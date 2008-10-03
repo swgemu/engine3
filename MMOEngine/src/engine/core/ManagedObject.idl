@@ -1,0 +1,18 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+package engine.core;
+
+interface ManagedObject {
+	native void lock(boolean doLock = true);
+	native void lock(ManagedObject obj);
+
+	native void wlock(boolean doLock = true);
+	native void wlock(ManagedObject obj);
+	
+	native void unlock(boolean doLock = true);
+	
+	native void setLockName(const string name);	
+}

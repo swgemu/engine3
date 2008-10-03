@@ -1,0 +1,45 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+#include "DistributedObjectBroker.h"
+
+#include "DistributedObjectBrokerClient.h"
+
+DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBroker* broker, Socket* sock) 
+		: StreamServiceClient(sock), Logger("DistributedObjectBroker") {
+	orb = broker;
+
+	/*info("client \'" + host + "\' connected", true);*/
+	info("client connected", true);
+}
+
+DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBroker* broker, const string& host) 
+		: StreamServiceClient(host, 44432) , Logger("DistributedObjectBroker") {
+	orb = broker;
+
+	try {
+		connect();
+		info("connected to server \'" + host + "\'", true);
+	} catch (SocketException& e) {
+		error("unable to connect to \'" + host + "\'");
+	}
+}
+
+void DistributedObjectBrokerClient::run() {
+	DOBPacketHandler* phandler = orb->getPacketHandler();
+
+	Packet packet;
+	
+	while (read(&packet)) {
+		phandler->handlePacket(this, &packet);
+	}
+}
+
+void DistributedObjectBrokerClient::send(Packet* pack) {
+	//info("SEND " + pack->toString(), true);
+	StreamServiceClient::send(pack);
+	
+	delete pack;
+}

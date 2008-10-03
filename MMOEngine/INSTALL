@@ -1,0 +1,52 @@
+Pre-requisites
+-----------------
+
+  these are the recommended ways to obtain them
+
+  1. Mysql 5.0 or higher installed
+     
+        download the sources from http://dev.mysql.com/downloads/mysql/5.0.html#downloads
+
+        and
+	
+        ./configure && make install
+
+  2. Lua 5.1 or higher installed
+
+        download latest source from http://www.lua.org/ftp/
+
+        and
+
+        make <PLATFORM> install
+
+          notes: - to get a list of the platforms type 'make'
+                 - on CYGWIN use 'generic'
+
+  3. zlib 1.2.3
+
+        download the sources from http://www.zlib.net/
+
+	and
+
+        ./configure && make install
+
+
+
+Installing IDLC compiler
+---------------------------
+
+  - copy bin/idlc to /usr/local/bin or any other place where your system can locate it
+
+  - add bin/idlc.jar to your CLASSPATH variable
+
+
+
+Compiling Engine3
+--------------------
+
+  type 'make' to compile it from it's root directory
+
+    
+    notes: - on CYGWIN make sure <CYGWIN_PATH>\cygwin\bin is added to your local PATH
+
+
