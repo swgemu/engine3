@@ -103,6 +103,13 @@ MMOEngine/config.sub -text
 MMOEngine/configure -text
 MMOEngine/configure.ac -text
 MMOEngine/doc/Doxyfile -text
+MMOEngine/external/pthreads-w32/include/pthread.h -text
+MMOEngine/external/pthreads-w32/include/sched.h -text
+MMOEngine/external/pthreads-w32/include/semaphore.h -text
+MMOEngine/external/pthreads-w32/lib/pthreadVC2.lib -text
+MMOEngine/external/zlib/include/zconf.h -text
+MMOEngine/external/zlib/include/zlib.h -text
+MMOEngine/external/zlib/lib/zlib1.lib -text
 MMOEngine/include/engine/core/Core.h -text
 MMOEngine/include/engine/core/ManagedObject.h -text
 MMOEngine/include/engine/core/ManagedObjectImplementation.h -text
