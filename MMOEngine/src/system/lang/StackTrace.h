@@ -20,27 +20,27 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace sys {
   namespace lang {
-		
+
 	class StackTrace {
 	#ifdef LINE_TRACING
-		uint32* symbols;
+		void** symbols;
 	#else
 		char** symbols;
 	#endif
-	
+
 		int count;
-	
+
 	public:
 		StackTrace();
-		
+
 		~StackTrace();
-		
+
 		void print();
-	
+
 		void getStackTrace(string& trace);
-	
-		static void printStackTrace();	
-		
+
+		static void printStackTrace();
+
 	};
 
   } // namespace lang

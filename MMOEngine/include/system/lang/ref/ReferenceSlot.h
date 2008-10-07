@@ -51,12 +51,12 @@ namespace sys {
 		inline O* get() {
 			return object;
 		}
-		
+
 	protected:
 		inline void updateObject(O* obj) {
 			if (obj == object)
 				return;
-			
+
 			releaseObject();
 
 			setObject(obj);
@@ -68,20 +68,27 @@ namespace sys {
 
 			initializeObject(obj);
 		}
-	
+
 		inline void initializeObject(O* obj) {
 			object = obj;
-			
+
 			acquireObject();
 		}
 
 		inline void acquireObject() {
-			if (object != NULL)
+			if (object != NULL) {
+			#ifdef TRACE_REFERENCESLOTS
+				object->addHolder(this);
+			#endif
 				object->acquire();
+			}
 		}
 
 		inline void releaseObject() {
 			if (object != NULL) {
+			#ifdef TRACE_REFERENCESLOTS
+				object->removeHolder(this);
+			#endif
 				object->release();
 				object = NULL;
 			}

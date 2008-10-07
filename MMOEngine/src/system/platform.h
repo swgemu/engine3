@@ -88,6 +88,7 @@ namespace sys {
 
 	//#define TRACE_REFERENCING
 	//#define LINE_TRACING
+	//#define TRACE_REFERENCESLOTS
 
 	#define VERSION_PUBLIC
 	#define CONNECTION_LIMIT 20
