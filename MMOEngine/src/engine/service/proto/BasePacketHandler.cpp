@@ -20,11 +20,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 BasePacketHandler::BasePacketHandler() : Logger() {
 	messageQueue = NULL;
-} 
-	
+}
+
 BasePacketHandler::BasePacketHandler(const string& s, MessageQueue* queue) : Logger(s) {
 	messageQueue = queue;
-} 
+}
 
 void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 	#ifdef VERSION_PUBLIC
@@ -51,7 +51,7 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 		case 0x0500: //Disconnect
 			if (!client->processRecieve(pack))
 				return;
-				
+
 			doDisconnect(client, pack); //we shouldnt send a disconnect back.
 			break;
 		case 0x0600: //SOE Ping
@@ -74,7 +74,7 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 		case 0x0900: //Data Channel
 			if (!client->processRecieve(pack))
 				return;
-			
+
 			if (!client->validatePacket(pack))
 				return;
 
@@ -117,7 +117,7 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			client->processRecieve(pack);
 
 			pack->setOffset(0);
-			
+
 			handleDataChannelPacket(client, pack);
 			break;
 	}
@@ -125,12 +125,12 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 
 void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
 	//client->info("session request recieved");
-	
+
     SessionIDRequestMessage::parse(pack, client);
-    
-    SessionIDResponseMessage sresp(client);
-    client->send(&sresp);
-    
+
+    Packet* msg = new SessionIDResponseMessage(client);
+    client->send(msg);
+
     /*
     info("sending connection server message");
     BasePacket* cserv = new ConnectionServerMessage();
@@ -141,7 +141,7 @@ void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
 
 void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
 	client->info("session request recieved");
-	
+
     uint32 seed = SessionIDResponseMessage::parse(pack);
 
     client->notifyReceivedSeed(seed);
@@ -160,9 +160,9 @@ void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 	client->updateNetStatus();
 
     /*stringstream msg;
-    msg << hex << "NETSTAT respond with 0x" << tick << "\n"; 
+    msg << hex << "NETSTAT respond with 0x" << tick << "\n";
 	info(msg);*/
-			
+
     BasePacket* resp = new NetStatusResponseMessage(tick);
     client->sendPacket(resp);
 }
@@ -185,17 +185,17 @@ void BasePacketHandler::doAcknowledge(BaseClient* client, Packet* pack) {
 void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 	while (pack->hasData()) {
 		uint8 blockSize = pack->parseByte();
-		
+
 		int offset = pack->getOffset();
-		
+
 		uint16 opcode = pack->parseShort();
-			
+
 		switch (opcode) {
 			case 0x0900: //Data Channel
 				if (!client->validatePacket(pack))
 					break;
-					
-				handleDataChannelMultiPacket(client, pack, (uint16) blockSize); 
+
+				handleDataChannelMultiPacket(client, pack, (uint16) blockSize);
 
 				processBufferedPackets(client);
 				break;
@@ -217,19 +217,19 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 			default:
 				if (!(opcode >> 8))	{
 					BaseMessage* message = new BaseMessage(pack, offset, offset + blockSize);
-		
+
 					// semi-worst case waiting time 50 ms
 					// TODO implement preprocess to set this time correctly according to priority
 
 					message->setClient(client);
 					message->setTimeStampMili(System::getMiliTime() + 50);
-		
+
 					messageQueue->push(message);
 				}
-				
+
 				break;
 		}
-		
+
 		pack->setOffset(offset + blockSize);
 	}
 }
@@ -242,10 +242,10 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 
 		if (pack->parseShort(0) == 0x0300) {
 			int offset = pack->getOffset();
-			
+
 			uint8 blockSize = pack->parseByte(offset - 5);
 			//cout << (int) blockSize << " : " << pack->toString() << "\n";
-			
+
 			handleDataChannelMultiPacket(client, pack, blockSize);
 		} else if (pack->parseShort(0) == 0x0D00) {
 		} else
@@ -261,30 +261,30 @@ void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack
 	if (opCount == 0x1900) {  // multi DataChannel
 		while (pack->hasData()) {
 			uint16 blockSize = (uint16) (pack->parseByte());
-			
+
 			if (blockSize == 0xFF)
 				blockSize = pack->parseNetShort();
 
 			int offset = pack->getOffset();
-					
+
 			BaseMessage* message = new BaseMessage(pack, offset, offset + blockSize);
-			
+
 			message->setClient(client);
 			message->setTimeStampMili(System::getMiliTime() + 50);
-			
+
 			messageQueue->push(message);
-			
+
 			pack->shiftOffset(blockSize);
 		}
 	} else {  // single DataChannel
 		BaseMessage* message = new BaseMessage(pack, pack->getOffset() - 2);
-		
+
 		// semi-worst case waiting time 50 ms
 		// TODO implement preprocess to set this time correctly according to priority
 
 		message->setClient(client);
 		message->setTimeStampMili(System::getMiliTime() + 50);
-		
+
 		messageQueue->push(message);
 	}
 }
@@ -296,7 +296,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 	if (opCount == 0x1900) {  // multi DataChannel
 		while ((parsedsize < size)) {
 			uint16 blockSize = (uint16) (pack->parseByte());
-			
+
 			if (blockSize == 0xFF) {
 				blockSize = pack->parseNetShort();
 				parsedsize += (blockSize + 3);
@@ -305,27 +305,27 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 			}
 
 			int offset = pack->getOffset();
-					
+
 			BaseMessage* message = new BaseMessage(pack, offset, offset + blockSize);
-			
+
 			message->setClient(client);
 			message->setTimeStampMili(System::getMiliTime() + 50);
-			
+
 			messageQueue->push(message);
 
 			pack->shiftOffset(blockSize);
 		}
 	} else {  // single DataChannel
 		int offset = pack->getOffset() - 2;
-		
+
 		BaseMessage* message = new BaseMessage(pack, offset , offset + (size - 4));
-		
+
 		// semi-worst case waiting time 50 ms
 		// TODO implement preprocess to set this time correctly according to priority
 
 		message->setClient(client);
 		message->setTimeStampMili(System::getMiliTime() + 50);
-		
+
 		messageQueue->push(message);
-	} 
+	}
 }

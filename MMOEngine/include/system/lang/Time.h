@@ -20,7 +20,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace sys {
   namespace lang {
-		
+
 	class Time {
 		struct timespec ts;
 
@@ -37,7 +37,12 @@ namespace sys {
 		Time() {
 			update();
 		}
-		
+
+		Time(uint32 seconds) {
+			ts.tv_sec = seconds;
+			ts.tv_nsec = 0;
+		}
+
 		inline void update() {
 			#ifndef PLATFORM_WIN
 				clock_gettime(CLOCK_REALTIME, &ts);
@@ -51,31 +56,31 @@ namespace sys {
 				filetime_to_timespec(&ft, &ts);
 			#endif
 		}
-	
+
 		inline void addMiliTime(uint64 mtime) {
 			ts.tv_sec += (long) (mtime / 1000);
 			ts.tv_nsec += (long) ((mtime % 1000) * 1000000);
-	
+
 			checkForOverflow();
 		}
-	
+
 		inline void addMikroTime(uint64 utime) {
 			ts.tv_sec += (long) (utime / 1000000);
 			ts.tv_nsec += (long) ((utime % 1000000) * 1000);
-	
+
 			checkForOverflow();
 		}
-	
+
 		inline void addNanoTime(uint64 ntime) {
 			ts.tv_sec += (long) (ntime / 1000000000);
 			ts.tv_nsec += (long) (ntime % 1000000000);
-			
+
 			checkForOverflow();
 		}
 
 		Time& operator=(Time& t) {
 			ts = t.ts;
-			
+
 			return *this;
 		}
 
@@ -91,32 +96,32 @@ namespace sys {
 					return -1;
 				else
 					return 0;
-			} 
-			
-		} 
-	
+			}
+
+		}
+
 		int compareMiliTo(Time& t) {
 			uint64 t1 = getMiliTime();
 			uint64 t2 = t.getMiliTime();
-	
+
 			if (t1 < t2)
 				return 1;
 			else if (t1 > t2)
 				return -1;
 			else
 				return 0;
-		} 
-		
+		}
+
 		inline static uint64 currentNanoTime() {
 			#ifndef PLATFORM_WIN
 				struct timespec cts;
 				clock_gettime(CLOCK_REALTIME, &cts);
 
 				uint64 time;
-		    
+
 				time = cts.tv_sec;
 				time = (time * 1000000000) + (uint64)cts.tv_nsec;
-	
+
 				return time;
 			#else
 				return 0;
@@ -127,12 +132,12 @@ namespace sys {
 			Time t;
 			return compareTo(t) > 0;
 		}
-	
+
 		inline bool isPresent() {
 			Time t;
 			return compareTo(t) == 0;
 		}
-	
+
 		inline bool isFuture() {
 			Time t;
 			return compareTo(t) < 0;
@@ -144,48 +149,52 @@ namespace sys {
 	    		ts.tv_sec++;
 	    		ts.tv_nsec -= 1000000000;
 	  		}
-		} 
-	
+		}
+
 	public:
 		// getters
+		inline uint32 getTime() {
+			return ts.tv_sec;
+		}
+
 		inline uint64 getMiliTime() {
 		    uint64 time;
-		    
+
 		    time = ts.tv_sec;
 		    time = (time * 1000) + (uint64)(ts.tv_nsec / 1000000.f);
-	
+
 		    return time;
 		}
-	
+
 		inline uint64 getMikroTime() {
 		    uint64 time;
-		    
+
 		    time = ts.tv_sec;
 		    time = (time * 1000000) + (uint64)(ts.tv_nsec / 1000.f);
-	
+
 		    return time;
 		}
-		
+
 		inline uint64 getNanoTime() {
 		    uint64 time;
-		    
+
 		    time = ts.tv_sec;
 		    time = (time * 1000000000) + (uint64)ts.tv_nsec;
-	
+
 		    return time;
 		}
-		
+
 		inline int64 miliDifference(Time& t) {
 			return t.getMiliTime() - getMiliTime();
 		}
-	
+
 		inline int64 miliDifference() {
 			return Time().getMiliTime() - getMiliTime();
 		}
-		
+
 		inline struct timespec* getTimeSpec() {
 			return &ts;
-		} 
+		}
 	};
 
   } // namespace lang

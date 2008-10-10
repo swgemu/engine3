@@ -7,7 +7,7 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 all: compile inst
 	#done
 
-allpub: config compile instpub
+allpub: config clean compile instpub
 	#done
 
 compile:
