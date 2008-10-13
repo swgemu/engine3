@@ -15,13 +15,19 @@ namespace sys {
 	public:
 		NumberFormatException() : Exception("NumberFormatException\n") {
 		}
-	
+
 		NumberFormatException(int index) : Exception() {
 			stringstream sstr;
 			sstr << "NumberFormatException at " << index << "\n";
 			message = sstr.str();
 		}
-		
+
+		NumberFormatException(int index, const string& str) : Exception() {
+			stringstream sstr;
+			sstr << "NumberFormatException at " << index << " while converting string:[ " << str << "]\n";
+			message = sstr.str();
+		}
+
 	};
 
   } // namespace lang

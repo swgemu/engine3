@@ -150,6 +150,13 @@ namespace sys {
 			  	#endif
 	   		}
 
+		#ifdef TRACE_LOCKS
+			if (doTrace) {
+				delete trace;
+				trace = new StackTrace();
+			}
+		#endif
+
 			#ifdef LOG_LOCKS
 				currentCount = cnt;
 
