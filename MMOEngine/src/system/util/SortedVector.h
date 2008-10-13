@@ -13,26 +13,28 @@ namespace sys {
 
 	template<class E> class SortedVector : public Vector<E> {
 		int insertPlan;
-	
+
 		virtual int compare(E& o1, E& o2) {
 			return o1->compareTo(o2);
 		}
-		
+
 	public:
 		static const int ALLOW_DUPLICATE = 1;
-	
+
 		static const int NO_DUPLICATE = 2;
-	
+
+		static const int ALLOW_OVERWRITE = 3;
+
 	public:
 		SortedVector();
 		SortedVector(int initsize, int incr);
-	
+
 		int put(E& o);
-		
+
 		bool contains(E& o);
-		
+
 		int find(E& o);
-		
+
 		bool drop(E& o);
 
 		inline void setInsertPlan(int plan) {
@@ -50,28 +52,34 @@ namespace sys {
 	}
 
 	template<class E> int SortedVector<E>::put(E& o) {
-		int m = 0, l = 0; 
+		int m = 0, l = 0;
 		int r = Vector<E>::elementCount - 1;
 
     	while (l <= r) {
         	m = (l + r) / 2;
-        	
+
         	E& obj = Vector<E>::elementData[m];
         	int cmp = compare(obj, o);
 
         	if (cmp == 0) {
-        		if (insertPlan == ALLOW_DUPLICATE)
+        		switch (insertPlan) {
+        		case ALLOW_DUPLICATE:
         			Vector<E>::add(++m, o);
-        		else
+					break;
+        		case ALLOW_OVERWRITE:
+        			Vector<E>::set(m, o);
+					break;
+        		default:
 					return -1;
-        			
+        		}
+
             	return m;
         	} else if (cmp > 0)
             	l = m + 1;
         	else
             	r = m - 1;
     	}
-    	
+
 	    if (r == m)
    		    m++;
 
@@ -79,11 +87,11 @@ namespace sys {
 
     	return m;
 	}
-	
+
 	template<class E> bool SortedVector<E>::contains(E& o) {
 		return find(o) != -1;
 	}
-	
+
 	template<class E> int SortedVector<E>::find(E& o) {
 	    int l = 0, r = Vector<E>::elementCount - 1;
 	    int m = 0, cmp = 0;
@@ -104,14 +112,14 @@ namespace sys {
 
     	return -1;
 	}
-	
+
 	template<class E> bool SortedVector<E>::drop(E& o) {
 		int index = find(o);
 		if (index == -1)
 			return false;
-		
+
 		E& oldValue = Vector<E>::elementData[index];
-		
+
 		Vector<E>::remove(index);
 		return true;
 	}

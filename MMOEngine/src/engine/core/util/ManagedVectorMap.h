@@ -1,0 +1,54 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+#ifndef MANAGEDVECTORMAP_H_
+#define MANAGEDVECTORMAP_H_
+
+#include "system/lang.h"
+
+namespace engine {
+  namespace core {
+    namespace util {
+
+	/*template<class K, class O> class ManagedVectorMap : public VectorMap<K, ManagedReference<O> > {
+	public:
+		ManagedVectorMap() : VectorMap<K, ManagedReference<O> >() {
+		}
+
+		ManagedVectorMap(int initsize, int incr) : VectorMap<K, ManagedReference<O> >(initsize, incr) {
+		}
+
+		int put(const K& key, O* object) {
+			VectorMap<K, ManagedReference<O>::put(key, object);
+		}
+
+		O* get(int index) {
+
+		}
+
+		O* get(const K& key) {
+
+		}
+
+		int find(const K& key) {
+
+		}
+
+		bool contains(const K& key) {
+
+		}
+
+		bool drop(const K& key) {
+
+		}
+	};*/
+
+    } // namespace util
+  } // namespace core
+} // namespace engine
+
+using namespace engine::core::util;
+
+#endif /* MANAGEDVECTORMAP_H_ */

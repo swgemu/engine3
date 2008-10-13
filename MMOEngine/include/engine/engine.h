@@ -61,6 +61,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 //#include "core/util/ManagedVector.h"
 //#include "core/util/ManagedVectorImplementation.h"
 #include "core/util/ManagedSortedVector.h"
+#include "core/util/ManagedVectorMap.h"
 
 #ifndef PLATFORM_WIN
 #include "db/Database.h"
