@@ -12,20 +12,20 @@ namespace engine {
 	class Coordinate : public DistributedObject {
 	protected:
 		float positionX, positionZ, positionY;
-		
+
 		float previousPositionX, previousPositionZ, previousPositionY;
-	
+
 	public:
 		Coordinate() : DistributedObject() {
-		}	
-	
+		}
+
 		Coordinate(float x, float z, float y) : DistributedObject() {
 			positionX = x;
 			positionZ = z;
 			positionY = y;
 
 			updatePreviousPosition();
-		}	
+		}
 
 		virtual ~Coordinate() {
 		}
@@ -36,41 +36,59 @@ namespace engine {
 			positionY = y;
 
 			updatePreviousPosition();
-		} 
+		}
 
 		void randomizePosition(float radius) {
 			updatePreviousPosition();
 
 			float angle = (45 + System::random(200)) / 3.14;
 			float distance = radius + System::random((int) radius);
-			
-			positionX += cos(angle) * distance; 
+
+			positionX += cos(angle) * distance;
 			positionY += sin(angle) * distance;
 		}
 
 		inline void setPosition(float x, float z, float y) {
 			updatePreviousPosition();
-			
+
 			positionX = x;
 			positionZ = z;
 			positionY = y;
-		} 
+		}
+
+		inline void setPositionX(float x) {
+			previousPositionX = positionX;
+
+			positionX = x;
+		}
+
+		inline void setPositionZ(float z) {
+			previousPositionZ = positionZ;
+
+			positionZ = z;
+		}
+
+		inline void setPositionY(float y) {
+			previousPositionY = positionY;
+
+			positionY = y;
+		}
 
 		inline void updatePreviousPosition() {
 			previousPositionX = positionX;
 			previousPositionZ = positionZ;
 			previousPositionY = positionY;
-		} 
+		}
 
 		// getters
 		inline float getPositionX() {
 			return positionX;
 		}
-	
+
 		inline float getPositionZ() {
 			return positionZ;
 		}
-	
+
 		inline float getPositionY() {
 			return positionY;
 		}
@@ -78,11 +96,11 @@ namespace engine {
 		inline float getPreviousPositionX() {
 			return previousPositionX;
 		}
-	
+
 		inline float getPreviousPositionZ() {
 			return previousPositionZ;
 		}
-	
+
 		inline float getPreviousPositionY() {
 			return previousPositionY;
 		}
