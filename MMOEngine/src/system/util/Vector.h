@@ -218,9 +218,9 @@ namespace sys {
    }
 
    template<class E> Vector<E>& Vector<E>::operator=(Vector<E>& vector) {
-       clone(vector);
+       vector.clone(*this);
 
-       return vector;
+       return *this;
    }
 
    template<class E> void Vector<E>::ensureCapacity(int minCapacity, bool copyContent) {
