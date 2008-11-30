@@ -3,8 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#ifndef LONG_H_
-#define LONG_H_
+#ifndef FLOAT_H_
+#define FLOAT_H_
 
 #include "String.h"
 
@@ -25,4 +25,4 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*LONG_H_*/
+#endif /*FLOAT_H_*/
