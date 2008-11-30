@@ -22,21 +22,21 @@ namespace engine {
 		virtual ~Database() {
 		}
 	
-		virtual void connect(const string& dbname, const string& user, const string& passw, int port) = 0;
+		virtual void connect(const String& dbname, const String& user, const String& passw, int port) = 0;
 	
 		virtual void close() = 0;
 
 		virtual void executeStatement(const char* statement) = 0;
 
-		virtual void executeStatement(const string& statement) = 0;
+		virtual void executeStatement(const String& statement) = 0;
 	
-		virtual void executeStatement(const stringstream& statement) = 0;
+		virtual void executeStatement(const StringBuffer& statement) = 0;
 	
 		virtual ResultSet* executeQuery(const char* statement) = 0;
 
-		virtual ResultSet* executeQuery(const string& statement) = 0;
+		virtual ResultSet* executeQuery(const String& statement) = 0;
 	
-		virtual ResultSet* executeQuery(const stringstream& statement) = 0;
+		virtual ResultSet* executeQuery(const StringBuffer& statement) = 0;
 
 		virtual void commit() = 0;
 	

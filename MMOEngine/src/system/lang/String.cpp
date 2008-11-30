@@ -4,7 +4,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "String.h"
+#include "StringBuffer.h"
 
+#include "ArrayIndexOutOfBoundsException.h"
 #include "NumberFormatException.h"
 
 static const unsigned int crctable[256] = {
@@ -62,70 +64,378 @@ static const unsigned int crctable[256] = {
     0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 };
 
-void String::toLower(string& str) {
-#ifndef PLATFORM_WIN
- 	std::transform(str.begin(), str.end(), str.begin(), (int(*)(int)) std::tolower);
-#endif
+String::String() {
+	value = NULL;
+	count = 0;
 }
 
-void String::toUpper(string& str) {
-#ifndef PLATFORM_WIN
- 	std::transform(str.begin(), str.end(), str.begin(), (int(*)(int)) std::toupper);
-#endif
+String::String(char* str) {
+	create(str, strlen(str));
 }
 
-uint32 String::hashCode(const char* str, int len) {
+String::String(const char* str) {
+	create(str, strlen(str));
+}
+
+String::String(const char* str, int len) {
+	create(str, len);
+}
+
+String::String(const String& str) {
+	create(str.value, str.count);
+}
+
+String::~String() {
+	destroy();
+}
+
+void String::create(const char* str, int len) {
+	value = (char*) malloc(len + 1);
+
+	strncpy(value, str, len);
+	value[len] = 0;
+
+	count = len;
+}
+
+void String::destroy() {
+	if (value != NULL) {
+		free(value);
+		value = NULL;
+	}
+}
+
+String String::concat(const char* str) const {
+	return concat(str, strlen(str));
+}
+
+String String::concat(const char* str, int len) const {
+	int newlen = count + len;
+
+	String newstr;
+	newstr.value = (char*) malloc(newlen + 1);
+
+	strncpy(newstr.value, value, count);
+
+	strncpy(newstr.value + count, str, len);
+	newstr.value[newlen] = 0;
+
+	newstr.count = newlen;
+
+	return newstr;
+}
+
+String String::concat(const String& str) const {
+	return concat(str.value, str.count);
+}
+
+int String::compareTo(const char* str) const {
+	return strcmp(value, str);
+}
+
+int String::compareTo(const String& str) const {
+	return compareTo(str.value);
+}
+
+int String::indexOf(char ch) const  {
+	return indexOf(ch, 0);
+}
+
+int String::indexOf(char ch, int fromIndex) const {
+	char* position = strchr(value + fromIndex, ch);
+
+	if (position != NULL)
+		return position - value;
+	else
+		return -1;
+}
+
+int String::indexOf(const String& str) const {
+	return indexOf(str, 0);
+}
+
+int String::indexOf(const String& str, int fromIndex) const {
+	char* position = strstr(value + fromIndex, str);
+
+	if (position != NULL)
+		return position - value;
+	else
+		return -1;
+}
+
+int String::lastIndexOf(char ch) const  {
+	return lastIndexOf(ch, 0);
+}
+
+int String::lastIndexOf(char ch, int fromIndex) const {
+	char* position = strrchr(value + fromIndex, ch);
+
+	if (position != NULL)
+		return position - value;
+	else
+		return -1;
+}
+
+/*int String::lastIndexOf(const String& str) const {
+	return lastIndexOf(str, 0);
+}
+
+int String::lastIndexOf(const String& str, int fromIndex) const {
+	char* position = strstr(value + fromIndex, str);
+
+	if (position != NULL)
+		return position - value;
+	else
+		return -1;
+}*/
+
+uint32 String::hashCode() const {
 	uint32 CRC = 0xFFFFFFFF;
 
-	for (short counter = 0; counter < len; counter++)
-  		CRC = crctable[str[counter] ^ (CRC >> 24)] ^ (CRC << 8);
+	for (int counter = 0; counter < count; counter++)
+  		CRC = crctable[value[counter] ^ (CRC >> 24)] ^ (CRC << 8);
 
 	return ~CRC;
 }
 
-uint64 String::toUnsignedLong(const char* str) {
-	int len = strlen(str);
+String String::subString(int beginIndex) const {
+	if (beginIndex < 0 || beginIndex >= count)
+		throw ArrayIndexOutOfBoundsException(beginIndex);
 
-	uint64 value = 0;
-	uint64 mul = 1;
-
-	for (int i = len - 1; i >= 0; --i) {
-		int digit = str[i] - '0';
-
-		if (digit < 0 || digit > 9)
-			throw NumberFormatException(i, str);
-
-		value += digit * mul;
-
-		mul *= 10;
-	}
-
-	return value;
+	return String(value + beginIndex, count - beginIndex);
 }
 
-uint32 String::toHexInt(const char* str) {
-	int len = strlen(str);
+String String::subString(int beginIndex, int endIndex) const {
+	if (beginIndex < 0 || beginIndex > count)
+		throw ArrayIndexOutOfBoundsException(beginIndex);
+	else if (endIndex < 0 || endIndex > count)
+		throw ArrayIndexOutOfBoundsException(endIndex);
+	else if (beginIndex > endIndex)
+		throw ArrayIndexOutOfBoundsException(beginIndex);
 
-	uint64 value = 0;
-	uint64 mul = 1;
+	if (beginIndex != endIndex)
+		return String(value + beginIndex, endIndex - beginIndex);
+	else
+		return String("");
+}
 
-	for (int i = len - 1; i >= 0; --i) {
-		char c = str[i];
-		int digit;
+String String::valueOf(int val) {
+	char buf[10];
 
-		if (c >= '0' && c <= '9')
-			digit = c - '0';
-		else if (c >= 'A' && c <= 'F')
-			digit = c - 'A' + 10;
-		else if (c >= 'a' && c <= 'f')
-			digit = c - 'a' + 10;
+	sprintf(buf, "%d", val);
+
+	return String(buf);
+}
+
+String String::valueOf(uint32 val) {
+	char buf[10];
+
+	sprintf(buf, "%u", val);
+
+	return String(buf);
+}
+
+String String::valueOf(int64 val) {
+	char buf[20];
+
+	sprintf(buf, "%ld", (long) val);
+
+	return String(buf);
+}
+
+String String::valueOf(uint64 val) {
+	char buf[20];
+
+	sprintf(buf, "%lu", (unsigned long) val);
+
+	return String(buf);
+}
+
+String String::valueOf(float val) {
+	char buf[20];
+
+	sprintf(buf, "%f", val);
+
+	return String(buf);
+}
+
+String String::valueOf(double val) {
+	char buf[20];
+
+	sprintf(buf, "%f", (float) val);
+
+	return String(buf);
+}
+
+String String::hexvalueOf(int val) {
+	char buf[20];
+
+	sprintf(buf, "%x", val);
+
+	return String(buf);
+}
+
+String String::replaceFirst(const String& regex, const String& replacement) const {
+	int rlen = regex.count;
+
+	int i = indexOf(regex);
+
+	if (i != -1) {
+		if (i > 0 && i + rlen < count)
+			return subString(0, i) + replacement + subString(i + rlen, count);
+		else if (i == 0 && i + rlen < count)
+			return replacement + subString(i + rlen, count);
+		else if (i > 0 && i + rlen == count)
+			return subString(0, i) + replacement;
 		else
-			throw NumberFormatException(i, str);
+			return regex;
+	} else
+		return *this;
+}
 
-		value += digit * mul;
+String String::replaceAll(const String& regex, const String& replacement) const {
+	StringBuffer str(*this);
 
-		mul *= 16;
+	for (int pos = 0; (pos = str.indexOf(regex, pos)) != -1; ++pos)
+		str.replace(pos, pos + regex.length(), replacement);
+
+	return str.toString();
+}
+
+String String::toLowerCase() const {
+	String str(value);
+
+	for (int i = 0; i < count; ++i) {
+		char ch = value[i];
+
+		if (isupper(ch))
+			str.value[i] = tolower(ch);
 	}
 
-	return value;
+	return str;
+}
+
+String String::toUpperCase() const {
+	String str(value);
+
+	for (int i = 0; i < count; ++i) {
+		char ch = value[i];
+
+		if (islower(ch))
+			str.value[i] = toupper(ch);
+	}
+
+	return str;
+}
+
+String String::trim() const {
+	String str;
+
+	int firstIndex = -1, lastIndex = -1;
+
+	for (int i = 0; i < count; ++i) {
+		char ch = value[i];
+
+		if (ch != ' ' && ch != '\n' && ch != '\t' && ch != '\r' && ch != '\f') {
+			firstIndex = i;
+			break;
+		}
+	}
+
+	if (firstIndex == -1)
+		return String("");
+
+	for (int i = count - 1; i >= 0; --i) {
+		char ch = value[i];
+
+		if (ch != ' ' && ch != '\n' && ch != '\t' && ch != '\r' && ch != '\f') {
+			lastIndex = i + 1;
+			break;
+		}
+	}
+
+	return subString(firstIndex, lastIndex);
+}
+
+String& String::operator=(const char* str) {
+	if (value != NULL)
+		free(value);
+
+	create(str, strlen(str));
+
+	return *this;
+}
+
+String& String::operator=(const String& str) {
+	if (value == str.value)
+		return *this;
+
+	if (value != NULL)
+		free(value);
+
+	create(str.value, str.count);
+
+	return *this;
+}
+
+String& String::operator+=(const char* str) {
+	int len = strlen(str);
+	int newlen = count + len;
+
+	value = (char*) realloc(value, newlen + 1);
+
+	strncpy(value + count, str, len);
+	value[newlen] = 0;
+
+	count = newlen;
+
+	return *this;
+}
+
+String& String::operator+=(const String& str) {
+	int newlen = count + str.count;
+
+	value = (char*) realloc(value, newlen + 1);
+
+	strncpy(value + count, str, str.count);
+	value[newlen] = 0;
+
+	count = newlen;
+
+	return *this;
+}
+
+char String::charAt(int index) const {
+	if (index < 0 || index >= count)
+		throw ArrayIndexOutOfBoundsException(index);
+
+	return value[index];
+}
+
+bool operator==(char* str1, const String& str2) {
+	return String(str1) == str2;
+}
+
+bool operator==(const char* str1, const String& str2) {
+	return String(str1) == str2;
+}
+
+bool operator!=(const char* str1, const String& str2) {
+	return String(str1) != str2;
+}
+
+bool operator!=(char* str1, const String& str2) {
+	return String(str1) != str2;
+}
+
+String operator+(const String& str1, const String& str2) {
+	return str1.concat(str2);
+}
+
+String operator+(const char* str1, const String& str2) {
+	return String(str1).concat(str2);
+}
+
+String operator+(const String& str1, const char* str2) {
+	return str1.concat(str2);
 }

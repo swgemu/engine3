@@ -11,6 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../lang/types.h"
 
 #include "../lang/ArrayIndexOutOfBoundsException.h"
+#include "../lang/IllegalArgumentException.h"
 
 namespace sys {
  namespace util {
@@ -44,6 +45,8 @@ namespace sys {
 
        void removeElementAt(int index);
 
+       void removeRange(int fromIndex, int toIndex);
+
        void removeAll();
 
        E set(int index, const E& element);
@@ -63,6 +66,8 @@ namespace sys {
        inline void createElementAt(const E& o, int index);
 
        inline void destroyElementAt(int index);
+
+       inline void destroyElementRange(int fromIndex, int toIndex);
 
        inline void destroyElements();
 
@@ -244,6 +249,25 @@ namespace sys {
        }
    }
 
+   template<class E> void Vector<E>::removeRange(int fromIndex, int toIndex) {
+       if (fromIndex < 0)
+           throw ArrayIndexOutOfBoundsException(fromIndex);
+       else if (toIndex >= elementCount)
+           throw ArrayIndexOutOfBoundsException(toIndex);
+       else if (fromIndex > toIndex)
+    	   throw IllegalArgumentException();
+
+       destroyElementRange(fromIndex, toIndex);
+
+       int numMoved = elementCount - toIndex - 1;
+       if (numMoved > 0) {
+           E* indexOffset = elementData + fromIndex;
+           memcpy(indexOffset, indexOffset + toIndex - fromIndex, numMoved * sizeof(E));
+       }
+
+       elementCount -= toIndex - fromIndex;
+   }
+
    template<class E> void Vector<E>::setSize(int newSize, bool copyContent) {
        if (newSize > elementCount)
            ensureCapacity(newSize, copyContent);
@@ -263,11 +287,15 @@ namespace sys {
            (&(elementData[index]))->~E();
    }
 
-   template<class E> void Vector<E>::destroyElements() {
+   template<class E> void Vector<E>::destroyElementRange(int fromIndex, int toIndex) {
        if (TypeInfo<E>::needConstructor) {
-           for (int i = 0; i < elementCount; ++i)
-               destroyElementAt(i);
+    	   for (int i = fromIndex; i < toIndex; ++i)
+    		   destroyElementAt(i);
        }
+   }
+
+   template<class E> void Vector<E>::destroyElements() {
+	   destroyElementRange(0, elementCount);
    }
 
  } // namespace util

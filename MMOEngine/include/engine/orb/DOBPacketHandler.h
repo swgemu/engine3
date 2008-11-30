@@ -21,7 +21,7 @@ namespace engine {
 	
 	public:
 		DOBPacketHandler();
-		DOBPacketHandler(const string& s, DistributedObjectBroker* broker);
+		DOBPacketHandler(const String& s, DistributedObjectBroker* broker);
 	
 		~DOBPacketHandler();
 	

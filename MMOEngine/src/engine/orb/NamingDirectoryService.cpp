@@ -16,7 +16,7 @@ NamingDirectoryService::NamingDirectoryService() {
 	classMap = DistributedObjectBroker::instance()->getClassMap();
 }
 
-NamingDirectoryService::NamingDirectoryService(const string& address) {
+NamingDirectoryService::NamingDirectoryService(const String& address) {
 	brokerClient = new DistributedObjectBrokerClient(DistributedObjectBroker::instance(), address);
 
 	classMap = DistributedObjectBroker::instance()->getClassMap();
@@ -28,10 +28,10 @@ NamingDirectoryService::~NamingDirectoryService() {
 void NamingDirectoryService::deploy(DistributedObjectStub* stub) {
 }
 
-void NamingDirectoryService::deploy(const string& name, DistributedObjectStub* stub) {
+void NamingDirectoryService::deploy(const String& name, DistributedObjectStub* stub) {
 }
 
-DistributedObject* NamingDirectoryService::lookUp(const string& name) {
+DistributedObject* NamingDirectoryService::lookUp(const String& name) {
 	Packet* msg = new LookUpObjectMessage(name);
 	brokerClient->send(msg);
 			
@@ -41,7 +41,7 @@ DistributedObject* NamingDirectoryService::lookUp(const string& name) {
 	if (!LookUpObjectResponseMessage::parseObjectFound(&resp))
 		return NULL;
 			
-	string className;
+	String className;
 	resp.parseAscii(className);
 	
 	uint64 objectid = resp.parseLong();
@@ -61,7 +61,7 @@ DistributedObject* NamingDirectoryService::lookUp(const string& name) {
 	return obj;
 }
 
-DistributedObject* NamingDirectoryService::undeploy(const string& name) {
+DistributedObject* NamingDirectoryService::undeploy(const String& name) {
 	DistributedObject* obj = NULL;
 	
 	return obj;

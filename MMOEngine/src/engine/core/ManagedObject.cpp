@@ -82,7 +82,7 @@ void ManagedObject::_unlock(bool doLock) {
 		((ManagedObjectImplementation*) _impl)->unlock(doLock);
 }
 
-void ManagedObject::_setLockName(const string& name) {
+void ManagedObject::_setLockName(const String& name) {
 	if (_impl == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -122,7 +122,7 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		unlock(inv->getBooleanParameter());
 		break;
 	case 11:
-		setLockName(inv->getAsciiParameter(_param0_setLockName__string_));
+		setLockName(inv->getAsciiParameter(_param0_setLockName__String_));
 		break;
 	default:
 		return NULL;
@@ -151,7 +151,7 @@ void ManagedObjectAdapter::unlock(bool doLock) {
 	return ((ManagedObjectImplementation*) impl)->unlock(doLock);
 }
 
-void ManagedObjectAdapter::setLockName(const string& name) {
+void ManagedObjectAdapter::setLockName(const String& name) {
 	return ((ManagedObjectImplementation*) impl)->setLockName(name);
 }
 

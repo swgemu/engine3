@@ -20,7 +20,7 @@ namespace engine {
 	public:
 		StreamServiceClient(Socket* sock);
 		StreamServiceClient(Socket* sock, SocketAddress& addr);
-		StreamServiceClient(const string& host, int port);
+		StreamServiceClient(const String& host, int port);
 
 		virtual ~StreamServiceClient();
 		

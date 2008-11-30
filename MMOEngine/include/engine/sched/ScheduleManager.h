@@ -25,7 +25,7 @@ namespace engine {
 	
 	public:
 		ScheduleManager();
-		ScheduleManager(const string& s);
+		ScheduleManager(const String& s);
 	
 		virtual ~ScheduleManager();
 	

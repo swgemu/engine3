@@ -13,12 +13,12 @@ namespace engine {
 
 	class LookUpObjectMessage : public Packet {
 	public:	
-		LookUpObjectMessage(const string& name) : Packet(40) {
+		LookUpObjectMessage(const String& name) : Packet(40) {
 			insertInt(0x01);
 			insertAscii(name);
 		}
 	
-		static void parseObjectName(Packet* pack, string& name) {
+		static void parseObjectName(Packet* pack, String& name) {
 			pack->parseAscii(name);
 		}
 	};

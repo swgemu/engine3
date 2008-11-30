@@ -13,13 +13,13 @@ namespace engine {
 	class Core {
 	public:
 		Core() {
-			set_new_handler(outOfMemoryHandler);
+			//set_new_handler(outOfMemoryHandler);
 
 			Socket::initialize();
 		}
 
 		Core(const char* globallogfile) {
-			set_new_handler(outOfMemoryHandler);
+			//set_new_handler(outOfMemoryHandler);
 
 			Socket::initialize();
 
@@ -30,18 +30,18 @@ namespace engine {
 			MySqlDatabase::finalizeLibrary();
 
 			NetworkInterface::finalize();
-			
+
 			Logger::closeGlobalFileLogger();
 		}
 
 		static void outOfMemoryHandler() {
-			cout << "OutOfMemoryException\n";
-			
+			System::out << "OutOfMemoryException\n";
+
 			exit(1);
 		}
 
 	};
-	
+
   } // namespace core
 } // namespace engine
 

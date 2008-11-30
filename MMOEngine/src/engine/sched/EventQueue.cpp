@@ -70,7 +70,7 @@ void EventQueue::add(Event* e, bool doLock) {
 	e->setQueued(true);
 
 	#ifdef TRACE_EVENTS
-		stringstream s;
+		StringBuffer s;
 		s << "added event " << e->getTimeStamp().getMiliTime() << "(" << e << ")";
 		info(s);
 	#endif
@@ -111,7 +111,7 @@ Event* EventQueue::get() {
 			break;
 
 		#ifdef TRACE_EVENTS
-			stringstream s;
+			StringBuffer s;
 			s << "scheduling " << e->toString();
 			info(s);
 		#endif
@@ -119,13 +119,13 @@ Event* EventQueue::get() {
 		int res = timedWait(condMutex, &time);
 
 		#ifdef TRACE_EVENTS
-			stringstream s2;
+			StringBuffer s2;
 			s2 << "timedwait finished with (" << res << ")";
 			info(s2);
 		#endif
 
 		if (res != 0 && res != ETIMEDOUT) {
-			stringstream msg;
+			StringBuffer msg;
 
 			if (res == 22)
 				msg << "invalid condition parameters";
@@ -155,20 +155,20 @@ Event* EventQueue::get() {
 		int64 difference = -(uint64) e->getTimeStamp().miliDifference();
 
 		if (difference > 10) {
-			stringstream msg;
+			StringBuffer msg;
 			msg << "future event happenend " << e->getTimeStamp().getMiliTime() << " ("
 				<< difference << ")";
 			error(msg);
 		}
 	} /*if (!blocked && e->getTimeStamp().miliDifference() > 250) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "WARNING too high delay " << e->getTimeStamp().getMiliTime() << " ("
 			<< e->getTimeStamp().miliDifference() << ")";
 		error(msg);
 	}*/
 
 	#ifdef TRACE_EVENTS
-		stringstream s;
+		StringBuffer s;
 		s << "got event " << e->getTimeStamp().getMiliTime() << " [" << size() << "]";
 		info(s);
 	#endif
@@ -193,7 +193,7 @@ bool EventQueue::remove(Event* e, bool doLock) {
 	e->setQueued(false);
 
 	#ifdef TRACE_EVENTS
-		stringstream s;
+		StringBuffer s;
 		s << "removed event " << e->getTimeStamp().getMiliTime() << " [" << size() << "]";
 		info(s);
 	#endif
@@ -231,7 +231,7 @@ void EventQueue::repair() {
 }
 
 void EventQueue::printQueue() {
-	/*stringstream s;
+	/*StringBuffer s;
 	s << dec << "EventQueue list [" << size() << "] = ";
 
 	for (int i = 0; i < size(); ++i) {

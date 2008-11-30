@@ -3,122 +3,127 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "../lang/Integer.h"
+#include "../lang/Long.h"
 #include "../lang/String.h"
 
 #include "StringTokenizer.h"
 
-StringTokenizer::StringTokenizer(const string& s) {
+StringTokenizer::StringTokenizer(const String& s) {
 	str = s;
 
-	if (s.length() != 0)
+	if (!s.isEmpty())
 		index = 0;
 	else
-		index = string::npos;
+		index = -1;
 
 	delimeter = " ";
 }
 
 int StringTokenizer::getIntToken() {
-	string token;
+	String token;
 	nextToken(token);
-		
-	return atoi(token.c_str());
+
+	return Integer::valueOf(token);
 }
 
 uint32 StringTokenizer::getHexIntToken() {
-	string token;
+	String token;
 	nextToken(token);
 
-	return String::toHexInt(token.c_str());
+	return Integer::hexvalueOf(token);
 }
 
 float StringTokenizer::getFloatToken() {
-	string token;
+	String token;
 	nextToken(token);
-		
-	return (float) atof(token.c_str());
+
+	return (float) atof(token.toCharArray());
 }
-	
+
 uint64 StringTokenizer::getLongToken() {
-	string token;
+	String token;
 	nextToken(token);
-		
-	return String::toUnsignedLong(token.c_str());
+
+	return Long::unsignedvalueOf(token);
 }
 
-void StringTokenizer::getStringToken(string& token) {
-	nextToken(token);
-}
-
-void StringTokenizer::getStringToken(stringstream& token) {
+void StringTokenizer::getStringToken(String& token) {
 	nextToken(token);
 }
 
-void StringTokenizer::nextToken(string& s) {
+void StringTokenizer::getStringToken(StringBuffer& token) {
+	nextToken(token);
+}
+
+void StringTokenizer::nextToken(String& s) {
 	if (!hasMoreTokens())
 		throw Exception();
 
-	string::size_type oindex;
+	StringBuffer buf;
+
+	int oindex;
 
 	while (true) {
 		oindex = index;
-		
-		index = str.find(delimeter.c_str(), index);
 
-		if (index == oindex && index <= str.size())
+		index = str.indexOf(delimeter, index);
+
+		if (index == oindex && index <= str.length())
 			++index;
 		else
 			break;
 	}
 
-	s.clear();
-	if (index != string::npos)
-		s.append(str.substr(oindex, index++ - oindex));
+	if (index != -1)
+		buf.append(str.subString(oindex, index++));
 	else
-		s.append(str.substr(oindex, str.size() - oindex));
+		buf.append(str.subString(oindex, str.length()));
+
+	buf.toString(s);
 }
 
-void StringTokenizer::nextToken(stringstream& s) {
+void StringTokenizer::nextToken(StringBuffer& s) {
 	if (!hasMoreTokens())
 		throw Exception();
 
-	string::size_type oindex;
+	int oindex;
 
 	while (true) {
 		oindex = index;
-		
-		index = str.find(delimeter.c_str(), index);
 
-		if (index == oindex && index <= str.size())
+		index = str.indexOf(delimeter, index);
+
+		if (index == oindex && index <= str.length())
 			++index;
 		else
 			break;
 	}
-	
-	s.clear();
-	if (index != string::npos)
-		s << str.substr(oindex, index++ - oindex);
+
+	s.deleteAll();
+
+	if (index != -1)
+		s.append(str.subString(oindex, index++));
 	else
-		s << str.substr(oindex, str.size() - oindex);
+		s.append(str.subString(oindex, str.length()));
 }
 
-void StringTokenizer::finalToken(string& s) {
+void StringTokenizer::finalToken(String& s) {
 	if (!hasMoreTokens())
 		throw Exception();
 
-	s.clear();
-	s.append(str.substr(index, str.size() - index));
-	
-	index = string::npos;
+	s = str.subString(index, str.length());
+
+	index = -1;
 }
 
 void StringTokenizer::shiftTokens(int count) {
-	string token;
+	String token;
 
 	while (count-- > 0)
 		nextToken(token);
 }
 
 bool StringTokenizer::hasMoreTokens() {
-	return index != string::npos;
+	return index != -1;
 }

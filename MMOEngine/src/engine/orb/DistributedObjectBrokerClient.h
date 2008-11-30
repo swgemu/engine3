@@ -20,7 +20,7 @@ namespace engine {
 		
 	public:
 		DistributedObjectBrokerClient(DistributedObjectBroker* broker, Socket* sock);
-		DistributedObjectBrokerClient(DistributedObjectBroker* broker, const string& host);
+		DistributedObjectBrokerClient(DistributedObjectBroker* broker, const String& host);
 		
 		void run();
 		

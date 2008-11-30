@@ -10,39 +10,43 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Exception.h"
 
+#include "../lang/String.h"
+#include "../lang/StringBuffer.h"
+
 namespace sys {
-  namespace io { 
+  namespace io {
 
 	class StringTokenizer {
-		string str;
-		string::size_type index;
-		string delimeter;
-		
+		String str;
+
+		int index;
+		String delimeter;
+
 	public:
-		StringTokenizer(const string& s);
-	
+		StringTokenizer(const String& s);
+
 		int getIntToken();
 		uint32 getHexIntToken();
 		uint64 getLongToken();
 		float getFloatToken();
-		
-		void getStringToken(string& token);
-		void getStringToken(stringstream& token);
-	
-		void finalToken(string& s);
+
+		void getStringToken(String& token);
+		void getStringToken(StringBuffer& token);
+
+		void finalToken(String& s);
 
 		void shiftTokens(int count);
-		
+
 		bool hasMoreTokens();
 
-		inline void setDelimeter(const string& del) {
+		inline void setDelimeter(const String& del) {
 			delimeter = del;
 		}
 
 	private:
-		void nextToken(string& s);
-		void nextToken(stringstream& s);
-		
+		void nextToken(String& s);
+		void nextToken(StringBuffer& s);
+
 	};
 
   } // namespace io

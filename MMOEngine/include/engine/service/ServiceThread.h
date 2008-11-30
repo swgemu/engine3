@@ -25,8 +25,8 @@ namespace engine {
 		bool doRun, serviceReady;
 	
 	public:
-		ServiceThread(const string& s);
-		ServiceThread(const string& s, ScheduleManager* sched);
+		ServiceThread(const String& s);
+		ServiceThread(const String& s, ScheduleManager* sched);
 		
 		virtual ~ServiceThread();
 		

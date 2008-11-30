@@ -25,7 +25,7 @@ namespace engine {
 		MessageQueue messageQueue;
 		
 	public:
-		ServiceMessageHandlerThread(const string& s);
+		ServiceMessageHandlerThread(const String& s);
 		
 		virtual ~ServiceMessageHandlerThread();
 	

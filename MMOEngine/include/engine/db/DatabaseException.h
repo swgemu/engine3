@@ -13,7 +13,7 @@ namespace engine {
 
 	class DatabaseException : public Exception {
 	public:
-		DatabaseException(string msg) : Exception(msg) {
+		DatabaseException(String msg) : Exception(msg) {
 		}
 		
 	};

@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DatagramServiceClient.h"
 
-DatagramServiceClient::DatagramServiceClient(const string& host, int port) 
+DatagramServiceClient::DatagramServiceClient(const String& host, int port) 
 		: ServiceClient(host, port) {
 	socket = new UDPSocket();
 
@@ -30,7 +30,7 @@ void DatagramServiceClient::recieveMessages() {
 
 			handleMessage(&packet);
 		} catch (SocketException& e) {
-			cout << e.getMessage() << "\n";
+			System::out << e.getMessage() << "\n";
 
 			doRun = false;
 		}

@@ -16,7 +16,7 @@ namespace engine {
 	
 	class DistributedObjectClassHelper {
 	protected:
-		string className;
+		String className;
 		
 	public:
 		DistributedObjectClassHelper() {
@@ -31,7 +31,7 @@ namespace engine {
 	
 		virtual DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj) = 0;
 		
-		inline const string& getClassName() {
+		inline const String& getClassName() {
 			return className;
 		}
 	};

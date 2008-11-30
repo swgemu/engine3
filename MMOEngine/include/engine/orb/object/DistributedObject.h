@@ -18,8 +18,8 @@ namespace engine {
 	
 	class DistributedObject : public ReadWriteLock, public Object {
 	protected:
-		string _className;
-		string _name;
+		String _className;
+		String _name;
 		
 		uint64 _objectID;
 		
@@ -31,11 +31,11 @@ namespace engine {
 		virtual ~DistributedObject();
 	
 		// setters
-		inline void _setClassName(const string& n) {
+		inline void _setClassName(const String& n) {
 			_className = n;
 		}
 		
-		inline void _setName(const string& n) {
+		inline void _setName(const String& n) {
 			_name = n;
 		}
 	
@@ -48,11 +48,11 @@ namespace engine {
 		}
 	
 		// getters
-		inline const string& _getClassName() {
+		inline const String& _getClassName() {
 			return _className;
 		}
 	
-		inline const string& _getName() {
+		inline const String& _getName() {
 			return _name;
 		}	
 		

@@ -22,16 +22,16 @@ namespace engine {
 		
 	public:
 		NamingDirectoryService();
-		NamingDirectoryService(const string& address);
+		NamingDirectoryService(const String& address);
 		
 		virtual ~NamingDirectoryService();
 	
 		virtual void deploy(DistributedObjectStub* stub);
-		virtual void deploy(const string& name, DistributedObjectStub* stub);
+		virtual void deploy(const String& name, DistributedObjectStub* stub);
 	
-		virtual DistributedObject* lookUp(const string& name);
+		virtual DistributedObject* lookUp(const String& name);
 		
-		virtual DistributedObject* undeploy(const string& name);
+		virtual DistributedObject* undeploy(const String& name);
 		
 		inline DistributedObjectBrokerClient* getClient() {
 			return brokerClient;

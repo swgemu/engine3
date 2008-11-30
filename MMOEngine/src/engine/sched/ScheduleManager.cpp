@@ -12,20 +12,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 ScheduleManager::ScheduleManager() : Thread(), Mutex("Scheduler"), Logger("Scheduler") {
 	doRun = false;
 		
-	string logname = "SchedulerEventQueue";
+	String logname = "SchedulerEventQueue";
 	events.setLoggingName(logname);
 		
-	string mutexname = "SchedulerEventQueueLock";
+	String mutexname = "SchedulerEventQueueLock";
 	events.setMutexName(mutexname);
 }
 
-ScheduleManager::ScheduleManager(const string& s) : Thread(), Mutex("SchedManager"), Logger(s) {
+ScheduleManager::ScheduleManager(const String& s) : Thread(), Mutex("SchedManager"), Logger(s) {
 	doRun = false;
 		
-	string logname = s + "EventQueue";
+	String logname = s + "EventQueue";
 	events.setLoggingName(logname);
 		
-	string mutexname = s + "EventQueueLock";
+	String mutexname = s + "EventQueueLock";
 	events.setMutexName(mutexname);
 	
 	setLogging(false);
@@ -35,7 +35,7 @@ ScheduleManager::~ScheduleManager() {
 }
 
 void ScheduleManager::start() {
-	stringstream msg;
+	StringBuffer msg;
 	msg << "started";
 	info(msg); 
 
@@ -64,7 +64,7 @@ void ScheduleManager::run() {
 			#ifdef VERSION_PUBLIC
 				return;
 			#else
-				cout << "[ScheduleManager] unreported Exception caught\n";
+				System::out << "[ScheduleManager] unreported Exception caught\n";
 			#endif
 		}
 	}

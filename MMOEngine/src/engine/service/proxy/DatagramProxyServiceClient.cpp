@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../../sched/ScheduleManager.h"
 
-DatagramProxyServiceClient::DatagramProxyServiceClient(DatagramProxyService* serv, string& host, int port) 
+DatagramProxyServiceClient::DatagramProxyServiceClient(DatagramProxyService* serv, String& host, int port) 
 		: DatagramServiceClient(host, port), Thread(), Logger("DatagramProxyServiceClient") {
 	service = serv;
 

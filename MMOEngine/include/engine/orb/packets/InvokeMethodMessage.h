@@ -21,7 +21,7 @@ namespace engine {
 			insertInt(invid);
 		}
 		
-		static void parseObjectName(Packet* pack, string& name) {
+		static void parseObjectName(Packet* pack, String& name) {
 			pack->parseAscii(name);
 		}
 	};

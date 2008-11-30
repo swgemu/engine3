@@ -14,7 +14,7 @@ BaseProtocol::BaseProtocol() : Logger("PROTO") {
 void BaseProtocol::prepareSend(BasePacket* pack) {
 	pack->close();
 
-	/*stringstream msg;
+	/*StringBuffer msg;
 	msg << "SEND - " << pack->toString();
 	info(msg);*/
 
@@ -37,7 +37,7 @@ void BaseProtocol::prepareSend(BasePacket* pack) {
 
 bool BaseProtocol::processRecieve(Packet* pack) {
 	if (!testCRC(pack)) {
-		/*stringstream msg;
+		/*StringBuffer msg;
 		msg << "incorrect CRC\n" << pack->toString() << "\n";
 		error(msg);*/
 
@@ -53,7 +53,7 @@ bool BaseProtocol::processRecieve(Packet* pack) {
 		decompress(pack);
 	}
 
-	/*stringstream msg;
+	/*StringBuffer msg;
 	msg << "READ - " << pack->toString();
 	info(msg);*/
 
@@ -154,14 +154,14 @@ void BaseProtocol::decompress(Packet* pack) {
     inflateInit(&packet);
     packet.next_in = (Bytef* )(pData+offset);
     packet.avail_in = (nLength-offset-3);
-    //cout << "WTF - " << offset << " - " << (nLength-offset-2) << "\n"; 
+    //System::out << "WTF - " << offset << " - " << (nLength-offset-2) << "\n"; 
     packet.next_out = (Bytef* )output;
     packet.avail_out = COMPRESSION_BUFFER_MAX;
     inflate(&packet,Z_FINISH);
     newLength = packet.total_out;
     inflateEnd(&packet); //close buffer*/
     
-    //cout << "size = " << newLength << "\n";
+    //System::out << "size = " << newLength << "\n";
     
     pack->reset();
 	pack->setSize(newLength + offset + 3, false);

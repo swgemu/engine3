@@ -14,5 +14,5 @@ interface ManagedObject {
 	
 	native void unlock(boolean doLock = true);
 	
-	native void setLockName(const string name);	
+	native void setLockName(const String name);	
 }

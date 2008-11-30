@@ -101,7 +101,7 @@ namespace engine {
 	    	return x >= minX && x < maxX && y >= minY && y < maxY;
 	    }
 
-		string toString();
+		String toString();
 
 		friend class QuadTree;
 

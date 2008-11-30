@@ -50,13 +50,16 @@ AR = ar
 ARFLAGS = cru
 libengine3_a_AR = $(AR) $(ARFLAGS)
 libengine3_a_LIBADD =
-am_libengine3_a_OBJECTS = System.$(OBJEXT) String.$(OBJEXT) \
-	unicode.$(OBJEXT) Math.$(OBJEXT) StackTrace.$(OBJEXT) \
-	Thread.$(OBJEXT) ReadWriteLock.$(OBJEXT) Socket.$(OBJEXT) \
+am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
+	String.$(OBJEXT) StringBuffer.$(OBJEXT) \
+	UnicodeString.$(OBJEXT) Math.$(OBJEXT) StackTrace.$(OBJEXT) \
+	ArrayIndexOutOfBoundsException.$(OBJEXT) Thread.$(OBJEXT) \
+	ReadWriteLock.$(OBJEXT) Socket.$(OBJEXT) \
 	SocketAddress.$(OBJEXT) InetAddress.$(OBJEXT) \
-	NetworkInterface.$(OBJEXT) Stream.$(OBJEXT) File.$(OBJEXT) \
-	BufferedReader.$(OBJEXT) StringTokenizer.$(OBJEXT) \
-	UnicodeTokenizer.$(OBJEXT) AdvancedBinaryHeap.$(OBJEXT) \
+	NetworkInterface.$(OBJEXT) Packet.$(OBJEXT) Stream.$(OBJEXT) \
+	File.$(OBJEXT) BufferedReader.$(OBJEXT) \
+	StringTokenizer.$(OBJEXT) UnicodeTokenizer.$(OBJEXT) \
+	PrintStream.$(OBJEXT) AdvancedBinaryHeap.$(OBJEXT) \
 	ScheduleManager.$(OBJEXT) EventQueue.$(OBJEXT) \
 	ServiceClient.$(OBJEXT) ServiceThread.$(OBJEXT) \
 	ServiceMessageHandlerThread.$(OBJEXT) \
@@ -203,7 +206,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CXXFLAGS = -g0 -Wall -Wextra -Wno-unused -Wno-write-strings
+AM_CXXFLAGS = -ggdb -Wall -Wextra -Wno-unused
 INCLUDES = $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src
 
@@ -211,21 +214,26 @@ noinst_LIBRARIES = libengine3.a
 libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
+			system/lang/Exception.cpp \
 			system/lang/String.cpp \
-			system/lang/unicode.cpp \
+			system/lang/StringBuffer.cpp \
+			system/lang/UnicodeString.cpp \
 			system/lang/Math.cpp \
 			system/lang/StackTrace.cpp \
+			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/thread/Thread.cpp \
 			system/thread/ReadWriteLock.cpp \
 			system/net/Socket.cpp \
 			system/net/SocketAddress.cpp \
 			system/net/InetAddress.cpp \
 			system/net/NetworkInterface.cpp \
+			system/net/Packet.cpp \
 			system/io/Stream.cpp \
 			system/io/File.cpp \
 			system/io/BufferedReader.cpp \
 			system/io/StringTokenizer.cpp \
 			system/io/UnicodeTokenizer.cpp \
+			system/io/PrintStream.cpp \
 			system/util/AdvancedBinaryHeap.cpp \
 			engine/engine.h \
 			engine/sched/ScheduleManager.cpp \
@@ -320,6 +328,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AdvancedBinaryHeap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ArrayIndexOutOfBoundsException.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BaseClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BaseClientProxy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BaseFragmentedPacket.Po@am__quote@
@@ -345,6 +354,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistributedObjectServant.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistributedObjectStub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EventQueue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Exception.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/File.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InetAddress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Logger.Po@am__quote@
@@ -357,6 +367,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamingDirectoryService.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamingDirectoryServiceImpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NetworkInterface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Packet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PrintStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/QuadTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadWriteLock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScheduleManager.Po@am__quote@
@@ -374,11 +386,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamServiceClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamServiceThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/String.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StringBuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StringTokenizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Thread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeTokenizer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unicode.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -408,6 +421,20 @@ System.obj: system/lang/System.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o System.obj `if test -f 'system/lang/System.cpp'; then $(CYGPATH_W) 'system/lang/System.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/System.cpp'; fi`
 
+Exception.o: system/lang/Exception.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Exception.o -MD -MP -MF $(DEPDIR)/Exception.Tpo -c -o Exception.o `test -f 'system/lang/Exception.cpp' || echo '$(srcdir)/'`system/lang/Exception.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Exception.Tpo $(DEPDIR)/Exception.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/Exception.cpp' object='Exception.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Exception.o `test -f 'system/lang/Exception.cpp' || echo '$(srcdir)/'`system/lang/Exception.cpp
+
+Exception.obj: system/lang/Exception.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Exception.obj -MD -MP -MF $(DEPDIR)/Exception.Tpo -c -o Exception.obj `if test -f 'system/lang/Exception.cpp'; then $(CYGPATH_W) 'system/lang/Exception.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/Exception.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Exception.Tpo $(DEPDIR)/Exception.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/Exception.cpp' object='Exception.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Exception.obj `if test -f 'system/lang/Exception.cpp'; then $(CYGPATH_W) 'system/lang/Exception.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/Exception.cpp'; fi`
+
 String.o: system/lang/String.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT String.o -MD -MP -MF $(DEPDIR)/String.Tpo -c -o String.o `test -f 'system/lang/String.cpp' || echo '$(srcdir)/'`system/lang/String.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/String.Tpo $(DEPDIR)/String.Po
@@ -422,19 +449,33 @@ String.obj: system/lang/String.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o String.obj `if test -f 'system/lang/String.cpp'; then $(CYGPATH_W) 'system/lang/String.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/String.cpp'; fi`
 
-unicode.o: system/lang/unicode.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unicode.o -MD -MP -MF $(DEPDIR)/unicode.Tpo -c -o unicode.o `test -f 'system/lang/unicode.cpp' || echo '$(srcdir)/'`system/lang/unicode.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/unicode.Tpo $(DEPDIR)/unicode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/unicode.cpp' object='unicode.o' libtool=no @AMDEPBACKSLASH@
+StringBuffer.o: system/lang/StringBuffer.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT StringBuffer.o -MD -MP -MF $(DEPDIR)/StringBuffer.Tpo -c -o StringBuffer.o `test -f 'system/lang/StringBuffer.cpp' || echo '$(srcdir)/'`system/lang/StringBuffer.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/StringBuffer.Tpo $(DEPDIR)/StringBuffer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/StringBuffer.cpp' object='StringBuffer.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unicode.o `test -f 'system/lang/unicode.cpp' || echo '$(srcdir)/'`system/lang/unicode.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StringBuffer.o `test -f 'system/lang/StringBuffer.cpp' || echo '$(srcdir)/'`system/lang/StringBuffer.cpp
 
-unicode.obj: system/lang/unicode.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unicode.obj -MD -MP -MF $(DEPDIR)/unicode.Tpo -c -o unicode.obj `if test -f 'system/lang/unicode.cpp'; then $(CYGPATH_W) 'system/lang/unicode.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/unicode.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/unicode.Tpo $(DEPDIR)/unicode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/unicode.cpp' object='unicode.obj' libtool=no @AMDEPBACKSLASH@
+StringBuffer.obj: system/lang/StringBuffer.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT StringBuffer.obj -MD -MP -MF $(DEPDIR)/StringBuffer.Tpo -c -o StringBuffer.obj `if test -f 'system/lang/StringBuffer.cpp'; then $(CYGPATH_W) 'system/lang/StringBuffer.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/StringBuffer.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/StringBuffer.Tpo $(DEPDIR)/StringBuffer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/StringBuffer.cpp' object='StringBuffer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unicode.obj `if test -f 'system/lang/unicode.cpp'; then $(CYGPATH_W) 'system/lang/unicode.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/unicode.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StringBuffer.obj `if test -f 'system/lang/StringBuffer.cpp'; then $(CYGPATH_W) 'system/lang/StringBuffer.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/StringBuffer.cpp'; fi`
+
+UnicodeString.o: system/lang/UnicodeString.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeString.o -MD -MP -MF $(DEPDIR)/UnicodeString.Tpo -c -o UnicodeString.o `test -f 'system/lang/UnicodeString.cpp' || echo '$(srcdir)/'`system/lang/UnicodeString.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/UnicodeString.Tpo $(DEPDIR)/UnicodeString.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/UnicodeString.cpp' object='UnicodeString.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeString.o `test -f 'system/lang/UnicodeString.cpp' || echo '$(srcdir)/'`system/lang/UnicodeString.cpp
+
+UnicodeString.obj: system/lang/UnicodeString.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeString.obj -MD -MP -MF $(DEPDIR)/UnicodeString.Tpo -c -o UnicodeString.obj `if test -f 'system/lang/UnicodeString.cpp'; then $(CYGPATH_W) 'system/lang/UnicodeString.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/UnicodeString.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/UnicodeString.Tpo $(DEPDIR)/UnicodeString.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/UnicodeString.cpp' object='UnicodeString.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeString.obj `if test -f 'system/lang/UnicodeString.cpp'; then $(CYGPATH_W) 'system/lang/UnicodeString.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/UnicodeString.cpp'; fi`
 
 Math.o: system/lang/Math.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Math.o -MD -MP -MF $(DEPDIR)/Math.Tpo -c -o Math.o `test -f 'system/lang/Math.cpp' || echo '$(srcdir)/'`system/lang/Math.cpp
@@ -463,6 +504,20 @@ StackTrace.obj: system/lang/StackTrace.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/StackTrace.cpp' object='StackTrace.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StackTrace.obj `if test -f 'system/lang/StackTrace.cpp'; then $(CYGPATH_W) 'system/lang/StackTrace.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/StackTrace.cpp'; fi`
+
+ArrayIndexOutOfBoundsException.o: system/lang/ArrayIndexOutOfBoundsException.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ArrayIndexOutOfBoundsException.o -MD -MP -MF $(DEPDIR)/ArrayIndexOutOfBoundsException.Tpo -c -o ArrayIndexOutOfBoundsException.o `test -f 'system/lang/ArrayIndexOutOfBoundsException.cpp' || echo '$(srcdir)/'`system/lang/ArrayIndexOutOfBoundsException.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ArrayIndexOutOfBoundsException.Tpo $(DEPDIR)/ArrayIndexOutOfBoundsException.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/ArrayIndexOutOfBoundsException.cpp' object='ArrayIndexOutOfBoundsException.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ArrayIndexOutOfBoundsException.o `test -f 'system/lang/ArrayIndexOutOfBoundsException.cpp' || echo '$(srcdir)/'`system/lang/ArrayIndexOutOfBoundsException.cpp
+
+ArrayIndexOutOfBoundsException.obj: system/lang/ArrayIndexOutOfBoundsException.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ArrayIndexOutOfBoundsException.obj -MD -MP -MF $(DEPDIR)/ArrayIndexOutOfBoundsException.Tpo -c -o ArrayIndexOutOfBoundsException.obj `if test -f 'system/lang/ArrayIndexOutOfBoundsException.cpp'; then $(CYGPATH_W) 'system/lang/ArrayIndexOutOfBoundsException.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/ArrayIndexOutOfBoundsException.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ArrayIndexOutOfBoundsException.Tpo $(DEPDIR)/ArrayIndexOutOfBoundsException.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/lang/ArrayIndexOutOfBoundsException.cpp' object='ArrayIndexOutOfBoundsException.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ArrayIndexOutOfBoundsException.obj `if test -f 'system/lang/ArrayIndexOutOfBoundsException.cpp'; then $(CYGPATH_W) 'system/lang/ArrayIndexOutOfBoundsException.cpp'; else $(CYGPATH_W) '$(srcdir)/system/lang/ArrayIndexOutOfBoundsException.cpp'; fi`
 
 Thread.o: system/thread/Thread.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Thread.o -MD -MP -MF $(DEPDIR)/Thread.Tpo -c -o Thread.o `test -f 'system/thread/Thread.cpp' || echo '$(srcdir)/'`system/thread/Thread.cpp
@@ -548,6 +603,20 @@ NetworkInterface.obj: system/net/NetworkInterface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NetworkInterface.obj `if test -f 'system/net/NetworkInterface.cpp'; then $(CYGPATH_W) 'system/net/NetworkInterface.cpp'; else $(CYGPATH_W) '$(srcdir)/system/net/NetworkInterface.cpp'; fi`
 
+Packet.o: system/net/Packet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Packet.o -MD -MP -MF $(DEPDIR)/Packet.Tpo -c -o Packet.o `test -f 'system/net/Packet.cpp' || echo '$(srcdir)/'`system/net/Packet.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Packet.Tpo $(DEPDIR)/Packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/net/Packet.cpp' object='Packet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Packet.o `test -f 'system/net/Packet.cpp' || echo '$(srcdir)/'`system/net/Packet.cpp
+
+Packet.obj: system/net/Packet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Packet.obj -MD -MP -MF $(DEPDIR)/Packet.Tpo -c -o Packet.obj `if test -f 'system/net/Packet.cpp'; then $(CYGPATH_W) 'system/net/Packet.cpp'; else $(CYGPATH_W) '$(srcdir)/system/net/Packet.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Packet.Tpo $(DEPDIR)/Packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/net/Packet.cpp' object='Packet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Packet.obj `if test -f 'system/net/Packet.cpp'; then $(CYGPATH_W) 'system/net/Packet.cpp'; else $(CYGPATH_W) '$(srcdir)/system/net/Packet.cpp'; fi`
+
 Stream.o: system/io/Stream.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Stream.o -MD -MP -MF $(DEPDIR)/Stream.Tpo -c -o Stream.o `test -f 'system/io/Stream.cpp' || echo '$(srcdir)/'`system/io/Stream.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Stream.Tpo $(DEPDIR)/Stream.Po
@@ -617,6 +686,20 @@ UnicodeTokenizer.obj: system/io/UnicodeTokenizer.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/io/UnicodeTokenizer.cpp' object='UnicodeTokenizer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeTokenizer.obj `if test -f 'system/io/UnicodeTokenizer.cpp'; then $(CYGPATH_W) 'system/io/UnicodeTokenizer.cpp'; else $(CYGPATH_W) '$(srcdir)/system/io/UnicodeTokenizer.cpp'; fi`
+
+PrintStream.o: system/io/PrintStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PrintStream.o -MD -MP -MF $(DEPDIR)/PrintStream.Tpo -c -o PrintStream.o `test -f 'system/io/PrintStream.cpp' || echo '$(srcdir)/'`system/io/PrintStream.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/PrintStream.Tpo $(DEPDIR)/PrintStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/io/PrintStream.cpp' object='PrintStream.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PrintStream.o `test -f 'system/io/PrintStream.cpp' || echo '$(srcdir)/'`system/io/PrintStream.cpp
+
+PrintStream.obj: system/io/PrintStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PrintStream.obj -MD -MP -MF $(DEPDIR)/PrintStream.Tpo -c -o PrintStream.obj `if test -f 'system/io/PrintStream.cpp'; then $(CYGPATH_W) 'system/io/PrintStream.cpp'; else $(CYGPATH_W) '$(srcdir)/system/io/PrintStream.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/PrintStream.Tpo $(DEPDIR)/PrintStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/io/PrintStream.cpp' object='PrintStream.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PrintStream.obj `if test -f 'system/io/PrintStream.cpp'; then $(CYGPATH_W) 'system/io/PrintStream.cpp'; else $(CYGPATH_W) '$(srcdir)/system/io/PrintStream.cpp'; fi`
 
 AdvancedBinaryHeap.o: system/util/AdvancedBinaryHeap.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AdvancedBinaryHeap.o -MD -MP -MF $(DEPDIR)/AdvancedBinaryHeap.Tpo -c -o AdvancedBinaryHeap.o `test -f 'system/util/AdvancedBinaryHeap.cpp' || echo '$(srcdir)/'`system/util/AdvancedBinaryHeap.cpp

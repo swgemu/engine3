@@ -18,7 +18,7 @@ ServiceClient::ServiceClient(Socket* sock, SocketAddress& addr) {
 	packetLossChance = 0;
 }
 
-ServiceClient::ServiceClient(const string& host, int port) {
+ServiceClient::ServiceClient(const String& host, int port) {
 	setAddress(host, port);
 	
 	packetLossChance = 0;

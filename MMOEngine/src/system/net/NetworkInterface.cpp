@@ -3,6 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "../lang/Integer.h"
+#include "../lang/StringBuffer.h"
+
 #include "NetworkInterface.h"
 
 NetworkInterface* NetworkInterface::sinterface = NULL;
@@ -33,7 +36,7 @@ void NetworkInterface::initialize() {
 	struct hostent* he = gethostbyname(hostname);
 
 	for (int i = 0; he != NULL && he->h_addr_list[i] != NULL; i++) {
-		stringstream address;
+		StringBuffer address;
 
 		for (int j = 0; j < he->h_length; j++) {
 			unsigned int iptag = ((unsigned int) ((unsigned char*) he->h_addr_list[i])[j]);
@@ -44,7 +47,7 @@ void NetworkInterface::initialize() {
 			address << iptag;
 		}
 
-		InetAddress* inetaddr = new InetAddress(address.str());
+		InetAddress* inetaddr = new InetAddress(address.toString());
 		inetaddr->setHostName(hostname);
 
 		interfaces->add(inetaddr);
@@ -56,9 +59,9 @@ void NetworkInterface::initialize() {
 void NetworkInterface::sortInterfaces() {
 	for (int i = 0; i < interfaces->size(); ++i) {
 		InetAddress* inetaddr = interfaces->get(i);
-		string address = inetaddr->getHostAddress();
+		String address = inetaddr->getHostAddress();
 
-		int tag = atoi(address.substr(0, 3).c_str());
+		int tag = Integer::valueOf(address.subString(0, 3));
 
 		if (tag == 192) {
 			interfaces->remove(i);
@@ -69,9 +72,9 @@ void NetworkInterface::sortInterfaces() {
 
 	for (int i = 0; i < interfaces->size(); ++i) {
 		InetAddress* inetaddr = interfaces->get(i);
-		string address = inetaddr->getHostAddress();
+		String address = inetaddr->getHostAddress();
 
-		int tag = atoi(address.substr(0, 3).c_str());
+		int tag = Integer::valueOf(address.subString(0, 3));
 
 		if (tag == 127) {
 			interfaces->remove(i);
@@ -82,19 +85,19 @@ void NetworkInterface::sortInterfaces() {
 
 	/*for (int i = 0; i < interfaces->size(); ++i) {
 		InetAddress* inetaddr = interfaces->get(i);
-		string address = inetaddr->getHostAddress();
+		String address = inetaddr->getHostAddress();
 
-		cout << address << "\n";
+		System::out << address << "\n";
 	}*/
 }
 
 void NetworkInterface::close() {
 	for (int i = 0; i < interfaces->size(); ++i) {
 		InetAddress* inetaddr = interfaces->get(i);
-		
+
 		delete inetaddr;
 	}
-	
+
 	interfaces->removeAll();
 }
 

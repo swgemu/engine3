@@ -8,27 +8,29 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Exception.h"
 
+#include "../lang/StringBuffer.h"
+
 namespace sys {
   namespace net {
 
 	class Packet;
-	
+
 	class PacketIndexOutOfBoundsException : public Exception {
 		Packet* packet;
-		
+
 	public:
 		PacketIndexOutOfBoundsException(Packet* pack, int index) : Exception() {
 			packet = pack;
-			
-			stringstream sstr;
-			sstr << "PacketIndexOutOfBoundsException at " << index << "\n";
-			message = sstr.str();
+
+			StringBuffer str;
+			str << "PacketIndexOutOfBoundsException at " << index << "\n";
+			message = str.toString();
 		}
-		
+
 		Packet* getPacket() {
 			return packet;
 		}
-		
+
 	};
 
   } // namespace net

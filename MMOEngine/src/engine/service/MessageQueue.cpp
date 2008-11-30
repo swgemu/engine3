@@ -30,7 +30,7 @@ void MessageQueue::push(Message* msg) {
 	SortedVector<Message*>::put(msg);
 
 	#ifdef TRACE_MESSAGES		
-		stringstream s;
+		StringBuffer s;
 		s << size() << " messages in queue";
 		info(s);
 	#endif
@@ -61,7 +61,7 @@ Message* MessageQueue::pop() {
 	Message* msg = remove(0);
 
 	#ifdef TRACE_MESSAGES		
-		stringstream s;
+		StringBuffer s;
 		s << size() << " messages remained in queue";
 		info(s);
 	#endif

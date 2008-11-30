@@ -45,7 +45,7 @@ namespace engine {
 		void printQueue();
 		
 		// setters and getters
-		inline void setMutexName(const string& s) {
+		inline void setMutexName(const String& s) {
 			condMutex->setLockName(s);
 		}
 	};

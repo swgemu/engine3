@@ -59,7 +59,7 @@ namespace engine {
 				QuadTreeEntry* obj2 = NULL;
 				obj2->getPositionX();
 
-				cout << hex << "[0x" << obj->objectID << "] was not found in close objects for [0x" 
+				System::out << hex << "[0x" << obj->objectID << "] was not found in close objects for [0x" 
 					 << objectID << dec << "]\n";
 			}*/
 		}

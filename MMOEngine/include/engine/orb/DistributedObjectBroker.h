@@ -42,7 +42,7 @@ namespace engine {
 	class DistributedObjectBroker : public StreamServiceThread, public Singleton<DistributedObjectBroker> {
 		static DistributedObjectBroker* impl;
 	
-		string address;
+		String address;
 		NamingDirectoryService* namingDirectoryInterface;
 		
 		DistributedObjectClassHelperMap classMap;
@@ -57,7 +57,7 @@ namespace engine {
 		virtual ~DistributedObjectBroker();
 
 	public:
-		static DistributedObjectBroker* initialize(const string& addr, int port = 44433);
+		static DistributedObjectBroker* initialize(const String& addr, int port = 44433);
 		
 		void init();
 	
@@ -67,19 +67,19 @@ namespace engine {
 	
 		DistributedObjectBrokerClient* createConnection(Socket* sock, SocketAddress& addr);
 		
-		void registerClass(const string& name, DistributedObjectClassHelper* helper);
+		void registerClass(const String& name, DistributedObjectClassHelper* helper);
 	
 		// deployment methods
 		void deploy(DistributedObjectStub* obj);
-		void deploy(const string& name, DistributedObjectStub* obj);
+		void deploy(const String& name, DistributedObjectStub* obj);
 		
-		DistributedObject* lookUp(const string& name);
+		DistributedObject* lookUp(const String& name);
 		DistributedObject* lookUp(uint64 objid);
 		
-		DistributedObjectStub* undeploy(const string& name);
+		DistributedObjectStub* undeploy(const String& name);
 		void undeploy(DistributedObjectStub* obj, bool doLock = true);
 
-		DistributedObjectAdapter* getObjectAdapter(const string& name);
+		DistributedObjectAdapter* getObjectAdapter(const String& name);
 		DistributedObjectAdapter* getObjectAdapter(uint64 oid);
 
 		// getters

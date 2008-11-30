@@ -9,10 +9,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/engine.h"
 
 class DatagramProxyService : public DatagramServiceThread {
-	string forwardAddress;
+	String forwardAddress;
 	int forwardPort;
 
-	string fullAddress;
+	String fullAddress;
 
 public:
 	DatagramProxyService();
@@ -30,12 +30,12 @@ public:
 
 	bool handleError(Exception& e);
 
-	void setForwarding(const string& address, int port);
+	void setForwarding(const String& address, int port);
 
 	// setters and getters
-	void setName(const string& name, int port);
+	void setName(const String& name, int port);
 
-	string& getAddress();
+	String& getAddress();
 
 };
 

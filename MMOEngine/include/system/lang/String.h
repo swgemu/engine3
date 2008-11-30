@@ -10,27 +10,138 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace sys {
   namespace lang {
-		
+
 	class String {
+	protected:
+		char* value;
+
+		int count;
+
 	public:
-		static void toLower(string& str);
-	
-		static void toUpper(string& str);
-	
-		static uint32 hashCode(const string& str) {
-			return hashCode(str.c_str(), str.size());
+		String();
+		String(char* str);
+		String(const char* str);
+		String(const char* str, int len);
+		String(const String& str);
+
+		virtual ~String();
+
+		String concat(const char* str) const;
+		String concat(const char* str, int len) const;
+		String concat(const String& str) const;
+
+		int compareTo(const char* str) const;
+		int compareTo(const String& str) const;
+
+		int indexOf(char ch) const ;
+		int indexOf(char ch, int fromIndex) const ;
+		int indexOf(const String& str) const ;
+		int indexOf(const String& str, int fromIndex) const ;
+
+		int lastIndexOf(char ch) const ;
+		int lastIndexOf(char ch, int fromIndex) const ;
+		/*int lastIndexOf(const String& str) const ;
+		int lastIndexOf(const String& str, int fromIndex) const ;*/
+
+		uint32 hashCode() const;
+
+		String subString(int beginIndex) const ;
+		String subString(int beginIndex, int endIndex) const ;
+
+		static String valueOf(int val);
+		static String valueOf(uint32 val);
+		static String valueOf(int64 val);
+		static String valueOf(uint64 val);
+		static String valueOf(float val);
+		static String valueOf(double val);
+
+		static String hexvalueOf(int val) ;
+
+		String replaceFirst(const String& regex, const String& replacement) const ;
+		String replaceAll(const String& regex, const String& replacement) const ;
+
+		String toLowerCase() const ;
+
+		String toUpperCase() const ;
+
+		String trim() const;
+
+		String& operator= (const char* str);
+		String& operator= (const String& str);
+
+		bool operator== (const char* str) const {
+			return compareTo(str) == 0;
 		}
-		
-		static uint32 hashCode(const char* str, int len);
-		
-		static uint64 toUnsignedLong(const char* str);
-		static uint32 toHexInt(const char* str);
-		
+
+		bool operator== (const String& str) const {
+			return compareTo(str) == 0;
+		}
+
+		bool operator< (const char* str) const {
+			return compareTo(str) < 0;
+		}
+
+		bool operator< (const String& str) const {
+			return compareTo(str) < 0;
+		}
+
+		bool operator> (const char* str) const {
+			return compareTo(str) > 0;
+		}
+
+		bool operator> (const String& str) const {
+			return compareTo(str) > 0;
+		}
+
+		bool operator!= (const char* str) const {
+			return compareTo(str) != 0;
+		}
+
+		bool operator!= (const String& str) const {
+			return compareTo(str) != 0;
+		}
+
+		String& operator+= (const char* str);
+		String& operator+= (const String& str);
+
+		operator char* () const {
+			return value;
+		}
+
+		char charAt(int index) const;
+
+		inline const char* toCharArray() const {
+			return value;
+		}
+
+		inline bool isEmpty() const {
+			return count == 0;
+		}
+
+	protected:
+		void create(const char* str, int len);
+
+		void destroy();
+
+	public:
+		// getters
+		inline int length() const {
+			return count;
+		}
 	};
 
   } // namespace lang
 } // namespace sys
 
 using namespace sys::lang;
+
+bool operator==(char* str1, const String& str2);
+bool operator==(const char* str1, const String& str2);
+bool operator!=(char* str1, const String& str2);
+bool operator!=(const char* str1, const String& str2);
+
+String operator+(const String& str1, const String& str2);
+String operator+(const char* str1, const String& str2);
+String operator+(const String& str1, const char* str2);
 
 #endif /*STRING_H_*/

@@ -16,7 +16,7 @@ StreamServiceClient::StreamServiceClient(Socket* sock, SocketAddress& addr)
 	doRun = true;
 }
 
-StreamServiceClient::StreamServiceClient(const string& host, int port) 
+StreamServiceClient::StreamServiceClient(const String& host, int port) 
 		: ServiceClient(host, port), Thread() {
 	socket = new TCPSocket();
 
@@ -37,7 +37,7 @@ void StreamServiceClient::connect() {
 }
 
 void StreamServiceClient::run() {
-	cout << "[StreamServiceClient] WARNING - client shouldn't run\n"; 
+	System::out << "[StreamServiceClient] WARNING - client shouldn't run\n"; 
 }
 
 void StreamServiceClient::start() {

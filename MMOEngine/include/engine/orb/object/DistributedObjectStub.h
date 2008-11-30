@@ -37,8 +37,8 @@ namespace engine {
 		// deployment methods
 		void deploy();
 		void deploy(const char* name);
-		void deploy(const string& name);
-		void deploy(const string& name, sys::uint64 nid);
+		void deploy(const String& name);
+		void deploy(const String& name, sys::uint64 nid);
 
 		bool undeploy();
 
@@ -52,7 +52,7 @@ namespace engine {
 		void printReferenceTrace();
 		
 		// setters
-		inline void setDeployingName(const string& name) {
+		inline void setDeployingName(const String& name) {
 			_setName(name);
 		}
 		

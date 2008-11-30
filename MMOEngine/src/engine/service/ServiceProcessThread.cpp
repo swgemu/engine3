@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ServiceProcessThread.h"
 
-ServiceProcessThread::ServiceProcessThread(const string& s) : ServiceThread(s) {
+ServiceProcessThread::ServiceProcessThread(const String& s) : ServiceThread(s) {
 }
 
 ServiceProcessThread::~ServiceProcessThread() {

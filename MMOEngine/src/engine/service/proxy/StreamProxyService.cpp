@@ -17,19 +17,19 @@ void StreamProxyService::init() {
 
 void StreamProxyService::run() {
 	ServiceThread::run();
-	
+
 	acceptConnections();
 }
 
 void StreamProxyService::stop() {
 	StreamServiceThread::stop();
-	
+
 	//proxyServiceClient->stop();
 }
 
 ServiceClient* StreamProxyService::createConnection(Socket* sock, SocketAddress& addr) {
 	StreamProxyClient* pclient = new StreamProxyClient(this, sock, addr);
-	
+
 	proxyServiceClient = new StreamProxyServiceClient(this, forwardAddress, forwardPort);
 
 	pclient->setProxyServiceClient(proxyServiceClient);
@@ -49,28 +49,28 @@ bool StreamProxyService::handleError(Exception& e) {
 	return true;
 }
 
-void StreamProxyService::setForwarding(const string& address, int port) {
+void StreamProxyService::setForwarding(const String& address, int port) {
 	forwardAddress = address;
 	forwardPort = port;
 
-	stringstream msg;
+	StringBuffer msg;
 	msg << "registered proxy \'" << address << ":" << port << "\'";
 	info(msg);
 }
 
-void StreamProxyService::setName(const string& name, int port) {
-	stringstream logname;
+void StreamProxyService::setName(const String& name, int port) {
+	StringBuffer logname;
 	logname << name << " = " << port;
 
-	setLoggingName(logname.str());
+	setLoggingName(logname.toString());
 }
 
-string& StreamProxyService::getAddress() {
-	if (fullAddress.size() == 0) {
-		stringstream addr;
+String& StreamProxyService::getAddress() {
+	if (fullAddress.isEmpty()) {
+		StringBuffer addr;
 		addr << forwardAddress << ":" << forwardPort;
 
-		fullAddress = addr.str();
+		fullAddress = addr.toString();
 	}
 
 	return fullAddress;

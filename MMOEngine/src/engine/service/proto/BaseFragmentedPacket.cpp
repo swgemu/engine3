@@ -36,7 +36,7 @@ BasePacket* BaseFragmentedPacket::nextPacket() {
 	frag->insertStream(singlePacket->getBuffer() + offset, fragsize);
 	offset += fragsize;
 	
-	//cout << "fragged packet: " << frag->toString() << "\n";
+	//System::out << "fragged packet: " << frag->toString() << "\n";
 	
 	return frag;
 }

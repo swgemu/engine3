@@ -18,11 +18,11 @@ namespace engine {
 		int iDataSize;
 	
 	public:
-		BinaryData(string& data);
+		BinaryData(String& data);
 	
-		void encode(string& stream);
+		void encode(String& stream);
 		
-		bool decode(string& stream);		
+		bool decode(String& stream);		
 	};
 
   } // namespace db

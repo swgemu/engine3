@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "proto/events/BaseClientCleanUpEvent.hpp"
 #endif
 
-DatagramServiceThread::DatagramServiceThread(const string& s) : ServiceMessageHandlerThread(s) {
+DatagramServiceThread::DatagramServiceThread(const String& s) : ServiceMessageHandlerThread(s) {
 	clients = NULL;
 	
 	setLogging(false);
@@ -40,7 +40,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 	} catch (SocketException& e) {
 		socket = NULL;
 
-		stringstream msg;
+		StringBuffer msg;
 		msg << "unable to connect to socket on port " << port;
 		error(msg);
 
@@ -51,7 +51,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 
 	ServiceThread::start();
 
-	stringstream msg;
+	StringBuffer msg;
 	msg << "started on port " << port;
 	info(msg, true); 
 }

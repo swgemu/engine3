@@ -38,9 +38,9 @@ QuadTreeNode::QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadT
    	minY = miny;
    	maxX = maxx;
    	maxY = maxy;
-    	
+
    	if (!validateNode() || minX > maxX || minY > maxY) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "[QuadTree] invalid node in create - " << toString();
 		Logger::console.info(msg, true);
    	}
@@ -60,12 +60,13 @@ QuadTreeNode::~QuadTreeNode() {
 		delete seNode;
 }
 
-void QuadTreeNode::addObject(QuadTreeEntry *obj) { 
+void QuadTreeNode::addObject(QuadTreeEntry *obj) {
 	if (QuadTree::doLog())
-		cout << hex << "object [" << obj->getObjectID() <<  "] added to QuadTree" << toString() << "\n";
+		System::out << hex << "object [" << obj->getObjectID() <<  "] added to QuadTree"
+					<< toString() << "\n";
 
 	if (!validateNode())
-		cout << "[QuadTree] invalid node in addObject() - " << toString() << "\n";
+		System::out << "[QuadTree] invalid node in addObject() - " << toString() << "\n";
 
 	objects.put(obj);
   	obj->node = this;
@@ -73,12 +74,14 @@ void QuadTreeNode::addObject(QuadTreeEntry *obj) {
 
 void QuadTreeNode::removeObject(QuadTreeEntry *obj) {
 	if (!objects.drop(obj)) {
-		cout << hex << "object [" << obj->getObjectID() <<  "] not found on QuadTree" << toString() << "\n";
+		System::out << hex << "object [" << obj->getObjectID() <<  "] not found on QuadTree"
+					<< toString() << "\n";
 	} else {
     	obj->node = NULL;
-    	
+
 		if (QuadTree::doLog())
-			cout <<  hex << "object [" << obj->getObjectID() <<  "] removed QuadTree" << toString() << "\n";
+			System::out <<  hex << "object [" << obj->getObjectID() <<  "] removed QuadTree"
+						<< toString() << "\n";
 	}
 }
 
@@ -110,18 +113,19 @@ void QuadTreeNode::check () {
             parentNode->seNode = NULL;
 
 		if (QuadTree::doLog())
-			cout << "deleteing node (" << this << ")\n"; 
+			System::out << "deleteing node (" << (uint32) this << ")\n";
 
         delete this;
     }
 }
 
-string QuadTreeNode::toString() {
-	stringstream s;
-	s << "Node " << this << " (" << (int) minX << "," << (int) minY << "," << (int) maxX << "," << (int) maxY 
+String QuadTreeNode::toString() {
+	StringBuffer s;
+	s << "Node " << (uint32) this << " (" << (int) minX << ","
+	  << (int) minY << "," << (int) maxX << "," << (int) maxY
 	  << ") [" << objects.size() << "]";
-		
-	return s.str();
+
+	return s.toString();
 }
 
 //---------------------------------------------------------------------------//
@@ -131,28 +135,28 @@ bool QuadTree::logTree = false;
 QuadTree::QuadTree() : Mutex("QuadTree") {
     root = NULL;
 }
-	
+
 QuadTree::QuadTree(float minx, float miny, float maxx, float maxy) : Mutex("QuadTree") {
     root = new QuadTreeNode(minx, miny, maxx, maxy, NULL);
 }
-	
+
 QuadTree::~QuadTree() {
     delete root;
-    	
+
    	root = NULL;
 }
 
 void QuadTree::setSize(float minx, float miny, float maxx, float maxy) {
     delete root;
-    
+
     root = new QuadTreeNode(minx, miny, maxx, maxy, NULL);
 }
 
 void QuadTree::insert(QuadTreeEntry *obj) {
 	try {
 		if (QuadTree::doLog()) {
-			cout << hex << "object [" << obj->getObjectID() <<  "] inserting\n";
-			cout << "(" << obj->getPositionX() << ", " << obj->getPositionY() << ")\n";
+			System::out << hex << "object [" << obj->getObjectID() <<  "] inserting\n";
+			System::out << "(" << obj->getPositionX() << ", " << obj->getPositionY() << ")\n";
 		}
 
 	    if (obj->node != NULL)
@@ -161,32 +165,33 @@ void QuadTree::insert(QuadTreeEntry *obj) {
     	_insert(root, obj);
 
 		if (QuadTree::doLog())
-			cout << hex << "object [" << obj->getObjectID() <<  "] finished inserting\n";
+			System::out << hex << "object [" << obj->getObjectID() <<  "] finished inserting\n";
 	} catch (...) {
-		cout << "[QuadTree] error on insert object\n"; 
+		System::out << "[QuadTree] error on insert object\n";
 	}
 }
 
 bool QuadTree::update(QuadTreeEntry *obj) {
 	try {
 		if (QuadTree::doLog()) {
-			cout << hex << "object [" << obj->getObjectID() <<  "] updating on node " << obj->node->toString() << " \n";
-			cout << "(" << obj->getPositionX() << ", " << obj->getPositionY() << ")\n";
+			System::out << hex << "object [" << obj->getObjectID() <<  "] updating on node "
+						<< obj->node->toString() << " \n" << "(" << obj->getPositionX()
+						<< ", " << obj->getPositionY() << ")\n";
 		}
 
 		if (obj->node == NULL) {
-			cout << hex << "object [" << obj->getObjectID() <<  "] updating error\n";
+			System::out << hex << "object [" << obj->getObjectID() <<  "] updating error\n";
 			return false;
 		}
 
 		bool res = _update(obj->node, obj);
 
 		if (QuadTree::doLog())
-			cout << hex << "object [" << obj->getObjectID() <<  "] finished updating\n";
+			System::out << hex << "object [" << obj->getObjectID() <<  "] finished updating\n";
 
-		return res; 
+		return res;
 	} catch (...) {
-		cout << "[QuadTree] error on update object\n"; 
+		System::out << "[QuadTree] error on update object\n";
 		return false;
 	}
 }
@@ -194,21 +199,21 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 	try {
 		_inRange(root, obj, range);
-		
+
 		if (QuadTree::doLog()) {
-			cout << hex << "object [" << obj->getObjectID() <<  "] in range ("; 
-			
+			System::out << hex << "object [" << obj->getObjectID() <<  "] in range (";
+
 			for (int i = 0; i < obj->inRangeObjectCount(); ++i) {
-				cout << hex << obj->getInRangeObject(i)->getObjectID() << ", ";
+				System::out << hex << obj->getInRangeObject(i)->getObjectID() << ", ";
 			}
-			
-			cout << "\n";
+
+			System::out << "\n";
 		}
-		
+
 	} catch (Exception& e) {
-		cout << "[QuadTree] " << e.getMessage() << "\n";
+		System::out << "[QuadTree] " << e.getMessage() << "\n";
 	} catch (...) {
-		cout << "[QuadTree] error on inRange\n"; 
+		System::out << "[QuadTree] error on inRange\n";
 	}
 }
 
@@ -216,34 +221,35 @@ int QuadTree::inRange(float x, float y, float range) {
 	try {
 		return _inRange(root, x, y, range);
 	} catch (Exception& e) {
-		cout << "[QuadTree] " << e.getMessage() << "\n";
+		System::out << "[QuadTree] " << e.getMessage() << "\n";
 	} catch (...) {
-		cout << "[QuadTree] error on inRange\n"; 
+		System::out << "[QuadTree] error on inRange\n";
 	}
-	
+
 	return 0;
 }
 
 void QuadTree::remove(QuadTreeEntry *obj) {
 	if (QuadTree::doLog())
-		cout << hex << "object [" << obj->getObjectID() <<  "] removing\n";
+		System::out << hex << "object [" << obj->getObjectID() <<  "] removing\n";
 
     if (obj->node != NULL) {
         QuadTreeNode* node = obj->node;
-        
+
         if (!node->validateNode()) {
-			cout << "[QuadTree] " << obj->getObjectID() << " error on remove() - invalid Node" << node->toString() << "\n";
+			System::out << "[QuadTree] " << obj->getObjectID() << " error on remove() - invalid Node"
+						<< node->toString() << "\n";
         }
 
        	node->removeObject(obj);
 
        	node->check();
        	obj->node = NULL;
-    } else 
-		cout << hex << "object [" << obj->getObjectID() <<  "] ERROR - removing the node\n";
-		
+    } else
+		System::out << hex << "object [" << obj->getObjectID() <<  "] ERROR - removing the node\n";
+
 	if (QuadTree::doLog())
-		cout << hex << "object [" << obj->getObjectID() <<  "] finished removing\n";
+		System::out << hex << "object [" << obj->getObjectID() <<  "] finished removing\n";
 }
 
 void QuadTree::removeAll() {
@@ -331,13 +337,13 @@ void QuadTree::_insert(QuadTreeNode *node, QuadTreeEntry *obj) {
                     node->nwNode = new QuadTreeNode(node->minX, dividerY, dividerX, node->maxY, node);
 
                 _insert(node->nwNode, existing);
-            } else { 
+            } else {
                 if (node->neNode == NULL)
                     node->neNode = new QuadTreeNode(dividerX, dividerY, node->maxX, node->maxY, node);
 
                 _insert(node->neNode, existing);
             }
-            
+
             // Okay, we don't need this reference anymore
             //existing->DecRef ();
         }
@@ -353,7 +359,7 @@ void QuadTree::_insert(QuadTreeNode *node, QuadTreeEntry *obj) {
             (obj->positionY + obj->radius > dividerY && obj->positionY - obj->radius < dividerY)) {
         obj->bounding = true;
         node->addObject(obj);
-        
+
         return;
     }
 
@@ -401,7 +407,7 @@ void QuadTree::_insert(QuadTreeNode *node, QuadTreeEntry *obj) {
  */
 bool QuadTree::_update(QuadTreeNode *node, QuadTreeEntry *obj) {
     // Whew, still in the same square. Lucky bastards we are.
-    //cout << "(" << obj->positionX << "," << obj->positionY << ")\n";
+    //System::out << "(" << obj->positionX << "," << obj->positionY << ")\n";
 
     if (node->testInside(obj->positionX, obj->positionY))
         return true;
@@ -422,7 +428,7 @@ bool QuadTree::_update(QuadTreeNode *node, QuadTreeEntry *obj) {
     if (cur != NULL)
         _insert(cur, obj);
 	else
-		cout << "[QuadTree] error on update() - invalid Node\n";
+		System::out << "[QuadTree] error on update() - invalid Node\n";
 
     // We don't need the reference anymore. If the object goes out of the
     // quadtree and there aren't any references left... well... goodbye
@@ -456,17 +462,17 @@ void QuadTree::_inRange(QuadTreeNode *node, QuadTreeEntry *obj, float range) {
  				if (oldDeltaX * oldDeltaX + oldDeltaY * oldDeltaY <= rangesq) {
  	 				obj->removeInRangeObject(o);
  					o->removeInRangeObject(obj);
- 					
+
  					/*if (obj->closeobjects.contains(o)) {
  						QuadTreeEntry* obj2 = NULL;
  						obj2->getPositionX();
  					}
- 					
+
  					if (o->closeobjects.contains(obj)) {
  						QuadTreeEntry* obj2 = NULL;
  						obj2->getPositionX();
  					}*/
- 					
+
  				}
  			}
 		} else
@@ -497,7 +503,7 @@ int QuadTree::_inRange(QuadTreeNode *node, float x, float y, float range) {
 		float deltaY = y - o->positionY;
 
 		if (deltaX * deltaX + deltaY * deltaY <= rangesq)
-			++count;		
+			++count;
 	}
 
 	if (node->hasSubNodes()) {
@@ -510,6 +516,6 @@ int QuadTree::_inRange(QuadTreeNode *node, float x, float y, float range) {
 		if (node->seNode != NULL && node->seNode->testInRange(x, y, range))
 			count += _inRange(node->seNode, x, y, range);
 	}
-	
+
 	return count;
 }

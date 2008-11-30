@@ -13,32 +13,32 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace ORB {
 
-	class DistributedObjectClassHelperMap : public HashTable<string, DistributedObjectClassHelper*> {
-		int hash(const string& key) {
-	        return sys::lang::String::hashCode(key);
+	class DistributedObjectClassHelperMap : public HashTable<String, DistributedObjectClassHelper*> {
+		int hash(const String& key) {
+	        return key.hashCode();
 		}
-	
+
 	public:
-		DistributedObjectClassHelperMap() : HashTable<string, DistributedObjectClassHelper*>(1000) {
+		DistributedObjectClassHelperMap() : HashTable<String, DistributedObjectClassHelper*>(1000) {
 			setNullValue(NULL);
 		}
-		
+
 		~DistributedObjectClassHelperMap() {
-			HashTableIterator<string, DistributedObjectClassHelper*> iter(this);
-			
+			HashTableIterator<String, DistributedObjectClassHelper*> iter(this);
+
 			while (iter.hasNext()) {
-				string& helpername = iter.getNextKey();
+				String& helpername = iter.getNextKey();
 				DistributedObjectClassHelper* helper = remove(helpername);
-				
+
 				helper->finalizeHelper();
 			}
 		}
-		
+
 	};
-	
+
   } // namespace ORB
 } // namespace engine
 
-using namespace engine::ORB;	
+using namespace engine::ORB;
 
 #endif /*DISTRIBUTEDOBJECTCLASSHELPERMAP_H_*/

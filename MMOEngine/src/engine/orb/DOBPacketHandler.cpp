@@ -15,7 +15,7 @@ DOBPacketHandler::DOBPacketHandler() : Logger() {
 	orb = NULL;
 } 
 
-DOBPacketHandler::DOBPacketHandler(const string& s, DistributedObjectBroker* broker) : Logger(s) {
+DOBPacketHandler::DOBPacketHandler(const String& s, DistributedObjectBroker* broker) : Logger(s) {
 	orb = broker;
 } 
 
@@ -23,7 +23,7 @@ DOBPacketHandler::~DOBPacketHandler() {
 }
 	
 void DOBPacketHandler::handlePacket(DistributedObjectBrokerClient* client, Packet* pack) {
-	//cout << "READ " << pack->toString() << "\n";
+	//System::out << "READ " << pack->toString() << "\n";
 
 	uint32 opcode = pack->parseInt();
 
@@ -41,7 +41,7 @@ void DOBPacketHandler::handlePacket(DistributedObjectBrokerClient* client, Packe
 }
 
 void DOBPacketHandler::handleObjectLookUpMessage(DistributedObjectBrokerClient* client, Packet* pack) {
-	string name;
+	String name;
 	LookUpObjectMessage::parseObjectName(pack, name);
 
 	DistributedObject* obj = orb->lookUp(name);
@@ -51,10 +51,10 @@ void DOBPacketHandler::handleObjectLookUpMessage(DistributedObjectBrokerClient* 
 }
 
 void DOBPacketHandler::handleObjectDeployMessage(DistributedObjectBrokerClient* client, Packet* pack) {
-	string name;
+	String name;
 	pack->parseAscii(name);
 
-	string classname;
+	String classname;
 	pack->parseAscii(classname);
 
 	uint64 objid = 0;

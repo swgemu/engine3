@@ -8,42 +8,36 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../platform.h"
 
+#include "String.h"
+
 #include "StackTrace.h"
 
 namespace sys {
   namespace lang {
 
 	class Exception {
-	protected:	
-		string message;
-	
+	protected:
+		String message;
+
 		StackTrace trace;
-	
+
 	public:
-		Exception() {
-		}
-	
-		Exception(const string& msg) {
-			message = msg;
-		}
-	
-		virtual ~Exception() {
-		}
-		
-		void printStackTrace() {
-			cout << message << "\n";
-			trace.print();
-		}
+		Exception();
+		Exception(const String& msg);
+
+		virtual ~Exception();
+
+		void printStackTrace();
 
 		// setters and getters
-		inline void setMessage(const string& msg) {
+		inline void setMessage(const String& msg) {
 			message = msg;
 		}
-		
-	 	inline string& getMessage() {
+
+	 	inline String& getMessage() {
 			return message;
 		}
-	 	
+
 	};
 
   } // namespace lang

@@ -26,7 +26,7 @@ namespace engine {
 	
 	public:
 		BasePacketHandler();	
-		BasePacketHandler(const string& s, MessageQueue* queue);
+		BasePacketHandler(const String& s, MessageQueue* queue);
 	
 		void handlePacket(BaseClient* client, Packet* pack);
 	

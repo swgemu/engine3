@@ -15,7 +15,7 @@ DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBr
 	info("client connected", true);
 }
 
-DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBroker* broker, const string& host) 
+DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBroker* broker, const String& host) 
 		: StreamServiceClient(host, 44432) , Logger("DistributedObjectBroker") {
 	orb = broker;
 

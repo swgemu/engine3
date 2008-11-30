@@ -23,23 +23,23 @@ namespace engine {
 
 	class MySqlDatabase : public Database, public Mutex,  public Logger {
 		MYSQL mysql;
-		string host;
+		String host;
 		
 	public:
-		MySqlDatabase(const string& s);
-		MySqlDatabase(const string& s, const string& host);
+		MySqlDatabase(const String& s);
+		MySqlDatabase(const String& s, const String& host);
 		
 		virtual ~MySqlDatabase();
 		
-		void connect(const string& dbname, const string& user, const string& passw, int port);
+		void connect(const String& dbname, const String& user, const String& passw, int port);
 		
 		void executeStatement(const char* statement);
-		void executeStatement(const string& statement);
-		void executeStatement(const stringstream& statement);
+		void executeStatement(const String& statement);
+		void executeStatement(const StringBuffer& statement);
 
 		ResultSet* executeQuery(const char* statement);
-		ResultSet* executeQuery(const string& statement);
-		ResultSet* executeQuery(const stringstream& statement);
+		ResultSet* executeQuery(const String& statement);
+		ResultSet* executeQuery(const StringBuffer& statement);
 
 		void commit();
 	
@@ -50,7 +50,7 @@ namespace engine {
 	    void error();
 	    void error(const char* query);
 
-		static void escapeString(string& s);
+		static void escapeString(String& s);
 		
 		static void finalizeLibrary();
 		

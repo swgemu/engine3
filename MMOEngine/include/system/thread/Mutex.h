@@ -10,8 +10,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <pthread.h>
 
+#include "../lang/System.h"
+
+#include "../lang/String.h"
 #include "../lang/StackTrace.h"
 #include "../lang/Time.h"
+
 #include "Atomic.h"
 
 namespace sys {
@@ -23,7 +27,7 @@ namespace sys {
 		pthread_mutex_t mutex;
 
 		bool doLog;
-		string lockName;
+		String lockName;
 
 		int lockCount;
 		int currentCount;
@@ -46,7 +50,7 @@ namespace sys {
 			doTrace = true;
 		}
 
-		Mutex(const string& s) {
+		Mutex(const String& s) {
 			pthread_mutex_init(&mutex, NULL);
 
 			doLog = true;
@@ -76,14 +80,14 @@ namespace sys {
 				int cnt = lockCount;
 
 				if (doLog)
-					cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring lock #" << cnt << "\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring lock #" << cnt << "\n";
 			#endif
 
 			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
 				int res = pthread_mutex_lock(&mutex);
 
 				if (res != 0)
-					cout << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
 			#else
 				#ifndef LOG_LOCKS
 					Atomic::incrementInt((uint32*)&lockCount);
@@ -97,10 +101,10 @@ namespace sys {
 		    		if (!doTrace)
 		    			continue;
 
-	 	  			cout << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access lock #" << cnt << " at\n";
+	 	  			System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access lock #" << cnt << " at\n";
 					StackTrace::printStackTrace();
 
-					cout << "locked at " << lockTime.getMiliTime() << " by\n";
+					System::out << "locked at " << lockTime.getMiliTime() << " by\n";
 					trace->print();
 
 					while (true);
@@ -120,13 +124,13 @@ namespace sys {
 				currentCount = cnt;
 
 				if (doLog)
-					cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired lock #" << cnt << "\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired lock #" << cnt << "\n";
 			#endif
 		}
 
 		inline void lock(Mutex* m) {
 			if (this == m) {
-				cout << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself [" << lockName << "]\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself [" << lockName << "]\n";
 
 				StackTrace::printStackTrace();
 				return;
@@ -137,7 +141,7 @@ namespace sys {
 				int cnt = lockCount;
 
 				if (doLog)
-					cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << m->lockName << ")] acquiring cross lock #" << cnt << "\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << m->lockName << ")] acquiring cross lock #" << cnt << "\n";
 			#endif
 
 		    while (pthread_mutex_trylock(&mutex)) {
@@ -161,7 +165,7 @@ namespace sys {
 				currentCount = cnt;
 
 				if (doLog)
-					cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << m->lockName << ")] acquired cross lock #" << cnt << "\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << m->lockName << ")] acquired cross lock #" << cnt << "\n";
 			#endif
 		}
 
@@ -175,7 +179,7 @@ namespace sys {
 
 			#ifdef LOG_LOCKS
 				if (doLog)
-					cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << currentCount << "\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << currentCount << "\n";
 			#endif
 
 			#ifdef TRACE_LOCKS
@@ -185,14 +189,14 @@ namespace sys {
 
 			int res = pthread_mutex_unlock(&mutex);
 			if (res != 0) {
-				cout << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
 
 				StackTrace::printStackTrace();
 			}
 
 			#ifdef LOG_LOCKS
 				if (doLog)
-					cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << currentCount << "\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << currentCount << "\n";
 			#endif
 		}
 
@@ -201,7 +205,7 @@ namespace sys {
 			doLog = dolog;
 		}
 
-		inline void setLockName(const string& s) {
+		inline void setLockName(const String& s) {
 			lockName = s;
 		}
 

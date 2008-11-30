@@ -5,12 +5,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BinaryData.h"
 
-BinaryData::BinaryData(string& data) {
-	iData = data.c_str();
-	iDataSize = data.size();
+BinaryData::BinaryData(String& data) {
+	iData = data.toCharArray();
+	iDataSize = data.length();
 }
 
-void BinaryData::encode(string& stream) {
+void BinaryData::encode(String& stream) {
    	int oDataSize = 1 + (iDataSize * 8 + 5) / 6;
 	char* oData = new char[oDataSize];
 
@@ -36,7 +36,7 @@ void BinaryData::encode(string& stream) {
        		acc = 0;
        		accbits = 0;
     	}
-    
+
     	// Keep what remained of the byte for the next round
     	accbits = bits;
     	acc = (byte >> 2);
@@ -47,11 +47,15 @@ void BinaryData::encode(string& stream) {
     	*out++ = base64_chars [acc];
 
 	*out++ = 0;
-	stream.append(oData, out - (sys::uint8 *)oData);
+
+	StringBuffer buf;
+	buf.append(oData, out - (sys::uint8 *)oData);
 	delete[] oData;
+
+	stream = buf.toString();
 }
 
-bool BinaryData::decode(string& stream) {
+bool BinaryData::decode(String& stream) {
 	int oDataSize = (iDataSize * 3) / 4;
 	char* oData = new char[oDataSize];
 
@@ -67,7 +71,7 @@ bool BinaryData::decode(string& stream) {
     	if (!c)
         	break;
 
-        char *s = (char*)strchr (base64_chars, c);
+        char *s = (char*) strchr (base64_chars, c);
 	    if (!s)
     	    return false;
 
@@ -84,9 +88,13 @@ bool BinaryData::decode(string& stream) {
     	}
 	}
 
+	StringBuffer buf;
+
 	// Ignore any bits we could have left in the accumulator
-	stream.append(oData, out - (sys::uint8 *)oData);
+	buf.append(oData, out - (sys::uint8 *)oData);
 	delete[] oData;
-	
+
+	stream = buf.toString();
+
 	return true;
 }

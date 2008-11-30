@@ -13,16 +13,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace ORB {
 
-	class DistributedObjectNameMap : public HashTable<string, DistributedObjectStub*> {
-		int hash(const string& key) {
-	        return sys::lang::String::hashCode(key);
+	class DistributedObjectNameMap : public HashTable<String, DistributedObjectStub*> {
+		int hash(const String& key) {
+	        return key.hashCode();
 		}
-	
+
 	public:
-		DistributedObjectNameMap() : HashTable<string, DistributedObjectStub*>(100) {
+		DistributedObjectNameMap() : HashTable<String, DistributedObjectStub*>(100) {
 			setNullValue(NULL);
 		}
-	
+
 	};
 
   } // namespace ORB

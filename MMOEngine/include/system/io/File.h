@@ -3,23 +3,25 @@
 
 #include "../platform.h"
 
+#include "../lang/String.h"
+
 namespace sys {
   namespace io {
 
 	class File {
 	protected:
 		FILE* fileDescriptor;
-		
-		string name;
-		
+
+		String name;
+
 		int mode;
-	
+
 		static const int READONLY = 1;
-		
+
 		static const int WRITEABLE = 2;
-		
+
 	public:
-		File(const string& pathname);
+		File(const String& pathname);
 
 		bool close();
 
@@ -37,14 +39,14 @@ namespace sys {
 		inline bool exists() {
 			return fileDescriptor != NULL;
 		}
-		
-		inline const string& getName() {
+
+		inline const String& getName() {
 			return name;
 		}
 
 	protected:
 		bool open(int mode);
-		
+
 		char* getModeString(int mode);
 	};
 

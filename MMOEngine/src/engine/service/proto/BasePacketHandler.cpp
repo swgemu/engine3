@@ -22,7 +22,7 @@ BasePacketHandler::BasePacketHandler() : Logger() {
 	messageQueue = NULL;
 }
 
-BasePacketHandler::BasePacketHandler(const string& s, MessageQueue* queue) : Logger(s) {
+BasePacketHandler::BasePacketHandler(const String& s, MessageQueue* queue) : Logger(s) {
 	messageQueue = queue;
 }
 
@@ -159,7 +159,7 @@ void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 
 	client->updateNetStatus();
 
-    /*stringstream msg;
+    /*StringBuffer msg;
     msg << hex << "NETSTAT respond with 0x" << tick << "\n";
 	info(msg);*/
 
@@ -172,7 +172,7 @@ void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 
 	client->resendPackets(seq);
 
-	/*stringstream msg;
+	/*StringBuffer msg;
 	msg << "packet Out of Order(" << seq << ")";
 	client->info(msg);*/
 }
@@ -244,7 +244,7 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 			int offset = pack->getOffset();
 
 			uint8 blockSize = pack->parseByte(offset - 5);
-			//cout << (int) blockSize << " : " << pack->toString() << "\n";
+			//System::out << (int) blockSize << " : " << pack->toString() << "\n";
 
 			handleDataChannelMultiPacket(client, pack, blockSize);
 		} else if (pack->parseShort(0) == 0x0D00) {

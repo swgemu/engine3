@@ -22,7 +22,7 @@ namespace engine {
 		ObjectNotDeployedException(DistributedObjectStub* stub) : Exception() {
 			message = "\'" + stub->_getName() + "\' is not deployed";
 			
-			cout << message << "\n";
+			System::out << message << "\n";
 			
 			stub->printReferenceTrace();
 			

@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../../platform.h"
 
+#include "../System.h"
+
 #include "../../thread/Atomic.h"
 
 namespace sys {
@@ -23,11 +25,11 @@ namespace sys {
 		ReferenceCounter() {
 			_references = NULL;
 		}
-		
+
 		ReferenceCounter(ReferenceCounter& counter) {
 			_references = counter._references;
 		}
-		
+
 		virtual ~ReferenceCounter() {
 			finalizeCount();
 		}
@@ -41,8 +43,8 @@ namespace sys {
 		inline void finalizeCount() {
 			if (_references != NULL) {
 				if (getReferenceCount() > 1)
-					cout << "WARNING - reference count was not zero on delete\n";
-	
+					System::out << "WARNING - reference count was not zero on delete\n";
+
 				delete _references;
 				_references = NULL;
 			}
@@ -54,10 +56,10 @@ namespace sys {
 
 		inline bool decreaseCount() {
 			if (getReferenceCount() < 1) {
-				cout << "WARNING - reference count getting under zero\n";
+				System::out << "WARNING - reference count getting under zero\n";
 				raise(SIGSEGV);
 			}
-			
+
 			return !Atomic::decrementInt(_references);
 		}
 

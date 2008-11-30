@@ -23,7 +23,7 @@ namespace sys {
 	protected:
 		pthread_rwlock_t rwlock;
 
-		string lockName;
+		String lockName;
 		int lockCount;
 
 		StackTrace* trace;
@@ -45,7 +45,7 @@ namespace sys {
 			threadIDLockHolder = 0;
 		}
 
-		ReadWriteLock(const string& s) {
+		ReadWriteLock(const String& s) {
 			pthread_rwlock_init(&rwlock, NULL);
 
 			lockName = s;
@@ -74,13 +74,13 @@ namespace sys {
 				Atomic::incrementInt((uint32*)&lockCount);
 				int cnt = lockCount;
 
-				cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring rlock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring rlock #" << cnt << "\n";
 			#endif
 
 			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
 				int res = pthread_rwlock_rdlock(&rwlock);
 				if (res != 0)
-					cout << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
 			#else
 				#ifndef LOG_LOCKS
 					Atomic::incrementInt((uint32*)&lockCount);
@@ -95,13 +95,13 @@ namespace sys {
 		    		if (!doTrace)
 		    			continue;
 
-		    		cout << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access rlock #" << cnt << " at\n";
+		    		System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access rlock #" << cnt << " at\n";
 					StackTrace::printStackTrace();
 
-					cout << "locked at " << lockTime.getMiliTime() << " by\n";
+					System::out << "locked at " << lockTime.getMiliTime() << " by\n";
 					trace->print();
 
-					while(true);
+					while (true);
 
 					start.addMiliTime(1000);
 		    	}
@@ -115,7 +115,7 @@ namespace sys {
 			#endif
 
 			#ifdef LOG_LOCKS
-				cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired rlock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired rlock #" << cnt << "\n";
 			#endif
 		}
 
@@ -127,13 +127,13 @@ namespace sys {
 				Atomic::incrementInt((uint32*)&lockCount);
 				int cnt = lockCount;
 
-				cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring wlock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring wlock #" << cnt << "\n";
 			#endif
 
 			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
 				int res = pthread_rwlock_wrlock(&rwlock);
 				if (res != 0)
-					cout << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
 			#else
 				#ifndef LOG_LOCKS
 					Atomic::incrementInt((uint32*)&lockCount);
@@ -147,14 +147,14 @@ namespace sys {
 		    		if (!doTrace)
 		    			continue;
 
-		    		cout << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access wlock #" << cnt << " at\n";
+		    		System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access wlock #" << cnt << " at\n";
 		    		StackTrace::printStackTrace();
 
 					if (trace != NULL) {
-						cout << "locked at " << lockTime.getMiliTime() << " by\n";
+						System::out << "locked at " << lockTime.getMiliTime() << " by\n";
 						trace->print();
 					} else {
-						cout << "no previous stackTrace created\n";
+						System::out << "no previous stackTrace created\n";
 					}
 
 					while (true);
@@ -173,7 +173,7 @@ namespace sys {
 			#endif
 
 			#ifdef LOG_LOCKS
-				cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired wlock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired wlock #" << cnt << "\n";
 			#endif
 		}
 
@@ -191,15 +191,15 @@ namespace sys {
 
 			#ifdef TRACE_LOCKS
 				if (threadIDLockHolder == 0) {
-					cout << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
+					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";
 					StackTrace::printStackTrace();
 				} else if (threadIDLockHolder != Thread::getCurrentThreadID()) {
-					cout << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
+					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
 					StackTrace::printStackTrace();
 
 					if (trace != NULL) {
-						cout << "previously locked at " << lockTime.getMiliTime() << " by\n";
+						System::out << "previously locked at " << lockTime.getMiliTime() << " by\n";
 						trace->print();
 					}
 				}
@@ -212,18 +212,18 @@ namespace sys {
 
 			#ifdef LOG_LOCKS
 				int cnt = lockCount;
-				cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << cnt << "\n";
 			#endif
 
 			int res = pthread_rwlock_unlock(&rwlock);
 			if (res != 0) {
-				cout << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
 
 				StackTrace::printStackTrace();
 			}
 
 			#ifdef LOG_LOCKS
-				cout << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << cnt << "\n";
 			#endif
 		}
 
@@ -235,7 +235,7 @@ namespace sys {
 		}
 
 		// setters
-		inline void setLockName(const string& s) {
+		inline void setLockName(const String& s) {
 			lockName = s;
 		}
 

@@ -17,30 +17,32 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <winsock2.h>
 #endif
 
+#include "../lang/String.h"
+
 namespace sys {
   namespace net {
 
 	class InetAddress {
-		string ipaddress;
-		string hostname;
+		String ipaddress;
+		String hostname;
 
 	public:
-		InetAddress(const string& address);
-		
+		InetAddress(const String& address);
+
 		~InetAddress() {
 		}
-		
+
 		// setters
-		inline void setHostName(const string& host) {
+		inline void setHostName(const String& host) {
 			hostname = host;
 		}
 
 		// getters
-		inline const string& getHostAddress() {
+		inline const String& getHostAddress() {
 			return ipaddress;
 		}
 
-		inline const string& getHostName() {
+		inline const String& getHostName() {
 			return hostname;
 		}
 

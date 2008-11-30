@@ -13,50 +13,50 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace service {
 
-	class StreamProxyServiceMap : public HashTable<string, StreamProxyService*>, 
-			public HashTableIterator<string, StreamProxyService*> {
-		
-		int hash(const string& key) {
-	        return String::hashCode(key);
+	class StreamProxyServiceMap : public HashTable<String, StreamProxyService*>,
+			public HashTableIterator<String, StreamProxyService*> {
+
+		int hash(const String& key) {
+	        return key.hashCode();
 		}
-	
+
 	public:
-		StreamProxyServiceMap(int initsize) : HashTable<string, StreamProxyService*>((int) (initsize * 1.25f)),
-				HashTableIterator<string, StreamProxyService*>() {
+		StreamProxyServiceMap(int initsize) : HashTable<String, StreamProxyService*>((int) (initsize * 1.25f)),
+				HashTableIterator<String, StreamProxyService*>() {
 			setTable(this);
 			setNullValue(NULL);
 		}
-		
-		void put(const string address, int port, StreamProxyService* value) {
-			string key = hashKey(address, port);
 
-			HashTable<string, StreamProxyService*>::put(key, value);
+		void put(const String address, int port, StreamProxyService* value) {
+			String key = hashKey(address, port);
+
+			HashTable<String, StreamProxyService*>::put(key, value);
 		}
 
-		StreamProxyService* get(const string address, int port) {
-			string key = hashKey(address, port);
+		StreamProxyService* get(const String address, int port) {
+			String key = hashKey(address, port);
 
-			return HashTable<string, StreamProxyService*>::get(key);
+			return HashTable<String, StreamProxyService*>::get(key);
 		}
 
-		StreamProxyService* remove(const string address, int port) {
-			string key = hashKey(address, port);
+		StreamProxyService* remove(const String address, int port) {
+			String key = hashKey(address, port);
 
-			return HashTable<string, StreamProxyService*>::remove(key);
+			return HashTable<String, StreamProxyService*>::remove(key);
 		}
-		
+
 		/*StreamProxyService* remove(StreamProxyService* value) {
-			string key = hashKey(value->getForwardingAddress(), value->getForwardingPort());
+			String key = hashKey(value->getForwardingAddress(), value->getForwardingPort());
 
-			return HashTable<string, StreamProxyService*>::remove(key);
+			return HashTable<String, StreamProxyService*>::remove(key);
 		}*/
-		
+
 	protected:
-		string hashKey(const string address, int port) {
-			stringstream key;
+		String hashKey(const String address, int port) {
+			StringBuffer key;
 			key << address << ":" << port;
 
-			return key.str();
+			return key.toString();
 		}
 
 	};

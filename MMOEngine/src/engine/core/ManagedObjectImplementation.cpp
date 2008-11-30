@@ -35,7 +35,7 @@ void ManagedObject::unlock(bool doLock) {
 		_unlock(doLock);
 }
 
-void ManagedObject::setLockName(const string& name) {
+void ManagedObject::setLockName(const String& name) {
 	DistributedObjectStub::setLockName(name);
 
 	if (_impl == NULL)
@@ -62,6 +62,6 @@ void ManagedObjectImplementation::unlock(bool doLock) {
 	_this->unlock(doLock);
 }
 
-void ManagedObjectImplementation::setLockName(const string& name) {
+void ManagedObjectImplementation::setLockName(const String& name) {
 	_this->setLockName(name);
 }

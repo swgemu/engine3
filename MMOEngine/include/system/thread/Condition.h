@@ -39,7 +39,7 @@ namespace sys {
 		inline int wait(Mutex* m) {
 			int res = pthread_cond_wait(&cond, &m->mutex);
 			if (res != 0)
-				cout << "outer wait() failed on Condition (" << res << ")\n";
+				System::out << "outer wait() failed on Condition (" << res << ")\n";
 					
 			return res;
 		}
@@ -49,7 +49,7 @@ namespace sys {
 	
 			int res = pthread_cond_wait(&cond, &cmutex);
 			if (res != 0)
-				cout << "wait() failed on Condition (" << res << ")\n";
+				System::out << "wait() failed on Condition (" << res << ")\n";
 	
 			pthread_mutex_unlock(&cmutex);
 		}
@@ -57,7 +57,7 @@ namespace sys {
 		inline int timedWait(Mutex* m, Time* time) {
 			int res = pthread_cond_timedwait(&cond, &(m->mutex), time->getTimeSpec());
 			/*if (res != 0 && res != 116) {
-				cout << "outer locked timedwait() failed on Condition (" << res << ")\n";
+				System::out << "outer locked timedwait() failed on Condition (" << res << ")\n";
 				//return false;
 			} //else
 				//return true;*/
@@ -71,7 +71,7 @@ namespace sys {
 			pthread_mutex_unlock(&cmutex);
 	
 			if (res != 0 && res != 116) {
-				cout << "timedwait() failed on Condition (" << res << ")\n";
+				System::out << "timedwait() failed on Condition (" << res << ")\n";
 				return false;
 			} else
 				return true;
@@ -80,7 +80,7 @@ namespace sys {
 		inline void signal(Mutex* m) {
 			int res = pthread_cond_signal(&cond);
 			if (res != 0)
-				cout << "outer signal() failed on Condition (" << res << ")\n";
+				System::out << "outer signal() failed on Condition (" << res << ")\n";
 		}
 	
 		inline void signal() {
@@ -88,7 +88,7 @@ namespace sys {
 	
 			int res = pthread_cond_signal(&cond);
 			if (res != 0)
-				cout << "signal() failed on Condition (" << res << ")\n";
+				System::out << "signal() failed on Condition (" << res << ")\n";
 	
 			pthread_mutex_unlock(&cmutex);
 		}
@@ -96,7 +96,7 @@ namespace sys {
 		inline void broadcast(Mutex* m) {
 			int res = pthread_cond_broadcast(&cond);
 			if (res != 0)
-				cout << "outer broadcast() failed on Condition (" << res << ")\n";
+				System::out << "outer broadcast() failed on Condition (" << res << ")\n";
 		}
 	
 		inline void broadcast() {
@@ -104,7 +104,7 @@ namespace sys {
 	
 			int res = pthread_cond_broadcast(&cond);
 			if (res != 0)
-				cout << "broadcast() failed on Condition (" << res << ")\n";
+				System::out << "broadcast() failed on Condition (" << res << ")\n";
 	
 			pthread_mutex_unlock(&cmutex);
 		}

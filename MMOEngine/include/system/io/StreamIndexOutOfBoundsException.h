@@ -8,25 +8,27 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Exception.h"
 
+#include  "../lang/StringBuffer.h"
+
 namespace sys {
   namespace io {
 
 	class StreamIndexOutOfBoundsException : public Exception {
 		class Stream* stream;
-		
+
 	public:
 		StreamIndexOutOfBoundsException(Stream* strm, int index) : Exception() {
 			stream = strm;
-			
-			stringstream sstr;
-			sstr << "StreamIndexOutOfBoundsException at " << index << "\n";
-			message = sstr.str();
+
+			StringBuffer str;
+			str << "StreamIndexOutOfBoundsException at " << index << "\n";
+			message = str.toString();
 		}
-		
+
 		Stream* getStream() {
 			return stream;
 		}
-		
+
 	};
 
   } // namespace io

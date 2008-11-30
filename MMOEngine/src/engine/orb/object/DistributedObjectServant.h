@@ -26,7 +26,7 @@ namespace engine {
 		
 		virtual ~DistributedObjectServant();
 
-		void setDeployingName(const string& name);
+		void setDeployingName(const String& name);
 
 		virtual void _setStub(DistributedObjectStub* stub) = 0;
 

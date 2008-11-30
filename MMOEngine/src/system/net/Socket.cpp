@@ -44,10 +44,10 @@ void Socket::initialize() {
 
 void Socket::bindTo(SocketAddress* bindpoint) {
 	if (bind(sock, bindpoint->getAddress(), bindpoint->getAddressSize())) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "unable to bind to socket " << bindpoint->getPort();
 
-		throw SocketException(msg.str());
+		throw SocketException(msg.toString());
 	}
 }
 
@@ -81,10 +81,10 @@ Socket* Socket::accept(SocketAddress* addr) {
 
 void Socket::connect(SocketAddress* address) {
 	if (::connect(sock, address->getAddress(), address->getAddressSize())) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "unable to connect to socket " << address->getPort();
 
-		throw SocketException(msg.str());
+		throw SocketException(msg.toString());
 	}
 }
 
@@ -111,10 +111,10 @@ bool Socket::recieveFrom(Packet* pack, SocketAddress* addr) {
 bool Socket::read(Packet* pack) {
 	int len = recv(sock, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0);
 	if (len < 0) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "error reading from socket";
 			
-		throw SocketException(msg.str());
+		throw SocketException(msg.toString());
 	} else if (len == 0)
 		return false;
 			
@@ -135,10 +135,10 @@ void Socket::readFrom(Packet* pack, SocketAddress* addr) {
 
 	int len = recvfrom(sock, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0, addr->getAddress(), &addr_len);
 	if (len < 0) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "error reading from socket";
 			
-		throw SocketException(msg.str());
+		throw SocketException(msg.toString());
 	}
 			
 	pack->setSize(len);
@@ -149,10 +149,10 @@ void Socket::send(Packet* pack) {
 	int res = ::send(sock, pack->getBuffer(), pack->size(), 0); 
 		
 	if (res < 0/* && errno != EAGAIN*/) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "unable to send data to socket";
 
-		throw SocketException(msg.str());
+		throw SocketException(msg.toString());
 	}
 }
 
@@ -160,10 +160,10 @@ void Socket::sendTo(Packet* pack, SocketAddress* addr) {
 	int res = sendto(sock, pack->getBuffer(), pack->size(), 0, addr->getAddress(), addr->getAddressSize()); 
 		
 	if (res < 0/* && errno != EAGAIN*/) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "unable to send data to socket";
 
-		throw SocketException(msg.str());
+		throw SocketException(msg.toString());
 	}
 }
 	
@@ -184,10 +184,10 @@ bool Socket::hasData() {
 	updateTimeOut();
 	
 	if (select(sock + 1, &readSet, NULL, NULL, &tv) < 0) {
-		stringstream msg;
+		StringBuffer msg;
 		msg << "select error";
 
-		throw SocketException(msg.str());
+		throw SocketException(msg.toString());
 	}
 
 	return FD_ISSET(sock, &readSet) != 0;

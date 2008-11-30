@@ -13,7 +13,7 @@ namespace engine {
 
 	class StreamServiceThread : public ServiceMessageHandlerThread {
 	public:
-		StreamServiceThread(const string& s);
+		StreamServiceThread(const String& s);
 		
 		virtual ~StreamServiceThread();
 		

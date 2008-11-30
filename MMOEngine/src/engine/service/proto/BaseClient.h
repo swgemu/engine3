@@ -52,7 +52,7 @@ namespace engine {
 	
 		SortedVector<BasePacket*> receiveBuffer;
 		
-		string ip;
+		String ip;
 	
 		Condition connectionEstablishedCondition;
 
@@ -65,7 +65,7 @@ namespace engine {
 		static const int NETSTATUSCHECKUP_TIMEOUT = 50000; 
 	
 	public:
-		BaseClient(const string& addr, int port);
+		BaseClient(const String& addr, int port);
 		BaseClient(Socket* sock, SocketAddress& addr);
 		
 		virtual ~BaseClient();
@@ -101,7 +101,7 @@ namespace engine {
 
 		void notifyReceivedSeed(sys::uint32 seed);
 
-		void disconnect(const string& msg, bool doLock = false);
+		void disconnect(const String& msg, bool doLock = false);
 		
 		void disconnect();
 		virtual void disconnect(bool doLock);
@@ -128,11 +128,11 @@ namespace engine {
 		}
 
 		// getters
-		inline string& getAddress() {
+		inline String& getAddress() {
 			return ip;
 		}
 	
-		inline string getIPAddress() {
+		inline String getIPAddress() {
 			return addr.getIPAddress();
 		}
 

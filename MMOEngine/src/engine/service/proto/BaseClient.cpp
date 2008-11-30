@@ -16,7 +16,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/OutOfOrderMessage.h"
 #include "packets/DisconnectMessage.h"
 
-BaseClient::BaseClient(const string& addr, int port) : DatagramServiceClient(addr, port),
+BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
 		BaseProtocol(),	Event(), Mutex("Client") {
 	scheduler = NULL;
 
@@ -37,7 +37,7 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
    	setLockName("Client " + ip);
    	//setMutexLogging(false);
 
-   	/*string prip = addr.getFullPrintableIPAddress();
+   	/*String prip = addr.getFullPrintableIPAddress();
    	setFileLogger("log/" + prip);*/
 
    	setLogging(true);
@@ -239,7 +239,7 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 	}
 
 	/*#ifdef TRACE_CLIENTS
-		stringstream msg;
+		StringBuffer msg;
 		msg << "SEND(" << pack->getSequence() << ")" + pack->toString());
 		info(msg);
 	#endif*/
@@ -282,7 +282,7 @@ bool BaseClient::activate() {
 			}
 
 			#ifdef TRACE_CLIENTS
-				stringstream msg;
+				StringBuffer msg;
 				msg << "SEND(" << serverSequence << ") - " << pack->toString();
 				info(msg);
 			#endif
@@ -291,14 +291,14 @@ bool BaseClient::activate() {
 
 			prepareSend(pack);
 			if (pack->getSequence() != (uint32) realServerSequence++) {
-				stringstream msg;
+				StringBuffer msg;
 				msg << "invalid server Packet " << pack->getSequence() << " sent (" << realServerSequence - 1 << ")";
 				error(msg);
 			}
 
 			sequenceBuffer.add(pack);
 			if (!DatagramServiceClient::send(pack)) {
-				stringstream msg;
+				StringBuffer msg;
 				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
 				info(msg);
 			}
@@ -321,7 +321,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 	BasePacket* pack = NULL;
 
 	/*#ifdef TRACE_CLIENTS
-		stringstream msg;
+		StringBuffer msg;
 		msg << "SEQ = " << serverSequence << ", ACKSEQ = " << acknowledgedServerSequence << ", BUFFSIZE = "
 			<< sendBuffer.size();
 		info(msg);
@@ -332,7 +332,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 			scheduler->addEvent(this, 10);
 
 		if (sendBuffer.size() > 1500) {
-			stringstream msg;
+			StringBuffer msg;
 			msg << "WARNING - send buffer overload [" << sendBuffer.size() << "]";
 			error(msg);
 
@@ -364,7 +364,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 		BasePacket* packet = new BasePacket(pack, seq);
 		receiveBuffer.put(packet);
 
-		/*stringstream msg3;
+		/*StringBuffer msg3;
 		msg3 << "READ buffer (";
 
 		for (int i = 0; i < receiveBuffer.size(); ++i) {
@@ -377,7 +377,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 		sendPacket(oor);
 
 		#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
    			msg << "OUT of order READ(" << seq << ") expected " << clientSequence;
 			info(msg);
 		#endif
@@ -388,7 +388,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 	acknowledgeClientPackets(clientSequence++);
 
 	#ifdef TRACE_CLIENTS
-		stringstream msg;
+		StringBuffer msg;
 		msg  << "READ(" << seq << ") - " << pack->toString();
 		info(msg);
 	#endif
@@ -409,7 +409,7 @@ Packet* BaseClient::getBufferedPacket() {
 		acknowledgeClientPackets(clientSequence++);
 
 		#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
 			msg << "BUFFERED READ(" << packseq << ")";
 			info(msg);
 		#endif
@@ -432,7 +432,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 		uint32 seq = pack->getSequence();
 
 		#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
 			msg << "CHECKING UP sequence " << seq << "[" << acknowledgedServerSequence
 				<< "]";
 			info(msg);
@@ -445,7 +445,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 			checkupEvent->update(pack);
 
 			#ifdef TRACE_CLIENTS
-				stringstream msg;
+				StringBuffer msg;
 				msg << "checkup time incresed to " << checkupEvent->getCheckupTime();
 				info(msg);
 			#endif
@@ -465,7 +465,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 
 void BaseClient::resendPackets() {
 	/*#ifdef TRACE_CLIENTS
-		stringstream msg2;
+		StringBuffer msg2;
 		msg2 << "[" << seq << "] resending " << MIN(sequenceBuffer.size(), 5) << " packets to \'" << ip << "\' ["
 			 << checkupEvent->getCheckupTime() << "]";
 		info(msg2, true);
@@ -480,7 +480,7 @@ void BaseClient::resendPackets() {
 		packet->setTimeout(checkupEvent->getCheckupTime());
 
 		if (!DatagramServiceClient::send(packet)) {
-			stringstream msg;
+			StringBuffer msg;
 			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
 			info(msg);
 		}
@@ -488,7 +488,7 @@ void BaseClient::resendPackets() {
 		++resentPackets;
 
 		#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
 			msg << "RESEND(" << packet->getSequence() << ") - " << packet->toString();
 			info(msg);
 		#endif
@@ -514,7 +514,7 @@ void BaseClient::resendPackets(int seq) {
 		packet->setTimeout(checkupEvent->getCheckupTime());
 
 		if (!DatagramServiceClient::send(packet)) {
-			stringstream msg;
+			StringBuffer msg;
 			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
 			info(msg);
 		}
@@ -529,7 +529,7 @@ void BaseClient::balancePacketCheckupTime() {
 	setPacketCheckupTime(2000);
 
 	#ifdef TRACE_CLIENTS
-		stringstream msg;
+		StringBuffer msg;
 		msg << "checkup time set to " << 2000;
 		info(msg);
 	#endif
@@ -539,7 +539,7 @@ void BaseClient::resetPacketCheckupTime() {
 	setPacketCheckupTime(100);
 
 	#ifdef TRACE_CLIENTS
-		stringstream msg;
+		StringBuffer msg;
 		msg << "checkup time set to " << 100;
 		info(msg);
 	#endif
@@ -550,7 +550,7 @@ void BaseClient::setPacketCheckupTime(uint32 time) {
 
 	try {
 		#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
 			msg << "changing packet checkup time to " << time;
 			info(msg);
 		#endif
@@ -573,7 +573,7 @@ void BaseClient::acknowledgeClientPackets(uint16 seq) {
 		}
 
 		#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
 			msg << hex << "ACKING READ(" << seq << ")";
 			info(msg);
 		#endif
@@ -603,7 +603,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			realseq = (seq & 0xFFFF) | (serverSequence & 0xFFFF0000);
 
 		#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
 			msg << "ACKNOWLEDGED SEND(" << seq << ") [real = " << realseq << ", ackedseq = " << acknowledgedServerSequence << "]";
 			info(msg);
 		#endif
@@ -617,7 +617,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 
 		if (!sequenceBuffer.isEmpty()) {
 			#ifdef TRACE_CLIENTS
-				stringstream msg;
+				StringBuffer msg;
 				msg << "reschudeling for sequence " << realseq + 1;
 				info(msg);
 			#endif
@@ -647,7 +647,7 @@ void BaseClient::flushSendBuffer(int seq) {
 		Time& timestamp = pack->getTimestamp();
 
 		/*#ifdef TRACE_CLIENTS
-			stringstream msg;
+			StringBuffer msg;
 			msg << "deleting packet sequence number " << pack->getSequence() << " ("
 				<< timestamp.miliDifference() << " ms)";
 			info(msg);
@@ -660,7 +660,7 @@ void BaseClient::flushSendBuffer(int seq) {
 	acknowledgedServerSequence = seq;
 
 	#ifdef TRACE_CLIENTS
-		stringstream msg;
+		StringBuffer msg;
 		msg << sequenceBuffer.size() << " packet remained in queue";
 		info(msg);
 	#endif
@@ -759,7 +759,7 @@ void BaseClient::notifyReceivedSeed(uint32 seed) {
 	unlock();
 }
 
-void BaseClient::disconnect(const string& msg, bool doLock) {
+void BaseClient::disconnect(const String& msg, bool doLock) {
 	Logger::error(msg);
 
 	hasError = true;
@@ -820,7 +820,7 @@ void BaseClient::reportStats(bool doLog) {
 	//if (packetloss > 15)
 	//	doLog = true;
 
-	stringstream msg;
+	StringBuffer msg;
 	msg << "STATS: sent = " << serverSequence << ", resent = " << resentPackets << " [" << packetloss << "%]";
 	info(msg, doLog);
 }

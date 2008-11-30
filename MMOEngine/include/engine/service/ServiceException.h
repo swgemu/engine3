@@ -16,7 +16,7 @@ namespace engine {
 		ServiceException() : Exception() {
 		}
 
-		ServiceException(const string& msg) : Exception(msg) {
+		ServiceException(const String& msg) : Exception(msg) {
 		}
 	};
 

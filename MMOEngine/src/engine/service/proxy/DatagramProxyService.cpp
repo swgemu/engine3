@@ -18,7 +18,7 @@ void DatagramProxyService::init() {
 
 void DatagramProxyService::run() {
 	ServiceThread::run();
-	
+
 	receiveMessages();
 }
 
@@ -28,7 +28,7 @@ void DatagramProxyService::stop() {
 
 ServiceClient* DatagramProxyService::createConnection(Socket* sock, SocketAddress& addr) {
 	DatagramProxyClient* pclient = new DatagramProxyClient(this, socket, addr);
-	
+
 	DatagramProxyServiceClient* proxyServiceClient = new DatagramProxyServiceClient(this, forwardAddress, forwardPort);
 	proxyServiceClient->start();
 
@@ -43,7 +43,7 @@ ServiceClient* DatagramProxyService::createConnection(Socket* sock, SocketAddres
 void DatagramProxyService::handleMessage(ServiceClient* client, Packet* message) {
 	DatagramProxyClient* pclient = (DatagramProxyClient*) client;
 	pclient->forwardMessage(message);
-	
+
 	/*if (!pclient->isAvailable())
 		delete pclient;*/
 }
@@ -52,28 +52,28 @@ bool DatagramProxyService::handleError(Exception& e) {
 	return true;
 }
 
-void DatagramProxyService::setForwarding(const string& address, int port) {
+void DatagramProxyService::setForwarding(const String& address, int port) {
 	forwardAddress = address;
 	forwardPort = port;
 
-	stringstream msg;
+	StringBuffer msg;
 	msg << "registered proxy \'" << address << ":" << port << "\'";
 	info(msg);
 }
 
-void DatagramProxyService::setName(const string& name, int port) {
-	stringstream logname;
+void DatagramProxyService::setName(const String& name, int port) {
+	StringBuffer logname;
 	logname << name << " = " << port;
 
-	setLoggingName(logname.str());
+	setLoggingName(logname.toString());
 }
 
-string& DatagramProxyService::getAddress() {
-	if (fullAddress.size() == 0) {
-		stringstream addr;
+String& DatagramProxyService::getAddress() {
+	if (fullAddress.isEmpty()) {
+		StringBuffer addr;
 		addr << forwardAddress << ":" << forwardPort;
 
-		fullAddress = addr.str();
+		fullAddress = addr.toString();
 	}
 
 	return fullAddress;

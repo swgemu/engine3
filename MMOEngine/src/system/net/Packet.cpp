@@ -5,21 +5,30 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Packet.h"
 
-void Packet::create(char *buf[], int len) {
+Packet::Packet() : Stream(RAW_MAX_SIZE, RAW_MAX_SIZE), ObjectInputStream(), ObjectOutputStream() {
+}
+
+Packet::Packet(int size) : Stream(size, RAW_MAX_SIZE), ObjectInputStream(), ObjectOutputStream() {
+}
+
+Packet::~Packet() {
+}
+
+/*void Packet::create(char *buf[], int len) {
 	setSize(len);
 
 	memcpy(elementData, buf, len);
-}
+}*/
 
 Packet* Packet::clone(int startoffs) {
 	int newSize = size() - startoffs;
 	Packet* p = new Packet(newSize);
 	p->insertStream(elementData + startoffs, newSize);
 
-	return p;		
+	return p;
 }
 
-void Packet::copy(Packet* pack, int startoffs) {
+/*void Packet::copy(Packet* pack, int startoffs) {
 	int newSize = size() - startoffs;
 
 	pack->reset();
@@ -29,10 +38,10 @@ void Packet::copy(Packet* pack, int startoffs) {
 void Packet::setSize(int len, bool copyContent) {
 	char* oldElementData = elementData;
 	Vector<char>::setSize(len, copyContent);
-	
+
 	if (oldElementData != elementData)
 		offset = (offset - oldElementData) + elementData;
-	
+
 	end = elementData + len;
 }
 
@@ -50,7 +59,7 @@ void Packet::extendSize(int len, bool copyContent) {
 
 void Packet::clear() {
 	Vector<char>::setSize(0);
-	 
+
 	end = offset = elementData;
 }
 
@@ -62,22 +71,22 @@ void Packet::removeLastBytes(int len) {
 	int newSize = size() - len;
 	if (newSize < 0)
 		throw PacketIndexOutOfBoundsException(this, newSize);
-			
-	setSize(newSize);
-}
 
-string Packet::toString() {
-	stringstream str;
+	setSize(newSize);
+}*/
+
+String Packet::toString() {
+	StringBuffer str;
 	str << "Packet [" << size() << "] " << uppercase << hex;
-			
+
 	for (int i = 0; i < size(); ++i) {
-		unsigned int byte = ((unsigned int )elementData[i]) & 0xFF; 
-				
+		unsigned int byte = ((unsigned int) elementData[i]) & 0xFF;
+
 		if ((byte & 0xF0) == 0)
 			str << "0" << byte  << " ";
 		else
 			str << byte  << " ";
 	}
-		
-	return str.str();
+
+	return str.toString();
 }

@@ -22,14 +22,14 @@ namespace engine {
 		
 	public:
 		NamingDirectoryServiceImpl();
-		NamingDirectoryServiceImpl(const string& address);
+		NamingDirectoryServiceImpl(const String& address);
 	
 		void deploy(DistributedObjectStub* stub);
-		void deploy(const string& name, DistributedObjectStub* stub);
+		void deploy(const String& name, DistributedObjectStub* stub);
 	
-		DistributedObject* lookUp(const string& name);
+		DistributedObject* lookUp(const String& name);
 		
-		DistributedObject* undeploy(const string& name);
+		DistributedObject* undeploy(const String& name);
 		
 		inline bool isRootDirectory() {
 			return rootNamingDirectory == NULL;

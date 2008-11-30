@@ -17,7 +17,7 @@ namespace engine {
 		ServiceMessageHandlerThread* server;
 	
 	public:
-		ServiceProcessThread(const string& s);
+		ServiceProcessThread(const String& s);
 	
 		virtual ~ServiceProcessThread();
 	

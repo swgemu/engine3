@@ -14,7 +14,7 @@ namespace engine {
 
 	class ErrorMessage : public BasePacket {
 	public:
-		ErrorMessage(const string& ErrorType, const string& ErrorMsg, bool Fatal) : BasePacket(50) {
+		ErrorMessage(const String& ErrorType, const String& ErrorMsg, bool Fatal) : BasePacket(50) {
 			insertShort(0x03);
 			insertAscii(ErrorType);
 			insertAscii(ErrorMsg);

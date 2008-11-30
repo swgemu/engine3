@@ -23,19 +23,19 @@ DistributedMethod::DistributedMethod(DistributedObject* obj, uint32 methid) {
 
 DistributedMethod::DistributedMethod(DistributedObjectBroker* broker, Packet* pack) {
 	orb = broker;
-	
+
 	invmsg = pack;
 }
 
 void DistributedMethod::executeWithVoidReturn() {
 	Packet resp;
-	
+
 	execute(&resp);
 }
 
 bool DistributedMethod::executeWithBooleanReturn() {
 	Packet resp;
-	
+
 	execute(&resp);
 
 	return resp.parseByte(8);
@@ -43,7 +43,7 @@ bool DistributedMethod::executeWithBooleanReturn() {
 
 byte DistributedMethod::executeWithByteReturn() {
 	Packet resp;
-	
+
 	execute(&resp);
 
 	return resp.parseByte(8);
@@ -51,9 +51,9 @@ byte DistributedMethod::executeWithByteReturn() {
 
 char DistributedMethod::executeWithSignedCharReturn() {
 	Packet resp;
-	
+
 	execute(&resp);
-	
+
 	return resp.parseSignedByte(8);
 }
 
@@ -83,7 +83,7 @@ unsigned int DistributedMethod::executeWithUnsignedIntReturn() {
 
 long long DistributedMethod::executeWithSignedLongReturn() {
 	Packet resp;
-	
+
 	execute(&resp);
 
 	return resp.parseSignedLong(8);
@@ -105,17 +105,17 @@ float DistributedMethod::executeWithFloatReturn() {
 	return resp.parseFloat(8);
 }
 
-void DistributedMethod::executeWithAsciiReturn(string& value) {
+void DistributedMethod::executeWithAsciiReturn(String& value) {
 	Packet resp;
-	
+
 	execute(&resp);
 
 	resp.parseAscii(8, value);
 }
 
-void DistributedMethod::executeWithUnicodeReturn(unicode& value) {
+void DistributedMethod::executeWithUnicodeReturn(UnicodeString& value) {
 	Packet resp;
-	
+
 	execute(&resp);
 
 	resp.parseUnicode(8, value);
@@ -129,7 +129,7 @@ DistributedObject* DistributedMethod::executeWithObjectReturn() {
 	uint64 objid = resp.parseLong(8);
 	if (objid != 0)
 		return DistributedObjectBroker::instance()->lookUp(objid);
-	else 
+	else
 		return NULL;
 }
 
@@ -176,11 +176,11 @@ void DistributedMethod::addFloatParameter(float val) {
 	invmsg->insertFloat(val);
 }
 
-void DistributedMethod::addAsciiParameter(const string& ascii) {
+void DistributedMethod::addAsciiParameter(const String& ascii) {
 	invmsg->insertAscii(ascii);
 }
 
-void DistributedMethod::addUnicodeParameter(const unicode& str) {
+void DistributedMethod::addUnicodeParameter(const UnicodeString& str) {
 	invmsg->insertUnicode(str);
 }
 
@@ -227,21 +227,21 @@ float DistributedMethod::getFloatParameter() {
 	return invmsg->parseFloat();
 }
 
-string& DistributedMethod::getAsciiParameter(string& ascii) {
+String& DistributedMethod::getAsciiParameter(String& ascii) {
 	invmsg->parseAscii(ascii);
-	
+
 	return ascii;
 }
 
-unicode& DistributedMethod::getUnicodeParameter(unicode& str) {
+UnicodeString& DistributedMethod::getUnicodeParameter(UnicodeString& str) {
 	invmsg->parseUnicode(str);
-	
+
 	return str;
 }
 
 DistributedObject* DistributedMethod::getObjectParameter() {
 	uint64 objid = invmsg->parseLong();
-	
+
 	if (objid != 0)
 		return orb->lookUp(objid);
 	else

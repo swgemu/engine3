@@ -16,7 +16,7 @@ class DatagramProxyServiceClient : public DatagramServiceClient, public Thread, 
 	class DatagramProxyClient* proxyClient;
 
 public:
-	DatagramProxyServiceClient(DatagramProxyService* serv, string& host, int port);
+	DatagramProxyServiceClient(DatagramProxyService* serv, String& host, int port);
 	
 	virtual ~DatagramProxyServiceClient();
 

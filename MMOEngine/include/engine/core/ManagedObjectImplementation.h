@@ -21,7 +21,7 @@ namespace engine {
 
 		void unlock(bool doLock = true);
 
-		void setLockName(const string& name);
+		void setLockName(const String& name);
 	};
 
   } // namespace core

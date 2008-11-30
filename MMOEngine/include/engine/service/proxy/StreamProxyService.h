@@ -12,10 +12,10 @@ class StreamProxyService : public StreamServiceThread
 {
 	class StreamProxyServiceClient* proxyServiceClient;
 
-	string forwardAddress;
+	String forwardAddress;
 	int forwardPort;
 
-	string fullAddress;
+	String fullAddress;
 
 public:
 	StreamProxyService();
@@ -31,14 +31,14 @@ public:
 
 	bool handleError(Exception& e);
 
-	void setForwarding(const string& address, int port);
+	void setForwarding(const String& address, int port);
 
 	// setters and getters
-	void setName(const string& name, int port);
+	void setName(const String& name, int port);
 
-	string& getAddress();
+	String& getAddress();
 
-	const string& getForwardingAddress() {
+	const String& getForwardingAddress() {
 		return forwardAddress;
 	}
 	

@@ -3,103 +3,104 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "../lang/Integer.h"
+#include "../lang/Long.h"
 #include "../lang/String.h"
 
 #include "UnicodeTokenizer.h"
 
-UnicodeTokenizer::UnicodeTokenizer(const string& s) {
+UnicodeTokenizer::UnicodeTokenizer(const String& s) {
 	str = s;
 
-	if (s.length() != 0)
+	if (!s.isEmpty())
 		index = 0;
 	else
 		index = -1;
 
-	delimeter = unicode(" ");
+	delimeter = UnicodeString(" ");
 }
 
-UnicodeTokenizer::UnicodeTokenizer(const unicode& u) {
+UnicodeTokenizer::UnicodeTokenizer(const UnicodeString& u) {
 	str = u;
 
-	if (u.size() != 0)
+	if (!u.isEmpty())
 		index = 0;
 	else
 		index = -1;
 
-	delimeter = unicode(" ");
+	delimeter = UnicodeString(" ");
 }
 
 UnicodeTokenizer::UnicodeTokenizer(const char* ascii) {
 	str = ascii;
 
-	if (str.size() != 0)
+	if (!str.isEmpty())
 		index = 0;
 	else
 		index = -1;
 
-	delimeter = unicode(" ");
+	delimeter = UnicodeString(" ");
 }
 
 UnicodeTokenizer::UnicodeTokenizer(const char* ascii, int len) {
-	str = unicode(ascii, len);
+	str = UnicodeString(ascii, len);
 
 	if (len != 0)
 		index = 0;
 	else
 		index = -1;
 
-	delimeter = unicode(" ");
+	delimeter = UnicodeString(" ");
 }
 
 int UnicodeTokenizer::getIntToken() {
-	unicode token;
+	UnicodeString token;
 	nextToken(token);
 
-	return atoi(token.c_str().c_str());
+	return Integer::valueOf(token.toCharArray());
 }
 
 uint32 UnicodeTokenizer::getHexIntToken() {
-	unicode token;
+	UnicodeString token;
 	nextToken(token);
 
-	return String::toHexInt(token.c_str().c_str());
+	return Integer::hexvalueOf(token.toString());
 }
 
 float UnicodeTokenizer::getFloatToken() {
-	unicode token;
+	UnicodeString token;
 	nextToken(token);
 
-	return (float) atof(token.c_str().c_str());
+	return (float) atof(token.toCharArray());
 }
 
 uint64 UnicodeTokenizer::getLongToken() {
-	unicode token;
+	UnicodeString token;
 	nextToken(token);
 
-	return String::toUnsignedLong(token.c_str().c_str());
+	return Long::unsignedvalueOf(token.toString());
 }
 
-void UnicodeTokenizer::getStringToken(string& token) {
-	unicode tok;
+void UnicodeTokenizer::getStringToken(String& token) {
+	UnicodeString tok;
 	nextToken(tok);
 
-	token.clear();
-	token.append(tok.c_str());
+	token = tok.toString();
 }
 
-void UnicodeTokenizer::getUnicodeToken(unicode& token) {
+void UnicodeTokenizer::getUnicodeToken(UnicodeString& token) {
 	nextToken(token);
 }
 
-void UnicodeTokenizer::getStringToken(stringstream& token) {
-	unicode tok;
+void UnicodeTokenizer::getStringToken(StringBuffer& token) {
+	UnicodeString tok;
 	nextToken(tok);
 
-	token.clear();
-	token << tok.c_str();
+	token.deleteAll();
+	token.append(tok.toString());
 }
 
-void UnicodeTokenizer::nextToken(unicode& s) {
+void UnicodeTokenizer::nextToken(UnicodeString& s) {
 	if (!hasMoreTokens())
 		throw Exception();
 
@@ -108,44 +109,43 @@ void UnicodeTokenizer::nextToken(unicode& s) {
 	while (true) {
 		oindex = index;
 
-		index = str.find(delimeter, index);
+		index = str.indexOf(delimeter, index);
 
-		if (index == oindex && index <= str.size())
+		if (index == oindex && index <= str.length())
 			++index;
 		else
 			break;
 	}
 
 	s.clear();
+
 	if (index != -1) {
 		s.append(str.substr(oindex, index++ - oindex));
 	} else {
-		s.append(str.substr(oindex, str.size() - oindex));
+		s.append(str.substr(oindex, str.length() - oindex));
 	}
 }
 
-void UnicodeTokenizer::finalToken(string& s) {
+void UnicodeTokenizer::finalToken(String& s) {
 	if (!hasMoreTokens())
 		throw Exception();
 
-	s.clear();
-	s.append((str.substr(index, str.size() - index)).c_str());
+	s = str.substr(index, str.length() - index).toString();
 
 	index = -1;
 }
 
-void UnicodeTokenizer::finalToken(unicode& s) {
+void UnicodeTokenizer::finalToken(UnicodeString& s) {
 	if (!hasMoreTokens())
 		throw Exception();
 
-	s.clear();
-	s.append(str.substr(index, str.size() - index));
+	s = str.substr(index, str.length() - index);
 
 	index = -1;
 }
 
 void UnicodeTokenizer::shiftTokens(int count) {
-	unicode token;
+	UnicodeString token;
 
 	while (count-- > 0)
 		nextToken(token);

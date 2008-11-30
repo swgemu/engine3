@@ -37,7 +37,7 @@ namespace sys {
 
 		void print();
 
-		void getStackTrace(string& trace);
+		void getStackTrace(String& trace);
 
 		static void printStackTrace();
 

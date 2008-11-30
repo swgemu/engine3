@@ -5,10 +5,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MySqlDatabase.h"
 
-MySqlDatabase::MySqlDatabase(const string& s) : Mutex("MYSQL DB"), Logger(s) {
+MySqlDatabase::MySqlDatabase(const String& s) : Mutex("MYSQL DB"), Logger(s) {
 }
 
-MySqlDatabase::MySqlDatabase(const string& s, const string& host) : Mutex("MYSQL DB"), Logger(s) {
+MySqlDatabase::MySqlDatabase(const String& s, const String& host) : Mutex("MYSQL DB"), Logger(s) {
 	MySqlDatabase::host = host;
 
 	setLockTracing(false);
@@ -18,16 +18,16 @@ MySqlDatabase::~MySqlDatabase() {
 	close();
 }
 
-void MySqlDatabase::connect(const string& dbname, const string& user, const string& passw, int port) {
+void MySqlDatabase::connect(const String& dbname, const String& user, const String& passw, int port) {
 	lock();
 
 	if (!mysql_init(&mysql))
 		error();
 
-	if(!mysql_real_connect(&mysql, host.c_str(), user.c_str(), passw.c_str(), dbname.c_str(), port, NULL, 0))
+	if (!mysql_real_connect(&mysql, host.toCharArray(), user.toCharArray(), passw.toCharArray(), dbname.toCharArray(), port, NULL, 0))
 		error();
 
-	stringstream msg;
+	StringBuffer msg;
 	msg << "connected to " << host;
 	info(msg);
 
@@ -43,12 +43,12 @@ void MySqlDatabase::executeStatement(const char* statement) {
 	unlock();
 }
 
-void MySqlDatabase::executeStatement(const string& statement) {
-	executeStatement(statement.c_str());
+void MySqlDatabase::executeStatement(const String& statement) {
+	executeStatement(statement.toCharArray());
 }
 
-void MySqlDatabase::executeStatement(const stringstream& statement) {
-	executeStatement(statement.str().c_str());
+void MySqlDatabase::executeStatement(const StringBuffer& statement) {
+	executeStatement(statement.toString().toCharArray());
 }
 
 ResultSet* MySqlDatabase::executeQuery(const char* statement) {
@@ -73,12 +73,12 @@ ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 	return res;
 }
 
-ResultSet* MySqlDatabase::executeQuery(const string& statement) {
-	return executeQuery(statement.c_str());
+ResultSet* MySqlDatabase::executeQuery(const String& statement) {
+	return executeQuery(statement.toCharArray());
 }
 
-ResultSet* MySqlDatabase::executeQuery(const stringstream& statement) {
-	return executeQuery(statement.str().c_str());
+ResultSet* MySqlDatabase::executeQuery(const StringBuffer& statement) {
+	return executeQuery(statement.toString().toCharArray());
 }
 
 void MySqlDatabase::commit() {
@@ -105,63 +105,62 @@ void MySqlDatabase::close() {
 
 
 void MySqlDatabase::error() {
-	stringstream msg;
+	StringBuffer msg;
 	msg << mysql_errno(&mysql) << ": " << mysql_error(&mysql);
 	Logger::error(msg);
 
 	unlock();
 
-	throw DatabaseException(msg.str());
+	throw DatabaseException(msg.toString());
 }
 
 void MySqlDatabase::error(const char* query) {
-	stringstream msg;
+	StringBuffer msg;
 	msg << "DatabaseException caused by query: " << query << "\n" << mysql_errno(&mysql) << ": " << mysql_error(&mysql);
 	//Logger::error(msg);
 
 	unlock();
 
-	throw DatabaseException(msg.str());
+	throw DatabaseException(msg.toString());
 }
 
-void MySqlDatabase::escapeString(string& s) {
-	if (s.size() == 0)
+void MySqlDatabase::escapeString(String& s) {
+	if (s.isEmpty())
 		return;
 
-	for (unsigned int i = 0; i < s.size(); i++) {
+	StringBuffer buf;
+
+	for (int i = 0; i < s.length(); i++) {
 		switch (s[i]) {
 		case '\0': // Must be escaped for "mysql"
-			s[i] = '\\';
-			s.insert(++i, "0", 1);
+			buf << "\\0";
 			break;
 		case '\n': // Must be escaped for logs
-			s[i] = '\\';
-			s.insert(++i, "n", 1);
+			buf << "\\n";
 			break;
 		case '\r':
-			s[i] = '\\';
-			s.insert(++i, "r", 1);
+			buf << "\\r";
 			break;
 		case '\\':
-			s[i] = '\\';
-			s.insert(++i, "\\", 1);
+			buf << "\\\\";
 			break;
 		case '\"':
-			s[i] = '\\';
-			s.insert(++i, "\"", 1);
+			buf << "\\\"";
 			break;
 		case '\'': // Better safe than sorry
-			s[i] = '\\';
-			s.insert(++i, "\'", 1);
+			buf << "\\\'";
 			break;
 		/*case '\032': // This gives problems on Win32
-			s[i] = '\\';
-			s.insert(++i, "Z", 1);
+			buf << "\\Z";
 			break;*/
 		default:
-			break;
+			continue;
 		}
+
+		++i;
 	}
+
+	s = buf.toString();
 }
 
 void MySqlDatabase::finalizeLibrary() {

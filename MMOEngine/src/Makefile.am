@@ -1,7 +1,7 @@
 # Copyright (C) 2007 <SWGEmu>. All rights reserved.
 # Distribution of this file for usage outside of Core3 is prohibited.
 
-AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wno-write-strings
+AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src
@@ -15,21 +15,26 @@ noinst_LIBRARIES = libengine3.a
 libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
+			system/lang/Exception.cpp \
 			system/lang/String.cpp \
-			system/lang/unicode.cpp \
+			system/lang/StringBuffer.cpp \
+			system/lang/UnicodeString.cpp \
 			system/lang/Math.cpp \
 			system/lang/StackTrace.cpp \
+			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/thread/Thread.cpp \
 			system/thread/ReadWriteLock.cpp \
 			system/net/Socket.cpp \
 			system/net/SocketAddress.cpp \
 			system/net/InetAddress.cpp \
 			system/net/NetworkInterface.cpp \
+			system/net/Packet.cpp \
 			system/io/Stream.cpp \
 			system/io/File.cpp \
 			system/io/BufferedReader.cpp \
 			system/io/StringTokenizer.cpp \
 			system/io/UnicodeTokenizer.cpp \
+			system/io/PrintStream.cpp \
 			system/util/AdvancedBinaryHeap.cpp \
 			engine/engine.h \
 			engine/sched/ScheduleManager.cpp \

@@ -6,58 +6,58 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 namespace engine {
   namespace log {
 
 	class Logger {
-		string name;
-		
-		static ofstream* globallogfile;
-		ofstream* logfile;
-	
+		String name;
+
+		static FileWriter* globalLogFile;
+		FileWriter* logFile;
+
 		static Time starttime;
-		
+
 		bool doLog, doGlobalLog;
 
 	public:
 		static Logger console;
-		
+
 	public:
 		Logger();
-		Logger(const char *s);	
-		Logger(const string& s);	
-		
+		Logger(const char *s);
+		Logger(const String& s);
+
 		~Logger();
-	
+
 		static void setGlobalFileLogger(const char* file);
-		static void setGlobalFileLogger(const string& file);
-	
+		static void setGlobalFileLogger(const String& file);
+
 		void setFileLogger(const char* file);
-		void setFileLogger(const string& file);
-		
+		void setFileLogger(const String& file);
+
 		static void closeGlobalFileLogger();
 		void closeFileLogger();
-	
+
 		void info(const char *msg, bool forcedLog = false);
-		void info(const string& msg, bool forcedLog = false);
-		void info(const stringstream& msg, bool forcedLog = false);
-	
+		void info(const String& msg, bool forcedLog = false);
+		void info(const StringBuffer& msg, bool forcedLog = false);
+
 		void log(const char *msg);
-		void log(const string& msg);
-		void log(const stringstream& msg);
-	
+		void log(const String& msg);
+		void log(const StringBuffer& msg);
+
 		void error(const char* msg);
-		void error(const string& msg);
-		void error(const stringstream& msg);
-	
-		static void getTime(string& time, bool getFull = true);
+		void error(const String& msg);
+		void error(const StringBuffer& msg);
+
+		static void getTime(String& time, bool getFull = true);
 		static void printTime(bool getFull = true);
-		
+
 		static uint64 getElapsedTime();
 
-		// setters		
+		// setters
 		inline void setLogging(bool doLog) {
 			Logger::doLog = doLog;
 		}
@@ -65,16 +65,16 @@ namespace engine {
 		inline void setGlobalLogging(bool doLog) {
 			doGlobalLog = doLog;
 		}
-	
-		inline void setLoggingName(const string& s) {
+
+		inline void setLoggingName(const String& s) {
 			name = s;
 		}
-		
+
 		// getters
-		inline string& getLoggingName() {
+		inline String& getLoggingName() {
 			return name;
 		}
-		 
+
 	};
 
   } // namespace log

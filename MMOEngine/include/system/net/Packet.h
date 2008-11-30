@@ -14,6 +14,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <winsock2.h>
 #endif
 
+#include "../lang/String.h"
+#include "../lang/UnicodeString.h"
+
 #include "../io/ObjectInputStream.h"
 #include "../io/ObjectOutputStream.h"
 
@@ -24,26 +27,15 @@ namespace sys {
 
 	class Packet : public ObjectInputStream, public ObjectOutputStream {
 	public:
-		static const int RAW_MAX_SIZE = 1496;
+		static const int RAW_MAX_SIZE = 496;
 
 	public:
-		Packet() : Stream(RAW_MAX_SIZE, RAW_MAX_SIZE), ObjectInputStream(), ObjectOutputStream() {
-		}
+		Packet();
+		Packet(int size);
 
-		Packet(int size) : Stream(size, RAW_MAX_SIZE), ObjectInputStream(), ObjectOutputStream() {
-		}
+		virtual ~Packet();
 
-		virtual ~Packet() {
-		}
-
-		Packet* clone(int startoffs = 0) {
-			int newSize = size() - startoffs;
-			Packet* p = new Packet(newSize);
-
-			p->writeStream(elementData + startoffs, newSize);
-
-			return p;
-		}
+		Packet* clone(int startoffs = 0);
 
 		// inserting methods
 		inline void insertBoolean(bool val) {
@@ -122,18 +114,18 @@ namespace sys {
 			writeStream(ascii, len);
 		}
 
-		void insertAscii(const string& ascii) {
-			int len = ascii.size();
+		void insertAscii(const String& ascii) {
+			int len = ascii.length();
 			writeShort(len);
 
-			writeStream(ascii.c_str(), len);
+			writeStream(ascii.toCharArray(), len);
 		}
 
-		void insertUnicode(const unicode& str) {
-			int len = str.size();
+		void insertUnicode(const UnicodeString& str) {
+			int len = str.length();
 			writeInt(len);
 
-			writeStream(str.u_str(), len * 2);
+			writeStream(str.toCharArray(), len * 2);
 		}
 
 		inline void insertStream(const char *buf, int len) {
@@ -237,26 +229,30 @@ namespace sys {
 			return len;
 		}
 
-		inline void parseAscii(string& ascii) {
+		inline void parseAscii(String& ascii) {
 			uint32 len = readShort();
 			shiftOffset(len);
 
-			ascii.clear();
-			ascii.append(offset - len, len);
+			StringBuffer str;
+			str.append(offset - len, len);
+
+			str.toString(ascii);
 		}
 
-		inline void parseAscii(int offs, string& ascii) {
+		inline void parseAscii(int offs, String& ascii) {
 			uint32 len = readShort(offs);
 
 			char* elementOffset = elementData + offs + 2;
 			if (elementOffset > end)
 				throw StreamIndexOutOfBoundsException(this, offs + 2);
 
-			ascii.clear();
-			ascii.append(elementOffset - len, len);
+			StringBuffer str;
+			str.append(elementOffset - len, len);
+
+			str.toString(ascii);
 		}
 
-		inline void parseUnicode(unicode& str) {
+		inline void parseUnicode(UnicodeString& str) {
 			uint32 len = readInt();
 			shiftOffset(len * 2);
 
@@ -264,7 +260,7 @@ namespace sys {
 			str.append((wchar_t*) (offset - len * 2), len);
 		}
 
-		inline void parseUnicode(int offs, unicode& str) {
+		inline void parseUnicode(int offs, UnicodeString& str) {
 			uint32 len = readInt(offs);
 
 			char* elementOffset = elementData + offs + 4;
@@ -283,22 +279,7 @@ namespace sys {
 			readStream(stream, len);
 		}
 
-		string toString() {
-			stringstream str;
-			str << "Packet [" << size() << "] " << uppercase << hex;
-
-			for (int i = 0; i < size(); ++i) {
-				unsigned int byte = ((unsigned int )elementData[i]) & 0xFF;
-
-				if ((byte & 0xF0) == 0)
-					str << "0" << byte  << " ";
-				else
-					str << byte  << " ";
-			}
-
-			return str.str();
-		}
-
+		String toString();
 	};
 
   } // namespace net

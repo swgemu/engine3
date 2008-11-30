@@ -34,7 +34,7 @@ public:
 class SegmentationFault : public Exception {
 public:
 	SegmentationFault() : Exception() {
-		cout << "Segmentation Fault at\n";
+		System::out << "Segmentation Fault at\n";
 		printStackTrace();
 	}
 

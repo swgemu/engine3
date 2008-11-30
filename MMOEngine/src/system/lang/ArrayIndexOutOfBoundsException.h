@@ -13,15 +13,9 @@ namespace sys {
 
 	class ArrayIndexOutOfBoundsException : public Exception {
 	public:
-		ArrayIndexOutOfBoundsException() : Exception("ArrayIndexOutOfBoundsException\n") {
-		}
-	
-		ArrayIndexOutOfBoundsException(int index) : Exception() {
-			stringstream sstr;
-			sstr << "ArrayIndexOutOfBoundsException at " << index << "\n";
-			message = sstr.str();
-		}
-		
+		ArrayIndexOutOfBoundsException();
+
+		ArrayIndexOutOfBoundsException(int index);
 	};
 
   } // namespace lang

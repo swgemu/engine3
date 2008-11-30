@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ServiceMessageHandlerThread.h"
 
-ServiceMessageHandlerThread::ServiceMessageHandlerThread(const string& s) : ServiceThread(s) {
+ServiceMessageHandlerThread::ServiceMessageHandlerThread(const String& s) : ServiceThread(s) {
 	socket = NULL;
 	clients = NULL;
 }

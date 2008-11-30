@@ -347,11 +347,11 @@ namespace sys {
 	}
 	
 	template<class K, class V> void HashTableIterator<K,V>::toConsole() {
-		while(hasNext()) {
+		while (hasNext()) {
 			while (e == NULL)
 				e = htable->table[++eIndex];
 
-			cout << e->key << " = " << e->value << "\n";
+			System::out << e->key << " = " << e->value << "\n";
 		
 			e = e->next;
 			position++;

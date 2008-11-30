@@ -1,21 +1,21 @@
 #include "File.h"
 
-File::File(const string& pathname) {
+File::File(const String& pathname) {
 	name = pathname;
-	
+
 	fileDescriptor = NULL;
-	
+
 	mode = READONLY;
 }
 
 bool File::open(int mode) {
 	if (fileDescriptor == NULL)
-		fileDescriptor = fopen(name.c_str(), getModeString(mode));
+		fileDescriptor = fopen(name.toCharArray(), getModeString(mode));
 	else
-		fileDescriptor = freopen(name.c_str(), getModeString(mode), fileDescriptor);
+		fileDescriptor = freopen(name.toCharArray(), getModeString(mode), fileDescriptor);
 
 	File::mode = mode;
-	
+
 	return fileDescriptor != NULL;
 }
 

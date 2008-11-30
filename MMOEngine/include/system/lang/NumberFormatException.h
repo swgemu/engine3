@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Exception.h"
 
+#include "StringBuffer.h"
+
 namespace sys {
   namespace lang {
 
@@ -17,15 +19,15 @@ namespace sys {
 		}
 
 		NumberFormatException(int index) : Exception() {
-			stringstream sstr;
-			sstr << "NumberFormatException at " << index << "\n";
-			message = sstr.str();
+			StringBuffer str;
+			str << "NumberFormatException at " << index << "\n";
+			message = str.toString();
 		}
 
-		NumberFormatException(int index, const string& str) : Exception() {
-			stringstream sstr;
-			sstr << "NumberFormatException at " << index << " while converting string:[ " << str << "]\n";
-			message = sstr.str();
+		NumberFormatException(int index, const String& num) : Exception() {
+			StringBuffer str;
+			str << "NumberFormatException at " << index << " while converting String:[ " << num << "]\n";
+			message = str.toString();
 		}
 
 	};

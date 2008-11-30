@@ -13,44 +13,44 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace service {
 
-	class DatagramProxyServiceMap : public HashTable<string, DatagramProxyService*>,
-			public HashTableIterator<string, DatagramProxyService*> {
-				
-		int hash(const string& key) {
-	        return String::hashCode(key);
+	class DatagramProxyServiceMap : public HashTable<String, DatagramProxyService*>,
+			public HashTableIterator<String, DatagramProxyService*> {
+
+		int hash(const String& key) {
+	        return key.hashCode();
 		}
-	
+
 	public:
-		DatagramProxyServiceMap(int initsize) : HashTable<string, DatagramProxyService*>((int) (initsize * 1.25f)), 
-				HashTableIterator<string, DatagramProxyService*>() {
+		DatagramProxyServiceMap(int initsize) : HashTable<String, DatagramProxyService*>((int) (initsize * 1.25f)),
+				HashTableIterator<String, DatagramProxyService*>() {
 			setTable(this);
 			setNullValue(NULL);
 		}
 
-		void put(const string address, int port, DatagramProxyService* value) {
-			string key = hashKey(address, port);
+		void put(const String address, int port, DatagramProxyService* value) {
+			String key = hashKey(address, port);
 
-			HashTable<string, DatagramProxyService*>::put(key, value);
+			HashTable<String, DatagramProxyService*>::put(key, value);
 		}
 
-		DatagramProxyService* get(const string address, int port) {
-			string key = hashKey(address, port);
+		DatagramProxyService* get(const String address, int port) {
+			String key = hashKey(address, port);
 
-			return HashTable<string, DatagramProxyService*>::get(key);
+			return HashTable<String, DatagramProxyService*>::get(key);
 		}
 
-		DatagramProxyService* remove(const string address, int port) {
-			string key = hashKey(address, port);
+		DatagramProxyService* remove(const String address, int port) {
+			String key = hashKey(address, port);
 
-			return HashTable<string, DatagramProxyService*>::remove(key);
+			return HashTable<String, DatagramProxyService*>::remove(key);
 		}
-		
+
 	protected:
-		string hashKey(const string address, int port) {
-			stringstream key;
+		String hashKey(const String address, int port) {
+			StringBuffer key;
 			key << address << ":" << port;
 
-			return key.str();
+			return key.toString();
 		}
 
 	};

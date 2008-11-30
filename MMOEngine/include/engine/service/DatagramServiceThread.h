@@ -13,7 +13,7 @@ namespace engine {
   	
 	class DatagramServiceThread : public ServiceMessageHandlerThread {
 	public:
-		DatagramServiceThread(const string& s);
+		DatagramServiceThread(const String& s);
 		
 		virtual ~DatagramServiceThread();
 		

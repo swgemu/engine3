@@ -22,7 +22,7 @@ public:
 
 	void unlock(bool doLock = true);
 
-	void setLockName(const string& name);
+	void setLockName(const String& name);
 
 protected:
 	ManagedObject(DummyConstructorParameter* param);
@@ -39,7 +39,7 @@ protected:
 
 	void _unlock(bool doLock);
 
-	void _setLockName(const string& name);
+	void _setLockName(const String& name);
 
 	friend class ManagedObjectHelper;
 };
@@ -62,10 +62,10 @@ public:
 
 	void unlock(bool doLock);
 
-	void setLockName(const string& name);
+	void setLockName(const String& name);
 
 protected:
-	string _param0_setLockName__string_;
+	String _param0_setLockName__String_;
 };
 
 class ManagedObjectHelper : public DistributedObjectClassHelper, public Singleton<ManagedObjectHelper> {

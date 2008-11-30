@@ -14,23 +14,25 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Exception.h"
 
+#include "../lang/StringBuffer.h"
+
 namespace sys {
   namespace net {
 
 	class SocketException : public sys::lang::Exception {
 	public:
 		SocketException() : Exception() {
-			stringstream str;
+			StringBuffer str;
 			str << "Socket Exception " << " (errno " << getErrorCode() << ")";
 
-			message = str.str();
+			message = str.toString();
 		}
 
-		SocketException(const string msg) : Exception(msg) {
-			stringstream str;
+		SocketException(const String msg) : Exception(msg) {
+			StringBuffer str;
 			str << msg << " (errno " << getErrorCode() << ")";
 
-			message = str.str();
+			message = str.toString();
 		}
 
 		int getErrorCode() {

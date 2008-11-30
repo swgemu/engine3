@@ -10,17 +10,22 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Exception.h"
 
+#include "../lang/UnicodeString.h"
+
+#include "../lang/StringBuffer.h"
+
 namespace sys {
   namespace io {
 
 	class UnicodeTokenizer {
-		unicode str;
+		UnicodeString str;
+
 		int index;
-		unicode delimeter;
+		UnicodeString delimeter;
 
 	public:
-		UnicodeTokenizer(const unicode& u);
-		UnicodeTokenizer(const string& s);
+		UnicodeTokenizer(const UnicodeString& u);
+		UnicodeTokenizer(const String& s);
 		UnicodeTokenizer(const char* ascii);
 		UnicodeTokenizer(const char* ascii, int len);
 
@@ -29,22 +34,22 @@ namespace sys {
 		uint64 getLongToken();
 		float getFloatToken();
 
-		void getStringToken(string& token);
-		void getStringToken(stringstream& token);
-		void getUnicodeToken(unicode& token);
+		void getStringToken(String& token);
+		void getStringToken(StringBuffer& token);
+		void getUnicodeToken(UnicodeString& token);
 
-		void finalToken(string& s);
-		void finalToken(unicode& u);
+		void finalToken(String& s);
+		void finalToken(UnicodeString& u);
 
 		void shiftTokens(int count);
 
 		bool hasMoreTokens() const;
 
-		inline void setDelimeter(const string& del) {
+		inline void setDelimeter(const String& del) {
 			delimeter = del;
 		}
 
-		inline void setDelimiter(const unicode& del) {
+		inline void setDelimiter(const UnicodeString& del) {
 			delimeter = del;
 		}
 
@@ -52,7 +57,7 @@ namespace sys {
 			delimeter = ascii;
 		}
 	private:
-		void nextToken(unicode& s);
+		void nextToken(UnicodeString& s);
 
 	};
 

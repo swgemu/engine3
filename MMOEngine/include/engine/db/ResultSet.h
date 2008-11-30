@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "system/lang/Long.h"
+
 namespace engine {
   namespace db {
 
@@ -48,11 +50,11 @@ namespace engine {
 		}
 
 		sys::int64 getLong(int index) {
-			return String::toUnsignedLong(row[index]);
+			return Long::valueOf(row[index]);
 		}
 
 		sys::uint64 getUnsignedLong(int index) {
-			return String::toUnsignedLong(row[index]);
+			return Long::unsignedvalueOf(row[index]);
 		}
 
 		float getFloat(int index) {

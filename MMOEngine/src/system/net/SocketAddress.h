@@ -17,41 +17,41 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <winsock2.h>
 #endif
 
-using namespace std;
+#include "../lang/String.h"
 
 namespace sys {
   namespace net {
 
 	class SocketAddress {
 		struct sockaddr_in addr;
-	
+
 	public:
 		SocketAddress();
 		SocketAddress(int port);
-		SocketAddress(const string& host, int port);
-	
+		SocketAddress(const String& host, int port);
+
 		void clear();
-	
+
 		int compareTo(SocketAddress* addr);
-	
+
 		struct sockaddr* getAddress();
-		
-	    string getIPAddress();
-	
+
+	    String getIPAddress();
+
 	    uint16 getPort();
-	    
-	    string getFullIPAddress();
-	
-	    string getFullPrintableIPAddress();
-	
+
+	    String getFullIPAddress();
+
+	    String getFullPrintableIPAddress();
+
 		uint64 getNetworkID();
-	
+
 		uint32 getIPID();
-	    
+
 		inline int getAddressSize() {
 			return sizeof(addr);
 		}
-		
+
 	};
 
   } // namespace net

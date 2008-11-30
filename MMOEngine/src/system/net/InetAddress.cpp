@@ -5,6 +5,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "InetAddress.h"
 
-InetAddress::InetAddress(const string& address) {
+InetAddress::InetAddress(const String& address) {
 	ipaddress = address;
 }

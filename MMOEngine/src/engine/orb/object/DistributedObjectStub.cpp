@@ -53,7 +53,7 @@ void DistributedObjectStub::deploy(const char* name) {
 	deployed = true;
 }
 
-void DistributedObjectStub::deploy(const string& name) {
+void DistributedObjectStub::deploy(const String& name) {
 	if (_impl == NULL)
 		throw Exception("unable to deploy object");
 	
@@ -62,11 +62,11 @@ void DistributedObjectStub::deploy(const string& name) {
 	deployed = true;
 }
 
-void DistributedObjectStub::deploy(const string& name, uint64 nid) {
-	stringstream nameid;
+void DistributedObjectStub::deploy(const String& name, uint64 nid) {
+	StringBuffer nameid;
 	nameid << name << nid;
 	
-	deploy(nameid.str());
+	deploy(nameid.toString());
 }
 
 bool DistributedObjectStub::undeploy() {
@@ -89,11 +89,11 @@ bool DistributedObjectStub::undeploy() {
 void DistributedObjectStub::finalize() {
 	#ifdef TRACE_REFERENCING
 		if (finalizedTrace != NULL) {
-			cout << "ERROR - object already finalized at\n";
+			System::out << "ERROR - object already finalized at\n";
 		
 			StackTrace::printStackTrace();
 		
-			cout << "finalized by\n";
+			System::out << "finalized by\n";
 		
 			finalizedTrace->print();
 	
@@ -113,7 +113,7 @@ void DistributedObjectStub::acquire() {
 		
 	Object::acquire();
 		
-	/*stringstream msg;
+	/*StringBuffer msg;
 	msg << "[" << _getName() << "] acquired (" << getReferenceCount() << ")";
 	Logger::console.info(msg);*/
 }
@@ -129,7 +129,7 @@ void DistributedObjectStub::release() {
 		}
 	#endif
 
-	/*stringstream msg;
+	/*StringBuffer msg;
 	msg << "[" << _getName() << "] released (" << getReferenceCount() - 1 << ")";
 	Logger::console.info(msg);*/
 
@@ -137,7 +137,7 @@ void DistributedObjectStub::release() {
 }
 	
 void DistributedObjectStub::printReferenceTrace() {
-	cout << "ERROR - reference count getting under zero\n";
+	System::out << "ERROR - reference count getting under zero\n";
 
 	#ifdef TRACE_REFERENCING
 		for (int i = 0; i < traces.size(); ++i) {
@@ -146,7 +146,7 @@ void DistributedObjectStub::printReferenceTrace() {
 			Logger::console.info("--------------------------------------------------------------------------", true);
 		
 			trace->print();
-			/*string traceoutput;
+			/*String traceoutput;
 			trace->getStackTrace(traceoutput);
 		
 			Logger::console.info(traceoutput, true);*/

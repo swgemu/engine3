@@ -23,7 +23,7 @@ namespace engine {
 	public:
 		ServiceClient(Socket* sock);
 		ServiceClient(Socket* sock, SocketAddress& addr);
-		ServiceClient(const string& host, int port);
+		ServiceClient(const String& host, int port);
 
 		virtual ~ServiceClient();
 
@@ -42,7 +42,7 @@ namespace engine {
 		virtual void release();
 
 		// setters
-		inline void setAddress(const string& host, int port) {
+		inline void setAddress(const String& host, int port) {
 			addr = SocketAddress(host, port);
 		}
 

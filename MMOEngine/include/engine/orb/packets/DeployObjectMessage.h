@@ -13,13 +13,13 @@ namespace engine {
 
 	class DeployObjectMessage : public Packet {
 	public:	
-		DeployObjectMessage(const string& name, const string& classname) : Packet(40) {
+		DeployObjectMessage(const String& name, const String& classname) : Packet(40) {
 			insertInt(0x03);
 			insertAscii(name);
 			insertAscii(classname);
 		}
 	
-		static void parseObjectName(Packet* pack, string& name) {
+		static void parseObjectName(Packet* pack, String& name) {
 			pack->parseAscii(name);
 		}
 	};

@@ -15,7 +15,7 @@ class StreamProxyServiceClient : public StreamServiceClient, public Logger
 	class StreamProxyClient* proxyClient;
 
 public:
-	StreamProxyServiceClient(StreamProxyService* serv, string& host, int port);
+	StreamProxyServiceClient(StreamProxyService* serv, String& host, int port);
 
 	virtual ~StreamProxyServiceClient() {
 	}

@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "StreamServiceThread.h"
 
-StreamServiceThread::StreamServiceThread(const string& s) : ServiceMessageHandlerThread(s) {
+StreamServiceThread::StreamServiceThread(const String& s) : ServiceMessageHandlerThread(s) {
 	setLogging(false);
 }
 
@@ -28,7 +28,7 @@ void StreamServiceThread::start(int p, int mconn) {
 	} catch (SocketException& e) {
 		socket = NULL;
 
-		stringstream msg;
+		StringBuffer msg;
 		msg << "unable to connect to socket on port " << port;
 		error(msg);
 
@@ -39,7 +39,7 @@ void StreamServiceThread::start(int p, int mconn) {
 
 	ServiceThread::start();
 
-	stringstream msg;
+	StringBuffer msg;
 	msg << "started on port " << port;
 	info(msg, true); 
 }

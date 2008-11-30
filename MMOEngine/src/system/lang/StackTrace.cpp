@@ -41,33 +41,33 @@ StackTrace::~StackTrace() {
 void StackTrace::print() {
 	#ifdef PLATFORM_UNIX
 		#ifdef LINE_TRACING
-			stringstream command;
+			StringBuffer command;
 			command << "/usr/bin/addr2line -e core3";
 		#endif
 		for (int i = 0; i < count; ++i) {
 			#ifdef LINE_TRACING
 				command << " " << hex << symbols[i];
 			#else
-				cout << symbols[i] << endl;
+				System::out << symbols[i] << endl;
 			#endif
 		}
 		#ifdef LINE_TRACING
-			system(command.str().c_str());
+			system(command.toString().c_str());
 		#endif
 	#elif defined PLATFORM_CYGWIN
 		cygwin_stackdump();
 	#endif
 }
 
-void StackTrace::getStackTrace(string& trace) {
-	stringstream out;
+void StackTrace::getStackTrace(String& trace) {
+	StringBuffer out;
 
 	#ifdef PLATFORM_UNIX
 		for (int i = 0; i < count; i++) {
 		}
 	#endif
 
-	trace = out.str();
+	trace = out.toString();
 }
 
 void StackTrace::printStackTrace() {

@@ -12,22 +12,22 @@ SocketAddress::SocketAddress() {
 }
 
 SocketAddress::SocketAddress(int port) {
-	addr.sin_family = AF_INET;	
+	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(port);
 }
 
-SocketAddress::SocketAddress(const string& host, int port) {
+SocketAddress::SocketAddress(const String& host, int port) {
 #ifndef PLATFORM_WIN
-	struct hostent *hp = gethostbyname(host.c_str());
-	
+	struct hostent *hp = gethostbyname(host.toCharArray());
+
 	if (hp == 0)
 		throw SocketException("unknown host " + host);
 
 	bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);
 #else
-	HOSTENT *hp = gethostbyname(host.c_str());
-	
+	HOSTENT *hp = gethostbyname(host.toCharArray());
+
 	if (hp == NULL)
 		throw SocketException("unknown host " + host);
 
@@ -57,33 +57,33 @@ int SocketAddress::compareTo(SocketAddress* socka) {
 			return -1;
 		else
 			return 0;
-	} 
+	}
 }
 
 struct sockaddr* SocketAddress::getAddress() {
 	return (struct sockaddr*) &addr;
-} 	
-	
-string SocketAddress::getIPAddress() {
-	return string(inet_ntoa(addr.sin_addr));
+}
+
+String SocketAddress::getIPAddress() {
+	return String(inet_ntoa(addr.sin_addr));
 }
 
 uint16 SocketAddress::getPort() {
 	return htons(addr.sin_port);
 }
-    
-string SocketAddress::getFullIPAddress() {
-	stringstream ip;
+
+String SocketAddress::getFullIPAddress() {
+	StringBuffer ip;
 	ip << inet_ntoa(addr.sin_addr) << ":" << htons(addr.sin_port);
-        
-	return ip.str();
+
+	return ip.toString();
 }
 
-string SocketAddress::getFullPrintableIPAddress() {
-	stringstream ip;
+String SocketAddress::getFullPrintableIPAddress() {
+	StringBuffer ip;
 	ip << inet_ntoa(addr.sin_addr) << "_" << htons(addr.sin_port);
-        
-	return ip.str();
+
+	return ip.toString();
 }
 
 uint64 SocketAddress::getNetworkID() {

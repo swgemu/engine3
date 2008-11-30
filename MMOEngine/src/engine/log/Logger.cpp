@@ -5,21 +5,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Logger.h"
 
-ofstream* Logger::globallogfile = NULL;
+FileWriter* Logger::globalLogFile = NULL;
 
 Time Logger::starttime;
 
 Logger Logger::console("Console");
 
 Logger::Logger() {
-	logfile = NULL;
+	logFile = NULL;
 
 	doLog = true;
 	doGlobalLog = true;
 }
 
 Logger::Logger(const char *s) {
-	logfile = NULL;
+	logFile = NULL;
 
 	name = s;
 
@@ -27,8 +27,8 @@ Logger::Logger(const char *s) {
 	doGlobalLog = true;
 }
 
-Logger::Logger(const string& s) {
-	logfile = NULL;
+Logger::Logger(const String& s) {
+	logFile = NULL;
 
 	name = s;
 
@@ -37,150 +37,141 @@ Logger::Logger(const string& s) {
 }
 
 Logger::~Logger() {
-	if (logfile != NULL) {
+	if (logFile != NULL) {
 		closeFileLogger();
-		delete logfile;
+		delete logFile;
 	}
 }
 
 void Logger::setGlobalFileLogger(const char* file) {
-	globallogfile = new ofstream();
-	globallogfile->open(file);
-		
+	globalLogFile = new FileWriter(new File(file));
+
 	starttime.update();
 }
 
-void Logger::setGlobalFileLogger(const string& file) {
-	if (globallogfile != NULL)
+void Logger::setGlobalFileLogger(const String& file) {
+	if (globalLogFile != NULL)
 		closeGlobalFileLogger();
-	
-	globallogfile = new ofstream();
-	globallogfile->open(file.c_str());
+
+	globalLogFile = new FileWriter(new File(file));
 
 	starttime.update();
 }
 
 void Logger::setFileLogger(const char* file) {
-	if (logfile != NULL)
+	if (logFile != NULL)
 		closeFileLogger();
-	
-	logfile = new ofstream();
-	logfile->open(file);
+
+	logFile = new FileWriter(new File(file));
 }
 
-void Logger::setFileLogger(const string& file) {
-	logfile = new ofstream();
-	logfile->open(file.c_str());
+void Logger::setFileLogger(const String& file) {
+	logFile = new FileWriter(new File(file));
 }
 
 void Logger::closeGlobalFileLogger() {
-	if (globallogfile != NULL) {
-		globallogfile->close();
+	if (globalLogFile != NULL) {
+		globalLogFile->close();
 
-		delete globallogfile;
-		globallogfile = NULL;
+		delete globalLogFile;
+		globalLogFile = NULL;
 	}
 }
 
 void Logger::closeFileLogger() {
-	if (logfile != NULL) {
-		logfile->close();
+	if (logFile != NULL) {
+		logFile->close();
 
-		delete logfile;
-		logfile = NULL;
+		delete logFile;
+		logFile = NULL;
 	}
 }
 
 void Logger::info(const char *msg, bool forcedLog) {
 	if (doLog || forcedLog) {
 		printTime(false);
-		cout << " [" << name << "] " << msg << "\n";
+		System::out << " [" << name << "] " << msg << "\n";
 	}
-			
+
 	log(msg);
 }
 
-void Logger::info(const string& msg, bool forcedLog) {
-	info(msg.c_str(), forcedLog);
+void Logger::info(const String& msg, bool forcedLog) {
+	info(msg.toCharArray(), forcedLog);
 }
 
-void Logger::info(const stringstream& msg, bool forcedLog) {
-	string s = msg.str();
+void Logger::info(const StringBuffer& msg, bool forcedLog) {
+	String s = msg.toString();
 	info(s, forcedLog);
 }
 
 void Logger::log(const char *msg) {
-	if (doLog && logfile != NULL) {
-		string time;
-		getTime(time);
-		
-		(*logfile) << time; 
-		(*logfile) << " [";
-		(*logfile) << name; 
-		(*logfile) << "] "; 
-		(*logfile) << msg; 
-		(*logfile) << "\n";
-		
-		logfile->flush();
-	} else if (doGlobalLog && globallogfile != NULL) {
-		string time;
+	if (doLog && logFile != NULL) {
+		String time;
 		getTime(time);
 
-		(*globallogfile) << time << " [" << name << "] " << msg << "\n";
-		
-		globallogfile->flush();
-	} 
+		(*logFile) << time << " [" << name << "] " << msg << "\n";
+
+		logFile->flush();
+	} else if (doGlobalLog && globalLogFile != NULL) {
+		String time;
+		getTime(time);
+
+		(*globalLogFile) << time << " [" << name << "] " << msg << "\n";
+
+		globalLogFile->flush();
+	}
 }
 
-void Logger::log(const string& msg) {
-	log(msg.c_str());
+void Logger::log(const String& msg) {
+	log(msg.toCharArray());
 }
 
-void Logger::log(const stringstream& msg) {
-	log(msg.str().c_str());
+void Logger::log(const StringBuffer& msg) {
+	log(msg.toString().toCharArray());
 }
 
 void Logger::error(const char* msg) {
 	printTime(false);
-	
-	cout << " [" << name << "] ERROR - " << msg << "\n";
+
+	System::out << " [" << name << "] ERROR - " << msg << "\n";
 
 	log(msg);
 }
 
-void Logger::error(const string& msg) {
-	error(msg.c_str());
+void Logger::error(const String& msg) {
+	error(msg.toCharArray());
 }
 
-void Logger::error(const stringstream& msg) {
-	string s = msg.str();
+void Logger::error(const StringBuffer& msg) {
+	String s = msg.toString();
 	error(s);
-}	
+}
 
-void Logger::getTime(string& times, bool getFull) {
+void Logger::getTime(String& times, bool getFull) {
 	Time time;
-	stringstream str;
-		
+	StringBuffer str;
+
 	uint64 elapsed = Logger::starttime.miliDifference(time);
-	
+
 	if (getFull)
 		str << time.getMiliTime() << " msec ";
-			
+
 	str << "(" << (elapsed / 1000) << " s)";
 
-	times = str.str();
+	times = str.toString();
 }
 
 void Logger::printTime(bool getFull) {
 	Time time;
-	stringstream str;
-		
+	StringBuffer str;
+
 	uint64 elapsed = Logger::starttime.miliDifference(time);
-	
+
 	if (getFull)
-		cout << time.getMiliTime() << " msec ";
-			
-	cout << "(" << (elapsed / 1000) << " s)";
+		System::out << time.getMiliTime() << " msec ";
+
+	System::out << "(" << (elapsed / 1000) << " s)";
 }
 
 uint64 Logger::getElapsedTime() {
