@@ -109,7 +109,7 @@ namespace sys {
 			writeStream(ascii, len);
 		}
 
-		void insertAscii(char *ascii, int len) {
+		void insertAscii(const char *ascii, int len) {
 			writeShort(len);
 			writeStream(ascii, len);
 		}

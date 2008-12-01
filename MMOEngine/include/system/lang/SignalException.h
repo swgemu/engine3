@@ -9,6 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef __CYGWIN__
 
 #include "Exception.h"
+
 #include "System.h"
 
 #include <signal.h>

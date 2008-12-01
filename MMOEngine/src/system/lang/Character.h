@@ -13,7 +13,7 @@ namespace sys {
 		}
 
 		static inline bool isLetter(char ch) {
-			return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z';
+			return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 		}
 
 		static inline bool isLetterOrDigit(char ch) {
