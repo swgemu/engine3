@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "StringBuffer.h"
 
 #include "ArrayIndexOutOfBoundsException.h"
+#include "IllegalArgumentException.h"
 #include "NumberFormatException.h"
 
 static const unsigned int crctable[256] = {
@@ -70,14 +71,23 @@ String::String() {
 }
 
 String::String(char* str) {
+	if (str == NULL)
+		throw IllegalArgumentException();
+
 	create(str, strlen(str));
 }
 
 String::String(const char* str) {
+	if (str == NULL)
+		throw IllegalArgumentException();
+
 	create(str, strlen(str));
 }
 
 String::String(const char* str, int len) {
+	if (str == NULL)
+		throw IllegalArgumentException();
+
 	create(str, len);
 }
 
