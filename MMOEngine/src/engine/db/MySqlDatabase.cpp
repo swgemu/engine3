@@ -130,8 +130,10 @@ void MySqlDatabase::escapeString(String& s) {
 
 	StringBuffer buf;
 
-	for (int i = 0; i < s.length(); i++) {
-		switch (s[i]) {
+	for (int i = 0; i < s.length(); ++i) {
+		char ch = s.charAt(i);
+
+		switch (ch) {
 		case '\0': // Must be escaped for "mysql"
 			buf << "\\0";
 			break;
@@ -154,10 +156,9 @@ void MySqlDatabase::escapeString(String& s) {
 			buf << "\\Z";
 			break;*/
 		default:
-			continue;
+			buf << ch;
+			break;
 		}
-
-		++i;
 	}
 
 	s = buf.toString();

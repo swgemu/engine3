@@ -129,11 +129,11 @@
 </buildTargets>
 </storageModule>
 <storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
 <pathentry kind="out" path=""/>
 <pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
 <pathentry kind="src" path=""/>
-<pathentry kind="lib" library="/home/oru/workspace/MMOEngine/lib/unix/libengine3.a" path=""/>
 </storageModule>
 </cconfiguration>
 </storageModule>
