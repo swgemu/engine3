@@ -186,18 +186,18 @@ int String::lastIndexOf(char ch, int fromIndex) const {
 		return -1;
 }
 
-/*int String::lastIndexOf(const String& str) const {
+int String::lastIndexOf(const String& str) const {
 	return lastIndexOf(str, 0);
 }
 
 int String::lastIndexOf(const String& str, int fromIndex) const {
-	char* position = strstr(value + fromIndex, str);
+	/*char* position = strstr(value + fromIndex, count - fromIndex, str, str.count);
 
 	if (position != NULL)
 		return position - value;
-	else
+	else*/
 		return -1;
-}*/
+}
 
 uint32 String::hashCode() const {
 	uint32 CRC = 0xFFFFFFFF;
@@ -448,4 +448,17 @@ String operator+(const char* str1, const String& str2) {
 
 String operator+(const String& str1, const char* str2) {
 	return str1.concat(str2);
+}
+
+char* String::strrstr(const char* s, int slen, const char* t, int tlen) {
+	int i, j;
+
+	for (i = slen; i >= tlen; i--) {
+		for (j = 0; j < tlen && s[i - tlen + j] == t[j]; j++);
+
+		if (j == tlen)
+			return (char *) (s + i - tlen);
+	}
+
+	return NULL;
 }

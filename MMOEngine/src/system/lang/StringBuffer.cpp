@@ -36,7 +36,9 @@ StringBuffer& StringBuffer::append(int val) {
 }
 
 StringBuffer& StringBuffer::append(uint32 val) {
-	return append((int) val);
+	String str = String::valueOf(val);
+
+	return append(str);
 }
 
 StringBuffer& StringBuffer::append(long val) {

@@ -40,8 +40,8 @@ namespace sys {
 
 		int lastIndexOf(char ch) const ;
 		int lastIndexOf(char ch, int fromIndex) const ;
-		/*int lastIndexOf(const String& str) const ;
-		int lastIndexOf(const String& str, int fromIndex) const ;*/
+		int lastIndexOf(const String& str) const ;
+		int lastIndexOf(const String& str, int fromIndex) const ;
 
 		uint32 hashCode() const;
 
@@ -122,6 +122,8 @@ namespace sys {
 		void create(const char* str, int len);
 
 		void destroy();
+
+		char* strrstr(const char* s, int slen, const char* t, int tlen);
 
 	public:
 		// getters
