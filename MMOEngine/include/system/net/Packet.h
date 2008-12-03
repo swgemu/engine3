@@ -125,7 +125,7 @@ namespace sys {
 			int len = str.length();
 			writeInt(len);
 
-			writeStream(str.toCharArray(), len * 2);
+			writeStream((char*)str.toWideCharArray(), len * 2);
 		}
 
 		inline void insertStream(const char *buf, int len) {

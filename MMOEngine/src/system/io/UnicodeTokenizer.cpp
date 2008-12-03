@@ -57,7 +57,7 @@ int UnicodeTokenizer::getIntToken() {
 	UnicodeString token;
 	nextToken(token);
 
-	return Integer::valueOf(token.toCharArray());
+	return Integer::valueOf(token.toString());
 }
 
 uint32 UnicodeTokenizer::getHexIntToken() {
@@ -71,7 +71,7 @@ float UnicodeTokenizer::getFloatToken() {
 	UnicodeString token;
 	nextToken(token);
 
-	return (float) atof(token.toCharArray());
+	return (float) atof(token.toString());
 }
 
 uint64 UnicodeTokenizer::getLongToken() {

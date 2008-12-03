@@ -131,7 +131,7 @@ void UnicodeString::append(const String& ascii) {
 }
 
 void UnicodeString::append(const UnicodeString& uni) {
-	append((wchar_t*) uni.toCharArray(), uni.length());
+	append((wchar_t*) uni.toWideCharArray(), uni.length());
 }
 
 void UnicodeString::append(const char* ascii) {
@@ -196,7 +196,7 @@ int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
 		return -1;
 
 	for (int i = startPos; i <= count - str.length(); ++i) {
-		if (!memcmp(uString + i, str.toCharArray(), str.length() * sizeof(wchar_t)))
+		if (!memcmp(uString + i, str.toWideCharArray(), str.length() * sizeof(wchar_t)))
 			return i;
 	}
 
@@ -227,8 +227,8 @@ void UnicodeString::clear() {
 	create("", 0);
 }
 
-const char* UnicodeString::toCharArray() const {
-	return (char*) uString;
+const wchar_t* UnicodeString::toWideCharArray() const {
+	return uString;
 }
 
 String UnicodeString::toString() const {

@@ -54,7 +54,7 @@ namespace sys {
 		UnicodeString subString(int beg, int end) const;
 		UnicodeString substr(int beg, int length) const;
 
-		const char* toCharArray() const;
+		const wchar_t* toWideCharArray() const;
 
 		String toString() const;
 		void toString(String& ascii) const;
