@@ -61,7 +61,7 @@ public:
 		add(obj, root);
 	}
 
-	const bool contains(const O& obj) const {
+	bool contains(const O& obj) const {
 		return elementAt(find(obj, root));
 	}
 
@@ -94,7 +94,7 @@ public:
 		return root == NULL;
 	}
 
-	int size() {
+	int size() const {
 		return 0;
 	}
 

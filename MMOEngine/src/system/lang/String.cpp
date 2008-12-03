@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "String.h"
 #include "StringBuffer.h"
 
+#include "Long.h"
+
 #include "ArrayIndexOutOfBoundsException.h"
 #include "IllegalArgumentException.h"
 #include "NumberFormatException.h"
@@ -191,7 +193,7 @@ int String::lastIndexOf(const String& str) const {
 }
 
 int String::lastIndexOf(const String& str, int fromIndex) const {
-	/*char* position = strstr(value + fromIndex, count - fromIndex, str, str.count);
+	/*char* position = strrstr(value + fromIndex, count - fromIndex, str.value, str.count);
 
 	if (position != NULL)
 		return position - value;
@@ -246,19 +248,19 @@ String String::valueOf(uint32 val) {
 }
 
 String String::valueOf(int64 val) {
-	char buf[20];
+	String str;
 
-	sprintf(buf, "%ld", (long) val);
+	Long::toString(str, val);
 
-	return String(buf);
+	return str;
 }
 
 String String::valueOf(uint64 val) {
-	char buf[20];
+	String str;
 
-	sprintf(buf, "%lu", (unsigned long) val);
+	Long::toString(str, val);
 
-	return String(buf);
+	return str;
 }
 
 String String::valueOf(float val) {

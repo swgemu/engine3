@@ -51,15 +51,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <time.h>
 
-#include <stdlib.h>
-#include <math.h>
-
-#include <iostream>
-#include <fstream>
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include <cmath>
+
+#include <memory>
 
 #ifdef PLATFORM_SOLARIS
 #include <Strings.h>
@@ -90,8 +88,8 @@ namespace sys {
 	//#define LINE_TRACING
 	//#define TRACE_REFERENCESLOTS
 
-	/*#define VERSION_PUBLIC
-	#define CONNECTION_LIMIT 20*/
+	#define VERSION_PUBLIC
+	#define CONNECTION_LIMIT 20
 
 	namespace lang {
 	} // namespace net

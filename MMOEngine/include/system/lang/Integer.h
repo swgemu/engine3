@@ -10,6 +10,14 @@ namespace sys {
 
 	class Integer {
 	public:
+		static int valueOf(char ch) {
+			int digit = ch - '0';
+			if (digit < 0 || digit > 9)
+				throw NumberFormatException();
+
+			return digit;
+		}
+
 		static int valueOf(const char* str) {
 			return atoi(str);
 		}

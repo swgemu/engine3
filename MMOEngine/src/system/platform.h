@@ -51,15 +51,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <time.h>
 
-#include <stdlib.h>
-#include <math.h>
-
-#include <iostream>
-#include <fstream>
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include <cmath>
+
+#include <memory>
 
 #ifdef PLATFORM_SOLARIS
 #include <Strings.h>
