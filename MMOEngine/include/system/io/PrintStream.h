@@ -22,6 +22,7 @@ namespace sys {
 		void print(int64 val);
 		void print(uint64 val);
 		void print(float val);
+		void print(void* val);
 		void print(const char* str);
 		void print(const String& str);
 
@@ -32,6 +33,7 @@ namespace sys {
 		void println(int64 val);
 		void println(uint64 val);
 		void println(float val);
+		void println(void* val);
 		void println(const char* str);
 		void println(const String& str);
 
@@ -42,6 +44,7 @@ namespace sys {
 		PrintStream& operator<< (int64 val);
 		PrintStream& operator<< (uint64 val);
 		PrintStream& operator<< (float val);
+		PrintStream& operator<< (void* val);
 		PrintStream& operator<< (const char* str);
 		PrintStream& operator<< (const String& str);
 		PrintStream& operator<< (const StreamFlags flags);

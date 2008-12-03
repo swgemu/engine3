@@ -49,6 +49,10 @@ void PrintStream::print(float val) {
 	printf("%f", val);
 }
 
+void PrintStream::print(void* val) {
+	printf("%p", val);
+}
+
 void PrintStream::print(const char* str) {
 	printf("%s", str);
 }
@@ -84,20 +88,24 @@ void PrintStream::println(long val) {
 
 void PrintStream::println(int64 val) {
 	if (doHex())
-		printf("%ldh", (long) val);
+		printf("%lldh", val);
 	else
-		printf("%ld", (long) val);
+		printf("%lld", val);
 }
 
 void PrintStream::println(uint64 val) {
 	if (doHex())
-		printf("%luh\n", (unsigned long) val);
+		printf("%lluh\n", val);
 	else
-		printf("%lu\n", (unsigned long) val);
+		printf("%llu\n", val);
 }
 
 void PrintStream::println(float val) {
 	printf("%f\n", val);
+}
+
+void PrintStream::println(void* val) {
+	printf("%p\n", val);
 }
 
 void PrintStream::println(const char* str) {
@@ -145,6 +153,12 @@ PrintStream& PrintStream::operator<<(uint64 val) {
 }
 
 PrintStream& PrintStream::operator<<(float val) {
+	print(val);
+
+	return *this;
+}
+
+PrintStream& PrintStream::operator<<(void* val) {
 	print(val);
 
 	return *this;
