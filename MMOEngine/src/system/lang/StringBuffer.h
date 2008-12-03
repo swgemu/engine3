@@ -40,6 +40,7 @@ namespace sys {
 		StringBuffer& append(uint64 val);
 		StringBuffer& append(float val);
 		StringBuffer& append(double val);
+		StringBuffer& append(void* val);
 		StringBuffer& append(const char* str);
 		StringBuffer& append(const char* str, int len);
 		StringBuffer& append(const String& str);
@@ -61,6 +62,7 @@ namespace sys {
 		StringBuffer& insert(int offset, uint64 val);
 		StringBuffer& insert(int offset, float val);
 		StringBuffer& insert(int offset, double val);
+		StringBuffer& insert(int offset, void* val);
 		StringBuffer& insert(int offset, const char* str);
 		StringBuffer& insert(int offset, const char* str, int len);
 		StringBuffer& insert(int offset, const String& str);
@@ -93,6 +95,7 @@ namespace sys {
 		StringBuffer& operator<< (uint64 val);
 		StringBuffer& operator<< (float val);
 		StringBuffer& operator<< (double val);
+		StringBuffer& operator<< (void* val);
 		StringBuffer& operator<< (const char* str);
 		StringBuffer& operator<< (const String& str);
 		StringBuffer& operator<< (const StreamFlags flags);

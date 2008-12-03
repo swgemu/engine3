@@ -54,7 +54,7 @@ void StackTrace::print() {
 			#endif
 		}
 		#ifdef LINE_TRACING
-			system(command.toString().c_str());
+			system(command.toString().toCharArray());
 		#endif
 	#elif defined PLATFORM_CYGWIN
 		cygwin_stackdump();

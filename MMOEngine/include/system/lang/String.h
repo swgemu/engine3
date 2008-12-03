@@ -54,6 +54,7 @@ namespace sys {
 		static String valueOf(uint64 val);
 		static String valueOf(float val);
 		static String valueOf(double val);
+		static String valueOf(void* val);
 
 		static String hexvalueOf(int val) ;
 

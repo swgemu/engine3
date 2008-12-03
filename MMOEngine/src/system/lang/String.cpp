@@ -279,6 +279,14 @@ String String::valueOf(double val) {
 	return String(buf);
 }
 
+String String::valueOf(void* val) {
+	char buf[20];
+
+	sprintf(buf, "%p", val);
+
+	return String(buf);
+}
+
 String String::hexvalueOf(int val) {
 	char buf[20];
 

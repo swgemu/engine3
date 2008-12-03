@@ -69,6 +69,12 @@ StringBuffer& StringBuffer::append(double val) {
 	return append(str);
 }
 
+StringBuffer& StringBuffer::append(void* val) {
+	String str = String::valueOf(val);
+
+	return append(str);
+}
+
 StringBuffer& StringBuffer::append(const char* str) {
 	int len = strlen(str);
 
@@ -172,6 +178,12 @@ StringBuffer& StringBuffer::insert(int offset, double val) {
 	return insert(offset, str);
 }
 
+StringBuffer& StringBuffer::insert(int offset, void* val) {
+	String str = String::valueOf(val);
+
+	return insert(offset, str);
+}
+
 StringBuffer& StringBuffer::insert(int offset, const char* str) {
 	int len = strlen(str);
 
@@ -242,6 +254,10 @@ StringBuffer& StringBuffer::operator<< (float val) {
 }
 
 StringBuffer& StringBuffer::operator<< (double val) {
+	return append(val);
+}
+
+StringBuffer& StringBuffer::operator<< (void* val) {
 	return append(val);
 }
 
