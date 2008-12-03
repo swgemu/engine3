@@ -33,16 +33,16 @@ void PrintStream::print(long val) {
 
 void PrintStream::print(int64 val) {
 	if (doHex())
-		printf("%ldh", (long) val);
+		printf("%lldh", val);
 	else
-		printf("%ld", (long) val);
+		printf("%lld", val);
 }
 
 void PrintStream::print(uint64 val) {
 	if (doHex())
-		printf("%luh", (unsigned long) val);
+		printf("%lluh", val);
 	else
-		printf("%lu", (unsigned long) val);
+		printf("%llu", val);
 }
 
 void PrintStream::print(float val) {
