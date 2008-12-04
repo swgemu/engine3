@@ -68,8 +68,7 @@ static const unsigned int crctable[256] = {
 };
 
 String::String() {
-	value = NULL;
-	count = 0;
+	create("", 0);
 }
 
 String::String(char* str) {
@@ -114,6 +113,8 @@ void String::destroy() {
 	if (value != NULL) {
 		free(value);
 		value = NULL;
+
+		count = 0;
 	}
 }
 
