@@ -177,7 +177,17 @@ PrintStream& PrintStream::operator<<(const String& str) {
 }
 
 PrintStream& PrintStream::operator<< (const StreamFlags flags) {
-	streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);
+	switch (flags) {
+	case dec:
+		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) hex);
+		break;
+	case endl:
+		println("");
+		break;
+	default:
+		streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);
+		break;
+	}
 
 	return *this;
 }

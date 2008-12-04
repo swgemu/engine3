@@ -173,6 +173,7 @@ target_alias =
 target_cpu = i686
 target_os = cygwin
 target_vendor = pc
+top_build_prefix = 
 top_builddir = .
 top_srcdir = ../..
 SUBDIRS = src
