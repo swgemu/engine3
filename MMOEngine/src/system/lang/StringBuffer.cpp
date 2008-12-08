@@ -36,7 +36,12 @@ StringBuffer& StringBuffer::append(int val) {
 }
 
 StringBuffer& StringBuffer::append(uint32 val) {
-	String str = String::valueOf(val);
+	String str;
+
+	if (!doHex())
+		str = String::valueOf(val);
+	else
+		str = String::hexvalueOf((int)val);
 
 	return append(str);
 }

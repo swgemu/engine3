@@ -103,7 +103,7 @@ String::~String() {
 void String::create(const char* str, int len) {
 	value = (char*) malloc(len + 1);
 
-	strncpy(value, str, len);
+	memcpy(value, str, len);
 	value[len] = 0;
 
 	count = len;
@@ -128,9 +128,9 @@ String String::concat(const char* str, int len) const {
 	String newstr;
 	newstr.value = (char*) malloc(newlen + 1);
 
-	strncpy(newstr.value, value, count);
+	memcpy(newstr.value, value, count);
 
-	strncpy(newstr.value + count, str, len);
+	memcpy(newstr.value + count, str, len);
 	newstr.value[newlen] = 0;
 
 	newstr.count = newlen;
@@ -405,7 +405,7 @@ String& String::operator+=(const char* str) {
 
 	value = (char*) realloc(value, newlen + 1);
 
-	strncpy(value + count, str, len);
+	memcpy(value + count, str, len);
 	value[newlen] = 0;
 
 	count = newlen;
@@ -418,7 +418,7 @@ String& String::operator+=(const String& str) {
 
 	value = (char*) realloc(value, newlen + 1);
 
-	strncpy(value + count, str, str.count);
+	memcpy(value + count, str, str.count);
 	value[newlen] = 0;
 
 	count = newlen;

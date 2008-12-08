@@ -83,9 +83,9 @@ String Packet::toString() {
 		unsigned int byte = ((unsigned int) elementData[i]) & 0xFF;
 
 		if ((byte & 0xF0) == 0)
-			str << "0" << byte  << " ";
+			str << "0" << hex << byte  << " ";
 		else
-			str << byte  << " ";
+			str << hex << byte  << " ";
 	}
 
 	return str.toString();
