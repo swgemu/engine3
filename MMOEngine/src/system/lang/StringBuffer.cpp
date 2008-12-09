@@ -110,12 +110,12 @@ int StringBuffer::indexOf(char ch) const  {
 }
 
 int StringBuffer::indexOf(char ch, int fromIndex) const {
-	char* position = strchr(elementData + fromIndex, ch);
+	for (int i = fromIndex; i <= elementCount - 1; ++i) {
+		if (!memcmp(elementData + i, &ch, sizeof(char)))
+			return i;
+	}
 
-	if (position != NULL)
-		return position - elementData;
-	else
-		return -1;
+	return -1;
 }
 
 int StringBuffer::indexOf(const String& str) const {
@@ -123,12 +123,15 @@ int StringBuffer::indexOf(const String& str) const {
 }
 
 int StringBuffer::indexOf(const String& str, int fromIndex) const {
-	char* position = strstr(elementData + fromIndex, str);
-
-	if (position != NULL)
-		return position - elementData;
-	else
+	if (str.isEmpty())
 		return -1;
+
+	for (int i = fromIndex; i <= elementCount - str.length(); ++i) {
+		if (!memcmp(elementData + i, str, str.length() * sizeof(char)))
+			return i;
+	}
+
+	return -1;
 }
 
 StringBuffer& StringBuffer::insert(int offset, char ch) {

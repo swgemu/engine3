@@ -252,14 +252,14 @@ namespace sys {
    template<class E> void Vector<E>::removeRange(int fromIndex, int toIndex) {
        if (fromIndex < 0)
            throw ArrayIndexOutOfBoundsException(fromIndex);
-       else if (toIndex >= elementCount)
+       else if (toIndex > elementCount)
            throw ArrayIndexOutOfBoundsException(toIndex);
        else if (fromIndex > toIndex)
     	   throw IllegalArgumentException();
 
        destroyElementRange(fromIndex, toIndex);
 
-       int numMoved = elementCount - toIndex - 1;
+       int numMoved = elementCount - toIndex ;
        if (numMoved > 0) {
            E* indexOffset = elementData + fromIndex;
            memcpy(indexOffset, indexOffset + toIndex - fromIndex, numMoved * sizeof(E));
