@@ -122,6 +122,10 @@ String String::concat(const char* str) const {
 	return concat(str, strlen(str));
 }
 
+String String::concat(char ch) const {
+	return concat(&ch, 1);
+}
+
 String String::concat(const char* str, int len) const {
 	int newlen = count + len;
 
@@ -413,6 +417,19 @@ String& String::operator+=(const char* str) {
 	return *this;
 }
 
+String& String::operator+=(char ch) {
+	int newlen = count + 1;
+
+	value = (char*) realloc(value, newlen + 1);
+
+	value[newlen - 1] = ch;
+	value[newlen] = 0;
+
+	count = newlen;
+
+	return *this;
+}
+
 String& String::operator+=(const String& str) {
 	int newlen = count + str.count;
 
@@ -433,6 +450,14 @@ char String::charAt(int index) const {
 	return value[index];
 }
 
+bool operator==(char ch, const String& str2) {
+	return String(&ch, 1) == str2;
+}
+
+bool operator==(const String& str, char ch) {
+	return String(&ch, 1) == str;
+}
+
 bool operator==(char* str1, const String& str2) {
 	return String(str1) == str2;
 }
@@ -441,12 +466,20 @@ bool operator==(const char* str1, const String& str2) {
 	return String(str1) == str2;
 }
 
+bool operator!=(char ch, const String& str2) {
+	return String(&ch, 1) != str2;
+}
+
 bool operator!=(const char* str1, const String& str2) {
 	return String(str1) != str2;
 }
 
 bool operator!=(char* str1, const String& str2) {
 	return String(str1) != str2;
+}
+
+bool operator!=(const String& str, char ch) {
+	return String(&ch, 1) != str;
 }
 
 String operator+(const String& str1, const String& str2) {
@@ -459,6 +492,14 @@ String operator+(const char* str1, const String& str2) {
 
 String operator+(const String& str1, const char* str2) {
 	return str1.concat(str2);
+}
+
+String operator+(const String& str1, char ch) {
+	return str1.concat(ch);
+}
+
+String operator+(char ch, const String& str2) {
+	return String(&ch, 1).concat(str2);
 }
 
 char* String::strrstr(const char* s, int slen, const char* t, int tlen) {

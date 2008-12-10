@@ -26,6 +26,7 @@ namespace sys {
 
 		virtual ~String();
 
+		String concat(char ch) const;
 		String concat(const char* str) const;
 		String concat(const char* str, int len) const;
 		String concat(const String& str) const;
@@ -102,6 +103,7 @@ namespace sys {
 			return compareTo(str) != 0;
 		}
 
+		String& operator+= (char ch);
 		String& operator+= (const char* str);
 		String& operator+= (const String& str);
 
@@ -138,13 +140,20 @@ namespace sys {
 
 using namespace sys::lang;
 
+bool operator==(char ch, const String& str2);
+bool operator==(const String& str, char ch);
 bool operator==(char* str1, const String& str2);
 bool operator==(const char* str1, const String& str2);
+
+bool operator!=(char ch, const String& str2);
+bool operator!=(const String& str, char ch);
 bool operator!=(char* str1, const String& str2);
 bool operator!=(const char* str1, const String& str2);
 
 String operator+(const String& str1, const String& str2);
 String operator+(const char* str1, const String& str2);
 String operator+(const String& str1, const char* str2);
+String operator+(const String& str1, char ch);
+String operator+(char ch, const String& str2);
 
 #endif /*STRING_H_*/
