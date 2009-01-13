@@ -190,7 +190,7 @@ namespace sys {
 				return;
 
 			#ifdef TRACE_LOCKS
-				if (threadIDLockHolder == 0) {
+				/*if (threadIDLockHolder == 0) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";
 					StackTrace::printStackTrace();
@@ -202,7 +202,7 @@ namespace sys {
 						System::out << "previously locked at " << lockTime.getMiliTime() << " by\n";
 						trace->print();
 					}
-				}
+				}*/
 
 				delete trace;
 				trace = NULL;
