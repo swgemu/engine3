@@ -271,7 +271,7 @@ String String::valueOf(uint64 val) {
 String String::valueOf(float val) {
 	char buf[20];
 
-	sprintf(buf, "%f", val);
+	sprintf(buf, "%g", val);
 
 	return String(buf);
 }
@@ -279,7 +279,7 @@ String String::valueOf(float val) {
 String String::valueOf(double val) {
 	char buf[20];
 
-	sprintf(buf, "%f", (float) val);
+	sprintf(buf, "%g", (float) val);
 
 	return String(buf);
 }
