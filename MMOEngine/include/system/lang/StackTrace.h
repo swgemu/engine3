@@ -41,6 +41,7 @@ namespace sys {
 
 		static void printStackTrace();
 
+		bool equals(const StackTrace& trace);
 	};
 
   } // namespace lang

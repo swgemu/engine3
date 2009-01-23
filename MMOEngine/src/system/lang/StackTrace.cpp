@@ -76,3 +76,18 @@ void StackTrace::printStackTrace() {
 	StackTrace trace;
 	trace.print();
 }
+
+bool StackTrace::equals(const StackTrace& trace) {
+	if (count != trace.count)
+		return false;
+
+	for (int i = 0; i < count; ++i) {
+		void* symbol1 = symbols[i];
+		void* symbol2 = trace.symbols[i];
+
+		if (symbol1 != symbol2)
+			return false;
+	}
+
+	return true;
+}

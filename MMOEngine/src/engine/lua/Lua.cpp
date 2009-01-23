@@ -504,7 +504,7 @@ String LuaObject::getStringField(const String& key) {
 	result = lua_tostring(L, -1);
 	lua_pop(L, 1);
 
-	return result;
+	return String(result);
 }
 
 uint32 LuaObject::getIntField(const String& key) {

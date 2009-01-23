@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 DatagramServiceThread::DatagramServiceThread(const String& s) : ServiceMessageHandlerThread(s) {
 	clients = NULL;
-	
+
 	setLogging(false);
 }
 
@@ -30,10 +30,10 @@ DatagramServiceThread::~DatagramServiceThread() {
 void DatagramServiceThread::start(int p, int mconn) {
 	port = p;
 
-	clients = new ServiceClientMap(mconn); 
-			
+	clients = new ServiceClientMap(mconn);
+
 	try {
-		SocketAddress addr(port); 
+		SocketAddress addr(port);
 		socket = new UDPServerSocket(&addr);
 
 		socket->setBlocking(true);
@@ -53,7 +53,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 
 	StringBuffer msg;
 	msg << "started on port " << port;
-	info(msg, true); 
+	info(msg, true);
 }
 
 void DatagramServiceThread::stop() {
@@ -61,7 +61,7 @@ void DatagramServiceThread::stop() {
 		ServiceThread::stop();
 
 		socket->close();
-		
+
 		//removeConnections();
 
 		info("stopped", true);
@@ -88,16 +88,16 @@ void DatagramServiceThread::receiveMessages() {
 			uint64 netid = addr.getNetworkID();
 
 			lock();
-			
+
 			client = clients->get(netid);
 			if (client == NULL)	{
 				if ((client = createConnection(socket, addr)) == NULL) {
 					unlock();
 					continue;
 				}
-				
+
 				clients->add(client);
-				
+
 				#ifdef VERSION_PUBLIC
 					if (clients->size() > CONNECTION_LIMIT) {
 						unlock();
@@ -107,10 +107,10 @@ void DatagramServiceThread::receiveMessages() {
 			}
 
 			unlock();
-			
+
 			if (client->isAvailable())
 				handleMessage(client, &packet);
-			
+
 		} catch (SocketException& e) {
 			if (client == NULL) {
 				info(e.getMessage());
@@ -139,12 +139,12 @@ bool DatagramServiceThread::removeConnection(ServiceClient* client) {
 void DatagramServiceThread::removeConnections() {
 	if (clients == NULL)
 		return;
-	
+
 	clients->resetIterator();
-	
+
 	while (clients->hasNext()) {
 		ServiceClient* client = clients->next();
-		
+
 		delete client;
 	}
 }
