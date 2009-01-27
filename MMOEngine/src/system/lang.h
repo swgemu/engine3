@@ -37,6 +37,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "io/ObjectInputStream.h"
 #include "io/ObjectOutputStream.h"
 #include "io/File.h"
+#include "io/FileInputStream.h"
+#include "io/FileOutputStream.h"
 #include "io/FileReader.h"
 #include "io/FileWriter.h"
 #include "io/BufferedReader.h"

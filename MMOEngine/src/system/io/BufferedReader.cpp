@@ -8,11 +8,11 @@ void BufferedReader::close() {
 	reader->close();
 }
 
-int BufferedReader::read(byte* buf, int len) {
+int BufferedReader::read(char* buf, int len) {
 	return reader->read(buf, len);
 }
 
-int BufferedReader::read(byte* buf, uint32 off, int len) {
+int BufferedReader::read(char* buf, uint32 off, int len) {
 	return reader->read(buf, off, len);
 }
 

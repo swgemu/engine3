@@ -35,7 +35,7 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 }
 
 DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr, int port) {
-	DistributedObjectBroker* inst = instance();
+	DistributedObjectBroker* inst = DistributedObjectBroker::instance();
 
 	inst->address = addr;
 	inst->start(port);

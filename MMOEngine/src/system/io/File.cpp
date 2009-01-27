@@ -5,14 +5,15 @@ File::File(const String& pathname) {
 
 	fileDescriptor = NULL;
 
-	mode = READONLY;
+	mode = TEXT_MODE;
+	access = READONLY_ACCESS;
 }
 
-bool File::open(int mode) {
+bool File::open(int access) {
 	if (fileDescriptor == NULL)
-		fileDescriptor = fopen(name.toCharArray(), getModeString(mode));
+		fileDescriptor = fopen(name.toCharArray(), getModeString(mode, access));
 	else
-		fileDescriptor = freopen(name.toCharArray(), getModeString(mode), fileDescriptor);
+		fileDescriptor = freopen(name.toCharArray(), getModeString(mode, access), fileDescriptor);
 
 	File::mode = mode;
 
@@ -23,6 +24,10 @@ bool File::close() {
 	return fclose(fileDescriptor) == 0;
 }
 
+bool File::deleteFile() {
+	return remove(name.toCharArray()) == 0;
+}
+
 void File::flush() {
 	fflush(fileDescriptor);
 }
@@ -31,17 +36,24 @@ FILE* File::getDescriptor() const {
 	return fileDescriptor;
 }
 
-char* File::getModeString(int mode) {
-	switch (mode) {
-	case READONLY:
-		return "r";
-	case WRITEABLE:
-		return "w";
-	case READONLY & WRITEABLE:
-		return "rw";
+const char* File::getModeString(int mode, int access) {
+	String str;
+
+	switch (access) {
+	case READONLY_ACCESS:
+		str = "r";
+		break;
+	case WRITEABLE_ACCESS:
+		str = "w";
+		break;
 	default:
 		return "";
 	}
+
+	if (mode == BINARY_MODE)
+		str += "b";
+
+	return str.toCharArray();
 }
 
 int File::seek(uint32 offset, int origin) {
@@ -49,9 +61,9 @@ int File::seek(uint32 offset, int origin) {
 }
 
 bool File::setReadOnly() {
-	return open(File::READONLY);
+	return open(File::READONLY_ACCESS);
 }
 
 bool File::setWriteable() {
-	return open(File::WRITEABLE);
+	return open(File::WRITEABLE_ACCESS);
 }

@@ -8,14 +8,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 ServiceThread::ServiceThread(const String& s) : Thread(), Mutex(s + "Thread"), Logger(s) {
 	scheduler = new ScheduleManager(s + "Scheduler");
 	usingOwnScheduler = true;
-	
+
 	setRunning(false);
 }
 
 ServiceThread::ServiceThread(const String& s, ScheduleManager* sched) : Thread(), Mutex(s + "Thread"), Logger(s) {
 	scheduler = sched;
 	usingOwnScheduler = false;
-	
+
 	setRunning(false);
 }
 
@@ -34,12 +34,12 @@ void ServiceThread::start(bool waitForStartup) {
 		throw ServiceException("service already running");
 
 	setRunning(true);
-	
+
 	if (waitForStartup)
 		setReady(true);
 
 	Thread::start();
-	
+
 	if (waitForStartup)
 		while (!isReady());
 }
@@ -52,7 +52,7 @@ void ServiceThread::run() {
 void ServiceThread::stop(bool doJoin) {
 	if (isRunning()) {
 		setRunning(false);
-		
+
 		if (doJoin) {
 			join();
 		} else {

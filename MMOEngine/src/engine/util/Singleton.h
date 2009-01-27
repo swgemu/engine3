@@ -11,32 +11,32 @@ namespace engine {
 
 	template<class O> class SingletonWrapper {
 		O* inst;
-	
+
 	public:
 		SingletonWrapper() {
 			inst = NULL;
 		}
-		
+
 		~SingletonWrapper() {
 			finalize();
 		}
-		
+
 		O* instance() {
 			if (inst == NULL)
 				inst = new O();
 
-			return inst;					
+			return inst;
 		}
-		
+
 		void finalize() {
 			if (inst != NULL)
 				delete inst;
-	
+
 			inst = NULL;
 		}
-	
+
 	};
-	
+
 	template<class O> class Singleton {
 		static SingletonWrapper<O>* getWrapper() {
 			static SingletonWrapper<O> wrapper;

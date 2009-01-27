@@ -3,18 +3,22 @@
 
 namespace sys {
   namespace io {
-  
+
   	class Reader {
   	public:
   		virtual ~Reader() {
   		}
-  		
-  		virtual void close() = 0;
-  		
-  		virtual int read(byte* buf, int len) = 0;
 
-  		virtual int read(byte* buf, uint32 off, int len) = 0;
-  		
+  		// Closes the stream and releases any system resources associated with it.
+  		virtual void close() = 0;
+
+  		// Reads characters into an array.
+  		virtual int read(char* buf, int len) = 0;
+
+  		// Reads characters into a portion of an array.
+  		virtual int read(char* buf, uint32 off, int len) = 0;
+
+  		// Skips characters.
   		virtual int skip(int n) = 0;
   	};
 

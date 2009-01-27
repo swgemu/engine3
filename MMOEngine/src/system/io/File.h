@@ -16,9 +16,15 @@ namespace sys {
 
 		int mode;
 
-		static const int READONLY = 1;
+		int access;
 
-		static const int WRITEABLE = 2;
+		static const int TEXT_MODE = 1;
+
+		static const int BINARY_MODE = 2;
+
+		static const int READONLY_ACCESS = 1;
+
+		static const int WRITEABLE_ACCESS = 2;
 
 	public:
 		File(const String& pathname);
@@ -26,6 +32,8 @@ namespace sys {
 		bool close();
 
 		void flush();
+
+		bool deleteFile();
 
 		FILE* getDescriptor() const;
 
@@ -44,10 +52,15 @@ namespace sys {
 			return name;
 		}
 
-	protected:
-		bool open(int mode);
+		// setters
+  		inline void setBinary() {
+  			mode = BINARY_MODE;
+  		}
 
-		char* getModeString(int mode);
+	protected:
+		bool open(int access);
+
+		const char* getModeString(int mode, int access);
 	};
 
   } // namespace io
