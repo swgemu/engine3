@@ -29,22 +29,11 @@ namespace sys {
   			file->close();
   		}
 
-  		/*bool read(String& buf) {
-  			bool ret = false;
-  			String line;
-  			while(readLine(line)) {
-  				buf += line;
-  				ret = true;
-			}
-
-  			return ret;
-  		}*/
-
   		int read(char* buf, int len) {
   			return fread(buf, 1, len, file->getDescriptor());
   		}
 
-  		int read(char* buf, int off, int len) {
+  		int read(char* buf, uint32 off, int len) {
   			file->seek(off);
 
   			return fread(buf, 1, len, file->getDescriptor());
