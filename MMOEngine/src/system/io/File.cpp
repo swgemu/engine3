@@ -10,10 +10,12 @@ File::File(const String& pathname) {
 }
 
 bool File::open(int access) {
+	String modestr = getModeString(mode, access);
+
 	if (fileDescriptor == NULL)
-		fileDescriptor = fopen(name.toCharArray(), getModeString(mode, access));
+		fileDescriptor = fopen(name.toCharArray(), modestr.toCharArray());
 	else
-		fileDescriptor = freopen(name.toCharArray(), getModeString(mode, access), fileDescriptor);
+		fileDescriptor = freopen(name.toCharArray(), modestr.toCharArray(), fileDescriptor);
 
 	File::mode = mode;
 
@@ -36,7 +38,7 @@ FILE* File::getDescriptor() const {
 	return fileDescriptor;
 }
 
-const char* File::getModeString(int mode, int access) {
+String File::getModeString(int mode, int access) {
 	String str;
 
 	switch (access) {
@@ -44,7 +46,7 @@ const char* File::getModeString(int mode, int access) {
 		str = "r";
 		break;
 	case WRITEABLE_ACCESS:
-		str = "w";
+		str = "rw";
 		break;
 	default:
 		return "";
@@ -53,7 +55,7 @@ const char* File::getModeString(int mode, int access) {
 	if (mode == BINARY_MODE)
 		str += "b";
 
-	return str.toCharArray();
+	return str;
 }
 
 int File::seek(uint32 offset, int origin) {

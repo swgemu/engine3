@@ -60,7 +60,7 @@ namespace sys {
 	protected:
 		bool open(int access);
 
-		const char* getModeString(int mode, int access);
+		String getModeString(int mode, int access);
 	};
 
   } // namespace io
