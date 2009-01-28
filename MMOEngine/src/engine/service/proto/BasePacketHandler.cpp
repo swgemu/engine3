@@ -28,7 +28,7 @@ BasePacketHandler::BasePacketHandler(const String& s, MessageQueue* queue) : Log
 
 void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 	#ifdef VERSION_PUBLIC
-		DO_TIMELIMIT
+		DO_TIMELIMIT;
 	#endif
 
 	//info("READ - " + pack->toString());
@@ -86,10 +86,8 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			if (!client->processRecieve(pack))
 				return;
 
-			if (!client->validatePacket(pack))
-				return;
+			handleFragmentedPacket(client, pack);
 
-			processBufferedPackets(client);
 			break;
 		case 0x1100: //Out of order
 			if (!client->processRecieve(pack))
@@ -209,11 +207,7 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 				AcknowledgeOkMessage::parseOk(pack);
 				break;
 			case 0x0D00: //Fragmented
-				if (!client->validatePacket(pack))
-					break;
-				break;
-
-				processBufferedPackets(client);
+				handleFragmentedPacket(client, pack);
 			default:
 				if (!(opcode >> 8))	{
 					BaseMessage* message = new BaseMessage(pack, offset, offset + blockSize);
@@ -248,6 +242,7 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 
 			handleDataChannelMultiPacket(client, pack, blockSize);
 		} else if (pack->parseShort(0) == 0x0D00) {
+			handleFragmentedPacket(client, pack);
 		} else
 			handleDataChannelPacket(client, pack);
 
@@ -327,5 +322,19 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 		message->setTimeStampMili(System::getMiliTime() + 50);
 
 		messageQueue->push(message);
+	}
+}
+
+void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
+	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
+
+	if (fraggedPacket != NULL) {
+		client->validatePacket(fraggedPacket);
+
+		handleDataChannelPacket(client, fraggedPacket);
+
+		delete fraggedPacket;
+
+		processBufferedPackets(client);
 	}
 }

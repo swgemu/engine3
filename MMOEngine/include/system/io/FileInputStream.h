@@ -1,51 +1,42 @@
-#ifndef FILEREADER_H_
-#define FILEREADER_H_
+#ifndef FILEINPUTSTREAM_H_
+#define FILEINPUTSTREAM_H_
 
 #include "File.h"
 
-#include "Reader.h"
+#include "InputStream.h"
 
 #include "FileNotFoundException.h"
 
 namespace sys {
   namespace io {
 
-  	class FileReader : public Reader {
+  	class FileInputStream : public InputStream {
   		File* file;
 
-  		char buf[4096];
-
   	public:
-  		FileReader(File* file) {
+  		FileInputStream(File* file) {
+  			file->setBinary();
+
   			file->setReadOnly();
 
   			if (!file->exists())
   				throw FileNotFoundException(file);
 
-  			FileReader::file = file;
+  			FileInputStream::file = file;
   		}
 
   		void close() {
   			file->close();
   		}
 
-  		int read(char* buf, int len) {
+  		int read(byte* buf, int len) {
   			return fread(buf, 1, len, file->getDescriptor());
   		}
 
-  		int read(char* buf, uint32 off, int len) {
+  		int read(byte* buf, uint32 off, int len) {
   			file->seek(off);
 
   			return fread(buf, 1, len, file->getDescriptor());
-  		}
-
-  		bool readLine(String& line) {
-  			if (fgets(buf, 4096, file->getDescriptor()) != NULL) {
-  				line = buf;
-
-  				return true;
-  			} else
-  				return false;
   		}
 
   		int skip(int n) {
@@ -58,4 +49,4 @@ namespace sys {
 
 using namespace sys::io;
 
-#endif /*FILEREADER_H_*/
+#endif /*FILEINPUTSTREAM_H_*/

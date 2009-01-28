@@ -11,23 +11,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 ScheduleManager::ScheduleManager() : Thread(), Mutex("Scheduler"), Logger("Scheduler") {
 	doRun = false;
-		
+
 	String logname = "SchedulerEventQueue";
 	events.setLoggingName(logname);
-		
+
 	String mutexname = "SchedulerEventQueueLock";
 	events.setMutexName(mutexname);
 }
 
 ScheduleManager::ScheduleManager(const String& s) : Thread(), Mutex("SchedManager"), Logger(s) {
 	doRun = false;
-		
+
 	String logname = s + "EventQueue";
 	events.setLoggingName(logname);
-		
+
 	String mutexname = s + "EventQueueLock";
 	events.setMutexName(mutexname);
-	
+
 	setLogging(false);
 }
 
@@ -37,7 +37,7 @@ ScheduleManager::~ScheduleManager() {
 void ScheduleManager::start() {
 	StringBuffer msg;
 	msg << "started";
-	info(msg); 
+	info(msg);
 
 	doRun = true;
 	Thread::start();
@@ -49,11 +49,11 @@ void ScheduleManager::run() {
 	while ((event = events.get()) != NULL) {
 		try {
 			#ifdef VERSION_PUBLIC
-				DO_TIMELIMIT
+				DO_TIMELIMIT;
 			#endif
-			
+
 			event->activate();
-		
+
 			if (!event->doKeep())
 				delete event;
 		} catch (SocketException& e) {
@@ -74,9 +74,9 @@ void ScheduleManager::stop() {
 	if (doRun) {
 		doRun = false;
 		events.flush();
-		
+
 		join();
 	}
-	
+
 	info("stopped");
 }

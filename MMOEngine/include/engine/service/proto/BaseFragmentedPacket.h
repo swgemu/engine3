@@ -14,18 +14,22 @@ namespace engine {
 
 	class BaseFragmentedPacket : public BasePacket {
 		BasePacket* singlePacket;
-		
+
 		int offset;
-		
+
 	public:
+		BaseFragmentedPacket();
 		BaseFragmentedPacket(BasePacket* pack);
-	
+
 		~BaseFragmentedPacket();
-		
-		BasePacket* nextPacket();
-		
-		bool hasNext();
-		
+
+		void addFragment(Packet* pack);
+
+		BasePacket* getFragment();
+
+		bool isComplete();
+
+		bool hasFragments();
 	};
 
     } // namespace proto

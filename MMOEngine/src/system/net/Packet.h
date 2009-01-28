@@ -197,6 +197,14 @@ namespace sys {
 			return readSignedInt(offs);
 		}
 
+		inline uint32 parseNetInt() {
+			return ntohl(readInt());
+		}
+
+		inline uint32 parseNetInt(int offs) {
+			return ntohl(readInt(offs));
+		}
+
 		inline uint64 parseLong() {
 			return readLong();
 		}

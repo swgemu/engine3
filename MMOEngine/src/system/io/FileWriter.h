@@ -95,6 +95,12 @@ namespace sys {
   			return write(str.toCharArray(), str.length());
   		}
 
+  		int writeLine(const String& str) {
+  			String line = str + "\n";
+
+  			return write(line.toCharArray(), line.length());
+  		}
+
   		FileWriter& operator<< (char ch) {
 			write(ch);
 

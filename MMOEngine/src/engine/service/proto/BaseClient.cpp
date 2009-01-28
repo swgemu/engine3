@@ -23,6 +23,8 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
+	fragmentedPacket = NULL;
+
 	setKeeping(true);
 
 	setLogging(true);
@@ -32,6 +34,10 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClient(sock, addr),
 		BaseProtocol(),	Event(), Mutex("Client") {
 	scheduler = NULL;
+
+	bufferedPacket = NULL;
+
+	fragmentedPacket = NULL;
 
   	ip = addr.getFullIPAddress();
    	setLockName("Client " + ip);
@@ -111,6 +117,11 @@ void BaseClient::close() {
 	}
 
 	sequenceBuffer.removeAll();
+
+	if (fragmentedPacket != NULL) {
+		delete fragmentedPacket;
+		fragmentedPacket = NULL;
+	}
 
 	//serverSequence = 0;
 	clientSequence = 0;
@@ -252,8 +263,8 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 	try {
 		BaseFragmentedPacket* frag = new BaseFragmentedPacket(pack);
 
-		while (frag->hasNext())
-			sendSequenced(frag->nextPacket());
+		while (frag->hasFragments())
+			sendSequenced(frag->getFragment());
 
 		delete frag;
 	} catch (SocketException& e) {
@@ -383,7 +394,8 @@ bool BaseClient::validatePacket(Packet* pack) {
 		#endif
 
 		return false;
-	}
+	} else
+		throw Exception("received same packet sequence");
 
 	acknowledgeClientPackets(clientSequence++);
 
@@ -418,6 +430,24 @@ Packet* BaseClient::getBufferedPacket() {
 	}
 
 	return NULL;
+}
+
+BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
+	BasePacket* packet = NULL;
+
+	if (fragmentedPacket == NULL)
+		fragmentedPacket = new BaseFragmentedPacket();
+
+	fragmentedPacket->addFragment(pack);
+
+	if (fragmentedPacket->isComplete()) {
+		fragmentedPacket->setOffset(2);
+
+		packet = fragmentedPacket;
+		fragmentedPacket = NULL;
+	}
+
+	return packet;
 }
 
 void BaseClient::checkupServerPackets(BasePacket* pack) {

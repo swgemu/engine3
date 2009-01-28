@@ -20,46 +20,44 @@ namespace engine {
 
 	class ScheduleManager : public Singleton<ScheduleManager>,  public Thread, public Mutex, public Logger {
 		EventQueue events;
-		
+
 		bool doRun;
-	
+
 	public:
 		ScheduleManager();
 		ScheduleManager(const String& s);
-	
+
 		virtual ~ScheduleManager();
-	
+
 		void start();
-		
+
 		void run();
-	
+
 		void stop();
-	
+
 		inline void addEvent(Event* event, uint64 time = 0) {
 			events.add(event, time);
 		}
-	
+
 		inline void addEvent(Event* event, Time& time) {
 			events.add(event, time);
 		}
-	
+
 		inline void deleteEvent(Event* event) {
 			events.remove(event);
 		}
-	
+
 		void fixQueue() {
 			events.repair();
 		}
-		
+
 		inline int getQueueSize() {
 			return events.size();
 		}
-		
+
 		inline void printEvents() {
 			events.printQueue();
 		}
-	
-		friend class SingletonWrapper<ScheduleManager>;
 	};
 
   } // namespace sched

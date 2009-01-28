@@ -8,9 +8,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "engine/util/Singleton.h"
+#include "../util/Singleton.h"
 
-#include "engine/service/StreamServiceThread.h"
+#include "../service/StreamServiceThread.h"
 
 #include "DistributedObjectDirectory.h"
 
@@ -41,41 +41,41 @@ namespace engine {
 
 	class DistributedObjectBroker : public StreamServiceThread, public Singleton<DistributedObjectBroker> {
 		static DistributedObjectBroker* impl;
-	
+
 		String address;
 		NamingDirectoryService* namingDirectoryInterface;
-		
+
 		DistributedObjectClassHelperMap classMap;
-	
+
 		DistributedObjectDirectory objectDirectory;
-	
+
 		DOBPacketHandler* phandler;
-		
+
 	private:
 		DistributedObjectBroker();
-	
+
 		virtual ~DistributedObjectBroker();
 
 	public:
 		static DistributedObjectBroker* initialize(const String& addr, int port = 44433);
-		
+
 		void init();
-	
+
 		void run();
-		
+
 		void shutdown();
-	
+
 		DistributedObjectBrokerClient* createConnection(Socket* sock, SocketAddress& addr);
-		
+
 		void registerClass(const String& name, DistributedObjectClassHelper* helper);
-	
+
 		// deployment methods
 		void deploy(DistributedObjectStub* obj);
 		void deploy(const String& name, DistributedObjectStub* obj);
-		
+
 		DistributedObject* lookUp(const String& name);
 		DistributedObject* lookUp(uint64 objid);
-		
+
 		DistributedObjectStub* undeploy(const String& name);
 		void undeploy(DistributedObjectStub* obj, bool doLock = true);
 
@@ -86,17 +86,17 @@ namespace engine {
 		/*inline bool hasRootDirectory() {
 			return namingDirectoryInterface->isRootDirectory();
 		}*/
-		
+
 		inline DistributedObjectClassHelperMap* getClassMap() {
 			return &classMap;
 		}
-		
+
 		inline DOBPacketHandler* getPacketHandler() {
 			return phandler;
 		}
-		
+
 		friend class NamingDirectoryService;
-			
+
 		friend class SingletonWrapper<DistributedObjectBroker>;
 	};
 

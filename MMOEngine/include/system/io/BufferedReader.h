@@ -7,23 +7,23 @@
 
 namespace sys {
   namespace io {
-  
+
   	class BufferedReader : public Reader {
   		Reader* reader;
-  		
+
   		byte* buffer;
-  		
+
   		static const int defaultBufferSize = 8129;
-	  
+
   	public:
   		BufferedReader(Reader* reader);
-	  
-  		void close();
-  		
-  		int read(byte* buf, int len);
 
-  		int read(byte* buf, uint32 off, int len);
-  		
+  		void close();
+
+  		int read(char* buf, int len);
+
+  		int read(char* buf, uint32 off, int len);
+
   		int skip(int n);
   	};
 

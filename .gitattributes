@@ -154,11 +154,15 @@ MMOEngine/include/engine/util/ResourcePool.h -text
 MMOEngine/include/engine/util/Singleton.h -text
 MMOEngine/include/system/io/BufferedReader.h -text
 MMOEngine/include/system/io/File.h -text
+MMOEngine/include/system/io/FileInputStream.h -text
 MMOEngine/include/system/io/FileNotFoundException.h -text
+MMOEngine/include/system/io/FileOutputStream.h -text
 MMOEngine/include/system/io/FileReader.h -text
 MMOEngine/include/system/io/FileWriter.h -text
+MMOEngine/include/system/io/InputStream.h -text
 MMOEngine/include/system/io/ObjectInputStream.h -text
 MMOEngine/include/system/io/ObjectOutputStream.h -text
+MMOEngine/include/system/io/OutputStream.h -text
 MMOEngine/include/system/io/PrintStream.h -text
 MMOEngine/include/system/io/Reader.h -text
 MMOEngine/include/system/io/Serializable.h -text
@@ -225,6 +229,7 @@ MMOEngine/include/system/util/Timer.h -text
 MMOEngine/include/system/util/Vector.h -text
 MMOEngine/include/system/util/VectorMap.h -text
 MMOEngine/install-sh -text
+MMOEngine/lib/unix/libengine3.a -text
 MMOEngine/lib/win32/engine3.lib -text
 MMOEngine/lib/win32/engine3d.lib -text
 MMOEngine/src/Makefile.am -text
