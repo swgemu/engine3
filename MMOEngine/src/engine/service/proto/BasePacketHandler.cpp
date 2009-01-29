@@ -86,7 +86,12 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			if (!client->processRecieve(pack))
 				return;
 
-			handleFragmentedPacket(client, pack);
+			if (!client->validatePacket(pack))
+				return;
+
+			//handleFragmentedPacket(client, pack);
+
+			processBufferedPackets(client);
 
 			break;
 		case 0x1100: //Out of order
@@ -207,7 +212,13 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 				AcknowledgeOkMessage::parseOk(pack);
 				break;
 			case 0x0D00: //Fragmented
-				handleFragmentedPacket(client, pack);
+				if (!client->validatePacket(pack))
+					break;
+				break;
+
+				processBufferedPackets(client);
+				
+				//handleFragmentedPacket(client, pack);
 			default:
 				if (!(opcode >> 8))	{
 					BaseMessage* message = new BaseMessage(pack, offset, offset + blockSize);
@@ -242,7 +253,7 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 
 			handleDataChannelMultiPacket(client, pack, blockSize);
 		} else if (pack->parseShort(0) == 0x0D00) {
-			handleFragmentedPacket(client, pack);
+			//handleFragmentedPacket(client, pack);
 		} else
 			handleDataChannelPacket(client, pack);
 

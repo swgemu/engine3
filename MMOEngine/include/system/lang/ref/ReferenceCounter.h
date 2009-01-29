@@ -42,8 +42,10 @@ namespace sys {
 
 		inline void finalizeCount() {
 			if (_references != NULL) {
-				if (getReferenceCount() > 1)
+				if (getReferenceCount() > 1) {
 					System::out << "WARNING - reference count was not zero on delete\n";
+					StackTrace::printStackTrace();
+				}
 
 				delete _references;
 				_references = NULL;

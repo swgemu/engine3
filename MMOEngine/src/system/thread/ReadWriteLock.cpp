@@ -51,6 +51,8 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
 		if (lock->threadIDLockHolder == 0) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking to an unlocked mutex [" << lock->lockName << "]\n";
 			StackTrace::printStackTrace();
+
+			raise(SIGSEGV);
 		}
 	#endif
 

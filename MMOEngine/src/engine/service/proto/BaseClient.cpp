@@ -394,8 +394,8 @@ bool BaseClient::validatePacket(Packet* pack) {
 		#endif
 
 		return false;
-	} else
-		throw Exception("received same packet sequence");
+	} /*else
+		throw Exception("received same packet sequence");*/
 
 	acknowledgeClientPackets(clientSequence++);
 
