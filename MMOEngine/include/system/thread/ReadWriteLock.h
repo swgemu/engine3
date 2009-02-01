@@ -99,7 +99,8 @@ namespace sys {
 					StackTrace::printStackTrace();
 
 					System::out << "locked at " << lockTime.getMiliTime() << " by\n";
-					trace->print();
+					if (trace != NULL)
+						trace->print();
 
 					while (true);
 
@@ -108,10 +109,10 @@ namespace sys {
 
 				lockTime.update();
 
-				if (trace != NULL)
+				/*if (trace != NULL)
 					delete trace;
 
-				trace = new StackTrace();
+				trace = new StackTrace();*/
 			#endif
 
 			#ifdef LOG_LOCKS
@@ -190,7 +191,7 @@ namespace sys {
 				return;
 
 			#ifdef TRACE_LOCKS
-				/*if (threadIDLockHolder == 0) {
+				if (threadIDLockHolder == 0) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";
 					StackTrace::printStackTrace();
@@ -202,7 +203,7 @@ namespace sys {
 						System::out << "previously locked at " << lockTime.getMiliTime() << " by\n";
 						trace->print();
 					}
-				}*/
+				}
 
 				delete trace;
 				trace = NULL;
@@ -225,6 +226,48 @@ namespace sys {
 			#ifdef LOG_LOCKS
 				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << cnt << "\n";
 			#endif
+		}
+
+		inline void runlock(bool doLock = true) {
+			if (!doLock)
+				return;
+
+		#ifdef TRACE_LOCKS
+			/*if (threadIDLockHolder == 0) {
+							System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
+									<< " unlocking an unlocked mutex\n";
+							StackTrace::printStackTrace();
+						} else if (threadIDLockHolder != Thread::getCurrentThreadID()) {
+							System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
+							StackTrace::printStackTrace();
+
+							if (trace != NULL) {
+								System::out << "previously locked at " << lockTime.getMiliTime() << " by\n";
+								trace->print();
+							}
+						}*/
+
+			/*delete trace;
+			trace = NULL;
+
+			threadIDLockHolder = 0;*/
+		#endif
+
+		#ifdef LOG_LOCKS
+			int cnt = lockCount;
+			System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << cnt << "\n";
+		#endif
+
+			int res = pthread_rwlock_unlock(&rwlock);
+			if (res != 0) {
+				System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+
+				StackTrace::printStackTrace();
+			}
+
+		#ifdef LOG_LOCKS
+			System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << cnt << "\n";
+		#endif
 		}
 
 		inline bool destroy() {
