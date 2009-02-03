@@ -12,7 +12,7 @@ fi
 
 # create tree on include files
 cd src
-find . -iname \*.h | cpio -ov > tree.cpio
+/usr/bin/find . -iname \*.h | cpio -ov > tree.cpio
 cd ..
 
 # copy files to destination
