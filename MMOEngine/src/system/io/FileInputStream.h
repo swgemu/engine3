@@ -19,28 +19,39 @@ namespace sys {
 
   			file->setReadOnly();
 
-  			if (!file->exists())
-  				throw FileNotFoundException(file);
-
   			FileInputStream::file = file;
   		}
 
   		void close() {
+  			validateReadable();
+
   			file->close();
   		}
 
   		int read(byte* buf, int len) {
+  			validateReadable();
+
   			return fread(buf, 1, len, file->getDescriptor());
   		}
 
   		int read(byte* buf, uint32 off, int len) {
+  			validateReadable();
+
   			file->seek(off);
 
   			return fread(buf, 1, len, file->getDescriptor());
   		}
 
   		int skip(int n) {
+  			validateReadable();
+
   			return file->seek(n, SEEK_CUR);
+  		}
+
+  	protected:
+  		void validateReadable() {
+  			if (!file->exists())
+  				throw FileNotFoundException(file);
   		}
   	};
 

@@ -46,7 +46,7 @@ String File::getModeString(int mode, int access) {
 		str = "r";
 		break;
 	case WRITEABLE_ACCESS:
-		str = "rw";
+		str = "w";
 		break;
 	default:
 		return "";

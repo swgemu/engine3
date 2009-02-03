@@ -19,27 +19,32 @@ namespace sys {
   		FileReader(File* file) {
   			file->setReadOnly();
 
-  			if (!file->exists())
-  				throw FileNotFoundException(file);
-
   			FileReader::file = file;
   		}
 
   		void close() {
+  			validateReadable();
+
   			file->close();
   		}
 
   		int read(char* buf, int len) {
+  			validateReadable();
+
   			return fread(buf, 1, len, file->getDescriptor());
   		}
 
   		int read(char* buf, uint32 off, int len) {
+  			validateReadable();
+
   			file->seek(off);
 
   			return fread(buf, 1, len, file->getDescriptor());
   		}
 
   		bool readLine(String& line) {
+  			validateReadable();
+
   			if (fgets(buf, 4096, file->getDescriptor()) != NULL) {
   				line = buf;
 
@@ -49,7 +54,15 @@ namespace sys {
   		}
 
   		int skip(int n) {
+  			validateReadable();
+
   			return file->seek(n, SEEK_CUR);
+  		}
+
+  	protected:
+  		void validateReadable() {
+  			if (!file->exists())
+  				throw FileNotFoundException(file);
   		}
   	};
 

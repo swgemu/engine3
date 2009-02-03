@@ -159,6 +159,7 @@ MMOEngine/include/system/io/FileNotFoundException.h -text
 MMOEngine/include/system/io/FileOutputStream.h -text
 MMOEngine/include/system/io/FileReader.h -text
 MMOEngine/include/system/io/FileWriter.h -text
+MMOEngine/include/system/io/IOException.h -text
 MMOEngine/include/system/io/InputStream.h -text
 MMOEngine/include/system/io/ObjectInputStream.h -text
 MMOEngine/include/system/io/ObjectOutputStream.h -text
@@ -387,6 +388,7 @@ MMOEngine/src/system/io/FileNotFoundException.h -text
 MMOEngine/src/system/io/FileOutputStream.h -text
 MMOEngine/src/system/io/FileReader.h -text
 MMOEngine/src/system/io/FileWriter.h -text
+MMOEngine/src/system/io/IOException.h -text
 MMOEngine/src/system/io/InputStream.h -text
 MMOEngine/src/system/io/ObjectInputStream.h -text
 MMOEngine/src/system/io/ObjectOutputStream.h -text

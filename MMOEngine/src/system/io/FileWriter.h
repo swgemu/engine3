@@ -19,27 +19,32 @@ namespace sys {
   		FileWriter(File* file) {
   			file->setWriteable();
 
-  			if (!file->exists())
-  				throw FileNotFoundException(file);
-
   			FileWriter::file = file;
   		}
 
   		void close() {
+  			validateWriteable();
+
   			file->flush();
 
   			file->close();
   		}
 
   		void flush() {
+  			validateWriteable();
+
   			file->flush();
   		}
 
   		int write(const char* str, int len) {
+  			validateWriteable();
+
   			return fwrite((byte*) str, 1, len, file->getDescriptor());
   		}
 
   		int write(const char* str, uint32 off, int len) {
+  			validateWriteable();
+
   			file->seek(off);
 
   			return fwrite((byte*) str, 1, len, file->getDescriptor());
@@ -154,6 +159,12 @@ namespace sys {
 
 			return *this;
 		}
+
+  	protected:
+  		void validateWriteable() {
+  			if (!file->exists())
+  				throw FileNotFoundException(file);
+  		}
   	};
   } // namespace io
 } // namespace sys
