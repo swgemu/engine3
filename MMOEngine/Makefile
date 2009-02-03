@@ -1,6 +1,8 @@
 # Copyright (C) 2007 <SWGEmu>. All rights reserved.
 # Distribution of this file for usage outside of Core3 is prohibited.
 
+IDLC = /usr/local/bin/idlc
+
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/util/ManagedVector.idl
 	
@@ -11,7 +13,7 @@ allpub: config clean compile instpub
 	#done
 
 compile:
-	cd src && idlc $(IDL_SOURCES)
+	cd src && $(IDLC) $(IDL_SOURCES)
 	cd build/unix && ../../configure && make
 	cp build/unix/src/libengine3.a lib/unix
 
@@ -20,7 +22,7 @@ config:
 	#done
 
 clean: cleanidl
-	cd src && idlc -rebuild $(IDL_SOURCES)
+	cd src && $(IDLC) -rebuild $(IDL_SOURCES)
 	cd build/unix && make clean
 	#done
 
