@@ -89,7 +89,7 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			if (!client->validatePacket(pack))
 				return;
 
-			//handleFragmentedPacket(client, pack);
+			handleFragmentedPacket(client, pack);
 
 			processBufferedPackets(client);
 
@@ -214,11 +214,11 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 			case 0x0D00: //Fragmented
 				if (!client->validatePacket(pack))
 					break;
-				break;
+
+				handleFragmentedPacket(client, pack);
 
 				processBufferedPackets(client);
-				
-				//handleFragmentedPacket(client, pack);
+				break;
 			default:
 				if (!(opcode >> 8))	{
 					BaseMessage* message = new BaseMessage(pack, offset, offset + blockSize);
@@ -253,7 +253,7 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 
 			handleDataChannelMultiPacket(client, pack, blockSize);
 		} else if (pack->parseShort(0) == 0x0D00) {
-			//handleFragmentedPacket(client, pack);
+			handleFragmentedPacket(client, pack);
 		} else
 			handleDataChannelPacket(client, pack);
 
@@ -345,7 +345,6 @@ void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack)
 		handleDataChannelPacket(client, fraggedPacket);
 
 		delete fraggedPacket;
-
-		processBufferedPackets(client);
-	}
+	} else if (pack->size() < 485)
+		throw Exception("incomplete fragmented packet");
 }

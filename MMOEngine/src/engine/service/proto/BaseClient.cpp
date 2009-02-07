@@ -443,6 +443,8 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 	if (fragmentedPacket->isComplete()) {
 		fragmentedPacket->setOffset(2);
 
+		//Logger::console.info("completed fragmented packet");
+
 		packet = fragmentedPacket;
 		fragmentedPacket = NULL;
 	}

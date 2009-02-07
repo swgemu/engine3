@@ -5,6 +5,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BaseFragmentedPacket.h"
 
+#include "../../log/Logger.h"
+
 BaseFragmentedPacket::BaseFragmentedPacket() : BasePacket() {
 	singlePacket = NULL;
 
@@ -23,21 +25,24 @@ BaseFragmentedPacket::~BaseFragmentedPacket() {
 }
 
 void BaseFragmentedPacket::addFragment(Packet* pack) {
-	uint16 seq = pack->parseNetShort(2);
+	uint32 seq = pack->parseNetShort(2);
 
-	if (!hasData()) {
-		sequence = seq;
-
+	if (offset == 0) {
 		offset = pack->parseNetInt(4);
 
 		insertStream(pack->getBuffer() + 8, 496 - 8 - 3);
-	} else {
-		if (sequence != seq)
-			throw Exception("fragmented packet sequence does not match");
 
+		/*Logger::console.info("received first segment of fragmented packet ("
+				+ String::valueOf(seq) + ") - size = " + String::valueOf(offset));*/
+	} else {
 		int fragsize = MIN(496, pack->size()) - 4 - 3;
 
+		offset -= 3;
+
 		insertStream(pack->getBuffer() + 4, fragsize);
+
+		/*Logger::console.info("received next segment of fragmented packet ("
+				+ String::valueOf(seq) + ") - size = " + String::valueOf(fragsize));*/
 	}
 }
 
@@ -70,12 +75,16 @@ BasePacket* BaseFragmentedPacket::getFragment() {
 bool BaseFragmentedPacket::isComplete() {
 	int currentSize = size();
 
+	/*Logger::console.info("checking fragmented packet completeness: " + String::valueOf(currentSize)
+			+ " = " + String::valueOf(offset));*/
+
 	if (currentSize < offset)
 		return false;
 	else if (currentSize == offset)
 		return true;
 	else
-		throw Exception("fragmented packet exceeded size");
+		throw Exception("fragmented packet exceeded size (" + String::valueOf(offset)
+				+ ") - size = " + String::valueOf(currentSize));
 }
 
 bool BaseFragmentedPacket::hasFragments() {
