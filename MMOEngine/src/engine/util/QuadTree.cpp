@@ -245,8 +245,10 @@ void QuadTree::remove(QuadTreeEntry *obj) {
 
        	node->check();
        	obj->node = NULL;
-    } else
+    } else {
 		System::out << hex << "object [" << obj->getObjectID() <<  "] ERROR - removing the node\n";
+		StackTrace::printStackTrace();
+    }
 
 	if (QuadTree::doLog())
 		System::out << hex << "object [" << obj->getObjectID() <<  "] finished removing\n";

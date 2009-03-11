@@ -17,14 +17,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace thread {
 
-	/*! 
+	/*!
 	 * thread wrapper class. the inheriting classes must implement a run() method that have to contain the code to be executed
 	 */
 	class Thread : public Runnable {
 		pthread_t thread;
 
 		pthread_attr_t attributes;
-		
+
 		static pthread_once_t initThread;
 		static pthread_key_t threadDataKey;
 
@@ -41,16 +41,16 @@ namespace sys {
 
 		//! causes this thread to begin execution
 		void start();
-	
+
 		//! causes this thread to be cancelled
 		void cancel();
 
 		//! causes this thread to be killed
 		void kill(int signal = SIGINT);
-		
+
 		//! causes the calling thread to be waiting until this thread finishes
 		void join();
-	
+
 		void detach();
 
 		static void sleep(uint64 millis);
@@ -67,6 +67,8 @@ namespace sys {
 		void setDetached();
 
 		void setJoinable();
+
+		void setSchedulingPolicy(int policy);
 
 	};
 

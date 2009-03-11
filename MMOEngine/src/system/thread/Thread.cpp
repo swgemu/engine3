@@ -27,11 +27,11 @@ void* Thread::executeThread(void* th) {
 	return NULL;
 }
 
-Thread::Thread() { 
+Thread::Thread() {
 	pthread_attr_init(&attributes);
 }
 
-Thread::~Thread() { 
+Thread::~Thread() {
 	pthread_attr_destroy(&attributes);
 }
 
@@ -118,4 +118,8 @@ void Thread::setDetached() {
 
 void Thread::setJoinable() {
 	pthread_attr_setdetachstate(&attributes, PTHREAD_CREATE_JOINABLE);
+}
+
+void Thread::setSchedulingPolicy(int policy) {
+	pthread_attr_setschedpolicy(&attributes, policy);
 }
