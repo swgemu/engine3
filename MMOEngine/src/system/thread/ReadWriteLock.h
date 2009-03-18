@@ -110,7 +110,7 @@ namespace sys {
 					if (trace != NULL)
 						trace->print();
 
-					while (true);
+					while (true) ;
 
 					start.addMiliTime(1000);
 		    	}
@@ -166,7 +166,7 @@ namespace sys {
 						System::out << "no previous stackTrace created\n";
 					}
 
-					while (true);
+					while (true) ;
 
 					start.addMiliTime(1000);
 		    	}

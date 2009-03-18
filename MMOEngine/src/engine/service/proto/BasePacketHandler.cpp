@@ -337,7 +337,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 }
 
 void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
-	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
+	/*BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
 
 	if (fraggedPacket != NULL) {
 		client->validatePacket(fraggedPacket);
@@ -346,5 +346,5 @@ void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack)
 
 		delete fraggedPacket;
 	} else if (pack->size() < 485)
-		throw Exception("incomplete fragmented packet");
+		throw Exception("incomplete fragmented packet");*/
 }

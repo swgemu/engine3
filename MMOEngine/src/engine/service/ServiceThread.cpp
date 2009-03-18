@@ -41,7 +41,7 @@ void ServiceThread::start(bool waitForStartup) {
 	Thread::start();
 
 	if (waitForStartup)
-		while (!isReady());
+		while (!isReady()) ;
 }
 
 

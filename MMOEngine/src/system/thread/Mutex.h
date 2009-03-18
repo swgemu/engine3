@@ -107,7 +107,7 @@ namespace sys {
 					System::out << "locked at " << lockTime.getMiliTime() << " by\n";
 					trace->print();
 
-					while (true);
+					while (true) ;
 
 					start.addMiliTime(1000);
 		    	}

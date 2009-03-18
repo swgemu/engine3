@@ -506,7 +506,7 @@ char* String::strrstr(const char* s, int slen, const char* t, int tlen) {
 	int i, j;
 
 	for (i = slen; i >= tlen; i--) {
-		for (j = 0; j < tlen && s[i - tlen + j] == t[j]; j++);
+		for (j = 0; j < tlen && s[i - tlen + j] == t[j]; j++) ;
 
 		if (j == tlen)
 			return (char *) (s + i - tlen);
