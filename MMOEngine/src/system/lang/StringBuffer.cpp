@@ -155,7 +155,7 @@ StringBuffer& StringBuffer::insert(int offset, int val) {
 }
 
 StringBuffer& StringBuffer::insert(int offset, uint32 val) {
-	return insert(offset, val);
+	return insert(offset, (int) val);
 }
 
 StringBuffer& StringBuffer::insert(int offset, long val) {

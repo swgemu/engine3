@@ -27,6 +27,7 @@ namespace sys {
 		int lockCount;
 
 		StackTrace* trace;
+		StackTrace* unlockTrace;
 		Time lockTime;
 
 		bool doTrace;
@@ -40,6 +41,7 @@ namespace sys {
 			lockCount = 0;
 
 			trace = NULL;
+			unlockTrace = NULL;
 			doTrace = true;
 
 			threadIDLockHolder = 0;
@@ -52,6 +54,7 @@ namespace sys {
 			lockCount = 0;
 
 			trace = NULL;
+			unlockTrace = NULL;
 			doTrace = true;
 
 			threadIDLockHolder = 0;
@@ -63,6 +66,11 @@ namespace sys {
 			if (trace != NULL) {
 				delete trace;
 				trace = NULL;
+			}
+
+			if (unlockTrace != NULL) {
+				delete unlockTrace;
+				unlockTrace = NULL;
 			}
 		}
 
@@ -102,7 +110,7 @@ namespace sys {
 					if (trace != NULL)
 						trace->print();
 
-					while (true);
+					while (true) ;
 
 					start.addMiliTime(1000);
 		    	}
@@ -158,7 +166,7 @@ namespace sys {
 						System::out << "no previous stackTrace created\n";
 					}
 
-					while (true);
+					while (true) ;
 
 					start.addMiliTime(1000);
 		    	}
@@ -195,6 +203,13 @@ namespace sys {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";
 					StackTrace::printStackTrace();
+
+					if (unlockTrace != NULL) {
+						System::out << "previously unlocked by\n";
+						unlockTrace->print();
+					}
+
+					raise(SIGSEGV);
 				} else if (threadIDLockHolder != Thread::getCurrentThreadID()) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
 					StackTrace::printStackTrace();
@@ -209,6 +224,9 @@ namespace sys {
 				trace = NULL;
 
 				threadIDLockHolder = 0;
+
+				delete unlockTrace;
+				unlockTrace = new StackTrace();
 			#endif
 
 			#ifdef LOG_LOCKS

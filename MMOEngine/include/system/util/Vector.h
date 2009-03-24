@@ -35,9 +35,9 @@ namespace sys {
 
        void insertElementAt(const E& element, int index);
 
-       E& get(int index);
+       E& get(int index) const;
 
-       E& elementAt(int index);
+       E& elementAt(int index) const;
 
        E remove(int index);
 
@@ -52,7 +52,7 @@ namespace sys {
        E set(int index, const E& element);
        void setElementAt(int index, const E& element);
 
-       void clone(Vector<E>& vector);
+       void clone(Vector<E>& vector) const ;
 
        Vector<E>& operator=(Vector<E>& vector);
 
@@ -72,15 +72,15 @@ namespace sys {
        inline void destroyElements();
 
    public:
-       inline int size() {
+       inline int size() const {
            return elementCount;
        }
 
-       int capacity() {
+       int capacity() const {
            return elementCapacity;
        }
 
-       inline bool isEmpty() {
+       inline bool isEmpty() const {
            return elementCount == 0;
        }
 
@@ -140,11 +140,11 @@ namespace sys {
        elementCount++;
    }
 
-   template<class E> E& Vector<E>::get(int index) {
+   template<class E> E& Vector<E>::get(int index) const {
        return elementAt(index);
    }
 
-   template<class E> E& Vector<E>::elementAt(int index) {
+   template<class E> E& Vector<E>::elementAt(int index) const {
        if (index >= elementCount || index < 0)
            throw ArrayIndexOutOfBoundsException(index);
 
@@ -209,7 +209,7 @@ namespace sys {
        createElementAt(element, index);
    }
 
-   template<class E> void Vector<E>::clone(Vector<E>& vector) {
+   template<class E> void Vector<E>::clone(Vector<E>& vector) const {
        vector.removeAll();
        vector.init(elementCapacity, capacityIncrement);
 

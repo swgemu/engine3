@@ -113,7 +113,7 @@ void QuadTreeNode::check () {
             parentNode->seNode = NULL;
 
 		if (QuadTree::doLog())
-			System::out << "deleteing node (" << (uint64) this << ")\n";
+			System::out << "deleteing node (" << this << ")\n";
 
         delete this;
     }
@@ -121,7 +121,7 @@ void QuadTreeNode::check () {
 
 String QuadTreeNode::toString() {
 	StringBuffer s;
-	s << "Node " << (uint64) this << " (" << (int) minX << ","
+	s << "Node " << this << " (" << (int) minX << ","
 	  << (int) minY << "," << (int) maxX << "," << (int) maxY
 	  << ") [" << objects.size() << "]";
 
