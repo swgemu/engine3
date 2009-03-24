@@ -198,11 +198,11 @@ int String::lastIndexOf(const String& str) const {
 }
 
 int String::lastIndexOf(const String& str, int fromIndex) const {
-	/*char* position = strrstr(value + fromIndex, count - fromIndex, str.value, str.count);
+	char* position = strrstr(value + fromIndex, count - fromIndex, str.value, str.count);
 
 	if (position != NULL)
 		return position - value;
-	else*/
+	else
 		return -1;
 }
 
