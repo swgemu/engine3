@@ -209,8 +209,14 @@ int String::lastIndexOf(const String& str, int fromIndex) const {
 uint32 String::hashCode() const {
 	uint32 CRC = 0xFFFFFFFF;
 
-	for (int counter = 0; counter < count; counter++)
-  		CRC = crctable[value[counter] ^ (CRC >> 24)] ^ (CRC << 8);
+	for (int counter = 0; counter < count; counter++) {
+		uint32 table = value[counter] ^ (CRC >> 24);
+
+		if (table > 255)
+			throw ArrayIndexOutOfBoundsException(value[counter]);
+
+  		CRC = crctable[table] ^ (CRC << 8);
+	}
 
 	return ~CRC;
 }
