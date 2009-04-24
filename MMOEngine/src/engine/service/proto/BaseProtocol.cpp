@@ -12,6 +12,9 @@ BaseProtocol::BaseProtocol() : Logger("PROTO") {
 }
 
 void BaseProtocol::prepareSend(BasePacket* pack) {
+	if (pack->doCompression())
+		pack->setCompression(false);
+
 	pack->close();
 
 	/*StringBuffer msg;
@@ -20,19 +23,19 @@ void BaseProtocol::prepareSend(BasePacket* pack) {
 
 	if (pack->doSequencing())
 		pack->setSequence(serverSequence++);
-	
+
 	if (pack->doCompression()) {
 		compress(pack);
 	}
-	
+
 	if (pack->doEncryption()) {
 		encrypt(pack, true);
 	}
-				
+
 	if (pack->doCRCChecking()) {
 		appendCRC(pack);
 	}
-		
+
 }
 
 bool BaseProtocol::processRecieve(Packet* pack) {
@@ -58,7 +61,7 @@ bool BaseProtocol::processRecieve(Packet* pack) {
 	info(msg);*/
 
 	pack->removeLastBytes(3);
-	
+
 	return true;
 }
 
@@ -71,7 +74,7 @@ void BaseProtocol::encrypt(Packet* pack, bool crc) {
     unsigned int *data;
     if (!crc)
         nLength += 2;
-    
+
     if (pData[0] == 0x00) {
         nLength -= 4;
         data = (unsigned int*) (pData+2);
@@ -79,17 +82,17 @@ void BaseProtocol::encrypt(Packet* pack, bool crc) {
       	nLength -= 3;
      	data = (unsigned int*) (pData+1);
     }
-    
+
     short block_count = (nLength / 4);
     short byte_count = (nLength % 4);
     unsigned int itemp;
-    
+
     for (short count = 0; count< block_count; count++) {
         *data ^= nCrcSeed;
         nCrcSeed = *data;
         data++;
     }
-    
+
     pData = (char*)data;
     for (short count = 0; count < byte_count; count++) {
         *pData ^= (char)nCrcSeed;
@@ -111,18 +114,18 @@ void BaseProtocol::decrypt(Packet* pack) {
      	nLength -= 3;
      	data = (unsigned int*) (pData+1);
     }
-    
+
     short block_count = (nLength / 4);
     short byte_count = (nLength % 4);
     unsigned int itemp;
-    
+
     for (short count = 0; count < block_count; count++) {
     	itemp = *data;
     	*data ^= nCrcSeed;
     	nCrcSeed = itemp;
     	data++;
     }
-    
+
     pData = (char*) data;
     for (short count = 0; count < byte_count; count++) {
       	*pData ^= nCrcSeed;
@@ -144,7 +147,7 @@ void BaseProtocol::decompress(Packet* pack) {
     uint16 offset = 1;
     if ((uint8)opcode == 0x00) //put offset for standalone or soe_opcoded pkt
         offset = 2;
-        
+
     z_stream packet;
     packet.zalloc = Z_NULL;
     packet.zfree = Z_NULL;
@@ -154,28 +157,28 @@ void BaseProtocol::decompress(Packet* pack) {
     inflateInit(&packet);
     packet.next_in = (Bytef* )(pData+offset);
     packet.avail_in = (nLength-offset-3);
-    //System::out << "WTF - " << offset << " - " << (nLength-offset-2) << "\n"; 
+    //System::out << "WTF - " << offset << " - " << (nLength-offset-2) << "\n";
     packet.next_out = (Bytef* )output;
     packet.avail_out = COMPRESSION_BUFFER_MAX;
     inflate(&packet,Z_FINISH);
     newLength = packet.total_out;
     inflateEnd(&packet); //close buffer*/
-    
+
     //System::out << "size = " << newLength << "\n";
-    
+
     pack->reset();
 	pack->setSize(newLength + offset + 3, false);
-    
+
     if (offset == 2) {
     	pack->insertShort(opcode);
     } else {
     	pack->insertByte((uint8) opcode);
     }
-    
+
 	pack->insertStream(outputPtr, newLength);
 
 	pack->insertByte(0x01); //set compression flag
-	pack->insertShort(crc);    
+	pack->insertShort(crc);
 
    	pack->setOffset(2);
 }
@@ -183,18 +186,18 @@ void BaseProtocol::decompress(Packet* pack) {
 bool BaseProtocol::compress(Packet* pack) {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
-	
+
 	uint16 opcode = *(uint16*)pData;
 	uint16 crc = *(uint16*)(pData+nLength-2);
 
 	char *output = new char[nLength+20]; //size + 20 for zlib header/footers in worst case scenerio
-        
+
   	uint16 offset;
   	if ((uint8)opcode == 0x00)
     	offset = 2;
   	else
     	offset = 1;
-            
+
 	z_stream packet;
    	packet.zalloc = Z_NULL;
   	packet.zfree = Z_NULL;
@@ -205,29 +208,29 @@ bool BaseProtocol::compress(Packet* pack) {
   	packet.next_in = (Bytef* )(pData+offset);
    	packet.avail_in = nLength - offset - 3;
    	packet.next_out = (Bytef* )output;
-   	packet.avail_out = nLength + 20; 
+   	packet.avail_out = nLength + 20;
    	deflate(&packet,  Z_FINISH);
    	int compSize = packet.total_out;
 
    	if (compSize + 3 >= nLength) {
    	//if (false) {
     	delete [] output;
-        	
+
       	return false; //We didn't compress it.
   	} else {
 		pack->reset();
 		pack->setSize(compSize + offset + 3, false);
-    
+
     	if (offset == 2) {
     		pack->insertShort(opcode);
 	    } else {
 		   	pack->insertByte((uint8) opcode);
     	}
-    
+
 		pack->insertStream(output, compSize);
 
 		pack->insertByte(0x01); //set compression flag
-		pack->insertShort(crc);    
+		pack->insertShort(crc);
 
 	    pack->reset();
 
@@ -317,7 +320,7 @@ void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
     if (crcLength > 0) {
         uint32 crc = generateCrc(pack, nLength - crcLength);
         pData += (nLength-crcLength);
-        
+
         for (uint16 i = 0; i < crcLength; i++) {
             pData[(crcLength - 1) - i] = (char)((crc >> (8 * i)) & 0xFF);
         }
@@ -334,7 +337,7 @@ bool BaseProtocol::testCRC(Packet* pack, uint16 crcLength) {
         unsigned int crc = 0;
         unsigned int mask = 0;
         unsigned int pullbyte = 0;
-        
+
         pData = pData + (nLength - crcLength);
         for (short i = 0; i < crcLength; i++) {
             pullbyte = (unsigned char) pData[i];
@@ -342,11 +345,11 @@ bool BaseProtocol::testCRC(Packet* pack, uint16 crcLength) {
             mask <<= 8;
             mask |= 0xFF;
         }
-        
+
         p_crc &= mask;
         if (p_crc != crc)
             crctest = false;
     }
-    
+
     return crctest;
 }

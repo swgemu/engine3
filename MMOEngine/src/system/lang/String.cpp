@@ -210,12 +210,12 @@ uint32 String::hashCode() const {
 	uint32 CRC = 0xFFFFFFFF;
 
 	for (int counter = 0; counter < count; counter++) {
-		uint32 table = value[counter] ^ (CRC >> 24);
+		uint32 idx = value[counter] ^ (CRC >> 24);
 
-		if (table > 255)
+		if (idx > 255)
 			throw ArrayIndexOutOfBoundsException(value[counter]);
 
-  		CRC = crctable[table] ^ (CRC << 8);
+  		CRC = crctable[idx] ^ (CRC << 8);
 	}
 
 	return ~CRC;
@@ -245,7 +245,7 @@ String String::subString(int beginIndex, int endIndex) const {
 String String::valueOf(int val) {
 	char buf[10];
 
-	sprintf(buf, "%d", val);
+	snprintf(buf, 10, "%d", val);
 
 	return String(buf);
 }
@@ -253,7 +253,7 @@ String String::valueOf(int val) {
 String String::valueOf(uint32 val) {
 	char buf[10];
 
-	sprintf(buf, "%u", val);
+	snprintf(buf, 10, "%u", val);
 
 	return String(buf);
 }
@@ -275,17 +275,17 @@ String String::valueOf(uint64 val) {
 }
 
 String String::valueOf(float val) {
-	char buf[20];
+	char buf[32];
 
-	sprintf(buf, "%g", val);
+	snprintf(buf, 32, "%g", val);
 
 	return String(buf);
 }
 
 String String::valueOf(double val) {
-	char buf[20];
+	char buf[32];
 
-	sprintf(buf, "%g", (float) val);
+	snprintf(buf, 32, "%g", (float) val);
 
 	return String(buf);
 }
@@ -293,7 +293,7 @@ String String::valueOf(double val) {
 String String::valueOf(void* val) {
 	char buf[20];
 
-	sprintf(buf, "%p", val);
+	snprintf(buf, 20, "%p", val);
 
 	return String(buf);
 }
@@ -301,7 +301,7 @@ String String::valueOf(void* val) {
 String String::hexvalueOf(int val) {
 	char buf[20];
 
-	sprintf(buf, "%x", val);
+	snprintf(buf, 20, "%x", val);
 
 	return String(buf);
 }

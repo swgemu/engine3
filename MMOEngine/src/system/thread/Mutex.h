@@ -90,7 +90,7 @@ namespace sys {
 					System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
 			#else
 				#ifndef LOG_LOCKS
-					Atomic::incrementInt((uint32*)&lockCount);
+					//Atomic::incrementInt((uint32*)&lockCount);
 					int cnt = lockCount;
 				#endif
 

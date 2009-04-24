@@ -342,7 +342,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 		if (!sendBuffer.isEmpty() || bufferedPacket != NULL)
 			scheduler->addEvent(this, 10);
 
-		if (sendBuffer.size() > 1500) {
+		if (sendBuffer.size() > 3000) {
 			StringBuffer msg;
 			msg << "WARNING - send buffer overload [" << sendBuffer.size() << "]";
 			error(msg);

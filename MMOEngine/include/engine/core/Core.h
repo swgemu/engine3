@@ -7,19 +7,21 @@
 
 #include "../db/MySqlDatabase.h"
 
+#include <new>
+
 namespace engine {
   namespace core {
 
 	class Core {
 	public:
 		Core() {
-			//set_new_handler(outOfMemoryHandler);
+			std::set_new_handler(outOfMemoryHandler);
 
 			Socket::initialize();
 		}
 
 		Core(const char* globallogfile) {
-			//set_new_handler(outOfMemoryHandler);
+			std::set_new_handler(outOfMemoryHandler);
 
 			Socket::initialize();
 
@@ -36,6 +38,8 @@ namespace engine {
 
 		static void outOfMemoryHandler() {
 			System::out << "OutOfMemoryException\n";
+
+			//StackTrace::printStackTrace();
 
 			exit(1);
 		}

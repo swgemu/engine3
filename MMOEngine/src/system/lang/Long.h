@@ -68,7 +68,7 @@ namespace sys {
 		static void toString(String& str, int64 val) {
 			char buf[32];
 
-			sprintf(buf, "%lld", val);
+			snprintf(buf, 32, "%lld", val);
 
 			str = buf;
 		}
@@ -84,7 +84,7 @@ namespace sys {
 		static void toString(String& str, uint64 val) {
 			char buf[32];
 
-			sprintf(buf, "%llu", val);
+			snprintf(buf, 32, "%llu", val);
 
 			str = buf;
 		}
