@@ -98,6 +98,10 @@ namespace sys {
 	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
 	 	VectorMapEntry<K, V>* e = new VectorMapEntry<K, V>(key, value);
 
+	 	if ((SortedVector<VectorMapEntry<K, V>*>::getInsertPlan() == (SortedVector<VectorMapEntry<K, V>*>::ALLOW_OVERWRITE)) && contains(key)) {
+			drop(key);
+	 	}
+
 	 	int res = SortedVector<VectorMapEntry<K, V>*>::put(e);
 
 	 	if (res == -1)

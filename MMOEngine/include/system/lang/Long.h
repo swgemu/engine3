@@ -13,11 +13,25 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "NumberFormatException.h"
 
+#include "BaseTypeVariable.h"
+
 namespace sys {
   namespace lang {
 
-	class Long {
+	class Long : public BaseTypeVariable<int64> {
 	public:
+		Long() : BaseTypeVariable<int64>(0) {
+
+		}
+
+		Long(int64 val) : BaseTypeVariable<int64>(val) {
+
+		}
+
+		void toString(String* str) {
+			*str = String::valueOf(*this);
+		}
+
 		static int hashCode(uint64 value) {
 			return (int)(value ^ (value >> 32));
 		}

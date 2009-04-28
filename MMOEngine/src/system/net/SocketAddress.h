@@ -17,7 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <winsock2.h>
 #endif
 
-#include "../lang/String.h"
+#include "../lang/types/String.h"
 
 namespace sys {
   namespace net {

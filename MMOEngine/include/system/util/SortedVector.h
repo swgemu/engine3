@@ -41,6 +41,10 @@ namespace sys {
 			insertPlan = plan;
 		}
 
+		inline int getInsertPlan() {
+			return insertPlan;
+		}
+
 	};
 
 	template<class E> SortedVector<E>::SortedVector() : Vector<E>() {

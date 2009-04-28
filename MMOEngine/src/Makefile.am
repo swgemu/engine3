@@ -16,9 +16,9 @@ libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
 			system/lang/Exception.cpp \
-			system/lang/String.cpp \
+			system/lang/types/String.cpp \
 			system/lang/StringBuffer.cpp \
-			system/lang/UnicodeString.cpp \
+			system/lang/types/UnicodeString.cpp \
 			system/lang/Math.cpp \
 			system/lang/StackTrace.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
@@ -35,6 +35,7 @@ libengine3_a_SOURCES = \
 			system/io/StringTokenizer.cpp \
 			system/io/UnicodeTokenizer.cpp \
 			system/io/PrintStream.cpp \
+			system/io/Serializable.cpp \
 			system/util/AdvancedBinaryHeap.cpp \
 			engine/engine.h \
 			engine/sched/ScheduleManager.cpp \

@@ -1,9 +1,14 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
 #ifndef PRINTSTREAM_H_
 #define PRINTSTREAM_H_
 
 #include "../platform.h"
 
-#include "../lang/String.h"
+#include "../lang/types/String.h"
 #include "../lang/StringBuffer.h"
 
 namespace sys {

@@ -3,14 +3,14 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../platform.h"
+#include "../../platform.h"
 
 #include "String.h"
-#include "StringBuffer.h"
+#include "../StringBuffer.h"
 
 #include "UnicodeString.h"
 
-#include "ArrayIndexOutOfBoundsException.h"
+#include "../ArrayIndexOutOfBoundsException.h"
 
 UnicodeString::UnicodeString() {
 	create("", 0);

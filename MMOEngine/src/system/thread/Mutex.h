@@ -12,7 +12,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/System.h"
 
-#include "../lang/String.h"
+#include "../lang/types/String.h"
 #include "../lang/StackTrace.h"
 #include "../lang/Time.h"
 

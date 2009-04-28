@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "system/lang/Long.h"
+#include "system/lang/types/Long.h"
 
 namespace engine {
   namespace db {

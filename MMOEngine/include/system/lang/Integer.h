@@ -4,12 +4,25 @@
 #include "String.h"
 
 #include "NumberFormatException.h"
+#include "BaseTypeVariable.h"
 
 namespace sys {
   namespace lang {
 
-	class Integer {
+	class Integer : public BaseTypeVariable<int> {
 	public:
+		Integer() : BaseTypeVariable<int>(0) {
+
+		}
+
+		Integer(int val) : BaseTypeVariable<int>(val) {
+
+		}
+
+		void toString(String* str) {
+			*str = String::valueOf(*this);
+		}
+
 		static int valueOf(char ch) {
 			int digit = ch - '0';
 			if (digit < 0 || digit > 9)

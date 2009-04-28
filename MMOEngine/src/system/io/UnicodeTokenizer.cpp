@@ -3,9 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../lang/Integer.h"
-#include "../lang/Long.h"
-#include "../lang/String.h"
+#include "../lang/types/Integer.h"
+#include "../lang/types/Long.h"
+#include "../lang/types/String.h"
 
 #include "UnicodeTokenizer.h"
 
@@ -120,7 +120,8 @@ void UnicodeTokenizer::nextToken(UnicodeString& s) {
 	s.clear();
 
 	if (index != -1) {
-		s.append(str.substr(oindex, index++ - oindex));
+		s.append(str.substr(oindex, index - oindex));
+		index += delimeter.length();
 	} else {
 		s.append(str.substr(oindex, str.length() - oindex));
 	}

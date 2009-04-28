@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef UNICODE_H_
 #define UNICODE_H_
 
-#include "../platform.h"
+#include "../../platform.h"
 
 #ifndef PLATFORM_WIN
 #define wchar_t unsigned short
@@ -17,7 +17,7 @@ namespace sys {
 
 	class String;
 
-	class UnicodeString {
+	class UnicodeString : public Variable {
 		wchar_t* uString;
 		int count;
 
@@ -58,6 +58,14 @@ namespace sys {
 
 		String toString() const;
 		void toString(String& ascii) const;
+
+		void parseFromString(String* str) {
+			*this = *str;
+		}
+
+		void toString(String* ascii) {
+			toString(*ascii);
+		}
 
 		inline bool isEmpty() const {
 			return count == 0;

@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Exception.h"
 
-#include "../lang/UnicodeString.h"
+#include "../lang/types/UnicodeString.h"
 
 #include "../lang/StringBuffer.h"
 

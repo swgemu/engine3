@@ -1,13 +1,37 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
-#include "../platform.h"
+#include "../../platform.h"
+
+#include "BaseTypeVariable.h"
+
+#include "String.h"
 
 namespace sys {
   namespace lang {
 
-	class Character {
+	class Character : public BaseTypeVariable<char> {
 	public:
+		Character() : BaseTypeVariable<char>(0) {
+
+		}
+
+		Character(char val) : BaseTypeVariable<char>(val) {
+
+		}
+
+		void toString(String* str) {
+			*str = String::valueOf(*this);
+		}
+
+		void parseFromString(String* str) {
+			*this = valueOf(*str);
+		}
+
+		static inline char valueOf(String& str) {
+			return str.charAt(0);
+		}
+
 		static inline bool isDigit(char ch) {
 			return isdigit(ch);
 		}
@@ -46,6 +70,25 @@ namespace sys {
 			return (uint32) value;
 		}
 
+	};
+
+	class UnsignedCharacter : public BaseTypeVariable<unsigned char> {
+	public:
+		UnsignedCharacter() : BaseTypeVariable<unsigned char>(0) {
+
+		}
+
+		UnsignedCharacter(unsigned char val) : BaseTypeVariable<unsigned char>(val) {
+
+		}
+
+		void toString(String* str) {
+			*str = String::valueOf(*this);
+		}
+
+		void parseFromString(String* str) {
+			*this = Character::valueOf(*str);
+		}
 	};
 
   } // namespace lang

@@ -11,12 +11,13 @@ namespace engine {
 
 	class Coordinate : public DistributedObject {
 	protected:
-		float positionX, positionZ, positionY;
+		Float positionX, positionZ, positionY;
 
-		float previousPositionX, previousPositionZ, previousPositionY;
+		Float previousPositionX, previousPositionZ, previousPositionY;
 
 	public:
 		Coordinate() : DistributedObject() {
+			addSerializableVariables();
 		}
 
 		Coordinate(float x, float z, float y) : DistributedObject() {
@@ -25,6 +26,8 @@ namespace engine {
 			positionY = y;
 
 			updatePreviousPosition();
+
+			addSerializableVariables();
 		}
 
 		virtual ~Coordinate() {
@@ -103,6 +106,13 @@ namespace engine {
 
 		inline float getPreviousPositionY() {
 			return previousPositionY;
+		}
+
+	private:
+		void addSerializableVariables() {
+			addSerializableVariable("positionX", &positionX);
+			addSerializableVariable("positionY", &positionY);
+			addSerializableVariable("positionZ", &positionZ);
 		}
 
 	};

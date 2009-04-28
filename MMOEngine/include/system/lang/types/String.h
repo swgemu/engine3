@@ -6,12 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef STRING_H_
 #define STRING_H_
 
-#include "../platform.h"
+#include "../../platform.h"
+#include "Variable.h"
 
 namespace sys {
   namespace lang {
 
-	class String {
+	class String : public Variable {
 	protected:
 		char* value;
 
@@ -43,6 +44,10 @@ namespace sys {
 		int lastIndexOf(char ch, int fromIndex) const ;
 		int lastIndexOf(const String& str) const ;
 		int lastIndexOf(const String& str, int fromIndex) const ;
+
+		void parseFromString(String* str) {
+			*this = *str;
+		}
 
 		uint32 hashCode() const;
 
@@ -101,6 +106,10 @@ namespace sys {
 
 		bool operator!= (const String& str) const {
 			return compareTo(str) != 0;
+		}
+
+		void toString(String* str) {
+			*str = *this;
 		}
 
 		String& operator+= (char ch);

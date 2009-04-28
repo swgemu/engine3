@@ -3,9 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../lang/Integer.h"
-#include "../lang/Long.h"
-#include "../lang/String.h"
+#include "../lang/types/Integer.h"
+#include "../lang/types/Long.h"
+#include "../lang/types/String.h"
 
 #include "StringTokenizer.h"
 
@@ -58,7 +58,7 @@ void StringTokenizer::getStringToken(StringBuffer& token) {
 
 void StringTokenizer::nextToken(String& s) {
 	if (!hasMoreTokens())
-		throw Exception();
+		throw Exception("no more tokens in " + str);
 
 	StringBuffer buf;
 
@@ -75,9 +75,10 @@ void StringTokenizer::nextToken(String& s) {
 			break;
 	}
 
-	if (index != -1)
-		buf.append(str.subString(oindex, index++));
-	else
+	if (index != -1) {
+		buf.append(str.subString(oindex, index));
+		index += delimeter.length();
+	} else
 		buf.append(str.subString(oindex, str.length()));
 
 	buf.toString(s);
@@ -85,7 +86,7 @@ void StringTokenizer::nextToken(String& s) {
 
 void StringTokenizer::nextToken(StringBuffer& s) {
 	if (!hasMoreTokens())
-		throw Exception();
+		throw Exception("no more tokens in " + str);
 
 	int oindex;
 
@@ -102,9 +103,10 @@ void StringTokenizer::nextToken(StringBuffer& s) {
 
 	s.deleteAll();
 
-	if (index != -1)
-		s.append(str.subString(oindex, index++));
-	else
+	if (index != -1) {
+		s.append(str.subString(oindex, index));
+		index += delimeter.length();
+	} else
 		s.append(str.subString(oindex, str.length()));
 }
 

@@ -4,13 +4,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "String.h"
-#include "StringBuffer.h"
+#include "../StringBuffer.h"
 
 #include "Long.h"
+#include "Integer.h"
+#include "Bool.h"
+#include "Float.h"
 
-#include "ArrayIndexOutOfBoundsException.h"
-#include "IllegalArgumentException.h"
-#include "NumberFormatException.h"
+#include "../ArrayIndexOutOfBoundsException.h"
+#include "../IllegalArgumentException.h"
+#include "../NumberFormatException.h"
 
 static const unsigned int crctable[256] = {
     0x0000000,
@@ -210,12 +213,12 @@ uint32 String::hashCode() const {
 	uint32 CRC = 0xFFFFFFFF;
 
 	for (int counter = 0; counter < count; counter++) {
-		uint32 idx = value[counter] ^ (CRC >> 24);
+		uint32 table = value[counter] ^ (CRC >> 24);
 
-		if (idx > 255)
+		if (table > 255)
 			throw ArrayIndexOutOfBoundsException(value[counter]);
 
-  		CRC = crctable[idx] ^ (CRC << 8);
+  		CRC = crctable[table] ^ (CRC << 8);
 	}
 
 	return ~CRC;
@@ -245,7 +248,7 @@ String String::subString(int beginIndex, int endIndex) const {
 String String::valueOf(int val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%d", val);
+	snprintf(buf, 10, "%d", val);
 
 	return String(buf);
 }
@@ -253,7 +256,7 @@ String String::valueOf(int val) {
 String String::valueOf(uint32 val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%u", val);
+	snprintf(buf, 10, "%u", val);
 
 	return String(buf);
 }
@@ -275,17 +278,17 @@ String String::valueOf(uint64 val) {
 }
 
 String String::valueOf(float val) {
-	char buf[32];
+	char buf[40];
 
-	snprintf(buf, 32, "%g", val);
+	snprintf(buf, 40, "%g", val);
 
 	return String(buf);
 }
 
 String String::valueOf(double val) {
-	char buf[32];
+	char buf[40];
 
-	snprintf(buf, 32, "%g", (float) val);
+	snprintf(buf, 40, "%g", (float) val);
 
 	return String(buf);
 }

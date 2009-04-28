@@ -16,7 +16,7 @@ namespace engine {
 	class DistributedObjectAdapter;
 	class DistributedObjectStub;
 
-	class DistributedObject : public ReadWriteLock, public Object {
+	class DistributedObject : public ReadWriteLock, public Object, public virtual Serializable {
 	protected:
 		String _className;
 		String _name;

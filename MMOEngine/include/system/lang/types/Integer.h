@@ -3,13 +3,30 @@
 
 #include "String.h"
 
-#include "NumberFormatException.h"
+#include "../NumberFormatException.h"
+#include "BaseTypeVariable.h"
 
 namespace sys {
   namespace lang {
 
-	class Integer {
+	class Integer : public BaseTypeVariable<int> {
 	public:
+		Integer() : BaseTypeVariable<int>(0) {
+
+		}
+
+		Integer(int val) : BaseTypeVariable<int>(val) {
+
+		}
+
+		void toString(String* str) {
+			*str = String::valueOf(*this);
+		}
+
+		void parseFromString(String* str) {
+			*this = valueOf(*str);
+		}
+
 		static int valueOf(char ch) {
 			int digit = ch - '0';
 			if (digit < 0 || digit > 9)
@@ -53,6 +70,41 @@ namespace sys {
 
 		static uint32 hashCode(int value) {
 			return (uint32) value;
+		}
+
+	};
+
+	class UnsignedInteger: public BaseTypeVariable<unsigned int> {
+	public:
+		UnsignedInteger() : BaseTypeVariable<unsigned int>(0) {
+
+		}
+
+		UnsignedInteger(unsigned int val) : BaseTypeVariable<unsigned int>(val) {
+
+		}
+
+		void toString(String* str) {
+			*str = String::valueOf(*this);
+		}
+
+		void parseFromString(String* str) {
+			*this = (unsigned int) UnsignedInteger::valueOf(*str);
+		}
+
+		static unsigned int valueOf(const String& str) {
+			unsigned int val = 0;
+			unsigned int mul = 1;
+
+			for (int i = str.length() - 1; i >= 0; --i) {
+				int digit = Integer::valueOf(str.charAt(i));
+
+				val += digit * mul;
+
+				mul *= 10;
+			}
+
+			return val;
 		}
 
 	};
