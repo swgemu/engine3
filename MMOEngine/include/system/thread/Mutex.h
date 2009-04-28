@@ -37,6 +37,8 @@ namespace sys {
 
 		bool doTrace;
 
+		bool locked;
+
 	public:
 		Mutex() {
 			pthread_mutex_init(&mutex, NULL);
@@ -48,6 +50,8 @@ namespace sys {
 
 			trace = NULL;
 			doTrace = true;
+
+			locked = false;
 		}
 
 		Mutex(const String& s) {
@@ -60,6 +64,8 @@ namespace sys {
 
 			trace = NULL;
 			doTrace = true;
+
+			locked = false;
 		}
 
 		virtual ~Mutex() {
@@ -120,6 +126,8 @@ namespace sys {
 				trace = new StackTrace();
 			#endif
 
+				locked = true;
+
 			#ifdef LOG_LOCKS
 				currentCount = cnt;
 
@@ -161,6 +169,8 @@ namespace sys {
 			}
 		#endif
 
+			locked = true;
+
 			#ifdef LOG_LOCKS
 				currentCount = cnt;
 
@@ -187,6 +197,8 @@ namespace sys {
 				trace = NULL;
 			#endif
 
+			locked = false;
+
 			int res = pthread_mutex_unlock(&mutex);
 			if (res != 0) {
 				System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
@@ -211,6 +223,10 @@ namespace sys {
 
 		inline void setLockTracing(bool tracing) {
 			doTrace = tracing;
+		}
+
+		inline bool isLocked() {
+			return locked;
 		}
 
 		friend class Condition;

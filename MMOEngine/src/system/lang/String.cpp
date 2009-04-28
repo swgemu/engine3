@@ -243,17 +243,17 @@ String String::subString(int beginIndex, int endIndex) const {
 }
 
 String String::valueOf(int val) {
-	char buf[10];
+	char buf[20];
 
-	snprintf(buf, 10, "%d", val);
+	snprintf(buf, 20, "%d", val);
 
 	return String(buf);
 }
 
 String String::valueOf(uint32 val) {
-	char buf[10];
+	char buf[20];
 
-	snprintf(buf, 10, "%u", val);
+	snprintf(buf, 20, "%u", val);
 
 	return String(buf);
 }

@@ -12,3 +12,24 @@ DistributedObject::DistributedObject() {
 
 DistributedObject::~DistributedObject() {
 }
+
+void DistributedObject::finalize() {
+	Object::finalize();
+}
+
+void DistributedObject::acquire() {
+	Object::acquire();
+
+	/*StringBuffer msg;
+	msg << "[" << _getName() << "] acquired (" << getReferenceCount() << ")";
+	Logger::console.info(msg);*/
+}
+
+void DistributedObject::release() {
+
+	/*StringBuffer msg;
+	msg << "[" << _getName() << "] released (" << getReferenceCount() - 1 << ")";
+	Logger::console.info(msg);*/
+
+	Object::release();
+}
