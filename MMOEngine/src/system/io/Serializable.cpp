@@ -74,7 +74,7 @@ void Serializable::deSerializeVariable(const String& var) {
 		return;
 	}
 
-	tokenizer.getStringToken(data);
+	tokenizer.finalToken(data);
 
 	if (nameAndVersion.indexOf("|") != -1) {
 		StringTokenizer ver(nameAndVersion);

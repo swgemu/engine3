@@ -49,7 +49,7 @@ void BinaryData::encode(String& stream) {
 	*out++ = 0;
 
 	StringBuffer buf;
-	buf.append(oData, out - (sys::uint8 *)oData);
+	buf.append(oData/*, out - (sys::uint8 *)oData*/);
 	delete[] oData;
 
 	stream = buf.toString();
