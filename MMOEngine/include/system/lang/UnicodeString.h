@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../platform.h"
 
+#include "Variable.h"
+
 #ifndef PLATFORM_WIN
 #define wchar_t unsigned short
 #endif
@@ -17,7 +19,7 @@ namespace sys {
 
 	class String;
 
-	class UnicodeString {
+	class UnicodeString : public Variable {
 		wchar_t* uString;
 		int count;
 
@@ -58,6 +60,17 @@ namespace sys {
 
 		String toString() const;
 		void toString(String& ascii) const;
+
+		void parseFromString(String* str) {
+			*this = *str;
+		}
+
+		void toString(String* ascii) {
+			toString(*ascii);
+		}
+
+		void toBinaryStream(sys::io::ObjectOutputStream* stream);
+		void parseFromBinaryStream(sys::io::ObjectInputStream* stream);
 
 		inline bool isEmpty() const {
 			return count == 0;

@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef STRING_H_
 #define STRING_H_
 
-#include "../../platform.h"
+#include "../platform.h"
 #include "Variable.h"
 
 namespace sys {
@@ -136,7 +136,7 @@ namespace sys {
 	protected:
 		void create(const char* str, int len);
 
-		void destroy();
+		void clear();
 
 		static char* strrstr(const char* s, int slen, const char* t, int tlen);
 

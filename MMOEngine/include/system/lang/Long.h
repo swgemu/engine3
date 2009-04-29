@@ -15,94 +15,151 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BaseTypeVariable.h"
 
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
-	class Long : public BaseTypeVariable<int64> {
-	public:
-		Long() : BaseTypeVariable<int64>(0) {
+	  class Long : public BaseTypeVariable<int64> {
+	  public:
+		  Long() : BaseTypeVariable<int64>(0) {
 
-		}
+		  }
 
-		Long(int64 val) : BaseTypeVariable<int64>(val) {
+		  Long(int64 val) : BaseTypeVariable<int64>(val) {
 
-		}
+		  }
 
-		void toString(String* str) {
-			*str = String::valueOf(*this);
-		}
+		  void toString(String* str) {
+			  *str = String::valueOf(*this);
+		  }
 
-		static int hashCode(uint64 value) {
-			return (int)(value ^ (value >> 32));
-		}
+		  void parseFromString(String* str) {
+			  *this = valueOf(*str);
+		  }
 
-		static int64 valueOf(const String& str) {
-			int64 val = 0;
-			int64 mul = 1;
+		  void toBinaryStream(ObjectOutputStream* stream) {
+			  stream->writeSignedLong(get());
+		  }
 
-			for (int i = str.length() - 1; i >= 0; --i) {
-				char ch = str.charAt(i);
+		  void parseFromBinaryStream(ObjectInputStream* stream) {
+			  *this = stream->readSignedLong();
+		  }
 
-				if (i == 0 && ch == '-') {
-					val *= -1;
-					break;
-				}
+		  static int hashCode(uint64 value) {
+			  return (int)(value ^ (value >> 32));
+		  }
 
-				val += Integer::valueOf(ch) * mul;
+		  static int64 valueOf(const String& str) {
+			  int64 val = 0;
+			  int64 mul = 1;
 
-				mul *= 10;
-			}
+			  for (int i = str.length() - 1; i >= 0; --i) {
+				  char ch = str.charAt(i);
 
-			return val;
-		}
+				  if (i == 0 && ch == '-') {
+					  val *= -1;
+					  break;
+				  }
 
-		static uint64 unsignedvalueOf(const String& str) {
-			uint64 val = 0;
-			uint64 mul = 1;
+				  val += Integer::valueOf(ch) * mul;
 
-			for (int i = str.length() - 1; i >= 0; --i) {
-				int digit = Integer::valueOf(str.charAt(i));
+				  mul *= 10;
+			  }
 
-				val += digit * mul;
+			  return val;
+		  }
 
-				mul *= 10;
-			}
+		  static uint64 unsignedvalueOf(const String& str) {
+			  uint64 val = 0;
+			  uint64 mul = 1;
 
-			return val;
-		}
+			  for (int i = str.length() - 1; i >= 0; --i) {
+				  int digit = Integer::valueOf(str.charAt(i));
 
-		static String toString(int64 val) {
-			String str;
+				  val += digit * mul;
 
-			toString(str, val);
+				  mul *= 10;
+			  }
 
-			return str;
-		}
+			  return val;
+		  }
 
-		static void toString(String& str, int64 val) {
-			char buf[32];
+		  static String toString(int64 val) {
+			  String str;
 
-			snprintf(buf, 32, "%lld", val);
+			  toString(str, val);
 
-			str = buf;
-		}
+			  return str;
+		  }
 
-		static String toString(uint64 val) {
-			String str;
+		  static void toString(String& str, int64 val) {
+			  char buf[32];
 
-			toString(str, val);
+			  snprintf(buf, 32, "%lld", val);
 
-			return str;
-		}
+			  str = buf;
+		  }
 
-		static void toString(String& str, uint64 val) {
-			char buf[32];
+		  static String toString(uint64 val) {
+			  String str;
 
-			snprintf(buf, 32, "%llu", val);
+			  toString(str, val);
 
-			str = buf;
-		}
-};
+			  return str;
+		  }
+
+		  static void toString(String& str, uint64 val) {
+			  char buf[32];
+
+			  snprintf(buf, 32, "%llu", val);
+
+			  str = buf;
+		  }
+	  };
+
+	  class UnsignedLong : public BaseTypeVariable<uint64> {
+	  public:
+		  UnsignedLong() : BaseTypeVariable<uint64>(0) {
+
+		  }
+
+		  UnsignedLong(uint64 val) : BaseTypeVariable<uint64>(val) {
+
+		  }
+
+		  void toString(String* str) {
+			  *str = String::valueOf(*this);
+		  }
+
+		  void parseFromString(String* str) {
+			  *this = UnsignedLong::valueOf(*str);
+		  }
+
+		  void toBinaryStream(ObjectOutputStream* stream) {
+			  stream->writeLong(BaseTypeVariable<uint64>::get());
+		  }
+
+		  void parseFromBinaryStream(ObjectInputStream* stream) {
+			  *this = stream->readLong();
+		  }
+
+		  static uint64 valueOf(const String& str) {
+			  uint64 val = 0;
+			  uint64 mul = 1;
+
+			  for (int i = str.length() - 1; i >= 0; --i) {
+				  int digit = Integer::valueOf(str.charAt(i));
+
+				  val += digit * mul;
+
+				  mul *= 10;
+			  }
+
+			  return val;
+		  }
+	  };
 
   } // namespace lang
 } // namespace sys

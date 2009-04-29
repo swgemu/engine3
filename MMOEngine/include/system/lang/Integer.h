@@ -6,6 +6,9 @@
 #include "NumberFormatException.h"
 #include "BaseTypeVariable.h"
 
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -21,6 +24,18 @@ namespace sys {
 
 		void toString(String* str) {
 			*str = String::valueOf(*this);
+		}
+
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeSignedInt(get());
+		}
+
+		void parseFromString(String* str) {
+			*this = valueOf(*str);
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readSignedInt();
 		}
 
 		static int valueOf(char ch) {
@@ -66,6 +81,49 @@ namespace sys {
 
 		static uint32 hashCode(int value) {
 			return (uint32) value;
+		}
+
+	};
+
+	class UnsignedInteger: public BaseTypeVariable<unsigned int> {
+	public:
+		UnsignedInteger() : BaseTypeVariable<unsigned int>(0) {
+
+		}
+
+		UnsignedInteger(unsigned int val) : BaseTypeVariable<unsigned int>(val) {
+
+		}
+
+		void toString(String* str) {
+			*str = String::valueOf(*this);
+		}
+
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeInt(get());
+		}
+
+		void parseFromString(String* str) {
+			*this = (unsigned int) UnsignedInteger::valueOf(*str);
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readInt();
+		}
+
+		static unsigned int valueOf(const String& str) {
+			unsigned int val = 0;
+			unsigned int mul = 1;
+
+			for (int i = str.length() - 1; i >= 0; --i) {
+				int digit = Integer::valueOf(str.charAt(i));
+
+				val += digit * mul;
+
+				mul *= 10;
+			}
+
+			return val;
 		}
 
 	};

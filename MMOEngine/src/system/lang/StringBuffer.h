@@ -3,7 +3,7 @@
 
 #include "../platform.h"
 
-#include "types/String.h"
+#include "String.h"
 
 #include "../util/Vector.h"
 

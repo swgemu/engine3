@@ -1,4 +1,4 @@
-#include "types/Character.h"
+#include "Character.h"
 
 #include "StringBuffer.h"
 

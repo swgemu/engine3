@@ -1,4 +1,4 @@
-#include "../lang/types/Character.h"
+#include "../lang/Character.h"
 
 #include "PrintStream.h"
 

@@ -15,7 +15,19 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #endif
 
 namespace sys {
+	namespace io {
+		class ObjectOutputStream;
+		class ObjectInputStream;
+	}
+}
+
+
+namespace sys {
   namespace lang {
+
+    class String;
+
+	using namespace sys::io;
 
 	class Object : public ReferenceCounter {
 		bool finalized;
@@ -61,6 +73,27 @@ namespace sys {
 
 			acquire();
 		}
+
+		/*virtual void toString(String* str) {
+
+		}
+
+		virtual void parseFromString(String* str) {
+
+		}
+
+		virtual bool parseFromString(String* str, int version) {
+			return false;
+		}
+
+		virtual void toBinaryStream(ObjectOutputStream* stream) {
+
+		}
+
+		virtual void parseFromBinaryStream(ObjectInputStream* stream) {
+
+		}*/
+
 
 	#ifdef TRACE_REFERENCESLOTS
 		void addHolder(void* obj) {

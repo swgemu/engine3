@@ -6,8 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef DOUBLE_H_
 #define DOUBLE_H_
 
-#include "../../io/ObjectOutputStream.h"
-#include "../../io/ObjectInputStream.h"
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
 
 namespace sys {
   namespace lang {

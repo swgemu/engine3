@@ -1,14 +1,14 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
-#include "../../platform.h"
+#include "../platform.h"
 
 #include "BaseTypeVariable.h"
 
 #include "String.h"
 
-#include "../../io/ObjectOutputStream.h"
-#include "../../io/ObjectInputStream.h"
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
 
 namespace sys {
   namespace lang {

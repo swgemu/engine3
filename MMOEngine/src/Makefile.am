@@ -16,9 +16,9 @@ libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
 			system/lang/Exception.cpp \
-			system/lang/types/String.cpp \
+			system/lang/String.cpp \
 			system/lang/StringBuffer.cpp \
-			system/lang/types/UnicodeString.cpp \
+			system/lang/UnicodeString.cpp \
 			system/lang/Math.cpp \
 			system/lang/StackTrace.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \

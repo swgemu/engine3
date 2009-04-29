@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../platform.h"
 
-#include "../lang/types/String.h"
+#include "../lang/String.h"
 #include "../lang/StringBuffer.h"
 
 namespace sys {

@@ -1,9 +1,7 @@
 /*
- * Variable.h
- *
- *  Created on: Apr 25, 2009
- *      Author: theanswer
- */
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
 
 #ifndef VARIABLE_H_
 #define VARIABLE_H_
@@ -13,6 +11,7 @@
 namespace sys {
 	namespace io {
 		class ObjectOutputStream;
+		class ObjectInputStream;
 	}
 }
 
@@ -21,15 +20,23 @@ namespace sys {
 
 	class String;
 
+	using namespace sys::io;
+
 	class Variable {
 	public:
-		virtual void toString(String* str) {
+		virtual ~Variable() {
 
 		}
 
-		virtual void toBinaryData(sys::io::ObjectOutputStream* stream) {
+		virtual void toString(String* str) = 0;
+		virtual void parseFromString(String* str) = 0;
 
+		virtual bool parseFromString(String* str, int version) {
+			return false;
 		}
+
+		virtual void toBinaryStream(ObjectOutputStream* stream) = 0;
+		virtual void parseFromBinaryStream(ObjectInputStream* stream) = 0;
 
 	};
 

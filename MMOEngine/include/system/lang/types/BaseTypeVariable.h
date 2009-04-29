@@ -24,13 +24,13 @@ namespace sys {
 				initialize(defaultValue);
 			}
 
-			inline virtual int compareTo(const O& val) {
+			/*inline virtual int compareTo(const O& val) {
 				if (object < val)
 					return 1;
 				else if (object > val)
 					return -1;
 				else return 0;
-			}
+			}*/
 
 			inline O operator|=(O obj) {
 				return object |= obj;

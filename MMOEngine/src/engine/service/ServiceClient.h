@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace service {
 
-	class ServiceClient : public Object {
+	class ServiceClient : public virtual Object {
 	protected:
 		SocketAddress addr;
 		Socket* socket;
@@ -19,7 +19,7 @@ namespace engine {
 		bool hasError, disconnected;
 
 		int packetLossChance;
-		
+
 	public:
 		ServiceClient(Socket* sock);
 		ServiceClient(Socket* sock, SocketAddress& addr);
@@ -28,7 +28,7 @@ namespace engine {
 		virtual ~ServiceClient();
 
 		void close();
-		
+
 		bool isAvailable();
 
 		inline bool isDisconnected() {
@@ -36,9 +36,9 @@ namespace engine {
 		}
 
 		virtual void finalize();
-		
+
 		virtual void acquire();
-		
+
 		virtual void release();
 
 		// setters
@@ -58,7 +58,7 @@ namespace engine {
 		inline uint64 getNetworkID() {
 			return addr.getNetworkID();
 		}
-		
+
 		inline SocketAddress& getAddress()
 		{
 			return addr;

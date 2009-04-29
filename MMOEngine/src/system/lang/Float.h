@@ -10,10 +10,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "String.h"
 
-#include "../NumberFormatException.h"
+#include "NumberFormatException.h"
 
-#include "../../io/ObjectOutputStream.h"
-#include "../../io/ObjectInputStream.h"
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
 
 namespace sys {
   namespace lang {

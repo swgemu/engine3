@@ -8,8 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../platform.h"
 
-#include "../lang/types/String.h"
-#include "../lang/types/Variable.h"
+#include "../lang/String.h"
 #include "../util/VectorMap.h"
 
 

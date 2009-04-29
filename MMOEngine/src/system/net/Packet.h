@@ -14,8 +14,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <winsock2.h>
 #endif
 
-#include "../lang/types/String.h"
-#include "../lang/types/UnicodeString.h"
+#include "../lang/String.h"
+#include "../lang/UnicodeString.h"
 
 #include "../io/ObjectInputStream.h"
 #include "../io/ObjectOutputStream.h"

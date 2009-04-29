@@ -6,7 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef UNICODE_H_
 #define UNICODE_H_
 
-#include "../../platform.h"
+#include "../platform.h"
+
+#include "Variable.h"
 
 #ifndef PLATFORM_WIN
 #define wchar_t unsigned short

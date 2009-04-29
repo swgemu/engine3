@@ -1,9 +1,7 @@
 /*
- * BaseTypeVariable.h
- *
- *  Created on: Apr 25, 2009
- *      Author: theanswer
- */
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
 
 #ifndef BASETYPEVARIABLE_H_
 #define BASETYPEVARIABLE_H_
@@ -26,12 +24,7 @@ namespace sys {
 				initialize(defaultValue);
 			}
 
-			virtual ~BaseTypeVariable() {
-			}
-
-			virtual void toString(String& str) = 0;
-
-			inline virtual int compareTo(const O& val) const {
+			inline virtual int compareTo(const O& val) {
 				if (object < val)
 					return 1;
 				else if (object > val)
@@ -39,20 +32,60 @@ namespace sys {
 				else return 0;
 			}
 
-			inline virtual bool operator== (const O& val) const {
-				return object == val;
+			inline O operator|=(O obj) {
+				return object |= obj;
 			}
 
-			inline virtual bool operator< (const O& val) const {
-				return object < val;
+			inline O operator^=(O obj) {
+				return object ^= obj;
 			}
 
-			inline virtual bool operator> (const O& val) const {
-				return object > val;
+			inline O operator&=(O obj) {
+				return object &= obj;
 			}
 
-			inline virtual bool operator!= (const O& val) const {
-				return object != val;
+			inline O operator>>=(O obj) {
+				return object >>= obj;
+			}
+
+			inline O operator<<=(O obj) {
+				return object <<= obj;
+			}
+
+			inline O operator%=(O obj) {
+				return object %= obj;
+			}
+
+			inline O operator/=(O obj) {
+				return object /= obj;
+			}
+
+			inline O operator*=(O obj) {
+				return object *= obj;
+			}
+
+			inline O operator+=(O obj) {
+				return object += obj;
+			}
+
+			inline O operator++(int) {
+				return object++;
+			}
+
+			inline O operator--(int) {
+				return object--;
+			}
+
+			inline O operator++() {
+				return ++object;
+			}
+
+			inline O operator--() {
+				return --object;
+			}
+
+			inline O operator-=(O obj) {
+				return object -= obj;
 			}
 
 			inline void operator=(O obj) {
@@ -63,7 +96,7 @@ namespace sys {
 				return object;
 			}
 
-			operator O() {
+			inline operator O() {
 				return object;
 			}
 

@@ -3,9 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../lang/types/Integer.h"
-#include "../lang/types/Long.h"
-#include "../lang/types/String.h"
+#include "../lang/Integer.h"
+#include "../lang/Long.h"
+#include "../lang/String.h"
 
 #include "UnicodeTokenizer.h"
 

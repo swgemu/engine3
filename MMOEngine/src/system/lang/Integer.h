@@ -3,11 +3,11 @@
 
 #include "String.h"
 
-#include "../NumberFormatException.h"
+#include "NumberFormatException.h"
 #include "BaseTypeVariable.h"
 
-#include "../../io/ObjectOutputStream.h"
-#include "../../io/ObjectInputStream.h"
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
 
 namespace sys {
   namespace lang {

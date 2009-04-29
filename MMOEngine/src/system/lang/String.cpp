@@ -4,16 +4,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "String.h"
-#include "../StringBuffer.h"
+#include "StringBuffer.h"
 
 #include "Integer.h"
 #include "Long.h"
 
-#include "../../net/Packet.h"
-
-#include "../ArrayIndexOutOfBoundsException.h"
-#include "../IllegalArgumentException.h"
-#include "../NumberFormatException.h"
+#include "ArrayIndexOutOfBoundsException.h"
+#include "IllegalArgumentException.h"
+#include "NumberFormatException.h"
 
 static const unsigned int crctable[256] = {
     0x0000000,
@@ -70,37 +68,37 @@ static const unsigned int crctable[256] = {
     0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 };
 
-String::String() {
+String::String() : Variable() {
 	create("", 0);
 }
 
-String::String(char* str) {
+String::String(char* str) : Variable() {
 	if (str == NULL)
 		throw IllegalArgumentException();
 
 	create(str, strlen(str));
 }
 
-String::String(const char* str) {
+String::String(const char* str) : Variable() {
 	if (str == NULL)
 		throw IllegalArgumentException();
 
 	create(str, strlen(str));
 }
 
-String::String(const char* str, int len) {
+String::String(const char* str, int len) : Variable() {
 	if (str == NULL)
 		throw IllegalArgumentException();
 
 	create(str, len);
 }
 
-String::String(const String& str) {
+String::String(const String& str) : Variable() {
 	create(str.value, str.count);
 }
 
 String::~String() {
-	destroy();
+	clear();
 }
 
 void String::create(const char* str, int len) {
@@ -112,7 +110,7 @@ void String::create(const char* str, int len) {
 	count = len;
 }
 
-void String::destroy() {
+void String::clear() {
 	if (value != NULL) {
 		free(value);
 		value = NULL;

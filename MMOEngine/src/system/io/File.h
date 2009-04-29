@@ -3,7 +3,7 @@
 
 #include "../platform.h"
 
-#include "../lang/types/String.h"
+#include "../lang/String.h"
 
 namespace sys {
   namespace io {

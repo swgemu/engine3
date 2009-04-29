@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../platform.h"
 
-#include "types/String.h"
+#include "String.h"
 
 #include "StackTrace.h"
 

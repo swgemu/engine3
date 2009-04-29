@@ -45,6 +45,10 @@ namespace sys {
 		int lastIndexOf(const String& str) const ;
 		int lastIndexOf(const String& str, int fromIndex) const ;
 
+		void parseFromString(String* str) {
+			*this = *str;
+		}
+
 		uint32 hashCode() const;
 
 		String subString(int beginIndex) const ;
@@ -104,9 +108,12 @@ namespace sys {
 			return compareTo(str) != 0;
 		}
 
-		inline void toString(String* str) {
+		void toString(String* str) {
 			*str = *this;
 		}
+
+		void toBinaryStream(sys::io::ObjectOutputStream* stream);
+		void parseFromBinaryStream(sys::io::ObjectInputStream* stream);
 
 		String& operator+= (char ch);
 		String& operator+= (const char* str);
@@ -129,7 +136,7 @@ namespace sys {
 	protected:
 		void create(const char* str, int len);
 
-		void destroy();
+		void clear();
 
 		static char* strrstr(const char* s, int slen, const char* t, int tlen);
 

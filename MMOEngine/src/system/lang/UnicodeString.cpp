@@ -3,36 +3,36 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../../platform.h"
+#include "../platform.h"
 
 #include "String.h"
-#include "../StringBuffer.h"
+#include "StringBuffer.h"
 
 #include "UnicodeString.h"
 
-#include "../ArrayIndexOutOfBoundsException.h"
+#include "ArrayIndexOutOfBoundsException.h"
 
-#include "../../io/ObjectOutputStream.h"
-#include "../../io/ObjectInputStream.h"
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
 
-UnicodeString::UnicodeString() {
+UnicodeString::UnicodeString() : Variable() {
 	create("", 0);
 }
 
-UnicodeString::UnicodeString(const char* ascii) {
+UnicodeString::UnicodeString(const char* ascii) : Variable() {
 	int len = strlen(ascii);
 	create(ascii, len);
 }
 
-UnicodeString::UnicodeString(const String& ascii) {
+UnicodeString::UnicodeString(const String& ascii) : Variable() {
 	create(ascii.toCharArray(), ascii.length());
 }
 
-UnicodeString::UnicodeString(const char* ascii, int len) {
+UnicodeString::UnicodeString(const char* ascii, int len) : Variable() {
 	create(ascii, len);
 }
 
-UnicodeString::UnicodeString(const UnicodeString& str) {
+UnicodeString::UnicodeString(const UnicodeString& str) : Variable() {
 	uString = new wchar_t[str.count + 1];
 	count = str.count;
 	//wcscpy(uString, str.uString);
