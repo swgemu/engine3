@@ -10,6 +10,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang.h"
 
+#include "ObjectOutputStream.h"
+#include "ObjectInputStream.h"
+
 Serializable::Serializable() {
 	variables.setInsertPlan(SortedVector<VectorMapEntry<String, Variable*>*>::NO_DUPLICATE);
 	variables.setNullValue(NULL);
@@ -33,6 +36,36 @@ void Serializable::serialize(String& str) {
 	}
 
 	buffer.toString(str);
+}
+
+void Serializable::serialize(ObjectOutputStream* stream) {
+	int size = variables.size();
+
+	stream->writeInt(size);
+
+	for (int i = 0; i < size; ++i) {
+		Variable* variable = variables.get(i);
+
+		variable->toBinaryStream(stream);
+	}
+}
+
+void Serializable::deSerialize(ObjectInputStream* stream) {
+	int size = variables.size();
+
+	int dataSize = stream->readInt();
+
+	if (size != dataSize) {
+		System::out << "WARNING data size and variables not equal in void Serializable::deSerialize(ObjectInputStream* stream)\n";
+
+		return;
+	}
+
+	for (int i = 0; i < size; ++i) {
+		Variable* variable = variables.get(i);
+
+		variable->parseFromBinaryStream(stream);
+	}
 }
 
 void Serializable::deSerialize(const String& str) {

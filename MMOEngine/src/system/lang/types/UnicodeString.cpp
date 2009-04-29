@@ -12,6 +12,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../ArrayIndexOutOfBoundsException.h"
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 UnicodeString::UnicodeString() {
 	create("", 0);
 }
@@ -247,4 +250,21 @@ void UnicodeString::toString(String& ascii) const {
 		str.append((char*) (uString + i));
 
 	ascii = str.toString();
+}
+
+void UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
+	stream->writeInt(count);
+
+	stream->writeStream((char*)uString, count  * 2);
+}
+
+void UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
+	uint32 len = stream->readInt();
+
+	wchar_t uni[len];
+
+	stream->readStream((char*)uni, len * 2);
+
+	clear();
+	append(uni, len);
 }

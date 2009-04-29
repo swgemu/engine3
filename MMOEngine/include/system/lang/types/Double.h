@@ -6,6 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef DOUBLE_H_
 #define DOUBLE_H_
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -27,7 +30,15 @@ namespace sys {
 			*str = String::valueOf(*this);
 		}
 
-		static Double valueOf(const String& str) {
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeFloat(get());
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readFloat();
+		}
+
+		static float valueOf(const String& str) {
 			return atof(str.toCharArray());
 		}
 	};

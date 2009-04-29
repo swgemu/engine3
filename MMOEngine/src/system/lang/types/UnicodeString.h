@@ -67,6 +67,9 @@ namespace sys {
 			toString(*ascii);
 		}
 
+		void toBinaryStream(sys::io::ObjectOutputStream* stream);
+		void parseFromBinaryStream(sys::io::ObjectInputStream* stream);
+
 		inline bool isEmpty() const {
 			return count == 0;
 		}

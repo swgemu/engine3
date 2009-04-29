@@ -11,6 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
 	namespace io {
 		class ObjectOutputStream;
+		class ObjectInputStream;
 	}
 }
 
@@ -19,6 +20,8 @@ namespace sys {
 
 	class String;
 
+	using namespace sys::io;
+
 	class Variable {
 	public:
 		virtual ~Variable() {
@@ -26,16 +29,14 @@ namespace sys {
 		}
 
 		virtual void toString(String* str) = 0;
-
 		virtual void parseFromString(String* str) = 0;
 
 		virtual bool parseFromString(String* str, int version) {
 			return false;
 		}
 
-		virtual void toBinaryData(sys::io::ObjectOutputStream* stream) {
-
-		}
+		virtual void toBinaryStream(ObjectOutputStream* stream) = 0;
+		virtual void parseFromBinaryStream(ObjectInputStream* stream) = 0;
 
 	};
 

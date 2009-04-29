@@ -7,6 +7,9 @@
 
 #include "String.h"
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -26,6 +29,14 @@ namespace sys {
 
 		void parseFromString(String* str) {
 			*this = valueOf(*str);
+		}
+
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeSignedByte(get());
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readSignedByte();
 		}
 
 		static inline char valueOf(String& str) {
@@ -88,6 +99,14 @@ namespace sys {
 
 		void parseFromString(String* str) {
 			*this = Character::valueOf(*str);
+		}
+
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeByte(get());
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readByte();
 		}
 	};
 

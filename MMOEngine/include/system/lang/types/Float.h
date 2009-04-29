@@ -12,6 +12,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../NumberFormatException.h"
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -31,6 +34,14 @@ namespace sys {
 
 		void toString(String* str) {
 			*str = String::valueOf(*this);
+		}
+
+		void toBinaryStream(sys::io::ObjectOutputStream* stream) {
+			stream->writeFloat(BaseTypeVariable<float>::get());
+		}
+
+		void parseFromBinaryStream(sys::io::ObjectInputStream* stream) {
+			*this = stream->readFloat();
 		}
 
 		static float valueOf(const String& str) {

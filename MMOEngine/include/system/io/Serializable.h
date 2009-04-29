@@ -16,6 +16,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
 	namespace io {
 
+		class ObjectOutputStream;
+		class ObjectInputStream;
+
 		class Serializable {
 			VectorMap<String, Variable*> variables;
 
@@ -27,8 +30,11 @@ namespace sys {
 			}
 
 			virtual void serialize(String& str);
+			virtual void serialize(ObjectOutputStream* stream);
 
 			virtual void deSerialize(const String& str);
+			virtual void deSerialize(ObjectInputStream* stream);
+
 
 			void addSerializableVariable(const String& nameAndVersion, Variable* variable) {
 				variables.put(nameAndVersion, variable);

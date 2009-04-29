@@ -24,7 +24,7 @@ namespace sys {
 				initialize(defaultValue);
 			}
 
-			inline virtual int compareTo(const O& val) const {
+			inline virtual int compareTo(const O& val) {
 				if (object < val)
 					return 1;
 				else if (object > val)
@@ -66,6 +66,22 @@ namespace sys {
 
 			inline O operator+=(O obj) {
 				return object += obj;
+			}
+
+			inline O operator++(int) {
+				return object++;
+			}
+
+			inline O operator--(int) {
+				return object--;
+			}
+
+			inline O operator++() {
+				return ++object;
+			}
+
+			inline O operator--() {
+				return --object;
 			}
 
 			inline O operator-=(O obj) {

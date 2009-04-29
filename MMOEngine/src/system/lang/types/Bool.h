@@ -8,6 +8,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BaseTypeVariable.h"
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -26,6 +29,14 @@ namespace sys {
 				*str = String("true");
 			else
 				*str = String("false");
+		}
+
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeBoolean(get());
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readBoolean();
 		}
 
 		void parseFromString(String* str) {

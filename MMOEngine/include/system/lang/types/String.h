@@ -112,6 +112,9 @@ namespace sys {
 			*str = *this;
 		}
 
+		void toBinaryStream(sys::io::ObjectOutputStream* stream);
+		void parseFromBinaryStream(sys::io::ObjectInputStream* stream);
+
 		String& operator+= (char ch);
 		String& operator+= (const char* str);
 		String& operator+= (const String& str);

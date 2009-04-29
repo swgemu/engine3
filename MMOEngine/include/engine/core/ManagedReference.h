@@ -13,30 +13,46 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace core {
 
-	template<class O> class ManagedReference : public ReferenceSlot<O> {
+	template<class O> class ManagedReference : public ReferenceSlot<O>, public Variable {
 	public:
 		ManagedReference() : ReferenceSlot<O>() {
 		}
-		
+
 		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O>(ref) {
 		}
-		
+
 		ManagedReference(O* obj) : ReferenceSlot<O>(obj) {
 		}
-	
+
 		void operator=(const ManagedReference& ref) {
 			ReferenceSlot<O>::setObject(ref.object);
 		}
-	
+
 		void operator=(O* obj) {
 			ReferenceSlot<O>::updateObject(obj);
 		}
-	
+
+		void toString(String* str) {
+
+		}
+
+		void parseFromString(String* str) {
+
+		}
+
+		void toBinaryStream(ObjectOutputStream* stream) {
+
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+
+		}
+
 	};
 
   } // namespace core
 } // namespace engine
 
 using namespace engine::core;
-	
+
 #endif /*MANAGEDREFERENCE_H_*/

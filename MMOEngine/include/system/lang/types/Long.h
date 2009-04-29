@@ -15,6 +15,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BaseTypeVariable.h"
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -34,6 +37,14 @@ namespace sys {
 
 		  void parseFromString(String* str) {
 			  *this = valueOf(*str);
+		  }
+
+		  void toBinaryStream(ObjectOutputStream* stream) {
+			  stream->writeSignedLong(get());
+		  }
+
+		  void parseFromBinaryStream(ObjectInputStream* stream) {
+			  *this = stream->readSignedLong();
 		  }
 
 		  static int hashCode(uint64 value) {
@@ -124,6 +135,14 @@ namespace sys {
 
 		  void parseFromString(String* str) {
 			  *this = UnsignedLong::valueOf(*str);
+		  }
+
+		  void toBinaryStream(ObjectOutputStream* stream) {
+			  stream->writeLong(BaseTypeVariable<uint64>::get());
+		  }
+
+		  void parseFromBinaryStream(ObjectInputStream* stream) {
+			  *this = stream->readLong();
 		  }
 
 		  static uint64 valueOf(const String& str) {

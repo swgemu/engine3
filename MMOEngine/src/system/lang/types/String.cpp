@@ -6,10 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "String.h"
 #include "../StringBuffer.h"
 
-#include "Long.h"
 #include "Integer.h"
-#include "Bool.h"
-#include "Float.h"
+#include "Long.h"
+
+#include "../../net/Packet.h"
 
 #include "../ArrayIndexOutOfBoundsException.h"
 #include "../IllegalArgumentException.h"
@@ -457,6 +457,21 @@ char String::charAt(int index) const {
 		throw ArrayIndexOutOfBoundsException(index);
 
 	return value[index];
+}
+
+void String::toBinaryStream(ObjectOutputStream* stream) {
+	stream->writeShort(count);
+
+	stream->writeStream(value, count);
+}
+
+void String::parseFromBinaryStream(ObjectInputStream* stream) {
+	uint16 len = stream->readShort();
+	char ascii[len + 1];
+	stream->readStream(ascii, (int) len);
+	ascii[len] = 0;
+
+	*this = String(ascii);
 }
 
 bool operator==(char ch, const String& str2) {

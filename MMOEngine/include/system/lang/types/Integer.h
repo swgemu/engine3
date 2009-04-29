@@ -6,6 +6,9 @@
 #include "../NumberFormatException.h"
 #include "BaseTypeVariable.h"
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -23,8 +26,16 @@ namespace sys {
 			*str = String::valueOf(*this);
 		}
 
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeSignedInt(get());
+		}
+
 		void parseFromString(String* str) {
 			*this = valueOf(*str);
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readSignedInt();
 		}
 
 		static int valueOf(char ch) {
@@ -88,8 +99,16 @@ namespace sys {
 			*str = String::valueOf(*this);
 		}
 
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeInt(get());
+		}
+
 		void parseFromString(String* str) {
 			*this = (unsigned int) UnsignedInteger::valueOf(*str);
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readInt();
 		}
 
 		static unsigned int valueOf(const String& str) {

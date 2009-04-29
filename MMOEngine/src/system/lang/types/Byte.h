@@ -9,6 +9,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Character.h"
 #include "Integer.h"
 
+#include "../../io/ObjectOutputStream.h"
+#include "../../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
@@ -20,6 +23,14 @@ namespace sys {
 
 		Byte(unsigned char val) : UnsignedCharacter(val) {
 
+		}
+
+		void toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeByte(get());
+		}
+
+		void parseFromBinaryStream(ObjectInputStream* stream) {
+			*this = stream->readByte();
 		}
 
 		void toString(String* str) {
