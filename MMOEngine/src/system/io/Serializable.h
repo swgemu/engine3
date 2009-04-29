@@ -34,14 +34,8 @@ namespace sys {
 			virtual void deSerialize(const String& str);
 			virtual void deSerialize(ObjectInputStream* stream);
 
-
-			void addSerializableVariable(const String& nameAndVersion, Variable* variable) {
-				variables.put(nameAndVersion, variable);
-			}
-
-			Variable* getSerilizableVariable(const String& nameAndVersion) {
-				return variables.get(nameAndVersion);
-			}
+			void addSerializableVariable(const String& nameAndVersion, Variable* variable);
+			Variable* getSerilizableVariable(const String& nameAndVersion);
 
 		private:
 			void deSerializeVariable(const String& var);

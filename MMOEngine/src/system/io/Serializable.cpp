@@ -122,3 +122,11 @@ void Serializable::deSerializeVariable(const String& var) {
 		variable->parseFromString(&data);
 	}
 }
+
+void Serializable::addSerializableVariable(const String& nameAndVersion, Variable* variable) {
+	variables.put(nameAndVersion, variable);
+}
+
+Variable* Serializable::getSerilizableVariable(const String& nameAndVersion) {
+	return variables.get(nameAndVersion);
+}
