@@ -14,11 +14,11 @@ namespace sys {
 
 	class Double : public BaseTypeVariable<double> {
 	public:
-		Double() : BaseTypeVariable<double>(0) {
+		inline Double() : BaseTypeVariable<double>(0) {
 
 		}
 
-		Double(double val) : BaseTypeVariable<double>(val) {
+		inline Double(double val) : BaseTypeVariable<double>(val) {
 
 		}
 

@@ -15,11 +15,11 @@ namespace sys {
 
 	class Character : public BaseTypeVariable<char> {
 	public:
-		Character() : BaseTypeVariable<char>(0) {
+		inline Character() : BaseTypeVariable<char>(0) {
 
 		}
 
-		Character(char val) : BaseTypeVariable<char>(val) {
+		inline Character(char val) : BaseTypeVariable<char>(val) {
 
 		}
 
@@ -85,11 +85,11 @@ namespace sys {
 
 	class UnsignedCharacter : public BaseTypeVariable<unsigned char> {
 	public:
-		UnsignedCharacter() : BaseTypeVariable<unsigned char>(0) {
+		inline UnsignedCharacter() : BaseTypeVariable<unsigned char>(0) {
 
 		}
 
-		UnsignedCharacter(unsigned char val) : BaseTypeVariable<unsigned char>(val) {
+		inline UnsignedCharacter(unsigned char val) : BaseTypeVariable<unsigned char>(val) {
 
 		}
 

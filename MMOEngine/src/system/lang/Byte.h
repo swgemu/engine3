@@ -17,11 +17,10 @@ namespace sys {
 
 	class Byte : public UnsignedCharacter {
 	public:
-		Byte() : UnsignedCharacter(0) {
-
+		inline Byte() : UnsignedCharacter(0) {
 		}
 
-		Byte(unsigned char val) : UnsignedCharacter(val) {
+		inline Byte(unsigned char val) : UnsignedCharacter(val) {
 
 		}
 

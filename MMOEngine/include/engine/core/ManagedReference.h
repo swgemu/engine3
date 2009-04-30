@@ -15,13 +15,13 @@ namespace engine {
 
 	template<class O> class ManagedReference : public ReferenceSlot<O>, public Variable {
 	public:
-		ManagedReference() : ReferenceSlot<O>() {
+		ManagedReference() : ReferenceSlot<O>(), Variable() {
 		}
 
-		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O>(ref) {
+		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O>(ref), Variable() {
 		}
 
-		ManagedReference(O* obj) : ReferenceSlot<O>(obj) {
+		ManagedReference(O* obj) : ReferenceSlot<O>(obj), Variable() {
 		}
 
 		void operator=(const ManagedReference& ref) {

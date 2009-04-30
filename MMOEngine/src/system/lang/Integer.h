@@ -14,11 +14,11 @@ namespace sys {
 
 	class Integer : public BaseTypeVariable<int> {
 	public:
-		Integer() : BaseTypeVariable<int>(0) {
+		inline Integer() : BaseTypeVariable<int>(0) {
 
 		}
 
-		Integer(int val) : BaseTypeVariable<int>(val) {
+		inline Integer(int val) : BaseTypeVariable<int>(val) {
 
 		}
 
@@ -87,11 +87,11 @@ namespace sys {
 
 	class UnsignedInteger: public BaseTypeVariable<unsigned int> {
 	public:
-		UnsignedInteger() : BaseTypeVariable<unsigned int>(0) {
+		inline UnsignedInteger() : BaseTypeVariable<unsigned int>(0) {
 
 		}
 
-		UnsignedInteger(unsigned int val) : BaseTypeVariable<unsigned int>(val) {
+		inline UnsignedInteger(unsigned int val) : BaseTypeVariable<unsigned int>(val) {
 
 		}
 

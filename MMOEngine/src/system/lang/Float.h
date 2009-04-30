@@ -20,11 +20,11 @@ namespace sys {
 
 	class Float : public BaseTypeVariable<float> {
 	public:
-		Float() : BaseTypeVariable<float>(0.f) {
+		inline Float() : BaseTypeVariable<float>(0.f) {
 
 		}
 
-		Float(float val) : BaseTypeVariable<float>(val) {
+		inline Float(float val) : BaseTypeVariable<float>(val) {
 
 		}
 

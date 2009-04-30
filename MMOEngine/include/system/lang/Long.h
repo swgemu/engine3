@@ -23,11 +23,11 @@ namespace sys {
 
 	  class Long : public BaseTypeVariable<int64> {
 	  public:
-		  Long() : BaseTypeVariable<int64>(0) {
+		  inline Long() : BaseTypeVariable<int64>(0) {
 
 		  }
 
-		  Long(int64 val) : BaseTypeVariable<int64>(val) {
+		  inline Long(int64 val) : BaseTypeVariable<int64>(val) {
 
 		  }
 
@@ -121,11 +121,11 @@ namespace sys {
 
 	  class UnsignedLong : public BaseTypeVariable<uint64> {
 	  public:
-		  UnsignedLong() : BaseTypeVariable<uint64>(0) {
+		  inline UnsignedLong() : BaseTypeVariable<uint64>(0) {
 
 		  }
 
-		  UnsignedLong(uint64 val) : BaseTypeVariable<uint64>(val) {
+		  inline UnsignedLong(uint64 val) : BaseTypeVariable<uint64>(val) {
 
 		  }
 

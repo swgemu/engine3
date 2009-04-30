@@ -16,11 +16,11 @@ namespace sys {
 
 	class Bool : public BaseTypeVariable<bool> {
 	public:
-		Bool() : BaseTypeVariable<bool>(false) {
+		inline Bool() : BaseTypeVariable<bool>(false) {
 
 		}
 
-		Bool(bool val) : BaseTypeVariable<bool>(val) {
+		inline Bool(bool val) : BaseTypeVariable<bool>(val) {
 
 		}
 

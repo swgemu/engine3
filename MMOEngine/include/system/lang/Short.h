@@ -19,11 +19,11 @@ namespace sys {
 
 	class Short : public BaseTypeVariable<int16> {
 	public:
-		Short() : BaseTypeVariable<int16>(0) {
+		inline Short() : BaseTypeVariable<int16>(0) {
 
 		}
 
-		Short(int16 val) : BaseTypeVariable<int16>(val) {
+		inline Short(int16 val) : BaseTypeVariable<int16>(val) {
 
 		}
 
@@ -47,11 +47,11 @@ namespace sys {
 
 	class UnsignedShort : public BaseTypeVariable<uint16> {
 	public:
-		UnsignedShort() : BaseTypeVariable<uint16>(0) {
+		inline UnsignedShort() : BaseTypeVariable<uint16>(0) {
 
 		}
 
-		UnsignedShort(uint16 val) : BaseTypeVariable<uint16>(val) {
+		inline UnsignedShort(uint16 val) : BaseTypeVariable<uint16>(val) {
 
 		}
 

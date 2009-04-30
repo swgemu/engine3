@@ -24,6 +24,10 @@ namespace sys {
 
 	class Variable {
 	public:
+		inline Variable() {
+
+		}
+
 		virtual ~Variable() {
 
 		}

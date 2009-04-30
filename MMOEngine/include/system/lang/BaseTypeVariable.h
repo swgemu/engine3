@@ -16,11 +16,11 @@ namespace sys {
 			O object;
 
 		public:
-			BaseTypeVariable() : Variable() {
+			inline BaseTypeVariable() : Variable() {
 
 			}
 
-			BaseTypeVariable(O defaultValue) : Variable() {
+			inline BaseTypeVariable(O defaultValue) : Variable() {
 				initialize(defaultValue);
 			}
 
