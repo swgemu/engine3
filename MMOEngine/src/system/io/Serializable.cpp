@@ -13,7 +13,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ObjectOutputStream.h"
 #include "ObjectInputStream.h"
 
-Serializable::Serializable() {
+//VectorMap<uint32, String> Serializable::variableNames;
+//ReadWriteLock Serializable::variableNameMutex;
+
+Serializable::Serializable() : Object() {
 	variables.setInsertPlan(SortedVector<VectorMapEntry<String, Variable*>*>::NO_DUPLICATE);
 	variables.setNullValue(NULL);
 }
@@ -21,7 +24,7 @@ Serializable::Serializable() {
 void Serializable::serialize(String& str) {
 	StringBuffer buffer;
 
-	buffer << variables.size() << ";";
+	buffer << "{" << "size=" << variables.size();
 
 	for (int i = 0; i < variables.size(); ++i) {
 		VectorMapEntry<String, Variable*>* entry = variables.SortedVector<VectorMapEntry<String, Variable*>*>::get(i);
@@ -30,10 +33,12 @@ void Serializable::serialize(String& str) {
 		Variable* variable = entry->getValue();
 
 		String value;
-		variable->toString(&value);
+		variable->toString(value);
 
-		buffer << nameAndVersion << "=" << value << ";";
+		buffer << "," << nameAndVersion << "=" << value;
 	}
+
+	buffer << "}";
 
 	buffer.toString(str);
 }
@@ -69,19 +74,35 @@ void Serializable::deSerialize(ObjectInputStream* stream) {
 }
 
 void Serializable::deSerialize(const String& str) {
+	String data;
 	try {
-		StringTokenizer mainTokens(str);
-		mainTokens.setDelimeter(";");
+		if (!getObjectData(str, data))
+			return;
 
-		String name;
+		int comma = data.indexOf("=");
 
-		int size = mainTokens.getIntToken();
+		int variableSize = Integer::valueOf(data.subString(1, comma));
 
-		for (int i = 0; i < size; ++i) {
-			String variable;
-			mainTokens.getStringToken(variable);
+		comma = data.indexOf(",");
 
-			deSerializeVariable(variable);
+		for (int i = 0; i < variableSize; ++i) {
+			data = data.subString(comma + 1);
+
+			int equal = data.indexOf("=");
+
+			String variableName = data.subString(0, equal);
+			String variableData;
+
+			if (data.subString(equal + 1, equal + 2).indexOf("{") != -1) {
+				int lastSemiColon = getObjectData(data, variableData);
+
+				comma = lastSemiColon;
+			} else {
+				comma = data.indexOf(",");
+				variableData = data.subString(equal + 1, comma);
+			}
+
+			deSerializeVariable(variableName, variableData);
 		}
 
 	} catch (Exception& e) {
@@ -92,34 +113,23 @@ void Serializable::deSerialize(const String& str) {
 	}
 }
 
-void Serializable::deSerializeVariable(const String& var) {
-	StringTokenizer tokenizer(var);
-	tokenizer.setDelimeter("=");
-
-	String nameAndVersion, data;
-	tokenizer.getStringToken(nameAndVersion);
-
+void Serializable::deSerializeVariable(const String& nameAndVersion, const String& varData) {
 	Variable* variable = variables.get(nameAndVersion);
 
 	if (variable == NULL) {
-		System::out << "WARNING: variable " << nameAndVersion << " not found when deserializing [" << var << "] \n";
+		System::out << "WARNING: variable " << nameAndVersion << " not found when deserializing [" << varData << "] \n";
 
 		return;
 	}
 
-	tokenizer.finalToken(data);
+	int hasVersion = nameAndVersion.indexOf("|");
 
-	if (nameAndVersion.indexOf("|") != -1) {
-		StringTokenizer ver(nameAndVersion);
-		ver.setDelimeter("|");
-		ver.shiftTokens(1);
+	if (hasVersion != -1) {
+		int version = Integer::valueOf(nameAndVersion.subString(hasVersion + 1));
 
-		int version = ver.getIntToken();
-
-		if (!variable->parseFromString(&data, version))
-			System::out << "WARNING: could not deserialize variable " << nameAndVersion << "\n";
+		variable->parseFromString(varData, version);
 	} else {
-		variable->parseFromString(&data);
+		variable->parseFromString(varData);
 	}
 }
 
@@ -127,6 +137,54 @@ void Serializable::addSerializableVariable(const String& nameAndVersion, Variabl
 	variables.put(nameAndVersion, variable);
 }
 
-Variable* Serializable::getSerilizableVariable(const String& nameAndVersion) {
+Variable* Serializable::getSerializableVariable(const String& nameAndVersion) {
 	return variables.get(nameAndVersion);
+}
+
+int Serializable::getObjectData(const String& str, String& obj) {
+	int opening = str.indexOf("{");
+
+	if (opening == -1)
+		return 0;
+
+	int i, subObjects = 0;
+	bool subString = false;
+
+
+	for (i = opening + 1; i < str.length(); ++i) {
+		char opening = str.charAt(i);
+
+		if (subString && opening == '\\') {
+			++i;
+			continue;
+		}
+
+		if (opening == '"') {
+			subString = !subString;
+			continue;
+		}
+
+		if (!subString) {
+			if (opening == '{') {
+				++subObjects;
+			} else if (opening == '}') {
+				--subObjects;
+			}
+		}
+
+		if (subObjects < 0) {
+			break;
+		}
+	}
+
+	if (subObjects < 0) {
+		obj = str.subString(opening, i + 1);
+
+		//System::out << obj << "\n";
+
+		return i + 1;
+	} else
+		System::out << "WARNING expecting \"}\" in " << str << " at " << i;
+
+	return 0;
 }

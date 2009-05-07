@@ -104,7 +104,7 @@ namespace sys {
         	m = (l + r) / 2;
 
         	E& obj = Vector<E>::elementData[m];
-        	int cmp = compare(obj, o);
+        	cmp = compare(obj, o);
 
         	if (cmp == 0)
             	return m;

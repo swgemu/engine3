@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ref/ReferenceCounter.h"
 
+#include "Variable.h"
+
 #ifdef TRACE_REFERENCESLOTS
 #include "ref/ReferenceSlot.h"
 #include "../util/VectorMap.h"
@@ -29,7 +31,7 @@ namespace sys {
 
 	using namespace sys::io;
 
-	class Object : public ReferenceCounter {
+	class Object : public ReferenceCounter, public Variable {
 		bool finalized;
 
 	#ifdef TRACE_REFERENCESLOTS
@@ -39,7 +41,7 @@ namespace sys {
 	#endif
 
 	public:
-		Object() : ReferenceCounter() {
+		Object() : ReferenceCounter(), Variable() {
 			initializeCount();
 
 		#ifdef TRACE_REFERENCESLOTS
@@ -47,6 +49,11 @@ namespace sys {
 		#endif
 
 			finalized = false;
+		}
+
+		Object(const Object& obj) : ReferenceCounter(), Variable() {
+			_references = obj._references;
+			finalized = obj.finalized;
 		}
 
 		virtual ~Object() {
@@ -74,25 +81,21 @@ namespace sys {
 			acquire();
 		}
 
-		/*virtual void toString(String* str) {
-
-		}
-
-		virtual void parseFromString(String* str) {
-
-		}
-
-		virtual bool parseFromString(String* str, int version) {
+		bool toString(String& str) {
 			return false;
 		}
 
-		virtual void toBinaryStream(ObjectOutputStream* stream) {
-
+		bool parseFromString(const String& str, int version = 0) {
+			return false;
 		}
 
-		virtual void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			return false;
+		}
 
-		}*/
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			return false;
+		}
 
 
 	#ifdef TRACE_REFERENCESLOTS
@@ -127,7 +130,6 @@ namespace sys {
 		}
 	#endif
 
-	protected:
 		inline void acquire() {
 			increaseCount();
 		}
@@ -137,6 +139,7 @@ namespace sys {
 				destroy();
 		}
 
+	protected:
 		virtual bool destroy() {
 			if (finalized) {
 				delete this;

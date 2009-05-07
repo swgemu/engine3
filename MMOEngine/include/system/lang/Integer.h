@@ -22,20 +22,32 @@ namespace sys {
 
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf(*this);
+		inline Integer(const Integer& val) : BaseTypeVariable<int>(val) {
+
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool toString(String& str) {
+			str = String::valueOf(*this);
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeSignedInt(get());
+
+			return true;
 		}
 
-		void parseFromString(String* str) {
-			*this = valueOf(*str);
+		bool parseFromString(const String& str, int version = 0) {
+			*this = valueOf(str);
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readSignedInt();
+
+			return true;
 		}
 
 		static int valueOf(char ch) {
@@ -85,30 +97,42 @@ namespace sys {
 
 	};
 
-	class UnsignedInteger: public BaseTypeVariable<unsigned int> {
+	class UnsignedInteger: public BaseTypeVariable<uint32> {
 	public:
-		inline UnsignedInteger() : BaseTypeVariable<unsigned int>(0) {
+		inline UnsignedInteger() : BaseTypeVariable<uint32>(0) {
 
 		}
 
-		inline UnsignedInteger(unsigned int val) : BaseTypeVariable<unsigned int>(val) {
+		inline UnsignedInteger(uint32 val) : BaseTypeVariable<uint32>(val) {
 
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf(*this);
+		inline UnsignedInteger(const UnsignedInteger& val) : BaseTypeVariable<uint32>(val) {
+
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool toString(String& str) {
+			str = String::valueOf(*this);
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeInt(get());
+
+			return true;
 		}
 
-		void parseFromString(String* str) {
-			*this = (unsigned int) UnsignedInteger::valueOf(*str);
+		bool parseFromString(const String& str, int version = 0) {
+			*this = (unsigned int) UnsignedInteger::valueOf(str);
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readInt();
+
+			return true;
 		}
 
 		static unsigned int valueOf(const String& str) {

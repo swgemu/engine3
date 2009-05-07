@@ -86,6 +86,8 @@ namespace sys {
 
    };
 
+
+
    template<class E> Vector<E>::Vector() {
        init(10, 5);
    }
@@ -297,9 +299,10 @@ namespace sys {
    template<class E> void Vector<E>::destroyElements() {
 	   destroyElementRange(0, elementCount);
    }
+ }
 
- } // namespace util
-} // namespace sys
+} // namespace util
+ // namespace sys
 
 using namespace sys::util;
 

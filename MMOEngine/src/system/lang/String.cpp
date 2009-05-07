@@ -13,6 +13,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "IllegalArgumentException.h"
 #include "NumberFormatException.h"
 
+#include "../util/SerializableSortedVector.h"
+
 static const unsigned int crctable[256] = {
     0x0000000,
     0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
@@ -389,6 +391,46 @@ String String::trim() const {
 	return subString(firstIndex, lastIndex);
 }
 
+String String::escapeString() const {
+	if (isEmpty())
+		return String("");
+
+	StringBuffer buf;
+
+	for (int i = 0; i < length(); ++i) {
+		char ch = charAt(i);
+
+		switch (ch) {
+		case '\0': // Must be escaped for "mysql"
+			buf << "\\0";
+			break;
+		case '\n': // Must be escaped for logs
+			buf << "\\n";
+			break;
+		case '\r':
+			buf << "\\r";
+			break;
+		case '\\':
+			buf << "\\\\";
+			break;
+		case '\"':
+			buf << "\\\"";
+			break;
+		case '\'': // Better safe than sorry
+			buf << "\\\'";
+			break;
+		/*case '\032': // This gives problems on Win32
+			buf << "\\Z";
+			break;*/
+		default:
+			buf << ch;
+			break;
+		}
+	}
+
+	return buf.toString();
+}
+
 String& String::operator=(const char* str) {
 	if (value != NULL)
 		free(value);
@@ -457,19 +499,56 @@ char String::charAt(int index) const {
 	return value[index];
 }
 
-void String::toBinaryStream(ObjectOutputStream* stream) {
+bool String::toBinaryStream(ObjectOutputStream* stream) {
 	stream->writeShort(count);
 
 	stream->writeStream(value, count);
+
+	return true;
 }
 
-void String::parseFromBinaryStream(ObjectInputStream* stream) {
+bool String::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint16 len = stream->readShort();
 	char ascii[len + 1];
 	stream->readStream(ascii, (int) len);
 	ascii[len] = 0;
 
 	*this = String(ascii);
+
+	return true;
+}
+
+bool String::toString(String& str) {
+	StringBuffer buffer;
+	buffer << '"' << escapeString() << '"';
+
+	buffer.toString(str);
+
+	return true;
+}
+
+bool String::parseFromString(const String& str, int version) {
+	if (str.length() < 2)
+		return false;
+
+	StringBuffer buffer;
+	bool skip = false;
+
+	for (int i = 1; i < str.length() - 1; ++i) {
+		if (skip) {
+			skip = false;
+			buffer << str.charAt(i);
+			continue;
+		} else if (str.charAt(i) == '\\') {
+			skip = true;
+			continue;
+		} else
+			buffer << str.charAt(i);
+	}
+
+	buffer.toString(*this);
+
+	return true;
 }
 
 bool operator==(char ch, const String& str2) {

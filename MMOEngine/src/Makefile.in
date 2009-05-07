@@ -59,10 +59,10 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	NetworkInterface.$(OBJEXT) Packet.$(OBJEXT) Stream.$(OBJEXT) \
 	File.$(OBJEXT) BufferedReader.$(OBJEXT) \
 	StringTokenizer.$(OBJEXT) UnicodeTokenizer.$(OBJEXT) \
-	PrintStream.$(OBJEXT) AdvancedBinaryHeap.$(OBJEXT) \
-	ScheduleManager.$(OBJEXT) EventQueue.$(OBJEXT) \
-	ServiceClient.$(OBJEXT) ServiceThread.$(OBJEXT) \
-	ServiceMessageHandlerThread.$(OBJEXT) \
+	PrintStream.$(OBJEXT) Serializable.$(OBJEXT) \
+	AdvancedBinaryHeap.$(OBJEXT) ScheduleManager.$(OBJEXT) \
+	EventQueue.$(OBJEXT) ServiceClient.$(OBJEXT) \
+	ServiceThread.$(OBJEXT) ServiceMessageHandlerThread.$(OBJEXT) \
 	ServiceProcessThread.$(OBJEXT) DatagramServiceClient.$(OBJEXT) \
 	DatagramServiceClientProxy.$(OBJEXT) \
 	DatagramServiceThread.$(OBJEXT) StreamServiceClient.$(OBJEXT) \
@@ -204,6 +204,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
+top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CXXFLAGS = -ggdb -Wall -Wextra -Wno-unused
@@ -234,6 +235,7 @@ libengine3_a_SOURCES = \
 			system/io/StringTokenizer.cpp \
 			system/io/UnicodeTokenizer.cpp \
 			system/io/PrintStream.cpp \
+			system/io/Serializable.cpp \
 			system/util/AdvancedBinaryHeap.cpp \
 			engine/engine.h \
 			engine/sched/ScheduleManager.cpp \
@@ -372,6 +374,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/QuadTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadWriteLock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScheduleManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Serializable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ServiceClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ServiceMessageHandlerThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ServiceProcessThread.Po@am__quote@
@@ -700,6 +703,20 @@ PrintStream.obj: system/io/PrintStream.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/io/PrintStream.cpp' object='PrintStream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PrintStream.obj `if test -f 'system/io/PrintStream.cpp'; then $(CYGPATH_W) 'system/io/PrintStream.cpp'; else $(CYGPATH_W) '$(srcdir)/system/io/PrintStream.cpp'; fi`
+
+Serializable.o: system/io/Serializable.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Serializable.o -MD -MP -MF $(DEPDIR)/Serializable.Tpo -c -o Serializable.o `test -f 'system/io/Serializable.cpp' || echo '$(srcdir)/'`system/io/Serializable.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Serializable.Tpo $(DEPDIR)/Serializable.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/io/Serializable.cpp' object='Serializable.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Serializable.o `test -f 'system/io/Serializable.cpp' || echo '$(srcdir)/'`system/io/Serializable.cpp
+
+Serializable.obj: system/io/Serializable.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Serializable.obj -MD -MP -MF $(DEPDIR)/Serializable.Tpo -c -o Serializable.obj `if test -f 'system/io/Serializable.cpp'; then $(CYGPATH_W) 'system/io/Serializable.cpp'; else $(CYGPATH_W) '$(srcdir)/system/io/Serializable.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Serializable.Tpo $(DEPDIR)/Serializable.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/io/Serializable.cpp' object='Serializable.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Serializable.obj `if test -f 'system/io/Serializable.cpp'; then $(CYGPATH_W) 'system/io/Serializable.cpp'; else $(CYGPATH_W) '$(srcdir)/system/io/Serializable.cpp'; fi`
 
 AdvancedBinaryHeap.o: system/util/AdvancedBinaryHeap.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AdvancedBinaryHeap.o -MD -MP -MF $(DEPDIR)/AdvancedBinaryHeap.Tpo -c -o AdvancedBinaryHeap.o `test -f 'system/util/AdvancedBinaryHeap.cpp' || echo '$(srcdir)/'`system/util/AdvancedBinaryHeap.cpp

@@ -10,18 +10,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ManagedObject.h"
 
+#include "../orb/DistributedObjectBroker.h"
+
 namespace engine {
   namespace core {
 
-	template<class O> class ManagedReference : public ReferenceSlot<O>, public Variable {
+	template<class O> class ManagedReference : public ReferenceSlot<O> {
 	public:
-		ManagedReference() : ReferenceSlot<O>(), Variable() {
+		ManagedReference() : ReferenceSlot<O>() {
 		}
 
-		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O>(ref), Variable() {
+		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O>(ref) {
 		}
 
-		ManagedReference(O* obj) : ReferenceSlot<O>(obj), Variable() {
+		ManagedReference(O* obj) : ReferenceSlot<O>(obj) {
 		}
 
 		void operator=(const ManagedReference& ref) {
@@ -32,20 +34,56 @@ namespace engine {
 			ReferenceSlot<O>::updateObject(obj);
 		}
 
-		void toString(String* str) {
-
+		int compareTo(const ManagedReference& ref) {
+			if (ReferenceSlot<O>::object->_getObjectID() < ref.ReferenceSlot<O>::object->_getObjectID())
+				return 1;
+			else if (ReferenceSlot<O>::object->_getObjectID() > ref.ReferenceSlot<O>::object->_getObjectID())
+				return -1;
+			else
+				return 0;
 		}
 
-		void parseFromString(String* str) {
+		bool toString(String& str) {
+			if (ReferenceSlot<O>::object != NULL)
+				str = ReferenceSlot<O>::object->_getName();
 
+			return true;
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool parseFromString(const String& str, int version = 0) {
+			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(str);
 
+			ReferenceSlot<O>::updateObject((O*)obj);
+
+			if (obj == NULL)
+				return false;
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			String name;
 
+			if (ReferenceSlot<O>::object != NULL)
+				name = ReferenceSlot<O>::object->_getName();
+
+			name.toBinaryStream(stream);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			String name;
+			name.parseFromBinaryStream(stream);
+
+			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(name);
+
+			ReferenceSlot<O>::updateObject((O*)obj);
+
+			if (obj == NULL)
+				return false;
+
+			return true;
 		}
 
 	};

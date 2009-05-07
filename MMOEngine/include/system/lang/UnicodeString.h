@@ -19,7 +19,7 @@ namespace sys {
 
 	class String;
 
-	class UnicodeString : public Variable {
+	class UnicodeString : public virtual Variable {
 		wchar_t* uString;
 		int count;
 
@@ -59,18 +59,13 @@ namespace sys {
 		const wchar_t* toWideCharArray() const;
 
 		String toString() const;
-		void toString(String& ascii) const;
+		bool toString(String& str);
 
-		void parseFromString(String* str) {
-			*this = *str;
-		}
+		bool parseFromString(const String& str, int version = 0);
 
-		void toString(String* ascii) {
-			toString(*ascii);
-		}
 
-		void toBinaryStream(sys::io::ObjectOutputStream* stream);
-		void parseFromBinaryStream(sys::io::ObjectInputStream* stream);
+		bool toBinaryStream(sys::io::ObjectOutputStream* stream);
+		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream);
 
 		inline bool isEmpty() const {
 			return count == 0;

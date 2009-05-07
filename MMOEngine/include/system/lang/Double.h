@@ -22,20 +22,32 @@ namespace sys {
 
 		}
 
-		void parseFromString(String* str) {
-			*this = valueOf(*str);
+		inline Double(const Double& val) : BaseTypeVariable<double>(val) {
+
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf(*this);
+		bool parseFromString(const String& str, int version = 0) {
+			*this = valueOf(str);
+
+			return true;
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool toString(String& str) {
+			str = String::valueOf(*this);
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeFloat(get());
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readFloat();
+
+			return true;
 		}
 
 		static float valueOf(const String& str) {

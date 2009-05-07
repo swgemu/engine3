@@ -24,20 +24,28 @@ namespace sys {
 
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeByte(get());
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readByte();
+
+			return true;
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf((unsigned int)get());
+		bool toString(String& str) {
+			str = String::valueOf((unsigned int)get());
+
+			return true;
 		}
 
-		void parseFromString(String* str) {
-			*this = (unsigned char) UnsignedInteger::valueOf(*str);
+		bool parseFromString(const String& str, int version = 0) {
+			*this = (unsigned char) UnsignedInteger::valueOf(str);
+
+			return true;
 		}
 
 	};

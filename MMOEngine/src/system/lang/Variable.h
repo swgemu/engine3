@@ -32,15 +32,11 @@ namespace sys {
 
 		}
 
-		virtual void toString(String* str) = 0;
-		virtual void parseFromString(String* str) = 0;
+		virtual bool toString(String& str) = 0;
+		virtual bool parseFromString(const String& str, int version = 0) = 0;
 
-		virtual bool parseFromString(String* str, int version) {
-			return false;
-		}
-
-		virtual void toBinaryStream(ObjectOutputStream* stream) = 0;
-		virtual void parseFromBinaryStream(ObjectInputStream* stream) = 0;
+		virtual bool toBinaryStream(ObjectOutputStream* stream) = 0;
+		virtual bool parseFromBinaryStream(ObjectInputStream* stream) = 0;
 
 	};
 

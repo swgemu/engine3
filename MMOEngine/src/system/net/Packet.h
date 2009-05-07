@@ -16,6 +16,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/String.h"
 #include "../lang/UnicodeString.h"
+#include "../lang/Object.h"
 
 #include "../io/ObjectInputStream.h"
 #include "../io/ObjectOutputStream.h"
@@ -24,6 +25,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace sys {
   namespace net {
+
+	using namespace sys::lang;
 
 	class Packet : public ObjectInputStream, public ObjectOutputStream {
 	public:
@@ -287,7 +290,7 @@ namespace sys {
 			readStream(stream, len);
 		}
 
-		String toString();
+		String getString();
 	};
 
   } // namespace net

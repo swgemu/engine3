@@ -11,20 +11,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace lang {
 
-	template<class O> class ReferenceSlot {
+	template<class O> class ReferenceSlot : public Variable {
 	protected:
 		O* object;
 
 	public:
-		ReferenceSlot() {
+		ReferenceSlot() : Variable() {
 			object = NULL;
 		}
 
-		ReferenceSlot(const ReferenceSlot& refslot) {
+		ReferenceSlot(const ReferenceSlot& refslot) : Variable() {
 			initializeObject(refslot.object);
 		}
 
-		ReferenceSlot(O* obj) {
+		ReferenceSlot(O* obj) : Variable() {
 			initializeObject(obj);
 		}
 
@@ -50,6 +50,22 @@ namespace sys {
 
 		inline O* get() {
 			return object;
+		}
+
+		bool toString(String& str) {
+			return object->toString(str);
+		}
+
+		bool parseFromString(const String& str, int version = 0) {
+			return object->parseFromString(str, version);
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			return object->toBinaryStream(stream);
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			return object->parseFromBinaryStream(stream);
 		}
 
 	protected:

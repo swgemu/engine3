@@ -27,20 +27,32 @@ namespace sys {
 
 		}
 
-		void parseFromString(String* str) {
-			*this = (int16) Integer::valueOf(*str);
+		inline Short(const Short& val) : BaseTypeVariable<int16>(val) {
+
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf((int)*this);
+		bool parseFromString(const String& str, int version = 0) {
+			*this = (int16) Integer::valueOf(str);
+
+			return true;
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool toString(String& str) {
+			str = String::valueOf((int)*this);
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeSignedShort(get());
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readSignedShort();
+
+			return true;
 		}
 
 	};
@@ -55,20 +67,28 @@ namespace sys {
 
 		}
 
-		void parseFromString(String* str) {
-			*this = (int16) UnsignedInteger::valueOf(*str);
+		bool parseFromString(const String& str, int version = 0) {
+			*this = (int16) UnsignedInteger::valueOf(str);
+
+			return true;
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf((uint32)*this);
+		bool toString(String& str) {
+			str = String::valueOf((uint32)*this);
+
+			return true;
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeShort(get());
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readShort();
+
+			return true;
 		}
 
 	};

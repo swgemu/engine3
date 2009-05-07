@@ -18,10 +18,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <time.h>
 
+#include "Object.h"
+#include "String.h"
+#include "Long.h"
+
+#include "../io/ObjectOutputStream.h"
+#include "../io/ObjectInputStream.h"
+
 namespace sys {
   namespace lang {
 
-	class Time {
+	class Time : public Object {
 		struct timespec ts;
 
 	#ifdef PLATFORM_WIN
@@ -34,13 +41,17 @@ namespace sys {
 	#endif
 
 	public:
-		Time() {
+		Time() : Object() {
 			update();
 		}
 
-		Time(uint32 seconds) {
+		Time(uint32 seconds) : Object() {
 			ts.tv_sec = seconds;
 			ts.tv_nsec = 0;
+		}
+
+		Time(const Time& time) : Object() {
+			ts = time.ts;
 		}
 
 		inline void update() {
@@ -78,10 +89,8 @@ namespace sys {
 			checkForOverflow();
 		}
 
-		Time& operator=(Time& t) {
+		void operator=(const Time& t) {
 			ts = t.ts;
-
-			return *this;
 		}
 
 		int compareTo(Time& t) {
@@ -194,6 +203,39 @@ namespace sys {
 
 		inline struct timespec* getTimeSpec() {
 			return &ts;
+		}
+
+		bool toString(String& str) {
+			StringBuffer buffer;
+
+			buffer << ts.tv_sec << ";" << ts.tv_nsec;
+
+			buffer.toString(str);
+
+			return true;
+		}
+
+		bool parseFromString(const String& str, int version = 0) {
+			int separator = str.indexOf(";");
+
+			ts.tv_sec = UnsignedLong::valueOf(str.subString(0, separator));
+			ts.tv_nsec = UnsignedLong::valueOf(str.subString(separator + 1));
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeLong(ts.tv_sec);
+			stream->writeLong(ts.tv_nsec);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			ts.tv_sec = stream->readLong();
+			ts.tv_nsec = stream->readLong();
+
+			return true;
 		}
 	};
 

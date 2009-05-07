@@ -75,7 +75,7 @@ void Packet::removeLastBytes(int len) {
 	setSize(newSize);
 }*/
 
-String Packet::toString() {
+String Packet::getString() {
 	StringBuffer str;
 	str << "Packet [" << size() << "] " << uppercase << hex;
 

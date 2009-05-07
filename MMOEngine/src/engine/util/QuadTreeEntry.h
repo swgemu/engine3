@@ -24,7 +24,7 @@ namespace engine {
 
 		//int visibilityRange;
 
-		ManagedSortedVector<QuadTreeEntry> closeobjects;
+		SortedVector<QuadTreeEntry*> closeobjects;
 
 		UnsignedLong objectID;
 
@@ -40,8 +40,6 @@ namespace engine {
 			closeobjects.setInsertPlan(ManagedSortedVector<QuadTreeEntry>::NO_DUPLICATE);
 
 			radius = 0.5f;
-
-			addSerializableVariable("objectID", &objectID);
 		}
 
 		inline void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate = true) {

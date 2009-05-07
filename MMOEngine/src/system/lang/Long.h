@@ -31,20 +31,32 @@ namespace sys {
 
 		  }
 
-		  void toString(String* str) {
-			  *str = String::valueOf(*this);
+		  inline Long(const Long& val) : BaseTypeVariable<int64>(val) {
+
 		  }
 
-		  void parseFromString(String* str) {
-			  *this = valueOf(*str);
+		  bool toString(String& str) {
+			  str = String::valueOf(*this);
+
+			  return true;
 		  }
 
-		  void toBinaryStream(ObjectOutputStream* stream) {
+		  bool parseFromString(const String& str, int version = 0) {
+			  *this = valueOf(str);
+
+			  return true;
+		  }
+
+		  bool toBinaryStream(ObjectOutputStream* stream) {
 			  stream->writeSignedLong(get());
+
+			  return true;
 		  }
 
-		  void parseFromBinaryStream(ObjectInputStream* stream) {
+		  bool parseFromBinaryStream(ObjectInputStream* stream) {
 			  *this = stream->readSignedLong();
+
+			  return true;
 		  }
 
 		  static int hashCode(uint64 value) {
@@ -129,20 +141,32 @@ namespace sys {
 
 		  }
 
-		  void toString(String* str) {
-			  *str = String::valueOf(*this);
+		  inline UnsignedLong(const UnsignedLong& val) : BaseTypeVariable<uint64>(val) {
+
 		  }
 
-		  void parseFromString(String* str) {
-			  *this = UnsignedLong::valueOf(*str);
+		  bool toString(String& str) {
+			  str = String::valueOf(*this);
+
+			  return true;
 		  }
 
-		  void toBinaryStream(ObjectOutputStream* stream) {
+		  bool parseFromString(const String& str, int version = 0) {
+			  *this = UnsignedLong::valueOf(str);
+
+			  return true;
+		  }
+
+		  bool toBinaryStream(ObjectOutputStream* stream) {
 			  stream->writeLong(BaseTypeVariable<uint64>::get());
+
+			  return true;
 		  }
 
-		  void parseFromBinaryStream(ObjectInputStream* stream) {
+		  bool parseFromBinaryStream(ObjectInputStream* stream) {
 			  *this = stream->readLong();
+
+			  return true;
 		  }
 
 		  static uint64 valueOf(const String& str) {

@@ -243,6 +243,10 @@ MMOEngine/include/system/util/HashTable.h -text
 MMOEngine/include/system/util/Iterator.h -text
 MMOEngine/include/system/util/LinkedList.h -text
 MMOEngine/include/system/util/PriorityQueue.h -text
+MMOEngine/include/system/util/SerializableHashTable.h -text
+MMOEngine/include/system/util/SerializableSortedVector.h -text
+MMOEngine/include/system/util/SerializableVector.h -text
+MMOEngine/include/system/util/SerializableVectorMap.h -text
 MMOEngine/include/system/util/SortedVector.h -text
 MMOEngine/include/system/util/Timer.h -text
 MMOEngine/include/system/util/Vector.h -text
@@ -498,6 +502,10 @@ MMOEngine/src/system/util/HashTable.h -text
 MMOEngine/src/system/util/Iterator.h -text
 MMOEngine/src/system/util/LinkedList.h -text
 MMOEngine/src/system/util/PriorityQueue.h -text
+MMOEngine/src/system/util/SerializableHashTable.h -text
+MMOEngine/src/system/util/SerializableSortedVector.h -text
+MMOEngine/src/system/util/SerializableVector.h -text
+MMOEngine/src/system/util/SerializableVectorMap.h -text
 MMOEngine/src/system/util/SortedVector.h -text
 MMOEngine/src/system/util/Timer.h -text
 MMOEngine/src/system/util/Vector.h -text

@@ -17,7 +17,7 @@ namespace engine {
 
 	public:
 		Coordinate() : DistributedObject() {
-			addSerializableVariables();
+
 		}
 
 		Coordinate(float x, float z, float y) : DistributedObject() {
@@ -26,8 +26,6 @@ namespace engine {
 			positionY = y;
 
 			updatePreviousPosition();
-
-			addSerializableVariables();
 		}
 
 		virtual ~Coordinate() {
@@ -106,13 +104,6 @@ namespace engine {
 
 		inline float getPreviousPositionY() {
 			return previousPositionY;
-		}
-
-	private:
-		void addSerializableVariables() {
-			addSerializableVariable("positionX", &positionX);
-			addSerializableVariable("positionY", &positionY);
-			addSerializableVariable("positionZ", &positionZ);
 		}
 
 	};

@@ -24,27 +24,39 @@ namespace sys {
 
 		}
 
-		void toString(String* str) {
+		inline Bool(const Bool& val) : BaseTypeVariable<bool>(val) {
+
+		}
+
+		bool toString(String& str) {
 			if (get() == true)
-				*str = String("true");
+				str = String("true");
 			else
-				*str = String("false");
+				str = String("false");
+
+			return true;
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeBoolean(get());
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readBoolean();
+
+			return true;
 		}
 
-		void parseFromString(String* str) {
-			if (*str == "true") {
+		bool parseFromString(const String& str, int version = 0) {
+			if (str == "true") {
 				*this = true;
 			} else {
 				*this = false;
 			}
+
+			return true;
 		}
 
 	};

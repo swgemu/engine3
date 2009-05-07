@@ -9,8 +9,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../platform.h"
 
 #include "../lang/String.h"
-#include "../util/VectorMap.h"
+#include "../lang/System.h"
+#include "../lang/Time.h"
 
+#include "../lang/Object.h"
+#include "../util/VectorMap.h"
+#include "../thread/ReadWriteLock.h"
 
 namespace sys {
 	namespace io {
@@ -18,8 +22,11 @@ namespace sys {
 		class ObjectOutputStream;
 		class ObjectInputStream;
 
-		class Serializable {
+		class Serializable : public virtual Object {
 			VectorMap<String, Variable*> variables;
+
+			//static VectorMap<uint32, String> variableNames;
+			//static ReadWriteLock variableNameMutex;
 
 		public:
 			Serializable();
@@ -35,10 +42,37 @@ namespace sys {
 			virtual void deSerialize(ObjectInputStream* stream);
 
 			void addSerializableVariable(const String& nameAndVersion, Variable* variable);
-			Variable* getSerilizableVariable(const String& nameAndVersion);
+			Variable* getSerializableVariable(const String& nameAndVersion);
+
+			bool toString(String& str) {
+				serialize(str);
+
+				return true;
+			}
+
+			bool parseFromString(const String& str, int version = 0) {
+				deSerialize(str);
+
+				return true;
+			}
+
+			bool toBinaryStream(ObjectOutputStream* stream) {
+				serialize(stream);
+
+				return true;
+			}
+
+			bool parseFromBinaryStream(ObjectInputStream* stream) {
+				deSerialize(stream);
+
+				return true;
+			}
+
+			static int getObjectData(const String& str, String& obj);
 
 		private:
-			void deSerializeVariable(const String& var);
+			void deSerializeVariable(const String& nameAndVersion, const String& varData);
+
 		};
 	}
 }

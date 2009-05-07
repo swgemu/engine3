@@ -243,22 +243,39 @@ String UnicodeString::toString() const {
 	return ascii.toString();
 }
 
-void UnicodeString::toString(String& ascii) const {
+bool UnicodeString::toString(String& ascii) {
 	StringBuffer str;
+
+	str << '"';
 
 	for (int i = 0; i < count; ++i)
 		str.append((char*) (uString + i));
 
+	str << '"';
+
 	ascii = str.toString();
+
+	return true;
 }
 
-void UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
+bool UnicodeString::parseFromString(const String& str, int version) {
+	String data;
+	data.parseFromString(str);
+
+	*this = data;
+
+	return true;
+}
+
+bool UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
 	stream->writeInt(count);
 
 	stream->writeStream((char*)uString, count  * 2);
+
+	return true;
 }
 
-void UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
+bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint32 len = stream->readInt();
 
 	wchar_t uni[len];
@@ -267,4 +284,6 @@ void UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 
 	clear();
 	append(uni, len);
+
+	return true;
 }

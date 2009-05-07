@@ -145,7 +145,7 @@ void BaseClient::send(Packet* pack, bool doLock) {
 			#endif
 
 			if (!DatagramServiceClient::send(pack))
-				info("LOSING " + pack->toString());
+				info("LOSING " + pack->getString());
 		}
 	} catch (SocketException& e) {
 		error("on send()" + e.getMessage());
@@ -223,7 +223,7 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 
 		prepareSend(pack);
 		if (!DatagramServiceClient::send(pack))
-			info("LOSING " + pack->toString());
+			info("LOSING " + pack->getString());
 
 		delete pack;
 	} catch (SocketException& e) {
@@ -513,7 +513,7 @@ void BaseClient::resendPackets() {
 
 		if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
-			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
+			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->getString();
 			info(msg);
 		}
 
@@ -547,7 +547,7 @@ void BaseClient::resendPackets(int seq) {
 
 		if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
-			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
+			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->getString();
 			info(msg);
 		}
 

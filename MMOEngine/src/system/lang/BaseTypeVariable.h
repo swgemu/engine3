@@ -24,12 +24,18 @@ namespace sys {
 				initialize(defaultValue);
 			}
 
-			inline virtual int compareTo(const O& val) {
-				if (object < val)
+			inline BaseTypeVariable(const BaseTypeVariable& val) : Variable() {
+				initialize(val.object);
+			}
+
+			virtual int compareTo(const BaseTypeVariable& val) {
+				if (object < val.object)
 					return 1;
-				else if (object > val)
+				else if (object > val.object)
 					return -1;
 				else return 0;
+
+				return 1;
 			}
 
 			inline O operator|=(O obj) {

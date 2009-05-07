@@ -23,23 +23,35 @@ namespace sys {
 
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf(*this);
+		inline Character(const Character& val) : BaseTypeVariable<char>(val) {
+
 		}
 
-		void parseFromString(String* str) {
-			*this = valueOf(*str);
+		bool toString(String& str) {
+			str = String::valueOf(*this);
+
+			return true;
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool parseFromString(const String& str, int version = 0) {
+			*this = valueOf(str);
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeSignedByte(get());
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readSignedByte();
+
+			return true;
 		}
 
-		static inline char valueOf(String& str) {
+		static inline char valueOf(const String& str) {
 			return str.charAt(0);
 		}
 
@@ -93,20 +105,32 @@ namespace sys {
 
 		}
 
-		void toString(String* str) {
-			*str = String::valueOf(*this);
+		inline UnsignedCharacter(const UnsignedCharacter& val) : BaseTypeVariable<unsigned char>(val) {
+
 		}
 
-		void parseFromString(String* str) {
-			*this = Character::valueOf(*str);
+		bool toString(String& str) {
+			str = String::valueOf(*this);
+
+			return true;
 		}
 
-		void toBinaryStream(ObjectOutputStream* stream) {
+		bool parseFromString(const String& str, int version = 0) {
+			*this = Character::valueOf(str);
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeByte(get());
+
+			return true;
 		}
 
-		void parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			*this = stream->readByte();
+
+			return true;
 		}
 	};
 

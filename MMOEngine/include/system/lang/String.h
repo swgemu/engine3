@@ -12,7 +12,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace lang {
 
-	class String : public Variable {
+	class String : public virtual Variable {
 	protected:
 		char* value;
 
@@ -45,10 +45,6 @@ namespace sys {
 		int lastIndexOf(const String& str) const ;
 		int lastIndexOf(const String& str, int fromIndex) const ;
 
-		void parseFromString(String* str) {
-			*this = *str;
-		}
-
 		uint32 hashCode() const;
 
 		String subString(int beginIndex) const ;
@@ -72,6 +68,8 @@ namespace sys {
 		String toUpperCase() const ;
 
 		String trim() const;
+
+		String escapeString() const ;
 
 		String& operator= (const char* str);
 		String& operator= (const String& str);
@@ -108,12 +106,12 @@ namespace sys {
 			return compareTo(str) != 0;
 		}
 
-		void toString(String* str) {
-			*str = *this;
-		}
+		bool toString(String& str);
 
-		void toBinaryStream(sys::io::ObjectOutputStream* stream);
-		void parseFromBinaryStream(sys::io::ObjectInputStream* stream);
+		bool parseFromString(const String& str, int version = 0);
+
+		bool toBinaryStream(sys::io::ObjectOutputStream* stream);
+		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream);
 
 		String& operator+= (char ch);
 		String& operator+= (const char* str);

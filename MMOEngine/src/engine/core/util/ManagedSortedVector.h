@@ -6,14 +6,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef MANAGEDSORTEDVECTOR_H_
 #define MANAGEDSORTEDVECTOR_H_
 
-#include "system/lang.h"
+#include "../../../system/lang.h"
 #include "../ManagedReference.h"
 
 namespace engine {
   namespace core {
     namespace util {
 
-	template<class O> class ManagedSortedVector : public Vector<ManagedReference<O> > {
+	template<class O> class ManagedSortedVector : public SerializableVector<ManagedReference<O> > {
 		int insertPlan;
 
 		virtual int compare(O* obj1, O* obj2) {
@@ -43,28 +43,28 @@ namespace engine {
 
 	};
 
-	template<class O> ManagedSortedVector<O>::ManagedSortedVector() : Vector<ManagedReference<O> >() {
+	template<class O> ManagedSortedVector<O>::ManagedSortedVector() : SerializableVector<ManagedReference<O> >() {
 		insertPlan = ALLOW_DUPLICATE;
 	}
 
 	template<class O> ManagedSortedVector<O>::ManagedSortedVector(int initsize, int incr)
-			: Vector<ManagedReference<O> >(initsize, incr) {
+			: SerializableVector<ManagedReference<O> >(initsize, incr) {
 		insertPlan = ALLOW_DUPLICATE;
 	}
 
 	template<class O> int ManagedSortedVector<O>::put(O* obj) {
 		int m = 0, l = 0;
-		int r = Vector<ManagedReference<O> >::elementCount - 1;
+		int r = SerializableVector<ManagedReference<O> >::elementCount - 1;
 
     	while (l <= r) {
         	m = (l + r) / 2;
 
-        	O* temp = Vector<ManagedReference<O> >::elementData[m];
+        	O* temp = SerializableVector<ManagedReference<O> >::elementData[m];
         	int cmp = compare(temp, obj);
 
         	if (cmp == 0) {
         		if (insertPlan == ALLOW_DUPLICATE)
-        			Vector<ManagedReference<O> >::add(++m, obj);
+        			SerializableVector<ManagedReference<O> >::add(++m, obj);
         		else
 					return -1;
 
@@ -78,7 +78,7 @@ namespace engine {
 	    if (r == m)
    		    m++;
 
-		Vector<ManagedReference<O> >::add(m, obj);
+	    SerializableVector<ManagedReference<O> >::add(m, obj);
 
     	return m;
 	}
@@ -88,13 +88,13 @@ namespace engine {
 	}
 
 	template<class O> int ManagedSortedVector<O>::find(O* obj) {
-	    int l = 0, r = Vector<ManagedReference<O> >::elementCount - 1;
+	    int l = 0, r = SerializableVector<ManagedReference<O> >::elementCount - 1;
 	    int m = 0, cmp = 0;
 
 	    while (l <= r) {
         	m = (l + r) / 2;
 
-        	O* temp = Vector<ManagedReference<O> >::elementData[m];
+        	O* temp = SerializableVector<ManagedReference<O> >::elementData[m];
         	int cmp = compare(temp, obj);
 
         	if (cmp == 0)
@@ -113,9 +113,9 @@ namespace engine {
 		if (index == -1)
 			return false;
 
-		O* oldValue = Vector<ManagedReference<O> >::elementData[index];
+		O* oldValue = SerializableVector<ManagedReference<O> >::elementData[index];
 
-		Vector<ManagedReference<O> >::remove(index);
+		SerializableVector<ManagedReference<O> >::remove(index);
 		return true;
 	}
 

@@ -20,8 +20,12 @@ namespace sys {
 
 			}
 
-			BaseTypeVariable(O defaultValue) : Variable() {
+			BaseTypeVariable(const O& defaultValue) : Variable() {
 				initialize(defaultValue);
+			}
+
+			BaseTypeVariable(const BaseTypeVariable& var) : Variable() {
+				initialize(var.object);
 			}
 
 			/*inline virtual int compareTo(const O& val) {
