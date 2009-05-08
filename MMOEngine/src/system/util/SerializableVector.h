@@ -86,7 +86,10 @@ namespace sys {
 					comma = lastSemiColon;
 				} else {
 					comma = data.indexOf(",");
-					variableData = data.subString(0, comma);
+					if (comma != -1)
+						variableData = data.subString(0, comma);
+					else
+						variableData = data.subString(0, data.length());
 				}
 
 				E object;

@@ -20,7 +20,7 @@ namespace sys {
 
 			}
 
-			inline BaseTypeVariable(O defaultValue) : Variable() {
+			inline BaseTypeVariable(const O& defaultValue) : Variable() {
 				initialize(defaultValue);
 			}
 
@@ -28,7 +28,7 @@ namespace sys {
 				initialize(val.object);
 			}
 
-			virtual int compareTo(const BaseTypeVariable& val) {
+			virtual int compareTo(const BaseTypeVariable& val) const {
 				if (object < val.object)
 					return 1;
 				else if (object > val.object)
@@ -98,11 +98,11 @@ namespace sys {
 				object = obj;
 			}
 
-			inline virtual O get() {
+			inline O get() const {
 				return object;
 			}
 
-			inline operator O() {
+			inline operator O() const {
 				return object;
 			}
 

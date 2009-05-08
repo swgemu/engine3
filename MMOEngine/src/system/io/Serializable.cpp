@@ -17,7 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 //ReadWriteLock Serializable::variableNameMutex;
 
 Serializable::Serializable() : Object() {
-	variables.setInsertPlan(SortedVector<VectorMapEntry<String, Variable*>*>::NO_DUPLICATE);
+	variables.setInsertPlan(SortedVector<VectorMapEntry<VariableName, Variable*>*>::NO_DUPLICATE);
 	variables.setNullValue(NULL);
 }
 
@@ -27,15 +27,24 @@ void Serializable::serialize(String& str) {
 	buffer << "{" << "size=" << variables.size();
 
 	for (int i = 0; i < variables.size(); ++i) {
-		VectorMapEntry<String, Variable*>* entry = variables.SortedVector<VectorMapEntry<String, Variable*>*>::get(i);
+		VectorMapEntry<VariableName, Variable*>* entry = variables.SortedVector<VectorMapEntry<VariableName, Variable*>*>::get(i);
 
-		String nameAndVersion = entry->getKey();
+		VariableName varName = entry->getKey();
 		Variable* variable = entry->getValue();
+
+		int version = varName.getVersion();
+		String name = varName.getName();
+
+		if (version != 0) {
+			StringBuffer nameAndVersion;
+			nameAndVersion << name << "[" << version << "]";
+			nameAndVersion.toString(name);
+		}
 
 		String value;
 		variable->toString(value);
 
-		buffer << "," << nameAndVersion << "=" << value;
+		buffer << "," << name << "=" << value;
 	}
 
 	buffer << "}";
@@ -46,11 +55,15 @@ void Serializable::serialize(String& str) {
 void Serializable::serialize(ObjectOutputStream* stream) {
 	int size = variables.size();
 
-	stream->writeInt(size);
+	stream->writeShort((uint16)size);
 
 	for (int i = 0; i < size; ++i) {
-		Variable* variable = variables.get(i);
+		/*VectorMapEntry<String, Variable*>* entry = variables.SortedVector<VectorMapEntry<String, Variable*>*>::get(i);
+		Variable* variable = entry->getValue();
+		String name = entry->getKey();
 
+		name.toBinaryStream(stream);*/
+		Variable* variable = variables.get(i);
 		variable->toBinaryStream(stream);
 	}
 }
@@ -58,7 +71,7 @@ void Serializable::serialize(ObjectOutputStream* stream) {
 void Serializable::deSerialize(ObjectInputStream* stream) {
 	int size = variables.size();
 
-	int dataSize = stream->readInt();
+	uint16 dataSize = stream->readShort();
 
 	if (size != dataSize) {
 		System::out << "WARNING data size and variables not equal in void Serializable::deSerialize(ObjectInputStream* stream)\n";
@@ -67,6 +80,11 @@ void Serializable::deSerialize(ObjectInputStream* stream) {
 	}
 
 	for (int i = 0; i < size; ++i) {
+		/*String variableName;
+		variableName.parseFromBinaryStream(stream);
+
+		Variable* variable = variables.get(variableName);*/
+
 		Variable* variable = variables.get(i);
 
 		variable->parseFromBinaryStream(stream);
@@ -79,11 +97,11 @@ void Serializable::deSerialize(const String& str) {
 		if (!getObjectData(str, data))
 			return;
 
-		int comma = data.indexOf("=");
+		int size = data.indexOf("=");
 
-		int variableSize = Integer::valueOf(data.subString(1, comma));
+		int comma = data.indexOf(",");
 
-		comma = data.indexOf(",");
+		int variableSize = Integer::valueOf(data.subString(size + 1, comma));
 
 		for (int i = 0; i < variableSize; ++i) {
 			data = data.subString(comma + 1);
@@ -93,13 +111,18 @@ void Serializable::deSerialize(const String& str) {
 			String variableName = data.subString(0, equal);
 			String variableData;
 
+			System::out << data << "\n";
+
 			if (data.subString(equal + 1, equal + 2).indexOf("{") != -1) {
 				int lastSemiColon = getObjectData(data, variableData);
 
 				comma = lastSemiColon;
 			} else {
 				comma = data.indexOf(",");
-				variableData = data.subString(equal + 1, comma);
+				if (comma != -1)
+					variableData = data.subString(equal + 1, comma);
+				else
+					variableData = data.subString(equal + 1, data.length());
 			}
 
 			deSerializeVariable(variableName, variableData);
@@ -114,7 +137,20 @@ void Serializable::deSerialize(const String& str) {
 }
 
 void Serializable::deSerializeVariable(const String& nameAndVersion, const String& varData) {
-	Variable* variable = variables.get(nameAndVersion);
+	String name = nameAndVersion;
+	int version = 0;
+
+	int verIdx = nameAndVersion.indexOf('[');
+
+	if (verIdx != -1) {
+		name = nameAndVersion.subString(0, verIdx);
+		version = Integer::valueOf(nameAndVersion.subString(verIdx + 1, nameAndVersion.length()));
+	}
+
+	VariableName var;
+	var.setName(name);
+
+	Variable* variable = variables.get(var);
 
 	if (variable == NULL) {
 		System::out << "WARNING: variable " << nameAndVersion << " not found when deserializing [" << varData << "] \n";
@@ -122,23 +158,23 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 		return;
 	}
 
-	int hasVersion = nameAndVersion.indexOf("|");
+	//System::out << "deserializing " << name << " version:" << version << "\n";
 
-	if (hasVersion != -1) {
-		int version = Integer::valueOf(nameAndVersion.subString(hasVersion + 1));
-
-		variable->parseFromString(varData, version);
-	} else {
-		variable->parseFromString(varData);
-	}
+	variable->parseFromString(varData, version);
 }
 
-void Serializable::addSerializableVariable(const String& nameAndVersion, Variable* variable) {
-	variables.put(nameAndVersion, variable);
+void Serializable::addSerializableVariable(const String& name, Variable* variable, int version) {
+	VariableName varName;
+	varName.setName(name);
+	varName.setVersion(version);
+
+	variables.put(varName, variable);
 }
 
-Variable* Serializable::getSerializableVariable(const String& nameAndVersion) {
-	return variables.get(nameAndVersion);
+Variable* Serializable::getSerializableVariable(const String& name) {
+	VariableName var;
+	var.setName(name);
+	return variables.get(var);
 }
 
 int Serializable::getObjectData(const String& str, String& obj) {

@@ -22,8 +22,47 @@ namespace sys {
 		class ObjectOutputStream;
 		class ObjectInputStream;
 
+		class VariableName {
+			String name;
+			int version;
+
+		public:
+			VariableName() {
+				version = 0;
+			}
+
+			VariableName(const String& name, int version) {
+				VariableName::name = name;
+				VariableName::version = version;
+			}
+
+			bool operator< (const VariableName& str) const {
+				return name.compareTo(str.name) < 0;
+			}
+
+			bool operator> (const VariableName& str) const {
+				return name.compareTo(str.name) > 0;
+			}
+
+			inline String getName() {
+				return name;
+			}
+
+			inline void setName(const String& str) {
+				name = str;
+			}
+
+			inline void setVersion(int ver) {
+				version = ver;
+			}
+
+			inline int getVersion() {
+				return version;
+			}
+		};
+
 		class Serializable : public virtual Object {
-			VectorMap<String, Variable*> variables;
+			VectorMap<VariableName, Variable*> variables;
 
 			//static VectorMap<uint32, String> variableNames;
 			//static ReadWriteLock variableNameMutex;
@@ -41,8 +80,8 @@ namespace sys {
 			virtual void deSerialize(const String& str);
 			virtual void deSerialize(ObjectInputStream* stream);
 
-			void addSerializableVariable(const String& nameAndVersion, Variable* variable);
-			Variable* getSerializableVariable(const String& nameAndVersion);
+			void addSerializableVariable(const String& name, Variable* variable, int version = 0);
+			Variable* getSerializableVariable(const String& name);
 
 			bool toString(String& str) {
 				serialize(str);
