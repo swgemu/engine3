@@ -503,7 +503,6 @@ MMOEngine/src/system/util/HashTable.h -text
 MMOEngine/src/system/util/Iterator.h -text
 MMOEngine/src/system/util/LinkedList.h -text
 MMOEngine/src/system/util/PriorityQueue.h -text
-MMOEngine/src/system/util/SerializableHashTable.h -text
 MMOEngine/src/system/util/SortedVector.h -text
 MMOEngine/src/system/util/Timer.h -text
 MMOEngine/src/system/util/Vector.h -text
