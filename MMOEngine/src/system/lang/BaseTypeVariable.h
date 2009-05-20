@@ -38,6 +38,16 @@ namespace sys {
 				return 1;
 			}
 
+			virtual int compareTo(const BaseTypeVariable* val) const {
+				if (object < val->object)
+					return 1;
+				else if (object > val->object)
+					return -1;
+				else return 0;
+
+				return 1;
+			}
+
 			inline O operator|=(O obj) {
 				return object |= obj;
 			}
