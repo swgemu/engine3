@@ -23,7 +23,7 @@ namespace sys {
   	const StreamFlags uppercase = SF_uppercase;
   	const StreamFlags endl = SF_endl;
 
-	class StringBuffer : public Vector<char> {
+	class StringBuffer : private Vector<char> {
 		StreamFlags streamFlags;
 
 	public:
@@ -72,7 +72,7 @@ namespace sys {
 
 		String toString() const ;
 
-		void toString(String& str) const ;
+		void toString(String& str) const;
 
 		// getters
 		inline bool doHex() {

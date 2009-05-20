@@ -21,6 +21,7 @@ libengine3_a_SOURCES = \
 			system/lang/UnicodeString.cpp \
 			system/lang/Math.cpp \
 			system/lang/StackTrace.cpp \
+			system/lang/types.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/thread/Thread.cpp \
 			system/thread/ReadWriteLock.cpp \

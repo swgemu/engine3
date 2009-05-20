@@ -62,7 +62,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "util/BinarySearchTree.h"
 #include "util/BinaryHeap.h"
 #include "util/AdvancedBinaryHeap.h"
-#include "util/SerializableVector.h"
 #include "util/SerializableSortedVector.h"
 #include "util/SerializableVectorMap.h"
 #include "util/SerializableHashTable.h"

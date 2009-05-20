@@ -8,15 +8,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../platform.h"
 
-#include "../lang/types.h"
+#include "../lang/String.h"
 
 #include "../lang/ArrayIndexOutOfBoundsException.h"
 #include "../lang/IllegalArgumentException.h"
 
+#include "../lang/types.h"
+
 namespace sys {
  namespace util {
 
-   template<class E> class Vector {
+   template<class E> class Vector : public Variable {
    protected:
        E* elementData;
 
@@ -56,6 +58,15 @@ namespace sys {
 
        Vector<E>& operator=(Vector<E>& vector);
 
+       bool toString(String& str);
+       bool parseFromString(const String& str, int version = 0);
+
+       bool toBinaryStream(ObjectOutputStream* stream);
+
+       bool parseFromBinaryStream(ObjectInputStream* stream);
+
+       static int getObjectData(const String& str, String& obj);
+
    protected:
        void init(int initsize, int incr);
 
@@ -86,17 +97,15 @@ namespace sys {
 
    };
 
-
-
-   template<class E> Vector<E>::Vector() {
+   template<class E> Vector<E>::Vector() : Variable() {
        init(10, 5);
    }
 
-   template<class E> Vector<E>::Vector(int incr) {
+   template<class E> Vector<E>::Vector(int incr) : Variable() {
        init(10, incr);
    }
 
-   template<class E> Vector<E>::Vector(int initsize, int incr) {
+   template<class E> Vector<E>::Vector(int initsize, int incr) : Variable() {
        init(initsize, incr);
    }
 
@@ -298,6 +307,144 @@ namespace sys {
 
    template<class E> void Vector<E>::destroyElements() {
 	   destroyElementRange(0, elementCount);
+   }
+
+   template<class E> bool Vector<E>::toString(String& str) {
+	   str = "{";
+	   str += String::valueOf(size());
+
+	   for (int i = 0; i < size(); ++i) {
+		   String data;
+
+		   E obj = Vector<E>::get(i);
+
+		   TypeInfo<E>::toString(&obj, data);
+
+		   str += ",";
+		   str += data;
+	   }
+
+	   str += "}";
+
+	   return true;
+   }
+
+   template<class E> bool Vector<E>::parseFromString(const String& str, int version) {
+	   Vector<E>::removeAll();
+
+	   String data;
+
+	   if (!getObjectData(str, data))
+		   return true;
+
+	   int comma = data.indexOf(",");
+
+	   int variableSize;
+	   TypeInfo<int>::parseFromString(&variableSize, data.subString(1, comma));
+
+	   for (int i = 0; i < variableSize; ++i) {
+		   data = data.subString(comma + 1);
+
+		   String variableData;
+
+		   if (data.subString(0, 1).indexOf("{") != -1) {
+			   int lastSemiColon = getObjectData(data, variableData);
+
+			   comma = lastSemiColon;
+		   } else {
+			   comma = data.indexOf(",");
+			   if (comma != -1)
+				   variableData = data.subString(0, comma);
+			   else
+				   variableData = data.subString(0, data.length());
+		   }
+
+		   E object;
+
+		   if (TypeInfo<E>::parseFromString(&object, variableData))
+			   add(object);
+	   }
+
+	   return true;
+   }
+
+   template<class E> bool Vector<E>::toBinaryStream(ObjectOutputStream* stream) {
+	   int size = Vector<E>::size();
+
+	   TypeInfo<int>::toBinaryStream(&size, stream);
+
+	   for (int i = 0; i < Vector<E>::size(); ++i) {
+		   E obj = Vector<E>::get(i);
+
+		   TypeInfo<E>::toBinaryStream(&obj, stream);
+	   }
+
+	   return true;
+   }
+
+   template<class E> bool Vector<E>::parseFromBinaryStream(ObjectInputStream* stream) {
+	   Vector<E>::removeAll();
+
+	   int size;
+
+	   TypeInfo<int>::parseFromBinaryStream(&size, stream);
+
+	   for (int i = 0; i < size; ++i) {
+		   E object;
+
+		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream))
+			   add(object);
+	   }
+
+	   return true;
+   }
+
+   template<class E> int Vector<E>::getObjectData(const String& str, String& obj) {
+	   int opening = str.indexOf("{");
+
+	   if (opening == -1)
+		   return 0;
+
+	   int i, subObjects = 0;
+	   bool subString = false;
+
+
+	   for (i = opening + 1; i < str.length(); ++i) {
+		   char opening = str.charAt(i);
+
+		   if (subString && opening == '\\') {
+			   ++i;
+			   continue;
+		   }
+
+		   if (opening == '"') {
+			   subString = !subString;
+			   continue;
+		   }
+
+		   if (!subString) {
+			   if (opening == '{') {
+				   ++subObjects;
+			   } else if (opening == '}') {
+				   --subObjects;
+			   }
+		   }
+
+		   if (subObjects < 0) {
+			   break;
+		   }
+	   }
+
+	   if (subObjects < 0) {
+		   obj = str.subString(opening, i + 1);
+
+		   //System::out << obj << "\n";
+
+		   return i + 1;
+	   } else
+		  // System::out << "WARNING expecting \"}\" in " << str << " at " << i;
+
+	   return 0;
    }
  }
 

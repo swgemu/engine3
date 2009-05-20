@@ -6,12 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SERIALIZABLESORTEDVECTOR_H_
 #define SERIALIZABLESORTEDVECTOR_H_
 
-#include "SerializableVector.h"
+#include "Vector.h"
 
 namespace sys {
 	namespace util {
 
-	template<class O> class SerializableSortedVector : public SerializableVector<O> {
+	template<class O> class SerializableSortedVector : public Vector<O> {
 		int insertPlan;
 
 	public:
@@ -37,28 +37,28 @@ namespace sys {
 
 	};
 
-	template<class O> SerializableSortedVector<O>::SerializableSortedVector() : SerializableVector<O> () {
+	template<class O> SerializableSortedVector<O>::SerializableSortedVector() : Vector<O> () {
 		insertPlan = ALLOW_DUPLICATE;
 	}
 
 	template<class O> SerializableSortedVector<O>::SerializableSortedVector(int initsize, int incr)
-	: SerializableVector<O>(initsize, incr) {
+	: Vector<O>(initsize, incr) {
 		insertPlan = ALLOW_DUPLICATE;
 	}
 
 	template<class O> int SerializableSortedVector<O>::put(const O& obj) {
 		int m = 0, l = 0;
-		int r = SerializableVector<O> ::elementCount - 1;
+		int r = Vector<O> ::elementCount - 1;
 
 		while (l <= r) {
 			m = (l + r) / 2;
 
-			O temp = SerializableVector<O>::elementData[m];
+			O temp = Vector<O>::elementData[m];
 			int cmp = temp.compareTo(obj);
 
 			if (cmp == 0) {
 				if (insertPlan == ALLOW_DUPLICATE)
-					SerializableVector<O>::add(++m, obj);
+					Vector<O>::add(++m, obj);
 				else
 					return -1;
 
@@ -72,7 +72,7 @@ namespace sys {
 		if (r == m)
 			m++;
 
-		SerializableVector<O>::add(m, obj);
+		Vector<O>::add(m, obj);
 
 		return m;
 	}
@@ -82,13 +82,13 @@ namespace sys {
 	}
 
 	template<class O> int SerializableSortedVector<O>::find(const O& obj) const {
-		int l = 0, r = SerializableVector<O>::elementCount - 1;
+		int l = 0, r = Vector<O>::elementCount - 1;
 		int m = 0;
 
 		while (l <= r) {
 			m = (l + r) / 2;
 
-			O temp = SerializableVector<O>::elementData[m];
+			O temp = Vector<O>::elementData[m];
 			int cmp = temp.compareTo(obj);
 
 			if (cmp == 0)
@@ -107,9 +107,9 @@ namespace sys {
 		if (index == -1)
 			return false;
 
-		O oldValue = SerializableVector<O>::elementData[index];
+		O oldValue = Vector<O>::elementData[index];
 
-		SerializableVector<O>::remove(index);
+		Vector<O>::remove(index);
 		return true;
 	}
 
