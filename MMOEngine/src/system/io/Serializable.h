@@ -19,23 +19,27 @@ namespace sys {
 		class ObjectOutputStream;
 		class ObjectInputStream;
 
-		class VariableName {
+		class VariableName : public Variable {
 			String name;
 			uint8 version;
 
 			uint8 type;
 
 		public:
-			VariableName() {
+			VariableName() : Variable() {
 				version = 0;
 				type = 0;
 			}
 
-			VariableName(const String& name, int version) {
+			VariableName(const String& name, int version) : Variable() {
 				VariableName::name = name;
 				VariableName::version = version;
 
 				type = 0;
+			}
+
+			~VariableName() {
+
 			}
 
 			bool operator< (const VariableName& str) const {
@@ -68,6 +72,22 @@ namespace sys {
 
 			inline int getType() {
 				return (int) type;
+			}
+
+			bool toString(String& str) {
+				return false;
+			}
+
+			bool parseFromString(const String& str, int version = 0) {
+				return false;
+			}
+
+			bool toBinaryStream(ObjectOutputStream* stream) {
+				return false;
+			}
+
+			bool parseFromBinaryStream(ObjectInputStream* stream) {
+				return false;
 			}
 
 		};

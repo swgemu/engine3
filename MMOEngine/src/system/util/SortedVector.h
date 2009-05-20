@@ -14,8 +14,8 @@ namespace sys {
 	template<class E> class SortedVector : public Vector<E> {
 		int insertPlan;
 
-		virtual int compare(E& o1, E& o2) {
-			return o1->compareTo(o2);
+		virtual int compare(E& o1, E& o2) const {
+			return TypeInfo<E>::compare(o1, o2);
 		}
 
 	public:
@@ -29,13 +29,13 @@ namespace sys {
 		SortedVector();
 		SortedVector(int initsize, int incr);
 
-		int put(E& o);
+		int put(const E& o);
 
-		bool contains(E& o);
+		bool contains(const E& o) const;
 
-		int find(E& o);
+		int find(const E& o) const;
 
-		bool drop(E& o);
+		bool drop(const E& o);
 
 		inline void setInsertPlan(int plan) {
 			insertPlan = plan;
@@ -55,7 +55,7 @@ namespace sys {
 		insertPlan = ALLOW_DUPLICATE;
 	}
 
-	template<class E> int SortedVector<E>::put(E& o) {
+	template<class E> int SortedVector<E>::put(const E& o) {
 		int m = 0, l = 0;
 		int r = Vector<E>::elementCount - 1;
 
@@ -63,7 +63,8 @@ namespace sys {
         	m = (l + r) / 2;
 
         	E& obj = Vector<E>::elementData[m];
-        	int cmp = compare(obj, o);
+        	E o2 = o;
+        	int cmp = compare(obj, o2);
 
         	if (cmp == 0) {
         		switch (insertPlan) {
@@ -92,11 +93,11 @@ namespace sys {
     	return m;
 	}
 
-	template<class E> bool SortedVector<E>::contains(E& o) {
+	template<class E> bool SortedVector<E>::contains(const E& o) const {
 		return find(o) != -1;
 	}
 
-	template<class E> int SortedVector<E>::find(E& o) {
+	template<class E> int SortedVector<E>::find(const E& o) const {
 	    int l = 0, r = Vector<E>::elementCount - 1;
 	    int m = 0, cmp = 0;
 
@@ -104,7 +105,8 @@ namespace sys {
         	m = (l + r) / 2;
 
         	E& obj = Vector<E>::elementData[m];
-        	cmp = compare(obj, o);
+        	E o2 = o;
+        	cmp = compare(obj, o2);
 
         	if (cmp == 0)
             	return m;
@@ -117,7 +119,7 @@ namespace sys {
     	return -1;
 	}
 
-	template<class E> bool SortedVector<E>::drop(E& o) {
+	template<class E> bool SortedVector<E>::drop(const E& o) {
 		int index = find(o);
 		if (index == -1)
 			return false;

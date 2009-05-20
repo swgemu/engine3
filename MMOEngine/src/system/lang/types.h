@@ -46,6 +46,16 @@ public:
 	static bool parseFromString(void* address, const sys::lang::String& value, int version = 0);
 	static bool parseFromBinaryStream(void* address, ObjectInputStream* value);
 
+	static int compare(const T& val1, const T& val2) {
+		if (val1 < val2)
+			return 1;
+		else if (val1 > val2)
+			return -1;
+		else return 0;
+
+		return 1;
+	}
+
 };
 
 template<typename T> class TypeInfoConstructedBase {
@@ -67,6 +77,10 @@ public:
 
 	static bool parseFromBinaryStream(T* address, ObjectInputStream* stream) {
 		return address->parseFromBinaryStream(stream);
+	}
+
+	static int compare(T& val1, T& val2) {
+		return val1.compareTo(val2);
 	}
 };
 
@@ -128,6 +142,7 @@ public:
 template<typename T> class TypeInfoAtomicPointer : public TypeInfoAtomicBase<T> {
 public:
 	static const int type = TypeInfoAtomicBase<T>::POINTER;
+
 };
 
 template<typename T> class TypeInfoAtomicBool : public TypeInfoAtomicBase<T> {
@@ -153,6 +168,10 @@ public:
 
 	static bool parseFromBinaryStream(void* address, ObjectInputStream* value) {
 		return false;
+	}
+
+	static int compare(T* val1, T* val2) {
+		return val1->compareTo(val2);
 	}
 };
 

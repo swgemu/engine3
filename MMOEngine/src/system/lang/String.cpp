@@ -13,8 +13,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "IllegalArgumentException.h"
 #include "NumberFormatException.h"
 
-#include "../util/SerializableSortedVector.h"
-
 static const unsigned int crctable[256] = {
     0x0000000,
     0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
