@@ -23,6 +23,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "lang/ArrayIndexOutOfBoundsException.h"
 #include "lang/IllegalArgumentException.h"
 #include "lang/NumberFormatException.h"
+#include "lang/DivisionByZeroException.h"
 
 #include "lang/Character.h"
 #include "lang/Byte.h"
@@ -49,7 +50,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "io/StringTokenizer.h"
 #include "io/UnicodeTokenizer.h"
 #include "io/FileNotFoundException.h"
-#include "io/Serializable.h"
 
 #include "util/LinkedList.h"
 #include "util/Vector.h"
@@ -62,10 +62,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "util/BinarySearchTree.h"
 #include "util/BinaryHeap.h"
 #include "util/AdvancedBinaryHeap.h"
-#include "util/SerializableVector.h"
-#include "util/SerializableSortedVector.h"
-#include "util/SerializableVectorMap.h"
-#include "util/SerializableHashTable.h"
 
 #include "thread/Atomic.h"
 #include "thread/Thread.h"

@@ -11,9 +11,9 @@ namespace engine {
 
 	class Coordinate : public DistributedObject {
 	protected:
-		Float positionX, positionZ, positionY;
+		float positionX, positionZ, positionY;
 
-		Float previousPositionX, previousPositionZ, previousPositionY;
+		float previousPositionX, previousPositionZ, previousPositionY;
 
 	public:
 		Coordinate() : DistributedObject() {

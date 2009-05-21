@@ -178,6 +178,7 @@ MMOEngine/include/system/lang/BaseTypeVariable.h -text
 MMOEngine/include/system/lang/Bool.h -text
 MMOEngine/include/system/lang/Byte.h -text
 MMOEngine/include/system/lang/Character.h -text
+MMOEngine/include/system/lang/DivisionByZeroException.h -text
 MMOEngine/include/system/lang/Double.h -text
 MMOEngine/include/system/lang/Exception.h -text
 MMOEngine/include/system/lang/Float.h -text
@@ -441,6 +442,7 @@ MMOEngine/src/system/lang/Exception.cpp -text
 MMOEngine/src/system/lang/Exception.h -text
 MMOEngine/src/system/lang/Float.h -text
 MMOEngine/src/system/lang/IllegalArgumentException.h -text
+MMOEngine/src/system/lang/Integer.cpp -text
 MMOEngine/src/system/lang/Integer.h -text
 MMOEngine/src/system/lang/Long.h -text
 MMOEngine/src/system/lang/Math.cpp -text

@@ -34,7 +34,7 @@ namespace engine {
 			ReferenceSlot<O>::updateObject(obj);
 		}
 
-		int compareTo(const ManagedReference& ref) {
+		int compareTo(const ManagedReference& ref) const {
 			if (ReferenceSlot<O>::object->_getObjectID() < ref.ReferenceSlot<O>::object->_getObjectID())
 				return 1;
 			else if (ReferenceSlot<O>::object->_getObjectID() > ref.ReferenceSlot<O>::object->_getObjectID())

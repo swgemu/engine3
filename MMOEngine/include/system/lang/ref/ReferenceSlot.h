@@ -32,23 +32,37 @@ namespace sys {
 			releaseObject();
 		}
 
-		void operator=(const ReferenceSlot& refslot) {
+		virtual int compareTo(const ReferenceSlot& val) const {
+			if (object < val.object)
+				return 1;
+			else if (object > val.object)
+				return -1;
+			else
+				return 0;
+		}
+
+		ReferenceSlot& operator=(const ReferenceSlot& refslot) {
+			if (this == &refslot)
+				return *this;
+
 			setObject(refslot.object);
+
+			return *this;
 		}
 
 		void operator=(O* obj) {
 			updateObject(obj);
 		}
 
-		O* operator->() {
+		O* operator->() const {
 			return object;
 		}
 
-		operator O*() {
+		operator O*() const {
 			return object;
 		}
 
-		inline O* get() {
+		inline O* get() const {
 			return object;
 		}
 

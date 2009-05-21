@@ -2,12 +2,7 @@
 #define INTEGER_H_
 
 #include "String.h"
-
-#include "NumberFormatException.h"
 #include "BaseTypeVariable.h"
-
-#include "../io/ObjectOutputStream.h"
-#include "../io/ObjectInputStream.h"
 
 namespace sys {
   namespace lang {
@@ -26,37 +21,18 @@ namespace sys {
 
 		}
 
-		bool toString(String& str) {
-			str = String::valueOf(*this);
+		bool toString(String& str);
 
-			return true;
-		}
+		bool toBinaryStream(ObjectOutputStream* stream);
 
-		bool toBinaryStream(ObjectOutputStream* stream) {
-			stream->writeSignedInt(get());
+		bool parseFromString(const String& str, int version = 0);
 
-			return true;
-		}
+		bool parseFromBinaryStream(ObjectInputStream* stream);
 
-		bool parseFromString(const String& str, int version = 0) {
-			*this = valueOf(str);
+		static void toBinaryStream(int val, ObjectOutputStream* stream);
+		static void parseFromBinaryStream(int& val, ObjectInputStream* stream);
 
-			return true;
-		}
-
-		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			*this = stream->readSignedInt();
-
-			return true;
-		}
-
-		static int valueOf(char ch) {
-			int digit = ch - '0';
-			if (digit < 0 || digit > 9)
-				throw NumberFormatException();
-
-			return digit;
-		}
+		static int valueOf(char ch);
 
 		static int valueOf(const char* str) {
 			return atoi(str);
@@ -66,30 +42,7 @@ namespace sys {
 			return valueOf(str.toCharArray());
 		}
 
-		static uint32 hexvalueOf(const String& str) {
-			uint64 val = 0;
-			uint64 mul = 1;
-
-			for (int i = str.length() - 1; i >= 0; --i) {
-				char c = str.charAt(i);
-				int digit;
-
-				if (c >= '0' && c <= '9')
-					digit = c - '0';
-				else if (c >= 'A' && c <= 'F')
-					digit = c - 'A' + 10;
-				else if (c >= 'a' && c <= 'f')
-					digit = c - 'a' + 10;
-				else
-					throw NumberFormatException(i);
-
-				val += digit * mul;
-
-				mul *= 16;
-			}
-
-			return val;
-		}
+		static uint32 hexvalueOf(const String& str);
 
 		static uint32 hashCode(int value) {
 			return (uint32) value;
@@ -111,29 +64,13 @@ namespace sys {
 
 		}
 
-		bool toString(String& str) {
-			str = String::valueOf(*this);
+		bool toString(String& str);
 
-			return true;
-		}
+		bool toBinaryStream(ObjectOutputStream* stream);
 
-		bool toBinaryStream(ObjectOutputStream* stream) {
-			stream->writeInt(get());
+		bool parseFromString(const String& str, int version = 0);
 
-			return true;
-		}
-
-		bool parseFromString(const String& str, int version = 0) {
-			*this = (unsigned int) UnsignedInteger::valueOf(str);
-
-			return true;
-		}
-
-		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			*this = stream->readInt();
-
-			return true;
-		}
+		bool parseFromBinaryStream(ObjectInputStream* stream);
 
 		static unsigned int valueOf(const String& str) {
 			unsigned int val = 0;

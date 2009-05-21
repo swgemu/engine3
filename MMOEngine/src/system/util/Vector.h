@@ -15,6 +15,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/types.h"
 
+#include "../lang/Integer.h"
+
 namespace sys {
  namespace util {
 
@@ -339,8 +341,7 @@ namespace sys {
 
 	   int comma = data.indexOf(",");
 
-	   int variableSize;
-	   TypeInfo<int>::parseFromString(&variableSize, data.subString(1, comma));
+	   int variableSize = Integer::valueOf(data.subString(1, comma));
 
 	   for (int i = 0; i < variableSize; ++i) {
 		   data = data.subString(comma + 1);
@@ -371,7 +372,7 @@ namespace sys {
    template<class E> bool Vector<E>::toBinaryStream(ObjectOutputStream* stream) {
 	   int size = Vector<E>::size();
 
-	   TypeInfo<int>::toBinaryStream(&size, stream);
+	   Integer::toBinaryStream(size, stream);
 
 	   for (int i = 0; i < Vector<E>::size(); ++i) {
 		   E obj = Vector<E>::get(i);
@@ -387,7 +388,7 @@ namespace sys {
 
 	   int size;
 
-	   TypeInfo<int>::parseFromBinaryStream(&size, stream);
+	   Integer::parseFromBinaryStream(size, stream);
 
 	   for (int i = 0; i < size; ++i) {
 		   E object;

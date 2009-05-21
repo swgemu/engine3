@@ -54,15 +54,15 @@ namespace sys {
 			updateObject(obj);
 		}
 
-		O* operator->() {
+		O* operator->() const {
 			return object;
 		}
 
-		operator O*() {
+		operator O*() const {
 			return object;
 		}
 
-		inline O* get() {
+		inline O* get() const {
 			return object;
 		}
 

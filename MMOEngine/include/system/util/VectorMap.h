@@ -13,30 +13,41 @@ namespace sys {
 
 	template<class K, class V> class VectorMap;
 
-	template<class K, class V> class VectorMapEntry {
+	template<class K, class V> class VectorMapEntry : public Variable {
 		K key;
 		V value;
 
 	public:
-		VectorMapEntry() {
+		VectorMapEntry() : Variable() {
 		}
 
-		VectorMapEntry(K key) {
+		VectorMapEntry(K key) : Variable() {
 			VectorMapEntry::key = key;
 		}
 
-		VectorMapEntry(K key, V value) {
+		VectorMapEntry(K key, V value) : Variable() {
 			VectorMapEntry::key = key;
 			VectorMapEntry::value = value;
 		}
 
-		int compareTo(VectorMapEntry*& e) {
-			if (key < e->key)
-				return 1;
-			else if (key > e->key)
-				return -1;
-			else
-				return 0;
+		VectorMapEntry(const VectorMapEntry& entry) : Variable() {
+			key = entry.key;
+			value = entry.value;
+		}
+
+		VectorMapEntry& operator=(const VectorMapEntry& entry) {
+			key = entry.key;
+			value = entry.value;
+
+			return *this;
+		}
+
+		~VectorMapEntry() {
+
+		}
+
+		int compareTo(const VectorMapEntry& e) const {
+			return TypeInfo<K>::compare(key, e.key);
 		}
 
 		K& getKey() {
@@ -47,10 +58,57 @@ namespace sys {
 			return value;
 		}
 
+		bool toString(String& str) {
+			// structure key=value
+			String stringKey, stringValue;
+
+			TypeInfo<K>::toString(&key, stringKey);
+			TypeInfo<V>::toString(&value, stringValue);
+
+			StringBuffer buffer;
+			buffer << "{{" << stringKey << "},{" << stringValue << "}}";
+
+			buffer.toString(str);
+
+			return true;
+		}
+
+		bool parseFromString(const String& str, int version = 0) {
+			String data;
+
+			if (!Vector<int>::getObjectData(str, data))
+				return true;
+
+			String stringKey, stringValue;
+
+			int size = Vector<int>::getObjectData(data.subString(1), stringKey);
+			Vector<int>::getObjectData(data.subString(size + 1), stringValue);
+
+			if (!TypeInfo<K>::parseFromString(&key, stringKey.subString(1, stringKey.length() - 1))
+					|| !TypeInfo<V>::parseFromString(&value, stringValue.subString(1, stringValue.length() - 1)))
+				return false;
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			TypeInfo<K>::toBinaryStream(&key, stream);
+			TypeInfo<V>::toBinaryStream(&value, stream);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			if (!TypeInfo<K>::parseFromBinaryStream(&key, stream) || !TypeInfo<V>::parseFromBinaryStream(&value, stream))
+				return false;
+
+			return true;
+		}
+
 		friend class VectorMap<K,V>;
 	};
 
-	template<class K, class V> class VectorMap : public SortedVector<VectorMapEntry<K, V>*> {
+	template<class K, class V> class VectorMap : public SortedVector<VectorMapEntry<K, V> > {
 		V nullValue;
 
 	public:
@@ -77,18 +135,18 @@ namespace sys {
 		}
 
 	protected:
-		virtual int compare(VectorMapEntry<K, V>*& e1, VectorMapEntry<K, V>*& e2);
+		virtual int compare(VectorMapEntry<K, V>& e1, VectorMapEntry<K, V>& e2);
 
 	};
 
 	template<class K, class V> VectorMap<K, V>::VectorMap()
-			: SortedVector<VectorMapEntry<K, V>*>() {
-		setInsertPlan(SortedVector<VectorMapEntry<K, V>*>::ALLOW_OVERWRITE);
+			: SortedVector<VectorMapEntry<K, V> >() {
+		setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
 	}
 
 	template<class K, class V> VectorMap<K, V>::VectorMap(int initsize, int incr)
-			: SortedVector<VectorMapEntry<K, V>*>(initsize, incr) {
-		setInsertPlan(SortedVector<VectorMapEntry<K, V>*>::ALLOW_OVERWRITE);
+			: SortedVector<VectorMapEntry<K, V> >(initsize, incr) {
+		setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
 	}
 
 	template<class K, class V> VectorMap<K, V>::~VectorMap() {
@@ -96,49 +154,46 @@ namespace sys {
 	}
 
 	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
-	 	VectorMapEntry<K, V>* e = new VectorMapEntry<K, V>(key, value);
+	 	VectorMapEntry<K, V> e(key, value);
 
-	 	if ((SortedVector<VectorMapEntry<K, V>*>::getInsertPlan() == (SortedVector<VectorMapEntry<K, V>*>::ALLOW_OVERWRITE)) && contains(key)) {
+	 	if ((SortedVector<VectorMapEntry<K, V> >::getInsertPlan() == (SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE)) && contains(key)) {
 			drop(key);
 	 	}
 
-	 	int res = SortedVector<VectorMapEntry<K, V>*>::put(e);
+	 	int res = SortedVector<VectorMapEntry<K, V> >::put(e);
 
-	 	if (res == -1)
-	 		delete e;
+	 	/*if (res == -1)
+	 		delete e;*/
 
 	 	return res;
 	}
 
 	template<class K, class V> V& VectorMap<K, V>::get(int index) {
-		VectorMapEntry<K, V>* entry = SortedVector<VectorMapEntry<K, V>*>::get(index);
+		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(index);
 	 	return entry->value;
 	}
 
 	template<class K, class V> V& VectorMap<K, V>::get(const K& key) {
 	 	VectorMapEntry<K, V> e(key);
-	 	VectorMapEntry<K, V>* eptr = &e;
 
-	 	int pos = SortedVector<VectorMapEntry<K, V>*>::find(eptr);
+	 	int pos = SortedVector<VectorMapEntry<K, V> >::find(e);
 		if (pos == -1)
 	 		return nullValue;
 
-	 	VectorMapEntry<K, V>* entry = SortedVector<VectorMapEntry<K, V>*>::get(pos);
+	 	VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(pos);
 	 	return entry->value;
 	}
 
 	template<class K, class V> int VectorMap<K, V>::find(const K& key) {
 		VectorMapEntry<K, V> e(key);
-		VectorMapEntry<K, V>* eptr = &e;
 
-	 	return SortedVector<VectorMapEntry<K, V>*>::find(eptr);
+	 	return SortedVector<VectorMapEntry<K, V> >::find(e);
 	}
 
 	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) {
 		VectorMapEntry<K, V> e(key);
-	 	VectorMapEntry<K, V>* eptr = &e;
 
-	 	int idx = SortedVector<VectorMapEntry<K, V>*>::find(eptr);
+	 	int idx = SortedVector<VectorMapEntry<K, V> >::find(e);
 
 	 	if (idx == -1)
 	 		return false;
@@ -151,26 +206,20 @@ namespace sys {
 		if (pos == -1)
 			return false;
 
-		VectorMapEntry<K, V>* entry = SortedVector<VectorMapEntry<K, V>*>::remove(pos);
-		delete entry;
+		VectorMapEntry<K, V> entry = SortedVector<VectorMapEntry<K, V> >::remove(pos);
 
 	 	return true;
 	}
 
 	template<class K, class V> void VectorMap<K, V>::removeAll() {
-		for (int i = SortedVector<VectorMapEntry<K, V>*>::size() - 1; i >= 0; --i) {
-			VectorMapEntry<K, V>* entry = SortedVector<VectorMapEntry<K, V>*>::remove(i);
+		/*for (int i = SortedVector<VectorMapEntry<K, V> >::size() - 1; i >= 0; --i) {
+			VectorMapEntry<K, V> entry = SortedVector<VectorMapEntry<K, V> >::remove(i);
 			delete entry;
-		}
+		}*/
 	}
 
-	template<class K, class V> int VectorMap<K, V>::compare(VectorMapEntry<K, V>*& e1, VectorMapEntry<K, V>*& e2) {
-		if (e1->key < e2->key)
-			return 1;
-		else if (e1->key > e2->key)
-			return -1;
-		else
-			return 0;
+	template<class K, class V> int VectorMap<K, V>::compare(VectorMapEntry<K, V>& e1, VectorMapEntry<K, V>& e2) {
+		return TypeInfo<K>::compare(e1.key, e2.key);
 	}
 
   } // namespace util

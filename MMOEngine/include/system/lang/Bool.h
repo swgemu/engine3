@@ -50,13 +50,17 @@ namespace sys {
 		}
 
 		bool parseFromString(const String& str, int version = 0) {
-			if (str == "true") {
-				*this = true;
-			} else {
-				*this = false;
-			}
+			*this = valueOf(str);
 
 			return true;
+		}
+
+		static bool valueOf(const String& str) {
+			if (str == "true") {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 	};
