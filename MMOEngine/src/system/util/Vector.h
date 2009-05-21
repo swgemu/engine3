@@ -356,7 +356,7 @@ namespace sys {
 			   if (comma != -1)
 				   variableData = data.subString(0, comma);
 			   else
-				   variableData = data.subString(0, data.length());
+				   variableData = data.subString(0, data.length() - 1);
 		   }
 
 		   E object;

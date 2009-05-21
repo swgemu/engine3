@@ -14,6 +14,8 @@ namespace sys {
 	class Math {
 	public:
 		static const double PI = M_PI;
+		static const double DEG2RAD = M_PI / 180.0f;
+		static const double RAD2DEG = 180.0f / M_PI;
 
 		static float sqrt(float number);
 
@@ -31,6 +33,14 @@ namespace sys {
 
 		static double cos(double arg) {
 			return ::cos(arg);
+		}
+
+		static double deg2rad(double degrees) {
+			return degrees * DEG2RAD;
+		}
+
+		static double rad2deg(double radians) {
+			return radians * RAD2DEG;
 		}
 	};
 

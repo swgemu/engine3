@@ -30,17 +30,24 @@ namespace sys {
 			VectorMapEntry::value = value;
 		}
 
+		VectorMapEntry(const VectorMapEntry& entry) : Variable() {
+			key = entry.key;
+			value = entry.value;
+		}
+
+		VectorMapEntry& operator=(const VectorMapEntry& entry) {
+			key = entry.key;
+			value = entry.value;
+
+			return *this;
+		}
+
 		~VectorMapEntry() {
 
 		}
 
 		int compareTo(const VectorMapEntry& e) const {
-			if (key < e.key)
-				return 1;
-			else if (key > e.key)
-				return -1;
-			else
-				return 0;
+			return TypeInfo<K>::compare(key, e.key);
 		}
 
 		K& getKey() {
@@ -162,8 +169,8 @@ namespace sys {
 	}
 
 	template<class K, class V> V& VectorMap<K, V>::get(int index) {
-		VectorMapEntry<K, V> entry = SortedVector<VectorMapEntry<K, V> >::get(index);
-	 	return entry.value;
+		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(index);
+	 	return entry->value;
 	}
 
 	template<class K, class V> V& VectorMap<K, V>::get(const K& key) {
@@ -173,8 +180,8 @@ namespace sys {
 		if (pos == -1)
 	 		return nullValue;
 
-	 	VectorMapEntry<K, V> entry = SortedVector<VectorMapEntry<K, V> >::get(pos);
-	 	return entry.value;
+	 	VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(pos);
+	 	return entry->value;
 	}
 
 	template<class K, class V> int VectorMap<K, V>::find(const K& key) {
@@ -212,12 +219,7 @@ namespace sys {
 	}
 
 	template<class K, class V> int VectorMap<K, V>::compare(VectorMapEntry<K, V>& e1, VectorMapEntry<K, V>& e2) {
-		if (e1.key < e2.key)
-			return 1;
-		else if (e1.key > e2.key)
-			return -1;
-		else
-			return 0;
+		return TypeInfo<K>::compare(e1.key, e2.key);
 	}
 
   } // namespace util

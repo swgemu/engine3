@@ -42,12 +42,8 @@ namespace sys {
 
 			}
 
-			bool operator< (const VariableName& str) const {
-				return name.compareTo(str.name) < 0;
-			}
-
-			bool operator> (const VariableName& str) const {
-				return name.compareTo(str.name) > 0;
+			int compareTo(const VariableName& str) const {
+				return name.compareTo(str.name);
 			}
 
 			inline String getName() {

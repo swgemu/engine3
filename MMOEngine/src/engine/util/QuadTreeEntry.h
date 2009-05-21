@@ -26,7 +26,7 @@ namespace engine {
 
 		SortedVector<QuadTreeEntry*> closeobjects;
 
-		UnsignedLong objectID;
+		uint64 objectID;
 
 		float radius;
 
@@ -108,7 +108,7 @@ namespace engine {
 		virtual void notifyDissapear(QuadTreeEntry* obj) {
 		}
 
-		int compareTo(QuadTreeEntry* obj) {
+		int compareTo(QuadTreeEntry* obj) const {
 			if (objectID < obj->objectID)
 				return 1;
 			else if (objectID > obj->objectID)

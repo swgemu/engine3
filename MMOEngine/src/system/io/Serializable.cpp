@@ -27,10 +27,11 @@ void Serializable::serialize(String& str) {
 	buffer << "{" << "size=" << variables.size();
 
 	for (int i = 0; i < variables.size(); ++i) {
-		VectorMapEntry<VariableName, void*> entry = variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
+		VectorMapEntry<VariableName, void*>* entry = &variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
 
-		VariableName varName = entry.getKey();
-		void* variable = entry.getValue();
+		VariableName varName = entry->getKey();
+		void* variable = entry->getValue();
+
 		int type = varName.getType();
 
 		int version = varName.getVersion();
@@ -47,8 +48,6 @@ void Serializable::serialize(String& str) {
 		if (type == 0) {
 			((Variable*)variable)->toString(value);
 		} else {
-			int type = varName.getType();
-
 			serializeAtomicType(variable, type, value);
 		}
 
@@ -66,9 +65,9 @@ void Serializable::serialize(ObjectOutputStream* stream) {
 	stream->writeShort((uint16)size);
 
 	for (int i = 0; i < size; ++i) {
-		VectorMapEntry<VariableName, void*> entry = variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
-		VariableName varName = entry.getKey();
-		void* variable = entry.getValue();
+		VectorMapEntry<VariableName, void*>* entry = &variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
+		VariableName varName = entry->getKey();
+		void* variable = entry->getValue();
 
 		int type = varName.getType();
 
@@ -92,9 +91,10 @@ void Serializable::deSerialize(ObjectInputStream* stream) {
 	}
 
 	for (int i = 0; i < size; ++i) {
-		VectorMapEntry<VariableName, void*> entry = variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
-		VariableName varName = entry.getKey();
-		void* variable = entry.getValue();
+		VectorMapEntry<VariableName, void*>* entry = &variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
+		VariableName varName = entry->getKey();
+		void* variable = entry->getValue();
+
 		int type = varName.getType();
 
 		if (type == 0)
@@ -135,8 +135,11 @@ void Serializable::deSerialize(const String& str) {
 				comma = data.indexOf(",");
 				if (comma != -1)
 					variableData = data.subString(equal + 1, comma);
-				else
-					variableData = data.subString(equal + 1, data.length());
+				else {
+					variableData = data.subString(equal + 1, data.length() - 1);
+
+					//System::out << variableData << "\n";
+				}
 			}
 
 			deSerializeVariable(variableName, variableData);
@@ -176,9 +179,9 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 
 	int pos = variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
 
-	VectorMapEntry<VariableName, void*> entry = variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
-	VariableName varName = entry.getKey();
-	void* variable = entry.getValue();
+	VectorMapEntry<VariableName, void*>* entry = &variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
+	VariableName varName = entry->getKey();
+	void* variable = entry->getValue();
 
 	int type = varName.getType();
 
@@ -305,9 +308,9 @@ Variable* Serializable::getSerializableVariable(const String& name) {
 
 	int pos = variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
 
-	VectorMapEntry<VariableName, void*> entry = variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
-	VariableName varName = entry.getKey();
-	void* variable = entry.getValue();
+	VectorMapEntry<VariableName, void*>* entry = &variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
+	VariableName varName = entry->getKey();
+	void* variable = entry->getValue();
 
 	if (varName.getType() == 0)
 		return (Variable*)variable;

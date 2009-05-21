@@ -435,6 +435,7 @@ MMOEngine/src/system/lang/BaseTypeVariable.h -text
 MMOEngine/src/system/lang/Bool.h -text
 MMOEngine/src/system/lang/Byte.h -text
 MMOEngine/src/system/lang/Character.h -text
+MMOEngine/src/system/lang/DivisionByZeroException.h -text
 MMOEngine/src/system/lang/Double.h -text
 MMOEngine/src/system/lang/Exception.cpp -text
 MMOEngine/src/system/lang/Exception.h -text

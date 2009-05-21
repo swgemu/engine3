@@ -23,6 +23,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "lang/ArrayIndexOutOfBoundsException.h"
 #include "lang/IllegalArgumentException.h"
 #include "lang/NumberFormatException.h"
+#include "lang/DivisionByZeroException.h"
 
 #include "lang/Character.h"
 #include "lang/Byte.h"

@@ -14,7 +14,7 @@ namespace sys {
 	template<class E> class SortedVector : public Vector<E> {
 		int insertPlan;
 
-		virtual int compare(E& o1, E& o2) const {
+		virtual int compare(E& o1, const E& o2) const {
 			return TypeInfo<E>::compare(o1, o2);
 		}
 
@@ -63,8 +63,7 @@ namespace sys {
         	m = (l + r) / 2;
 
         	E& obj = Vector<E>::elementData[m];
-        	E o2 = o;
-        	int cmp = compare(obj, o2);
+        	int cmp = compare(obj, o);
 
         	if (cmp == 0) {
         		switch (insertPlan) {
@@ -105,8 +104,7 @@ namespace sys {
         	m = (l + r) / 2;
 
         	E& obj = Vector<E>::elementData[m];
-        	E o2 = o;
-        	cmp = compare(obj, o2);
+        	cmp = compare(obj, o);
 
         	if (cmp == 0)
             	return m;

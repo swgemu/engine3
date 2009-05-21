@@ -51,9 +51,8 @@ public:
 			return 1;
 		else if (val1 > val2)
 			return -1;
-		else return 0;
-
-		return 1;
+		else
+			return 0;
 	}
 
 };
@@ -79,7 +78,7 @@ public:
 		return address->parseFromBinaryStream(stream);
 	}
 
-	static int compare(T& val1, T& val2) {
+	static int compare(const T& val1, const T& val2) {
 		return val1.compareTo(val2);
 	}
 };
