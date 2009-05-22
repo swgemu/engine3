@@ -35,7 +35,7 @@ template<> bool TypeInfoAtomicBase<char>::toString(void* address, String& value)
 }
 
 template<> bool TypeInfoAtomicBase<uint8>::toString(void* address, String& value) {
-	value = String::valueOf((uint8)(*(uint8*)address));
+	value = String::valueOf((uint32)(*(uint8*)address));
 
 	return true;
 }
@@ -192,7 +192,7 @@ template<> bool TypeInfoAtomicBase<char>::parseFromString(void* address, const S
 }
 
 template<> bool TypeInfoAtomicBase<uint8>::parseFromString(void* address, const String& value, int version) {
-	*(uint8*)address = Character::valueOf(value);
+	*(uint8*)address = UnsignedInteger::valueOf(value);
 
 	return true;
 }

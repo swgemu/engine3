@@ -128,8 +128,6 @@ namespace sys {
 
 		bool drop(const K& key);
 
-		void removeAll();
-
 		inline void setNullValue(V val) {
 			nullValue = val;
 		}
@@ -150,7 +148,7 @@ namespace sys {
 	}
 
 	template<class K, class V> VectorMap<K, V>::~VectorMap() {
-		removeAll();
+
 	}
 
 	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
@@ -161,9 +159,6 @@ namespace sys {
 	 	}
 
 	 	int res = SortedVector<VectorMapEntry<K, V> >::put(e);
-
-	 	/*if (res == -1)
-	 		delete e;*/
 
 	 	return res;
 	}
@@ -206,16 +201,9 @@ namespace sys {
 		if (pos == -1)
 			return false;
 
-		VectorMapEntry<K, V> entry = SortedVector<VectorMapEntry<K, V> >::remove(pos);
+		SortedVector<VectorMapEntry<K, V> >::remove(pos);
 
 	 	return true;
-	}
-
-	template<class K, class V> void VectorMap<K, V>::removeAll() {
-		/*for (int i = SortedVector<VectorMapEntry<K, V> >::size() - 1; i >= 0; --i) {
-			VectorMapEntry<K, V> entry = SortedVector<VectorMapEntry<K, V> >::remove(i);
-			delete entry;
-		}*/
 	}
 
 	template<class K, class V> int VectorMap<K, V>::compare(VectorMapEntry<K, V>& e1, VectorMapEntry<K, V>& e2) {
