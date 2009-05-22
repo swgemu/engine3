@@ -20,7 +20,7 @@ namespace sys {
 		class ObjectInputStream;
 
 		class VariableName : public Variable {
-			String name;
+			const char* name;
 			uint8 version;
 
 			uint8 type;
@@ -31,7 +31,7 @@ namespace sys {
 				type = 0;
 			}
 
-			VariableName(const String& name, int version) : Variable() {
+			VariableName(const char* name, int version) : Variable() {
 				VariableName::name = name;
 				VariableName::version = version;
 
@@ -43,14 +43,14 @@ namespace sys {
 			}
 
 			int compareTo(const VariableName& str) const {
-				return name.compareTo(str.name);
+				return strcmp(name, str.name);
 			}
 
-			inline String getName() {
+			inline const char* getName() {
 				return name;
 			}
 
-			inline void setName(const String& str) {
+			inline void setName(const char* str) {
 				name = str;
 			}
 
@@ -104,25 +104,25 @@ namespace sys {
 			virtual void deSerialize(const String& str);
 			virtual void deSerialize(ObjectInputStream* stream);
 
-			void addSerializableVariable(const String& name, uint8* variable, int version = 0);
-			void addSerializableVariable(const String& name, int8* variable, int version = 0);
+			void addSerializableVariable(const char* name, uint8* variable, int version = 0);
+			void addSerializableVariable(const char* name, int8* variable, int version = 0);
 
-			void addSerializableVariable(const String& name, uint16* variable, int version = 0);
-			void addSerializableVariable(const String& name, int16* variable, int version = 0);
+			void addSerializableVariable(const char* name, uint16* variable, int version = 0);
+			void addSerializableVariable(const char* name, int16* variable, int version = 0);
 
-			void addSerializableVariable(const String& name, uint32* variable, int version = 0);
-			void addSerializableVariable(const String& name, int32* variable, int version = 0);
+			void addSerializableVariable(const char* name, uint32* variable, int version = 0);
+			void addSerializableVariable(const char* name, int32* variable, int version = 0);
 
-			void addSerializableVariable(const String& name, uint64* variable, int version = 0);
-			void addSerializableVariable(const String& name, int64* variable, int version = 0);
+			void addSerializableVariable(const char* name, uint64* variable, int version = 0);
+			void addSerializableVariable(const char* name, int64* variable, int version = 0);
 
-			void addSerializableVariable(const String& name, float* variable, int version = 0);
-			void addSerializableVariable(const String& name, double* variable, int version = 0);
+			void addSerializableVariable(const char* name, float* variable, int version = 0);
+			void addSerializableVariable(const char* name, double* variable, int version = 0);
 
-			void addSerializableVariable(const String& name, bool* variable, int version = 0);
+			void addSerializableVariable(const char* name, bool* variable, int version = 0);
 
-			void addSerializableVariable(const String& name, Variable* variable, int version = 0);
-			Variable* getSerializableVariable(const String& name);
+			void addSerializableVariable(const char* name, Variable* variable, int version = 0);
+			Variable* getSerializableVariable(const char* name);
 
 			bool toString(String& str) {
 				serialize(str);

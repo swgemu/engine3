@@ -115,7 +115,12 @@ void Serializable::deSerialize(const String& str) {
 
 		int comma = data.indexOf(",");
 
-		int variableSize = Integer::valueOf(data.subString(size + 1, comma));
+		int variableSize;
+
+		if (comma != -1)
+			variableSize = Integer::valueOf(data.subString(size + 1, comma));
+		else
+			variableSize = Integer::valueOf(data.subString(size + 1, data.length() - 1));
 
 		for (int i = 0; i < variableSize; ++i) {
 			data = data.subString(comma + 1);
@@ -165,7 +170,7 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 	}
 
 	VariableName var;
-	var.setName(name);
+	var.setName(name.toCharArray());
 
 	if (!variables.contains(var)) {
 		System::out << "WARNING: variable " << nameAndVersion << " not found when deserializing [" << varData << "] \n";
@@ -193,7 +198,7 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 
 }
 
-void Serializable::addSerializableVariable(const String& name, Variable* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, Variable* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -201,7 +206,7 @@ void Serializable::addSerializableVariable(const String& name, Variable* variabl
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, uint8* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, uint8* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -210,7 +215,7 @@ void Serializable::addSerializableVariable(const String& name, uint8* variable, 
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, int8* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, int8* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -219,7 +224,7 @@ void Serializable::addSerializableVariable(const String& name, int8* variable, i
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, uint16* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, uint16* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -228,7 +233,7 @@ void Serializable::addSerializableVariable(const String& name, uint16* variable,
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, int16* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, int16* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -237,7 +242,7 @@ void Serializable::addSerializableVariable(const String& name, int16* variable, 
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, uint32* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, uint32* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -246,7 +251,7 @@ void Serializable::addSerializableVariable(const String& name, uint32* variable,
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, int32* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, int32* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -255,7 +260,7 @@ void Serializable::addSerializableVariable(const String& name, int32* variable, 
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, uint64* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, uint64* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -264,7 +269,7 @@ void Serializable::addSerializableVariable(const String& name, uint64* variable,
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, int64* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, int64* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -273,7 +278,7 @@ void Serializable::addSerializableVariable(const String& name, int64* variable, 
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, float* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, float* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -282,7 +287,7 @@ void Serializable::addSerializableVariable(const String& name, float* variable, 
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, double* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, double* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -291,7 +296,7 @@ void Serializable::addSerializableVariable(const String& name, double* variable,
 	variables.put(varName, variable);
 }
 
-void Serializable::addSerializableVariable(const String& name, bool* variable, int version) {
+void Serializable::addSerializableVariable(const char* name, bool* variable, int version) {
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
@@ -300,7 +305,7 @@ void Serializable::addSerializableVariable(const String& name, bool* variable, i
 	variables.put(varName, variable);
 }
 
-Variable* Serializable::getSerializableVariable(const String& name) {
+Variable* Serializable::getSerializableVariable(const char* name) {
 	VariableName var;
 	var.setName(name);
 

@@ -16,6 +16,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Float.h"
 #include "Bool.h"
 
+template<> bool TypeInfoAtomicBase<const char*>::toString(void* address, String& value) {
+	value = String((const char*)address);
+
+	return true;
+}
+
 template<> bool TypeInfoAtomicBase<bool>::toString(void* address, String& value) {
 	value = String::valueOf((bool)(*(bool*)address));
 
@@ -84,6 +90,15 @@ template<> bool TypeInfoAtomicBase<float>::toString(void* address, String& value
 
 template<> bool TypeInfoAtomicBase<double>::toString(void* address, String& value) {
 	value = String::valueOf((double)(*(double*)address));
+
+	return true;
+}
+
+template<> bool TypeInfoAtomicBase<const char*>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+	int count = strlen((const char*)address);
+
+	stream->writeShort(count);
+	stream->writeStream((const char*)address, count);
 
 	return true;
 }
@@ -160,6 +175,10 @@ template<> bool TypeInfoAtomicBase<double>::toBinaryStream(void* address, Object
 	return true;
 }
 
+template<> bool TypeInfoAtomicBase<const char*>::parseFromString(void* address, const String& value, int version) {
+	return false;
+}
+
 template<> bool TypeInfoAtomicBase<bool>::parseFromString(void* address, const String& value, int version) {
 	*(bool*)address = Bool::valueOf(value);
 
@@ -230,6 +249,10 @@ template<> bool TypeInfoAtomicBase<double>::parseFromString(void* address, const
 	*(double*)address = Float::valueOf(value);
 
 	return true;
+}
+
+template<> bool TypeInfoAtomicBase<const char*>::parseFromBinaryStream(void* address, ObjectInputStream* stream) {
+	return false;
 }
 
 template<> bool TypeInfoAtomicBase<bool>::parseFromBinaryStream(void* address, ObjectInputStream* stream) {

@@ -186,6 +186,7 @@ template<> class TypeInfo<uint64> : public TypeInfoAtomicUnsignedLong<uint64> {}
 template<> class TypeInfo<int64> : public TypeInfoAtomicSignedLong<int64> {};
 template<> class TypeInfo<float> : public TypeInfoAtomicFloat<float> {};
 template<> class TypeInfo<double> : public TypeInfoAtomicDouble<double> {};
+template<> class TypeInfo<const char*> : public TypeInfoAtomicPointer<const char*> {};
 
 
 #endif /*TYPES_H_*/

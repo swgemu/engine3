@@ -341,7 +341,12 @@ namespace sys {
 
 	   int comma = data.indexOf(",");
 
-	   int variableSize = Integer::valueOf(data.subString(1, comma));
+	   int variableSize;
+
+	   if (comma != -1)
+		   variableSize = Integer::valueOf(data.subString(1, comma));
+	   else
+		   variableSize = Integer::valueOf(data.subString(1, data.length() - 1));
 
 	   for (int i = 0; i < variableSize; ++i) {
 		   data = data.subString(comma + 1);
