@@ -22,13 +22,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "String.h"
 #include "Long.h"
 
-#include "../io/ObjectOutputStream.h"
-#include "../io/ObjectInputStream.h"
+#include "../io/Serializable.h"
 
 namespace sys {
   namespace lang {
 
-	class Time : public Object {
+	class Time : public Serializable {
 		struct timespec ts;
 
 	#ifdef PLATFORM_WIN
@@ -41,17 +40,26 @@ namespace sys {
 	#endif
 
 	public:
-		Time() : Object() {
+		Time() {
 			update();
+
+			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));
+			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
 		}
 
-		Time(uint32 seconds) : Object() {
+		Time(uint32 seconds) {
 			ts.tv_sec = seconds;
 			ts.tv_nsec = 0;
+
+			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));
+			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
 		}
 
-		Time(const Time& time) : Object() {
+		Time(const Time& time) : Object(), Serializable() {
 			ts = time.ts;
+
+			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));
+			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
 		}
 
 		inline void update() {
@@ -205,38 +213,6 @@ namespace sys {
 			return &ts;
 		}
 
-		bool toString(String& str) {
-			StringBuffer buffer;
-
-			buffer << ts.tv_sec << ";" << ts.tv_nsec;
-
-			buffer.toString(str);
-
-			return true;
-		}
-
-		bool parseFromString(const String& str, int version = 0) {
-			int separator = str.indexOf(";");
-
-			ts.tv_sec = UnsignedLong::valueOf(str.subString(0, separator));
-			ts.tv_nsec = UnsignedLong::valueOf(str.subString(separator + 1));
-
-			return true;
-		}
-
-		bool toBinaryStream(ObjectOutputStream* stream) {
-			stream->writeLong(ts.tv_sec);
-			stream->writeLong(ts.tv_nsec);
-
-			return true;
-		}
-
-		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			ts.tv_sec = stream->readLong();
-			ts.tv_nsec = stream->readLong();
-
-			return true;
-		}
 	};
 
   } // namespace lang

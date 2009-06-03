@@ -290,7 +290,7 @@ namespace sys {
 			readStream(stream, len);
 		}
 
-		String getString();
+		String toStringData();
 	};
 
   } // namespace net

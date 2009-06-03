@@ -30,7 +30,7 @@ void ServiceProcessThread::run() {
 				break;
 		} catch (...) {
 			error("unreported Exception caught");
-			info(msg->getString(), true);
+			info(msg->toStringData(), true);
 		}
 
 		delete msg;
