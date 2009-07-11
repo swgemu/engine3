@@ -70,6 +70,8 @@ MMOEngine/include/engine/db/Statement.h -text
 MMOEngine/include/engine/engine.h -text
 MMOEngine/include/engine/log/Logger.h -text
 MMOEngine/include/engine/lua/Lua.h -text
+MMOEngine/include/engine/lua/LuaFunction.h -text
+MMOEngine/include/engine/lua/LuaObject.h -text
 MMOEngine/include/engine/orb/DOBPacketHandler.h -text
 MMOEngine/include/engine/orb/DONamingDirectoryService.h -text
 MMOEngine/include/engine/orb/DistributedObjectBroker.h -text
@@ -285,6 +287,10 @@ MMOEngine/src/engine/log/Logger.cpp -text
 MMOEngine/src/engine/log/Logger.h -text
 MMOEngine/src/engine/lua/Lua.cpp -text
 MMOEngine/src/engine/lua/Lua.h -text
+MMOEngine/src/engine/lua/LuaFunction.cpp -text
+MMOEngine/src/engine/lua/LuaFunction.h -text
+MMOEngine/src/engine/lua/LuaObject.cpp -text
+MMOEngine/src/engine/lua/LuaObject.h -text
 MMOEngine/src/engine/orb/DOBPacketHandler.cpp -text
 MMOEngine/src/engine/orb/DOBPacketHandler.h -text
 MMOEngine/src/engine/orb/DistributedObjectBroker.cpp -text

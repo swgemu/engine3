@@ -12,6 +12,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "lua.hpp"
 
+#include "LuaObject.h"
+#include "LuaFunction.h"
+
 namespace engine {
   namespace lua {
 
@@ -78,80 +81,6 @@ namespace engine {
 		lua_State* getLuaState();
 		inline int checkStack();
 		inline bool checkStack(int num);
-
-	};
-
-	class LuaObject {
-		lua_State* L;
-
-		String objectName;
-
-	public:
-		LuaObject(lua_State* lState, const String& name) {
-			L = lState;
-			objectName = name;
-		}
-
-		LuaObject(lua_State* lState) {
-			L = lState;
-		}
-
-		void operator=(lua_State* lState) {
-			L = lState;
-		}
-
-		String getStringField(const String& key);
-		sys::uint32 getIntField(const String& key);
-		sys::uint16 getShortField(const String& key);
-		sys::uint8 getByteField(const String& key);
-		float getFloatField(const String& key);
-		uint64 getLongField(const String& key);
-		LuaObject getObjectField(const String& key);
-
-		void setField(const String& key, sys::uint32 value);
-		void setField(const String& key, const String& value);
-
-		bool isValidTable();
-
-		void pop();
-
-	};
-
-	class LuaFunction {
-		lua_State* L;
-
-		int numberOfArgs;
-		int numberOfArgsToReturn;
-		String functionName;
-
-	public:
-		LuaFunction(lua_State* l, const String& funcName, int argsToReturn);
-
-		LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn);
-
-		void operator<<(int number);
-		void operator<<(sys::uint32 number);
-		void operator<<(int64 number);
-		void operator<<(uint64 number);
-		void operator<<(bool boolean);
-		void operator<<(String& str);
-		void operator<<(const char* str);
-
-		inline lua_State* getLuaState() {
-			return L;
-		}
-
-		inline int getNumberOfArgs() {
-			return numberOfArgs;
-		}
-
-		inline int getNumberOfReturnArgs() {
-			return numberOfArgsToReturn;
-		}
-
-		inline String& getFunctionName() {
-			return functionName;
-		}
 
 	};
 

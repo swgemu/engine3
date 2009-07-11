@@ -1,7 +1,7 @@
 # Copyright (C) 2007 <SWGEmu>. All rights reserved.
 # Distribution of this file for usage outside of Core3 is prohibited.
 
-AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused
+AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src
@@ -82,7 +82,9 @@ libengine3_a_SOURCES = \
 			engine/db/MySqlDatabase.cpp \
 			engine/db/BinaryData.cpp \
 			engine/log/Logger.cpp \
-			engine/lua/Lua.cpp
+			engine/lua/Lua.cpp \
+			engine/lua/LuaFunction.cpp \
+			engine/lua/LuaObject.cpp
 
 .h.gch:
 	$(CXXCOMPILE) $<
