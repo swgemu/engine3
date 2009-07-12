@@ -6,13 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef VECTOR3_H_
 #define VECTOR3_H_
 
+#include "../io/Serializable.h"
+
 namespace sys {
-  namespace lang {
-	class Vector3 {
+  namespace util {
+	class Vector3 : public Serializable {
 	protected:
-		float x;
-		float y;
-		float z;
+		float x, y, z;
 
 	public:
 		static const Vector3 ZERO;
@@ -27,12 +27,16 @@ namespace sys {
 			x = 0;
 			y = 0;
 			z = 0;
+
+			addSerializableVariables();
 		}
 
 		inline Vector3(const float fx, const float fy, const float fz) {
 			x = fx;
 			y = fy;
 			z = fz;
+
+			addSerializableVariables();
 		}
 
 		/**
@@ -42,6 +46,8 @@ namespace sys {
 			x = coord[0];
 			y = coord[1];
 			z = coord[2];
+
+			addSerializableVariables();
 		}
 
 		/**
@@ -51,6 +57,8 @@ namespace sys {
 			x = (float) coord[0];
 			y = (float) coord[1];
 			z = (float) coord[2];
+
+			addSerializableVariables();
 		}
 
 		/**
@@ -60,22 +68,20 @@ namespace sys {
 			x = scalar;
 			y = scalar;
 			z = scalar;;
+
+			addSerializableVariables();
 		}
 
 		virtual ~Vector3() {
 		}
 
+		inline void addSerializableVariables() {
+			addSerializableVariable("x", &x);
+			addSerializableVariable("y", &y);
+			addSerializableVariable("z", &z);
+		}
+
 	public:
-		/// Serialize aka save
-		virtual void serialize() {
-			//TODO: Write x, y, and z with BinaryWriter::writeFloat(x); etc.
-			//TODO: Other option would be to add a method to BinaryWriter::writeVector3(const Vector3& v);
-		}
-
-		/// Deserialize aka load
-		virtual void deserialize() {
-		}
-
 		/**
 		 * Returns the exact length of the vector. Should be used sparingly as it
 		 * uses much CPU power. Use squaredLength for comparing lengths.

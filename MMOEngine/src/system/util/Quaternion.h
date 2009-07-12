@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../io/Serializable.h"
 
 namespace sys {
-  namespace lang {
+  namespace util {
   class Quaternion : public Serializable {
 	protected:
 		float w, x, y, z;
