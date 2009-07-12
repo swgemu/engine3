@@ -36,6 +36,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "lang/Bool.h"
 #include "lang/UnicodeString.h"
 #include "lang/StringBuffer.h"
+#include "lang/Quaternion.h"
+#include "lang/Vector3.h"
 
 #include "io/Serializable.h"
 #include "io/Stream.h"

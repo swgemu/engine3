@@ -191,6 +191,7 @@ MMOEngine/include/system/lang/Math.h -text
 MMOEngine/include/system/lang/NumberFormatException.h -text
 MMOEngine/include/system/lang/Object.h -text
 MMOEngine/include/system/lang/OutOfMemoryError.h -text
+MMOEngine/include/system/lang/Quaternion.h -text
 MMOEngine/include/system/lang/Reference.h -text
 MMOEngine/include/system/lang/Runnable.h -text
 MMOEngine/include/system/lang/Short.h -text
@@ -202,6 +203,7 @@ MMOEngine/include/system/lang/System.h -text
 MMOEngine/include/system/lang/Time.h -text
 MMOEngine/include/system/lang/UnicodeString.h -text
 MMOEngine/include/system/lang/Variable.h -text
+MMOEngine/include/system/lang/Vector3.h -text
 MMOEngine/include/system/lang/mersenne/MersenneTwister.h -text
 MMOEngine/include/system/lang/ref/Reference.h -text
 MMOEngine/include/system/lang/ref/ReferenceCounter.h -text
@@ -456,6 +458,7 @@ MMOEngine/src/system/lang/Math.h -text
 MMOEngine/src/system/lang/NumberFormatException.h -text
 MMOEngine/src/system/lang/Object.h -text
 MMOEngine/src/system/lang/OutOfMemoryError.h -text
+MMOEngine/src/system/lang/Quaternion.h -text
 MMOEngine/src/system/lang/Runnable.h -text
 MMOEngine/src/system/lang/Short.h -text
 MMOEngine/src/system/lang/SignalException.h -text
@@ -471,6 +474,7 @@ MMOEngine/src/system/lang/Time.h -text
 MMOEngine/src/system/lang/UnicodeString.cpp -text
 MMOEngine/src/system/lang/UnicodeString.h -text
 MMOEngine/src/system/lang/Variable.h -text
+MMOEngine/src/system/lang/Vector3.h -text
 MMOEngine/src/system/lang/mersenne/MersenneTwister.cpp -text
 MMOEngine/src/system/lang/mersenne/MersenneTwister.h -text
 MMOEngine/src/system/lang/ref/Reference.h -text
