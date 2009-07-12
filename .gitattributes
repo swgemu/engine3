@@ -150,6 +150,7 @@ MMOEngine/include/engine/service/proxy/StreamProxyService.h -text
 MMOEngine/include/engine/service/proxy/StreamProxyServiceClient.h -text
 MMOEngine/include/engine/service/proxy/StreamProxyServiceMap.h -text
 MMOEngine/include/engine/util/Coordinate.h -text
+MMOEngine/include/engine/util/ObjectFactory.h -text
 MMOEngine/include/engine/util/QuadTree.h -text
 MMOEngine/include/engine/util/QuadTreeEntry.h -text
 MMOEngine/include/engine/util/ResourcePool.h -text
@@ -248,6 +249,7 @@ MMOEngine/include/system/util/HashTable.h -text
 MMOEngine/include/system/util/Iterator.h -text
 MMOEngine/include/system/util/LinkedList.h -text
 MMOEngine/include/system/util/PriorityQueue.h -text
+MMOEngine/include/system/util/Quaternion.h -text
 MMOEngine/include/system/util/SerializableHashTable.h -text
 MMOEngine/include/system/util/SerializableSortedVector.h -text
 MMOEngine/include/system/util/SerializableVector.h -text
@@ -255,6 +257,7 @@ MMOEngine/include/system/util/SerializableVectorMap.h -text
 MMOEngine/include/system/util/SortedVector.h -text
 MMOEngine/include/system/util/Timer.h -text
 MMOEngine/include/system/util/Vector.h -text
+MMOEngine/include/system/util/Vector3.h -text
 MMOEngine/include/system/util/VectorMap.h -text
 MMOEngine/install-sh -text
 MMOEngine/lib/unix/libengine3.a -text
@@ -405,6 +408,7 @@ MMOEngine/src/engine/service/proxy/StreamProxyServiceClient.cpp -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceClient.h -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceMap.h -text
 MMOEngine/src/engine/util/Coordinate.h -text
+MMOEngine/src/engine/util/ObjectFactory.h -text
 MMOEngine/src/engine/util/QuadTree.cpp -text
 MMOEngine/src/engine/util/QuadTree.h -text
 MMOEngine/src/engine/util/QuadTreeEntry.h -text
