@@ -6,9 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef VECTOR3_H_
 #define VECTOR3_H_
 
-#include "../io/Serializable.h"
+#include "system/io/Serializable.h"
 
-namespace sys {
+namespace engine {
   namespace util {
 	class Vector3 : public Serializable {
 	protected:
@@ -307,6 +307,6 @@ namespace sys {
   }
 }
 
-using namespace sys::util;
+using namespace engine::util;
 
 #endif /* VECTOR3_H_ */

@@ -62,8 +62,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "util/BinarySearchTree.h"
 #include "util/BinaryHeap.h"
 #include "util/AdvancedBinaryHeap.h"
-#include "util/Quaternion.h"
-#include "util/Vector3.h"
 
 #include "thread/Atomic.h"
 #include "thread/Thread.h"

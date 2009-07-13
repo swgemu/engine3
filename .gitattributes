@@ -153,8 +153,10 @@ MMOEngine/include/engine/util/Coordinate.h -text
 MMOEngine/include/engine/util/ObjectFactory.h -text
 MMOEngine/include/engine/util/QuadTree.h -text
 MMOEngine/include/engine/util/QuadTreeEntry.h -text
+MMOEngine/include/engine/util/Quaternion.h -text
 MMOEngine/include/engine/util/ResourcePool.h -text
 MMOEngine/include/engine/util/Singleton.h -text
+MMOEngine/include/engine/util/Vector3.h -text
 MMOEngine/include/system/io/BufferedReader.h -text
 MMOEngine/include/system/io/File.h -text
 MMOEngine/include/system/io/FileInputStream.h -text
@@ -249,7 +251,6 @@ MMOEngine/include/system/util/HashTable.h -text
 MMOEngine/include/system/util/Iterator.h -text
 MMOEngine/include/system/util/LinkedList.h -text
 MMOEngine/include/system/util/PriorityQueue.h -text
-MMOEngine/include/system/util/Quaternion.h -text
 MMOEngine/include/system/util/SerializableHashTable.h -text
 MMOEngine/include/system/util/SerializableSortedVector.h -text
 MMOEngine/include/system/util/SerializableVector.h -text
@@ -257,7 +258,6 @@ MMOEngine/include/system/util/SerializableVectorMap.h -text
 MMOEngine/include/system/util/SortedVector.h -text
 MMOEngine/include/system/util/Timer.h -text
 MMOEngine/include/system/util/Vector.h -text
-MMOEngine/include/system/util/Vector3.h -text
 MMOEngine/include/system/util/VectorMap.h -text
 MMOEngine/install-sh -text
 MMOEngine/lib/unix/libengine3.a -text
@@ -412,8 +412,10 @@ MMOEngine/src/engine/util/ObjectFactory.h -text
 MMOEngine/src/engine/util/QuadTree.cpp -text
 MMOEngine/src/engine/util/QuadTree.h -text
 MMOEngine/src/engine/util/QuadTreeEntry.h -text
+MMOEngine/src/engine/util/Quaternion.h -text
 MMOEngine/src/engine/util/ResourcePool.h -text
 MMOEngine/src/engine/util/Singleton.h -text
+MMOEngine/src/engine/util/Vector3.h -text
 MMOEngine/src/system/io/BufferedReader.cpp -text
 MMOEngine/src/system/io/BufferedReader.h -text
 MMOEngine/src/system/io/File.cpp -text
@@ -518,9 +520,7 @@ MMOEngine/src/system/util/HashTable.h -text
 MMOEngine/src/system/util/Iterator.h -text
 MMOEngine/src/system/util/LinkedList.h -text
 MMOEngine/src/system/util/PriorityQueue.h -text
-MMOEngine/src/system/util/Quaternion.h -text
 MMOEngine/src/system/util/SortedVector.h -text
 MMOEngine/src/system/util/Timer.h -text
 MMOEngine/src/system/util/Vector.h -text
-MMOEngine/src/system/util/Vector3.h -text
 MMOEngine/src/system/util/VectorMap.h -text

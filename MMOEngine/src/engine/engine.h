@@ -71,5 +71,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #endif
 
 #include "util/QuadTree.h"
+#include "util/Quaternion.h"
+#include "util/Vector3.h"
 
 #endif /*ENGINE_H_*/
