@@ -7,20 +7,20 @@ package engine.core;
 
 class ManagedObject {
 	@nativeStub 
-	public void lock(boolean doLock = true);
+	public native void lock(boolean doLock = true);
 	
 	@nativeStub 
-	public void lock(ManagedObject obj);
+	public native void lock(ManagedObject obj);
 
 	@nativeStub 
-	public void wlock(boolean doLock = true);
+	public native void wlock(boolean doLock = true);
 
 	@nativeStub 
-	public void wlock(ManagedObject obj);
+	public native void wlock(ManagedObject obj);
 	
 	@nativeStub 
-	public void unlock(boolean doLock = true);
+	public native void unlock(boolean doLock = true);
 	
 	@nativeStub 
-	public void setLockName(final string name);	
+	public native void setLockName(final string name);	
 }
