@@ -32,6 +32,8 @@ protected:
 
 	void _setStub(DistributedObjectStub* stub);
 	DistributedObjectStub* _getStub();
+
+	friend class ManagedVector;
 };
 
 class ManagedVectorAdapter : public DistributedObjectAdapter {
