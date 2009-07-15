@@ -56,7 +56,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "core/ManagedReference.h"
 #include "core/ManagedObject.h"
-#include "core/ManagedObjectImplementation.h"
 
 //#include "core/util/ManagedVector.h"
 //#include "core/util/ManagedVectorImplementation.h"

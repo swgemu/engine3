@@ -5,14 +5,22 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 package engine.core;
 
-interface ManagedObject {
-	native void lock(boolean doLock = true);
-	native void lock(ManagedObject obj);
+class ManagedObject {
+	@nativeStub 
+	public void lock(boolean doLock = true);
+	
+	@nativeStub 
+	public void lock(ManagedObject obj);
 
-	native void wlock(boolean doLock = true);
-	native void wlock(ManagedObject obj);
+	@nativeStub 
+	public void wlock(boolean doLock = true);
+
+	@nativeStub 
+	public void wlock(ManagedObject obj);
 	
-	native void unlock(boolean doLock = true);
+	@nativeStub 
+	public void unlock(boolean doLock = true);
 	
-	native void setLockName(const String name);	
+	@nativeStub 
+	public void setLockName(final string name);	
 }

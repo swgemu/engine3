@@ -270,13 +270,11 @@ MMOEngine/src/engine/core/ManagedObject.cpp -text
 MMOEngine/src/engine/core/ManagedObject.h -text
 MMOEngine/src/engine/core/ManagedObject.idl -text
 MMOEngine/src/engine/core/ManagedObjectImplementation.cpp -text
-MMOEngine/src/engine/core/ManagedObjectImplementation.h -text
 MMOEngine/src/engine/core/ManagedReference.h -text
 MMOEngine/src/engine/core/util/ManagedSortedVector.h -text
 MMOEngine/src/engine/core/util/ManagedVector.cpp -text
 MMOEngine/src/engine/core/util/ManagedVector.h -text
 MMOEngine/src/engine/core/util/ManagedVector.idl -text
-MMOEngine/src/engine/core/util/ManagedVectorImplementation.h -text
 MMOEngine/src/engine/core/util/ManagedVectorMap.h -text
 MMOEngine/src/engine/db/BinaryData.cpp -text
 MMOEngine/src/engine/db/BinaryData.h -text

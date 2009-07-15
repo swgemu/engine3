@@ -1,4 +1,4 @@
-#include "ManagedObjectImplementation.h"
+#include "ManagedObject.h"
 
 void ManagedObject::lock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
