@@ -19,74 +19,7 @@ namespace sys {
 		class ObjectOutputStream;
 		class ObjectInputStream;
 
-		class VariableName : public Variable {
-			const char* name;
-			uint8 version;
-
-			uint8 type;
-
-		public:
-			VariableName() : Variable() {
-				version = 0;
-				type = 0;
-			}
-
-			VariableName(const char* name, int version) : Variable() {
-				VariableName::name = name;
-				VariableName::version = version;
-
-				type = 0;
-			}
-
-			~VariableName() {
-
-			}
-
-			int compareTo(const VariableName& str) const {
-				return strcmp(name, str.name);
-			}
-
-			inline const char* getName() {
-				return name;
-			}
-
-			inline void setName(const char* str) {
-				name = str;
-			}
-
-			inline void setVersion(int ver) {
-				version = (uint8) ver;
-			}
-
-			inline void setType(int typ) {
-				type = (uint8) typ;
-			}
-
-			inline int getVersion() {
-				return (int) version;
-			}
-
-			inline int getType() {
-				return (int) type;
-			}
-
-			bool toString(String& str) {
-				return false;
-			}
-
-			bool parseFromString(const String& str, int version = 0) {
-				return false;
-			}
-
-			bool toBinaryStream(ObjectOutputStream* stream) {
-				return false;
-			}
-
-			bool parseFromBinaryStream(ObjectInputStream* stream) {
-				return false;
-			}
-
-		};
+		class VariableName;
 
 		class Serializable : public virtual Object {
 			VectorMap<VariableName, void*> variables;
@@ -158,6 +91,75 @@ namespace sys {
 
 		private:
 			void deSerializeVariable(const String& nameAndVersion, const String& varData);
+
+		};
+
+		class VariableName : public Variable {
+			const char* name;
+			uint8 version;
+
+			uint8 type;
+
+		public:
+			VariableName() : Variable() {
+				version = 0;
+				type = 0;
+			}
+
+			VariableName(const char* name, int version) : Variable() {
+				VariableName::name = name;
+				VariableName::version = version;
+
+				type = 0;
+			}
+
+			~VariableName() {
+
+			}
+
+			int compareTo(const VariableName& str) const {
+				return strcmp(name, str.name);
+			}
+
+			inline const char* getName() {
+				return name;
+			}
+
+			inline void setName(const char* str) {
+				name = str;
+			}
+
+			inline void setVersion(int ver) {
+				version = (uint8) ver;
+			}
+
+			inline void setType(int typ) {
+				type = (uint8) typ;
+			}
+
+			inline int getVersion() {
+				return (int) version;
+			}
+
+			inline int getType() {
+				return (int) type;
+			}
+
+			bool toString(String& str) {
+				return false;
+			}
+
+			bool parseFromString(const String& str, int version = 0) {
+				return false;
+			}
+
+			bool toBinaryStream(ObjectOutputStream* stream) {
+				return false;
+			}
+
+			bool parseFromBinaryStream(ObjectInputStream* stream) {
+				return false;
+			}
 
 		};
 	}

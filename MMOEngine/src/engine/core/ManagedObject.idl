@@ -5,7 +5,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 package engine.core;
 
-class ManagedObject {
+import system.io.Serializable;
+import system.io.ObjectInputStream;
+import system.io.ObjectOutputStream;
+
+class ManagedObject extends native Serializable {
 	@nativeStub 
 	public native void lock(boolean doLock = true);
 	
@@ -23,4 +27,20 @@ class ManagedObject {
 	
 	@nativeStub 
 	public native void setLockName(final string name);	
+	
+	public abstract void serialize(string data) {
+		Serializable.serialize(data);
+	}
+	
+	public local abstract void serialize(ObjectOutputStream stream) {
+		Serializable.serialize(stream);
+	}
+	
+	public abstract void deSerialize(final string data) {
+		Serializable.deSerialize(data);
+	}
+	
+	public local abstract void deSerialize(ObjectInputStream stream) {
+		Serializable.deSerialize(stream);
+	}
 }
