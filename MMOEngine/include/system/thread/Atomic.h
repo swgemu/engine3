@@ -8,7 +8,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../platform.h"
 
-#ifdef PLATFORM_FREEBSD
+#ifdef PLATFORM_MAC
+#include <libkern/OSAtomic.h>
+#elif PLATFORM_FREEBSD
 #include <machine/atomic.h>
 #elif defined PLATFORM_SOLARIS
 #include <atomic.h>
@@ -22,6 +24,8 @@ namespace sys {
 		static inline void incrementInt(uint32* value) {
 			#if GCC_VERSION >= 40100
 				__sync_add_and_fetch(value, 1);
+			#elif defined(PLATFORM_MAC)
+				OSAtomicIncrement32((volatile int32_t*)value);
 			#elif PLATFORM_FREEBSD
 				atomic_add_int(value, 1);
 			#elif defined PLATFORM_LINUX
@@ -40,6 +44,8 @@ namespace sys {
 		static inline bool decrementInt(uint32* value) {
 			#if GCC_VERSION >= 40100
 				return __sync_sub_and_fetch(value, 1);
+			#elif defined(PLATFORM_MAC)
+				return OSAtomicDecrement32((volatile int32_t*)value);
 			#elif PLATFORM_FREEBSD
 				atomic_subtract_int(value, 1);
 				return *value;

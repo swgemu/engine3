@@ -8,7 +8,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../../system/lang.h"
 
+#ifdef PLATFORM_MAC
+#include "mysql5/mysql/mysql.h"
+#else
 #include <mysql.h>
+#endif
 
 #include "../log/Logger.h"
 

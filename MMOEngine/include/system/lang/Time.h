@@ -63,7 +63,13 @@ namespace sys {
 		}
 
 		inline void update() {
-			#ifndef PLATFORM_WIN
+			#ifdef PLATFORM_MAC
+				struct timeval tv;
+				gettimeofday(&tv, NULL);
+				ts.tv_sec = tv.tv_sec;
+				ts.tv_nsec = tv.tv_usec * 1000;
+
+			#elif !defined(PLATFORM_WIN)
 				clock_gettime(CLOCK_REALTIME, &ts);
 			#else
 				FILETIME ft;
@@ -130,7 +136,22 @@ namespace sys {
 		}
 
 		inline static uint64 currentNanoTime() {
-			#ifndef PLATFORM_WIN
+			#ifdef PLATFORM_MAC
+				struct timeval tv;
+				gettimeofday(&tv, NULL);
+
+				struct timespec cts;
+				cts.tv_sec = tv.tv_sec;
+				cts.tv_nsec = tv.tv_usec * 1000;
+
+				uint64 time;
+
+				time = cts.tv_sec;
+				time = (time * 1000000000) + (uint64)cts.tv_nsec;
+
+				return time;
+
+			#elif !defined(PLATFORM_WIN)
 				struct timespec cts;
 				clock_gettime(CLOCK_REALTIME, &cts);
 

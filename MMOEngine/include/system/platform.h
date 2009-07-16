@@ -16,6 +16,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #elif defined (__SVR4) && defined (__sun)
 	#define PLATFORM_SOLARIS
 	#define PLATFORM_UNIX
+#elif defined(__APPLE__)
+	#define PLATFORM_MAC
+	#define PLATFORM_UNIX
 #else
 	#define PLATFORM_LINUX
 	#define PLATFORM_UNIX
