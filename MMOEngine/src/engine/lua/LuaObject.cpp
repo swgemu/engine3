@@ -98,6 +98,49 @@ LuaObject LuaObject::getObjectField(const String& key) {
 	return obj;
 }
 
+sys::uint32 LuaObject::getIntAt(int idx) {
+	uint32 result = 0;
+
+	if (idx > (int)getTableSize() || idx < 1)
+		throw ArrayIndexOutOfBoundsException(idx);
+
+	lua_rawgeti(L, -1, idx);
+	result = (uint32)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	return result;
+}
+
+String LuaObject::getStringAt(int idx) {
+	const char* result = NULL;
+
+	if (idx > getTableSize() || idx < 1)
+		throw ArrayIndexOutOfBoundsException(idx);
+
+	lua_rawgeti(L, -1, idx);
+	result = lua_tostring(L, -1);
+	lua_pop(L, 1);
+
+	return String(result);
+}
+
+float LuaObject::getFloatAt(int idx) {
+	float result = 0.f;
+
+	if (idx > getTableSize() || idx < 1)
+		throw ArrayIndexOutOfBoundsException(idx);
+
+	lua_rawgeti(L, -1, idx);
+	result = (float)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	return result;
+}
+
+int LuaObject::getTableSize() {
+	return luaL_getn(L, -1);
+}
+
 bool LuaObject::isValidTable() {
 	return lua_istable(L, -1);
 }
