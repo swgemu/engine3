@@ -4,7 +4,7 @@
 AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src -I/opt/local/include
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src/
 
 LIBS =  $(SYSTEM_LIBS) \
 		-lmysqlclient -llua -lz \

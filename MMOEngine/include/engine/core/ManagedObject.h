@@ -7,6 +7,12 @@
 
 #include "engine/orb/DistributedObjectBroker.h"
 
+#include "system/io/Serializable.h"
+
+#include "system/io/ObjectInputStream.h"
+
+#include "system/io/ObjectOutputStream.h"
+
 namespace engine {
 namespace core {
 
@@ -23,6 +29,14 @@ public:
 	void unlock(bool doLock);
 
 	void setLockName(const String& name);
+
+	void serialize(String& data);
+
+	void serialize(ObjectOutputStream* stream);
+
+	void deSerialize(const String& data);
+
+	void deSerialize(ObjectInputStream* stream);
 
 protected:
 	ManagedObject(DummyConstructorParameter* param);
@@ -44,7 +58,7 @@ protected:
 	friend class ManagedObjectHelper;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant {
+class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
 
 public:
 	ManagedObjectImplementation();
@@ -60,6 +74,14 @@ public:
 
 	void setLockName(const String& name);
 
+	virtual void serialize(String& data);
+
+	virtual void serialize(ObjectOutputStream* stream);
+
+	virtual void deSerialize(const String& data);
+
+	virtual void deSerialize(ObjectInputStream* stream);
+
 	ManagedObject* _this;
 
 protected:
@@ -67,6 +89,8 @@ protected:
 
 	void _setStub(DistributedObjectStub* stub);
 	DistributedObjectStub* _getStub();
+
+	void _serializationHelperMethod();
 
 	friend class ManagedObject;
 };
@@ -89,8 +113,14 @@ public:
 
 	void setLockName(const String& name);
 
+	void serialize(String& data);
+
+	void deSerialize(const String& data);
+
 protected:
 	String _param0_setLockName__String_;
+	String _param0_serialize__String_;
+	String _param0_deSerialize__String_;
 };
 
 class ManagedObjectHelper : public DistributedObjectClassHelper, public Singleton<ManagedObjectHelper> {

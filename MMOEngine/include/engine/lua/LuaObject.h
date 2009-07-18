@@ -41,9 +41,19 @@ namespace lua {
 		void setField(const String& key, sys::uint32 value);
 		void setField(const String& key, const String& value);
 
+		String getStringAt(int idx);
+		sys::uint32 getIntAt(int idx);
+		float getFloatAt(int idx);
+
+		int getTableSize();
+
 		bool isValidTable();
 
 		void pop();
+
+		inline lua_State* getLuaState() {
+			return L;
+		}
 
 	};
 }
