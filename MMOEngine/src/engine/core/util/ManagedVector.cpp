@@ -34,6 +34,9 @@ DistributedObjectStub* ManagedVectorImplementation::_getStub() {
 	return _this;
 }
 
+void ManagedVectorImplementation::_serializationHelperMethod() {
+}
+
 /*
  *	ManagedVectorAdapter
  */
