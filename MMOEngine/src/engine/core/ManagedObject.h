@@ -84,6 +84,7 @@ public:
 
 	ManagedObject* _this;
 
+	operator ManagedObject*();
 protected:
 	virtual ~ManagedObjectImplementation();
 

@@ -154,6 +154,10 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 	return _this;
 }
 
+ManagedObjectImplementation::operator ManagedObject*() {
+	return _this;
+}
+
 void ManagedObjectImplementation::_serializationHelperMethod() {
 }
 

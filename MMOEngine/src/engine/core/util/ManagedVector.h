@@ -27,6 +27,7 @@ public:
 	ManagedVectorImplementation();
 	ManagedVector* _this;
 
+	operator ManagedVector*();
 protected:
 	virtual ~ManagedVectorImplementation();
 
