@@ -84,12 +84,13 @@ public:
 
 	ManagedObject* _this;
 
-	operator ManagedObject*();
+	operator const ManagedObject*();
+
+	DistributedObjectStub* _getStub();
 protected:
 	virtual ~ManagedObjectImplementation();
 
 	void _setStub(DistributedObjectStub* stub);
-	DistributedObjectStub* _getStub();
 
 	void _serializationHelperMethod();
 

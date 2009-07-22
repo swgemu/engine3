@@ -27,12 +27,13 @@ public:
 	ManagedVectorImplementation();
 	ManagedVector* _this;
 
-	operator ManagedVector*();
+	operator const ManagedVector*();
+
+	DistributedObjectStub* _getStub();
 protected:
 	virtual ~ManagedVectorImplementation();
 
 	void _setStub(DistributedObjectStub* stub);
-	DistributedObjectStub* _getStub();
 
 	void _serializationHelperMethod();
 

@@ -34,7 +34,7 @@ DistributedObjectStub* ManagedVectorImplementation::_getStub() {
 	return _this;
 }
 
-ManagedVectorImplementation::operator ManagedVector*() {
+ManagedVectorImplementation::operator const ManagedVector*() {
 	return _this;
 }
 

@@ -154,7 +154,7 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 	return _this;
 }
 
-ManagedObjectImplementation::operator ManagedObject*() {
+ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
 
