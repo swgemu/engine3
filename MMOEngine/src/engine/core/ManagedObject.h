@@ -7,6 +7,8 @@
 
 #include "engine/orb/DistributedObjectBroker.h"
 
+#include "engine/core/ManagedReference.h"
+
 #include "system/io/Serializable.h"
 
 #include "system/io/ObjectInputStream.h"

@@ -11,11 +11,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace lang {
 
-	template<typename O> class ReferenceSlot;
-
-	template<class O> class ReferenceSlot<O*> : public Variable {
+	template<class O> class ReferenceSlot : public Variable {
 	protected:
-		O* object;
+		O object;
 
 	public:
 		ReferenceSlot() : Variable() {
@@ -26,7 +24,7 @@ namespace sys {
 			initializeObject(refslot.object);
 		}
 
-		ReferenceSlot(O* obj) : Variable() {
+		ReferenceSlot(O obj) : Variable() {
 			initializeObject(obj);
 		}
 
@@ -52,19 +50,19 @@ namespace sys {
 			return *this;
 		}
 
-		void operator=(O* obj) {
+		void operator=(O obj) {
 			updateObject(obj);
 		}
 
-		O* operator->() const {
+		O operator->() const {
 			return object;
 		}
 
-		operator O*() const {
+		operator O() const {
 			return object;
 		}
 
-		inline O* get() const {
+		inline O get() const {
 			return object;
 		}
 
@@ -85,7 +83,7 @@ namespace sys {
 		}
 
 	protected:
-		inline void updateObject(O* obj) {
+		inline void updateObject(O obj) {
 			if (obj == object)
 				return;
 
@@ -94,14 +92,14 @@ namespace sys {
 			setObject(obj);
 		}
 
-		inline void setObject(O* obj) {
+		inline void setObject(O obj) {
 			if (obj == object)
 				return;
 
 			initializeObject(obj);
 		}
 
-		inline void initializeObject(O* obj) {
+		inline void initializeObject(O obj) {
 			object = obj;
 
 			acquireObject();
