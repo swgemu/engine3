@@ -176,8 +176,34 @@ namespace engine {
 			return w;
 		}
 
+		inline float getRadians() {
+			float angle;
+
+			if (z * z + y * y > 0.0f) {
+				if (z > 0.f && y < 0.0f)
+					w *= -1.0f;
+
+				angle = 2.0f * Math::acos(z);
+			} else {
+				angle = 0.0f;
+			}
+
+			return angle;
+		}
+
+		inline float getDegrees() {
+			return (getRadians() / 6.283f) * 100;
+		}
+
 		inline bool isIdentity() {
 			return (*this == IDENTITY);
+		}
+
+		inline void set(float fw, float fx, float fy, float fz) {
+			w = fw;
+			x = fx;
+			y = fy;
+			z = fz;
 		}
 	};
 
