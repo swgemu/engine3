@@ -107,7 +107,7 @@ namespace engine {
 
 	};
 
-	class QuadTree : public Mutex {
+	class QuadTree {
 		QuadTreeNode* root;
 
 		static bool logTree;

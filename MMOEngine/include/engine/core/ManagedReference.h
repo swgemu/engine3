@@ -15,37 +15,39 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace core {
 
-	template<class O> class ManagedReference : public ReferenceSlot<O> {
+    template<typename O> class ManagedReference;
+
+	template<typename O> class ManagedReference<O*> : public ReferenceSlot<O*> {
 	public:
-		ManagedReference() : ReferenceSlot<O>() {
+		ManagedReference() : ReferenceSlot<O*>() {
 		}
 
-		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O>(ref) {
+		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O*>(ref) {
 		}
 
-		ManagedReference(O* obj) : ReferenceSlot<O>(obj) {
+		ManagedReference(O* obj) : ReferenceSlot<O*>(obj) {
 		}
 
 		void operator=(const ManagedReference& ref) {
-			ReferenceSlot<O>::setObject(ref.object);
+			ReferenceSlot<O*>::setObject(ref.object);
 		}
 
 		void operator=(O* obj) {
-			ReferenceSlot<O>::updateObject(obj);
+			ReferenceSlot<O*>::updateObject(obj);
 		}
 
 		int compareTo(const ManagedReference& ref) const {
-			if (ReferenceSlot<O>::object->_getObjectID() < ref.ReferenceSlot<O>::object->_getObjectID())
+			if (ReferenceSlot<O*>::object->_getObjectID() < ref.ReferenceSlot<O*>::object->_getObjectID())
 				return 1;
-			else if (ReferenceSlot<O>::object->_getObjectID() > ref.ReferenceSlot<O>::object->_getObjectID())
+			else if (ReferenceSlot<O*>::object->_getObjectID() > ref.ReferenceSlot<O*>::object->_getObjectID())
 				return -1;
 			else
 				return 0;
 		}
 
 		bool toString(String& str) {
-			if (ReferenceSlot<O>::object != NULL)
-				str = ReferenceSlot<O>::object->_getName();
+			if (ReferenceSlot<O*>::object != NULL)
+				str = ReferenceSlot<O*>::object->_getName();
 
 			return true;
 		}
@@ -53,7 +55,7 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(str);
 
-			ReferenceSlot<O>::updateObject((O*)obj);
+			ReferenceSlot<O*>::updateObject((O*)obj);
 
 			if (obj == NULL)
 				return false;
@@ -64,8 +66,8 @@ namespace engine {
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			String name;
 
-			if (ReferenceSlot<O>::object != NULL)
-				name = ReferenceSlot<O>::object->_getName();
+			if (ReferenceSlot<O*>::object != NULL)
+				name = ReferenceSlot<O*>::object->_getName();
 
 			name.toBinaryStream(stream);
 
@@ -78,7 +80,7 @@ namespace engine {
 
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(name);
 
-			ReferenceSlot<O>::updateObject((O*)obj);
+			ReferenceSlot<O*>::updateObject((O*)obj);
 
 			if (obj == NULL)
 				return false;

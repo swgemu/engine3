@@ -11,7 +11,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace lang {
 
-	template<class O> class ReferenceSlot : public Variable {
+	template<typename O> class ReferenceSlot;
+
+	template<class O> class ReferenceSlot<O*> : public Variable {
 	protected:
 		O* object;
 

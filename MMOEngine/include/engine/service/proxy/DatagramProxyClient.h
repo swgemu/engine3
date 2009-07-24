@@ -13,7 +13,7 @@ class DatagramProxyServiceClient;
 class DatagramProxyClient : public DatagramServiceClientProxy, public Logger {
 	class DatagramProxyService* service;
 
-	ReferenceSlot<DatagramProxyServiceClient> proxyServiceClient;
+	ReferenceSlot<DatagramProxyServiceClient*> proxyServiceClient;
 	
 public:
 	DatagramProxyClient(DatagramProxyService* serv, Socket* sock, SocketAddress& addr);

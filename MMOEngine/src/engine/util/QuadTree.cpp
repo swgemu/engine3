@@ -132,11 +132,11 @@ String QuadTreeNode::toString() {
 
 bool QuadTree::logTree = false;
 
-QuadTree::QuadTree() : Mutex("QuadTree") {
+QuadTree::QuadTree() {
     root = NULL;
 }
 
-QuadTree::QuadTree(float minx, float miny, float maxx, float maxy) : Mutex("QuadTree") {
+QuadTree::QuadTree(float minx, float miny, float maxx, float maxy) {
     root = new QuadTreeNode(minx, miny, maxx, maxy, NULL);
 }
 
@@ -153,11 +153,11 @@ void QuadTree::setSize(float minx, float miny, float maxx, float maxy) {
 }
 
 void QuadTree::insert(QuadTreeEntry *obj) {
-	if (!isLocked()) {
+	/*if (!isLocked()) {
 		System::out << "inserting to unlocked quad tree\n";
 		StackTrace::printStackTrace();
 		raise(SIGSEGV);
-	}
+	}*/
 
 	try {
 		if (QuadTree::doLog()) {
@@ -178,11 +178,11 @@ void QuadTree::insert(QuadTreeEntry *obj) {
 }
 
 bool QuadTree::update(QuadTreeEntry *obj) {
-	if (!isLocked()) {
+	/*if (!isLocked()) {
 		System::out << "updating unlocked quad tree\n";
 		StackTrace::printStackTrace();
 		raise(SIGSEGV);
-	}
+	}*/
 
 	try {
 		if (QuadTree::doLog()) {
@@ -209,11 +209,11 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 }
 
 void QuadTree::inRange(QuadTreeEntry *obj, float range) {
-	if (!isLocked()) {
+	/*if (!isLocked()) {
 		System::out << "inRange unlocked quad tree\n";
 		StackTrace::printStackTrace();
 		raise(SIGSEGV);
-	}
+	}*/
 
 	try {
 		_inRange(root, obj, range);
@@ -248,11 +248,11 @@ int QuadTree::inRange(float x, float y, float range) {
 }
 
 void QuadTree::remove(QuadTreeEntry *obj) {
-	if (!isLocked()) {
+	/*if (!isLocked()) {
 		System::out << "remove on unlocked quad tree\n";
 		StackTrace::printStackTrace();
 		raise(SIGSEGV);
-	}
+	}*/
 
 	if (QuadTree::doLog())
 		System::out << hex << "object [" << obj->getObjectID() <<  "] removing\n";
