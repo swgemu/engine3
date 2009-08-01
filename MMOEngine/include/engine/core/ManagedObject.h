@@ -20,15 +20,15 @@ namespace core {
 
 class ManagedObject : public DistributedObjectStub {
 public:
-	void lock(bool doLock);
+	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
 
-	void wlock(bool doLock);
+	void wlock(bool doLock = true);
 
 	void wlock(ManagedObject* obj);
 
-	void unlock(bool doLock);
+	void unlock(bool doLock = true);
 
 	void setLockName(const String& name);
 
@@ -45,15 +45,15 @@ protected:
 
 	virtual ~ManagedObject();
 
-	void _lock(bool doLock);
+	void _lock(bool doLock = true);
 
 	void _lock(ManagedObject* obj);
 
-	void _wlock(bool doLock);
+	void _wlock(bool doLock = true);
 
 	void _wlock(ManagedObject* obj);
 
-	void _unlock(bool doLock);
+	void _unlock(bool doLock = true);
 
 	void _setLockName(const String& name);
 
@@ -64,15 +64,15 @@ class ManagedObjectImplementation : public DistributedObjectServant, public Seri
 
 public:
 	ManagedObjectImplementation();
-	void lock(bool doLock);
+	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
 
-	void wlock(bool doLock);
+	void wlock(bool doLock = true);
 
 	void wlock(ManagedObject* obj);
 
-	void unlock(bool doLock);
+	void unlock(bool doLock = true);
 
 	void setLockName(const String& name);
 
