@@ -9,7 +9,7 @@ import system.io.Serializable;
 import system.io.ObjectInputStream;
 import system.io.ObjectOutputStream;
 
-class ManagedObject extends native Serializable {
+class ManagedObject implements Serializable {
 	@nativeStub 
 	public native void lock(boolean doLock = true);
 	
