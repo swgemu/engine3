@@ -115,7 +115,7 @@ namespace sys {
 					start.addMiliTime(1000);
 		    	}
 
-				lockTime.update();
+				lockTime.updateToCurrentTime();
 
 				/*if (trace != NULL)
 					delete trace;
@@ -171,7 +171,7 @@ namespace sys {
 					start.addMiliTime(1000);
 		    	}
 
-				lockTime.update();
+				lockTime.updateToCurrentTime();
 
 				if (trace != NULL)
 					delete trace;

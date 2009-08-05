@@ -11,8 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../DatagramServiceClient.h"
 #include "../DatagramServiceThread.h"
 
-#include "../../sched/Event.h"
-#include "../../sched/ScheduleManager.h"
+#include "engine/core/TaskManager.h"
 
 #include "BasePacket.h"
 #include "BaseFragmentedPacket.h"
@@ -38,10 +37,11 @@ namespace engine {
 
 	class BaseClientNetStatusCheckupEvent;
 
-	class BaseClient : public DatagramServiceClient, public BaseProtocol, public Event, public Mutex {
+	class BaseClient : public DatagramServiceClient, public BaseProtocol, public ReentrantTask, public Mutex {
 	protected:
 		DatagramServiceThread* service;
-		ScheduleManager* scheduler;
+
+		TaskManager* taskManager;
 
 		Vector<BasePacket*> sequenceBuffer;
 		BasePacketChekupEvent* checkupEvent;
@@ -72,7 +72,7 @@ namespace engine {
 
 		virtual ~BaseClient();
 
-		void init(ScheduleManager* sched);
+		void initialize();
 
 		void send(Packet* pack, bool doLock = true);
 		void sendPacket(BasePacket* pack, bool doLock = true);

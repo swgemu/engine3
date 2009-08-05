@@ -17,24 +17,18 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/DisconnectMessage.h"
 
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
-		BaseProtocol(),	Event(), Mutex("Client") {
-	scheduler = NULL;
-
+		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
 	fragmentedPacket = NULL;
-
-	setKeeping(true);
 
 	setLogging(true);
    	setGlobalLogging(true);
 }
 
 BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClient(sock, addr),
-		BaseProtocol(),	Event(), Mutex("Client") {
-	scheduler = NULL;
-
+		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
 	bufferedPacket = NULL;
 
 	fragmentedPacket = NULL;
@@ -55,7 +49,7 @@ BaseClient::~BaseClient() {
 
 	if (checkupEvent != NULL) {
 		if (checkupEvent->isQueued())
-			scheduler->deleteEvent(checkupEvent);
+			checkupEvent->cancel();
 
 		delete checkupEvent;
 		checkupEvent = NULL;
@@ -63,7 +57,7 @@ BaseClient::~BaseClient() {
 
 	if (netcheckupEvent != NULL) {
 		if (netcheckupEvent->isQueued())
-			scheduler->deleteEvent(netcheckupEvent);
+			netcheckupEvent->cancel();
 
 		delete netcheckupEvent;
 		netcheckupEvent = NULL;
@@ -72,7 +66,7 @@ BaseClient::~BaseClient() {
 	info("deleted");
 }
 
-void BaseClient::init(ScheduleManager* sched) {
+void BaseClient::initialize() {
 	crcSeed = 0;
 
 	serverSequence = 0;
@@ -84,25 +78,28 @@ void BaseClient::init(ScheduleManager* sched) {
 	realServerSequence = 0;
 	resentPackets = 0;
 
-	scheduler = sched;
-
 	checkupEvent = new BasePacketChekupEvent(this);
 	netcheckupEvent = new BaseClientNetStatusCheckupEvent(this);
 
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
-	scheduler->addEvent(netcheckupEvent, NETSTATUSCHECKUP_TIMEOUT);
+   	taskManager = TaskManager::instance();
+
+	taskManager->scheduleTask(netcheckupEvent, NETSTATUSCHECKUP_TIMEOUT);
 }
 
 void BaseClient::close() {
-	if (scheduler != NULL) {
-		scheduler->deleteEvent(this);
-		scheduler->deleteEvent(checkupEvent);
-		scheduler->deleteEvent(netcheckupEvent);
-	}
+	if (this->isQueued())
+		this->cancel();
 
-	scheduler->addEvent(new BaseClientCleanupEvent(this));
+	if (checkupEvent->isQueued())
+		checkupEvent->cancel();
+
+	if (netcheckupEvent->isQueued())
+		netcheckupEvent->cancel();
+
+	taskManager->scheduleTask(new BaseClientCleanupEvent(this));
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
@@ -210,8 +207,8 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 	} else {
 		bufferedPacket = new BaseMultiPacket(pack);
 
-		if (!isQueued())
-			scheduler->addEvent(this, 10);
+		if (!this->isQueued())
+			taskManager->scheduleTask(this, 10);
 	}
 }
 
@@ -241,8 +238,8 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		pack->setTimeout(checkupEvent->getCheckupTime());
 		sendBuffer.add(pack);
 
-		if (!isQueued())
-			scheduler->addEvent(this, 10);
+		if (!this->isQueued())
+			taskManager->scheduleTask(this, 10);
 	} catch (SocketException& e) {
 		disconnect("sending packet");
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -289,7 +286,7 @@ bool BaseClient::activate() {
 				checkupEvent->update(pack);
 				pack->setTimeout(checkupEvent->getCheckupTime());
 
-				scheduler->addEvent(checkupEvent, pack->getTimeout());
+				taskManager->scheduleTask(checkupEvent, pack->getTimeout());
 			}
 
 			#ifdef TRACE_CLIENTS
@@ -315,7 +312,7 @@ bool BaseClient::activate() {
 			}
 
 			if (!sendBuffer.isEmpty() || bufferedPacket != NULL) {
-				scheduler->addEvent(this, 10);
+				taskManager->scheduleTask(this, 10);
 			}
 		}
 	} catch (SocketException& e) {
@@ -340,7 +337,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 	if (serverSequence - acknowledgedServerSequence > 25) {
 		if (!sendBuffer.isEmpty() || bufferedPacket != NULL)
-			scheduler->addEvent(this, 10);
+			taskManager->scheduleTask(this, 10);
 
 		if (sendBuffer.size() > 3000) {
 			StringBuffer msg;
@@ -482,7 +479,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 				info(msg);
 			#endif
 
-			scheduler->addEvent(checkupEvent, pack->getTimeout());
+			taskManager->scheduleTask(checkupEvent, pack->getTimeout());
 		}
 	} catch (SocketException& e) {
 		disconnect("on checkupServerPackets() - " + e.getMessage());
@@ -640,7 +637,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			info(msg);
 		#endif
 
-		scheduler->deleteEvent(checkupEvent);
+		checkupEvent->cancel();
 
 		flushSendBuffer(realseq);
 		acknowledgedServerSequence = realseq;
@@ -659,7 +656,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			checkupEvent->update(pack);
 			pack->setTimeout(checkupEvent->getCheckupTime());
 
-			scheduler->addEvent(checkupEvent, pack->getTimeout());
+			taskManager->scheduleTask(checkupEvent, pack->getTimeout());
 		}
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		info("on acknowledgeServerPackets() - " + e.getMessage());
@@ -707,14 +704,13 @@ void BaseClient::updateNetStatus() {
 			return;
 		}
 
-		lastNetStatusTimeStamp.update();
+		lastNetStatusTimeStamp.updateToCurrentTime();
 
 		#ifdef TRACE_CLIENTS
 			info("setting net status", true);
 		#endif
 
-		scheduler->deleteEvent(netcheckupEvent);
-		scheduler->addEvent(netcheckupEvent, NETSTATUSCHECKUP_TIMEOUT);
+		netcheckupEvent->reschedule(NETSTATUSCHECKUP_TIMEOUT);
 	} catch (...) {
 		disconnect("unreported exception on checkNetStatus()");
 	}

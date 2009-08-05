@@ -46,7 +46,7 @@ Logger::~Logger() {
 void Logger::setGlobalFileLogger(const char* file) {
 	globalLogFile = new FileWriter(new File(file));
 
-	starttime.update();
+	starttime.updateToCurrentTime();
 }
 
 void Logger::setGlobalFileLogger(const String& file) {
@@ -55,7 +55,7 @@ void Logger::setGlobalFileLogger(const String& file) {
 
 	globalLogFile = new FileWriter(new File(file));
 
-	starttime.update();
+	starttime.updateToCurrentTime();
 }
 
 void Logger::setFileLogger(const char* file) {

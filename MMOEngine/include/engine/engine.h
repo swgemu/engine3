@@ -6,12 +6,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ENGINE_H_
 #define ENGINE_H_
 
-#include "../system/lang.h"
+#include "system/lang.h"
+
+#include "core/Core.h"
+
+#include "core/Task.h"
+#include "core/ReentrantTask.h"
+#include "core/TaskManager.h"
+
+#include "core/ManagedReference.h"
+#include "core/ManagedObject.h"
+
+//#include "core/util/ManagedVector.h"
+//#include "core/util/ManagedVectorImplementation.h"
+#include "core/util/ManagedSortedVector.h"
+#include "core/util/ManagedVectorMap.h"
 
 #include "log/Logger.h"
-
-#include "sched/Event.h"
-#include "sched/ScheduleManager.h"
 
 #include "service/ServiceException.h"
 #include "service/ServiceProcessThread.h"
@@ -51,16 +62,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "service/proto/packets/LoginServerMessage.h"
 
 #include "orb/DistributedObjectBroker.h"
-
-#include "core/Core.h"
-
-#include "core/ManagedReference.h"
-#include "core/ManagedObject.h"
-
-//#include "core/util/ManagedVector.h"
-//#include "core/util/ManagedVectorImplementation.h"
-#include "core/util/ManagedSortedVector.h"
-#include "core/util/ManagedVectorMap.h"
 
 #ifndef PLATFORM_WIN
 #include "db/Database.h"

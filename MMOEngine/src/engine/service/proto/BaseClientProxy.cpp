@@ -8,12 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "BaseClientProxy.h"
 
 BaseClientProxy::BaseClientProxy(Socket* sock, SocketAddress& addr) : BaseClient(sock, addr) {
-	scheduler = NULL;
-
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
-
-	setKeeping(true);
 
 	//setLockName("ClientProxy " + ip);
    	//setMutexLogging(false);
@@ -36,7 +32,6 @@ void BaseClientProxy::init(DatagramServiceThread* serv) {
 	resentPackets = 0;
 
 	service = serv;
-	scheduler = service->getScheduler();
 
 	checkupEvent = new BasePacketChekupEvent(this);
 	netcheckupEvent = new BaseClientNetStatusCheckupEvent(this);
@@ -44,5 +39,5 @@ void BaseClientProxy::init(DatagramServiceThread* serv) {
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
-	scheduler->addEvent(netcheckupEvent, NETSTATUSCHECKUP_TIMEOUT);
+	taskManager->scheduleTask(netcheckupEvent, NETSTATUSCHECKUP_TIMEOUT);
 }

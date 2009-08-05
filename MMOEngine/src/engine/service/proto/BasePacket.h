@@ -74,11 +74,11 @@ namespace engine {
 		}
 	
 		inline void setTimestamp() {
-			timestamp.update();
+			timestamp.updateToCurrentTime();
 		}
 	
 		inline void setTimeout(uint64 time) {
-			timeout.update();
+			timeout.updateToCurrentTime();
 			timeout.addMiliTime(time);
 		}
 	

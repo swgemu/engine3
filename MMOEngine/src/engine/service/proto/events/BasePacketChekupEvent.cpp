@@ -5,15 +5,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BasePacketChekupEvent.h"
 
-BasePacketChekupEvent::BasePacketChekupEvent(BaseClient* cl, uint32 time) : Event(time) {
+BasePacketChekupEvent::BasePacketChekupEvent(BaseClient* cl, uint32 time) : ReentrantTask(time) {
 	client = cl;
 	checkupTime = time;
-			
-	setKeeping(true);
 }
 
-bool BasePacketChekupEvent::activate() {
+void BasePacketChekupEvent::run() {
 	client->checkupServerPackets(packet);
-
-	return false;
 }

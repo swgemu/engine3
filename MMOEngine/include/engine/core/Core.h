@@ -5,6 +5,8 @@
 
 #include "../log/Logger.h"
 
+#include "TaskManager.h"
+
 #include "../db/MySqlDatabase.h"
 
 #include <new>
@@ -15,20 +17,46 @@ namespace engine {
 	class Core {
 	public:
 		Core() {
-			std::set_new_handler(outOfMemoryHandler);
-
-			Socket::initialize();
+			initializeContext();
 		}
 
 		Core(const char* globallogfile) {
-			std::set_new_handler(outOfMemoryHandler);
-
-			Socket::initialize();
+			initializeContext();
 
 			Logger::setGlobalFileLogger(globallogfile);
 		}
 
 		virtual ~Core() {
+			finalizeContext();
+		}
+
+		static void scheduleTask(Task* task, uint64 time = 0) {
+			TaskManager* taskManager = getTaskManager();
+			taskManager->scheduleTask(task, time);
+		}
+
+		static void scheduleTask(Task* task, Time& time) {
+			TaskManager* taskManager = getTaskManager();
+			taskManager->scheduleTask(task, time);
+		}
+
+		static TaskManager* getTaskManager() {
+			return TaskManager::instance();
+		}
+
+	protected:
+		void initializeContext() {
+			std::set_new_handler(outOfMemoryHandler);
+
+			Socket::initialize();
+
+			TaskManager* taskManager = getTaskManager();
+		}
+
+		void finalizeContext() {
+			TaskManager* taskManager = getTaskManager();
+			taskManager->finalize();
+
 			MySqlDatabase::finalizeLibrary();
 
 			NetworkInterface::finalize();

@@ -23,7 +23,7 @@ namespace engine {
   namespace service {
     namespace proto {
 
-	class BasePacketChekupEvent : public Event {
+	class BasePacketChekupEvent : public ReentrantTask {
 		BaseClient* client;
 		BasePacket* packet;
 	
@@ -32,7 +32,7 @@ namespace engine {
 	public:
 		BasePacketChekupEvent(BaseClient* cl, sys::uint32 time = 5000);
 	
-		bool activate();
+		void run();
 
 		// setters and getters
 		inline void update(BasePacket* pack) {

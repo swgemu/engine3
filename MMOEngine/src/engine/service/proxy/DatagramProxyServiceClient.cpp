@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DatagramProxyServiceClient.h"
 
-#include "../../sched/ScheduleManager.h"
+#include "engine/core/TaskManager.h"
 
 DatagramProxyServiceClient::DatagramProxyServiceClient(DatagramProxyService* serv, String& host, int port) 
 		: DatagramServiceClient(host, port), Thread(), Logger("DatagramProxyServiceClient") {

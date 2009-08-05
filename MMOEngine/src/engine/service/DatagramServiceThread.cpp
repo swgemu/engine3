@@ -73,7 +73,7 @@ void DatagramServiceThread::receiveMessages() {
 
 	#ifdef VERSION_PUBLIC
 		int time = (3600 + System::random(100)) * 1000;
-		scheduler->addEvent(new BaseClientCleanUpEvent(this), time);
+		taskManager->scheduleTask(new BaseClientCleanUpEvent(this), time);
 	#endif
 
 	while (doRun) {

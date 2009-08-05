@@ -1,23 +1,21 @@
 #ifndef BASECLIENTCLEANUPEVENT_H_
 #define BASECLIENTCLEANUPEVENT_H_
 
-#include "../../../../system/platform.h"
+#include "system/platform.h"
 
 #include "../BaseClient.h"
 
-class BaseClientCleanupEvent : public Event {
+class BaseClientCleanupEvent : public Task {
 	BaseClient* client;
 	
 public:
-	BaseClientCleanupEvent(BaseClient* cl) : Event(60000) {
+	BaseClientCleanupEvent(BaseClient* cl) : Task(60000) {
 		client = cl;
 	}
 	
-	bool activate() {
+	void run() {
 		client->finalize();
 		client = NULL;
-		
-		return true;
 	}
 	
 };

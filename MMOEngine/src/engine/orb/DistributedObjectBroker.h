@@ -59,7 +59,7 @@ namespace engine {
 	public:
 		static DistributedObjectBroker* initialize(const String& addr, int port = 44433);
 
-		void init();
+		void initialize();
 
 		void run();
 

@@ -61,8 +61,10 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	File.$(OBJEXT) BufferedReader.$(OBJEXT) \
 	StringTokenizer.$(OBJEXT) UnicodeTokenizer.$(OBJEXT) \
 	PrintStream.$(OBJEXT) Serializable.$(OBJEXT) \
-	AdvancedBinaryHeap.$(OBJEXT) ScheduleManager.$(OBJEXT) \
-	EventQueue.$(OBJEXT) ServiceClient.$(OBJEXT) \
+	AdvancedBinaryHeap.$(OBJEXT) PriorityQueue.$(OBJEXT) \
+	Task.$(OBJEXT) TaskManager.$(OBJEXT) TaskScheduler.$(OBJEXT) \
+	TaskQueue.$(OBJEXT) TimedTaskQueue.$(OBJEXT) \
+	TaskWorkerThread.$(OBJEXT) ServiceClient.$(OBJEXT) \
 	ServiceThread.$(OBJEXT) ServiceMessageHandlerThread.$(OBJEXT) \
 	ServiceProcessThread.$(OBJEXT) DatagramServiceClient.$(OBJEXT) \
 	DatagramServiceClientProxy.$(OBJEXT) \
@@ -241,9 +243,14 @@ libengine3_a_SOURCES = \
 			system/io/PrintStream.cpp \
 			system/io/Serializable.cpp \
 			system/util/AdvancedBinaryHeap.cpp \
+			system/util/PriorityQueue.cpp \
 			engine/engine.h \
-			engine/sched/ScheduleManager.cpp \
-			engine/sched/EventQueue.cpp \
+			engine/core/Task.cpp \
+			engine/core/TaskManager.cpp \
+			engine/core/TaskScheduler.cpp \
+			engine/core/TaskQueue.cpp \
+			engine/core/TimedTaskQueue.cpp \
+			engine/core/TaskWorkerThread.cpp \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \
@@ -361,7 +368,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistributedObjectDirectory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistributedObjectServant.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistributedObjectStub.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EventQueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Exception.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/File.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InetAddress.Po@am__quote@
@@ -380,9 +386,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NetworkInterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Packet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PrintStream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PriorityQueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/QuadTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadWriteLock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScheduleManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Serializable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ServiceClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ServiceMessageHandlerThread.Po@am__quote@
@@ -401,7 +407,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StringBuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StringTokenizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/System.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Task.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TaskManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TaskQueue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TaskScheduler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TaskWorkerThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Thread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TimedTaskQueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeTokenizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/types.Po@am__quote@
@@ -770,33 +782,103 @@ AdvancedBinaryHeap.obj: system/util/AdvancedBinaryHeap.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AdvancedBinaryHeap.obj `if test -f 'system/util/AdvancedBinaryHeap.cpp'; then $(CYGPATH_W) 'system/util/AdvancedBinaryHeap.cpp'; else $(CYGPATH_W) '$(srcdir)/system/util/AdvancedBinaryHeap.cpp'; fi`
 
-ScheduleManager.o: engine/sched/ScheduleManager.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ScheduleManager.o -MD -MP -MF $(DEPDIR)/ScheduleManager.Tpo -c -o ScheduleManager.o `test -f 'engine/sched/ScheduleManager.cpp' || echo '$(srcdir)/'`engine/sched/ScheduleManager.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ScheduleManager.Tpo $(DEPDIR)/ScheduleManager.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/sched/ScheduleManager.cpp' object='ScheduleManager.o' libtool=no @AMDEPBACKSLASH@
+PriorityQueue.o: system/util/PriorityQueue.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PriorityQueue.o -MD -MP -MF $(DEPDIR)/PriorityQueue.Tpo -c -o PriorityQueue.o `test -f 'system/util/PriorityQueue.cpp' || echo '$(srcdir)/'`system/util/PriorityQueue.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/PriorityQueue.Tpo $(DEPDIR)/PriorityQueue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/util/PriorityQueue.cpp' object='PriorityQueue.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ScheduleManager.o `test -f 'engine/sched/ScheduleManager.cpp' || echo '$(srcdir)/'`engine/sched/ScheduleManager.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PriorityQueue.o `test -f 'system/util/PriorityQueue.cpp' || echo '$(srcdir)/'`system/util/PriorityQueue.cpp
 
-ScheduleManager.obj: engine/sched/ScheduleManager.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ScheduleManager.obj -MD -MP -MF $(DEPDIR)/ScheduleManager.Tpo -c -o ScheduleManager.obj `if test -f 'engine/sched/ScheduleManager.cpp'; then $(CYGPATH_W) 'engine/sched/ScheduleManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/sched/ScheduleManager.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ScheduleManager.Tpo $(DEPDIR)/ScheduleManager.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/sched/ScheduleManager.cpp' object='ScheduleManager.obj' libtool=no @AMDEPBACKSLASH@
+PriorityQueue.obj: system/util/PriorityQueue.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PriorityQueue.obj -MD -MP -MF $(DEPDIR)/PriorityQueue.Tpo -c -o PriorityQueue.obj `if test -f 'system/util/PriorityQueue.cpp'; then $(CYGPATH_W) 'system/util/PriorityQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/system/util/PriorityQueue.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/PriorityQueue.Tpo $(DEPDIR)/PriorityQueue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/util/PriorityQueue.cpp' object='PriorityQueue.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ScheduleManager.obj `if test -f 'engine/sched/ScheduleManager.cpp'; then $(CYGPATH_W) 'engine/sched/ScheduleManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/sched/ScheduleManager.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PriorityQueue.obj `if test -f 'system/util/PriorityQueue.cpp'; then $(CYGPATH_W) 'system/util/PriorityQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/system/util/PriorityQueue.cpp'; fi`
 
-EventQueue.o: engine/sched/EventQueue.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EventQueue.o -MD -MP -MF $(DEPDIR)/EventQueue.Tpo -c -o EventQueue.o `test -f 'engine/sched/EventQueue.cpp' || echo '$(srcdir)/'`engine/sched/EventQueue.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/EventQueue.Tpo $(DEPDIR)/EventQueue.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/sched/EventQueue.cpp' object='EventQueue.o' libtool=no @AMDEPBACKSLASH@
+Task.o: engine/core/Task.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Task.o -MD -MP -MF $(DEPDIR)/Task.Tpo -c -o Task.o `test -f 'engine/core/Task.cpp' || echo '$(srcdir)/'`engine/core/Task.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Task.Tpo $(DEPDIR)/Task.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/Task.cpp' object='Task.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EventQueue.o `test -f 'engine/sched/EventQueue.cpp' || echo '$(srcdir)/'`engine/sched/EventQueue.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Task.o `test -f 'engine/core/Task.cpp' || echo '$(srcdir)/'`engine/core/Task.cpp
 
-EventQueue.obj: engine/sched/EventQueue.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EventQueue.obj -MD -MP -MF $(DEPDIR)/EventQueue.Tpo -c -o EventQueue.obj `if test -f 'engine/sched/EventQueue.cpp'; then $(CYGPATH_W) 'engine/sched/EventQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/sched/EventQueue.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/EventQueue.Tpo $(DEPDIR)/EventQueue.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/sched/EventQueue.cpp' object='EventQueue.obj' libtool=no @AMDEPBACKSLASH@
+Task.obj: engine/core/Task.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Task.obj -MD -MP -MF $(DEPDIR)/Task.Tpo -c -o Task.obj `if test -f 'engine/core/Task.cpp'; then $(CYGPATH_W) 'engine/core/Task.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/Task.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Task.Tpo $(DEPDIR)/Task.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/Task.cpp' object='Task.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EventQueue.obj `if test -f 'engine/sched/EventQueue.cpp'; then $(CYGPATH_W) 'engine/sched/EventQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/sched/EventQueue.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Task.obj `if test -f 'engine/core/Task.cpp'; then $(CYGPATH_W) 'engine/core/Task.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/Task.cpp'; fi`
+
+TaskManager.o: engine/core/TaskManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskManager.o -MD -MP -MF $(DEPDIR)/TaskManager.Tpo -c -o TaskManager.o `test -f 'engine/core/TaskManager.cpp' || echo '$(srcdir)/'`engine/core/TaskManager.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskManager.Tpo $(DEPDIR)/TaskManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskManager.cpp' object='TaskManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskManager.o `test -f 'engine/core/TaskManager.cpp' || echo '$(srcdir)/'`engine/core/TaskManager.cpp
+
+TaskManager.obj: engine/core/TaskManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskManager.obj -MD -MP -MF $(DEPDIR)/TaskManager.Tpo -c -o TaskManager.obj `if test -f 'engine/core/TaskManager.cpp'; then $(CYGPATH_W) 'engine/core/TaskManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskManager.Tpo $(DEPDIR)/TaskManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskManager.cpp' object='TaskManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskManager.obj `if test -f 'engine/core/TaskManager.cpp'; then $(CYGPATH_W) 'engine/core/TaskManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskManager.cpp'; fi`
+
+TaskScheduler.o: engine/core/TaskScheduler.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskScheduler.o -MD -MP -MF $(DEPDIR)/TaskScheduler.Tpo -c -o TaskScheduler.o `test -f 'engine/core/TaskScheduler.cpp' || echo '$(srcdir)/'`engine/core/TaskScheduler.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskScheduler.Tpo $(DEPDIR)/TaskScheduler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskScheduler.cpp' object='TaskScheduler.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskScheduler.o `test -f 'engine/core/TaskScheduler.cpp' || echo '$(srcdir)/'`engine/core/TaskScheduler.cpp
+
+TaskScheduler.obj: engine/core/TaskScheduler.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskScheduler.obj -MD -MP -MF $(DEPDIR)/TaskScheduler.Tpo -c -o TaskScheduler.obj `if test -f 'engine/core/TaskScheduler.cpp'; then $(CYGPATH_W) 'engine/core/TaskScheduler.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskScheduler.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskScheduler.Tpo $(DEPDIR)/TaskScheduler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskScheduler.cpp' object='TaskScheduler.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskScheduler.obj `if test -f 'engine/core/TaskScheduler.cpp'; then $(CYGPATH_W) 'engine/core/TaskScheduler.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskScheduler.cpp'; fi`
+
+TaskQueue.o: engine/core/TaskQueue.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskQueue.o -MD -MP -MF $(DEPDIR)/TaskQueue.Tpo -c -o TaskQueue.o `test -f 'engine/core/TaskQueue.cpp' || echo '$(srcdir)/'`engine/core/TaskQueue.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskQueue.Tpo $(DEPDIR)/TaskQueue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskQueue.cpp' object='TaskQueue.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskQueue.o `test -f 'engine/core/TaskQueue.cpp' || echo '$(srcdir)/'`engine/core/TaskQueue.cpp
+
+TaskQueue.obj: engine/core/TaskQueue.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskQueue.obj -MD -MP -MF $(DEPDIR)/TaskQueue.Tpo -c -o TaskQueue.obj `if test -f 'engine/core/TaskQueue.cpp'; then $(CYGPATH_W) 'engine/core/TaskQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskQueue.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskQueue.Tpo $(DEPDIR)/TaskQueue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskQueue.cpp' object='TaskQueue.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskQueue.obj `if test -f 'engine/core/TaskQueue.cpp'; then $(CYGPATH_W) 'engine/core/TaskQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskQueue.cpp'; fi`
+
+TimedTaskQueue.o: engine/core/TimedTaskQueue.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TimedTaskQueue.o -MD -MP -MF $(DEPDIR)/TimedTaskQueue.Tpo -c -o TimedTaskQueue.o `test -f 'engine/core/TimedTaskQueue.cpp' || echo '$(srcdir)/'`engine/core/TimedTaskQueue.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TimedTaskQueue.Tpo $(DEPDIR)/TimedTaskQueue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TimedTaskQueue.cpp' object='TimedTaskQueue.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TimedTaskQueue.o `test -f 'engine/core/TimedTaskQueue.cpp' || echo '$(srcdir)/'`engine/core/TimedTaskQueue.cpp
+
+TimedTaskQueue.obj: engine/core/TimedTaskQueue.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TimedTaskQueue.obj -MD -MP -MF $(DEPDIR)/TimedTaskQueue.Tpo -c -o TimedTaskQueue.obj `if test -f 'engine/core/TimedTaskQueue.cpp'; then $(CYGPATH_W) 'engine/core/TimedTaskQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TimedTaskQueue.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TimedTaskQueue.Tpo $(DEPDIR)/TimedTaskQueue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TimedTaskQueue.cpp' object='TimedTaskQueue.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TimedTaskQueue.obj `if test -f 'engine/core/TimedTaskQueue.cpp'; then $(CYGPATH_W) 'engine/core/TimedTaskQueue.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TimedTaskQueue.cpp'; fi`
+
+TaskWorkerThread.o: engine/core/TaskWorkerThread.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskWorkerThread.o -MD -MP -MF $(DEPDIR)/TaskWorkerThread.Tpo -c -o TaskWorkerThread.o `test -f 'engine/core/TaskWorkerThread.cpp' || echo '$(srcdir)/'`engine/core/TaskWorkerThread.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskWorkerThread.Tpo $(DEPDIR)/TaskWorkerThread.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskWorkerThread.cpp' object='TaskWorkerThread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskWorkerThread.o `test -f 'engine/core/TaskWorkerThread.cpp' || echo '$(srcdir)/'`engine/core/TaskWorkerThread.cpp
+
+TaskWorkerThread.obj: engine/core/TaskWorkerThread.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TaskWorkerThread.obj -MD -MP -MF $(DEPDIR)/TaskWorkerThread.Tpo -c -o TaskWorkerThread.obj `if test -f 'engine/core/TaskWorkerThread.cpp'; then $(CYGPATH_W) 'engine/core/TaskWorkerThread.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskWorkerThread.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/TaskWorkerThread.Tpo $(DEPDIR)/TaskWorkerThread.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskWorkerThread.cpp' object='TaskWorkerThread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskWorkerThread.obj `if test -f 'engine/core/TaskWorkerThread.cpp'; then $(CYGPATH_W) 'engine/core/TaskWorkerThread.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskWorkerThread.cpp'; fi`
 
 ServiceClient.o: engine/service/ServiceClient.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ServiceClient.o -MD -MP -MF $(DEPDIR)/ServiceClient.Tpo -c -o ServiceClient.o `test -f 'engine/service/ServiceClient.cpp' || echo '$(srcdir)/'`engine/service/ServiceClient.cpp

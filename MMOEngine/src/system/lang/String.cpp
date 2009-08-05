@@ -119,12 +119,16 @@ void String::clear() {
 	}
 }
 
-String String::concat(const char* str) const {
-	return concat(str, strlen(str));
-}
-
 String String::concat(char ch) const {
 	return concat(&ch, 1);
+}
+
+String String::concat(int i) const {
+	return concat(valueOf(i));
+}
+
+String String::concat(const char* str) const {
+	return concat(str, strlen(str));
 }
 
 String String::concat(const char* str, int len) const {
@@ -599,6 +603,10 @@ String operator+(const String& str1, char ch) {
 
 String operator+(char ch, const String& str2) {
 	return String(&ch, 1).concat(str2);
+}
+
+String operator+(const String& str1, int i) {
+	return str1.concat(i);
 }
 
 char* String::strrstr(const char* s, int slen, const char* t, int tlen) {

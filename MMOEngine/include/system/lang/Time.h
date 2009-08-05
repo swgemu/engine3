@@ -41,7 +41,7 @@ namespace sys {
 
 	public:
 		Time() {
-			update();
+			updateToCurrentTime();
 
 			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));
 			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
@@ -62,7 +62,7 @@ namespace sys {
 			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
 		}
 
-		inline void update() {
+		inline void updateToCurrentTime() {
 			#ifdef PLATFORM_MAC
 				struct timeval tv;
 				gettimeofday(&tv, NULL);

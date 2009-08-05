@@ -39,9 +39,14 @@ libengine3_a_SOURCES = \
 			system/io/PrintStream.cpp \
 			system/io/Serializable.cpp \
 			system/util/AdvancedBinaryHeap.cpp \
+			system/util/PriorityQueue.cpp \
 			engine/engine.h \
-			engine/sched/ScheduleManager.cpp \
-			engine/sched/EventQueue.cpp \
+			engine/core/Task.cpp \
+			engine/core/TaskManager.cpp \
+			engine/core/TaskScheduler.cpp \
+			engine/core/TaskQueue.cpp \
+			engine/core/TimedTaskQueue.cpp \
+			engine/core/TaskWorkerThread.cpp \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \

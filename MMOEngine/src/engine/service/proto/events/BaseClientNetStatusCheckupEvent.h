@@ -13,20 +13,16 @@ namespace engine {
   namespace service {
     namespace proto {
 
-	class BaseClientNetStatusCheckupEvent : public Event {
+	class BaseClientNetStatusCheckupEvent : public ReentrantTask {
 		BaseClient* client;
 		
 	public:
-		BaseClientNetStatusCheckupEvent(BaseClient* cl) : Event(25000) {
+		BaseClientNetStatusCheckupEvent(BaseClient* cl) : ReentrantTask(25000) {
 			client = cl;
-			
-			setKeeping(true);
 		}
 	
-		bool activate() {
+		void run() {
 			client->checkNetStatus();
-
-			return false;
 		}
 	};
 

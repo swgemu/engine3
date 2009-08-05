@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../log/Logger.h"
 
-#include "../sched/ScheduleManager.h"
+#include "../core/TaskManager.h"
 
 #include "ServiceException.h"
 
@@ -19,14 +19,12 @@ namespace engine {
   	
 	class ServiceThread : public Thread, public Mutex, public Logger {
 	protected:
-		ScheduleManager* scheduler;
-		bool usingOwnScheduler;
+		TaskManager* taskManager;
 		
 		bool doRun, serviceReady;
 	
 	public:
 		ServiceThread(const String& s);
-		ServiceThread(const String& s, ScheduleManager* sched);
 		
 		virtual ~ServiceThread();
 		
@@ -38,17 +36,13 @@ namespace engine {
 		
 		virtual void stop(bool doJoin = true);
 		
-		// event methods
-		inline void addEvent(Event* e, uint64 time = 0) {
-			scheduler->addEvent(e, time);
+		// scheduler methods
+		inline void scheduleTask(Task* task, uint64 delay = 0) {
+			taskManager->scheduleTask(task, delay);
 		}
 
-		inline void addEvent(Event* e, Time& time) {
-			scheduler->addEvent(e, time);
-		}
-
-		inline void removeEvent(Event* e) {
-			scheduler->deleteEvent(e);
+		inline void scheduleTask(Task* task, Time& time) {
+			taskManager->scheduleTask(task, time);
 		}
 
 		// setters and getters
@@ -67,11 +61,6 @@ namespace engine {
 		inline bool isReady() {
 			return serviceReady;
 		}
-
-		inline ScheduleManager* getScheduler() {
-			return scheduler; 
-		}
-	
 	};
 
   } // namespace service

@@ -20,7 +20,7 @@ DatagramProxyClient::~DatagramProxyClient() {
 }
 
 void DatagramProxyClient::forwardMessage(Packet* message) {
-	ScheduleManager* scheduler = ScheduleManager::instance();
+	TaskManager* taskManager = TaskManager::instance();
 
 	//info("forwarding message:  " + message->toString());	inline void updateSendStamp() {
 

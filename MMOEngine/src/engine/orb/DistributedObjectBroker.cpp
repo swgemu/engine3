@@ -43,7 +43,7 @@ DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr,
 	return inst;
 }
 
-void DistributedObjectBroker::init() {
+void DistributedObjectBroker::initialize() {
 	if (address.isEmpty()) {
 		namingDirectoryInterface = new NamingDirectoryServiceImpl();
 
@@ -57,15 +57,11 @@ void DistributedObjectBroker::init() {
 }
 
 void DistributedObjectBroker::run() {
-	scheduler->start();
-
 	acceptConnections();
 }
 
 void DistributedObjectBroker::shutdown() {
 	stop();
-
-	scheduler->stop();
 }
 
 DistributedObjectBrokerClient* DistributedObjectBroker::createConnection(Socket* sock, SocketAddress& addr) {

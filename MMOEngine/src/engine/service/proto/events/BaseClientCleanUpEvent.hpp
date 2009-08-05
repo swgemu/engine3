@@ -20,17 +20,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../../DatagramServiceThread.h"
 
-class BaseClientCleanUpEvent : public Event {
+class BaseClientCleanUpEvent : public Task {
 	DatagramServiceThread* service;
 
 public:
-	BaseClientCleanUpEvent(DatagramServiceThread*) : Event(25000) {
+	BaseClientCleanUpEvent(DatagramServiceThread*) : Task(25000) {
 	}
 
-	bool activate() {
+	void run() {
 		cleanUp(service);
-
-		return false;
 	}
 
 	static void cleanUp(DatagramServiceThread* service) {

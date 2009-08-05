@@ -6,24 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ServiceThread.h"
 
 ServiceThread::ServiceThread(const String& s) : Thread(), Mutex(s + "Thread"), Logger(s) {
-	scheduler = new ScheduleManager(s + "Scheduler");
-	usingOwnScheduler = true;
-
-	setRunning(false);
-}
-
-ServiceThread::ServiceThread(const String& s, ScheduleManager* sched) : Thread(), Mutex(s + "Thread"), Logger(s) {
-	scheduler = sched;
-	usingOwnScheduler = false;
+	taskManager = TaskManager::instance();
 
 	setRunning(false);
 }
 
 ServiceThread::~ServiceThread() {
-	if (usingOwnScheduler && scheduler != NULL) {
-		delete scheduler;
-		scheduler = NULL;
-	}
 }
 
 void ServiceThread::init() {
