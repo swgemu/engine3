@@ -53,12 +53,7 @@
 <externalSettings/>
 <extensions>
 <extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
-<extension id="org.eclipse.cdt.core.Cygwin_PE" point="org.eclipse.cdt.core.BinaryParser">
-<attribute key="addr2line" value="addr2line"/>
-<attribute key="c++filt" value="c++filt"/>
-<attribute key="cygpath" value="cygpath"/>
-<attribute key="nm" value="nm"/>
-</extension>
+<extension id="org.eclipse.cdt.core.Cygwin_PE" point="org.eclipse.cdt.core.BinaryParser"/>
 </extensions>
 </storageModule>
 
@@ -133,7 +128,6 @@
 <pathentry kind="out" path=""/>
 <pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
 <pathentry kind="src" path=""/>
-<pathentry kind="lib" library="/home/oru/workspace/MMOEngine/lib/unix/libengine3.a" path=""/>
 </storageModule>
 </cconfiguration>
 </storageModule>

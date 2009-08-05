@@ -51,11 +51,12 @@ namespace engine {
 			Socket::initialize();
 
 			TaskManager* taskManager = getTaskManager();
+			taskManager->initialize();
 		}
 
 		void finalizeContext() {
 			TaskManager* taskManager = getTaskManager();
-			taskManager->finalize();
+			taskManager->shutdown();
 
 			MySqlDatabase::finalizeLibrary();
 

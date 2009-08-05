@@ -9,12 +9,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 TaskManager::TaskManager() : Mutex("TaskManager"), Logger("TaskManager") {
 	currentTaskScheduler = 0;
-
-	initialize();
 }
 
 TaskManager::~TaskManager() {
-	shutdown();
 }
 
 void TaskManager::initialize() {
