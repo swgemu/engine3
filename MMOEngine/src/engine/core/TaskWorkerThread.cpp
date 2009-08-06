@@ -6,6 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskWorkerThread.h"
 
 TaskWorkerThread::TaskWorkerThread(const String& s) : ServiceThread(s) {
+	setLogging(false);
 }
 
 TaskWorkerThread::~TaskWorkerThread() {
