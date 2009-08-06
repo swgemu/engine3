@@ -11,6 +11,8 @@ BaseClientProxy::BaseClientProxy(Socket* sock, SocketAddress& addr) : BaseClient
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
+	taskManager = NULL;
+
 	//setLockName("ClientProxy " + ip);
    	//setMutexLogging(false);
    	
@@ -39,5 +41,6 @@ void BaseClientProxy::init(DatagramServiceThread* serv) {
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
+   	taskManager = TaskManager::instance();
 	taskManager->scheduleTask(netcheckupEvent, NETSTATUSCHECKUP_TIMEOUT);
 }

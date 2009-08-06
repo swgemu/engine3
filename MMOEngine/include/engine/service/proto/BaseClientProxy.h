@@ -23,9 +23,6 @@ namespace engine {
 		}
 
 		void init(DatagramServiceThread* serv);
-		
-		void run() {
-		}
 
 	};
 

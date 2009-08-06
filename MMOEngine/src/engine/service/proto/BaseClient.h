@@ -83,7 +83,7 @@ namespace engine {
 
 		BasePacket* recieveFragmentedPacket(Packet* pack);
 
-		bool activate();
+		void run();
 
 		bool validatePacket(Packet* pack);
 

@@ -37,36 +37,27 @@ namespace engine {
 
 		inline void scheduleTask(Task* task, uint64 delay = 0) {
 			if (task->isQueued())
-				throw IllegalStateException("task is already scheduled - " + task->toString());
+				throw IllegalStateException("Task is already scheduled - " + task->toString());
 
 			tasks.add(task, delay);
 		}
 
 		inline void scheduleTask(Task* task, Time& time) {
 			if (task->isQueued())
-				throw IllegalStateException("task is already scheduled - " + task->toString());
+				throw IllegalStateException("Task is already scheduled - " + task->toString());
 
 			tasks.add(task, time);
 		}
 
 		inline void rescheduleTask(Task* task, uint64 delay = 0) {
-			if (!task->isQueued())
-				throw IllegalStateException("task is not scheduled for reschedueling - " + task->toString());
-
 			tasks.add(task, delay);
 		}
 
 		inline void rescheduleTask(Task* task, Time& time) {
-			if (!task->isQueued())
-				throw IllegalStateException("task is not scheduled for reschedueling - " + task->toString());
-
 			tasks.add(task, time);
 		}
 
 		inline void cancelTask(Task* task) {
-			if (!task->isQueued())
-				throw IllegalStateException("task is not scheduled for cancellation - " + task->toString());
-
 			tasks.remove(task);
 		}
 

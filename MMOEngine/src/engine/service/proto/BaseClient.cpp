@@ -271,7 +271,7 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 	}
 }
 
-bool BaseClient::activate() {
+void BaseClient::run() {
 	lock();
 
 	try {
@@ -279,7 +279,7 @@ bool BaseClient::activate() {
 			BasePacket* pack = getNextSequencedPacket();
 			if (pack == NULL) {
 				unlock();
-				return false;
+				return;
 			}
 
 			if (sequenceBuffer.isEmpty()) {
@@ -322,7 +322,6 @@ bool BaseClient::activate() {
 	}
 
 	unlock();
-	return true;
 }
 
 BasePacket* BaseClient::getNextSequencedPacket() {
