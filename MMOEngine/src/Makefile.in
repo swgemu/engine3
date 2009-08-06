@@ -211,7 +211,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CXXFLAGS = -g0 -Wall -Wextra -Wno-unused
+AM_CXXFLAGS = -ggdb -Wall -Wextra -Wno-unused
 INCLUDES = $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src/
 

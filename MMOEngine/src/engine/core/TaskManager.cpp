@@ -18,14 +18,14 @@ void TaskManager::initialize() {
 	lock();
 
 	for (int i = 0; i < DEAFULT_WORKER_THREADS; ++i) {
-		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + i);
+		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(i));
 		worker->start(this);
 
 		workers.add(worker);
 	}
 
 	for (int i = 0; i < DEAFULT_SCHEDULER_THREADS; ++i) {
-		TaskScheduler* scheduler = new TaskScheduler("TaskScheduler" + i);
+		TaskScheduler* scheduler = new TaskScheduler("TaskScheduler" + String::valueOf(i));
 		scheduler->start();
 
 		schedulers.add(scheduler);
