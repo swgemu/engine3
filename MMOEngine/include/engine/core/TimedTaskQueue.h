@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef TIMEDTASKQUEUE_H_
 #define TIMEDTASKQUEUE_H_
 
-//#define TRACE_EVENTS
+#define TRACE_EVENTS
 
 #include "system/lang.h"
 

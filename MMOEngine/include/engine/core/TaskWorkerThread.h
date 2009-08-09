@@ -6,12 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef TASKWORKERTHREAD_H_
 #define TASKWORKERTHREAD_H_
 
-#include "TaskManager.h"
 
 #include "../service/ServiceThread.h"
 
 namespace engine {
   namespace core {
+
+	class TaskManager;
 
 	class TaskWorkerThread : public ServiceThread {
 	public:

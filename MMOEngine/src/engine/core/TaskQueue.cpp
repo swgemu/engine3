@@ -4,6 +4,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "TaskQueue.h"
+#include "Task.h"
+
 
 TaskQueue::TaskQueue() : SortedVector<Task*>(200, 100), Condition(), Logger("TaskQueue") {
 	blocked = false;
@@ -59,6 +61,7 @@ Task* TaskQueue::pop() {
 	}
 
 	Task* task = remove(0);
+	task->setTaskScheduler(NULL);
 
 	#ifdef TRACE_MESSAGES
 		StringBuffer s;

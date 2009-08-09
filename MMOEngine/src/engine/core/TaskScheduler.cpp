@@ -21,6 +21,8 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
 	doRun = false;
 
+	tasks.setTaskScheduler(this);
+
 	tasks.setLoggingName(s + "TaskQueue");
 	tasks.setMutexName(s + "TaskQueueLock");
 
@@ -52,6 +54,9 @@ void TaskScheduler::run() {
 
 			if (!task->isReentrant())
 				delete task;
+
+			//should we set NULL taskScheduler for reentrant tasks here?
+
 		} catch (Exception& e) {
 			error(e.getMessage());
 		} catch (...) {

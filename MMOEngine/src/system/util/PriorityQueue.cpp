@@ -12,6 +12,8 @@ PriorityQueueEntry::PriorityQueueEntry(PriorityQueueEntry* parent,
 	rightNode = rnode;
 
 	npl = np;
+
+	enqueued = false;
 }
 
 PriorityQueue::PriorityQueue() {
@@ -31,6 +33,8 @@ PriorityQueue::~PriorityQueue() {
 
 void PriorityQueue::add(PriorityQueueEntry* node) {
 	root = merge(node, root);
+
+	node->setQueued();
 
 	++count;
 }
@@ -52,6 +56,8 @@ const PriorityQueueEntry* PriorityQueue::poll() {
 	oldRoot->parentNode = NULL;
 	oldRoot->leftNode = NULL;
 	oldRoot->rightNode = NULL;
+
+	oldRoot->setUnqueued();
 
 	--count;
 	return oldRoot;
@@ -84,6 +90,8 @@ const bool PriorityQueue::remove(PriorityQueueEntry* node) {
 	oldNode->parentNode = NULL;
 	oldNode->leftNode = NULL;
 	oldNode->rightNode = NULL;
+
+	oldNode->setUnqueued();
 
 	--count;
 	return true;

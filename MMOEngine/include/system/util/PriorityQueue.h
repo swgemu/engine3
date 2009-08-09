@@ -23,14 +23,29 @@ namespace sys {
 
 		int	npl;
 
+		bool enqueued;
+
 	public:
 		PriorityQueueEntry(PriorityQueueEntry* parent = NULL, PriorityQueueEntry* lnode = NULL,
 				PriorityQueueEntry* rnode = NULL, int np = 0);
 
 		virtual ~PriorityQueueEntry() {
+			enqueued = false;
 		}
 
 		virtual int compareTo(PriorityQueueEntry* node) = 0;
+
+		inline void setQueued() {
+			enqueued = true;
+		}
+
+		inline void setUnqueued() {
+			enqueued = false;
+		}
+
+		inline bool isQueued() {
+			return enqueued;
+		}
 
 		friend class PriorityQueue;
 

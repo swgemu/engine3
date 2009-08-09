@@ -12,17 +12,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../util/Singleton.h"
 
-#include "Task.h"
-#include "ReentrantTask.h"
-
 #include "TaskQueue.h"
-
-#include "TaskScheduler.h"
 
 namespace engine {
   namespace core {
 
 	class TaskWorkerThread;
+	class TaskScheduler;
+	class Task;
 
 	class TaskManager : public Singleton<TaskManager>, public Mutex, public Logger {
 		TaskQueue tasks;

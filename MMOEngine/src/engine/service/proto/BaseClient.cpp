@@ -23,6 +23,9 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 
 	fragmentedPacket = NULL;
 
+	checkupEvent = NULL;
+	netcheckupEvent = NULL;
+
 	setLogging(true);
    	setGlobalLogging(true);
 }
@@ -32,6 +35,9 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 	bufferedPacket = NULL;
 
 	fragmentedPacket = NULL;
+
+	checkupEvent = NULL;
+	netcheckupEvent = NULL;
 
   	ip = addr.getFullIPAddress();
    	setLockName("Client " + ip);

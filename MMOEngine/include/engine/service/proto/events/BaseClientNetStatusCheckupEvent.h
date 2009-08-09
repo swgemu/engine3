@@ -24,6 +24,14 @@ namespace engine {
 		void run() {
 			client->checkNetStatus();
 		}
+
+		String toString() {
+			struct timespec* ts = nextExecutionTime.getTimeSpec();
+
+			StringBuffer s;
+			s << "BaseClientNetStatusCheckupEvent " << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << (uint32) this << ")";
+			return s.toString();
+		}
 	};
 
     } // namespace proto

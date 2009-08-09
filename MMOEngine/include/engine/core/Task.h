@@ -63,7 +63,7 @@ namespace engine {
 
 		bool reschedule(Time& time);
 
-		int compareTo(Task* task) {
+		/*int compareTo(Task* task) {
 			if (priority == task->priority) {
 				if (this == task)
 					return 0;
@@ -75,7 +75,7 @@ namespace engine {
 				return 1;
 			} else
 				return -1;
-		}
+		}*/
 
 		int compareTo(PriorityQueueEntry* node) {
 			Task* task = (Task*) node;
@@ -92,7 +92,7 @@ namespace engine {
 				return cmp;
 		}
 
-		String toString() {
+		virtual String toString() {
 			struct timespec* ts = nextExecutionTime.getTimeSpec();
 
 			StringBuffer s;
@@ -123,10 +123,6 @@ namespace engine {
 
 		inline int getPriroty() {
 			return priority;
-		}
-
-		inline bool isQueued() {
-			return taskScheduler != NULL;
 		}
 
 		inline bool isReentrant() {

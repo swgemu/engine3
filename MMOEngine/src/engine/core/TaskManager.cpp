@@ -7,6 +7,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskManager.h"
 
+#include "TaskScheduler.h"
+
+#include "Task.h"
+#include "ReentrantTask.h"
+
 TaskManager::TaskManager() : Mutex("TaskManager"), Logger("TaskManager") {
 	currentTaskScheduler = 0;
 }

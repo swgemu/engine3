@@ -17,7 +17,7 @@ TimedTaskQueue::TimedTaskQueue() : PriorityQueue(), Condition(), Logger("TaskQue
 	waitingForTask = false;
 	changePlan = false;
 
-	setLogging(false);
+	setLogging(true);
 	condMutex->setMutexLogging(false);
 }
 
@@ -74,12 +74,18 @@ void TimedTaskQueue::add(Task* task, bool doLock) {
 	task->setTaskScheduler(taskScheduler);
 
 	#ifdef TRACE_EVENTS
-		StringBuffer s;
-		s << "added task " << task->getNextExecutionTime().getMiliTime() << "(" << task << ")";
-		info(s);
+		StringBuffer s1;
+		s1 << "adding task " << task->toString();
+		info(s1);
 	#endif
 
 	PriorityQueue::add(task);
+
+	#ifdef TRACE_EVENTS
+		StringBuffer s;
+		s << "added task " << task->toString();
+		info(s);
+	#endif
 
 	if (PriorityQueue::peak() == task && waitingForTask) {
 		changePlan = true;
@@ -192,6 +198,14 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 
 		return false;
 	} else if (taskScheduler != task->getTaskScheduler()) {
+		#ifdef TRACE_EVENTS
+			//info("wrong taskCheduler when removing task");
+
+			StringBuffer msg;
+			msg << "wrong taskScheduler when remove task->taskScheduler = " << hex << task->getTaskScheduler() << " this->taskScheduler " << hex << taskScheduler;
+			info(msg.toString());
+		#endif
+
 		task->cancel();
 
 		return true;
