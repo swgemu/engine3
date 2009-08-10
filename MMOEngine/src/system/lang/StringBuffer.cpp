@@ -51,13 +51,23 @@ StringBuffer& StringBuffer::append(long val) {
 }
 
 StringBuffer& StringBuffer::append(int64 val) {
-	String str = String::valueOf(val);
+	String str;
+
+	if (!doHex())
+		str = String::valueOf(val);
+	else
+		str = String::hexvalueOf(val);
 
 	return append(str);
 }
 
 StringBuffer& StringBuffer::append(uint64 val) {
-	String str = String::valueOf(val);
+	String str;
+
+	if (!doHex())
+		str = String::valueOf(val);
+	else
+		str = String::hexvalueOf((int64)val);
 
 	return append(str);
 }

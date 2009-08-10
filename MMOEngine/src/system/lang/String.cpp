@@ -311,6 +311,15 @@ String String::hexvalueOf(int val) {
 	return String(buf);
 }
 
+String String::hexvalueOf(int64 val) {
+	char buf[32];
+
+	snprintf(buf, 32, "%llx", val);
+
+
+	return String(buf);
+}
+
 String String::replaceFirst(const String& regex, const String& replacement) const {
 	int rlen = regex.count;
 
