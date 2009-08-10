@@ -54,16 +54,14 @@ BaseClient::~BaseClient() {
 	service->deleteConnection(this);
 
 	if (checkupEvent != NULL) {
-		if (checkupEvent->isQueued())
-			checkupEvent->cancel();
+		checkupEvent->cancel();
 
 		delete checkupEvent;
 		checkupEvent = NULL;
 	}
 
 	if (netcheckupEvent != NULL) {
-		if (netcheckupEvent->isQueued())
-			netcheckupEvent->cancel();
+		netcheckupEvent->cancel();
 
 		delete netcheckupEvent;
 		netcheckupEvent = NULL;
@@ -90,22 +88,17 @@ void BaseClient::initialize() {
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
-   	taskManager = TaskManager::instance();
-
-	taskManager->scheduleTask(netcheckupEvent, NETSTATUSCHECKUP_TIMEOUT);
+	netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
 }
 
 void BaseClient::close() {
-	if (this->isQueued())
-		this->cancel();
+	this->cancel();
 
-	if (checkupEvent->isQueued())
-		checkupEvent->cancel();
+	checkupEvent->cancel();
+	netcheckupEvent->cancel();
 
-	if (netcheckupEvent->isQueued())
-		netcheckupEvent->cancel();
-
-	taskManager->scheduleTask(new BaseClientCleanupEvent(this));
+	BaseClientCleanupEvent* cleanupEvent = new BaseClientCleanupEvent(this);
+	cleanupEvent->schedule();
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
@@ -213,8 +206,7 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 	} else {
 		bufferedPacket = new BaseMultiPacket(pack);
 
-		if (!this->isQueued())
-			taskManager->scheduleTask(this, 10);
+		this->schedule(10);
 	}
 }
 
@@ -244,8 +236,7 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		pack->setTimeout(checkupEvent->getCheckupTime());
 		sendBuffer.add(pack);
 
-		if (!this->isQueued())
-			taskManager->scheduleTask(this, 10);
+		this->schedule(10);
 	} catch (SocketException& e) {
 		disconnect("sending packet");
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -292,7 +283,7 @@ void BaseClient::run() {
 				checkupEvent->update(pack);
 				pack->setTimeout(checkupEvent->getCheckupTime());
 
-				taskManager->scheduleTask(checkupEvent, pack->getTimeout());
+				checkupEvent->schedule(pack->getTimeout());
 			}
 
 			#ifdef TRACE_CLIENTS
@@ -318,7 +309,7 @@ void BaseClient::run() {
 			}
 
 			if (!sendBuffer.isEmpty() || bufferedPacket != NULL) {
-				taskManager->scheduleTask(this, 10);
+				this->schedule(10);
 			}
 		}
 	} catch (SocketException& e) {
@@ -342,7 +333,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 	if (serverSequence - acknowledgedServerSequence > 25) {
 		if (!sendBuffer.isEmpty() || bufferedPacket != NULL)
-			taskManager->scheduleTask(this, 10);
+			this->schedule(10);
 
 		if (sendBuffer.size() > 3000) {
 			StringBuffer msg;
@@ -458,7 +449,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 	lock();
 
 	try {
-		if (!isAvailable() || checkupEvent->isQueued() || sequenceBuffer.size() == 0) {
+		if (!isAvailable() || checkupEvent->isScheduled() || sequenceBuffer.size() == 0) {
 			unlock();
 			return;
 		}
@@ -484,7 +475,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 				info(msg);
 			#endif
 
-			taskManager->scheduleTask(checkupEvent, pack->getTimeout());
+			checkupEvent->schedule(pack->getTimeout());
 		}
 	} catch (SocketException& e) {
 		disconnect("on checkupServerPackets() - " + e.getMessage());
@@ -661,7 +652,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			checkupEvent->update(pack);
 			pack->setTimeout(checkupEvent->getCheckupTime());
 
-			taskManager->scheduleTask(checkupEvent, pack->getTimeout());
+			checkupEvent->schedule(pack->getTimeout());
 		}
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		info("on acknowledgeServerPackets() - " + e.getMessage());

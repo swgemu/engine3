@@ -46,16 +46,23 @@ namespace engine {
 		void scheduleTask(Task* task, uint64 delay = 0);
 		void scheduleTask(Task* task, Time& time);
 
+		void rescheduleTask(Task* task, uint64 delay = 0);
+		void rescheduleTask(Task* task, Time& time);
+
+		bool cancelTask(Task* task);
+
 		inline void flushTasks() {
 			tasks.flush();
 		}
+
+		void printInfo();
 
 		int getScheduledTaskSize();
 
 		int getExecutingTaskSize();
 
 	private:
-		TaskScheduler* getTaskScheduler();
+		TaskScheduler* getTaskScheduler(bool doLock = true);
 
 		inline Task* getTask() {
 			return tasks.pop();

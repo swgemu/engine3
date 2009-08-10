@@ -73,7 +73,7 @@ void TimedTaskQueue::add(Task* task, bool doLock) {
 
 	task->setTaskScheduler(taskScheduler);
 
-	#ifdef TRACE_EVENTS
+	#ifdef TRACE_TASKS
 		StringBuffer s1;
 		s1 << "adding task " << task->toString();
 		info(s1);
@@ -81,7 +81,7 @@ void TimedTaskQueue::add(Task* task, bool doLock) {
 
 	PriorityQueue::add(task);
 
-	#ifdef TRACE_EVENTS
+	#ifdef TRACE_TASKS
 		StringBuffer s;
 		s << "added task " << task->toString();
 		info(s);
@@ -107,7 +107,7 @@ Task* TimedTaskQueue::get() {
 				return NULL;
 			}
 
-			#ifdef TRACE_EVENTS
+			#ifdef TRACE_TASKS
 				info("waiting event");
 			#endif
 
@@ -120,7 +120,7 @@ Task* TimedTaskQueue::get() {
 		if (blocked || !time.isFuture())
 			break;
 
-		#ifdef TRACE_EVENTS
+		#ifdef TRACE_TASKS
 			StringBuffer s;
 			s << "scheduling " << task->toString();
 			info(s);
@@ -128,7 +128,7 @@ Task* TimedTaskQueue::get() {
 
 		int res = timedWait(condMutex, &time);
 
-		#ifdef TRACE_EVENTS
+		#ifdef TRACE_TASKS
 			StringBuffer s2;
 			s2 << "timedwait finished with (" << res << ")";
 			info(s2);
@@ -149,7 +149,7 @@ Task* TimedTaskQueue::get() {
 		}
 
 		if (changePlan) {
-			#ifdef TRACE_EVENTS
+			#ifdef TRACE_TASKS
 				info("changing plan");
 			#endif
 
@@ -178,7 +178,7 @@ Task* TimedTaskQueue::get() {
 		error(msg);
 	}*/
 
-	#ifdef TRACE_EVENTS
+	#ifdef TRACE_TASKS
 		StringBuffer s;
 		s << "got event " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
 		info(s);
@@ -198,7 +198,7 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 
 		return false;
 	} else if (taskScheduler != task->getTaskScheduler()) {
-		#ifdef TRACE_EVENTS
+		#ifdef TRACE_TASKS
 			//info("wrong taskCheduler when removing task");
 
 			StringBuffer msg;
@@ -217,7 +217,7 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 
 	task->setTaskScheduler(NULL);
 
-	#ifdef TRACE_EVENTS
+	#ifdef TRACE_TASKS
 		StringBuffer s;
 		s << "removed task " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
 		info(s);

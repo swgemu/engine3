@@ -6,11 +6,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef TASKQUEUE_H_
 #define TASKQUEUE_H_
 
-//#define TRACE_TASKS
-
 #include "system/lang.h"
 
 #include "../log/Logger.h"
+
+//#define TRACE_TASKS
 
 namespace engine {
   namespace core {

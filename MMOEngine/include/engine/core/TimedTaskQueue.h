@@ -6,13 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef TIMEDTASKQUEUE_H_
 #define TIMEDTASKQUEUE_H_
 
-#define TRACE_EVENTS
-
 #include "system/lang.h"
 
 #include "../log/Logger.h"
 
 #include "Task.h"
+
+//#define TRACE_TASKS
 
 namespace engine {
   namespace core {

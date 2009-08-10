@@ -59,9 +59,11 @@ namespace engine {
 
 		bool cancel();
 
-		bool reschedule(uint64 delay = 0);
+		void schedule(uint64 delay = 0);
+		void schedule(Time& time);
 
-		bool reschedule(Time& time);
+		void reschedule(uint64 delay = 0);
+		void reschedule(Time& time);
 
 		/*int compareTo(Task* task) {
 			if (priority == task->priority) {
@@ -127,6 +129,10 @@ namespace engine {
 
 		inline bool isReentrant() {
 			return reentrantTask;
+		}
+
+		inline bool isScheduled() {
+			return taskScheduler != NULL;
 		}
 
 		inline void setTaskScheduler(TaskScheduler* scheduler) {

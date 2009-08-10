@@ -65,14 +65,14 @@ void TaskManager::shutdown() {
 	unlock();
 }
 
-TaskScheduler* TaskManager::getTaskScheduler() {
-	lock();
+TaskScheduler* TaskManager::getTaskScheduler(bool doLock) {
+	lock(doLock);
 
 	int index = currentTaskScheduler++ % schedulers.size();
 
 	TaskScheduler* scheduler = schedulers.get(index);
 
-	unlock();
+	unlock(doLock);
 
 	return scheduler;
 }
@@ -82,15 +82,134 @@ void TaskManager::executeTask(Task* task) {
 }
 
 void TaskManager::scheduleTask(Task* task, uint64 delay) {
-	TaskScheduler* scheduler = getTaskScheduler();
+	TaskScheduler* scheduler = NULL;
+
+	try {
+		lock();
+
+		if (task->isScheduled()) {
+			unlock();
+
+			return ;
+		}
+
+		scheduler = getTaskScheduler(false);
+
+		task->setTaskScheduler(scheduler);
+
+		unlock();
+	} catch (...) {
+		error("unreported exception caught on TaskManager::scheduleTask()");
+
+		unlock();
+	}
 
 	scheduler->scheduleTask(task, delay);
 }
 
 void TaskManager::scheduleTask(Task* task, Time& time) {
-	TaskScheduler* scheduler = getTaskScheduler();
+	TaskScheduler* scheduler = NULL;
+
+	try {
+		lock();
+
+		if (task->isScheduled()) {
+			unlock();
+
+			return ;
+		}
+
+		scheduler = getTaskScheduler(false);
+
+		task->setTaskScheduler(scheduler);
+
+		unlock();
+	} catch (...) {
+		error("unreported exception caught on TaskManager::scheduleTask()");
+
+		unlock();
+	}
 
 	scheduler->scheduleTask(task, time);
+}
+
+void TaskManager::rescheduleTask(Task* task, uint64 delay) {
+	TaskScheduler* scheduler = NULL;
+
+	try {
+		lock();
+
+		if (task->isScheduled())
+			scheduler = task->getTaskScheduler();
+		else
+			scheduler = getTaskScheduler(false);
+
+		unlock();
+	} catch (...) {
+		error("unreported exception caught on TaskManager::rescheduleTask()");
+
+		unlock();
+	}
+
+	scheduler->rescheduleTask(task, delay);
+}
+
+void TaskManager::rescheduleTask(Task* task, Time& time) {
+	TaskScheduler* scheduler = NULL;
+
+	try {
+		lock();
+
+		if (task->isScheduled())
+			scheduler = task->getTaskScheduler();
+		else
+			scheduler = getTaskScheduler(false);
+
+		unlock();
+	} catch (...) {
+		error("unreported exception caught on TaskManager::rescheduleTask()");
+
+		unlock();
+	}
+
+	scheduler->rescheduleTask(task, time);
+}
+
+bool TaskManager::cancelTask(Task* task) {
+	try {
+		lock();
+
+		if (!task->isScheduled()) {
+			unlock();
+
+			return false;
+		}
+
+		unlock();
+	} catch (...) {
+		error("unreported exception caught on TaskManager::rescheduleTask()");
+
+		unlock();
+	}
+
+	TaskScheduler* scheduler = task->getTaskScheduler();
+	scheduler->cancelTask(task);
+
+	return true;
+}
+
+void TaskManager::printInfo() {
+	lock();
+
+	StringBuffer msg;
+	msg << "executing tasks - " << getExecutingTaskSize();
+	info(msg, true);
+
+	StringBuffer msg2;
+	msg2 << "scheduled tasks - " << getScheduledTaskSize();
+	info(msg2, true);
+
+	unlock();
 }
 
 int TaskManager::getScheduledTaskSize() {
@@ -106,5 +225,5 @@ int TaskManager::getScheduledTaskSize() {
 }
 
 int TaskManager::getExecutingTaskSize() {
-	return 0;
+	return tasks.size();
 }

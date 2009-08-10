@@ -31,7 +31,7 @@ void TaskQueue::push(Task* task) {
 
 	SortedVector<Task*>::put(task);
 
-	#ifdef TRACE_MESSAGES
+	#ifdef TRACE_TASKS
 		StringBuffer s;
 		s << size() << " tasks in queue";
 		info(s);
@@ -46,7 +46,7 @@ void TaskQueue::push(Task* task) {
 Task* TaskQueue::pop() {
 	condMutex->lock();
 
-	#ifdef TRACE_MESSAGES
+	#ifdef TRACE_TASKS
 		info("waiting tasks");
 	#endif
 
@@ -63,7 +63,7 @@ Task* TaskQueue::pop() {
 	Task* task = remove(0);
 	task->setTaskScheduler(NULL);
 
-	#ifdef TRACE_MESSAGES
+	#ifdef TRACE_TASKS
 		StringBuffer s;
 		s << size() << " tasks remained in queue";
 		info(s);

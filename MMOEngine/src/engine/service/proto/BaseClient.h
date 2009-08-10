@@ -42,8 +42,6 @@ namespace engine {
 	protected:
 		DatagramServiceThread* service;
 
-		TaskManager* taskManager;
-
 		Vector<BasePacket*> sequenceBuffer;
 		BasePacketChekupEvent* checkupEvent;
 		BaseClientNetStatusCheckupEvent* netcheckupEvent;

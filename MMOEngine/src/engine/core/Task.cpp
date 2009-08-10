@@ -5,32 +5,22 @@
 #include "TaskManager.h"
 
 bool Task::cancel() {
-	if (isQueued()) {
-		//taskScheduler = TaskManager::instance()->getTaskScheduler();
-		taskScheduler->cancelTask(this);
-
-		return true;
-	} else
-		return false;
+	return TaskManager::instance()->cancelTask(this);
 }
 
-bool Task::reschedule(uint64 delay) {
-	if (isQueued()) {
-		//taskScheduler = TaskManager::instance()->getTaskScheduler();
-		taskScheduler->rescheduleTask(this, delay);
-
-		return true;
-	} else
-		return false;
+void Task::schedule(uint64 delay) {
+	TaskManager::instance()->scheduleTask(this, delay);
 }
 
-bool Task::reschedule(Time& time) {
-	if (isQueued()) {
-		//taskScheduler = TaskManager::instance()->getTaskScheduler();
-		taskScheduler->rescheduleTask(this, time);
+void Task::schedule(Time& time) {
+	TaskManager::instance()->scheduleTask(this, time);
+}
 
-		return true;
-	} else
-		return false;
+void Task::reschedule(uint64 delay) {
+	TaskManager::instance()->rescheduleTask(this, delay);
+}
+
+void Task::reschedule(Time& time) {
+	TaskManager::instance()->rescheduleTask(this, time);
 }
 

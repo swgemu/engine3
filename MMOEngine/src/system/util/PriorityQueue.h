@@ -87,7 +87,6 @@ namespace sys {
 	private:
 		void merge(PriorityQueue& heap);
 
-
 		PriorityQueueEntry* merge(PriorityQueueEntry* h1, PriorityQueueEntry* h2) const;
 		PriorityQueueEntry* merge1(PriorityQueueEntry* h1, PriorityQueueEntry* h2) const;
 
