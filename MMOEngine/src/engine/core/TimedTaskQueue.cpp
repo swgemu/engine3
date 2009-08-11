@@ -18,7 +18,7 @@ TimedTaskQueue::TimedTaskQueue() : PriorityQueue(), Condition(), Logger("TaskQue
 	changePlan = false;
 
 	setLogging(true);
-	condMutex->setMutexLogging(false);
+	condMutex->setLockLogging(false);
 }
 
 TimedTaskQueue::~TimedTaskQueue() {

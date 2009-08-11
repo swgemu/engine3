@@ -60,6 +60,7 @@ namespace sys {
 		static String valueOf(void* val);
 
 		static String hexvalueOf(int val) ;
+		static String hexvalueOf(int64 val);
 
 		String replaceFirst(const String& regex, const String& replacement) const ;
 		String replaceAll(const String& regex, const String& replacement) const ;

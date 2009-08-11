@@ -6,56 +6,28 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef READWRITELOCK_H_
 #define READWRITELOCK_H_
 
-#include "../platform.h"
-
-#include <pthread.h>
-
-#include "../lang/StackTrace.h"
-#include "Atomic.h"
-#include "Thread.h"
+#include "Lockable.h"
 
 namespace sys {
   namespace thread {
 
 	class Mutex;
 
-	class ReadWriteLock {
+	class ReadWriteLock : public Lockable  {
 	protected:
 		pthread_rwlock_t rwlock;
-
-		String lockName;
-		int lockCount;
-
-		StackTrace* trace;
-		StackTrace* unlockTrace;
-		Time lockTime;
-
-		bool doTrace;
 
 		uint32 threadIDLockHolder;
 
 	public:
-		ReadWriteLock() {
+		ReadWriteLock() : Lockable() {
 			pthread_rwlock_init(&rwlock, NULL);
-
-			lockCount = 0;
-
-			trace = NULL;
-			unlockTrace = NULL;
-			doTrace = true;
 
 			threadIDLockHolder = 0;
 		}
 
-		ReadWriteLock(const String& s) {
+		ReadWriteLock(const String& s) : Lockable(s) {
 			pthread_rwlock_init(&rwlock, NULL);
-
-			lockName = s;
-			lockCount = 0;
-
-			trace = NULL;
-			unlockTrace = NULL;
-			doTrace = true;
 
 			threadIDLockHolder = 0;
 		}
@@ -74,16 +46,15 @@ namespace sys {
 			}
 		}
 
+		inline void lock(bool doLock = true) {
+			wlock(doLock);
+		}
+
 		inline void rlock(bool doLock = true) {
 			if (!doLock)
 				return;
 
-			#ifdef LOG_LOCKS
-				Atomic::incrementInt((uint32*)&lockCount);
-				int cnt = lockCount;
-
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring rlock #" << cnt << "\n";
-			#endif
+			lockAcquiring("r");
 
 			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
 				int res = pthread_rwlock_rdlock(&rwlock);
@@ -94,7 +65,6 @@ namespace sys {
 					Atomic::incrementInt((uint32*)&lockCount);
 					int cnt = lockCount;
 				#endif
-
 
 				Time start;
 				start.addMiliTime(300000);
@@ -123,21 +93,14 @@ namespace sys {
 				trace = new StackTrace();*/
 			#endif
 
-			#ifdef LOG_LOCKS
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired rlock #" << cnt << "\n";
-			#endif
+			lockAcquired("r");
 		}
 
 		inline void wlock(bool doLock = true) {
 			if (!doLock)
 				return;
 
-			#ifdef LOG_LOCKS
-				Atomic::incrementInt((uint32*)&lockCount);
-				int cnt = lockCount;
-
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring wlock #" << cnt << "\n";
-			#endif
+			lockAcquiring("w");
 
 			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
 				int res = pthread_rwlock_wrlock(&rwlock);
@@ -173,22 +136,19 @@ namespace sys {
 
 				lockTime.updateToCurrentTime();
 
-				if (trace != NULL)
-					delete trace;
-
-				trace = new StackTrace();
+				refreshTrace();
 
 				threadIDLockHolder = Thread::getCurrentThreadID();
 			#endif
 
-			#ifdef LOG_LOCKS
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired wlock #" << cnt << "\n";
-			#endif
+			lockAcquired("w");
 		}
 
 		void wlock(Mutex* lock);
 
 		void wlock(ReadWriteLock* lock);
+
+		void lock(Lockable* lockable);
 
 		inline bool tryWLock() {
 			return pthread_rwlock_trywrlock(&rwlock) == 0;
@@ -198,7 +158,7 @@ namespace sys {
 			if (!doLock)
 				return;
 
-			#ifdef TRACE_LOCKS
+			#if defined(TRACE_LOCKS) && !defined(__CYGWIN__)
 				if (threadIDLockHolder == 0) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";
@@ -220,19 +180,14 @@ namespace sys {
 					}
 				}
 
-				delete trace;
-				trace = NULL;
+				deleteTrace();
 
 				threadIDLockHolder = 0;
 
-				delete unlockTrace;
-				unlockTrace = new StackTrace();
+				refreshUnlockTrace();
 			#endif
 
-			#ifdef LOG_LOCKS
-				int cnt = lockCount;
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << cnt << "\n";
-			#endif
+			lockReleasing();
 
 			int res = pthread_rwlock_unlock(&rwlock);
 			if (res != 0) {
@@ -241,9 +196,7 @@ namespace sys {
 				StackTrace::printStackTrace();
 			}
 
-			#ifdef LOG_LOCKS
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << cnt << "\n";
-			#endif
+			lockReleased();
 		}
 
 		inline void runlock(bool doLock = true) {
@@ -271,10 +224,7 @@ namespace sys {
 			threadIDLockHolder = 0;*/
 		#endif
 
-		#ifdef LOG_LOCKS
-			int cnt = lockCount;
-			System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << cnt << "\n";
-		#endif
+			lockReleasing("r");
 
 			int res = pthread_rwlock_unlock(&rwlock);
 			if (res != 0) {
@@ -283,9 +233,7 @@ namespace sys {
 				StackTrace::printStackTrace();
 			}
 
-		#ifdef LOG_LOCKS
-			System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << cnt << "\n";
-		#endif
+			lockReleased();
 		}
 
 		inline bool destroy() {
@@ -293,15 +241,6 @@ namespace sys {
 			pthread_rwlock_unlock(&rwlock);
 
 			return pthread_rwlock_destroy(&rwlock) == 0;
-		}
-
-		// setters
-		inline void setLockName(const String& s) {
-			lockName = s;
-		}
-
-		inline void setLockTracing(bool tracing) {
-			doTrace = tracing;
 		}
 
 		friend class Condition;

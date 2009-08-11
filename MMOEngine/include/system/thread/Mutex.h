@@ -6,88 +6,40 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef MUTEX_H_
 #define MUTEX_H_
 
-#include "../platform.h"
-
-#include <pthread.h>
-
-#include "../lang/System.h"
-
-#include "../lang/String.h"
-#include "../lang/StackTrace.h"
-#include "../lang/Time.h"
-
-#include "Atomic.h"
+#include "Lockable.h"
 
 namespace sys {
   namespace thread {
 
 	class ReadWriteLock;
 
-	class Mutex {
+	class Mutex : public Lockable {
 		pthread_mutex_t mutex;
-
-		bool doLog;
-		String lockName;
-
-		int lockCount;
-		int currentCount;
-
-		StackTrace* trace;
-		Time lockTime;
-
-		bool doTrace;
 
 		bool locked;
 
 	public:
-		Mutex() {
+		Mutex() : Lockable() {
 			pthread_mutex_init(&mutex, NULL);
-
-			doLog = true;
-			lockName = "";
-
-			lockCount = 0;
-
-			trace = NULL;
-			doTrace = true;
 
 			locked = false;
 		}
 
-		Mutex(const String& s) {
+		Mutex(const String& s) : Lockable(s) {
 			pthread_mutex_init(&mutex, NULL);
-
-			doLog = true;
-			lockName = s;
-
-			lockCount = 0;
-
-			trace = NULL;
-			doTrace = true;
 
 			locked = false;
 		}
 
-		virtual ~Mutex() {
+		~Mutex() {
 			pthread_mutex_destroy(&mutex);
-
-			if (trace != NULL) {
-				delete trace;
-				trace = NULL;
-			}
 		}
 
 		inline void lock(bool doLock = true) {
 			if (!doLock)
 				return;
 
-			#ifdef LOG_LOCKS
-				Atomic::incrementInt(&lockCount);
-				int cnt = lockCount;
-
-				if (doLog)
-					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring lock #" << cnt << "\n";
-			#endif
+			lockAcquiring();
 
 			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
 				int res = pthread_mutex_lock(&mutex);
@@ -120,20 +72,12 @@ namespace sys {
 
 				lockTime.updateToCurrentTime();
 
-				if (trace != NULL)
-					delete trace;
-
-				trace = new StackTrace();
+				refreshTrace();
 			#endif
 
-				locked = true;
+			locked = true;
 
-			#ifdef LOG_LOCKS
-				currentCount = cnt;
-
-				if (doLog)
-					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired lock #" << cnt << "\n";
-			#endif
+			lockAcquired();
 		}
 
 		inline void lock(Mutex* m) {
@@ -144,13 +88,7 @@ namespace sys {
 				return;
 			}
 
-			#ifdef LOG_LOCKS
-				Atomic::incrementInt(&lockCount);
-				int cnt = lockCount;
-
-				if (doLog)
-					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << m->lockName << ")] acquiring cross lock #" << cnt << "\n";
-			#endif
+			lockAcquiring(m);
 
 		    while (pthread_mutex_trylock(&mutex)) {
 		    	#ifndef TRACE_LOCKS
@@ -162,21 +100,33 @@ namespace sys {
 			  	#endif
 	   		}
 
-		#ifdef TRACE_LOCKS
-			if (doTrace) {
-				delete trace;
-				trace = new StackTrace();
-			}
-		#endif
+		    refreshTrace();
 
 			locked = true;
 
-			#ifdef LOG_LOCKS
-				currentCount = cnt;
+			lockAcquired(m);
+		}
 
-				if (doLog)
-					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << m->lockName << ")] acquired cross lock #" << cnt << "\n";
-			#endif
+		inline void lock(Lockable* lockable) {
+			if (this == lockable) {
+				System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself [" << lockName << "]\n";
+
+				StackTrace::printStackTrace();
+				return;
+			}
+
+			lockAcquiring(lockable);
+
+		    while (pthread_mutex_trylock(&mutex)) {
+				lockable->unlock();
+				lockable->lock();
+	   		}
+
+		    refreshTrace();
+
+			locked = true;
+
+			lockAcquired(lockable);
 		}
 
 		inline bool tryLock() {
@@ -187,15 +137,9 @@ namespace sys {
 			if (!doLock)
 				return;
 
-			#ifdef LOG_LOCKS
-				if (doLog)
-					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing lock #" << currentCount << "\n";
-			#endif
+			lockReleasing();
 
-			#ifdef TRACE_LOCKS
-				delete trace;
-				trace = NULL;
-			#endif
+			deleteTrace();
 
 			locked = false;
 
@@ -206,25 +150,10 @@ namespace sys {
 				StackTrace::printStackTrace();
 			}
 
-			#ifdef LOG_LOCKS
-				if (doLog)
-					System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released lock #" << currentCount << "\n";
-			#endif
+			lockReleased();
 		}
 
 		// setters
-		inline void setMutexLogging(bool dolog) {
-			doLog = dolog;
-		}
-
-		inline void setLockName(const String& s) {
-			lockName = s;
-		}
-
-		inline void setLockTracing(bool tracing) {
-			doTrace = tracing;
-		}
-
 		inline bool isLocked() {
 			return locked;
 		}

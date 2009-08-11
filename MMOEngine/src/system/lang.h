@@ -66,6 +66,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "thread/Atomic.h"
 #include "thread/Thread.h"
+#include "thread/Locker.h"
+#include "thread/Lockable.h"
 #include "thread/Mutex.h"
 #include "thread/ReadWriteLock.h"
 #include "thread/Condition.h"

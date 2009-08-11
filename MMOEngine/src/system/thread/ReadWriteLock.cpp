@@ -9,11 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ReadWriteLock.h"
 
 void ReadWriteLock::wlock(Mutex* lock) {
-	#ifdef LOG_LOCKS
-		Atomic::incrementInt((uint32*)&lockCount);
-		int cnt = lockCount;
-		System::out << "[" << lockName << "] acquiring cross mutex wlock #" << cnt << "\n";
-	#endif
+	lockAcquiring(lock, "w");
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
     	#ifndef TRACE_LOCKS
@@ -28,15 +24,10 @@ void ReadWriteLock::wlock(Mutex* lock) {
 	#ifdef TRACE_LOCKS
 		threadIDLockHolder = Thread::getCurrentThreadID();
 
-		if (doTrace) {
-			delete trace;
-			trace = new StackTrace();
-		}
+		refreshTrace();
 	#endif
 
-	#ifdef LOG_LOCKS
-		System::out << "[" << lockName << "] acquired cross mutex wlock #" << cnt << "\n";
-	#endif
+	lockAcquired(lock, "w");
 }
 
 void ReadWriteLock::wlock(ReadWriteLock* lock) {
@@ -56,11 +47,7 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
 		}
 	#endif
 
-	#ifdef LOG_LOCKS
-		Atomic::incrementInt((uint32*)&lockCount);
-		int cnt = lockCount;
-		System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << lock->lockName << ")] acquiring cross wlock #" << cnt << "\n";
-	#endif
+	lockAcquiring(lock, "w");
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
     	#ifndef TRACE_LOCKS
@@ -75,13 +62,25 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
 	#ifdef TRACE_LOCKS
 		threadIDLockHolder = Thread::getCurrentThreadID();
 
-		if (doTrace) {
-			delete trace;
-			trace = new StackTrace();
-		}
+		refreshTrace();
 	#endif
 
-	#ifdef LOG_LOCKS
-		System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << lock->lockName << ")] acquired cross wlock #" << cnt << "\n";
+	lockAcquired(lock, "w");
+}
+
+void ReadWriteLock::lock(Lockable* lockable) {
+	lockAcquiring(lockable, "w");
+
+    while (pthread_rwlock_trywrlock(&rwlock)) {
+  		lockable->unlock();
+      	lockable->lock();
+	}
+
+	#ifdef TRACE_LOCKS
+		threadIDLockHolder = Thread::getCurrentThreadID();
+
+		refreshTrace();
 	#endif
+
+	lockAcquired(lockable, "w");
 }

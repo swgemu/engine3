@@ -245,6 +245,9 @@ MMOEngine/include/system/net/UDPSocket.h -text
 MMOEngine/include/system/platform.h -text
 MMOEngine/include/system/thread/Atomic.h -text
 MMOEngine/include/system/thread/Condition.h -text
+MMOEngine/include/system/thread/Locaker.h -text
+MMOEngine/include/system/thread/Lockable.h -text
+MMOEngine/include/system/thread/Locker.h -text
 MMOEngine/include/system/thread/Mutex.h -text
 MMOEngine/include/system/thread/ReadWriteLock.h -text
 MMOEngine/include/system/thread/Thread.h -text
@@ -519,6 +522,8 @@ MMOEngine/src/system/net/UDPSocket.h -text
 MMOEngine/src/system/platform.h -text
 MMOEngine/src/system/thread/Atomic.h -text
 MMOEngine/src/system/thread/Condition.h -text
+MMOEngine/src/system/thread/Lockable.h -text
+MMOEngine/src/system/thread/Locker.h -text
 MMOEngine/src/system/thread/Mutex.h -text
 MMOEngine/src/system/thread/ReadWriteLock.cpp -text
 MMOEngine/src/system/thread/ReadWriteLock.h -text
