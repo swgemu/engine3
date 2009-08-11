@@ -9,18 +9,18 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace util {
 
-	class Coordinate : public DistributedObject {
+	class Coordinate {
 	protected:
 		float positionX, positionZ, positionY;
 
 		float previousPositionX, previousPositionZ, previousPositionY;
 
 	public:
-		Coordinate() : DistributedObject() {
+		Coordinate() {
 
 		}
 
-		Coordinate(float x, float z, float y) : DistributedObject() {
+		Coordinate(float x, float z, float y) {
 			positionX = x;
 			positionZ = z;
 			positionY = y;

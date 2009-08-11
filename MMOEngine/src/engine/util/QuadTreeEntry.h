@@ -73,7 +73,7 @@ namespace engine {
 			closeobjects.removeAll();
 		}
 
-		bool isInRange(QuadTreeEntry* obj, float range) {
+		virtual bool isInRange(QuadTreeEntry* obj, float range) {
 			return isInRange(obj->positionX, obj->positionY, range);
 		}
 
