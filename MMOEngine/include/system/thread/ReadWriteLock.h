@@ -158,7 +158,7 @@ namespace sys {
 			if (!doLock)
 				return;
 
-			#if defined(TRACE_LOCKS) && !defined(__CYGWIN__)
+			#ifdef TRACE_LOCKS
 				if (threadIDLockHolder == 0) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";

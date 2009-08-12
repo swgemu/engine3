@@ -25,7 +25,7 @@ TimedTaskQueue::~TimedTaskQueue() {
 	delete condMutex;
 }
 
-void TimedTaskQueue::add(Task* task, uint64 delay) {
+bool TimedTaskQueue::add(Task* task, uint64 delay) {
 	condMutex->lock();
 
 	if (task->isQueued())
@@ -34,38 +34,44 @@ void TimedTaskQueue::add(Task* task, uint64 delay) {
 	if (delay != 0)
 		task->updateExecutionTime(delay);
 
-	add(task, false);
+	bool result = add(task, false);
 
 	condMutex->unlock();
+
+	return result;
 }
 
-void TimedTaskQueue::add(Task* task, Time& time) {
+bool TimedTaskQueue::add(Task* task, Time& time) {
 	condMutex->lock();
 
 	if (task->isQueued())
 		remove(task, false);
 
 	task->setExecutionTime(time);
-	add(task, false);
+
+	bool result = add(task, false);
 
 	condMutex->unlock();
+
+	return result;
 }
 
-void TimedTaskQueue::add(Task* task, bool doLock) {
+bool TimedTaskQueue::add(Task* task, bool doLock) {
 	condMutex->lock(doLock);
 
 	if (blocked) {
 		condMutex->unlock(doLock);
-		return;
+		return false;
 	} else if (task->getNextExecutionTime().isPast()) {
-		/*error("past task scheduled - " + e->toString());
+		error("past task scheduled - " + task->toString());
 
-		StackTrace trace;
+		/*StackTrace trace;
 		trace.print();
 
 		raise(SIGSEGV);*/
 
-		throw IllegalArgumentException("Task with past time scheduled - " + task->toString());
+		condMutex->unlock(doLock);
+		return false;
 	}
 
 	if (task->isQueued())
@@ -93,6 +99,8 @@ void TimedTaskQueue::add(Task* task, bool doLock) {
 	}
 
 	condMutex->unlock(doLock);
+
+	return true;
 }
 
 Task* TimedTaskQueue::get() {
@@ -108,7 +116,7 @@ Task* TimedTaskQueue::get() {
 			}
 
 			#ifdef TRACE_TASKS
-				info("waiting event");
+				info("waiting task");
 			#endif
 
 			wait(condMutex);
@@ -180,7 +188,7 @@ Task* TimedTaskQueue::get() {
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;
-		s << "got event " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
+		s << "got task " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
 		info(s);
 	#endif
 

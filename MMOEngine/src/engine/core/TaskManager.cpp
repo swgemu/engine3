@@ -104,7 +104,11 @@ void TaskManager::scheduleTask(Task* task, uint64 delay) {
 		unlock();
 	}
 
-	scheduler->scheduleTask(task, delay);
+	try {
+		scheduler->scheduleTask(task, delay);
+	} catch (Exception& e) {
+		throw e;
+	}
 }
 
 void TaskManager::scheduleTask(Task* task, Time& time) {
@@ -130,7 +134,11 @@ void TaskManager::scheduleTask(Task* task, Time& time) {
 		unlock();
 	}
 
-	scheduler->scheduleTask(task, time);
+	try {
+		scheduler->scheduleTask(task, time);
+	} catch (Exception& e) {
+		throw e;
+	}
 }
 
 void TaskManager::rescheduleTask(Task* task, uint64 delay) {
@@ -151,7 +159,11 @@ void TaskManager::rescheduleTask(Task* task, uint64 delay) {
 		unlock();
 	}
 
-	scheduler->rescheduleTask(task, delay);
+	try {
+		scheduler->rescheduleTask(task, delay);
+	} catch (Exception& e) {
+		throw e;
+	}
 }
 
 void TaskManager::rescheduleTask(Task* task, Time& time) {
@@ -172,7 +184,11 @@ void TaskManager::rescheduleTask(Task* task, Time& time) {
 		unlock();
 	}
 
-	scheduler->rescheduleTask(task, time);
+	try {
+		scheduler->rescheduleTask(task, time);
+	} catch (Exception& e) {
+		throw e;
+	}
 }
 
 bool TaskManager::cancelTask(Task* task) {
@@ -213,17 +229,25 @@ void TaskManager::printInfo() {
 }
 
 class TestTask : public Task {
+	int value;
+
 public:
+	TestTask(int val) {
+		value = val;
+	}
+
 	void run() {
-		System::out.print("test");
+		System::out.println("test" + String::valueOf(value));
 	}
 };
 
 void TaskManager::testScheduler() {
-	for (int i = 0; i < 100; ++i) {
-		uint32 shift = System::random(250);
+	for (int i = 0; i < 10; ++i) {
+		uint32 shift = System::random(3000);
 
-		scheduleTask(new TestTask(), 1000 + shift);
+		Task* task = new TestTask(i);
+
+		scheduleTask(task, 3000 + shift);
 	}
 }
 

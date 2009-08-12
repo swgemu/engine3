@@ -34,10 +34,10 @@ namespace engine {
 
 		~TimedTaskQueue();
 
-		void add(Task* e, uint64 delay);
-		void add(Task* e, Time& time);
+		bool add(Task* e, uint64 delay);
+		bool add(Task* e, Time& time);
 
-		void add(Task* e, bool doLock = true);
+		bool add(Task* e, bool doLock = true);
 
 		Task* get();
 
