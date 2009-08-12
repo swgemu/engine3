@@ -38,7 +38,7 @@ void TaskManager::initialize() {
 
 	StringBuffer msg;
 	msg << "started";
-	info(msg);
+	info(msg, true);
 
 	unlock();
 }
@@ -210,6 +210,21 @@ void TaskManager::printInfo() {
 	info(msg2, true);
 
 	unlock();
+}
+
+class TestTask : public Task {
+public:
+	void run() {
+		System::out.print("test");
+	}
+};
+
+void TaskManager::testScheduler() {
+	for (int i = 0; i < 100; ++i) {
+		uint32 shift = System::random(250);
+
+		scheduleTask(new TestTask(), 1000 + shift);
+	}
 }
 
 int TaskManager::getScheduledTaskSize() {

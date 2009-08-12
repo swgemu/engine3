@@ -43,6 +43,8 @@ namespace engine {
 		}
 
 		inline void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate = true) {
+			//System::out << "adding in range object:" << obj << "\n";
+
 			if (closeobjects.put(obj) != -1)
 				notifyInsert(obj);
 			else if (doNotifyUpdate)
@@ -54,6 +56,8 @@ namespace engine {
 		}
 
 		inline void removeInRangeObject(QuadTreeEntry* obj) {
+			//System::out << "droping in range object:" << obj << "\n";
+
 			if (closeobjects.drop(obj))
 				notifyDissapear(obj);
 			/*else {
@@ -66,14 +70,22 @@ namespace engine {
 		}
 
 		inline void removeInRangeObject(int index) {
+			//System::out << "droping in range object with index:" << index << "\n";
+
 			closeobjects.remove(index);
 		}
 
 		inline void removeInRangeObjects() {
+			//System::out << "droping  all in range objects\n";
+
 			closeobjects.removeAll();
 		}
 
-		bool isInRange(QuadTreeEntry* obj, float range) {
+		inline bool containsInRangeObject(QuadTreeEntry* obj) {
+			return closeobjects.contains(obj);
+		}
+
+		virtual bool isInRange(QuadTreeEntry* obj, float range) {
 			return isInRange(obj->positionX, obj->positionY, range);
 		}
 

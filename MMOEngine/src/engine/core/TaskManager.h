@@ -34,7 +34,7 @@ namespace engine {
 		virtual ~TaskManager();
 
 		static const int DEAFULT_WORKER_THREADS = 20;
-		static const int DEAFULT_SCHEDULER_THREADS = 4;
+		static const int DEAFULT_SCHEDULER_THREADS = 1;//4;
 
 	public:
 		void initialize();
@@ -54,6 +54,8 @@ namespace engine {
 		inline void flushTasks() {
 			tasks.flush();
 		}
+
+		void testScheduler();
 
 		void printInfo();
 
