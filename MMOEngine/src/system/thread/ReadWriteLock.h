@@ -56,7 +56,7 @@ namespace sys {
 
 			lockAcquiring("r");
 
-			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
+			#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 				int res = pthread_rwlock_rdlock(&rwlock);
 				if (res != 0)
 					System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
@@ -102,7 +102,7 @@ namespace sys {
 
 			lockAcquiring("w");
 
-			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
+			#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 				int res = pthread_rwlock_wrlock(&rwlock);
 				if (res != 0)
 					System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
@@ -158,7 +158,7 @@ namespace sys {
 			if (!doLock)
 				return;
 
-			#ifdef TRACE_LOCKS
+			#if defined(TRACE_LOCKS) && !defined(PLATFORM_CYGWIN)
 				if (threadIDLockHolder == 0) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";

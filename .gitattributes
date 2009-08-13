@@ -26,10 +26,6 @@ MMOEngine/build/unix/config/config.sub -text
 MMOEngine/build/unix/config/depcomp -text
 MMOEngine/build/unix/config/install-sh -text
 MMOEngine/build/unix/config/missing -text
-MMOEngine/build/unix/conflTjJ08/config.h -text
-MMOEngine/build/unix/conflTjJ08/defines.sed -text
-MMOEngine/build/unix/conflTjJ08/out1 -text
-MMOEngine/build/unix/conflTjJ08/subs-1.sed -text
 MMOEngine/build/unix/install -text
 MMOEngine/build/unix/stamp-h1 -text
 MMOEngine/build/win32/engine3.sln -text

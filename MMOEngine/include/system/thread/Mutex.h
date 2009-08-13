@@ -41,7 +41,7 @@ namespace sys {
 
 			lockAcquiring();
 
-			#if !defined(TRACE_LOCKS) || defined(__CYGWIN__)
+			#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 				int res = pthread_mutex_lock(&mutex);
 
 				if (res != 0)
