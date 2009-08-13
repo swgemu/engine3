@@ -105,7 +105,7 @@ namespace engine {
 
 		void notifyReceivedSeed(sys::uint32 seed);
 
-		void disconnect(const String& msg, bool doLock = false);
+		void disconnect(const String& msg, bool doLock);
 
 		void disconnect();
 		virtual void disconnect(bool doLock);

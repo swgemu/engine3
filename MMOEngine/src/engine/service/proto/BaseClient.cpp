@@ -54,14 +54,16 @@ BaseClient::~BaseClient() {
 	service->deleteConnection(this);
 
 	if (checkupEvent != NULL) {
-		checkupEvent->cancel();
+		if (checkupEvent->isQueued())
+			checkupEvent->cancel();
 
 		delete checkupEvent;
 		checkupEvent = NULL;
 	}
 
 	if (netcheckupEvent != NULL) {
-		netcheckupEvent->cancel();
+		if (netcheckupEvent->isQueued())
+			netcheckupEvent->cancel();
 
 		delete netcheckupEvent;
 		netcheckupEvent = NULL;
@@ -88,17 +90,21 @@ void BaseClient::initialize() {
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
-	netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
+   	netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
 }
 
 void BaseClient::close() {
-	this->cancel();
+	if (this->isQueued())
+		this->cancel();
 
-	checkupEvent->cancel();
-	netcheckupEvent->cancel();
+	if (checkupEvent->isQueued())
+		checkupEvent->cancel();
 
-	BaseClientCleanupEvent* cleanupEvent = new BaseClientCleanupEvent(this);
-	cleanupEvent->schedule();
+	if (netcheckupEvent->isQueued())
+		netcheckupEvent->cancel();
+
+	Task* task = new BaseClientCleanupEvent(this);
+	task->schedule();
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
@@ -183,7 +189,7 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 		else
 			sendSequenceLess(pack);
 	} catch (...) {
-		disconnect("unreported exception on sendPacket()");
+		disconnect("unreported exception on sendPacket()", false);
 	}
 
 	unlock(doLock);
@@ -206,7 +212,8 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 	} else {
 		bufferedPacket = new BaseMultiPacket(pack);
 
-		this->schedule(10);
+		if (!this->isQueued())
+			schedule(10);
 	}
 }
 
@@ -224,7 +231,7 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 	} catch (SocketException& e) {
 		delete pack;
 
-		disconnect("on sendPacket()" + e.getMessage());
+		disconnect("on sendPacket()" + e.getMessage(), false);
 	}
 }
 
@@ -236,9 +243,10 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		pack->setTimeout(checkupEvent->getCheckupTime());
 		sendBuffer.add(pack);
 
-		this->schedule(10);
+		if (!this->isQueued())
+			schedule(10);
 	} catch (SocketException& e) {
-		disconnect("sending packet");
+		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		error("on sendQueued() - " + e.getMessage());
 	}
@@ -262,7 +270,7 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 
 		delete frag;
 	} catch (SocketException& e) {
-		disconnect("sending packet");
+		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		error("on sendFragmented() - " + e.getMessage());
 	}
@@ -309,13 +317,18 @@ void BaseClient::run() {
 			}
 
 			if (!sendBuffer.isEmpty() || bufferedPacket != NULL) {
-				this->schedule(10);
+				schedule(10);
 			}
 		}
 	} catch (SocketException& e) {
-		disconnect("on activate() - " + e.getMessage());
+		disconnect("on activate() - " + e.getMessage(), false);
+	} catch (Exception& e) {
+		error(e.getMessage());
+		e.printStackTrace();
+
+		disconnect("unreported exception on activate()", false);
 	} catch (...) {
-		disconnect("unreported exception on activate()");
+		disconnect("unreported exception on activate()", false);
 	}
 
 	unlock();
@@ -333,7 +346,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 	if (serverSequence - acknowledgedServerSequence > 25) {
 		if (!sendBuffer.isEmpty() || bufferedPacket != NULL)
-			this->schedule(10);
+			schedule(10);
 
 		if (sendBuffer.size() > 3000) {
 			StringBuffer msg;
@@ -449,7 +462,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 	lock();
 
 	try {
-		if (!isAvailable() || checkupEvent->isScheduled() || sequenceBuffer.size() == 0) {
+		if (!isAvailable() || checkupEvent->isQueued() || sequenceBuffer.size() == 0) {
 			unlock();
 			return;
 		}
@@ -478,11 +491,11 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 			checkupEvent->schedule(pack->getTimeout());
 		}
 	} catch (SocketException& e) {
-		disconnect("on checkupServerPackets() - " + e.getMessage());
+		disconnect("on checkupServerPackets() - " + e.getMessage(), false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		error("on checkupServerPackets() - " + e.getMessage());
 	} catch (...) {
-		disconnect("unreported exception on checkupServerPackets()");
+		disconnect("unreported exception on checkupServerPackets()", false);
 	}
 
 	unlock();
@@ -582,7 +595,7 @@ void BaseClient::setPacketCheckupTime(uint32 time) {
 
 		checkupEvent->setCheckupTime(time);
 	} catch (...) {
-		disconnect("unreported exception on setPacketCheckupTime()");
+		disconnect("unreported exception on setPacketCheckupTime()", false);
 	}
 
 	unlock();
@@ -606,9 +619,9 @@ void BaseClient::acknowledgeClientPackets(uint16 seq) {
 		BasePacket* ack = new AcknowledgeMessage(seq);
 		sendPacket(ack, false);
 	} catch (SocketException& e) {
-		disconnect("acknowledging client packets");
+		disconnect("acknowledging client packets", false);
 	} catch (...) {
-		disconnect("unreported exception on acknowledgeClientPackets()");
+		disconnect("unreported exception on acknowledgeClientPackets()", false);
 	}
 
 	unlock();
@@ -657,7 +670,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		info("on acknowledgeServerPackets() - " + e.getMessage());
 	} catch (...) {
-		disconnect("unreported exception on acknowledgeServerPackets()");
+		disconnect("unreported exception on acknowledgeServerPackets()", false);
 	}
 
 	unlock();
@@ -708,7 +721,7 @@ void BaseClient::updateNetStatus() {
 
 		netcheckupEvent->reschedule(NETSTATUSCHECKUP_TIMEOUT);
 	} catch (...) {
-		disconnect("unreported exception on checkNetStatus()");
+		disconnect("unreported exception on checkNetStatus()", false);
 	}
 
 	unlock();
@@ -732,7 +745,7 @@ bool BaseClient::checkNetStatus() {
 		hasError = true;
 		disconnect(false);
 	} catch (...) {
-		disconnect("unreported exception on checkNetStatus()");
+		disconnect("unreported exception on checkNetStatus()", false);
 	}
 
 	unlock();

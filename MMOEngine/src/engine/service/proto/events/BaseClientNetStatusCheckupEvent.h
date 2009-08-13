@@ -15,12 +15,12 @@ namespace engine {
 
 	class BaseClientNetStatusCheckupEvent : public ReentrantTask {
 		BaseClient* client;
-		
+
 	public:
 		BaseClientNetStatusCheckupEvent(BaseClient* cl) : ReentrantTask(25000) {
 			client = cl;
 		}
-	
+
 		void run() {
 			client->checkNetStatus();
 		}
@@ -29,7 +29,7 @@ namespace engine {
 			struct timespec* ts = nextExecutionTime.getTimeSpec();
 
 			StringBuffer s;
-			s << "BaseClientNetStatusCheckupEvent " << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << (uint32) this << ")";
+			s << "BaseClientNetStatusCheckupEvent " << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << this << ")";
 			return s.toString();
 		}
 	};

@@ -13,7 +13,7 @@ BaseClientProxy::BaseClientProxy(Socket* sock, SocketAddress& addr) : BaseClient
 
 	//setLockName("ClientProxy " + ip);
    	//setMutexLogging(false);
-   	
+
    	//setFileLogger("log/" + addr.getFullPrintableIPAddress());
 }
 
@@ -26,7 +26,7 @@ void BaseClientProxy::init(DatagramServiceThread* serv) {
     hasError = false;
    	disconnected = false;
    	clientDisconnected = false;
-   	
+
    	acknowledgedServerSequence = -1;
 	realServerSequence = 0;
 	resentPackets = 0;
