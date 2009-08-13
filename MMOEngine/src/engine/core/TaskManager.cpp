@@ -95,7 +95,7 @@ void TaskManager::scheduleTask(Task* task, uint64 delay) {
 	try {
 		lock();
 
-		if (task->isQueued()) {
+		if (task->isScheduled()) {
 			unlock();
 
 			return ;
@@ -122,7 +122,7 @@ void TaskManager::scheduleTask(Task* task, Time& time) {
 	try {
 		lock();
 
-		if (task->isQueued()) {
+		if (task->isScheduled()) {
 			unlock();
 
 			return ;
@@ -193,7 +193,7 @@ bool TaskManager::cancelTask(Task* task) {
 	try {
 		lock();
 
-		if (!task->isQueued()) {
+		if (!task->isScheduled()) {
 			unlock();
 
 			return false;
