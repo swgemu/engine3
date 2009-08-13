@@ -26,33 +26,33 @@ namespace engine {
 	class BasePacketChekupEvent : public ReentrantTask {
 		BaseClient* client;
 		BasePacket* packet;
-	
-		sys::uint32 checkupTime; 
-		
+
+		sys::uint32 checkupTime;
+
 	public:
 		BasePacketChekupEvent(BaseClient* cl, sys::uint32 time = 5000);
-	
+
 		void run();
 
 		// setters and getters
 		inline void update(BasePacket* pack) {
 			packet = pack;
-		}		
-	
+		}
+
 		inline void setCheckupTime(sys::uint32 time) {
 			checkupTime = time;
 		}
-	
+
 		void increaseCheckupTime(sys::uint32 time) {
 			if (checkupTime < 500)
 				checkupTime += time;
 		}
-	
+
 		void decreaseCheckupTime(sys::uint32 time) {
 			if (checkupTime > 100)
 				checkupTime -= time;
 		}
-	
+
 		inline sys::uint32 getCheckupTime() {
 			return checkupTime;
 		}
@@ -61,12 +61,12 @@ namespace engine {
 			struct timespec* ts = nextExecutionTime.getTimeSpec();
 
 			StringBuffer s;
-			s << "BasePacketChekupEvent " << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << (uint32) this << ")";
+			s << "BasePacketChekupEvent " << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << this << ")";
 			return s.toString();
 		}
 
 	};
-	
+
     } // namespace proto
   } // namespace service
 } // namespace engine

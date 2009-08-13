@@ -98,7 +98,7 @@ namespace engine {
 			struct timespec* ts = nextExecutionTime.getTimeSpec();
 
 			StringBuffer s;
-			s << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << (uint32) this << ")";
+			s << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << this << ")";
 			return s.toString();
 		}
 

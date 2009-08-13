@@ -66,10 +66,13 @@ namespace engine {
 	private:
 		TaskScheduler* getTaskScheduler(bool doLock = true);
 
+		void setTaskScheduler(Task* task, TaskScheduler* scheduler, bool doLock = true);
+
 		inline Task* getTask() {
 			return tasks.pop();
 		}
 
+		friend class TaskScheduler;
 		friend class TaskWorkerThread;
 		friend class SingletonWrapper<TaskManager>;
 	};

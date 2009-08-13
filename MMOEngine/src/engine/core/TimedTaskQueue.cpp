@@ -77,8 +77,6 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 	if (task->isQueued())
 		remove(task, false);
 
-	task->setTaskScheduler(taskScheduler);
-
 	#ifdef TRACE_TASKS
 		StringBuffer s1;
 		s1 << "adding task " << task->toString();

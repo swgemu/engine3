@@ -77,6 +77,14 @@ TaskScheduler* TaskManager::getTaskScheduler(bool doLock) {
 	return scheduler;
 }
 
+void TaskManager::setTaskScheduler(Task* task, TaskScheduler* scheduler, bool doLock) {
+	lock(doLock);
+
+	task->setTaskScheduler(scheduler);
+
+	unlock(doLock);
+}
+
 void TaskManager::executeTask(Task* task) {
 	tasks.push(task);
 }
@@ -95,7 +103,7 @@ void TaskManager::scheduleTask(Task* task, uint64 delay) {
 
 		scheduler = getTaskScheduler(false);
 
-		task->setTaskScheduler(scheduler);
+		setTaskScheduler(task, scheduler, false);
 
 		unlock();
 	} catch (...) {
