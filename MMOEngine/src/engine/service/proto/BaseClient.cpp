@@ -143,7 +143,7 @@ void BaseClient::send(Packet* pack, bool doLock) {
 	try {
 		if (isAvailable()) {
 			#ifdef TRACE_CLIENTS
-				info("SEND(RAW) - " + pack->toString());
+				info("SEND(RAW) - " + pack->toStringData());
 			#endif
 
 			if (!DatagramServiceClient::send(pack))
@@ -220,7 +220,7 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 void BaseClient::sendSequenceLess(BasePacket* pack) {
 	try {
 		#ifdef TRACE_CLIENTS
-			info("SEND(NOSEQ) - " + pack->toString());
+			info("SEND(NOSEQ) - " + pack->toStringData());
 		#endif
 
 		prepareSend(pack);
@@ -296,7 +296,7 @@ void BaseClient::run() {
 
 			#ifdef TRACE_CLIENTS
 				StringBuffer msg;
-				msg << "SEND(" << serverSequence << ") - " << pack->toString();
+				msg << "SEND(" << serverSequence << ") - " << pack->toStringData();
 				info(msg);
 			#endif
 
@@ -326,9 +326,9 @@ void BaseClient::run() {
 		error(e.getMessage());
 		e.printStackTrace();
 
-		disconnect("unreported exception on activate()", false);
+		disconnect("unreported exception on run()", false);
 	} catch (...) {
-		disconnect("unreported exception on activate()", false);
+		disconnect("unreported exception on run()", false);
 	}
 
 	unlock();
@@ -407,7 +407,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 
 	#ifdef TRACE_CLIENTS
 		StringBuffer msg;
-		msg  << "READ(" << seq << ") - " << pack->toString();
+		msg  << "READ(" << seq << ") - " << pack->toStringData();
 		info(msg);
 	#endif
 
@@ -527,7 +527,7 @@ void BaseClient::resendPackets() {
 
 		#ifdef TRACE_CLIENTS
 			StringBuffer msg;
-			msg << "RESEND(" << packet->getSequence() << ") - " << packet->toString();
+			msg << "RESEND(" << packet->getSequence() << ") - " << packet->toStringData();
 			info(msg);
 		#endif
 	}
@@ -564,7 +564,7 @@ void BaseClient::resendPackets(int seq) {
 }
 
 void BaseClient::balancePacketCheckupTime() {
-	setPacketCheckupTime(2000);
+	setPacketCheckupTime(4000);
 
 	#ifdef TRACE_CLIENTS
 		StringBuffer msg;
