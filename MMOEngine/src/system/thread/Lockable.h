@@ -86,7 +86,8 @@ namespace sys {
 			int cnt = lockCount;
 
 			if (doLog)
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquiring " << modifier << "lock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
+							<< "] acquiring " << modifier << "lock #" << cnt << "\n";
 		#endif
 		}
 
@@ -96,7 +97,9 @@ namespace sys {
 			int cnt = lockCount;
 
 			if (doLog)
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << lockable->lockName << ")] acquiring cross " << modifier << "lock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
+							<< " (" << lockable->lockName << ")] acquiring cross "
+							<< modifier << "lock #" << cnt << "\n";
 		#endif
 		}
 
@@ -105,7 +108,8 @@ namespace sys {
 			currentCount = cnt;
 
 			if (doLog)
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] acquired " << modifier << "lock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
+							<< "] acquired " << modifier << "lock #" << cnt << "\n";
 		#endif
 		}
 
@@ -114,22 +118,42 @@ namespace sys {
 			currentCount = cnt;
 
 			if (doLog)
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << " (" << lockable->lockName << ")] acquired cross " << modifier << "lock #" << cnt << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
+							<< " (" << lockable->lockName << ")] acquired cross "
+							<< modifier << "lock #" << cnt << "\n";
 		#endif
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			if (doLog)
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] releasing " << modifier << "lock #" << currentCount << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
+							<< "] releasing " << modifier << "lock #" << currentCount << "\n";
 		#endif
 		}
 
 		inline void lockReleased(const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			if (doLog)
-				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName << "] released " << modifier << "lock #" << currentCount << "\n";
+				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
+							<< "] released " << modifier << "lock #" << currentCount << "\n";
 		#endif
+		}
+
+		inline void traceDeadlock(const char* modifier = "") {
+  			System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access "
+						<< modifier << "lock #" << currentCount << " at\n";
+
+			StackTrace::printStackTrace();
+
+			if (trace != NULL) {
+				System::out << "locked at " << lockTime.getMiliTime() << " by\n";
+				trace->print();
+			} else {
+				System::out << "no previous stackTrace created\n";
+			}
+
+			while (true) ;
 		}
 
 		inline void refreshTrace() {

@@ -37,23 +37,15 @@ namespace engine {
 
 		inline bool scheduleTask(Task* task, uint64 delay = 0) {
 			if (task->isQueued())
-				return true;
+				return false;
 
 			return tasks.add(task, delay);
 		}
 
 		inline bool scheduleTask(Task* task, Time& time) {
 			if (task->isQueued())
-				return true;
+				return false;
 
-			return tasks.add(task, time);
-		}
-
-		inline bool rescheduleTask(Task* task, uint64 delay = 0) {
-			return tasks.add(task, delay);
-		}
-
-		inline bool rescheduleTask(Task* task, Time& time) {
 			return tasks.add(task, time);
 		}
 

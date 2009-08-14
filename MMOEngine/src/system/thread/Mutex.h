@@ -31,7 +31,7 @@ namespace sys {
 			locked = false;
 		}
 
-		~Mutex() {
+		virtual ~Mutex() {
 			pthread_mutex_destroy(&mutex);
 		}
 
@@ -47,11 +47,6 @@ namespace sys {
 				if (res != 0)
 					System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
 			#else
-				#ifndef LOG_LOCKS
-					//Atomic::incrementInt((uint32*)&lockCount);
-					int cnt = lockCount;
-				#endif
-
 				Time start;
 				start.addMiliTime(300000);
 
@@ -59,13 +54,7 @@ namespace sys {
 		    		if (!doTrace)
 		    			continue;
 
-	 	  			System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access lock #" << cnt << " at\n";
-					StackTrace::printStackTrace();
-
-					System::out << "locked at " << lockTime.getMiliTime() << " by\n";
-					trace->print();
-
-					while (true) ;
+		    		traceDeadlock();
 
 					start.addMiliTime(1000);
 		    	}

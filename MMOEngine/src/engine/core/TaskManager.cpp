@@ -98,7 +98,7 @@ void TaskManager::scheduleTask(Task* task, uint64 delay) {
 		if (task->isScheduled()) {
 			unlock();
 
-			return ;
+			throw IllegalArgumentException("task is already scheduled");
 		}
 
 		scheduler = getTaskScheduler(false);
@@ -125,7 +125,7 @@ void TaskManager::scheduleTask(Task* task, Time& time) {
 		if (task->isScheduled()) {
 			unlock();
 
-			return ;
+			throw IllegalArgumentException("task is already scheduled");
 		}
 
 		scheduler = getTaskScheduler(false);
@@ -144,47 +144,15 @@ void TaskManager::scheduleTask(Task* task, Time& time) {
 }
 
 void TaskManager::rescheduleTask(Task* task, uint64 delay) {
-	TaskScheduler* scheduler = NULL;
+	task->cancel();
 
-	try {
-		lock();
-
-		if (task->isScheduled())
-			scheduler = task->getTaskScheduler();
-		else
-			scheduler = getTaskScheduler(false);
-
-		unlock();
-	} catch (...) {
-		error("unreported exception caught on TaskManager::rescheduleTask()");
-
-		unlock();
-	}
-
-	if (!scheduler->scheduleTask(task, delay))
-		throw IllegalArgumentException("Task was invalid for scheduling");
+	scheduleTask(task, delay);
 }
 
 void TaskManager::rescheduleTask(Task* task, Time& time) {
-	TaskScheduler* scheduler = NULL;
+	task->cancel();
 
-	try {
-		lock();
-
-		if (task->isScheduled())
-			scheduler = task->getTaskScheduler();
-		else
-			scheduler = getTaskScheduler(false);
-
-		unlock();
-	} catch (...) {
-		error("unreported exception caught on TaskManager::rescheduleTask()");
-
-		unlock();
-	}
-
-	if (!scheduler->scheduleTask(task, time))
-		throw IllegalArgumentException("Task was invalid for scheduling");
+	scheduleTask(task, time);
 }
 
 bool TaskManager::cancelTask(Task* task) {
@@ -249,9 +217,11 @@ public:
 
 	void run() {
 		try {
-			System::out.println("test" + String::valueOf(value));
-			TaskManager::instance()->scheduleTask(this, 1000);
+			//System::out.println("test" + String::valueOf(value));
+			if (System::random(10) == 0)
+				TaskManager::instance()->scheduleTask(this, 100);
 
+			for (int i = 0; i < 0x10000000; ++i);
 		} catch (Exception& e) {
 			e.printStackTrace();
 		}
@@ -259,16 +229,19 @@ public:
 };
 
 void TaskManager::testScheduler() {
-	/*for (int i = 0; i < 10; ++i) {
-		uint32 shift = System::random(3000);
+	for (int i = 0; i < 20; ++i) {
+		uint32 shift = System::random(100);
 
 		Task* task = new TestTask(i);
 
-		scheduleTask(task, 3000 + shift);
-	}*/
+		scheduleTask(task, 100 + shift);
+		rescheduleTask(task, shift - 50);
 
-	Task* task = new ReentrantTestTask(1);
-	scheduleTask(task, 1000);
+		//Thread::sleep(System::random(5) + 5);
+	}
+
+	/*Task* task = new ReentrantTestTask(1);
+	scheduleTask(task, 1000);*/
 }
 
 int TaskManager::getScheduledTaskSize() {

@@ -54,16 +54,14 @@ BaseClient::~BaseClient() {
 	service->deleteConnection(this);
 
 	if (checkupEvent != NULL) {
-		if (checkupEvent->isQueued())
-			checkupEvent->cancel();
+		checkupEvent->cancel();
 
 		delete checkupEvent;
 		checkupEvent = NULL;
 	}
 
 	if (netcheckupEvent != NULL) {
-		if (netcheckupEvent->isQueued())
-			netcheckupEvent->cancel();
+		netcheckupEvent->cancel();
 
 		delete netcheckupEvent;
 		netcheckupEvent = NULL;
@@ -94,14 +92,10 @@ void BaseClient::initialize() {
 }
 
 void BaseClient::close() {
-	if (this->isQueued())
-		this->cancel();
+	this->cancel();
 
-	if (checkupEvent->isQueued())
-		checkupEvent->cancel();
-
-	if (netcheckupEvent->isQueued())
-		netcheckupEvent->cancel();
+	checkupEvent->cancel();
+	netcheckupEvent->cancel();
 
 	Task* task = new BaseClientCleanupEvent(this);
 	task->schedule();
@@ -212,7 +206,7 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 	} else {
 		bufferedPacket = new BaseMultiPacket(pack);
 
-		if (!this->isQueued())
+		if (!this->isScheduled())
 			schedule(10);
 	}
 }
@@ -243,7 +237,7 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		pack->setTimeout(checkupEvent->getCheckupTime());
 		sendBuffer.add(pack);
 
-		if (!this->isQueued())
+		if (!this->isScheduled())
 			schedule(10);
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
@@ -462,7 +456,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 	lock();
 
 	try {
-		if (!isAvailable() || checkupEvent->isQueued() || sequenceBuffer.size() == 0) {
+		if (!isAvailable() || checkupEvent->isScheduled() || sequenceBuffer.size() == 0) {
 			unlock();
 			return;
 		}

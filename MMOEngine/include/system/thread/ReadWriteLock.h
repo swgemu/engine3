@@ -73,24 +73,14 @@ namespace sys {
 		    		if (!doTrace)
 		    			continue;
 
-		    		System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access rlock #" << cnt << " at\n";
-					StackTrace::printStackTrace();
-
-					System::out << "locked at " << lockTime.getMiliTime() << " by\n";
-					if (trace != NULL)
-						trace->print();
-
-					while (true) ;
+		    		traceDeadlock("r");
 
 					start.addMiliTime(1000);
 		    	}
 
 				lockTime.updateToCurrentTime();
 
-				/*if (trace != NULL)
-					delete trace;
-
-				trace = new StackTrace();*/
+				//refreshTrace();
 			#endif
 
 			lockAcquired("r");
@@ -107,11 +97,6 @@ namespace sys {
 				if (res != 0)
 					System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
 			#else
-				#ifndef LOG_LOCKS
-					Atomic::incrementInt((uint32*)&lockCount);
-					int cnt = lockCount;
-				#endif
-
 				Time start;
 				start.addMiliTime(300000);
 
@@ -119,17 +104,7 @@ namespace sys {
 		    		if (!doTrace)
 		    			continue;
 
-		    		System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access wlock #" << cnt << " at\n";
-		    		StackTrace::printStackTrace();
-
-					if (trace != NULL) {
-						System::out << "locked at " << lockTime.getMiliTime() << " by\n";
-						trace->print();
-					} else {
-						System::out << "no previous stackTrace created\n";
-					}
-
-					while (true) ;
+		    		traceDeadlock("w");
 
 					start.addMiliTime(1000);
 		    	}
