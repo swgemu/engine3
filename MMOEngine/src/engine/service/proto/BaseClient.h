@@ -107,6 +107,10 @@ namespace engine {
 
 		void disconnect(const String& msg, bool doLock);
 
+		inline void disconnect(const char* msg, bool doLock = false) {
+			disconnect(String(msg), doLock);
+		}
+
 		void disconnect();
 		virtual void disconnect(bool doLock);
 

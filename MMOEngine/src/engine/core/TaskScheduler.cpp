@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../service/proto/events/BaseClientCleanUpEvent.hpp"
 #endif
 
+#include "TaskManager.h"
+
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	doRun = false;
 
