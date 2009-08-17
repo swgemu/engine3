@@ -710,7 +710,7 @@ void BaseClient::updateNetStatus() {
 		lastNetStatusTimeStamp.updateToCurrentTime();
 
 		#ifdef TRACE_CLIENTS
-			info("setting net status", true);
+			info("setting net status");
 		#endif
 
 		netcheckupEvent->reschedule(NETSTATUSCHECKUP_TIMEOUT);

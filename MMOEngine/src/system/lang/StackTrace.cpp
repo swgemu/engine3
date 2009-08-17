@@ -11,33 +11,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 StackTrace::StackTrace() {
 	#ifdef PLATFORM_UNIX
-		void* array[25];
-		count = backtrace(array, 25);
-
-		#ifdef LINE_TRACING
-			symbols = new void*[count];
-
-			for (int i = 0; i < count; ++i) {
-				symbols[i] = array[i];
-			}
-		#else
-			symbols = backtrace_symbols(array, count);
-		#endif
+		count = backtrace(symbols, 25);
 	#endif
 }
 
 StackTrace::~StackTrace() {
-	#ifdef PLATFORM_UNIX
-		if (symbols != NULL) {
-			#ifdef LINE_TRACING
-				delete [] symbols;
-			#else
-				free(symbols);
-			#endif
 
-			symbols = NULL;
-		}
-	#endif
 }
 
 void StackTrace::print() {
@@ -45,16 +24,26 @@ void StackTrace::print() {
 		#ifdef LINE_TRACING
 			StringBuffer command;
 			command << "/usr/bin/addr2line -e core3";
+		#else
+		char** tracedSymbols = backtrace_symbols(symbols, count);
+
+		if (tracedSymbols == NULL) {
+			System::out << "error while trying to print stack trace: tracedSymbols == NULL" << endl;
+			return;
+		}
+
 		#endif
 		for (int i = 0; i < count; ++i) {
 			#ifdef LINE_TRACING
 				command << " " << hex << symbols[i];
 			#else
-				System::out << symbols[i] << endl;
+				System::out << tracedSymbols[i] << endl;
 			#endif
 		}
 		#ifdef LINE_TRACING
 			system(command.toString().toCharArray());
+		#else
+			free(tracedSymbols);
 		#endif
 	#elif defined PLATFORM_CYGWIN
 		cygwin_stackdump();

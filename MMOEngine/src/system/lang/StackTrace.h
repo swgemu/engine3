@@ -18,15 +18,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 	#define LINE_TRACING
 #endif
 
+#ifdef PLATFORM_MAC
+	#undef LINE_TRACING
+#endif
+
 namespace sys {
   namespace lang {
 
 	class StackTrace {
-	#ifdef LINE_TRACING
-		void** symbols;
-	#else
-		char** symbols;
-	#endif
+		void* symbols[25];
 
 		int count;
 
