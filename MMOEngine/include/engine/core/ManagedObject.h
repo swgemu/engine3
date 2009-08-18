@@ -9,6 +9,8 @@
 
 #include "engine/core/ManagedReference.h"
 
+#include "system/thread/ReadWriteLock.h"
+
 #include "system/io/Serializable.h"
 
 #include "system/io/ObjectInputStream.h"
@@ -24,11 +26,15 @@ public:
 
 	void lock(ManagedObject* obj);
 
+	void rlock(bool doLock = true);
+
 	void wlock(bool doLock = true);
 
 	void wlock(ManagedObject* obj);
 
 	void unlock(bool doLock = true);
+
+	void runlock(bool doLock = true);
 
 	void setLockName(const String& name);
 
@@ -49,11 +55,15 @@ protected:
 
 	void _lock(ManagedObject* obj);
 
+	void _rlock(bool doLock = true);
+
 	void _wlock(bool doLock = true);
 
 	void _wlock(ManagedObject* obj);
 
 	void _unlock(bool doLock = true);
+
+	void _runlock(bool doLock = true);
 
 	void _setLockName(const String& name);
 
@@ -68,11 +78,15 @@ public:
 
 	void lock(ManagedObject* obj);
 
+	void rlock(bool doLock = true);
+
 	void wlock(bool doLock = true);
 
 	void wlock(ManagedObject* obj);
 
 	void unlock(bool doLock = true);
+
+	void runlock(bool doLock = true);
 
 	void setLockName(const String& name);
 
@@ -109,11 +123,15 @@ public:
 
 	void lock(ManagedObject* obj);
 
+	void rlock(bool doLock);
+
 	void wlock(bool doLock);
 
 	void wlock(ManagedObject* obj);
 
 	void unlock(bool doLock);
+
+	void runlock(bool doLock);
 
 	void setLockName(const String& name);
 

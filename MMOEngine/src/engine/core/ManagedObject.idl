@@ -5,16 +5,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 package engine.core;
 
+import system.thread.ReadWriteLock;
+
 import system.io.Serializable;
 import system.io.ObjectInputStream;
 import system.io.ObjectOutputStream;
 
 class ManagedObject implements Serializable {
+	//private dereferenced ReadWriteLock lock;
+	
 	@nativeStub 
 	public native void lock(boolean doLock = true);
 	
 	@nativeStub 
 	public native void lock(ManagedObject obj);
+
+	@nativeStub 
+	public native void rlock(boolean doLock = true);
 
 	@nativeStub 
 	public native void wlock(boolean doLock = true);
@@ -24,7 +31,10 @@ class ManagedObject implements Serializable {
 	
 	@nativeStub 
 	public native void unlock(boolean doLock = true);
-	
+
+	@nativeStub 
+	public native void runlock(boolean doLock = true);
+
 	@nativeStub 
 	public native void setLockName(final string name);	
 	

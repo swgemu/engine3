@@ -14,6 +14,13 @@ void ManagedObject::lock(ManagedObject* obj) {
 		_wlock(obj);
 }
 
+void ManagedObject::rlock(bool doLock) {
+	DistributedObjectStub::rlock(doLock);
+
+	if (_impl == NULL)
+		_rlock(doLock);
+}
+
 void ManagedObject::wlock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
 
@@ -35,6 +42,13 @@ void ManagedObject::unlock(bool doLock) {
 		_unlock(doLock);
 }
 
+void ManagedObject::runlock(bool doLock) {
+	DistributedObjectStub::runlock(doLock);
+
+	if (_impl == NULL)
+		_runlock(doLock);
+}
+
 void ManagedObject::setLockName(const String& name) {
 	DistributedObjectStub::setLockName(name);
 
@@ -50,6 +64,10 @@ void ManagedObjectImplementation::lock(ManagedObject* obj) {
 	_this->wlock(obj);
 }
 
+void ManagedObjectImplementation::rlock(bool doLock) {
+	_this->rlock(doLock);
+}
+
 void ManagedObjectImplementation::wlock(bool doLock) {
 	_this->wlock(doLock);
 }
@@ -60,6 +78,10 @@ void ManagedObjectImplementation::wlock(ManagedObject* obj) {
 
 void ManagedObjectImplementation::unlock(bool doLock) {
 	_this->unlock(doLock);
+}
+
+void ManagedObjectImplementation::runlock(bool doLock) {
+	_this->runlock(doLock);
 }
 
 void ManagedObjectImplementation::setLockName(const String& name) {

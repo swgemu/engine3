@@ -41,12 +41,25 @@ void ManagedObject::_lock(ManagedObject* obj) {
 		((ManagedObjectImplementation*) _impl)->lock(obj);
 }
 
-void ManagedObject::_wlock(bool doLock) {
+void ManagedObject::_rlock(bool doLock) {
 	if (_impl == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, 8);
+		method.addBooleanParameter(doLock);
+
+		method.executeWithVoidReturn();
+	} else
+		((ManagedObjectImplementation*) _impl)->rlock(doLock);
+}
+
+void ManagedObject::_wlock(bool doLock) {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 9);
 		method.addBooleanParameter(doLock);
 
 		method.executeWithVoidReturn();
@@ -59,7 +72,7 @@ void ManagedObject::_wlock(ManagedObject* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 9);
+		DistributedMethod method(this, 10);
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
@@ -72,7 +85,7 @@ void ManagedObject::_unlock(bool doLock) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 10);
+		DistributedMethod method(this, 11);
 		method.addBooleanParameter(doLock);
 
 		method.executeWithVoidReturn();
@@ -80,12 +93,25 @@ void ManagedObject::_unlock(bool doLock) {
 		((ManagedObjectImplementation*) _impl)->unlock(doLock);
 }
 
+void ManagedObject::_runlock(bool doLock) {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 12);
+		method.addBooleanParameter(doLock);
+
+		method.executeWithVoidReturn();
+	} else
+		((ManagedObjectImplementation*) _impl)->runlock(doLock);
+}
+
 void ManagedObject::_setLockName(const String& name) {
 	if (_impl == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 11);
+		DistributedMethod method(this, 13);
 		method.addAsciiParameter(name);
 
 		method.executeWithVoidReturn();
@@ -98,7 +124,7 @@ void ManagedObject::serialize(String& data) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 12);
+		DistributedMethod method(this, 14);
 		method.addAsciiParameter(data);
 
 		method.executeWithVoidReturn();
@@ -119,7 +145,7 @@ void ManagedObject::deSerialize(const String& data) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 13);
+		DistributedMethod method(this, 15);
 		method.addAsciiParameter(data);
 
 		method.executeWithVoidReturn();
@@ -162,22 +188,22 @@ void ManagedObjectImplementation::_serializationHelperMethod() {
 }
 
 void ManagedObjectImplementation::serialize(String& data) {
-	// engine/core/ManagedObject.idl(32):  Serializable.serialize(data);
+	// engine/core/ManagedObject.idl(42):  Serializable.serialize(data);
 	Serializable::serialize(data);
 }
 
 void ManagedObjectImplementation::serialize(ObjectOutputStream* stream) {
-	// engine/core/ManagedObject.idl(36):  Serializable.serialize(stream);
+	// engine/core/ManagedObject.idl(46):  Serializable.serialize(stream);
 	Serializable::serialize(stream);
 }
 
 void ManagedObjectImplementation::deSerialize(const String& data) {
-	// engine/core/ManagedObject.idl(40):  Serializable.deSerialize(data);
+	// engine/core/ManagedObject.idl(50):  Serializable.deSerialize(data);
 	Serializable::deSerialize(data);
 }
 
 void ManagedObjectImplementation::deSerialize(ObjectInputStream* stream) {
-	// engine/core/ManagedObject.idl(44):  Serializable.deSerialize(stream);
+	// engine/core/ManagedObject.idl(54):  Serializable.deSerialize(stream);
 	Serializable::deSerialize(stream);
 }
 
@@ -199,21 +225,27 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		lock((ManagedObject*) inv->getObjectParameter());
 		break;
 	case 8:
-		wlock(inv->getBooleanParameter());
+		rlock(inv->getBooleanParameter());
 		break;
 	case 9:
-		wlock((ManagedObject*) inv->getObjectParameter());
+		wlock(inv->getBooleanParameter());
 		break;
 	case 10:
-		unlock(inv->getBooleanParameter());
+		wlock((ManagedObject*) inv->getObjectParameter());
 		break;
 	case 11:
-		setLockName(inv->getAsciiParameter(_param0_setLockName__String_));
+		unlock(inv->getBooleanParameter());
 		break;
 	case 12:
-		serialize(inv->getAsciiParameter(_param0_serialize__String_));
+		runlock(inv->getBooleanParameter());
 		break;
 	case 13:
+		setLockName(inv->getAsciiParameter(_param0_setLockName__String_));
+		break;
+	case 14:
+		serialize(inv->getAsciiParameter(_param0_serialize__String_));
+		break;
+	case 15:
 		deSerialize(inv->getAsciiParameter(_param0_deSerialize__String_));
 		break;
 	default:
@@ -231,6 +263,10 @@ void ManagedObjectAdapter::lock(ManagedObject* obj) {
 	return ((ManagedObjectImplementation*) impl)->lock(obj);
 }
 
+void ManagedObjectAdapter::rlock(bool doLock) {
+	return ((ManagedObjectImplementation*) impl)->rlock(doLock);
+}
+
 void ManagedObjectAdapter::wlock(bool doLock) {
 	return ((ManagedObjectImplementation*) impl)->wlock(doLock);
 }
@@ -241,6 +277,10 @@ void ManagedObjectAdapter::wlock(ManagedObject* obj) {
 
 void ManagedObjectAdapter::unlock(bool doLock) {
 	return ((ManagedObjectImplementation*) impl)->unlock(doLock);
+}
+
+void ManagedObjectAdapter::runlock(bool doLock) {
+	return ((ManagedObjectImplementation*) impl)->runlock(doLock);
 }
 
 void ManagedObjectAdapter::setLockName(const String& name) {
