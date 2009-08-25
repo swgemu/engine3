@@ -8,8 +8,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/DeployObjectMessage.h"
 #include "packets/LookUpObjectMessage.h"
 #include "packets/LookUpObjectResponseMessage.h"
+#include "packets/LoadPersistentObjectMessage.h"
+#include "packets/UpdatePersistentObjectMessage.h"
+#include "packets/UpdatePersistentObjectResponseMessage.h"
+#include "packets/GetNextFreeObjectIDMessage.h"
+#include "packets/GetNextFreeObjectIDResponseMessage.h"
+
 
 #include "DOBPacketHandler.h"
+#include "DOBObjectManager.h"
 
 DOBPacketHandler::DOBPacketHandler() : Logger() {
 	orb = NULL;
@@ -31,11 +38,29 @@ void DOBPacketHandler::handlePacket(DistributedObjectBrokerClient* client, Packe
 	case 01:
 		handleObjectLookUpMessage(client, pack);
 		break;
+
+	case 02:
+		handleObjectLookUpMessageByID(client, pack);
+		break;
+
 	case 03:
 		handleObjectDeployMessage(client, pack);
 		break;
+
 	case 05:
 		handleMethodInvocationMessage(client, pack);
+		break;
+
+	case 07:
+		handleLoadPersistentObjectMessage(client, pack);
+		break;
+
+	case 0x9:
+		handleUpdatePersistentObjectMessage(client, pack);
+		break;
+
+	case 0x0B:
+		handleGetNextFreeObjectIDMessage(client, pack);
 		break;
 	}
 }
@@ -45,6 +70,17 @@ void DOBPacketHandler::handleObjectLookUpMessage(DistributedObjectBrokerClient* 
 	LookUpObjectMessage::parseObjectName(pack, name);
 
 	DistributedObject* obj = orb->lookUp(name);
+
+	Packet* msg = new LookUpObjectResponseMessage(obj);
+	client->send(msg);
+}
+
+void DOBPacketHandler::handleObjectLookUpMessageByID(DistributedObjectBrokerClient* client, Packet* pack) {
+	uint64 objectid = LookUpObjectMessage::parseObjectID(pack);
+
+	DOBObjectManager* objectManager = orb->getObjectManager();
+
+	DistributedObject* obj = objectManager->getObject(objectid);
 
 	Packet* msg = new LookUpObjectResponseMessage(obj);
 	client->send(msg);
@@ -86,4 +122,47 @@ void DOBPacketHandler::handleMethodInvocationMessage(DistributedObjectBrokerClie
 
 	Packet* resp = adapter->invokeMethod(methodID, &invocation);
 	client->send(resp);
+}
+
+void DOBPacketHandler::handleLoadPersistentObjectMessage(DistributedObjectBrokerClient* client, Packet* pack) {
+	uint64 objectid = LoadPersistentObjectMessage::parseObjectID(pack);
+
+	DOBObjectManager* objectManager = orb->getObjectManager();
+
+	DistributedObject* obj = objectManager->loadPersistentObject(objectid);
+
+	Packet* msg = new LookUpObjectResponseMessage(obj);
+	client->send(msg);
+}
+
+void DOBPacketHandler::handleUpdatePersistentObjectMessage(DistributedObjectBrokerClient* client, Packet* pack) {
+	uint64 objectid = UpdatePersistentObjectMessage::parseObjectID(pack);
+
+	DOBObjectManager* objectManager = orb->getObjectManager();
+
+	DistributedObject* obj = objectManager->getObject(objectid);
+
+	int success;
+
+	if (obj != NULL) {
+		error("could not locate object in  DOBPacketHandler::handleUpdatePersistentObjectMessage");
+
+		success = 0;
+	} else {
+		success = objectManager->updatePersistentObject(obj);
+	}
+
+	Packet* msg = new UpdatePersistentObjectResponseMessage(success);
+	client->send(msg);
+}
+
+void DOBPacketHandler::handleGetNextFreeObjectIDMessage(DistributedObjectBrokerClient* client, Packet* pack) {
+	bool doLock = GetNextFreeObjectIDMessage::parseDoLock(pack);
+
+	DOBObjectManager* objectManager = orb->getObjectManager();
+
+	uint64 objectID = objectManager->getNextFreeObjectID(doLock);
+
+	Packet* msg = new GetNextFreeObjectIDResponseMessage(objectID);
+	client->send(msg);
 }

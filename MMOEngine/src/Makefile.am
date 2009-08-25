@@ -73,6 +73,8 @@ libengine3_a_SOURCES = \
 			engine/service/proto/events/BasePacketChekupEvent.cpp \
 			engine/orb/DistributedObjectBroker.cpp \
 			engine/orb/DistributedObjectDirectory.cpp \
+			engine/orb/DOBObjectManager.cpp \
+			engine/orb/DOBObjectManagerImplementation.cpp \
 			engine/orb/NamingDirectoryService.cpp \
 			engine/orb/NamingDirectoryServiceImpl.cpp \
 			engine/orb/DistributedObjectBrokerClient.cpp \

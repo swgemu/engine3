@@ -20,7 +20,7 @@ namespace engine {
 	public:
 		DistributedObjectDirectory();
 		
-		void add(sys::uint64 objid, DistributedObjectAdapter* adapter);
+		DistributedObjectAdapter* add(sys::uint64 objid, DistributedObjectAdapter* adapter);
 	
 		DistributedObject* get(sys::uint64 objid);
 		

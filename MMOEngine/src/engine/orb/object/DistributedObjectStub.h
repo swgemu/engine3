@@ -60,6 +60,10 @@ namespace engine {
 			_classHelper = helper;
 		}
 		
+		inline void setDeployed(bool val) {
+			deployed = val;
+		}
+
 		// getters
 		inline bool isDeplyoed() {
 			return deployed;

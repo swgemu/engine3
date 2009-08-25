@@ -36,6 +36,7 @@ namespace engine {
 		inline DistributedObjectBrokerClient* getClient() {
 			return brokerClient;
 		}
+
 	};
 
   } // namespace ORB

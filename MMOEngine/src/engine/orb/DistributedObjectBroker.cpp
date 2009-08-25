@@ -11,11 +11,18 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "NamingDirectoryServiceImpl.h"
 
+#include "DOBObjectManager.h"
+#include "DOBObjectManagerImplementation.h"
+
 DistributedObjectBroker::DistributedObjectBroker()
 		: StreamServiceThread("DistributedObjectBroker") {
 	phandler = NULL;
 
 	namingDirectoryInterface = NULL;
+
+	objectManager = NULL;
+
+	orbClient = NULL;
 
 	setLogging(false);
 }
@@ -32,6 +39,11 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 		delete phandler;
 		phandler = NULL;
 	}
+
+	if (objectManager != NULL) {
+		delete objectManager;
+		objectManager = NULL;
+	}
 }
 
 DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr, int port) {
@@ -40,7 +52,8 @@ DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr,
 
 	inst->initialize();
 
-	inst->start(port);
+	if (addr.isEmpty())
+		inst->start(port);
 
 	return inst;
 }
@@ -51,11 +64,18 @@ void DistributedObjectBroker::initialize() {
 
 		info("root naming directory initialized", true);
 	} else {
-		namingDirectoryInterface = new NamingDirectoryServiceImpl(address);
+		namingDirectoryInterface = new NamingDirectoryService(address);
+		orbClient = namingDirectoryInterface->getClient();
 	}
 
 	phandler = new DOBPacketHandler("ORBPacketHandler", this);
 	phandler->setLogging(false);
+
+	if (address.isEmpty()) {
+		objectManager = new DOBObjectManagerImplementation();
+	} else {
+		objectManager = new DOBObjectManager(orbClient);
+	}
 }
 
 void DistributedObjectBroker::run() {
@@ -96,14 +116,23 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 	}
 
 	try {
-		DistributedObjectClassHelper* helper = servant->_getClassHelper();
-		DistributedObjectAdapter* adapter = helper->createAdapter(obj);
+		uint64 objectid = obj->_getObjectID();
+
+		if (objectid == 0) {
+			objectid = objectManager->getNextFreeObjectID();
+			obj->_setObjectID(objectid);
+		}
 
 		namingDirectoryInterface->deploy(obj);
 
-		objectDirectory.add(obj->_getObjectID(), adapter);
+		if (objectManager->addObject(obj) != NULL) {
+			StringBuffer msg;
+			msg << "obejctid 0x" << hex << objectid << " already deployed";
+			error(msg.toString());
+			StackTrace::printStackTrace();
+		} else
+			info("object \'" + obj->_getName() + "\' deployed");
 
-		info("object \'" + obj->_getName() + "\' deployed");
 	} catch (Exception& e) {
 		error(e.getMessage());
 	} catch (...) {
@@ -124,14 +153,23 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 	}
 
 	try {
-		DistributedObjectClassHelper* helper = servant->_getClassHelper();
-		DistributedObjectAdapter* adapter = helper->createAdapter(obj);
+		uint64 objectid = obj->_getObjectID();
+
+		if (objectid == 0) {
+			objectid = objectManager->getNextFreeObjectID();
+			obj->_setObjectID(objectid);
+		}
 
 		namingDirectoryInterface->deploy(name, obj);
 
-		objectDirectory.add(obj->_getObjectID(), adapter);
+		if (objectManager->addObject(obj) != NULL) {
+			StringBuffer msg;
+			msg << "obejctid 0x" << hex << objectid << " already deployed";
+			error(msg.toString());
+			StackTrace::printStackTrace();
+		} else
+			info("object \'" + obj->_getName() + "\' deployed");
 
-		info("object \'" + obj->_getName() + "\' deployed");
 	} catch (Exception& e) {
 		error(e.getMessage());
 	} catch (...) {
@@ -147,7 +185,9 @@ DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
 	DistributedObject* obj = NULL;
 
 	try {
+
 		obj = namingDirectoryInterface->lookUp(name);
+
 	} catch (...) {
 		error("unreported Exception on lookUp()");
 	}
@@ -162,12 +202,20 @@ DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
 	DistributedObject* obj = NULL;
 
 	try {
-		obj = objectDirectory.get(objid);
+
+		obj = objectManager->getObject(objid);
+
+	} catch (Exception& e) {
+		error(e.getMessage());
+		e.printStackTrace();
 	} catch (...) {
 		error("unreported Exception on lookUp()");
 	}
 
 	unlock();
+
+	if (obj == NULL)
+		obj = objectManager->loadPersistentObject(objid);
 
 	return obj;
 }
@@ -182,7 +230,7 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 		obj = (DistributedObjectStub*) namingDirectoryInterface->undeploy(name);
 
 		if (obj != NULL) {
-			DistributedObjectAdapter* adapter = objectDirectory.remove(obj->_getObjectID());
+			DistributedObjectAdapter* adapter = objectManager->removeObject(obj->_getObjectID());
 
 			if (adapter != NULL) {
 				servant = adapter->getImplementation();
@@ -217,13 +265,22 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 	return adapter;
 }*/
 
+void DistributedObjectBroker::setCustomObjectManager(DOBObjectManager* manager) {
+	lock();
+
+	delete objectManager;
+	objectManager = manager;
+
+	unlock();
+}
+
 DistributedObjectAdapter* DistributedObjectBroker::getObjectAdapter(uint64 oid) {
 	lock();
 
 	DistributedObjectAdapter* adapter = NULL;
 
 	try {
-		adapter = objectDirectory.getAdapter(oid);
+		adapter = objectManager->getAdapter(oid);
 	} catch (...) {
 		error("unreported Exception on getObjectAdapter()");
 	}

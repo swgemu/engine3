@@ -53,7 +53,9 @@ DistributedObject* NamingDirectoryService::lookUp(const String& name) {
 		obj = helper->instantiateObject();
 				
 		obj->_setName(name);
-		obj->_setObjectID(objectid);			
+		obj->_setObjectID(objectid);
+
+		((DistributedObjectStub*)obj)->setDeployed(true);
 				
 		obj->_setNamingDirectory(this);
 	}		

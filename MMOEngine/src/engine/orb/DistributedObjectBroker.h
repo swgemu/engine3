@@ -39,6 +39,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace ORB {
 
+	class DOBObjectManager;
+
+	class DistributedObjectBrokerClient;
+
 	class DistributedObjectBroker : public StreamServiceThread, public Singleton<DistributedObjectBroker> {
 		static DistributedObjectBroker* impl;
 
@@ -47,9 +51,10 @@ namespace engine {
 
 		DistributedObjectClassHelperMap classMap;
 
-		DistributedObjectDirectory objectDirectory;
-
 		DOBPacketHandler* phandler;
+		DOBObjectManager* objectManager;
+
+		DistributedObjectBrokerClient* orbClient;
 
 	private:
 		DistributedObjectBroker();
@@ -93,6 +98,21 @@ namespace engine {
 
 		inline DOBPacketHandler* getPacketHandler() {
 			return phandler;
+		}
+
+		inline DistributedObjectBrokerClient* getOrbClient() {
+			return orbClient;
+		}
+
+		inline DOBObjectManager* getObjectManager() {
+			return objectManager;
+		}
+
+		// setters
+		void setCustomObjectManager(DOBObjectManager* manager);
+
+		inline void setOrbClient(DistributedObjectBrokerClient* client) {
+			orbClient = client;
 		}
 
 		friend class NamingDirectoryService;

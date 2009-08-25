@@ -16,7 +16,7 @@ DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBr
 }
 
 DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBroker* broker, const String& host) 
-		: StreamServiceClient(host, 44432) , Logger("DistributedObjectBroker") {
+		: StreamServiceClient(host, 44433) , Logger("DistributedObjectBroker") {
 	orb = broker;
 
 	try {
@@ -24,6 +24,7 @@ DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBr
 		info("connected to server \'" + host + "\'", true);
 	} catch (SocketException& e) {
 		error("unable to connect to \'" + host + "\'");
+		error(e.getMessage());
 	}
 }
 

@@ -28,8 +28,14 @@ namespace engine {
 		void handlePacket(DistributedObjectBrokerClient* client, Packet* pack);
 		
 		void handleObjectLookUpMessage(DistributedObjectBrokerClient* client, Packet* pack);
+		void handleObjectLookUpMessageByID(DistributedObjectBrokerClient* client, Packet* pack);
+
 		void handleObjectDeployMessage(DistributedObjectBrokerClient* client, Packet* pack);
 		void handleMethodInvocationMessage(DistributedObjectBrokerClient* client, Packet* pack);
+		void handleLoadPersistentObjectMessage(DistributedObjectBrokerClient* client, Packet* pack);
+
+		void handleUpdatePersistentObjectMessage(DistributedObjectBrokerClient* client, Packet* pack);
+		void handleGetNextFreeObjectIDMessage(DistributedObjectBrokerClient* client, Packet* pack);
 	};
 
   } // namespace ORB

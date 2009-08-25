@@ -11,7 +11,9 @@ DistributedObjectStub::DistributedObjectStub() : DistributedObject() {
 	_impl = NULL;
 		
 	deployed = false;
-	
+
+	_classHelper = NULL;
+
 	#ifdef TRACE_REFERENCING
 		finalizedTrace = NULL;
 	#endif

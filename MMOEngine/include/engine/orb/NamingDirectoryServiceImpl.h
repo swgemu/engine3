@@ -17,8 +17,6 @@ namespace engine {
 		NamingDirectoryService* rootNamingDirectory;
 
 		DistributedObjectNameMap objectNameMap;
-	
-		uint64 nextObjectID;
 		
 	public:
 		NamingDirectoryServiceImpl();
@@ -39,7 +37,7 @@ namespace engine {
 		inline void setRootNamingDirectory(NamingDirectoryService* directory) {
 			rootNamingDirectory = directory;
 		}
-		
+
 	};
 
   } // namespace ORB

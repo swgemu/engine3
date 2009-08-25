@@ -8,12 +8,18 @@ Distribution of this file for usage outside of Core3 is prohibited.
 DistributedObjectDirectory::DistributedObjectDirectory() {
 }
 
-void DistributedObjectDirectory::add(uint64 objid, DistributedObjectAdapter* adapter) {
-		objectMap.put(objid, adapter);
+DistributedObjectAdapter* DistributedObjectDirectory::add(uint64 objid, DistributedObjectAdapter* adapter) {
+	return objectMap.put(objid, adapter);
 }
 
 DistributedObject* DistributedObjectDirectory::get(uint64 objid) {
-	DistributedObjectAdapter* adapter = objectMap.get(objid);
+	DistributedObjectAdapter* adapter = NULL;
+
+	try {
+		adapter = objectMap.get(objid);
+	} catch (...) {
+
+	}
 
 	if (adapter != NULL)
 		return adapter->getStub();

@@ -44,14 +44,16 @@ namespace engine {
 		}
 
 		bool toString(String& str) {
-			if (ReferenceSlot<O>::object != NULL)
-				str = ReferenceSlot<O>::object->_getName();
+			if (ReferenceSlot<O>::get() != NULL)
+				str = String::valueOf((ReferenceSlot<O>::get())->_getObjectID());
+			else
+				str = String::valueOf(0);
 
 			return true;
 		}
 
 		bool parseFromString(const String& str, int version = 0) {
-			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(str);
+			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
 			ReferenceSlot<O>::updateObject((O) obj);
 
@@ -62,23 +64,21 @@ namespace engine {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			String name;
+			O object = ReferenceSlot<O>::get();
 
-			if (ReferenceSlot<O>::object != NULL)
-				name = ReferenceSlot<O>::object->_getName();
-
-			name.toBinaryStream(stream);
+			if (object != NULL)
+				stream->writeLong(object->_getObjectID());
+			else
+				stream->writeLong(0);
 
 			return true;
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			String name;
-			name.parseFromBinaryStream(stream);
+			uint64 oid = stream->readLong();
 
-			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(name);
-
-			ReferenceSlot<O>::updateObject((O) obj);
+			O obj = (O) DistributedObjectBroker::instance()->lookUp(oid);
+			*this = obj;
 
 			if (obj == NULL)
 				return false;

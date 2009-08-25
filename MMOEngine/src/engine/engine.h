@@ -62,6 +62,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "service/proto/packets/LoginServerMessage.h"
 
 #include "orb/DistributedObjectBroker.h"
+#include "orb/DOBObjectManager.h"
+#include "orb/DOBObjectManagerImplementation.h"
+
 
 #ifndef PLATFORM_WIN
 #include "db/Database.h"

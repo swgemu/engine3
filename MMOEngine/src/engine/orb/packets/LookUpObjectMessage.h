@@ -17,10 +17,20 @@ namespace engine {
 			insertInt(0x01);
 			insertAscii(name);
 		}
+
+		LookUpObjectMessage(uint64 objectid) : Packet(20) {
+			insertInt(0x02);
+			insertLong(objectid);
+		}
 	
 		static void parseObjectName(Packet* pack, String& name) {
 			pack->parseAscii(name);
 		}
+
+		static uint64 parseObjectID(Packet* pack) {
+			return pack->parseLong();
+		}
+
 	};
 
   } // namespace ORB

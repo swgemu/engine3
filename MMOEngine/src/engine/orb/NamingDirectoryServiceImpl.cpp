@@ -10,21 +10,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 NamingDirectoryServiceImpl::NamingDirectoryServiceImpl()
 		: NamingDirectoryService() {
 	rootNamingDirectory = NULL;
-
-	nextObjectID = 1;
 }
 
 NamingDirectoryServiceImpl::NamingDirectoryServiceImpl(const String& address)
 		: NamingDirectoryService() {
 	rootNamingDirectory = new NamingDirectoryService(address);
-
-	nextObjectID = 1;
 }
 
 void NamingDirectoryServiceImpl::deploy(DistributedObjectStub* stub) {
-	uint64 objectid = nextObjectID++;
-
 	String name = stub->_getName();
+	uint64 objectid = stub->_getObjectID();
 
 	if (name.isEmpty()) {
 		StringBuffer orbname;
@@ -37,17 +32,12 @@ void NamingDirectoryServiceImpl::deploy(DistributedObjectStub* stub) {
 
 	if (objectNameMap.put(name, stub) != NULL)
 		DistributedObjectBroker::instance()->error("object \'" + name + "\' already deployed");
-
-	stub->_setObjectID(objectid);
 }
 
 void NamingDirectoryServiceImpl::deploy(const String& name, DistributedObjectStub* stub) {
-	uint64 objectid = nextObjectID++;
-
 	if (objectNameMap.put(name, stub) != NULL)
 		DistributedObjectBroker::instance()->error("object \'" + name + "\' already deployed");
 
-	stub->_setObjectID(objectid);
 	stub->_setName(name);
 }
 

@@ -26,8 +26,6 @@ namespace engine {
 
 		SortedVector<QuadTreeEntry*> closeobjects;
 
-		uint64 objectID;
-
 		float radius;
 
 	public:
@@ -120,10 +118,10 @@ namespace engine {
 		virtual void notifyDissapear(QuadTreeEntry* obj) {
 		}
 
-		int compareTo(QuadTreeEntry* obj) const {
-			if (objectID < obj->objectID)
+		virtual int compareTo(QuadTreeEntry* obj) {
+			if (getObjectID() < obj->getObjectID())
 				return 1;
-			else if (objectID > obj->objectID)
+			else if (getObjectID() > obj->getObjectID())
 				return -1;
 			else
 				return 0;
@@ -137,14 +135,7 @@ namespace engine {
 			return closeobjects.size();
 		}
 
-		// setters and getters
-		inline void setObjectID(uint64 id) {
-			objectID = id;
-		}
-
-		inline uint64 getObjectID() {
-			return objectID;
-		}
+		virtual uint64 getObjectID() = 0;
 
 		friend class QuadTree;
 		friend class QuadTreeNode;
