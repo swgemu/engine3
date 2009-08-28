@@ -19,7 +19,7 @@ MySqlDatabase::~MySqlDatabase() {
 }
 
 void MySqlDatabase::connect(const String& dbname, const String& user, const String& passw, int port) {
-	lock();
+	Locker locker(this);
 
 	if (!mysql_init(&mysql))
 		error();
@@ -30,17 +30,13 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 	StringBuffer msg;
 	msg << "connected to " << host;
 	info(msg);
-
-	unlock();
 }
 
 void MySqlDatabase::executeStatement(const char* statement) {
-	lock();
+	Locker locker(this);
 
 	if (mysql_query(&mysql, statement))
 		error(statement);
-
-	unlock();
 }
 
 void MySqlDatabase::executeStatement(const String& statement) {
@@ -52,7 +48,7 @@ void MySqlDatabase::executeStatement(const StringBuffer& statement) {
 }
 
 ResultSet* MySqlDatabase::executeQuery(const char* statement) {
-	lock();
+	Locker locker(this);
 
 	if (mysql_query(&mysql, statement))
 		error(statement);
@@ -69,7 +65,6 @@ ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 
 	ResultSet* res = new ResultSet(&mysql, result);
 
-	unlock();
 	return res;
 }
 
@@ -82,19 +77,15 @@ ResultSet* MySqlDatabase::executeQuery(const StringBuffer& statement) {
 }
 
 void MySqlDatabase::commit() {
-	lock();
+	Locker locker(this);
 
 	mysql_commit(&mysql);
-
-	unlock();
 }
 
 void MySqlDatabase::autocommit(bool doCommit) {
-	lock();
+	Locker locker(this);
 
 	mysql_autocommit(&mysql, doCommit);
-
-	unlock();
 }
 
 void MySqlDatabase::close() {
@@ -109,8 +100,6 @@ void MySqlDatabase::error() {
 	msg << mysql_errno(&mysql) << ": " << mysql_error(&mysql);
 	Logger::error(msg);
 
-	unlock();
-
 	throw DatabaseException(msg.toString());
 }
 
@@ -118,8 +107,6 @@ void MySqlDatabase::error(const char* query) {
 	StringBuffer msg;
 	msg << "DatabaseException caused by query: " << query << "\n" << mysql_errno(&mysql) << ": " << mysql_error(&mysql);
 	//Logger::error(msg);
-
-	unlock();
 
 	throw DatabaseException(msg.toString());
 }

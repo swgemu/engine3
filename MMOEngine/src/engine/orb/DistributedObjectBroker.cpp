@@ -94,26 +94,17 @@ DistributedObjectBrokerClient* DistributedObjectBroker::createConnection(Socket*
 }
 
 void DistributedObjectBroker::registerClass(const String& name, DistributedObjectClassHelper* helper) {
-	lock();
+	Locker locker(this);
 
-	try {
-		classMap.put(name, helper);
-	} catch (...) {
-		error("unreported Exception on registerClass()");
-	}
-
-	unlock();
+	classMap.put(name, helper);
 }
 
 void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
-	lock();
+	Locker locker(this);
 
 	DistributedObjectServant* servant = obj->_getImplementation();
-	if (servant == NULL) {
-		unlock();
-
+	if (servant == NULL)
 		throw ObjectNotLocalException(obj);
-	}
 
 	try {
 		uint64 objectid = obj->_getObjectID();
@@ -132,25 +123,17 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 			StackTrace::printStackTrace();
 		} else
 			info("object \'" + obj->_getName() + "\' deployed");
-
 	} catch (Exception& e) {
 		error(e.getMessage());
-	} catch (...) {
-		error("unreported Exception on deploy()");
 	}
-
-	unlock();
 }
 
 void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
-	lock();
+	Locker locker(this);
 
 	DistributedObjectServant* servant = obj->_getImplementation();
-	if (servant == NULL) {
-		unlock();
-
+	if (servant == NULL)
 		throw ObjectNotLocalException(obj);
-	}
 
 	try {
 		uint64 objectid = obj->_getObjectID();
@@ -172,47 +155,21 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 
 	} catch (Exception& e) {
 		error(e.getMessage());
-	} catch (...) {
-		error("unreported Exception on deploy()");
 	}
-
-	unlock();
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
-	lock();
+	Locker locker(this);
 
-	DistributedObject* obj = NULL;
-
-	try {
-
-		obj = namingDirectoryInterface->lookUp(name);
-
-	} catch (...) {
-		error("unreported Exception on lookUp()");
-	}
-
-	unlock();
-	return obj;
+	return namingDirectoryInterface->lookUp(name);
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
-	lock();
+	Locker locker(this);
 
-	DistributedObject* obj = NULL;
+	DistributedObject* obj = objectManager->getObject(objid);
 
-	try {
-
-		obj = objectManager->getObject(objid);
-
-	} catch (Exception& e) {
-		error(e.getMessage());
-		e.printStackTrace();
-	} catch (...) {
-		error("unreported Exception on lookUp()");
-	}
-
-	unlock();
+	locker.release();
 
 	if (obj == NULL)
 		obj = objectManager->loadPersistentObject(objid);
@@ -221,30 +178,25 @@ DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
 }
 
 DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
-	lock();
+	Locker locker(this);
 
-	DistributedObjectStub* obj = NULL;
 	DistributedObjectServant* servant = NULL;
 
-	try {
-		obj = (DistributedObjectStub*) namingDirectoryInterface->undeploy(name);
+	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryInterface->undeploy(name);
 
-		if (obj != NULL) {
-			DistributedObjectAdapter* adapter = objectManager->removeObject(obj->_getObjectID());
+	if (obj != NULL) {
+		DistributedObjectAdapter* adapter = objectManager->removeObject(obj->_getObjectID());
 
-			if (adapter != NULL) {
-				servant = adapter->getImplementation();
+		if (adapter != NULL) {
+			servant = adapter->getImplementation();
 
-				delete adapter;
-			}
-
-			info("object \'" + obj->_getName() + "\' deployed");
+			delete adapter;
 		}
-	} catch (...) {
-		error("unreported Exception on undeploy()");
+
+		info("object \'" + obj->_getName() + "\' deployed");
 	}
 
-	unlock();
+	locker.release();
 
 	if (servant != NULL) {
 		info("deleting servant \'" + name + "\'");
@@ -266,25 +218,14 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 }*/
 
 void DistributedObjectBroker::setCustomObjectManager(DOBObjectManager* manager) {
-	lock();
+	Locker locker(this);
 
 	delete objectManager;
 	objectManager = manager;
-
-	unlock();
 }
 
 DistributedObjectAdapter* DistributedObjectBroker::getObjectAdapter(uint64 oid) {
-	lock();
+	Locker locker(this);
 
-	DistributedObjectAdapter* adapter = NULL;
-
-	try {
-		adapter = objectManager->getAdapter(oid);
-	} catch (...) {
-		error("unreported Exception on getObjectAdapter()");
-	}
-
-	unlock();
-	return adapter;
+	return objectManager->getAdapter(oid);
 }

@@ -27,6 +27,8 @@ namespace sys {
 	protected:
 		String lockName;
 
+		uint32 threadIDLockHolder;
+
 		int lockCount;
 		int currentCount;
 
@@ -40,6 +42,8 @@ namespace sys {
 
 	public:
 		Lockable() {
+			threadIDLockHolder = 0;
+
 			lockCount = 0;
 			currentCount = 0;
 
@@ -51,6 +55,8 @@ namespace sys {
 		}
 
 		Lockable(const String& s) {
+			threadIDLockHolder = 0;
+
 			lockName = s;
 
 			lockCount = 0;
@@ -111,6 +117,13 @@ namespace sys {
 				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
 							<< "] acquired " << modifier << "lock #" << cnt << "\n";
 		#endif
+
+		#ifdef TRACE_LOCKS
+			if (modifier[0] != 'r')
+				refreshTrace();
+		#endif
+
+			threadIDLockHolder = Thread::getCurrentThreadID();
 		}
 
 		inline void lockAcquired(Lockable* lockable, const char* modifier = "") {
@@ -122,9 +135,26 @@ namespace sys {
 							<< " (" << lockable->lockName << ")] acquired cross "
 							<< modifier << "lock #" << cnt << "\n";
 		#endif
+
+		#ifdef TRACE_LOCKS
+			if (modifier[0] != 'r')
+				refreshTrace();
+		#endif
+
+			threadIDLockHolder = Thread::getCurrentThreadID();
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
+			threadIDLockHolder = 0;
+
+		#ifdef TRACE_LOCKS
+			if (modifier[0] != 'r') {
+				deleteTrace();
+
+				refreshUnlockTrace();
+			}
+		#endif
+
 		#ifdef LOG_LOCKS
 			if (doLog)
 				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
@@ -202,6 +232,14 @@ namespace sys {
 		}
 
 	public:
+		inline bool isLockedByCurrentThread() {
+			return threadIDLockHolder == Thread::getCurrentThreadID();
+		}
+
+		inline uint32 getLockHolderThreadID() {
+			return threadIDLockHolder;
+		}
+
 		// setters
 		inline void setLockName(const String& s) {
 			lockName = s;

@@ -80,6 +80,8 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	BasePacketChekupEvent.$(OBJEXT) \
 	DistributedObjectBroker.$(OBJEXT) \
 	DistributedObjectDirectory.$(OBJEXT) \
+	DOBObjectManager.$(OBJEXT) \
+	DOBObjectManagerImplementation.$(OBJEXT) \
 	NamingDirectoryService.$(OBJEXT) \
 	NamingDirectoryServiceImpl.$(OBJEXT) \
 	DistributedObjectBrokerClient.$(OBJEXT) \
@@ -277,6 +279,8 @@ libengine3_a_SOURCES = \
 			engine/service/proto/events/BasePacketChekupEvent.cpp \
 			engine/orb/DistributedObjectBroker.cpp \
 			engine/orb/DistributedObjectDirectory.cpp \
+			engine/orb/DOBObjectManager.cpp \
+			engine/orb/DOBObjectManagerImplementation.cpp \
 			engine/orb/NamingDirectoryService.cpp \
 			engine/orb/NamingDirectoryServiceImpl.cpp \
 			engine/orb/DistributedObjectBrokerClient.cpp \
@@ -354,6 +358,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BaseProtocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BinaryData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BufferedReader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DOBObjectManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DOBObjectManagerImplementation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DOBPacketHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DatagramProxyClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DatagramProxyService.Po@am__quote@
@@ -1243,6 +1249,34 @@ DistributedObjectDirectory.obj: engine/orb/DistributedObjectDirectory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/orb/DistributedObjectDirectory.cpp' object='DistributedObjectDirectory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DistributedObjectDirectory.obj `if test -f 'engine/orb/DistributedObjectDirectory.cpp'; then $(CYGPATH_W) 'engine/orb/DistributedObjectDirectory.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/orb/DistributedObjectDirectory.cpp'; fi`
+
+DOBObjectManager.o: engine/orb/DOBObjectManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DOBObjectManager.o -MD -MP -MF $(DEPDIR)/DOBObjectManager.Tpo -c -o DOBObjectManager.o `test -f 'engine/orb/DOBObjectManager.cpp' || echo '$(srcdir)/'`engine/orb/DOBObjectManager.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/DOBObjectManager.Tpo $(DEPDIR)/DOBObjectManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/orb/DOBObjectManager.cpp' object='DOBObjectManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DOBObjectManager.o `test -f 'engine/orb/DOBObjectManager.cpp' || echo '$(srcdir)/'`engine/orb/DOBObjectManager.cpp
+
+DOBObjectManager.obj: engine/orb/DOBObjectManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DOBObjectManager.obj -MD -MP -MF $(DEPDIR)/DOBObjectManager.Tpo -c -o DOBObjectManager.obj `if test -f 'engine/orb/DOBObjectManager.cpp'; then $(CYGPATH_W) 'engine/orb/DOBObjectManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/orb/DOBObjectManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/DOBObjectManager.Tpo $(DEPDIR)/DOBObjectManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/orb/DOBObjectManager.cpp' object='DOBObjectManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DOBObjectManager.obj `if test -f 'engine/orb/DOBObjectManager.cpp'; then $(CYGPATH_W) 'engine/orb/DOBObjectManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/orb/DOBObjectManager.cpp'; fi`
+
+DOBObjectManagerImplementation.o: engine/orb/DOBObjectManagerImplementation.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DOBObjectManagerImplementation.o -MD -MP -MF $(DEPDIR)/DOBObjectManagerImplementation.Tpo -c -o DOBObjectManagerImplementation.o `test -f 'engine/orb/DOBObjectManagerImplementation.cpp' || echo '$(srcdir)/'`engine/orb/DOBObjectManagerImplementation.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/DOBObjectManagerImplementation.Tpo $(DEPDIR)/DOBObjectManagerImplementation.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/orb/DOBObjectManagerImplementation.cpp' object='DOBObjectManagerImplementation.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DOBObjectManagerImplementation.o `test -f 'engine/orb/DOBObjectManagerImplementation.cpp' || echo '$(srcdir)/'`engine/orb/DOBObjectManagerImplementation.cpp
+
+DOBObjectManagerImplementation.obj: engine/orb/DOBObjectManagerImplementation.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DOBObjectManagerImplementation.obj -MD -MP -MF $(DEPDIR)/DOBObjectManagerImplementation.Tpo -c -o DOBObjectManagerImplementation.obj `if test -f 'engine/orb/DOBObjectManagerImplementation.cpp'; then $(CYGPATH_W) 'engine/orb/DOBObjectManagerImplementation.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/orb/DOBObjectManagerImplementation.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/DOBObjectManagerImplementation.Tpo $(DEPDIR)/DOBObjectManagerImplementation.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/orb/DOBObjectManagerImplementation.cpp' object='DOBObjectManagerImplementation.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DOBObjectManagerImplementation.obj `if test -f 'engine/orb/DOBObjectManagerImplementation.cpp'; then $(CYGPATH_W) 'engine/orb/DOBObjectManagerImplementation.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/orb/DOBObjectManagerImplementation.cpp'; fi`
 
 NamingDirectoryService.o: engine/orb/NamingDirectoryService.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NamingDirectoryService.o -MD -MP -MF $(DEPDIR)/NamingDirectoryService.Tpo -c -o NamingDirectoryService.o `test -f 'engine/orb/NamingDirectoryService.cpp' || echo '$(srcdir)/'`engine/orb/NamingDirectoryService.cpp

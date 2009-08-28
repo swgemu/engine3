@@ -17,15 +17,28 @@ namespace sys {
 		bool doLock;
 
 	public:
-		Locker(Lockable* lockable, bool doLock = true) {
-			Locker::lockable = lockable;
-			Locker::doLock = doLock;
-
-			lockable->lock(doLock);
+		Locker(Lockable* lockable) {
+			acquire(lockable);
 		}
 
 		virtual ~Locker() {
-			lockable->unlock(doLock);
+			release();
+		}
+
+	protected:
+		inline void acquire(Lockable* lockable) {
+			Locker::doLock = !lockable->isLockedByCurrentThread();
+
+			Locker::lockable = lockable;
+			lockable->lock(doLock);
+		}
+
+	public:
+		inline void release() {
+			if (lockable != NULL) {
+				lockable->unlock(doLock);
+				lockable = NULL;
+			}
 		}
 	};
 

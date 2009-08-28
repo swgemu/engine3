@@ -17,33 +17,17 @@ namespace sys {
 	protected:
 		pthread_rwlock_t rwlock;
 
-		uint32 threadIDLockHolder;
-
 	public:
 		ReadWriteLock() : Lockable() {
 			pthread_rwlock_init(&rwlock, NULL);
-
-			threadIDLockHolder = 0;
 		}
 
 		ReadWriteLock(const String& s) : Lockable(s) {
 			pthread_rwlock_init(&rwlock, NULL);
-
-			threadIDLockHolder = 0;
 		}
 
 		virtual ~ReadWriteLock() {
 			pthread_rwlock_destroy(&rwlock);
-
-			if (trace != NULL) {
-				delete trace;
-				trace = NULL;
-			}
-
-			if (unlockTrace != NULL) {
-				delete unlockTrace;
-				unlockTrace = NULL;
-			}
 		}
 
 		inline void lock(bool doLock = true) {
@@ -79,8 +63,6 @@ namespace sys {
 		    	}
 
 				lockTime.updateToCurrentTime();
-
-				//refreshTrace();
 			#endif
 
 			lockAcquired("r");
@@ -110,10 +92,6 @@ namespace sys {
 		    	}
 
 				lockTime.updateToCurrentTime();
-
-				refreshTrace();
-
-				threadIDLockHolder = Thread::getCurrentThreadID();
 			#endif
 
 			lockAcquired("w");
@@ -154,12 +132,6 @@ namespace sys {
 						trace->print();
 					}
 				}
-
-				deleteTrace();
-
-				threadIDLockHolder = 0;
-
-				refreshUnlockTrace();
 			#endif
 
 			lockReleasing();

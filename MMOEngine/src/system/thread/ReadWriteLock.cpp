@@ -21,12 +21,6 @@ void ReadWriteLock::wlock(Mutex* lock) {
 	 	#endif
 	}
 
-	#ifdef TRACE_LOCKS
-		threadIDLockHolder = Thread::getCurrentThreadID();
-
-		refreshTrace();
-	#endif
-
 	lockAcquired(lock, "w");
 }
 
@@ -59,12 +53,6 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
        	#endif
 		}
 
-	#ifdef TRACE_LOCKS
-		threadIDLockHolder = Thread::getCurrentThreadID();
-
-		refreshTrace();
-	#endif
-
 	lockAcquired(lock, "w");
 }
 
@@ -75,12 +63,6 @@ void ReadWriteLock::lock(Lockable* lockable) {
   		lockable->unlock();
       	lockable->lock();
 	}
-
-	#ifdef TRACE_LOCKS
-		threadIDLockHolder = Thread::getCurrentThreadID();
-
-		refreshTrace();
-	#endif
 
 	lockAcquired(lockable, "w");
 }

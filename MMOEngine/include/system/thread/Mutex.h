@@ -16,19 +16,13 @@ namespace sys {
 	class Mutex : public Lockable {
 		pthread_mutex_t mutex;
 
-		bool locked;
-
 	public:
 		Mutex() : Lockable() {
 			pthread_mutex_init(&mutex, NULL);
-
-			locked = false;
 		}
 
 		Mutex(const String& s) : Lockable(s) {
 			pthread_mutex_init(&mutex, NULL);
-
-			locked = false;
 		}
 
 		virtual ~Mutex() {
@@ -60,11 +54,7 @@ namespace sys {
 		    	}
 
 				lockTime.updateToCurrentTime();
-
-				refreshTrace();
 			#endif
-
-			locked = true;
 
 			lockAcquired();
 		}
@@ -89,10 +79,6 @@ namespace sys {
 			  	#endif
 	   		}
 
-		    refreshTrace();
-
-			locked = true;
-
 			lockAcquired(m);
 		}
 
@@ -111,10 +97,6 @@ namespace sys {
 				lockable->lock();
 	   		}
 
-		    refreshTrace();
-
-			locked = true;
-
 			lockAcquired(lockable);
 		}
 
@@ -128,10 +110,6 @@ namespace sys {
 
 			lockReleasing();
 
-			deleteTrace();
-
-			locked = false;
-
 			int res = pthread_mutex_unlock(&mutex);
 			if (res != 0) {
 				System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
@@ -140,11 +118,6 @@ namespace sys {
 			}
 
 			lockReleased();
-		}
-
-		// setters
-		inline bool isLocked() {
-			return locked;
 		}
 
 		friend class Condition;
