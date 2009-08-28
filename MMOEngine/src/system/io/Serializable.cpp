@@ -108,44 +108,16 @@ void Serializable::deSerialize(ObjectInputStream* stream) {
 void Serializable::deSerialize(const String& str) {
 	String data;
 	try {
-		if (!getObjectData(str, data))
-			return;
 
-		int size = data.indexOf("=");
+		VectorMap<String, String> variableDataMap;
 
-		int comma = data.indexOf(",");
-
-		int variableSize;
-
-		if (comma != -1)
-			variableSize = Integer::valueOf(data.subString(size + 1, comma));
-		else
-			variableSize = Integer::valueOf(data.subString(size + 1, data.length() - 1));
+		int variableSize = getVariableDataMap(str, variableDataMap);
 
 		for (int i = 0; i < variableSize; ++i) {
-			data = data.subString(comma + 1);
+			VectorMapEntry<String, String>* entry = &variableDataMap.SortedVector<VectorMapEntry<String, String> >::get(i);
 
-			int equal = data.indexOf("=");
-
-			String variableName = data.subString(0, equal);
-			String variableData;
-
-			//System::out << data << "\n";
-
-			if (data.subString(equal + 1, equal + 2).indexOf("{") != -1) {
-				int lastSemiColon = getObjectData(data, variableData);
-
-				comma = lastSemiColon;
-			} else {
-				comma = data.indexOf(",");
-				if (comma != -1)
-					variableData = data.subString(equal + 1, comma);
-				else {
-					variableData = data.subString(equal + 1, data.length() - 1);
-
-					//System::out << variableData << "\n";
-				}
-			}
+			String variableName = entry->getKey();
+			String variableData = entry->getValue();
 
 			deSerializeVariable(variableName, variableData);
 		}
@@ -574,3 +546,62 @@ int Serializable::deSerializeAtomicType(void* address, int type, ObjectInputStre
 
 	return 1;
 }
+
+int Serializable::getVariableDataMap(const String& serializedData, VectorMap<String, String>& map) {
+	String data;
+	map.removeAll();
+
+	try {
+		if (!getObjectData(serializedData, data))
+			return 0;
+
+		int size = data.indexOf("=");
+
+		int comma = data.indexOf(",");
+
+		int variableSize;
+
+		if (comma != -1)
+			variableSize = Integer::valueOf(data.subString(size + 1, comma));
+		else
+			variableSize = Integer::valueOf(data.subString(size + 1, data.length() - 1));
+
+		for (int i = 0; i < variableSize; ++i) {
+			data = data.subString(comma + 1);
+
+			int equal = data.indexOf("=");
+
+			String variableName = data.subString(0, equal);
+			String variableData;
+
+			//System::out << data << "\n";
+
+			if (data.subString(equal + 1, equal + 2).indexOf("{") != -1) {
+				int lastSemiColon = getObjectData(data, variableData);
+
+				comma = lastSemiColon;
+			} else {
+				comma = data.indexOf(",");
+
+				if (comma != -1)
+					variableData = data.subString(equal + 1, comma);
+				else {
+					variableData = data.subString(equal + 1, data.length() - 1);
+
+					//System::out << variableData << "\n";
+				}
+			}
+
+			map.put(variableName, variableData);
+		}
+
+	} catch (Exception& e) {
+		System::out << e.getMessage();
+		e.printStackTrace();
+	} catch (...) {
+		System::out << "Unreported exception caught in int Serializable::getVariableDataMap(const String& serializedData, VectorMap<String, String>& map)\n";
+	}
+
+	return map.size();
+}
+

@@ -416,22 +416,22 @@ namespace sys {
 
 
 	   for (i = opening + 1; i < str.length(); ++i) {
-		   char opening = str.charAt(i);
+		   char openingCharacter = str.charAt(i);
 
-		   if (subString && opening == '\\') {
+		   if (subString && openingCharacter == '\\') {
 			   ++i;
 			   continue;
 		   }
 
-		   if (opening == '"') {
+		   if (openingCharacter == '"') {
 			   subString = !subString;
 			   continue;
 		   }
 
 		   if (!subString) {
-			   if (opening == '{') {
+			   if (openingCharacter == '{') {
 				   ++subObjects;
-			   } else if (opening == '}') {
+			   } else if (openingCharacter == '}') {
 				   --subObjects;
 			   }
 		   }

@@ -89,6 +89,8 @@ namespace sys {
 			static int deSerializeAtomicType(void* address, int type, const String& value);
 			static int deSerializeAtomicType(void* address, int type, ObjectInputStream* stream);
 
+			static int getVariableDataMap(const String& serializedData, VectorMap<String, String>& map);
+
 		private:
 			void deSerializeVariable(const String& nameAndVersion, const String& varData);
 
