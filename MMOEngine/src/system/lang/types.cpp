@@ -94,7 +94,7 @@ template<> bool TypeInfoAtomicBase<double>::toString(void* address, String& valu
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<const char*>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<const char*>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	int count = strlen((const char*)address);
 
 	stream->writeShort(count);
@@ -103,73 +103,73 @@ template<> bool TypeInfoAtomicBase<const char*>::toBinaryStream(void* address, O
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<bool>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<bool>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeBoolean(*(bool*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<char>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<char>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeSignedByte(*(char*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<uint8>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<uint8>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeByte(*(uint8*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<uint16>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<uint16>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeShort(*(uint16*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<uint32>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<uint32>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeInt(*(uint32*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<uint64>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<uint64>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeLong(*(uint64*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<int8>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<int8>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeSignedByte(*(int8*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<int16>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<int16>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeSignedShort(*(int16*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<int32>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<int32>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeSignedInt(*(int32*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<int64>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<int64>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeSignedLong(*(int64*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<float>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<float>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeFloat(*(float*)address);
 
 	return true;
 }
 
-template<> bool TypeInfoAtomicBase<double>::toBinaryStream(void* address, ObjectOutputStream* stream) {
+template<> bool TypeInfoAtomicBase<double>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeFloat(*(float*)address);
 
 	return true;

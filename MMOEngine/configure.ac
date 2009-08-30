@@ -18,6 +18,12 @@ case "$host_cpu-$host_os" in
       USER_INCLUDES_PATH="/usr/local/include"
       USER_LIBS_PATH="/usr/local/lib"
       ;;
+     *darwin*)
+      SYSTEM_INCLUDES="-I/opt/local/include"
+      SYSTEM_LIBS="-lpthread"
+      USER_INCLUDES_PATH="/opt/local/include"
+      USER_LIBS_PATH="/opt/local/lib"
+      ;;
     *cygwin*)
       SYSTEM_INCLUDES=""
       SYSTEM_LIBS="-lpthread -lwsock32"

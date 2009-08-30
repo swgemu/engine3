@@ -41,7 +41,7 @@ public:
 	static const int BOOL = 0x80;
 
 	static bool toString(void* address, sys::lang::String& value);
-	static bool toBinaryStream(void* address, ObjectOutputStream* stream);
+	static bool toBinaryStream(const void* address, ObjectOutputStream* stream);
 
 	static bool parseFromString(void* address, const sys::lang::String& value, int version = 0);
 	static bool parseFromBinaryStream(void* address, ObjectInputStream* value);
@@ -157,7 +157,7 @@ public:
 		return false;
 	}
 
-	static bool toBinaryStream(void* address, ObjectOutputStream* stream) {
+	static bool toBinaryStream(const void* address, ObjectOutputStream* stream) {
 		return false;
 	}
 
