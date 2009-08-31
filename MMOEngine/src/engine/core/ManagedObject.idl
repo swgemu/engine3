@@ -12,8 +12,6 @@ import system.io.ObjectInputStream;
 import system.io.ObjectOutputStream;
 
 class ManagedObject implements Serializable {
-	//private dereferenced ReadWriteLock lock;
-	
 	@nativeStub 
 	public native void lock(boolean doLock = true);
 	
