@@ -30,6 +30,7 @@ namespace lua {
 		void operator<<(bool boolean);
 		void operator<<(String& str);
 		void operator<<(const char* str);
+		void operator<<(void* pointer);
 
 		inline lua_State* getLuaState() {
 			return L;

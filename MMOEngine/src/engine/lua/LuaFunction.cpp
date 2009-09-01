@@ -63,3 +63,9 @@ void LuaFunction::operator<<(const char* str) {
 	lua_pushstring(L, str);
 }
 
+void LuaFunction::operator<<(void* ptr) {
+	numberOfArgs++;
+	lua_pushlightuserdata(L, ptr);
+}
+
+

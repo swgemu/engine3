@@ -14,6 +14,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "LuaObject.h"
 #include "LuaFunction.h"
+#include "Lunar.h"
+#include "Luna.h"
 
 namespace engine {
   namespace lua {

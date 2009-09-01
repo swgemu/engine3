@@ -76,6 +76,8 @@ MMOEngine/include/engine/log/Logger.h -text
 MMOEngine/include/engine/lua/Lua.h -text
 MMOEngine/include/engine/lua/LuaFunction.h -text
 MMOEngine/include/engine/lua/LuaObject.h -text
+MMOEngine/include/engine/lua/Luna.h -text
+MMOEngine/include/engine/lua/Lunar.h -text
 MMOEngine/include/engine/orb/DOBObjectManager.h -text
 MMOEngine/include/engine/orb/DOBObjectManagerImplementation.h -text
 MMOEngine/include/engine/orb/DOBPacketHandler.h -text
@@ -321,6 +323,8 @@ MMOEngine/src/engine/lua/LuaFunction.cpp -text
 MMOEngine/src/engine/lua/LuaFunction.h -text
 MMOEngine/src/engine/lua/LuaObject.cpp -text
 MMOEngine/src/engine/lua/LuaObject.h -text
+MMOEngine/src/engine/lua/Luna.h -text
+MMOEngine/src/engine/lua/Lunar.h -text
 MMOEngine/src/engine/orb/DOBObjectManager.cpp -text
 MMOEngine/src/engine/orb/DOBObjectManager.h -text
 MMOEngine/src/engine/orb/DOBObjectManagerImplementation.cpp -text
