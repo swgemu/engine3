@@ -104,14 +104,6 @@ Thread* Thread::getCurrentThread() {
 	#endif
 }
 
-uint32 Thread::getCurrentThreadID() {
-	#ifndef PLATFORM_WIN
-		return (uint32) pthread_self();
-	#else
-		return GetCurrentThreadId();
-	#endif
-}
-
 void Thread::setDetached() {
 	pthread_attr_setdetachstate(&attributes, PTHREAD_CREATE_DETACHED);
 }

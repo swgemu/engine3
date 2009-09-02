@@ -27,7 +27,7 @@ namespace sys {
 	protected:
 		String lockName;
 
-		uint32 threadIDLockHolder;
+		Thread* threadLockHolder;
 
 		int lockCount;
 		int currentCount;
@@ -42,7 +42,7 @@ namespace sys {
 
 	public:
 		Lockable() {
-			threadIDLockHolder = 0;
+			threadLockHolder = NULL;
 
 			lockCount = 0;
 			currentCount = 0;
@@ -55,7 +55,7 @@ namespace sys {
 		}
 
 		Lockable(const String& s) {
-			threadIDLockHolder = 0;
+			threadLockHolder = NULL;
 
 			lockName = s;
 
@@ -123,7 +123,7 @@ namespace sys {
 				refreshTrace();
 		#endif
 
-			threadIDLockHolder = Thread::getCurrentThreadID();
+			threadLockHolder = Thread::getCurrentThread();
 		}
 
 		inline void lockAcquired(Lockable* lockable, const char* modifier = "") {
@@ -141,11 +141,11 @@ namespace sys {
 				refreshTrace();
 		#endif
 
-			threadIDLockHolder = Thread::getCurrentThreadID();
+			threadLockHolder = Thread::getCurrentThread();
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
-			threadIDLockHolder = 0;
+			threadLockHolder = NULL;
 
 		#ifdef TRACE_LOCKS
 			if (modifier[0] != 'r') {
@@ -233,11 +233,11 @@ namespace sys {
 
 	public:
 		inline bool isLockedByCurrentThread() {
-			return threadIDLockHolder == Thread::getCurrentThreadID();
+			return threadLockHolder == Thread::getCurrentThread();
 		}
 
-		inline uint32 getLockHolderThreadID() {
-			return threadIDLockHolder;
+		inline Thread* getLockHolderThread() {
+			return threadLockHolder;
 		}
 
 		// setters

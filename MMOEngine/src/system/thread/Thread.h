@@ -61,8 +61,6 @@ namespace sys {
 
 		static Thread* getCurrentThread();
 
-		static uint32 getCurrentThreadID();
-
 		// setters
 		void setDetached();
 

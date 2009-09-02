@@ -221,7 +221,8 @@ public:
 			if (System::random(10) == 0)
 				TaskManager::instance()->scheduleTask(this, 100);
 
-			for (int i = 0; i < 0x10000000; ++i);
+			for (int i = 0; i < 0x10000000; ++i) ;
+
 		} catch (Exception& e) {
 			e.printStackTrace();
 		}

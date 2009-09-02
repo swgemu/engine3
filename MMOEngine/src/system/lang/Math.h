@@ -19,9 +19,9 @@ namespace sys {
 
 		static float sqrt(float number);
 
-		static float rsqrt(float number);
+		//static float rsqrt(float number);
 
-		static float fabs(float f);
+		//static float fabs(float f);
 
 		static double acos(double arg) {
 			return ::acos(arg);

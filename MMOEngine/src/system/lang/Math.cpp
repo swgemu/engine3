@@ -5,8 +5,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Math.h"
 
-float Math::sqrt(float number) { // from Q3
-	long i;
+float Math::sqrt(float number) { // from Q3 fix for 64 bit
+	/*long i;
 	float x, y;
 	const float f = 1.5F;
 
@@ -19,10 +19,11 @@ float Math::sqrt(float number) { // from Q3
 	y  = * (float*) &i;
 	y  = y * (f - (x * y * y));
 	y  = y * (f - (x * y * y));
-	return number * y;
+	return number * y;*/
+	return ::sqrt(number);
 }
 
-float Math::rsqrt(float number) {
+/*float Math::rsqrt(float number) {
 	long i;
 	float x2, y;
 	const float threehalfs = 1.5F;
@@ -42,4 +43,4 @@ float Math::fabs(float f) {
 	int tmp = *(int*)&f;
 	tmp &= 0x7FFFFFFF;
 	return *(float*) &tmp;
-}
+}*/
