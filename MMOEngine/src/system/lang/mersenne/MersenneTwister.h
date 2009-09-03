@@ -66,9 +66,9 @@
 #include <time.h>
 #include <math.h>
 
-#include "../../thread/Mutex.h"
+#include "../../thread/ThreadLocal.h"
 
-class MTRand: public Mutex {
+class MTRand {
 	// Data
 public:
 	typedef unsigned long uint32; // unsigned integer type, at least 32 bits
@@ -220,9 +220,6 @@ inline MTRand::uint32 MTRand::randInt() {
 }
 
 inline MTRand::uint32 MTRand::randInt(const MTRand::uint32& n) {
-
-	lock();
-
 	// Find which bits are used in n
 	// Optimized by Magnus Jonsson (magnus@smartelectronix.com)
 	uint32 used = n;
@@ -237,8 +234,6 @@ inline MTRand::uint32 MTRand::randInt(const MTRand::uint32& n) {
 	do
 		i = randInt() & used; // toss unused bits to shorten search
 	while (i > n);
-
-	unlock();
 
 	return i;
 }

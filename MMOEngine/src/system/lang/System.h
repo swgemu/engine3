@@ -13,6 +13,7 @@ typedef time_t utime;
 class MTRand;
 
 #include "../io/PrintStream.h"
+#include "../thread/ThreadLocal.h"
 
 namespace sys {
   namespace lang {
@@ -22,7 +23,7 @@ namespace sys {
 	#endif // CLK_TCK
 
 	class System {
-		static MTRand* mtrand;
+		static ThreadLocal<MTRand> mtrand;
 
 	public:
 		static PrintStream out;

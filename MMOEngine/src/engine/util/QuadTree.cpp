@@ -172,6 +172,9 @@ void QuadTree::insert(QuadTreeEntry *obj) {
 
 		if (QuadTree::doLog())
 			System::out << hex << "object [" << obj->getObjectID() <<  "] finished inserting\n";
+	} catch (Exception& e) {
+		System::out << "[QuadTree] error - " << e.getMessage() << "\n";
+		e.printStackTrace();
 	} catch (...) {
 		System::out << "[QuadTree] error on insert object\n";
 	}
@@ -202,6 +205,11 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 			System::out << hex << "object [" << obj->getObjectID() <<  "] finished updating\n";
 
 		return res;
+	} catch (Exception& e) {
+		System::out << "[QuadTree] error - " << e.getMessage() << "\n";
+		e.printStackTrace();
+
+		return false;
 	} catch (...) {
 		System::out << "[QuadTree] error on update object\n";
 		return false;
@@ -230,6 +238,7 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 
 	} catch (Exception& e) {
 		System::out << "[QuadTree] " << e.getMessage() << "\n";
+		e.printStackTrace();
 	} catch (...) {
 		System::out << "[QuadTree] error on inRange\n";
 	}
@@ -240,6 +249,7 @@ int QuadTree::inRange(float x, float y, float range) {
 		return _inRange(root, x, y, range);
 	} catch (Exception& e) {
 		System::out << "[QuadTree] " << e.getMessage() << "\n";
+		e.printStackTrace();
 	} catch (...) {
 		System::out << "[QuadTree] error on inRange\n";
 	}
