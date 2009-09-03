@@ -257,6 +257,7 @@ MMOEngine/include/system/thread/Locker.h -text
 MMOEngine/include/system/thread/Mutex.h -text
 MMOEngine/include/system/thread/ReadWriteLock.h -text
 MMOEngine/include/system/thread/Thread.h -text
+MMOEngine/include/system/thread/ThreadLocal.h -text
 MMOEngine/include/system/util/AdvancedBinaryHeap.h -text
 MMOEngine/include/system/util/ArrayQueue.h -text
 MMOEngine/include/system/util/BinaryHeap.h -text
@@ -547,6 +548,8 @@ MMOEngine/src/system/thread/ReadWriteLock.cpp -text
 MMOEngine/src/system/thread/ReadWriteLock.h -text
 MMOEngine/src/system/thread/Thread.cpp -text
 MMOEngine/src/system/thread/Thread.h -text
+MMOEngine/src/system/thread/ThreadLocal.cpp -text
+MMOEngine/src/system/thread/ThreadLocal.h -text
 MMOEngine/src/system/util/AdvancedBinaryHeap.cpp -text
 MMOEngine/src/system/util/AdvancedBinaryHeap.h -text
 MMOEngine/src/system/util/ArrayQueue.h -text

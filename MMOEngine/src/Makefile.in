@@ -55,7 +55,7 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	UnicodeString.$(OBJEXT) Math.$(OBJEXT) StackTrace.$(OBJEXT) \
 	types.$(OBJEXT) Integer.$(OBJEXT) \
 	ArrayIndexOutOfBoundsException.$(OBJEXT) Thread.$(OBJEXT) \
-	ReadWriteLock.$(OBJEXT) Socket.$(OBJEXT) \
+	ThreadLocal.$(OBJEXT) ReadWriteLock.$(OBJEXT) Socket.$(OBJEXT) \
 	SocketAddress.$(OBJEXT) InetAddress.$(OBJEXT) \
 	NetworkInterface.$(OBJEXT) Packet.$(OBJEXT) Stream.$(OBJEXT) \
 	File.$(OBJEXT) BufferedReader.$(OBJEXT) \
@@ -231,6 +231,7 @@ libengine3_a_SOURCES = \
 			system/lang/Integer.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/thread/Thread.cpp \
+			system/thread/ThreadLocal.cpp \
 			system/thread/ReadWriteLock.cpp \
 			system/net/Socket.cpp \
 			system/net/SocketAddress.cpp \
@@ -419,6 +420,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TaskScheduler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TaskWorkerThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Thread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreadLocal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TimedTaskQueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeTokenizer.Po@am__quote@
@@ -591,6 +593,20 @@ Thread.obj: system/thread/Thread.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/thread/Thread.cpp' object='Thread.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Thread.obj `if test -f 'system/thread/Thread.cpp'; then $(CYGPATH_W) 'system/thread/Thread.cpp'; else $(CYGPATH_W) '$(srcdir)/system/thread/Thread.cpp'; fi`
+
+ThreadLocal.o: system/thread/ThreadLocal.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ThreadLocal.o -MD -MP -MF $(DEPDIR)/ThreadLocal.Tpo -c -o ThreadLocal.o `test -f 'system/thread/ThreadLocal.cpp' || echo '$(srcdir)/'`system/thread/ThreadLocal.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ThreadLocal.Tpo $(DEPDIR)/ThreadLocal.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/thread/ThreadLocal.cpp' object='ThreadLocal.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ThreadLocal.o `test -f 'system/thread/ThreadLocal.cpp' || echo '$(srcdir)/'`system/thread/ThreadLocal.cpp
+
+ThreadLocal.obj: system/thread/ThreadLocal.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ThreadLocal.obj -MD -MP -MF $(DEPDIR)/ThreadLocal.Tpo -c -o ThreadLocal.obj `if test -f 'system/thread/ThreadLocal.cpp'; then $(CYGPATH_W) 'system/thread/ThreadLocal.cpp'; else $(CYGPATH_W) '$(srcdir)/system/thread/ThreadLocal.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ThreadLocal.Tpo $(DEPDIR)/ThreadLocal.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='system/thread/ThreadLocal.cpp' object='ThreadLocal.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ThreadLocal.obj `if test -f 'system/thread/ThreadLocal.cpp'; then $(CYGPATH_W) 'system/thread/ThreadLocal.cpp'; else $(CYGPATH_W) '$(srcdir)/system/thread/ThreadLocal.cpp'; fi`
 
 ReadWriteLock.o: system/thread/ReadWriteLock.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ReadWriteLock.o -MD -MP -MF $(DEPDIR)/ReadWriteLock.Tpo -c -o ReadWriteLock.o `test -f 'system/thread/ReadWriteLock.cpp' || echo '$(srcdir)/'`system/thread/ReadWriteLock.cpp
