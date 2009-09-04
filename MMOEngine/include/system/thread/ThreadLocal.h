@@ -16,12 +16,12 @@ namespace sys {
 		pthread_key_t dataKey;
 	#endif
 
+		bool initialized;
+
 	public:
 		ThreadLocal();
 
-		virtual ~ThreadLocal() {
-
-		}
+		virtual ~ThreadLocal();
 
 		T* get();
 
@@ -29,29 +29,36 @@ namespace sys {
 
 		void set(const T* value);
 
+	protected:
+		void createKey();
+
+		void deleteKey();
+
 		virtual T* initValue() {
 			return NULL;
 		}
+
+		T* getValue();
 	};
 
 	template<class T> ThreadLocal<T>::ThreadLocal() {
-	#ifdef PLATFORM_UNIX
-		if (pthread_key_create(&dataKey, NULL) != 0) {
-			raise(SIGSEGV);
-		}
+		createKey();
+	}
 
-	#endif
-
-		T* value = initValue();
-		set(value);
+	template<class T> ThreadLocal<T>::~ThreadLocal() {
+		deleteKey();
 	}
 
 	template<class T> T* ThreadLocal<T>::get() {
-	#ifdef PLATFORM_UNIX
-		return (T*) pthread_getspecific(dataKey);
-	#else
-		return NULL;
-	#endif
+		T* value = getValue();
+
+		if (value == NULL) {
+			value = initValue();
+
+			set(value);
+		}
+
+		return value;
 	}
 
 	template<class T> void ThreadLocal<T>:: remove() {
@@ -64,6 +71,27 @@ namespace sys {
 	#endif
 	}
 
+	template<class T> void ThreadLocal<T>::createKey() {
+	#ifdef PLATFORM_UNIX
+		if (pthread_key_create(&dataKey, NULL) != 0) {
+			raise(SIGSEGV);
+		}
+	#endif
+	}
+
+	template<class T> void ThreadLocal<T>::deleteKey() {
+	#ifdef PLATFORM_UNIX
+		pthread_key_delete(&dataKey);
+	#endif
+	}
+
+	template<class T> T* ThreadLocal<T>::getValue() {
+	#ifdef PLATFORM_UNIX
+		return (T*) pthread_getspecific(dataKey);
+	#else
+		return NULL;
+	#endif
+	}
  }
 }
 

@@ -25,7 +25,6 @@ libengine3_a_SOURCES = \
 			system/lang/Integer.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/thread/Thread.cpp \
-			system/thread/ThreadLocal.cpp \
 			system/thread/ReadWriteLock.cpp \
 			system/net/Socket.cpp \
 			system/net/SocketAddress.cpp \
