@@ -16,8 +16,6 @@ namespace sys {
 		pthread_key_t dataKey;
 	#endif
 
-		bool initialized;
-
 	public:
 		ThreadLocal();
 
