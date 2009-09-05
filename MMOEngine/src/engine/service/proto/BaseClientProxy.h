@@ -17,6 +17,7 @@ namespace engine {
 	class BaseClientProxy : public BaseClient {
 	public:
 		BaseClientProxy(Socket* sock, SocketAddress& addr);
+		BaseClientProxy(const String& addr, int port);
 
 		virtual ~BaseClientProxy() {
 			socket = NULL;

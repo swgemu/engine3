@@ -36,8 +36,10 @@ namespace sys {
 	public:
 		//! allocates a new Thread
 		Thread();
-
 		virtual ~Thread();
+
+		//! Initializes main thread local key
+		static void initializeMainThread(Thread* mainThread);
 
 		//! causes this thread to begin execution
 		void start();

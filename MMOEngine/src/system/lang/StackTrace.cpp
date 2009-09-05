@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "StackTrace.h"
 
+char* StackTrace::binaryName = "core3";
+
 StackTrace::StackTrace() {
 	#ifdef PLATFORM_UNIX
 		count = backtrace(symbols, 25);
@@ -23,7 +25,7 @@ void StackTrace::print() {
 	#ifdef PLATFORM_UNIX
 		#ifdef LINE_TRACING
 			StringBuffer command;
-			command << "/usr/bin/addr2line -e core3";
+			command << "/usr/bin/addr2line -e " << binaryName;
 		#else
 		char** tracedSymbols = backtrace_symbols(symbols, count);
 

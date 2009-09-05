@@ -14,7 +14,7 @@
 namespace engine {
   namespace core {
 
-	class Core {
+	class Core : public Thread {
 	public:
 		Core() {
 			initializeContext();
@@ -24,6 +24,10 @@ namespace engine {
 			initializeContext();
 
 			Logger::setGlobalFileLogger(globallogfile);
+		}
+
+		void run() {
+
 		}
 
 		virtual ~Core() {
@@ -52,6 +56,8 @@ namespace engine {
 
 			TaskManager* taskManager = getTaskManager();
 			taskManager->initialize();
+
+			Thread::initializeMainThread(this);
 		}
 
 		void finalizeContext() {

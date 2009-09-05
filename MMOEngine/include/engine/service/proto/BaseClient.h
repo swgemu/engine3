@@ -103,7 +103,7 @@ namespace engine {
 
 		bool connect();
 
-		void notifyReceivedSeed(sys::uint32 seed);
+		virtual void notifyReceivedSeed(sys::uint32 seed);
 
 		void disconnect(const String& msg, bool doLock);
 

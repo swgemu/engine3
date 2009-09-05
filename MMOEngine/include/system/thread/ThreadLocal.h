@@ -81,7 +81,7 @@ namespace sys {
 
 	template<class T> void ThreadLocal<T>::deleteKey() {
 	#ifdef PLATFORM_UNIX
-		pthread_key_delete(&dataKey);
+		pthread_key_delete(dataKey);
 	#endif
 	}
 

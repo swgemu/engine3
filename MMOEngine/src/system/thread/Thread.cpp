@@ -12,6 +12,12 @@ void Thread::initializeThreading() {
 	pthread_key_create(&threadDataKey, NULL);
 }
 
+void Thread::initializeMainThread(Thread* mainThread) {
+	pthread_once(&initThread, initializeThreading);
+
+	pthread_setspecific(threadDataKey, mainThread);
+}
+
 void* Thread::executeThread(void* th) {
 	pthread_once(&initThread, initializeThreading);
 

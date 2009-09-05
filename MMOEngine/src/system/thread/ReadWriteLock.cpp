@@ -33,7 +33,7 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
 	}
 
 	#ifdef TRACE_LOCKS
-		if (lock->threadIDLockHolder == 0) {
+		if (lock->threadLockHolder == NULL) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking to an unlocked mutex [" << lock->lockName << "]\n";
 			StackTrace::printStackTrace();
 

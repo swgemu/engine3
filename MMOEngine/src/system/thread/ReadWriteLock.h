@@ -112,7 +112,7 @@ namespace sys {
 				return;
 
 			#if defined(TRACE_LOCKS) && !defined(PLATFORM_CYGWIN)
-				if (threadIDLockHolder == 0) {
+				if (threadLockHolder == NULL) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 							<< " unlocking an unlocked mutex\n";
 					StackTrace::printStackTrace();
@@ -123,7 +123,7 @@ namespace sys {
 					}
 
 					raise(SIGSEGV);
-				} else if (threadIDLockHolder != Thread::getCurrentThreadID()) {
+				} else if (threadLockHolder != Thread::getCurrentThread()) {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
 					StackTrace::printStackTrace();
 

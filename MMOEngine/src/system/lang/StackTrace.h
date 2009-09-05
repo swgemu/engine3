@@ -30,6 +30,8 @@ namespace sys {
 
 		int count;
 
+		static char* binaryName;
+
 	public:
 		StackTrace();
 
@@ -42,6 +44,10 @@ namespace sys {
 		static void printStackTrace();
 
 		bool equals(const StackTrace& trace);
+
+		static void setBinaryName(char* name) {
+			binaryName = name;
+		}
 	};
 
   } // namespace lang
