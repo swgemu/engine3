@@ -37,6 +37,7 @@ namespace engine {
     namespace proto {
 
 	class BaseClientNetStatusCheckupEvent;
+	class BaseClientNetStatusRequestEvent;
 
 	class BaseClient : public DatagramServiceClient, public BaseProtocol, public ReentrantTask, public Mutex {
 	protected:
@@ -45,6 +46,7 @@ namespace engine {
 		Vector<BasePacket*> sequenceBuffer;
 		BasePacketChekupEvent* checkupEvent;
 		BaseClientNetStatusCheckupEvent* netcheckupEvent;
+		BaseClientNetStatusRequestEvent* netRequestEvent;
 
 		BaseMultiPacket* bufferedPacket;
 		BaseFragmentedPacket* fragmentedPacket;
@@ -64,6 +66,7 @@ namespace engine {
 
 	public:
 		static const int NETSTATUSCHECKUP_TIMEOUT = 50000;
+		static const int NETSTATUSREQUEST_TIME = 5000;
 
 	public:
 		BaseClient(const String& addr, int port);
@@ -100,6 +103,7 @@ namespace engine {
 
 		void updateNetStatus();
 		bool checkNetStatus();
+		void requestNetStatus();
 
 		bool connect();
 

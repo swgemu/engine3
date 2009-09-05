@@ -139,6 +139,7 @@ MMOEngine/include/engine/service/proto/PacketHandler.h -text
 MMOEngine/include/engine/service/proto/StandaloneBaseMessage.h -text
 MMOEngine/include/engine/service/proto/events/BaseClientCleanupEvent.h -text
 MMOEngine/include/engine/service/proto/events/BaseClientNetStatusCheckupEvent.h -text
+MMOEngine/include/engine/service/proto/events/BaseClientNetStatusRequestEvent.h -text
 MMOEngine/include/engine/service/proto/events/BasePacketChekupEvent.h -text
 MMOEngine/include/engine/service/proto/packets/AcknowledgeMessage.h -text
 MMOEngine/include/engine/service/proto/packets/AcknowledgeOkMessage.h -text
@@ -414,6 +415,7 @@ MMOEngine/src/engine/service/proto/StandaloneBaseMessage.h -text
 MMOEngine/src/engine/service/proto/events/BaseClientCleanUpEvent.hpp -text
 MMOEngine/src/engine/service/proto/events/BaseClientCleanupEvent.h -text
 MMOEngine/src/engine/service/proto/events/BaseClientNetStatusCheckupEvent.h -text
+MMOEngine/src/engine/service/proto/events/BaseClientNetStatusRequestEvent.h -text
 MMOEngine/src/engine/service/proto/events/BasePacketChekupEvent.cpp -text
 MMOEngine/src/engine/service/proto/events/BasePacketChekupEvent.h -text
 MMOEngine/src/engine/service/proto/packets/AcknowledgeMessage.h -text

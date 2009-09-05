@@ -7,16 +7,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BaseClientProxy.h"
 
-BaseClientProxy::BaseClientProxy(const String& addr, int port) : BaseClient(addr, port) {
-	bufferedPacket = NULL;
-	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
-
-	//setLockName("ClientProxy " + ip);
-   	//setMutexLogging(false);
-
-   	//setFileLogger("log/" + addr.getFullPrintableIPAddress());
-}
-
 BaseClientProxy::BaseClientProxy(Socket* sock, SocketAddress& addr) : BaseClient(sock, addr) {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);

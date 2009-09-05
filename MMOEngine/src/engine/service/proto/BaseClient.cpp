@@ -9,12 +9,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "events/BaseClientNetStatusCheckupEvent.h"
 #include "events/BaseClientCleanupEvent.h"
+#include "events/BaseClientNetStatusRequestEvent.h"
 
 #include "packets/SessionIDRequestMessage.h"
 #include "packets/SessionIDResponseMessage.h"
 #include "packets/AcknowledgeMessage.h"
 #include "packets/OutOfOrderMessage.h"
 #include "packets/DisconnectMessage.h"
+#include "packets/NetStatusRequestMessage.h"
 
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
 		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
@@ -25,6 +27,7 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 
 	checkupEvent = NULL;
 	netcheckupEvent = NULL;
+	netRequestEvent = NULL;
 
 	setLogging(true);
    	setGlobalLogging(true);
@@ -38,6 +41,7 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 
 	checkupEvent = NULL;
 	netcheckupEvent = NULL;
+	netRequestEvent = NULL;
 
   	ip = addr.getFullIPAddress();
    	setLockName("Client " + ip);
@@ -68,6 +72,13 @@ BaseClient::~BaseClient() {
 		netcheckupEvent = NULL;
 	}
 
+	if (netRequestEvent != NULL) {
+		netRequestEvent->cancel();
+
+		delete netRequestEvent;
+		netRequestEvent = NULL;
+	}
+
 	info("deleted");
 }
 
@@ -79,9 +90,13 @@ void BaseClient::initialize() {
 
     hasError = false;
    	disconnected = false;
+   	clientDisconnected = false;
+
    	acknowledgedServerSequence = -1;
 	realServerSequence = 0;
 	resentPackets = 0;
+
+	service = NULL;
 
 	checkupEvent = new BasePacketChekupEvent(this);
 	netcheckupEvent = new BaseClientNetStatusCheckupEvent(this);
@@ -89,7 +104,9 @@ void BaseClient::initialize() {
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
-   	netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
+   	//netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
+
+   	netRequestEvent = new BaseClientNetStatusRequestEvent(this);
 }
 
 void BaseClient::close() {
@@ -722,6 +739,30 @@ void BaseClient::updateNetStatus() {
 	unlock();
 }
 
+void BaseClient::requestNetStatus() {
+	lock();
+
+	try {
+		if (!isAvailable()) {
+			unlock();
+
+			return;
+		}
+
+		uint16 tick = System::random(0xFFF);
+
+		BasePacket* resp = new NetStatusRequestMessage(tick);
+		sendPacket(resp, false);
+
+		netRequestEvent->reschedule(NETSTATUSREQUEST_TIME);
+
+	} catch (...) {
+		disconnect("unreported exception caught in BaseClient::requestNetStatus()", true);
+	}
+
+	unlock();
+}
+
 bool BaseClient::checkNetStatus() {
 	lock();
 
@@ -771,6 +812,8 @@ bool BaseClient::connect() {
 		}
 
 		info("connection established");
+
+		netRequestEvent->schedule(NETSTATUSREQUEST_TIME);
 
 		unlock();
 	} catch (...) {
