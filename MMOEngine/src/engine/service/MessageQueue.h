@@ -17,21 +17,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace service {
 
-	class MessageQueue : public SortedVector<Message*>, public Condition, public Logger {
+	class MessageQueue : public Vector<Message*>, public Condition, public Logger {
 		Mutex* condMutex;
-	
+
 		bool blocked;
 		bool waitingForMessage;
-		
+
 	public:
 		MessageQueue();
-		
+
 		virtual ~MessageQueue();
-		
+
 		void push(Message* msg);
-			
+
 		Message* pop();
-		
+
 		void flush();
 	};
 

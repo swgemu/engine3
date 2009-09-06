@@ -5,10 +5,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MessageQueue.h"
 
-MessageQueue::MessageQueue() : SortedVector<Message*>(100, 50), Condition(), Logger("MessageQueue") {
+MessageQueue::MessageQueue() : Vector<Message*>(100, 50), Condition(), Logger("MessageQueue") {
 	blocked = false;
 	waitingForMessage = false;
-		
+
 	condMutex = new Mutex("MessageQueue");
 
 	setLogging(false);
@@ -26,28 +26,28 @@ void MessageQueue::push(Message* msg) {
 		condMutex->unlock();
 		return;
 	}
-		
-	SortedVector<Message*>::put(msg);
 
-	#ifdef TRACE_MESSAGES		
+	Vector<Message*>::add(msg);
+
+	#ifdef TRACE_MESSAGES
 		StringBuffer s;
 		s << size() << " messages in queue";
 		info(s);
 	#endif
-		
+
 	if (waitingForMessage)
 		signal(condMutex);
-		
+
 	condMutex->unlock();
 }
-	
+
 Message* MessageQueue::pop() {
 	condMutex->lock();
 
-	#ifdef TRACE_MESSAGES		
+	#ifdef TRACE_MESSAGES
 		info("waiting message");
 	#endif
-		
+
 	while (isEmpty()) {
 		if (blocked) {
 			condMutex->unlock();
@@ -60,25 +60,25 @@ Message* MessageQueue::pop() {
 
 	Message* msg = remove(0);
 
-	#ifdef TRACE_MESSAGES		
+	#ifdef TRACE_MESSAGES
 		StringBuffer s;
 		s << size() << " messages remained in queue";
 		info(s);
 	#endif
-		
+
 	waitingForMessage = false;
 	condMutex->unlock();
-		
+
 	return msg;
 }
-	
+
 void MessageQueue::flush() {
 	condMutex->lock();
 
 	blocked = true;
-		
+
 	if (waitingForMessage)
 		signal(condMutex);
-		
+
 	condMutex->unlock();
 }
