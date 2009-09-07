@@ -66,8 +66,7 @@ namespace sys {
 			#ifdef PLATFORM_MAC
 				struct timeval tv;
 				gettimeofday(&tv, NULL);
-				ts.tv_sec = tv.tv_sec;
-				ts.tv_nsec = tv.tv_usec * 1000;
+				TIMEVAL_TO_TIMESPEC(&tv, &ts);
 
 			#elif !defined(PLATFORM_WIN)
 				clock_gettime(CLOCK_REALTIME, &ts);
@@ -141,8 +140,7 @@ namespace sys {
 				gettimeofday(&tv, NULL);
 
 				struct timespec cts;
-				cts.tv_sec = tv.tv_sec;
-				cts.tv_nsec = tv.tv_usec * 1000;
+				TIMEVAL_TO_TIMESPEC(&tv, &cts);
 
 				uint64 time;
 

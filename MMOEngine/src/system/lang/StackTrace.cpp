@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "StackTrace.h"
 
-char* StackTrace::binaryName = "core3";
+String StackTrace::binaryName = "core3";
 
 StackTrace::StackTrace() {
 	#ifdef PLATFORM_UNIX
