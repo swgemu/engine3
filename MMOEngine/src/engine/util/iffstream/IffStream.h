@@ -30,8 +30,7 @@ namespace engine {
 		 IffStream(const String& filename);
 		 ~IffStream();
 
-		 bool load();
-		 void loadMainChunks(char* dataBuffer);
+		 bool parseChunks();
 
 		 template <class K> void registerChunk(uint32 key) {
 			 chunkFactory.registerObject<K>(key);
@@ -82,7 +81,7 @@ namespace engine {
 		 void close();
 
 	 private:
-		 void loadChunks(Chunk* chunk, char* currOffs);
+		 void loadMainChunks(char* dataBuffer);
 	 };
  }
 }

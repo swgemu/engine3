@@ -14,9 +14,9 @@ IffStream::IffStream(const String& filename) : FileInputStream(new File(filename
 
 	lastOpenedChunk = -1;
 
-	setLoggingName("IffStream " + filename);
+	dataSize = 0;
 
-	load();
+	setLoggingName("IffStream " + filename);
 }
 
 IffStream::~IffStream() {
@@ -26,7 +26,7 @@ IffStream::~IffStream() {
 		delete mainChunks.remove(0);
 }
 
-bool IffStream::load() {
+bool IffStream::parseChunks() {
 	dataSize = file->size();
 
 	if (dataSize < 8) {
