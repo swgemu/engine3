@@ -192,6 +192,45 @@ namespace engine {
 		VectorMap<UniqueIdType, CreateObjectFunc> objectCreator;
 	};
 
+	template<typename BaseClassType, typename Param1Type, typename Param2Type, typename Param3Type, typename Param4Type, typename ClassType> BaseClassType CreateObject(Param1Type param1, Param2Type param2, Param3Type param3, Param4Type param4) {
+		return new ClassType(param1, param2, param3, param4);
+	}
+
+	template<typename BaseClassType, typename Param1Type, typename Param2Type, typename Param3Type, typename Param4Type, typename UniqueIdType>
+	class ObjectFactory<BaseClassType (Param1Type, Param2Type, Param3Type, Param4Type), UniqueIdType>
+	{
+	protected:
+		typedef BaseClassType (*CreateObjectFunc)(Param1Type, Param2Type, Param3Type, Param4Type);
+
+	public:
+		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2, Param3Type param3, Param4Type param4) {
+			if (!objectCreator.contains(uniqueID))
+				return NULL;
+
+			return objectCreator.get(uniqueID)(param1, param2, param3, param4);
+		}
+
+		template<typename ClassType> bool registerObject(UniqueIdType uniqueID) {
+			if (objectCreator.contains(uniqueID))
+				return false;
+
+			objectCreator.put(uniqueID, &CreateObject<BaseClassType, Param1Type, Param2Type, Param3Type, Param4Type, ClassType>);
+
+			return true;
+		}
+
+		bool unregisterObject(UniqueIdType uniqueID) {
+			return objectCreator.drop(uniqueID);
+		}
+
+		bool containsObject(UniqueIdType uniqueID) {
+			return objectCreator.contains(uniqueID);
+		}
+
+	protected:
+		VectorMap<UniqueIdType, CreateObjectFunc> objectCreator;
+	};
+
 	}
 }
 

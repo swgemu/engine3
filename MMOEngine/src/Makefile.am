@@ -86,6 +86,9 @@ libengine3_a_SOURCES = \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
 			engine/util/QuadTree.cpp \
+			engine/util/iffstream/IffStream.cpp \
+			engine/util/iffstream/chunks/Chunk.cpp \
+			engine/util/iffstream/chunks/form/Form.cpp \
 			engine/db/MySqlDatabase.cpp \
 			engine/db/BinaryData.cpp \
 			engine/log/Logger.cpp \

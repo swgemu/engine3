@@ -62,6 +62,18 @@ int File::seek(uint32 offset, int origin) {
 	return fseek(fileDescriptor, offset, origin);
 }
 
+int File::size() {
+	int currentOffset = ftell(fileDescriptor);
+
+	fseek(fileDescriptor, 0L, SEEK_END);
+
+	int size = ftell(fileDescriptor);
+
+	fseek(fileDescriptor, currentOffset, SEEK_SET);
+
+	return size;
+}
+
 bool File::setReadOnly() {
 	return open(File::READONLY_ACCESS);
 }

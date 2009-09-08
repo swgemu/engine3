@@ -30,7 +30,7 @@ namespace sys {
 
 		int count;
 
-		static char* binaryName;
+		static String binaryName;
 
 	public:
 		StackTrace();
@@ -45,7 +45,7 @@ namespace sys {
 
 		bool equals(const StackTrace& trace);
 
-		static void setBinaryName(char* name) {
+		static void setBinaryName(const String& name) {
 			binaryName = name;
 		}
 	};

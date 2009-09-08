@@ -22,7 +22,7 @@ namespace sys {
 		ObjectOutputStream(int initsize, int capincr) : Stream(initsize, capincr) {
 		}
 
-		ObjectOutputStream(char *buf[], int len) : Stream(buf, len) {
+		ObjectOutputStream(char *buf, int len) : Stream(buf, len) {
 		}
 
 		virtual ~ObjectOutputStream() {

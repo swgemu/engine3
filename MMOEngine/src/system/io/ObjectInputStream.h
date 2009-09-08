@@ -8,6 +8,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Stream.h"
 
+#ifndef PLATFORM_WIN
+#include <arpa/inet.h>
+#else
+#include <winsock2.h>
+#endif
+
+
 namespace sys {
   namespace io {
 
@@ -22,7 +29,7 @@ namespace sys {
 		ObjectInputStream(int initsize, int capincr) : Stream(initsize, capincr) {
 		}
 
-		ObjectInputStream(char *buf[], int len) : Stream(buf, len) {
+		ObjectInputStream(char *buf, int len) : Stream(buf, len) {
 		}
 
 		virtual ~ObjectInputStream() {
@@ -87,6 +94,10 @@ namespace sys {
 			shiftOffset(4);
 
 			return *(uint32*)(offset-4);
+		}
+
+		inline uint32 readNetInt() {
+			return ntohl(readInt());
 		}
 
 		inline uint32 readInt(int offs) {

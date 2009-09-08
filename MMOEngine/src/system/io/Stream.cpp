@@ -12,7 +12,7 @@ Stream::Stream(int initsize, int capincr) : Vector<char>(initsize, capincr) {
 	end = offset = elementData;
 }
 
-Stream::Stream(char *buf[], int len) : Vector<char>(len) {
+Stream::Stream(char *buf, int len) : Vector<char>(len) {
 	offset = elementData;
 	end = elementData + len;
 

@@ -11,6 +11,7 @@ namespace sys {
   namespace io {
 
   	class FileInputStream : public InputStream {
+  	protected:
   		File* file;
 
   	public:

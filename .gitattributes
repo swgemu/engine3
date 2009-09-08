@@ -169,6 +169,16 @@ MMOEngine/include/engine/util/Quaternion.h -text
 MMOEngine/include/engine/util/ResourcePool.h -text
 MMOEngine/include/engine/util/Singleton.h -text
 MMOEngine/include/engine/util/Vector3.h -text
+MMOEngine/include/engine/util/iffstream/IffStream.h -text
+MMOEngine/include/engine/util/iffstream/chunks/Chunk.h -text
+MMOEngine/include/engine/util/iffstream/chunks/data/Data.h -text
+MMOEngine/include/engine/util/iffstream/chunks/form/Form.h -text
+MMOEngine/include/engine/util/iffstream/exceptions.h -text
+MMOEngine/include/engine/util/iffstream/exceptions/IffStreamException.h -text
+MMOEngine/include/engine/util/iffstream/exceptions/InvalidChunkTypeException.h -text
+MMOEngine/include/engine/util/iffstream/exceptions/InvalidFileTypeException.h -text
+MMOEngine/include/engine/util/iffstream/exceptions/NoChunksException.h -text
+MMOEngine/include/engine/util/iffstream/exceptions/NoOpenedChunkException.h -text
 MMOEngine/include/system/io/BufferedReader.h -text
 MMOEngine/include/system/io/File.h -text
 MMOEngine/include/system/io/FileInputStream.h -text

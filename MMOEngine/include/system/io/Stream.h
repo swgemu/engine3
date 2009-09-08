@@ -23,7 +23,7 @@ namespace sys {
 		Stream();	
 		Stream(int initsize);
 		Stream(int initsize, int capincr);
-		Stream(char *buf[], int len);
+		Stream(char *buf, int len);
 		
 		virtual ~Stream();
 

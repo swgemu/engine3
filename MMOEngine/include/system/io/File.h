@@ -38,6 +38,7 @@ namespace sys {
 		FILE* getDescriptor() const;
 
   		int seek(uint32 offset, int origin = SEEK_SET);
+  		int size();
 
   		bool setReadOnly();
 
