@@ -256,43 +256,43 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 }
 
 void ManagedObjectAdapter::lock(bool doLock) {
-	return ((ManagedObjectImplementation*) impl)->lock(doLock);
+	((ManagedObjectImplementation*) impl)->lock(doLock);
 }
 
 void ManagedObjectAdapter::lock(ManagedObject* obj) {
-	return ((ManagedObjectImplementation*) impl)->lock(obj);
+	((ManagedObjectImplementation*) impl)->lock(obj);
 }
 
 void ManagedObjectAdapter::rlock(bool doLock) {
-	return ((ManagedObjectImplementation*) impl)->rlock(doLock);
+	((ManagedObjectImplementation*) impl)->rlock(doLock);
 }
 
 void ManagedObjectAdapter::wlock(bool doLock) {
-	return ((ManagedObjectImplementation*) impl)->wlock(doLock);
+	((ManagedObjectImplementation*) impl)->wlock(doLock);
 }
 
 void ManagedObjectAdapter::wlock(ManagedObject* obj) {
-	return ((ManagedObjectImplementation*) impl)->wlock(obj);
+	((ManagedObjectImplementation*) impl)->wlock(obj);
 }
 
 void ManagedObjectAdapter::unlock(bool doLock) {
-	return ((ManagedObjectImplementation*) impl)->unlock(doLock);
+	((ManagedObjectImplementation*) impl)->unlock(doLock);
 }
 
 void ManagedObjectAdapter::runlock(bool doLock) {
-	return ((ManagedObjectImplementation*) impl)->runlock(doLock);
+	((ManagedObjectImplementation*) impl)->runlock(doLock);
 }
 
 void ManagedObjectAdapter::setLockName(const String& name) {
-	return ((ManagedObjectImplementation*) impl)->setLockName(name);
+	((ManagedObjectImplementation*) impl)->setLockName(name);
 }
 
 void ManagedObjectAdapter::serialize(String& data) {
-	return ((ManagedObjectImplementation*) impl)->serialize(data);
+	((ManagedObjectImplementation*) impl)->serialize(data);
 }
 
 void ManagedObjectAdapter::deSerialize(const String& data) {
-	return ((ManagedObjectImplementation*) impl)->deSerialize(data);
+	((ManagedObjectImplementation*) impl)->deSerialize(data);
 }
 
 /*

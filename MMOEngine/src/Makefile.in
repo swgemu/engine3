@@ -89,9 +89,10 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	DistributedObjectServant.$(OBJEXT) \
 	DistributedObjectStub.$(OBJEXT) DistributedMethod.$(OBJEXT) \
 	ManagedObject.$(OBJEXT) ManagedObjectImplementation.$(OBJEXT) \
-	QuadTree.$(OBJEXT) MySqlDatabase.$(OBJEXT) \
-	BinaryData.$(OBJEXT) Logger.$(OBJEXT) Lua.$(OBJEXT) \
-	LuaFunction.$(OBJEXT) LuaObject.$(OBJEXT)
+	QuadTree.$(OBJEXT) IffStream.$(OBJEXT) Chunk.$(OBJEXT) \
+	Form.$(OBJEXT) MySqlDatabase.$(OBJEXT) BinaryData.$(OBJEXT) \
+	Logger.$(OBJEXT) Lua.$(OBJEXT) LuaFunction.$(OBJEXT) \
+	LuaObject.$(OBJEXT)
 libengine3_a_OBJECTS = $(am_libengine3_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build/unix/config/depcomp
@@ -292,6 +293,9 @@ libengine3_a_SOURCES = \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
 			engine/util/QuadTree.cpp \
+			engine/util/iffstream/IffStream.cpp \
+			engine/util/iffstream/chunks/Chunk.cpp \
+			engine/util/iffstream/chunks/form/Form.cpp \
 			engine/db/MySqlDatabase.cpp \
 			engine/db/BinaryData.cpp \
 			engine/log/Logger.cpp \
@@ -358,6 +362,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BaseProtocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BinaryData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BufferedReader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Chunk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DOBObjectManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DOBObjectManagerImplementation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DOBPacketHandler.Po@am__quote@
@@ -376,6 +381,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistributedObjectStub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Exception.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/File.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Form.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IffStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InetAddress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Integer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Logger.Po@am__quote@
@@ -1431,6 +1438,48 @@ QuadTree.obj: engine/util/QuadTree.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/util/QuadTree.cpp' object='QuadTree.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o QuadTree.obj `if test -f 'engine/util/QuadTree.cpp'; then $(CYGPATH_W) 'engine/util/QuadTree.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/QuadTree.cpp'; fi`
+
+IffStream.o: engine/util/iffstream/IffStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT IffStream.o -MD -MP -MF $(DEPDIR)/IffStream.Tpo -c -o IffStream.o `test -f 'engine/util/iffstream/IffStream.cpp' || echo '$(srcdir)/'`engine/util/iffstream/IffStream.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/IffStream.Tpo $(DEPDIR)/IffStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/util/iffstream/IffStream.cpp' object='IffStream.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o IffStream.o `test -f 'engine/util/iffstream/IffStream.cpp' || echo '$(srcdir)/'`engine/util/iffstream/IffStream.cpp
+
+IffStream.obj: engine/util/iffstream/IffStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT IffStream.obj -MD -MP -MF $(DEPDIR)/IffStream.Tpo -c -o IffStream.obj `if test -f 'engine/util/iffstream/IffStream.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/IffStream.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/IffStream.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/IffStream.Tpo $(DEPDIR)/IffStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/util/iffstream/IffStream.cpp' object='IffStream.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o IffStream.obj `if test -f 'engine/util/iffstream/IffStream.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/IffStream.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/IffStream.cpp'; fi`
+
+Chunk.o: engine/util/iffstream/chunks/Chunk.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Chunk.o -MD -MP -MF $(DEPDIR)/Chunk.Tpo -c -o Chunk.o `test -f 'engine/util/iffstream/chunks/Chunk.cpp' || echo '$(srcdir)/'`engine/util/iffstream/chunks/Chunk.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Chunk.Tpo $(DEPDIR)/Chunk.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/util/iffstream/chunks/Chunk.cpp' object='Chunk.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Chunk.o `test -f 'engine/util/iffstream/chunks/Chunk.cpp' || echo '$(srcdir)/'`engine/util/iffstream/chunks/Chunk.cpp
+
+Chunk.obj: engine/util/iffstream/chunks/Chunk.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Chunk.obj -MD -MP -MF $(DEPDIR)/Chunk.Tpo -c -o Chunk.obj `if test -f 'engine/util/iffstream/chunks/Chunk.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/chunks/Chunk.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/chunks/Chunk.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Chunk.Tpo $(DEPDIR)/Chunk.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/util/iffstream/chunks/Chunk.cpp' object='Chunk.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Chunk.obj `if test -f 'engine/util/iffstream/chunks/Chunk.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/chunks/Chunk.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/chunks/Chunk.cpp'; fi`
+
+Form.o: engine/util/iffstream/chunks/form/Form.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Form.o -MD -MP -MF $(DEPDIR)/Form.Tpo -c -o Form.o `test -f 'engine/util/iffstream/chunks/form/Form.cpp' || echo '$(srcdir)/'`engine/util/iffstream/chunks/form/Form.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Form.Tpo $(DEPDIR)/Form.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/util/iffstream/chunks/form/Form.cpp' object='Form.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Form.o `test -f 'engine/util/iffstream/chunks/form/Form.cpp' || echo '$(srcdir)/'`engine/util/iffstream/chunks/form/Form.cpp
+
+Form.obj: engine/util/iffstream/chunks/form/Form.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Form.obj -MD -MP -MF $(DEPDIR)/Form.Tpo -c -o Form.obj `if test -f 'engine/util/iffstream/chunks/form/Form.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/chunks/form/Form.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/chunks/form/Form.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Form.Tpo $(DEPDIR)/Form.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/util/iffstream/chunks/form/Form.cpp' object='Form.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Form.obj `if test -f 'engine/util/iffstream/chunks/form/Form.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/chunks/form/Form.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/chunks/form/Form.cpp'; fi`
 
 MySqlDatabase.o: engine/db/MySqlDatabase.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MySqlDatabase.o -MD -MP -MF $(DEPDIR)/MySqlDatabase.Tpo -c -o MySqlDatabase.o `test -f 'engine/db/MySqlDatabase.cpp' || echo '$(srcdir)/'`engine/db/MySqlDatabase.cpp

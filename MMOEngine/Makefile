@@ -39,6 +39,10 @@ instpub:
 	build/unix/install ../../swgemupub/MMOEngine -u > /dev/null
 	strip --strip-debug lib/unix/libengine3.a
 	cp lib/unix/libengine3.a ../../swgemupub/MMOEngine/lib/unix
-	
+
+pch:
+	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
+	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
+	 	
 rebuild: clean all
 	
