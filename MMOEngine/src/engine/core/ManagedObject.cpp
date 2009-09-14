@@ -193,17 +193,17 @@ void ManagedObjectImplementation::serialize(String& data) {
 }
 
 void ManagedObjectImplementation::serialize(ObjectOutputStream* stream) {
-	// engine/core/ManagedObject.idl(44):  Serializable.serialize(stream);
+	// engine/core/ManagedObject.idl(45):  Serializable.serialize(stream);
 	Serializable::serialize(stream);
 }
 
 void ManagedObjectImplementation::deSerialize(const String& data) {
-	// engine/core/ManagedObject.idl(48):  Serializable.deSerialize(data);
+	// engine/core/ManagedObject.idl(49):  Serializable.deSerialize(data);
 	Serializable::deSerialize(data);
 }
 
 void ManagedObjectImplementation::deSerialize(ObjectInputStream* stream) {
-	// engine/core/ManagedObject.idl(52):  Serializable.deSerialize(stream);
+	// engine/core/ManagedObject.idl(54):  Serializable.deSerialize(stream);
 	Serializable::deSerialize(stream);
 }
 

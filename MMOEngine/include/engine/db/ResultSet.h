@@ -69,6 +69,10 @@ namespace engine {
 			return row[index];
 		}
 
+		sys::uint64 getRowsAffected() {
+			return mysql_affected_rows(mysql);
+		}
+
 		sys::uint64 getLastAffectedRow() {
 			return mysql_insert_id(mysql);
 		}
