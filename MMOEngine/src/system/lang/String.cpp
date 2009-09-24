@@ -132,12 +132,11 @@ String String::concat(const char* str) const {
 }
 
 String String::concat(const char* str, int len) const {
+	String newstr(value, count);
+
 	int newlen = count + len;
 
-	String newstr;
-	newstr.value = (char*) malloc(newlen + 1);
-
-	memcpy(newstr.value, value, count);
+	newstr.value = (char*) realloc(newlen + 1);
 
 	memcpy(newstr.value + count, str, len);
 	newstr.value[newlen] = 0;
