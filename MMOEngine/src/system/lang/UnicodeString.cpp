@@ -238,7 +238,7 @@ String UnicodeString::toString() const {
 	StringBuffer ascii;
 
 	for (int i = 0; i < count; ++i)
-		ascii.append((char*) (uString + i));
+		ascii.append((char*) (uString + i), 1);
 
 	return ascii.toString();
 }
@@ -249,7 +249,7 @@ bool UnicodeString::toString(String& ascii) {
 	str << '"';
 
 	for (int i = 0; i < count; ++i)
-		str.append((char*) (uString + i));
+		str.append((char*) (uString + i), 1);
 
 	str << '"';
 

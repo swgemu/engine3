@@ -136,7 +136,7 @@ String String::concat(const char* str, int len) const {
 
 	int newlen = count + len;
 
-	newstr.value = (char*) realloc(newlen + 1);
+	newstr.value = (char*) realloc(newstr.value, newlen + 1);
 
 	memcpy(newstr.value + count, str, len);
 	newstr.value[newlen] = 0;
