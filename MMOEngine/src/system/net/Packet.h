@@ -268,7 +268,7 @@ namespace sys {
 			shiftOffset(len * 2);
 
 			str.clear();
-			str.append((wchar_t*) (offset - len * 2), len);
+			str.append((unsigned short*) (offset - len * 2), len);
 		}
 
 		inline void parseUnicode(int offs, UnicodeString& str) {
@@ -279,7 +279,7 @@ namespace sys {
 				throw StreamIndexOutOfBoundsException(this, offs + 4);
 
 			str.clear();
-			str.append((wchar_t*) (elementOffset - len * 2), len);
+			str.append((unsigned short*) (elementOffset - len * 2), len);
 		}
 
 		inline void parseStream(char *buf, int len) {

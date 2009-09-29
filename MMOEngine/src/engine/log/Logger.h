@@ -75,6 +75,10 @@ namespace engine {
 			return name;
 		}
 
+		inline FileWriter* getFileLogger() {
+			return logFile;
+		}
+
 	};
 
   } // namespace log

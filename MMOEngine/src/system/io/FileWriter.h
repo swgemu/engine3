@@ -160,6 +160,10 @@ namespace sys {
 			return *this;
 		}
 
+  		inline File* getFile() {
+  			return file;
+  		}
+
   	protected:
   		void validateWriteable() {
   			if (!file->exists())

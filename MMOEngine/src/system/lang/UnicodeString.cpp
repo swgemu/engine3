@@ -33,7 +33,7 @@ UnicodeString::UnicodeString(const char* ascii, int len) : Variable() {
 }
 
 UnicodeString::UnicodeString(const UnicodeString& str) : Variable() {
-	uString = new wchar_t[str.count + 1];
+	uString = new unsigned short[str.count + 1];
 	count = str.count;
 	//wcscpy(uString, str.uString);
 	copy(uString, str.uString);
@@ -47,21 +47,21 @@ void UnicodeString::create(const char* ascii, int len) {
 	//mbstate_t state;
 	//memset(&state, '\0', sizeof (state));
 
-	uString = new wchar_t[len + 1];
+	uString = new unsigned short[len + 1];
 	//mbsrtowcs(uString, &ascii, len, &state);
 	asciitowide(uString, ascii, len);
 
 	uString[count = len] = 0;
 }
 
-void UnicodeString::asciitowide(wchar_t* UnicodeString, const char* ascii, int len) {
+void UnicodeString::asciitowide(unsigned short* UnicodeString, const char* ascii, int len) {
 	for (int i = 0; i < len; ++i)
 		UnicodeString[i] = ascii[i];
 }
 
-void UnicodeString::copy(wchar_t* dest, const wchar_t* src) {
+void UnicodeString::copy(unsigned short* dest, const unsigned short* src) {
 	for (int i = 0; true; ++i) {
-		wchar_t chr = src[i];
+		unsigned short chr = src[i];
 
 		dest[i] = chr;
 
@@ -70,9 +70,9 @@ void UnicodeString::copy(wchar_t* dest, const wchar_t* src) {
 	}
 }
 
-void UnicodeString::copy(wchar_t* dest, const wchar_t* src, int len) {
+void UnicodeString::copy(unsigned short* dest, const unsigned short* src, int len) {
 	for (int i = 0; i < len; ++i) {
-		wchar_t chr = src[i];
+		unsigned short chr = src[i];
 
 		dest[i] = chr;
 
@@ -86,7 +86,7 @@ UnicodeString& UnicodeString::operator=(const UnicodeString& str) {
 		delete[] uString;
 
 		count = str.count;
-		uString = new wchar_t[count + 1];
+		uString = new unsigned short[count + 1];
 
 		//wcscpy(uString, str.uString);
 		copy(uString, str.uString);
@@ -134,7 +134,7 @@ void UnicodeString::append(const String& ascii) {
 }
 
 void UnicodeString::append(const UnicodeString& uni) {
-	append((wchar_t*) uni.toWideCharArray(), uni.length());
+	append((unsigned short*) uni.toWideCharArray(), uni.length());
 }
 
 void UnicodeString::append(const char* ascii) {
@@ -147,7 +147,7 @@ void UnicodeString::append(const char* ascii, int len) {
   	//memset (&state, '\0', sizeof (state));
 
   	int ncount = count + len;
-	wchar_t *nuString = new wchar_t[ncount + 1];
+	unsigned short *nuString = new unsigned short[ncount + 1];
 
 	//wmemcpy(nuString, uString, count);
 	copy(nuString, uString, count);
@@ -160,12 +160,12 @@ void UnicodeString::append(const char* ascii, int len) {
 	uString[count = ncount] = 0;
 }
 
-void UnicodeString::append(const wchar_t* str, int len) {
+void UnicodeString::append(const unsigned short* str, int len) {
 	//mbstate_t state;
     //memset (&state, '\0', sizeof (state));
 
   	int ncount = count + len;
-	wchar_t *nuString = new wchar_t[ncount + 1];
+	unsigned short *nuString = new unsigned short[ncount + 1];
 
 	//wmemcpy(nuString, uString, count);
 	copy(nuString, uString, count);
@@ -178,7 +178,7 @@ void UnicodeString::append(const wchar_t* str, int len) {
 	uString[count = ncount] = 0;
 }
 
-int UnicodeString::indexOf(wchar_t chr) const {
+int UnicodeString::indexOf(unsigned short chr) const {
 	for (int i = 0; i < count; ++i) {
 		if (uString[i] == chr)
 			return i;
@@ -186,7 +186,7 @@ int UnicodeString::indexOf(wchar_t chr) const {
 
 	return -1;
 
-	/*wchar_t* pos = wcschr(uString, chr);
+	/*unsigned short* pos = wcschr(uString, chr);
 
 	if (pos != NULL)
 		return (int) (pos - uString);
@@ -199,7 +199,7 @@ int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
 		return -1;
 
 	for (int i = startPos; i <= count - str.length(); ++i) {
-		if (!memcmp(uString + i, str.toWideCharArray(), str.length() * sizeof(wchar_t)))
+		if (!memcmp(uString + i, str.toWideCharArray(), str.length() * sizeof(unsigned short)))
 			return i;
 	}
 
@@ -230,7 +230,7 @@ void UnicodeString::clear() {
 	create("", 0);
 }
 
-const wchar_t* UnicodeString::toWideCharArray() const {
+const unsigned short* UnicodeString::toWideCharArray() const {
 	return uString;
 }
 
@@ -278,7 +278,7 @@ bool UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
 bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint32 len = stream->readInt();
 
-	wchar_t uni[len];
+	unsigned short uni[len];
 
 	stream->readStream((char*)uni, len * 2);
 

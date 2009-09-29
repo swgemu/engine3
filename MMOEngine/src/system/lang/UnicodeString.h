@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Variable.h"
 
 #ifndef PLATFORM_WIN
-#define wchar_t unsigned short
+//#define wchar_t unsigned short
 #endif
 
 namespace sys {
@@ -20,7 +20,7 @@ namespace sys {
 	class String;
 
 	class UnicodeString : public virtual Variable {
-		wchar_t* uString;
+		unsigned short* uString;
 		int count;
 
 	public:
@@ -46,17 +46,17 @@ namespace sys {
 		void append(const UnicodeString& uni);
 		void append(const char* ascii);
 		void append(const char* ascii, int len);
-		void append(const wchar_t* str, int len);
+		void append(const unsigned short* str, int len);
 
 		void clear();
 
-		int indexOf(wchar_t chr) const;
+		int indexOf(unsigned short chr) const;
 		int indexOf(const UnicodeString& str, int startPos = 0) const;
 
 		UnicodeString subString(int beg, int end) const;
 		UnicodeString substr(int beg, int length) const;
 
-		const wchar_t* toWideCharArray() const;
+		const unsigned short* toWideCharArray() const;
 
 		String toString() const;
 		bool toString(String& str);
@@ -73,10 +73,10 @@ namespace sys {
 
 	private:
 		void create(const char* ascii, int len);
-		void asciitowide(wchar_t* unicode, const char* ascii, int len);
+		void asciitowide(unsigned short* unicode, const char* ascii, int len);
 
-		void copy(wchar_t* dest, const wchar_t* src);
-		void copy(wchar_t* dest, const wchar_t* src, int len);
+		void copy(unsigned short* dest, const unsigned short* src);
+		void copy(unsigned short* dest, const unsigned short* src, int len);
 
 	public:
 		inline int length() const {
