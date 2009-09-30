@@ -47,14 +47,12 @@ DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* obj
 	return localObjectDirectory.add(object->_getObjectID(), adapter);
 }
 
-DistributedObject* DOBObjectManager::getObject(uint64 objectID, bool doLock) {
+DistributedObject* DOBObjectManager::getObject(uint64 objectID) {
 	DistributedObject* obj = NULL;
 
-	lock(doLock);
+	Locker _locker(this);
 
 	obj = localObjectDirectory.get(objectID);
-
-	unlock(doLock);
 
 	if (obj != NULL)
 		return obj;
@@ -90,28 +88,24 @@ DistributedObject* DOBObjectManager::getObject(uint64 objectID, bool doLock) {
 	return obj;
 }
 
-DistributedObjectAdapter* DOBObjectManager::getAdapter(uint64 objectID, bool doLock) {
-	lock(doLock);
+DistributedObjectAdapter* DOBObjectManager::getAdapter(uint64 objectID) {
+	Locker _locker(this);
 
 	DistributedObjectAdapter* adapter =  localObjectDirectory.getAdapter(objectID);
-
-	unlock(doLock);
 
 	return adapter;
 }
 
-DistributedObjectAdapter* DOBObjectManager::removeObject(uint64 objectID, bool doLock) {
-	lock(doLock);
+DistributedObjectAdapter* DOBObjectManager::removeObject(uint64 objectID) {
+	Locker _locker(this);
 
 	DistributedObjectAdapter* object = localObjectDirectory.remove(objectID);
-
-	unlock(doLock);
 
 	return object;
 }
 
-uint64 DOBObjectManager::getNextFreeObjectID(bool doLock) {
-	Packet* msg = new GetNextFreeObjectIDMessage(doLock);
+uint64 DOBObjectManager::getNextFreeObjectID() {
+	Packet* msg = new GetNextFreeObjectIDMessage(true);
 	client->send(msg);
 
 	Packet resp;

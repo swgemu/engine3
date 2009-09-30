@@ -51,7 +51,7 @@ namespace engine {
 			return objectDirectory.add(object->_getObjectID(), adapter);
 		}*/
 
-		DistributedObject* getObject(uint64 objectID, bool doLock = true);
+		DistributedObject* getObject(uint64 objectID);
 
 		/*virtual DistributedObjectAdapter* getAdapter(uint64 objectID, bool doLock = true) {
 			lock(doLock);
@@ -73,12 +73,10 @@ namespace engine {
 			return object;
 		}*/
 
-		uint64 getNextFreeObjectID(bool doLock = true) {
-			lock(doLock);
+		uint64 getNextFreeObjectID() {
+			Locker _locker(this);
 
 			uint64 val = ++nextObjectID;
-
-			unlock(doLock);
 
 			return val;
 		}

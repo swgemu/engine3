@@ -44,13 +44,13 @@ namespace engine {
 
 		virtual DistributedObjectAdapter* addObject(DistributedObjectStub* object);
 
-		virtual DistributedObject* getObject(uint64 objectID, bool doLock = true);
+		virtual DistributedObject* getObject(uint64 objectID);
 
-		virtual DistributedObjectAdapter* getAdapter(uint64 objectID, bool doLock = true);
+		virtual DistributedObjectAdapter* getAdapter(uint64 objectID);
 
-		virtual DistributedObjectAdapter* removeObject(uint64 objectID, bool doLock = true);
+		virtual DistributedObjectAdapter* removeObject(uint64 objectID);
 
-		virtual uint64 getNextFreeObjectID(bool doLock = true);
+		virtual uint64 getNextFreeObjectID();
 
 	};
 

@@ -21,14 +21,12 @@ DistributedObjectAdapter* DOBObjectManagerImplementation::addObject(DistributedO
 	return localObjectDirectory.add(object->_getObjectID(), adapter);
 }
 
-DistributedObject* DOBObjectManagerImplementation::getObject(uint64 objectID, bool doLock) {
+DistributedObject* DOBObjectManagerImplementation::getObject(uint64 objectID) {
 	DistributedObject* obj = NULL;
 
-	lock(doLock);
+	Locker _locker(this);
 
 	obj = localObjectDirectory.get(objectID);
-
-	unlock(doLock);
 
 	if (obj != NULL)
 		return obj;

@@ -20,15 +20,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 DOBPacketHandler::DOBPacketHandler() : Logger() {
 	orb = NULL;
-} 
+}
 
 DOBPacketHandler::DOBPacketHandler(const String& s, DistributedObjectBroker* broker) : Logger(s) {
 	orb = broker;
-} 
+}
 
 DOBPacketHandler::~DOBPacketHandler() {
 }
-	
+
 void DOBPacketHandler::handlePacket(DistributedObjectBrokerClient* client, Packet* pack) {
 	//System::out << "READ " << pack->toString() << "\n";
 
@@ -97,11 +97,11 @@ void DOBPacketHandler::handleObjectDeployMessage(DistributedObjectBrokerClient* 
 
 	/*ORBClassHelper* helper = classMap.get(classname);
 	if (helper != NULL) {
-		
-		
+
+
 		orb->deploy()
 	}
-	
+
 	Packet* msg = new DeployObjectResponseMessage(objid);
 	client->send(msg);*/
 }
@@ -114,7 +114,7 @@ void DOBPacketHandler::handleMethodInvocationMessage(DistributedObjectBrokerClie
 		error("object not found for method invocation");
 		return;
 	}
-	
+
 	uint32 methodID = pack->parseInt();
 	uint32 invocationID = pack->parseInt();
 
@@ -161,7 +161,7 @@ void DOBPacketHandler::handleGetNextFreeObjectIDMessage(DistributedObjectBrokerC
 
 	DOBObjectManager* objectManager = orb->getObjectManager();
 
-	uint64 objectID = objectManager->getNextFreeObjectID(doLock);
+	uint64 objectID = objectManager->getNextFreeObjectID();
 
 	Packet* msg = new GetNextFreeObjectIDResponseMessage(objectID);
 	client->send(msg);
