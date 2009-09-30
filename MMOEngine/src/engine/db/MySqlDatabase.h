@@ -28,15 +28,17 @@ namespace engine {
 	class MySqlDatabase : public Database, public Mutex,  public Logger {
 		MYSQL mysql;
 		String host;
-		
+
+		uint32 queryTimeout;
+
 	public:
 		MySqlDatabase(const String& s);
 		MySqlDatabase(const String& s, const String& host);
-		
+
 		virtual ~MySqlDatabase();
-		
+
 		void connect(const String& dbname, const String& user, const String& passw, int port);
-		
+
 		void executeStatement(const char* statement);
 		void executeStatement(const String& statement);
 		void executeStatement(const StringBuffer& statement);
@@ -46,18 +48,18 @@ namespace engine {
 		ResultSet* executeQuery(const StringBuffer& statement);
 
 		void commit();
-	
+
 		void autocommit(bool doCommit);
-	
+
 		void close();
-	    
+
 	    void error();
 	    void error(const char* query);
 
 		static void escapeString(String& s);
-		
+
 		static void finalizeLibrary();
-		
+
 	};
 
   } // namespace db

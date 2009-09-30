@@ -19,6 +19,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 Serializable::Serializable() : Object() {
 	variables.setInsertPlan(SortedVector<VectorMapEntry<VariableName, Variable*> >::NO_DUPLICATE);
 	variables.setNullValue(NULL);
+
+	addSerializableVariable("_className", &_className);
 }
 
 void Serializable::serialize(String& str) {
@@ -145,7 +147,7 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 	var.setName(name.toCharArray());
 
 	if (!variables.contains(var)) {
-		System::out << "WARNING: variable " << nameAndVersion << " not found when deserializing [" << varData << "] \n";
+		System::out << "WARNING: variable " << nameAndVersion << " not found when deserializing [" << _className << "] \n";
 
 		return;
 	}

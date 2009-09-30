@@ -22,6 +22,7 @@ namespace sys {
 		class VariableName;
 
 		class Serializable : public virtual Object {
+			String _className;
 			VectorMap<VariableName, void*> variables;
 
 		public:
@@ -79,6 +80,10 @@ namespace sys {
 				deSerialize(stream);
 
 				return true;
+			}
+
+			inline void setClassName(const String& name) {
+				_className = name;
 			}
 
 			static int getObjectData(const String& str, String& obj);

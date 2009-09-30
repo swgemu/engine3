@@ -25,6 +25,8 @@ namespace sys {
 
 		pthread_attr_t attributes;
 
+		//uint32 threadID;
+
 		static pthread_once_t initThread;
 		static pthread_key_t threadDataKey;
 

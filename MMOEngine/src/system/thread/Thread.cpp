@@ -4,6 +4,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "Thread.h"
+#include <mysql.h>
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
 pthread_key_t Thread::threadDataKey;
@@ -23,12 +24,16 @@ void* Thread::executeThread(void* th) {
 
 	pthread_setspecific(threadDataKey, th);
 
+	mysql_thread_init();
+
 	Thread* impl = (Thread*) th;
 
 	impl->run();
 
 	if (impl->isDetached())
 		delete impl;
+
+	mysql_thread_end();
 
 	return NULL;
 }

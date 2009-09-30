@@ -52,6 +52,9 @@ namespace engine {
 		void initializeContext() {
 			std::set_new_handler(outOfMemoryHandler);
 
+			mysql_library_init(0, NULL, NULL);
+			mysql_thread_init();
+
 			Socket::initialize();
 
 			TaskManager* taskManager = getTaskManager();
@@ -64,6 +67,7 @@ namespace engine {
 			TaskManager* taskManager = getTaskManager();
 			taskManager->shutdown();
 
+			mysql_thread_end();
 			MySqlDatabase::finalizeLibrary();
 
 			NetworkInterface::finalize();
