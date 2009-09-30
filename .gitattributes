@@ -33,6 +33,7 @@ MMOEngine/build/win32/engine3.suo -text
 MMOEngine/build/win32/engine3.vcproj -text
 MMOEngine/build/win32/exclude.lst -text
 MMOEngine/build/win32/install.bat -text
+MMOEngine/conf/filter -text
 MMOEngine/config.guess -text
 MMOEngine/config.h.in -text
 MMOEngine/config.sub -text

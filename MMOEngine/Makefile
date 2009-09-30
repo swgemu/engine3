@@ -32,6 +32,11 @@ cleanidl:
 	rm -f src/engine/core/util/ManagedVector.h
 	rm -f src/engine/core/util/ManagedVector.cpp
 
+install: compile
+	cp bin/idlc /usr/local/bin
+	cp bin/idlc.jar /usr/local/lib
+	#cp lib/unix/libengine3.a /usr/local/lib	
+
 inst:	
 	build/unix/install . > /dev/null 2>&1
 
