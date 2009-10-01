@@ -23,7 +23,7 @@ Serializable::Serializable() : Object() {
 	addSerializableVariable("_className", &_className);
 }
 
-void Serializable::serialize(String& str) {
+void Serializable::writeObject(String& str) {
 	StringBuffer buffer;
 
 	buffer << "{" << "size=" << variables.size();
@@ -61,7 +61,7 @@ void Serializable::serialize(String& str) {
 	buffer.toString(str);
 }
 
-void Serializable::serialize(ObjectOutputStream* stream) {
+void Serializable::writeObject(ObjectOutputStream* stream) {
 	int size = variables.size();
 
 	stream->writeShort((uint16)size);
@@ -73,27 +73,85 @@ void Serializable::serialize(ObjectOutputStream* stream) {
 
 		int type = varName.getType();
 
+		String name = varName.getName();
+
+		name.toBinaryStream(stream);
+
+		int offset = stream->getOffset();
+		stream->writeShort(0);
+
 		if (type == 0) {
 			((Variable*)variable)->toBinaryStream(stream);
 		} else {
 			serializeAtomicType(variable, type, stream);
 		}
+
+		uint16 totalSize = (uint16) (stream->getOffset() - (offset + 2));
+
+		stream->writeShort(offset, totalSize);
 	}
 }
 
-void Serializable::deSerialize(ObjectInputStream* stream) {
+int Serializable::getVariableDataOffset(const String& variableName, ObjectInputStream* stream) {
+	uint16 dataSize = stream->readShort();
+	int offset;
+
+	for (int i = 0; i < dataSize; ++i) {
+		String name;
+		name.parseFromBinaryStream(stream);
+
+		uint16 varSize = stream->readShort();
+
+		offset = stream->getOffset();
+
+		if (name != variableName)
+			stream->shiftOffset(varSize);
+		else {
+			stream->reset();
+			return offset;
+		}
+	}
+
+	offset = -1;
+
+	stream->reset();
+
+	return offset;
+}
+
+void Serializable::readObject(ObjectInputStream* stream) {
 	int size = variables.size();
 
 	uint16 dataSize = stream->readShort();
 
-	if (size != dataSize) {
+	/*if (size != dataSize) {
 		System::out << "WARNING data size and variables not equal in void Serializable::deSerialize(ObjectInputStream* stream)\n";
 
 		return;
-	}
+	}*/
 
-	for (int i = 0; i < size; ++i) {
-		VectorMapEntry<VariableName, void*>* entry = &variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
+	for (int i = 0; i < dataSize; ++i) {
+		String name;
+		name.parseFromBinaryStream(stream);
+
+		uint16 varSize = stream->readShort();
+
+		VariableName var;
+		var.setName(name.toCharArray());
+
+		if (!variables.contains(var)) {
+			System::out << "WARNING: variable " << name << " not found when deserializing [" << _className << "] \n";
+
+			stream->shiftOffset(varSize);
+
+			continue;
+		}
+
+		VectorMapEntry<VariableName, void*> e(var);
+
+		int pos = variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
+
+		VectorMapEntry<VariableName, void*>* entry = &variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
 		VariableName varName = entry->getKey();
 		void* variable = entry->getValue();
 
@@ -107,7 +165,7 @@ void Serializable::deSerialize(ObjectInputStream* stream) {
 	}
 }
 
-void Serializable::deSerialize(const String& str) {
+void Serializable::readObject(const String& str) {
 	String data;
 	try {
 

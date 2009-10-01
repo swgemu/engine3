@@ -36,21 +36,21 @@ class ManagedObject implements Serializable {
 	@nativeStub 
 	public native void setLockName(final string name);	
 	
-	public abstract void serialize(string data) {
-		Serializable.serialize(data);
+	public abstract void writeObject(string data) {
+		Serializable.writeObject(data);
 	}
 	
 	@local
-	public abstract void serialize(ObjectOutputStream stream) {
-		Serializable.serialize(stream);
+	public abstract void writeObject(ObjectOutputStream stream) {
+		Serializable.writeObject(stream);
 	}
 	
-	public abstract void deSerialize(final string data) {
-		Serializable.deSerialize(data);
+	public abstract void readObject(final string data) {
+		Serializable.readObject(data);
 	}
 	
 	@local
-	public abstract void deSerialize(ObjectInputStream stream) {
-		Serializable.deSerialize(stream);
+	public abstract void readObject(ObjectInputStream stream) {
+		Serializable.readObject(stream);
 	}
 }

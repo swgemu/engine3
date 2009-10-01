@@ -119,7 +119,7 @@ void ManagedObject::_setLockName(const String& name) {
 		((ManagedObjectImplementation*) _impl)->setLockName(name);
 }
 
-void ManagedObject::serialize(String& data) {
+void ManagedObject::writeObject(String& data) {
 	if (_impl == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -129,18 +129,18 @@ void ManagedObject::serialize(String& data) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->serialize(data);
+		((ManagedObjectImplementation*) _impl)->writeObject(data);
 }
 
-void ManagedObject::serialize(ObjectOutputStream* stream) {
+void ManagedObject::writeObject(ObjectOutputStream* stream) {
 	if (_impl == NULL) {
 		throw ObjectNotLocalException(this);
 
 	} else
-		((ManagedObjectImplementation*) _impl)->serialize(stream);
+		((ManagedObjectImplementation*) _impl)->writeObject(stream);
 }
 
-void ManagedObject::deSerialize(const String& data) {
+void ManagedObject::readObject(const String& data) {
 	if (_impl == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -150,15 +150,15 @@ void ManagedObject::deSerialize(const String& data) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->deSerialize(data);
+		((ManagedObjectImplementation*) _impl)->readObject(data);
 }
 
-void ManagedObject::deSerialize(ObjectInputStream* stream) {
+void ManagedObject::readObject(ObjectInputStream* stream) {
 	if (_impl == NULL) {
 		throw ObjectNotLocalException(this);
 
 	} else
-		((ManagedObjectImplementation*) _impl)->deSerialize(stream);
+		((ManagedObjectImplementation*) _impl)->readObject(stream);
 }
 
 /*
@@ -187,24 +187,24 @@ ManagedObjectImplementation::operator const ManagedObject*() {
 void ManagedObjectImplementation::_serializationHelperMethod() {
 }
 
-void ManagedObjectImplementation::serialize(String& data) {
-	// engine/core/ManagedObject.idl(40):  Serializable.serialize(data);
-	Serializable::serialize(data);
+void ManagedObjectImplementation::writeObject(String& data) {
+	// engine/core/ManagedObject.idl(40):  Serializable.writeObject(data);
+	Serializable::writeObject(data);
 }
 
-void ManagedObjectImplementation::serialize(ObjectOutputStream* stream) {
-	// engine/core/ManagedObject.idl(45):  Serializable.serialize(stream);
-	Serializable::serialize(stream);
+void ManagedObjectImplementation::writeObject(ObjectOutputStream* stream) {
+	// engine/core/ManagedObject.idl(45):  Serializable.writeObject(stream);
+	Serializable::writeObject(stream);
 }
 
-void ManagedObjectImplementation::deSerialize(const String& data) {
-	// engine/core/ManagedObject.idl(49):  Serializable.deSerialize(data);
-	Serializable::deSerialize(data);
+void ManagedObjectImplementation::readObject(const String& data) {
+	// engine/core/ManagedObject.idl(49):  Serializable.readObject(data);
+	Serializable::readObject(data);
 }
 
-void ManagedObjectImplementation::deSerialize(ObjectInputStream* stream) {
-	// engine/core/ManagedObject.idl(54):  Serializable.deSerialize(stream);
-	Serializable::deSerialize(stream);
+void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
+	// engine/core/ManagedObject.idl(54):  Serializable.readObject(stream);
+	Serializable::readObject(stream);
 }
 
 /*
@@ -243,10 +243,10 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		setLockName(inv->getAsciiParameter(_param0_setLockName__String_));
 		break;
 	case 14:
-		serialize(inv->getAsciiParameter(_param0_serialize__String_));
+		writeObject(inv->getAsciiParameter(_param0_writeObject__String_));
 		break;
 	case 15:
-		deSerialize(inv->getAsciiParameter(_param0_deSerialize__String_));
+		readObject(inv->getAsciiParameter(_param0_readObject__String_));
 		break;
 	default:
 		return NULL;
@@ -287,12 +287,12 @@ void ManagedObjectAdapter::setLockName(const String& name) {
 	((ManagedObjectImplementation*) impl)->setLockName(name);
 }
 
-void ManagedObjectAdapter::serialize(String& data) {
-	((ManagedObjectImplementation*) impl)->serialize(data);
+void ManagedObjectAdapter::writeObject(String& data) {
+	((ManagedObjectImplementation*) impl)->writeObject(data);
 }
 
-void ManagedObjectAdapter::deSerialize(const String& data) {
-	((ManagedObjectImplementation*) impl)->deSerialize(data);
+void ManagedObjectAdapter::readObject(const String& data) {
+	((ManagedObjectImplementation*) impl)->readObject(data);
 }
 
 /*
