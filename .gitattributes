@@ -547,7 +547,6 @@ MMOEngine/src/system/lang/UnicodeString.h -text
 MMOEngine/src/system/lang/Variable.h -text
 MMOEngine/src/system/lang/mersenne/MersenneTwister.cpp -text
 MMOEngine/src/system/lang/mersenne/MersenneTwister.h -text
-MMOEngine/src/system/lang/ref/Reference.h -text
 MMOEngine/src/system/lang/ref/ReferenceCounter.h -text
 MMOEngine/src/system/lang/ref/ReferenceSlot.h -text
 MMOEngine/src/system/lang/types.cpp -text
