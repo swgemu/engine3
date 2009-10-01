@@ -3,36 +3,36 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#ifndef REFERENCESLOT_H_
-#define REFERENCESLOT_H_
+#ifndef REFERENCE_H_
+#define REFERENCE_H_
 
 #include "../Object.h"
 
 namespace sys {
   namespace lang {
 
-	template<class O> class ReferenceSlot : public Variable {
+	template<class O> class Reference : public Variable {
 	protected:
 		O object;
 
 	public:
-		ReferenceSlot() : Variable() {
+		Reference() : Variable() {
 			object = NULL;
 		}
 
-		ReferenceSlot(const ReferenceSlot& refslot) : Variable() {
-			initializeObject(refslot.object);
+		Reference(const Reference& ref) : Variable() {
+			initializeObject(ref.object);
 		}
 
-		ReferenceSlot(O obj) : Variable() {
+		Reference(O obj) : Variable() {
 			initializeObject(obj);
 		}
 
-		virtual ~ReferenceSlot() {
+		virtual ~Reference() {
 			releaseObject();
 		}
 
-		virtual int compareTo(const ReferenceSlot& val) const {
+		virtual int compareTo(const Reference& val) const {
 			if (object < val.object)
 				return 1;
 			else if (object > val.object)
@@ -41,11 +41,11 @@ namespace sys {
 				return 0;
 		}
 
-		ReferenceSlot& operator=(const ReferenceSlot& refslot) {
-			if (this == &refslot)
+		Reference& operator=(const Reference& ref) {
+			if (this == &ref)
 				return *this;
 
-			setObject(refslot.object);
+			setObject(ref.object);
 
 			return *this;
 		}
@@ -107,7 +107,7 @@ namespace sys {
 
 		inline void acquireObject() {
 			if (object != NULL) {
-			#ifdef TRACE_REFERENCESLOTS
+			#ifdef TRACE_REFERENCES
 				object->addHolder(this);
 			#endif
 				object->acquire();
@@ -116,7 +116,7 @@ namespace sys {
 
 		inline void releaseObject() {
 			if (object != NULL) {
-			#ifdef TRACE_REFERENCESLOTS
+			#ifdef TRACE_REFERENCES
 				object->removeHolder(this);
 			#endif
 				object->release();
@@ -131,4 +131,4 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*REFERENCESLOT_H_*/
+#endif /*REFERENCE_H_*/

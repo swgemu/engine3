@@ -10,9 +10,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Variable.h"
 
-#ifdef TRACE_REFERENCESLOTS
-#include "ref/ReferenceSlot.h"
+#ifdef TRACE_REFERENCES
+#include "ref/Reference.h"
+
 #include "../util/VectorMap.h"
+
 #include "../thread/Mutex.h"
 #endif
 
@@ -34,7 +36,7 @@ namespace sys {
 	class Object : public ReferenceCounter, public Variable {
 		bool finalized;
 
-	#ifdef TRACE_REFERENCESLOTS
+	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 
 		Mutex refHoldersMutex;
@@ -44,7 +46,7 @@ namespace sys {
 		Object() : ReferenceCounter(), Variable() {
 			initializeCount();
 
-		#ifdef TRACE_REFERENCESLOTS
+		#ifdef TRACE_REFERENCES
 			referenceHolders.setNullValue(NULL);
 		#endif
 
@@ -57,7 +59,7 @@ namespace sys {
 		}
 
 		virtual ~Object() {
-		#ifdef TRACE_REFERENCESLOTS
+		#ifdef TRACE_REFERENCES
 			for (int i = 0; i < referenceHolders.size(); ++i)
 				delete referenceHolders.get(i);
 		#endif
@@ -98,7 +100,7 @@ namespace sys {
 		}
 
 
-	#ifdef TRACE_REFERENCESLOTS
+	#ifdef TRACE_REFERENCES
 		void addHolder(void* obj) {
 			refHoldersMutex.lock();
 

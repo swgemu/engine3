@@ -15,37 +15,37 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace core {
 
-	template<class O> class ManagedReference : public ReferenceSlot<O> {
+	template<class O> class ManagedReference : public Reference<O> {
 	public:
-		ManagedReference() : ReferenceSlot<O>() {
+		ManagedReference() : Reference<O>() {
 		}
 
-		ManagedReference(const ManagedReference& ref) : ReferenceSlot<O>(ref) {
+		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
 		}
 
-		ManagedReference(O obj) : ReferenceSlot<O>(obj) {
+		ManagedReference(O obj) : Reference<O>(obj) {
 		}
 
 		void operator=(const ManagedReference& ref) {
-			ReferenceSlot<O>::setObject(ref.object);
+			Reference<O>::setObject(ref.object);
 		}
 
 		void operator=(O obj) {
-			ReferenceSlot<O>::updateObject(obj);
+			Reference<O>::updateObject(obj);
 		}
 
 		int compareTo(const ManagedReference& ref) const {
-			if (ReferenceSlot<O>::object->_getObjectID() < ref.ReferenceSlot<O>::object->_getObjectID())
+			if (Reference<O>::object->_getObjectID() < ref.Reference<O>::object->_getObjectID())
 				return 1;
-			else if (ReferenceSlot<O>::object->_getObjectID() > ref.ReferenceSlot<O>::object->_getObjectID())
+			else if (Reference<O>::object->_getObjectID() > ref.Reference<O>::object->_getObjectID())
 				return -1;
 			else
 				return 0;
 		}
 
 		bool toString(String& str) {
-			if (ReferenceSlot<O>::get() != NULL)
-				str = String::valueOf((ReferenceSlot<O>::get())->_getObjectID());
+			if (Reference<O>::get() != NULL)
+				str = String::valueOf((Reference<O>::get())->_getObjectID());
 			else
 				str = String::valueOf(0);
 
@@ -55,7 +55,7 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
-			ReferenceSlot<O>::updateObject((O) obj);
+			Reference<O>::updateObject((O) obj);
 
 			if (obj == NULL)
 				return false;
@@ -64,7 +64,7 @@ namespace engine {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			O object = ReferenceSlot<O>::get();
+			O object = Reference<O>::get();
 
 			if (object != NULL)
 				stream->writeLong(object->_getObjectID());
