@@ -169,6 +169,10 @@ ManagedObjectImplementation::ManagedObjectImplementation() {
 	_classHelper = ManagedObjectHelper::instance();
 }
 
+ManagedObjectImplementation::ManagedObjectImplementation(DummyConstructorParameter* param) {
+	_classHelper = ManagedObjectHelper::instance();
+}
+
 ManagedObjectImplementation::~ManagedObjectImplementation() {
 }
 
@@ -185,6 +189,8 @@ ManagedObjectImplementation::operator const ManagedObject*() {
 }
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
+	_setClassName("ManagedObject");
+
 }
 
 void ManagedObjectImplementation::writeObject(String& data) {
@@ -313,6 +319,10 @@ void ManagedObjectHelper::finalizeHelper() {
 
 DistributedObject* ManagedObjectHelper::instantiateObject() {
 	return new ManagedObject(DummyConstructorParameter::instance());
+}
+
+DistributedObjectServant* ManagedObjectHelper::instantiateServant() {
+	return new ManagedObjectImplementation(DummyConstructorParameter::instance());
 }
 
 DistributedObjectAdapter* ManagedObjectHelper::createAdapter(DistributedObjectStub* obj) {

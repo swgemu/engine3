@@ -7,6 +7,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BaseClientProxy.h"
 
+BaseClientProxy::BaseClientProxy() : BaseClient() {
+	bufferedPacket = NULL;
+	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
+}
+
 BaseClientProxy::BaseClientProxy(Socket* sock, SocketAddress& addr) : BaseClient(sock, addr) {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);

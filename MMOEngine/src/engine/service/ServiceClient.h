@@ -21,6 +21,7 @@ namespace engine {
 		int packetLossChance;
 
 	public:
+		ServiceClient();
 		ServiceClient(Socket* sock);
 		ServiceClient(Socket* sock, SocketAddress& addr);
 		ServiceClient(const String& host, int port);

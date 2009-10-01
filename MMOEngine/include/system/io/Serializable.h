@@ -13,6 +13,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../util/VectorMap.h"
 
+#include "ObjectInputStream.h"
+
 namespace sys {
 	namespace io {
 
@@ -22,6 +24,7 @@ namespace sys {
 		class VariableName;
 
 		class Serializable : public virtual Object {
+			String _className;
 			VectorMap<VariableName, void*> variables;
 
 		public:
@@ -31,11 +34,11 @@ namespace sys {
 
 			}
 
-			virtual void serialize(String& str);
-			virtual void serialize(ObjectOutputStream* stream);
+			virtual void writeObject(String& str);
+			virtual void writeObject(ObjectOutputStream* stream);
 
-			virtual void deSerialize(const String& str);
-			virtual void deSerialize(ObjectInputStream* stream);
+			virtual void readObject(const String& str);
+			virtual void readObject(ObjectInputStream* stream);
 
 			void addSerializableVariable(const char* name, uint8* variable, int version = 0);
 			void addSerializableVariable(const char* name, int8* variable, int version = 0);
@@ -58,27 +61,31 @@ namespace sys {
 			Variable* getSerializableVariable(const char* name);
 
 			bool toString(String& str) {
-				serialize(str);
+				writeObject(str);
 
 				return true;
 			}
 
 			bool parseFromString(const String& str, int version = 0) {
-				deSerialize(str);
+				readObject(str);
 
 				return true;
 			}
 
 			bool toBinaryStream(ObjectOutputStream* stream) {
-				serialize(stream);
+				writeObject(stream);
 
 				return true;
 			}
 
 			bool parseFromBinaryStream(ObjectInputStream* stream) {
-				deSerialize(stream);
+				readObject(stream);
 
 				return true;
+			}
+
+			inline void _setClassName(const String& name) {
+				_className = name;
 			}
 
 			static int getObjectData(const String& str, String& obj);
@@ -90,6 +97,22 @@ namespace sys {
 			static int deSerializeAtomicType(void* address, int type, ObjectInputStream* stream);
 
 			static int getVariableDataMap(const String& serializedData, VectorMap<String, String>& map);
+			static int getVariableDataOffset(const String& variableName, ObjectInputStream* stream);
+
+			template<typename ClassType> static bool getVariable(const String& variableName, ClassType* address, ObjectInputStream* serializedObject) {
+				int offset = getVariableDataOffset(variableName, serializedObject);
+
+				if (offset == -1)
+					return false;
+
+				serializedObject->setOffset(offset);
+
+				TypeInfo<ClassType>::parseFromBinaryStream(address, serializedObject);
+
+				serializedObject->reset();
+
+				return true;
+			}
 
 		private:
 			void deSerializeVariable(const String& nameAndVersion, const String& varData);

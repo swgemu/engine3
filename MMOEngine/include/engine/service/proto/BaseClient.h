@@ -69,6 +69,7 @@ namespace engine {
 		static const int NETSTATUSREQUEST_TIME = 5000;
 
 	public:
+		BaseClient();
 		BaseClient(const String& addr, int port);
 		BaseClient(Socket* sock, SocketAddress& addr);
 

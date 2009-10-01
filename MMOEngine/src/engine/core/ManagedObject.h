@@ -74,6 +74,8 @@ class ManagedObjectImplementation : public DistributedObjectServant, public Seri
 
 public:
 	ManagedObjectImplementation();
+	ManagedObjectImplementation(DummyConstructorParameter* param);
+
 	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
@@ -154,6 +156,8 @@ public:
 	void finalizeHelper();
 
 	DistributedObject* instantiateObject();
+
+	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
 

@@ -18,6 +18,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/DisconnectMessage.h"
 #include "packets/NetStatusRequestMessage.h"
 
+BaseClient::BaseClient() : DatagramServiceClient(),
+		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
+	bufferedPacket = NULL;
+	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
+
+	fragmentedPacket = NULL;
+
+	checkupEvent = NULL;
+	netcheckupEvent = NULL;
+	netRequestEvent = NULL;
+
+	setLogging(true);
+   	setGlobalLogging(true);
+}
+
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
 		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
 	bufferedPacket = NULL;

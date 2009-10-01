@@ -5,6 +5,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DatagramServiceClient.h"
 
+DatagramServiceClient::DatagramServiceClient()
+		: ServiceClient() {
+	socket = new UDPSocket();
+
+	doRun = true;
+}
+
 DatagramServiceClient::DatagramServiceClient(const String& host, int port) 
 		: ServiceClient(host, port) {
 	socket = new UDPSocket();

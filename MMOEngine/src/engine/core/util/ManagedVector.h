@@ -27,6 +27,8 @@ class ManagedVectorImplementation : public DistributedObjectServant {
 
 public:
 	ManagedVectorImplementation();
+	ManagedVectorImplementation(DummyConstructorParameter* param);
+
 	ManagedVector* _this;
 
 	operator const ManagedVector*();
@@ -73,6 +75,8 @@ public:
 	void finalizeHelper();
 
 	DistributedObject* instantiateObject();
+
+	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
 

@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define DISTRIBUTEDOBJECTCLASSHELPER_H_
 
 #include "DistributedObject.h"
+#include "DistributedObjectServant.h"
 #include "DistributedObjectAdapter.h"
 
 namespace engine {
@@ -28,7 +29,9 @@ namespace engine {
 		virtual void finalizeHelper() = 0;
 		
 		virtual DistributedObject* instantiateObject() = 0;
-	
+
+		virtual DistributedObjectServant* instantiateServant() = 0;
+
 		virtual DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj) = 0;
 		
 		inline const String& getClassName() {

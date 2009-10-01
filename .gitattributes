@@ -18,6 +18,10 @@ MMOEngine/bin/idlc -text
 MMOEngine/bin/idlc.bat -text
 MMOEngine/bin/idlc.jar -text
 MMOEngine/build/unix/Makefile -text
+MMOEngine/build/unix/confSFqHD2/config.h -text
+MMOEngine/build/unix/confSFqHD2/defines.awk -text
+MMOEngine/build/unix/confSFqHD2/subs.awk -text
+MMOEngine/build/unix/confSFqHD2/subs1.awk -text
 MMOEngine/build/unix/config.h -text
 MMOEngine/build/unix/config.status -text
 MMOEngine/build/unix/config/config.guess -text

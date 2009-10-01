@@ -9,6 +9,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "proto/events/BaseClientCleanUpEvent.hpp"
 #endif
 
+DatagramServiceThread::DatagramServiceThread() : ServiceMessageHandlerThread("") {
+	clients = NULL;
+
+	setLogging(false);
+}
+
 DatagramServiceThread::DatagramServiceThread(const String& s) : ServiceMessageHandlerThread(s) {
 	clients = NULL;
 

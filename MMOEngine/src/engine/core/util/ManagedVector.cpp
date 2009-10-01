@@ -23,6 +23,10 @@ ManagedVectorImplementation::ManagedVectorImplementation() {
 	_classHelper = ManagedVectorHelper::instance();
 }
 
+ManagedVectorImplementation::ManagedVectorImplementation(DummyConstructorParameter* param) {
+	_classHelper = ManagedVectorHelper::instance();
+}
+
 ManagedVectorImplementation::~ManagedVectorImplementation() {
 }
 
@@ -67,6 +71,8 @@ void ManagedVectorImplementation::runlock(bool doLock) {
 }
 
 void ManagedVectorImplementation::_serializationHelperMethod() {
+	_setClassName("ManagedVector");
+
 }
 
 /*
@@ -105,6 +111,10 @@ void ManagedVectorHelper::finalizeHelper() {
 
 DistributedObject* ManagedVectorHelper::instantiateObject() {
 	return new ManagedVector(DummyConstructorParameter::instance());
+}
+
+DistributedObjectServant* ManagedVectorHelper::instantiateServant() {
+	return new ManagedVectorImplementation(DummyConstructorParameter::instance());
 }
 
 DistributedObjectAdapter* ManagedVectorHelper::createAdapter(DistributedObjectStub* obj) {

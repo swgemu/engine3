@@ -38,13 +38,13 @@ public:
 
 	void setLockName(const String& name);
 
-	void serialize(String& data);
+	void writeObject(String& data);
 
-	void serialize(ObjectOutputStream* stream);
+	void writeObject(ObjectOutputStream* stream);
 
-	void deSerialize(const String& data);
+	void readObject(const String& data);
 
-	void deSerialize(ObjectInputStream* stream);
+	void readObject(ObjectInputStream* stream);
 
 protected:
 	ManagedObject(DummyConstructorParameter* param);
@@ -74,6 +74,8 @@ class ManagedObjectImplementation : public DistributedObjectServant, public Seri
 
 public:
 	ManagedObjectImplementation();
+	ManagedObjectImplementation(DummyConstructorParameter* param);
+
 	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
@@ -90,13 +92,13 @@ public:
 
 	void setLockName(const String& name);
 
-	virtual void serialize(String& data);
+	virtual void writeObject(String& data);
 
-	virtual void serialize(ObjectOutputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
 
-	virtual void deSerialize(const String& data);
+	virtual void readObject(const String& data);
 
-	virtual void deSerialize(ObjectInputStream* stream);
+	virtual void readObject(ObjectInputStream* stream);
 
 	ManagedObject* _this;
 
@@ -135,14 +137,14 @@ public:
 
 	void setLockName(const String& name);
 
-	void serialize(String& data);
+	void writeObject(String& data);
 
-	void deSerialize(const String& data);
+	void readObject(const String& data);
 
 protected:
 	String _param0_setLockName__String_;
-	String _param0_serialize__String_;
-	String _param0_deSerialize__String_;
+	String _param0_writeObject__String_;
+	String _param0_readObject__String_;
 };
 
 class ManagedObjectHelper : public DistributedObjectClassHelper, public Singleton<ManagedObjectHelper> {
@@ -154,6 +156,8 @@ public:
 	void finalizeHelper();
 
 	DistributedObject* instantiateObject();
+
+	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
 

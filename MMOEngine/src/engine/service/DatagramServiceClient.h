@@ -18,6 +18,7 @@ namespace engine {
 		bool doRun;
 
 	public:
+		DatagramServiceClient();
 		DatagramServiceClient(const String& host, int port);
 		DatagramServiceClient(Socket* sock, SocketAddress& addr);
 
