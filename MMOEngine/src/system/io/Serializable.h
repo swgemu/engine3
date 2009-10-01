@@ -84,7 +84,7 @@ namespace sys {
 				return true;
 			}
 
-			inline void setClassName(const String& name) {
+			inline void _setClassName(const String& name) {
 				_className = name;
 			}
 
