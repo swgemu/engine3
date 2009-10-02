@@ -17,11 +17,15 @@
 
 #include "system/io/ObjectOutputStream.h"
 
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
+
 namespace engine {
 namespace core {
 
 class ManagedObject : public DistributedObjectStub {
 public:
+	ManagedObject();
+
 	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
@@ -45,6 +49,18 @@ public:
 	void readObject(const String& data);
 
 	void readObject(ObjectInputStream* stream);
+
+	void initializeTransientMembers();
+
+	void updateToDatabase();
+
+	void queueUpdateToDatabaseTask();
+
+	void clearUpdateToDatabaseTask();
+
+	bool isPersistent();
+
+	void setPersistent(bool value);
 
 protected:
 	ManagedObject(DummyConstructorParameter* param);
@@ -71,6 +87,10 @@ protected:
 };
 
 class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
+protected:
+	bool persistent;
+
+	ObjectUpdateToDatabaseTask* updateToDatabaseTask;
 
 public:
 	ManagedObjectImplementation();
@@ -99,6 +119,18 @@ public:
 	virtual void readObject(const String& data);
 
 	virtual void readObject(ObjectInputStream* stream);
+
+	virtual void initializeTransientMembers();
+
+	virtual void updateToDatabase();
+
+	virtual void queueUpdateToDatabaseTask();
+
+	void clearUpdateToDatabaseTask();
+
+	bool isPersistent();
+
+	void setPersistent(bool value);
 
 	ManagedObject* _this;
 
@@ -140,6 +172,18 @@ public:
 	void writeObject(String& data);
 
 	void readObject(const String& data);
+
+	void initializeTransientMembers();
+
+	void updateToDatabase();
+
+	void queueUpdateToDatabaseTask();
+
+	void clearUpdateToDatabaseTask();
+
+	bool isPersistent();
+
+	void setPersistent(bool value);
 
 protected:
 	String _param0_setLockName__String_;

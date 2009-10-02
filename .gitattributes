@@ -303,6 +303,7 @@ MMOEngine/src/engine/core/ManagedObject.h -text
 MMOEngine/src/engine/core/ManagedObject.idl -text
 MMOEngine/src/engine/core/ManagedObjectImplementation.cpp -text
 MMOEngine/src/engine/core/ManagedReference.h -text
+MMOEngine/src/engine/core/ObjectUpdateToDatabaseTask.h -text
 MMOEngine/src/engine/core/ReentrantTask.h -text
 MMOEngine/src/engine/core/Task.cpp -text
 MMOEngine/src/engine/core/Task.h -text

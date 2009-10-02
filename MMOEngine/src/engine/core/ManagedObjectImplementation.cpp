@@ -1,4 +1,6 @@
 #include "ManagedObject.h"
+#include "engine/engine.h"
+#include "ObjectUpdateToDatabaseTask.h"
 
 void ManagedObject::lock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
@@ -86,4 +88,26 @@ void ManagedObjectImplementation::runlock(bool doLock) {
 
 void ManagedObjectImplementation::setLockName(const String& name) {
 	_this->setLockName(name);
+}
+
+void ManagedObjectImplementation::updateToDatabase() {
+	DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
+
+	objectManager->updatePersistentObject(_this);
+
+	queueUpdateToDatabaseTask();
+}
+
+void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
+	if (updateToDatabaseTask != NULL || !persistent)
+		return;
+
+	updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);
+	updateToDatabaseTask->schedule();
+}
+
+void ManagedObjectImplementation:: initializeTransientMembers() {
+	updateToDatabaseTask = NULL;
+
+	persistent = true;
 }

@@ -8,6 +8,14 @@
  *	ManagedObjectStub
  */
 
+ManagedObject::ManagedObject() {
+	_impl = new ManagedObjectImplementation();
+	_impl->_setStub(this);
+	_impl->_setClassHelper(ManagedObjectHelper::instance());
+
+	((ManagedObjectImplementation*) _impl)->_serializationHelperMethod();
+}
+
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
 	_impl = NULL;
 }
@@ -161,6 +169,79 @@ void ManagedObject::readObject(ObjectInputStream* stream) {
 		((ManagedObjectImplementation*) _impl)->readObject(stream);
 }
 
+void ManagedObject::initializeTransientMembers() {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 16);
+
+		method.executeWithVoidReturn();
+	} else
+		((ManagedObjectImplementation*) _impl)->initializeTransientMembers();
+}
+
+void ManagedObject::updateToDatabase() {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 17);
+
+		method.executeWithVoidReturn();
+	} else
+		((ManagedObjectImplementation*) _impl)->updateToDatabase();
+}
+
+void ManagedObject::queueUpdateToDatabaseTask() {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 18);
+
+		method.executeWithVoidReturn();
+	} else
+		((ManagedObjectImplementation*) _impl)->queueUpdateToDatabaseTask();
+}
+
+void ManagedObject::clearUpdateToDatabaseTask() {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 19);
+
+		method.executeWithVoidReturn();
+	} else
+		((ManagedObjectImplementation*) _impl)->clearUpdateToDatabaseTask();
+}
+
+bool ManagedObject::isPersistent() {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 20);
+
+		return method.executeWithBooleanReturn();
+	} else
+		return ((ManagedObjectImplementation*) _impl)->isPersistent();
+}
+
+void ManagedObject::setPersistent(bool value) {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 21);
+		method.addBooleanParameter(value);
+
+		method.executeWithVoidReturn();
+	} else
+		((ManagedObjectImplementation*) _impl)->setPersistent(value);
+}
+
 /*
  *	ManagedObjectImplementation
  */
@@ -191,26 +272,54 @@ ManagedObjectImplementation::operator const ManagedObject*() {
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
 
+	addSerializableVariable("persistent", &persistent);
+}
+
+ManagedObjectImplementation::ManagedObjectImplementation() {
+	_classHelper = ManagedObjectHelper::instance();
+	// engine/core/ManagedObject.idl(21):  persistent = false;
+	persistent = false;
+	// engine/core/ManagedObject.idl(23):  updateToDatabaseTask = null;
+	updateToDatabaseTask = NULL;
 }
 
 void ManagedObjectImplementation::writeObject(String& data) {
-	// engine/core/ManagedObject.idl(40):  Serializable.writeObject(data);
+	// engine/core/ManagedObject.idl(51):  Serializable.writeObject(data);
 	Serializable::writeObject(data);
 }
 
 void ManagedObjectImplementation::writeObject(ObjectOutputStream* stream) {
-	// engine/core/ManagedObject.idl(45):  Serializable.writeObject(stream);
+	// engine/core/ManagedObject.idl(56):  Serializable.writeObject(stream);
 	Serializable::writeObject(stream);
 }
 
 void ManagedObjectImplementation::readObject(const String& data) {
-	// engine/core/ManagedObject.idl(49):  Serializable.readObject(data);
+	// engine/core/ManagedObject.idl(60):  Serializable.readObject(data);
 	Serializable::readObject(data);
+	// engine/core/ManagedObject.idl(62):  initializeTransientMembers();
+	initializeTransientMembers();
 }
 
 void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
-	// engine/core/ManagedObject.idl(54):  Serializable.readObject(stream);
+	// engine/core/ManagedObject.idl(67):  Serializable.readObject(stream);
 	Serializable::readObject(stream);
+	// engine/core/ManagedObject.idl(69):  initializeTransientMembers();
+	initializeTransientMembers();
+}
+
+void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
+	// engine/core/ManagedObject.idl(78):  updateToDatabaseTask = null;
+	updateToDatabaseTask = NULL;
+}
+
+bool ManagedObjectImplementation::isPersistent() {
+	// engine/core/ManagedObject.idl(82):  return persistent;
+	return persistent;
+}
+
+void ManagedObjectImplementation::setPersistent(bool value) {
+	// engine/core/ManagedObject.idl(86):  persistent = value;
+	persistent = value;
 }
 
 /*
@@ -253,6 +362,24 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		break;
 	case 15:
 		readObject(inv->getAsciiParameter(_param0_readObject__String_));
+		break;
+	case 16:
+		initializeTransientMembers();
+		break;
+	case 17:
+		updateToDatabase();
+		break;
+	case 18:
+		queueUpdateToDatabaseTask();
+		break;
+	case 19:
+		clearUpdateToDatabaseTask();
+		break;
+	case 20:
+		resp->insertBoolean(isPersistent());
+		break;
+	case 21:
+		setPersistent(inv->getBooleanParameter());
 		break;
 	default:
 		return NULL;
@@ -299,6 +426,30 @@ void ManagedObjectAdapter::writeObject(String& data) {
 
 void ManagedObjectAdapter::readObject(const String& data) {
 	((ManagedObjectImplementation*) impl)->readObject(data);
+}
+
+void ManagedObjectAdapter::initializeTransientMembers() {
+	((ManagedObjectImplementation*) impl)->initializeTransientMembers();
+}
+
+void ManagedObjectAdapter::updateToDatabase() {
+	((ManagedObjectImplementation*) impl)->updateToDatabase();
+}
+
+void ManagedObjectAdapter::queueUpdateToDatabaseTask() {
+	((ManagedObjectImplementation*) impl)->queueUpdateToDatabaseTask();
+}
+
+void ManagedObjectAdapter::clearUpdateToDatabaseTask() {
+	((ManagedObjectImplementation*) impl)->clearUpdateToDatabaseTask();
+}
+
+bool ManagedObjectAdapter::isPersistent() {
+	return ((ManagedObjectImplementation*) impl)->isPersistent();
+}
+
+void ManagedObjectAdapter::setPersistent(bool value) {
+	((ManagedObjectImplementation*) impl)->setPersistent(value);
 }
 
 /*

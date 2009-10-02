@@ -5,13 +5,24 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 package engine.core;
 
-import system.thread.ReadWriteLock;
 
+import system.thread.ReadWriteLock;
 import system.io.Serializable;
 import system.io.ObjectInputStream;
 import system.io.ObjectOutputStream;
+import engine.core.ObjectUpdateToDatabaseTask;
 
 class ManagedObject implements Serializable {
+	protected boolean persistent;
+	
+	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
+	
+	public ManagedObject() {
+		persistent = false;
+		
+		updateToDatabaseTask = null;
+	}
+
 	@nativeStub 
 	public native void lock(boolean doLock = true);
 	
@@ -47,10 +58,31 @@ class ManagedObject implements Serializable {
 	
 	public abstract void readObject(final string data) {
 		Serializable.readObject(data);
+		
+		initializeTransientMembers();
 	}
 	
 	@local
 	public abstract void readObject(ObjectInputStream stream) {
 		Serializable.readObject(stream);
+		
+		initializeTransientMembers();
+	}
+	
+	public abstract native void initializeTransientMembers();
+	
+	public abstract native void updateToDatabase();
+	public abstract native void queueUpdateToDatabaseTask();
+	
+	public void clearUpdateToDatabaseTask() {
+		updateToDatabaseTask = null;
+	}
+	
+	public boolean isPersistent() {
+		return persistent;
+	}
+	
+	public void setPersistent(boolean value) {
+		persistent = value;
 	}
 }

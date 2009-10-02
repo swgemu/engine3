@@ -44,6 +44,10 @@ namespace engine {
 
 		virtual void _setStub(DistributedObjectStub* stub) = 0;
 
+		virtual void _serializationHelperMethod() {
+
+		}
+
 		virtual DistributedObjectStub* _getStub() = 0;
 		
 		// setters
