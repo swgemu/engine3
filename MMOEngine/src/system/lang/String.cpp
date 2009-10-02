@@ -98,10 +98,18 @@ String::String(const String& str) : Variable() {
 }
 
 String::~String() {
-	clear();
+	if (value != NULL) {
+		free(value);
+		value = NULL;
+
+		count = 0;
+	}
 }
 
 void String::create(const char* str, int len) {
+	if (value != NULL)
+		free(value);
+
 	value = (char*) malloc(len + 1);
 
 	memcpy(value, str, len);
@@ -111,12 +119,7 @@ void String::create(const char* str, int len) {
 }
 
 void String::clear() {
-	if (value != NULL) {
-		free(value);
-		value = NULL;
-
-		count = 0;
-	}
+	create("", 0);
 }
 
 String String::concat(char ch) const {
