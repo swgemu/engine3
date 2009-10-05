@@ -4,6 +4,8 @@
 
 #include "ManagedObject.h"
 
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
+
 /*
  *	ManagedObjectStub
  */
@@ -245,10 +247,6 @@ void ManagedObject::setPersistent(bool value) {
 /*
  *	ManagedObjectImplementation
  */
-
-ManagedObjectImplementation::ManagedObjectImplementation() {
-	_classHelper = ManagedObjectHelper::instance();
-}
 
 ManagedObjectImplementation::ManagedObjectImplementation(DummyConstructorParameter* param) {
 	_classHelper = ManagedObjectHelper::instance();

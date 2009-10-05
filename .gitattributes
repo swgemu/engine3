@@ -55,6 +55,7 @@ MMOEngine/include/engine/core/Core.h -text
 MMOEngine/include/engine/core/ManagedObject.h -text
 MMOEngine/include/engine/core/ManagedObjectImplementation.h -text
 MMOEngine/include/engine/core/ManagedReference.h -text
+MMOEngine/include/engine/core/ObjectUpdateToDatabaseTask.h -text
 MMOEngine/include/engine/core/ReentrantTask.h -text
 MMOEngine/include/engine/core/Task.h -text
 MMOEngine/include/engine/core/TaskManager.h -text

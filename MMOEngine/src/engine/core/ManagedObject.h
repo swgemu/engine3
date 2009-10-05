@@ -9,6 +9,16 @@
 
 #include "engine/core/ManagedReference.h"
 
+namespace engine {
+namespace core {
+
+class ObjectUpdateToDatabaseTask;
+
+} // namespace core
+} // namespace engine
+
+using namespace engine::core;
+
 #include "system/thread/ReadWriteLock.h"
 
 #include "system/io/Serializable.h"
@@ -16,8 +26,6 @@
 #include "system/io/ObjectInputStream.h"
 
 #include "system/io/ObjectOutputStream.h"
-
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
 
 namespace engine {
 namespace core {

@@ -64,6 +64,10 @@ namespace engine {
 			deployed = val;
 		}
 
+		inline void _setImplementation(DistributedObjectServant* impl) {
+			_impl = impl;
+		}
+
 		// getters
 		inline bool isDeplyoed() {
 			return deployed;
