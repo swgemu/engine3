@@ -7,12 +7,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define MANAGEDVECTORMAP_H_
 
 #include "system/lang.h"
+#include "../ManagedReference.h"
 
 namespace engine {
   namespace core {
     namespace util {
 
-	template<class K, class O> class ManagedVectorMap : public VectorMap<K, ManagedReference<O> > {
+	template<class K, class O> class ManagedVectorMap : public VectorMap<K, engine::core::ManagedReference<O> > {
 	public:
 		ManagedVectorMap() : VectorMap<K, ManagedReference<O> >() {
 		}

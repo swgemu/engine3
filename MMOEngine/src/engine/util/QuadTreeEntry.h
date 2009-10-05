@@ -6,9 +6,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef QUADTREEENTRY_H_
 #define QUADTREEENTRY_H_
 
-#include "engine/orb/object/DistributedObject.h"
-#include "engine/core/util/ManagedSortedVector.h"
-
 #include "Coordinate.h"
 
 namespace engine {
@@ -35,7 +32,7 @@ namespace engine {
 
 			//visibilityRange = 128;
 
-			closeobjects.setInsertPlan(ManagedSortedVector<QuadTreeEntry>::NO_DUPLICATE);
+			closeobjects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
 
 			radius = 0.5f;
 		}

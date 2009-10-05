@@ -47,6 +47,7 @@ libengine3_a_SOURCES = \
 			engine/core/TaskQueue.cpp \
 			engine/core/TimedTaskQueue.cpp \
 			engine/core/TaskWorkerThread.cpp \
+			engine/core/ObjectUpdateToDatabaseTask.cpp \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \
