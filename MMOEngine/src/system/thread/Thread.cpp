@@ -6,6 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Thread.h"
 #include <mysql.h>
 
+#ifndef PLATFORM_WIN
+#include <unistd.h>
+#endif
+
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
 pthread_key_t Thread::threadDataKey;
 
@@ -37,6 +41,12 @@ void* Thread::executeThread(void* th) {
 
 	return NULL;
 }
+
+#ifndef PLATFORM_WIN
+pid_t Thread::getProcessID() {
+	return getpid();
+}
+#endif
 
 Thread::Thread() {
 	pthread_attr_init(&attributes);

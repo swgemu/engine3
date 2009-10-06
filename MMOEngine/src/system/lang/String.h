@@ -70,10 +70,8 @@ namespace sys {
 		String toUpperCase() const ;
 
 		String trim() const;
-
-		void clear();
-
 		String escapeString() const ;
+
 
 		String& operator= (const char* str);
 		String& operator= (const String& str);
@@ -137,6 +135,8 @@ namespace sys {
 
 	protected:
 		void create(const char* str, int len);
+
+		void clear();
 
 		static char* strrstr(const char* s, int slen, const char* t, int tlen);
 

@@ -107,9 +107,6 @@ String::~String() {
 }
 
 void String::create(const char* str, int len) {
-	if (value != NULL)
-		free(value);
-
 	value = (char*) malloc(len + 1);
 
 	memcpy(value, str, len);
@@ -119,7 +116,12 @@ void String::create(const char* str, int len) {
 }
 
 void String::clear() {
-	create("", 0);
+	if (value != NULL) {
+		free(value);
+		value = NULL;
+
+		count = 0;
+	}
 }
 
 String String::concat(char ch) const {
@@ -445,8 +447,7 @@ String String::escapeString() const {
 }
 
 String& String::operator=(const char* str) {
-	if (value != NULL)
-		free(value);
+	clear();
 
 	create(str, strlen(str));
 
@@ -457,8 +458,7 @@ String& String::operator=(const String& str) {
 	if (value == str.value)
 		return *this;
 
-	if (value != NULL)
-		free(value);
+	clear();
 
 	create(str.value, str.count);
 
