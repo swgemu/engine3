@@ -20,14 +20,20 @@ ManagedVector::~ManagedVector() {
  */
 
 ManagedVectorImplementation::ManagedVectorImplementation() {
-	_classHelper = ManagedVectorHelper::instance();
+	_initializeImplementation();
 }
 
 ManagedVectorImplementation::ManagedVectorImplementation(DummyConstructorParameter* param) {
-	_classHelper = ManagedVectorHelper::instance();
+	_initializeImplementation();
 }
 
 ManagedVectorImplementation::~ManagedVectorImplementation() {
+}
+
+void ManagedVectorImplementation::_initializeImplementation() {
+	_setClassHelper(ManagedVectorHelper::instance());
+
+	_serializationHelperMethod();
 }
 
 void ManagedVectorImplementation::_setStub(DistributedObjectStub* stub) {

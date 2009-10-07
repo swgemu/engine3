@@ -64,7 +64,8 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	AdvancedBinaryHeap.$(OBJEXT) PriorityQueue.$(OBJEXT) \
 	Task.$(OBJEXT) TaskManager.$(OBJEXT) TaskScheduler.$(OBJEXT) \
 	TaskQueue.$(OBJEXT) TimedTaskQueue.$(OBJEXT) \
-	TaskWorkerThread.$(OBJEXT) ServiceClient.$(OBJEXT) \
+	TaskWorkerThread.$(OBJEXT) \
+	ObjectUpdateToDatabaseTask.$(OBJEXT) ServiceClient.$(OBJEXT) \
 	ServiceThread.$(OBJEXT) ServiceMessageHandlerThread.$(OBJEXT) \
 	ServiceProcessThread.$(OBJEXT) DatagramServiceClient.$(OBJEXT) \
 	DatagramServiceClientProxy.$(OBJEXT) \
@@ -254,6 +255,7 @@ libengine3_a_SOURCES = \
 			engine/core/TaskQueue.cpp \
 			engine/core/TimedTaskQueue.cpp \
 			engine/core/TaskWorkerThread.cpp \
+			engine/core/ObjectUpdateToDatabaseTask.cpp \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \
@@ -397,6 +399,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamingDirectoryService.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamingDirectoryServiceImpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NetworkInterface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectUpdateToDatabaseTask.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Packet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PrintStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PriorityQueue.Po@am__quote@
@@ -892,6 +895,20 @@ TaskWorkerThread.obj: engine/core/TaskWorkerThread.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/TaskWorkerThread.cpp' object='TaskWorkerThread.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TaskWorkerThread.obj `if test -f 'engine/core/TaskWorkerThread.cpp'; then $(CYGPATH_W) 'engine/core/TaskWorkerThread.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/TaskWorkerThread.cpp'; fi`
+
+ObjectUpdateToDatabaseTask.o: engine/core/ObjectUpdateToDatabaseTask.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ObjectUpdateToDatabaseTask.o -MD -MP -MF $(DEPDIR)/ObjectUpdateToDatabaseTask.Tpo -c -o ObjectUpdateToDatabaseTask.o `test -f 'engine/core/ObjectUpdateToDatabaseTask.cpp' || echo '$(srcdir)/'`engine/core/ObjectUpdateToDatabaseTask.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ObjectUpdateToDatabaseTask.Tpo $(DEPDIR)/ObjectUpdateToDatabaseTask.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/ObjectUpdateToDatabaseTask.cpp' object='ObjectUpdateToDatabaseTask.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ObjectUpdateToDatabaseTask.o `test -f 'engine/core/ObjectUpdateToDatabaseTask.cpp' || echo '$(srcdir)/'`engine/core/ObjectUpdateToDatabaseTask.cpp
+
+ObjectUpdateToDatabaseTask.obj: engine/core/ObjectUpdateToDatabaseTask.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ObjectUpdateToDatabaseTask.obj -MD -MP -MF $(DEPDIR)/ObjectUpdateToDatabaseTask.Tpo -c -o ObjectUpdateToDatabaseTask.obj `if test -f 'engine/core/ObjectUpdateToDatabaseTask.cpp'; then $(CYGPATH_W) 'engine/core/ObjectUpdateToDatabaseTask.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/ObjectUpdateToDatabaseTask.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ObjectUpdateToDatabaseTask.Tpo $(DEPDIR)/ObjectUpdateToDatabaseTask.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/core/ObjectUpdateToDatabaseTask.cpp' object='ObjectUpdateToDatabaseTask.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ObjectUpdateToDatabaseTask.obj `if test -f 'engine/core/ObjectUpdateToDatabaseTask.cpp'; then $(CYGPATH_W) 'engine/core/ObjectUpdateToDatabaseTask.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/core/ObjectUpdateToDatabaseTask.cpp'; fi`
 
 ServiceClient.o: engine/service/ServiceClient.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ServiceClient.o -MD -MP -MF $(DEPDIR)/ServiceClient.Tpo -c -o ServiceClient.o `test -f 'engine/service/ServiceClient.cpp' || echo '$(srcdir)/'`engine/service/ServiceClient.cpp

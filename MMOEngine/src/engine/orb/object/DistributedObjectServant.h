@@ -26,27 +26,11 @@ namespace engine {
 		
 		virtual ~DistributedObjectServant();
 
-		/*void lock(bool doLock = true);
-
-		void rlock(bool doLock = true);
-
-		void wlock(bool doLock = true);
-
-		void wlock(Mutex* lock);
-
-		void wlock(ReadWriteLock* lock);
-
-		void unlock(bool doLock = true);
-
-		void runlock(bool doLock = true);*/
-
 		void setDeployingName(const String& name);
 
 		virtual void _setStub(DistributedObjectStub* stub) = 0;
 
-		virtual void _serializationHelperMethod() {
-
-		}
+		virtual void _serializationHelperMethod() = 0;
 
 		virtual DistributedObjectStub* _getStub() = 0;
 		

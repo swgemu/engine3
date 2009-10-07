@@ -13,7 +13,7 @@ namespace engine {
   namespace core {
     namespace util {
 
-	template<class O> class ManagedSortedVector : public Vector<ManagedReference<O> > {
+	template<class O> class ManagedSortedVector : public Vector<engine::core::ManagedReference<O> > {
 		int insertPlan;
 
 		virtual int compare(O* obj1, O* obj2) {

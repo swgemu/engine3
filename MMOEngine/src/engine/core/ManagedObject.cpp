@@ -13,9 +13,6 @@
 ManagedObject::ManagedObject() {
 	_impl = new ManagedObjectImplementation();
 	_impl->_setStub(this);
-	_impl->_setClassHelper(ManagedObjectHelper::instance());
-
-	((ManagedObjectImplementation*) _impl)->_serializationHelperMethod();
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
@@ -249,10 +246,16 @@ void ManagedObject::setPersistent(bool value) {
  */
 
 ManagedObjectImplementation::ManagedObjectImplementation(DummyConstructorParameter* param) {
-	_classHelper = ManagedObjectHelper::instance();
+	_initializeImplementation();
 }
 
 ManagedObjectImplementation::~ManagedObjectImplementation() {
+}
+
+void ManagedObjectImplementation::_initializeImplementation() {
+	_setClassHelper(ManagedObjectHelper::instance());
+
+	_serializationHelperMethod();
 }
 
 void ManagedObjectImplementation::_setStub(DistributedObjectStub* stub) {
@@ -274,7 +277,7 @@ void ManagedObjectImplementation::_serializationHelperMethod() {
 }
 
 ManagedObjectImplementation::ManagedObjectImplementation() {
-	_classHelper = ManagedObjectHelper::instance();
+	_initializeImplementation();
 	// engine/core/ManagedObject.idl(21):  persistent = false;
 	persistent = false;
 	// engine/core/ManagedObject.idl(23):  updateToDatabaseTask = null;

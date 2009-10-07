@@ -37,6 +37,8 @@ public:
 protected:
 	virtual ~ManagedVectorImplementation();
 
+	void _initializeImplementation();
+
 	void _setStub(DistributedObjectStub* stub);
 
 	void lock(bool doLock = true);

@@ -43,6 +43,10 @@ namespace sys {
 		//! Initializes main thread local key
 		static void initializeMainThread(Thread* mainThread);
 
+	#ifndef PLATFORM_WIN
+		static pid_t getProcessID();
+	#endif
+
 		//! causes this thread to begin execution
 		void start();
 

@@ -148,6 +148,8 @@ public:
 protected:
 	virtual ~ManagedObjectImplementation();
 
+	void _initializeImplementation();
+
 	void _setStub(DistributedObjectStub* stub);
 
 	void _serializationHelperMethod();
