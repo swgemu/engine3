@@ -68,7 +68,7 @@ public:
 
 	bool isPersistent();
 
-	void setPersistent(bool value);
+	void setPersistent();
 
 protected:
 	ManagedObject(DummyConstructorParameter* param);
@@ -138,7 +138,7 @@ public:
 
 	bool isPersistent();
 
-	void setPersistent(bool value);
+	void setPersistent();
 
 	ManagedObject* _this;
 
@@ -193,7 +193,7 @@ public:
 
 	bool isPersistent();
 
-	void setPersistent(bool value);
+	void setPersistent();
 
 protected:
 	String _param0_setLockName__String_;

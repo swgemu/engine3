@@ -41,6 +41,18 @@ namespace sys {
 			insertPlan = plan;
 		}
 
+		inline void setNoDuplicateInsertPlan() {
+			insertPlan = NO_DUPLICATE;
+		}
+
+		inline void setAllowDuplicateInsertPlan() {
+			insertPlan = ALLOW_DUPLICATE;
+		}
+
+		inline void setAllowOverwriteInsertPlan() {
+			insertPlan = ALLOW_OVERWRITE;
+		}
+
 		inline int getInsertPlan() {
 			return insertPlan;
 		}
