@@ -100,6 +100,13 @@ BaseClient::~BaseClient() {
 }
 
 void BaseClient::initialize() {
+	#ifdef VERSION_PUBLIC
+	SocketAddress addr = ServiceClient::getAddress();
+	uint16 port = addr.getPort();
+
+	ServiceClient::setAddress("localhost", port);
+	#endif
+
 	crcSeed = 0;
 
 	serverSequence = 0;
