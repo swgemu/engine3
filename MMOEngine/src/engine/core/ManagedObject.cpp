@@ -228,17 +228,16 @@ bool ManagedObject::isPersistent() {
 		return ((ManagedObjectImplementation*) _impl)->isPersistent();
 }
 
-void ManagedObject::setPersistent(bool value) {
+void ManagedObject::setPersistent() {
 	if (_impl == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, 21);
-		method.addBooleanParameter(value);
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->setPersistent(value);
+		((ManagedObjectImplementation*) _impl)->setPersistent();
 }
 
 /*
@@ -318,11 +317,6 @@ bool ManagedObjectImplementation::isPersistent() {
 	return persistent;
 }
 
-void ManagedObjectImplementation::setPersistent(bool value) {
-	// engine/core/ManagedObject.idl(86):  persistent = value;
-	persistent = value;
-}
-
 /*
  *	ManagedObjectAdapter
  */
@@ -380,7 +374,7 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		resp->insertBoolean(isPersistent());
 		break;
 	case 21:
-		setPersistent(inv->getBooleanParameter());
+		setPersistent();
 		break;
 	default:
 		return NULL;
@@ -449,8 +443,8 @@ bool ManagedObjectAdapter::isPersistent() {
 	return ((ManagedObjectImplementation*) impl)->isPersistent();
 }
 
-void ManagedObjectAdapter::setPersistent(bool value) {
-	((ManagedObjectImplementation*) impl)->setPersistent(value);
+void ManagedObjectAdapter::setPersistent() {
+	((ManagedObjectImplementation*) impl)->setPersistent();
 }
 
 /*

@@ -45,7 +45,7 @@ class ManagedObject implements Serializable {
 	public native void runlock(boolean doLock = true);
 
 	@nativeStub 
-	public native void setLockName(final string name);	
+	public native void setLockName(final string name);
 	
 	public abstract void writeObject(string data) {
 		Serializable.writeObject(data);
@@ -82,7 +82,5 @@ class ManagedObject implements Serializable {
 		return persistent;
 	}
 	
-	public void setPersistent(boolean value) {
-		persistent = value;
-	}
+	public native void setPersistent();
 }

@@ -38,6 +38,9 @@ void ManagedObject::wlock(ManagedObject* obj) {
 }
 
 void ManagedObject::unlock(bool doLock) {
+	/*if (isPersistent())
+		updateToDatabase();*/
+
 	DistributedObjectStub::unlock(doLock);
 
 	if (_impl == NULL)
@@ -104,6 +107,12 @@ void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
 
 	updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);
 	updateToDatabaseTask->schedule();
+}
+
+void ManagedObjectImplementation::setPersistent() {
+	persistent = true;
+
+	queueUpdateToDatabaseTask();
 }
 
 void ManagedObjectImplementation:: initializeTransientMembers() {
