@@ -18,6 +18,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/DisconnectMessage.h"
 #include "packets/NetStatusRequestMessage.h"
 
+#include "system/platform.h"
+
 BaseClient::BaseClient() : DatagramServiceClient(),
 		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
 	bufferedPacket = NULL;
@@ -806,6 +808,13 @@ bool BaseClient::checkNetStatus() {
 bool BaseClient::connect() {
 	try {
 		lock();
+
+		#ifdef VERSION_PUBLIC
+		SocketAddress addr = ServiceClient::getAddress();
+		uint16 port = addr.getPort();
+
+		ServiceClient::setAddress("localhost", port);
+		#endif
 
 		info("sending session request");
 
