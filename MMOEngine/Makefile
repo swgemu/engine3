@@ -3,6 +3,8 @@
 
 IDLC = /usr/local/bin/idlc
 
+ENGINE_PATH = ../../core3-pub/MMOEngine
+
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/util/ManagedVector.idl
 	
@@ -41,9 +43,10 @@ inst:
 	build/unix/install . > /dev/null 2>&1
 
 instpub:
-	build/unix/install ../../swgemupub/MMOEngine -u > /dev/null
+	build/unix/install $(ENGINE_PATH) -u > /dev/null
 	strip --strip-debug lib/unix/libengine3.a
-	cp lib/unix/libengine3.a ../../swgemupub/MMOEngine/lib/unix
+	cp lib/unix/libengine3.a $(ENGINE_PATH)/lib/unix
+	cp bin/idlc.jar $(ENGINE_PATH)/bin
 
 pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
