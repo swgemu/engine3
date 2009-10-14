@@ -12,16 +12,12 @@ fi
 
 # create tree on include files
 cd src
-/usr/bin/find . -iname \*.h | cpio -ov > tree.cpio
+/usr/bin/find . -iname \*.h -o -iname \*.h | cpio -ov > tree.cpio
 cd ..
 
 # copy files to destination
 cp src/tree.cpio ${INSTALL_PATH}/include
 rm src/tree.cpio
-
-#cp src/engine/lua/Lua.cpp ${INSTALL_PATH}/include/engine3/engine/lua
-
-#cp lib/freebsd/libengine.a ${INSTALL_PATH}/lib/freebsd
 
 # unpack tree at destination
 cd ${INSTALL_PATH}/include/

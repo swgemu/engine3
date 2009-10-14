@@ -53,6 +53,7 @@ MMOEngine/external/zlib/include/zlib.h -text
 MMOEngine/external/zlib/lib/zlib1.lib -text
 MMOEngine/include/engine/core/Core.h -text
 MMOEngine/include/engine/core/ManagedObject.h -text
+MMOEngine/include/engine/core/ManagedObject.idl -text
 MMOEngine/include/engine/core/ManagedObjectImplementation.h -text
 MMOEngine/include/engine/core/ManagedReference.h -text
 MMOEngine/include/engine/core/ObjectUpdateToDatabaseTask.h -text
@@ -68,6 +69,7 @@ MMOEngine/include/engine/core/thread/RWLockable.h -text
 MMOEngine/include/engine/core/thread/RWLockableImplementation.h -text
 MMOEngine/include/engine/core/util/ManagedSortedVector.h -text
 MMOEngine/include/engine/core/util/ManagedVector.h -text
+MMOEngine/include/engine/core/util/ManagedVector.idl -text
 MMOEngine/include/engine/core/util/ManagedVectorImplementation.h -text
 MMOEngine/include/engine/core/util/ManagedVectorMap.h -text
 MMOEngine/include/engine/db/BinaryData.h -text

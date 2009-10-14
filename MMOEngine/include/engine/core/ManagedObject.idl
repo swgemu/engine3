@@ -1,0 +1,86 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+package engine.core;
+
+include system.thread.ReadWriteLock;
+include system.io.Serializable;
+include system.io.ObjectInputStream;
+include system.io.ObjectOutputStream;
+
+import engine.core.ObjectUpdateToDatabaseTask;
+
+class ManagedObject implements Serializable {
+	protected boolean persistent;
+	
+	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
+	
+	public ManagedObject() {
+		persistent = false;
+		
+		updateToDatabaseTask = null;
+	}
+
+	@nativeStub 
+	public native void lock(boolean doLock = true);
+	
+	@nativeStub 
+	public native void lock(ManagedObject obj);
+
+	@nativeStub 
+	public native void rlock(boolean doLock = true);
+
+	@nativeStub 
+	public native void wlock(boolean doLock = true);
+
+	@nativeStub 
+	public native void wlock(ManagedObject obj);
+	
+	@nativeStub 
+	public native void unlock(boolean doLock = true);
+
+	@nativeStub 
+	public native void runlock(boolean doLock = true);
+
+	@nativeStub 
+	public native void setLockName(final string name);
+	
+	public abstract void writeObject(string data) {
+		Serializable.writeObject(data);
+	}
+	
+	@local
+	public abstract void writeObject(ObjectOutputStream stream) {
+		Serializable.writeObject(stream);
+	}
+	
+	public abstract void readObject(final string data) {
+		Serializable.readObject(data);
+		
+		initializeTransientMembers();
+	}
+	
+	@local
+	public abstract void readObject(ObjectInputStream stream) {
+		Serializable.readObject(stream);
+		
+		initializeTransientMembers();
+	}
+	
+	public abstract native void initializeTransientMembers();
+	
+	public abstract native void updateToDatabase();
+	public abstract native void queueUpdateToDatabaseTask();
+	
+	public void clearUpdateToDatabaseTask() {
+		updateToDatabaseTask = null;
+	}
+	
+	public boolean isPersistent() {
+		return persistent;
+	}
+	
+	public native void setPersistent();
+}
