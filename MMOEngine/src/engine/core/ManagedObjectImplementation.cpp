@@ -94,6 +94,9 @@ void ManagedObjectImplementation::setLockName(const String& name) {
 }
 
 void ManagedObjectImplementation::updateToDatabase() {
+	if (!persistent)
+		return;
+
 	DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
 
 	objectManager->updatePersistentObject(_this);
@@ -115,8 +118,7 @@ void ManagedObjectImplementation::setPersistent() {
 	queueUpdateToDatabaseTask();
 }
 
-void ManagedObjectImplementation:: initializeTransientMembers() {
-	updateToDatabaseTask = NULL;
-
-	persistent = true;
+void ManagedObjectImplementation::initializeTransientMembers() {
+	if (persistent)
+		queueUpdateToDatabaseTask();
 }
