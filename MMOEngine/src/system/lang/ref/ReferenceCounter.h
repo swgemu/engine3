@@ -37,7 +37,7 @@ namespace sys {
 	protected:
 		inline void initializeCount() {
 			_references = new uint32();
-			*_references = 1;
+			*_references = 0;
 		}
 
 		inline void finalizeCount() {

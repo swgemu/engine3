@@ -25,7 +25,6 @@ namespace sys {
 	}
 }
 
-
 namespace sys {
   namespace lang {
 
@@ -34,8 +33,6 @@ namespace sys {
 	using namespace sys::io;
 
 	class Object : public ReferenceCounter, public Variable {
-		bool finalized;
-
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 
@@ -49,16 +46,15 @@ namespace sys {
 		#ifdef TRACE_REFERENCES
 			referenceHolders.setNullValue(NULL);
 		#endif
-
-			finalized = false;
 		}
 
 		Object(const Object& obj) : ReferenceCounter(), Variable() {
 			_references = obj._references;
-			finalized = obj.finalized;
 		}
 
 		virtual ~Object() {
+			finalize();
+
 		#ifdef TRACE_REFERENCES
 			for (int i = 0; i < referenceHolders.size(); ++i)
 				delete referenceHolders.get(i);
@@ -66,21 +62,6 @@ namespace sys {
 		}
 
 		virtual void finalize() {
-			if (finalized)
-				return;
-
-			finalized = true;
-
-			release();
-		}
-
-		void revoke() {
-			if (!finalized)
-				return;
-
-			finalized = false;
-
-			acquire();
 		}
 
 		bool toString(String& str) {
@@ -142,13 +123,8 @@ namespace sys {
 		}
 
 	protected:
-		virtual bool destroy() {
-			if (finalized) {
-				delete this;
-
-				return true;
-			} else
-				return false;
+		virtual void destroy() {
+			delete this;
 		}
 
 	};

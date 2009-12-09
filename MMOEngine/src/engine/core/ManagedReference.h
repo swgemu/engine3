@@ -30,8 +30,10 @@ namespace engine {
 			Reference<O>::setObject(ref.object);
 		}
 
-		void operator=(O obj) {
+		O operator=(O obj) {
 			Reference<O>::updateObject(obj);
+
+			return obj;
 		}
 
 		int compareTo(const ManagedReference& ref) const {
