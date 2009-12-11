@@ -54,6 +54,10 @@ namespace sys {
 		PrintStream& operator<< (const String& str);
 		PrintStream& operator<< (const StreamFlags flags);
 
+		PrintStream* operator->() {
+			return this;
+		}
+
 		// getters
 		inline bool doHex() {
 			return streamFlags & SF_hex;

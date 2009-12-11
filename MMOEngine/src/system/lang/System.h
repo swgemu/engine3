@@ -13,6 +13,7 @@ typedef time_t utime;
 class MTRand;
 
 #include "../io/PrintStream.h"
+
 #include "../thread/ThreadLocal.h"
 
 namespace sys {
@@ -26,7 +27,7 @@ namespace sys {
 		static ThreadLocal<MTRand> mtrand;
 
 	public:
-		static PrintStream out;
+		static class PrintStream out;
 
 		static inline time_t getTime() {
 			return (utime) time(0);
