@@ -24,7 +24,7 @@ DistributedObjectBroker::DistributedObjectBroker()
 
 	orbClient = NULL;
 
-	setLogging(false);
+	setLogging(true);
 }
 
 DistributedObjectBroker::~DistributedObjectBroker() {

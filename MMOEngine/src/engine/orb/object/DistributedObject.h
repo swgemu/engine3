@@ -16,7 +16,7 @@ namespace engine {
 	class DistributedObjectAdapter;
 	class DistributedObjectStub;
 
-	class DistributedObject : public ReadWriteLock, public virtual Object {
+	class DistributedObject : public ReadWriteLock, public Object {
 	protected:
 		String _className;
 		String _name;
@@ -28,13 +28,7 @@ namespace engine {
 	public:
 		DistributedObject();
 
-		virtual ~DistributedObject();
-
-		virtual void finalize();
-
-		virtual void acquire();
-
-		virtual void release();
+		~DistributedObject();
 
 		// setters
 		inline void _setClassName(const String& n) {

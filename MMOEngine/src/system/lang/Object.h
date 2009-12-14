@@ -52,7 +52,6 @@ namespace sys {
 			_references = obj._references;
 		}
 
-	protected:
 		virtual ~Object() {
 			finalize();
 
@@ -61,7 +60,6 @@ namespace sys {
 				delete referenceHolders.get(i);
 		#endif
 		}
-	public:
 
 		virtual void finalize() {
 		}

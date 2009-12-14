@@ -30,7 +30,7 @@ namespace engine {
 	public:
 		DistributedObjectStub();
 
-		virtual ~DistributedObjectStub();
+		~DistributedObjectStub();
 
 		//virtual DistributedObjectStub* clone();
 
