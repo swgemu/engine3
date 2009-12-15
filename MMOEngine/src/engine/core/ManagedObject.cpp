@@ -22,6 +22,7 @@ ManagedObject::ManagedObject(DummyConstructorParameter* param) {
 ManagedObject::~ManagedObject() {
 }
 
+
 void ManagedObject::_lock(bool doLock) {
 	if (_impl == NULL) {
 		if (!deployed)
@@ -249,6 +250,11 @@ ManagedObjectImplementation::ManagedObjectImplementation(DummyConstructorParamet
 }
 
 ManagedObjectImplementation::~ManagedObjectImplementation() {
+	ManagedObjectImplementation::finalize();
+}
+
+
+void ManagedObjectImplementation::finalize() {
 }
 
 void ManagedObjectImplementation::_initializeImplementation() {

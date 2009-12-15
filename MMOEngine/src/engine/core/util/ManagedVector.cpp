@@ -15,6 +15,7 @@ ManagedVector::ManagedVector(DummyConstructorParameter* param) {
 ManagedVector::~ManagedVector() {
 }
 
+
 /*
  *	ManagedVectorImplementation
  */
@@ -28,6 +29,11 @@ ManagedVectorImplementation::ManagedVectorImplementation(DummyConstructorParamet
 }
 
 ManagedVectorImplementation::~ManagedVectorImplementation() {
+	ManagedVectorImplementation::finalize();
+}
+
+
+void ManagedVectorImplementation::finalize() {
 }
 
 void ManagedVectorImplementation::_initializeImplementation() {

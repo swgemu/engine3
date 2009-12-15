@@ -53,15 +53,15 @@ namespace sys {
 		}
 
 		virtual ~Object() {
-			finalize();
-
 		#ifdef TRACE_REFERENCES
 			for (int i = 0; i < referenceHolders.size(); ++i)
 				delete referenceHolders.get(i);
 		#endif
+
+			finalize();
 		}
 
-		virtual void finalize() {
+		void finalize() {
 		}
 
 		bool toString(String& str) {

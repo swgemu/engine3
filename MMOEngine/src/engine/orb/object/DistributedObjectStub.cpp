@@ -72,14 +72,10 @@ void DistributedObjectStub::deploy(const String& name, uint64 nid) {
 }
 
 bool DistributedObjectStub::undeploy() {
-	printf("anyad1\n");
 	if (deployed) {
-		printf("anyad2\n");
 		DistributedObjectBroker::instance()->undeploy(_name);
 		deployed = false; 
 	} else {
-		printf("anyad3\n");
-
 		if (_impl == NULL)
 			throw ObjectNotLocalException(this);
 		

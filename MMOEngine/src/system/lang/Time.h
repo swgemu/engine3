@@ -55,7 +55,7 @@ namespace sys {
 			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
 		}
 
-		Time(const Time& time) : Object(), Serializable() {
+		Time(const Time& time) : Serializable() {
 			ts = time.ts;
 
 			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));

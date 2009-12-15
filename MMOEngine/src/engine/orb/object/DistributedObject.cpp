@@ -12,5 +12,4 @@ DistributedObject::DistributedObject() {
 }
 
 DistributedObject::~DistributedObject() {
-	printf("deleting DistributedObject\n");
 }

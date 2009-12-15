@@ -28,7 +28,7 @@ namespace engine {
 	public:
 		DistributedObject();
 
-		~DistributedObject();
+		virtual ~DistributedObject();
 
 		// setters
 		inline void _setClassName(const String& n) {
