@@ -53,6 +53,8 @@ void TaskManager::shutdown() {
 		delete scheduler;
 	}
 
+	tasks.flush();
+
 	while (!workers.isEmpty()) {
 		TaskWorkerThread* worker = workers.remove(0);
 		worker->stop();

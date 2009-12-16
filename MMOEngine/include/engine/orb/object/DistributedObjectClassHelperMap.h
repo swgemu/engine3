@@ -30,7 +30,8 @@ namespace engine {
 				String& helpername = iter.getNextKey();
 				DistributedObjectClassHelper* helper = remove(helpername);
 
-				helper->finalizeHelper();
+				//TODO: fix crash
+				//helper->finalizeHelper();
 			}
 		}
 

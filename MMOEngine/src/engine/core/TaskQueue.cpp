@@ -81,7 +81,7 @@ void TaskQueue::flush() {
 	blocked = true;
 
 	if (waitingForTask)
-		signal(condMutex);
+		broadcast(condMutex);
 
 	condMutex->unlock();
 }
