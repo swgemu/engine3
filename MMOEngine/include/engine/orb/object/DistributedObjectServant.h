@@ -15,7 +15,7 @@ namespace engine {
 
   	class DistributedObjectClassHelper;
 
-	class DistributedObjectServant {
+	class DistributedObjectServant : public virtual Object {
 	protected:
 		DistributedObjectClassHelper* _classHelper;
 		

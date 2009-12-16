@@ -23,7 +23,7 @@ namespace sys {
 
 		class VariableName;
 
-		class Serializable : public Object {
+		class Serializable : public virtual Object {
 			String _className;
 			VectorMap<VariableName, void*> variables;
 

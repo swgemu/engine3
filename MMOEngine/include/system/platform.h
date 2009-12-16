@@ -98,7 +98,6 @@ namespace sys {
 	//#define TRACE_REFERENCES
 
 	#ifdef VERSION_PUBLIC
-	anyad
 	#define CONNECTION_LIMIT 20
 	#endif
 

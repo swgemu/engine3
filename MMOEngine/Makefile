@@ -14,9 +14,9 @@ all: compile install-headers
 all-public: clean compile-debug install-public
 	#done
 
-compile: compile-idlc compile-engine-release install-lib
+compile: compile-idlc compile-engine-debug install-lib
 
-compile-debug: compile-idlc compile-engine-debug install-lib
+compile-debug: compile-idlc compile-engine-release install-lib
 
 compile-idlc:
 	cd src && $(IDLC) $(IDL_SOURCES)
