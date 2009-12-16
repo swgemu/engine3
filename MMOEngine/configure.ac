@@ -37,6 +37,8 @@ case "$host_cpu-$host_os" in
       USER_LIBS_PATH="/usr/local/lib"
 esac
 
+AM_CONDITIONAL(DEBUG, test "$enable_debug" = yes)
+
 AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)
 

@@ -97,8 +97,9 @@ namespace sys {
 	#define LINE_TRACING
 	//#define TRACE_REFERENCES
 
-	/*#define VERSION_PUBLIC
-	#define CONNECTION_LIMIT 20*/
+	#ifdef VERSION_PUBLIC
+	#define CONNECTION_LIMIT 20
+	#endif
 
 	namespace lang {
 	} // namespace net

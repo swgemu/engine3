@@ -8,27 +8,40 @@ ENGINE_PATH = ../../core3-pub/MMOEngine
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/util/ManagedVector.idl
 	
-all: compile inst
+all: compile install-headers
 	#done
 
-allpub: config clean compile instpub
+all-public: clean compile-debug install-public
 	#done
 
-compile:
+compile: compile-idlc compile-engine-release install-lib
+
+compile-debug: compile-idlc compile-engine-debug install-lib
+
+compile-idlc:
 	cd src && $(IDLC) $(IDL_SOURCES)
+
+recompile-idlc:
+	cd src && $(IDLC) --rebuild $(IDL_SOURCES)
+
+compile-engine-release:
 	cd build/unix && ../../configure && make
+
+compile-engine-debug:
+	cd build/unix && ../../configure --enable-debug && make
+
+install-lib:
 	cp build/unix/src/libengine3.a lib/unix
 
 config:
 	autoreconf --force
 	#done
 
-clean: cleanidl
-	cd src && $(IDLC) -rebuild $(IDL_SOURCES)
+clean: clean-idlc recompile-idlc
 	cd build/unix && make clean
 	#done
 
-cleanidl:
+clean-idlc:
 	rm -f src/engine/core/ManagedObject.h
 	rm -f src/engine/core/ManagedObject.cpp
 	rm -f src/engine/core/util/ManagedVector.h
@@ -39,10 +52,10 @@ install:
 	cp bin/idlc.jar /usr/local/lib
 	#cp lib/unix/libengine3.a /usr/local/lib	
 
-inst:	
+install-headers:	
 	build/unix/install . > /dev/null 2>&1
 
-instpub:
+install-public:
 	build/unix/install $(ENGINE_PATH) -u > /dev/null
 	strip --strip-debug lib/unix/libengine3.a
 	cp lib/unix/libengine3.a $(ENGINE_PATH)/lib/unix

@@ -1,7 +1,11 @@
 # Copyright (C) 2007 <SWGEmu>. All rights reserved.
 # Distribution of this file for usage outside of Core3 is prohibited.
 
-AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused
+if DEBUG
+AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
+else
+AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused
+endif
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src/

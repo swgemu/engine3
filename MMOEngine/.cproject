@@ -87,14 +87,6 @@
 <useDefaultCommand>true</useDefaultCommand>
 <runAllBuilders>false</runAllBuilders>
 </target>
-<target name="all (win32)" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>nmake</buildCommand>
-<buildArguments>-f Makefile.win32</buildArguments>
-<buildTarget>all</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-<runAllBuilders>false</runAllBuilders>
-</target>
 <target name="configure" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-f Makefile.freebsd</buildArguments>
@@ -119,10 +111,10 @@
 <useDefaultCommand>true</useDefaultCommand>
 <runAllBuilders>false</runAllBuilders>
 </target>
-<target name="allpub" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="all-public" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-f Makefile.freebsd</buildArguments>
-<buildTarget>allpub</buildTarget>
+<buildTarget>all-public</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 <runAllBuilders>false</runAllBuilders>

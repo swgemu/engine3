@@ -557,6 +557,8 @@ USER_INCLUDES_PATH
 SYSTEM_LIBS
 SYSTEM_INCLUDES
 CFLAGS
+DEBUG_FALSE
+DEBUG_TRUE
 RANLIB
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
@@ -3149,6 +3151,15 @@ case "$host_cpu-$host_os" in
       USER_LIBS_PATH="/usr/local/lib"
 esac
 
+ if test "$enable_debug" = yes; then
+  DEBUG_TRUE=
+  DEBUG_FALSE='#'
+else
+  DEBUG_TRUE='#'
+  DEBUG_FALSE=
+fi
+
+
 
 
 
@@ -3263,6 +3274,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${DEBUG_TRUE}" && test -z "${DEBUG_FALSE}"; then
+  as_fn_error "conditional \"DEBUG\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
