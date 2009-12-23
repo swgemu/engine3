@@ -31,11 +31,21 @@ namespace engine {
 		}
 
 		bool add(ServiceClient* client) {
-			return HashTable<uint64, ServiceClient*>::put(client->getNetworkID(), client) == NULL;
+			if (HashTable<uint64, ServiceClient*>::put(client->getNetworkID(), client) == NULL) {
+				client->acquire();
+
+				return true;
+			} else
+				return false;
 		}
 
 		bool remove(ServiceClient* client) {
-			return HashTable<uint64, ServiceClient*>::remove(client->getNetworkID()) != NULL;
+			if (HashTable<uint64, ServiceClient*>::remove(client->getNetworkID()) != NULL) {
+				client->release();
+
+				return true;
+			} else
+				return false;
 		}
 		
 	};
