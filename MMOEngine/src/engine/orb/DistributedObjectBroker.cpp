@@ -40,10 +40,10 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 		phandler = NULL;
 	}
 
-	if (objectManager != NULL) {
+	/*if (objectManager != NULL) {
 		delete objectManager;
 		objectManager = NULL;
-	}
+	}*/
 }
 
 DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr, int port) {
@@ -83,7 +83,13 @@ void DistributedObjectBroker::run() {
 }
 
 void DistributedObjectBroker::shutdown() {
-	stop();
+	if (socket != NULL) {
+		socket->close();
+
+		ServiceThread::stop(false);
+
+		info("stopped", true);
+	}
 }
 
 DistributedObjectBrokerClient* DistributedObjectBroker::createConnection(Socket* sock, SocketAddress& addr) {

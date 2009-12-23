@@ -4,7 +4,7 @@
 
 void ManagedObject::lock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
-	
+
 	if (_impl == NULL)
 		_wlock(doLock);
 }
