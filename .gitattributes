@@ -1,6 +1,7 @@
 * text=auto !eol
 MMOEngine/.cdtproject -text
 MMOEngine/.cproject -text
+MMOEngine/.externalToolBuilders/org.eclipse.cdt.make.core.ScannerConfigBuilder[!!-~](1).launch -text
 MMOEngine/.project -text
 MMOEngine/.settings/org.eclipse.cdt.core.prefs -text
 MMOEngine/.settings/org.eclipse.ltk.core.refactoring.prefs -text
