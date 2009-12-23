@@ -1,12 +1,12 @@
 #ifndef BASECLIENTCLEANUPEVENT_H_
 #define BASECLIENTCLEANUPEVENT_H_
 
-#include "system/platform.h"
+#include "system/lang.h"
 
 #include "../BaseClient.h"
 
 class BaseClientCleanupEvent : public Task {
-	BaseClient* client;
+	Reference<BaseClient*> client;
 	
 public:
 	BaseClientCleanupEvent(BaseClient* cl) : Task(60000) {
@@ -14,7 +14,6 @@ public:
 	}
 	
 	void run() {
-		client->finalize();
 		client = NULL;
 	}
 	

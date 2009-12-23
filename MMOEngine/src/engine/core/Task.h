@@ -94,7 +94,7 @@ namespace engine {
 				return cmp;
 		}
 
-		virtual String toString() {
+		virtual String toStringData() {
 			struct timespec* ts = nextExecutionTime.getTimeSpec();
 
 			StringBuffer s;

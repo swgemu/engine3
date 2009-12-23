@@ -63,7 +63,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		condMutex->unlock(doLock);
 		return false;
 	} else if (task->getNextExecutionTime().isPast()) {
-		error("past task scheduled - " + task->toString());
+		error("past task scheduled - " + task->toStringData());
 
 		/*StackTrace trace;
 		trace.print();
