@@ -229,16 +229,29 @@ bool ManagedObject::isPersistent() {
 		return ((ManagedObjectImplementation*) _impl)->isPersistent();
 }
 
-void ManagedObject::setPersistent() {
+int ManagedObject::getPersistenceLevel() {
 	if (_impl == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, 21);
 
+		return method.executeWithSignedIntReturn();
+	} else
+		return ((ManagedObjectImplementation*) _impl)->getPersistenceLevel();
+}
+
+void ManagedObject::setPersistent(int level) {
+	if (_impl == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, 22);
+		method.addSignedIntParameter(level);
+
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->setPersistent();
+		((ManagedObjectImplementation*) _impl)->setPersistent(level);
 }
 
 /*
@@ -278,13 +291,13 @@ ManagedObjectImplementation::operator const ManagedObject*() {
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
 
-	addSerializableVariable("persistent", &persistent);
+	addSerializableVariable("persistenceLevel", &persistenceLevel);
 }
 
 ManagedObjectImplementation::ManagedObjectImplementation() {
 	_initializeImplementation();
-	// engine/core/ManagedObject.idl(21):  persistent = false;
-	persistent = false;
+	// engine/core/ManagedObject.idl(21):  persistenceLevel = 0;
+	persistenceLevel = 0;
 	// engine/core/ManagedObject.idl(23):  updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
@@ -319,8 +332,13 @@ void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
 }
 
 bool ManagedObjectImplementation::isPersistent() {
-	// engine/core/ManagedObject.idl(82):  return persistent;
-	return persistent;
+	// engine/core/ManagedObject.idl(82):  return persistenceLevel != 0;
+	return persistenceLevel != 0;
+}
+
+int ManagedObjectImplementation::getPersistenceLevel() {
+	// engine/core/ManagedObject.idl(86):  return persistenceLevel;
+	return persistenceLevel;
 }
 
 /*
@@ -380,7 +398,10 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		resp->insertBoolean(isPersistent());
 		break;
 	case 21:
-		setPersistent();
+		resp->insertSignedInt(getPersistenceLevel());
+		break;
+	case 22:
+		setPersistent(inv->getSignedIntParameter());
 		break;
 	default:
 		return NULL;
@@ -449,8 +470,12 @@ bool ManagedObjectAdapter::isPersistent() {
 	return ((ManagedObjectImplementation*) impl)->isPersistent();
 }
 
-void ManagedObjectAdapter::setPersistent() {
-	((ManagedObjectImplementation*) impl)->setPersistent();
+int ManagedObjectAdapter::getPersistenceLevel() {
+	return ((ManagedObjectImplementation*) impl)->getPersistenceLevel();
+}
+
+void ManagedObjectAdapter::setPersistent(int level) {
+	((ManagedObjectImplementation*) impl)->setPersistent(level);
 }
 
 /*

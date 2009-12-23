@@ -38,8 +38,8 @@ void ManagedObject::wlock(ManagedObject* obj) {
 }
 
 void ManagedObject::unlock(bool doLock) {
-	/*if (isPersistent())
-		updateToDatabase();*/
+	if (getPersistenceLevel() == 3)
+		updateToDatabase();
 
 	DistributedObjectStub::unlock(doLock);
 
@@ -94,7 +94,7 @@ void ManagedObjectImplementation::setLockName(const String& name) {
 }
 
 void ManagedObjectImplementation::updateToDatabase() {
-	if (!persistent)
+	if (persistenceLevel == 0)
 		return;
 
 	DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
@@ -105,20 +105,20 @@ void ManagedObjectImplementation::updateToDatabase() {
 }
 
 void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
-	if (updateToDatabaseTask != NULL || !persistent)
+	if (updateToDatabaseTask != NULL || persistenceLevel != 2)
 		return;
 
 	updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);
 	updateToDatabaseTask->schedule();
 }
 
-void ManagedObjectImplementation::setPersistent() {
-	persistent = true;
+void ManagedObjectImplementation::setPersistent(int level) {
+	persistenceLevel = level;
 
 	queueUpdateToDatabaseTask();
 }
 
 void ManagedObjectImplementation::initializeTransientMembers() {
-	if (persistent)
+	if (persistenceLevel == 2)
 		queueUpdateToDatabaseTask();
 }

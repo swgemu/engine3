@@ -12,35 +12,35 @@ void PrintStream::print(char ch) {
 
 void PrintStream::print(int val) {
 	if (doHex())
-		printf("%ih", val);
+		printf("%ix", val);
 	else
 		printf("%i", val);
 }
 
 void PrintStream::print(uint32 val) {
 	if (doHex())
-		printf("%uh", val);
+		printf("%ux", val);
 	else
 		printf("%u", val);
 }
 
 void PrintStream::print(long val) {
 	if (doHex())
-		printf("%ldh", val);
+		printf("%ldx", val);
 	else
 		printf("%ld", val);
 }
 
 void PrintStream::print(int64 val) {
 	if (doHex())
-		printf("%lldh", val);
+		printf("%lldx", val);
 	else
 		printf("%lld", val);
 }
 
 void PrintStream::print(uint64 val) {
 	if (doHex())
-		printf("%lluh", val);
+		printf("%llux", val);
 	else
 		printf("%llu", val);
 }

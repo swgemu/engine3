@@ -68,7 +68,9 @@ public:
 
 	bool isPersistent();
 
-	void setPersistent();
+	int getPersistenceLevel();
+
+	void setPersistent(int level);
 
 protected:
 	ManagedObject(DummyConstructorParameter* param);
@@ -96,7 +98,7 @@ protected:
 
 class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
 protected:
-	bool persistent;
+	int persistenceLevel;
 
 	ObjectUpdateToDatabaseTask* updateToDatabaseTask;
 
@@ -138,7 +140,9 @@ public:
 
 	bool isPersistent();
 
-	void setPersistent();
+	int getPersistenceLevel();
+
+	void setPersistent(int level);
 
 	ManagedObject* _this;
 
@@ -195,7 +199,9 @@ public:
 
 	bool isPersistent();
 
-	void setPersistent();
+	int getPersistenceLevel();
+
+	void setPersistent(int level);
 
 protected:
 	String _param0_setLockName__String_;
