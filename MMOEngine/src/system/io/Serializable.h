@@ -25,7 +25,7 @@ namespace sys {
 
 		class Serializable : public virtual Object {
 			String _className;
-			VectorMap<VariableName, void*> variables;
+			VectorMap<VariableName, void*> _variables;
 
 		public:
 			Serializable();
@@ -110,6 +110,21 @@ namespace sys {
 				TypeInfo<ClassType>::parseFromBinaryStream(address, serializedObject);
 
 				serializedObject->reset();
+
+				return true;
+			}
+
+			template<typename ClassType> static bool getVariable(const String& variableName, ClassType* address, const String& serializedObject) {
+				VectorMap<String, String> variableDataMap;
+
+				int variableSize = getVariableDataMap(serializedObject, variableDataMap);
+
+				if (!variableDataMap.contains(variableName))
+					return false;
+
+				String variableData = variableDataMap.get(variableName);
+
+				TypeInfo<ClassType>::parseFromString(address, variableData);
 
 				return true;
 			}
