@@ -83,6 +83,8 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		info(s1);
 	#endif
 
+	task->acquire();
+
 	PriorityQueue::add(task);
 
 	#ifdef TRACE_TASKS
@@ -222,6 +224,8 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 	PriorityQueue::remove(task);
 
 	task->setTaskScheduler(NULL);
+
+	task->release();
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;

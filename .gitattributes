@@ -71,7 +71,6 @@ MMOEngine/include/engine/core/thread/RWLockable.h -text
 MMOEngine/include/engine/core/thread/RWLockableImplementation.h -text
 MMOEngine/include/engine/core/util/ManagedSortedVector.h -text
 MMOEngine/include/engine/core/util/ManagedVector.h -text
-MMOEngine/include/engine/core/util/ManagedVector.idl -text
 MMOEngine/include/engine/core/util/ManagedVectorImplementation.h -text
 MMOEngine/include/engine/core/util/ManagedVectorMap.h -text
 MMOEngine/include/engine/db/BinaryData.h -text

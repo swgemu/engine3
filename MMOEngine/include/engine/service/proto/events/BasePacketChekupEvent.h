@@ -57,14 +57,6 @@ namespace engine {
 			return checkupTime;
 		}
 
-		String toString() {
-			struct timespec* ts = nextExecutionTime.getTimeSpec();
-
-			StringBuffer s;
-			s << "BasePacketChekupEvent " << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << this << ")";
-			return s.toString();
-		}
-
 	};
 
     } // namespace proto

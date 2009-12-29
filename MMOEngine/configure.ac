@@ -11,6 +11,10 @@ CXXFLAGS="$CXXFLAGS $C_EXTRA_FLAGS "
 AC_PROG_CXX
 AC_PROG_RANLIB
 
+# checking for library dependencies.
+AC_CHECK_HEADER(lua.h, [], [AC_MSG_ERROR([*** lua.h is required, install lua header files])])	 AC_CHECK_HEADER([mysql/mysql.h], [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])
+AC_CHECK_HEADER(mysql/mysql.h, [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])	 AC_CHECK_HEADER([mysql/mysql.h], [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])
+
 case "$host_cpu-$host_os" in
     *freebsd*)
       SYSTEM_INCLUDES="-I/usr/local/include"

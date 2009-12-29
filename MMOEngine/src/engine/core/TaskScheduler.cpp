@@ -56,8 +56,10 @@ void TaskScheduler::run() {
 
 			task->run();
 
-			if (!task->isReentrant())
-				delete task;
+			task->release();
+
+			/*if (!task->isReentrant())
+				delete task;*/
 
 			//should we set NULL taskScheduler for reentrant tasks here?
 

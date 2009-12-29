@@ -36,8 +36,10 @@ void TaskWorkerThread::run() {
 			error("unreported Exception caught");
 		}
 
-		if (!task->isReentrant())
-			delete task;
+		task->release();
+
+		/*if (!task->isReentrant())
+			delete task;*/
 	}
 }
 

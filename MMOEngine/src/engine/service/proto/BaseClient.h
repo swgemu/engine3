@@ -44,9 +44,10 @@ namespace engine {
 		DatagramServiceThread* service;
 
 		Vector<BasePacket*> sequenceBuffer;
-		BasePacketChekupEvent* checkupEvent;
-		BaseClientNetStatusCheckupEvent* netcheckupEvent;
-		BaseClientNetStatusRequestEvent* netRequestEvent;
+
+		Reference<BasePacketChekupEvent*> checkupEvent;
+		Reference<BaseClientNetStatusCheckupEvent*> netcheckupEvent;
+		Reference<BaseClientNetStatusRequestEvent*> netRequestEvent;
 
 		BaseMultiPacket* bufferedPacket;
 		BaseFragmentedPacket* fragmentedPacket;

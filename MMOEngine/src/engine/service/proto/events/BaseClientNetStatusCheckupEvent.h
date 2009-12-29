@@ -14,7 +14,7 @@ namespace engine {
     namespace proto {
 
 	class BaseClientNetStatusCheckupEvent : public ReentrantTask {
-		BaseClient* client;
+		Reference<BaseClient*> client;
 
 	public:
 		BaseClientNetStatusCheckupEvent(BaseClient* cl) : ReentrantTask(25000) {
@@ -23,14 +23,6 @@ namespace engine {
 
 		void run() {
 			client->checkNetStatus();
-		}
-
-		String toString() {
-			struct timespec* ts = nextExecutionTime.getTimeSpec();
-
-			StringBuffer s;
-			s << "BaseClientNetStatusCheckupEvent " << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << this << ")";
-			return s.toString();
 		}
 	};
 

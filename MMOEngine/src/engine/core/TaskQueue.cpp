@@ -6,12 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskQueue.h"
 #include "Task.h"
 
-
 TaskQueue::TaskQueue() : SortedVector<Task*>(200, 100), Condition(), Logger("TaskQueue") {
 	blocked = false;
 	waitingForTask = false;
 
 	condMutex = new Mutex("TaskQueue");
+
+	setNoDuplicateInsertPlan();
 
 	setLogging(false);
 	//condMutex->setMutexLogging(false);
@@ -29,7 +30,8 @@ void TaskQueue::push(Task* task) {
 		return;
 	}
 
-	SortedVector<Task*>::put(task);
+	if (SortedVector<Task*>::put(task) != -1)
+		task->acquire();
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;

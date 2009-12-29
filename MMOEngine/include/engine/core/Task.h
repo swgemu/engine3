@@ -11,7 +11,7 @@ namespace engine {
 	class TaskScheduler;
 	class TimedTaskQueue;
 
-	class Task : public PriorityQueueEntry, public Runnable {
+	class Task : public PriorityQueueEntry, public Runnable, public virtual Object {
 	protected:
 		TaskScheduler* taskScheduler;
 
