@@ -10,6 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "events/BaseClientNetStatusCheckupEvent.h"
 #include "events/BaseClientCleanupEvent.h"
 #include "events/BaseClientNetStatusRequestEvent.h"
+#include "events/BaseClientEvent.h"
 
 #include "packets/SessionIDRequestMessage.h"
 #include "packets/SessionIDResponseMessage.h"
@@ -17,11 +18,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/OutOfOrderMessage.h"
 #include "packets/DisconnectMessage.h"
 #include "packets/NetStatusRequestMessage.h"
+#include "engine/core/ReentrantTask.h"
 
 #include "system/platform.h"
 
 BaseClient::BaseClient() : DatagramServiceClient(),
-		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
+		BaseProtocol(), Mutex("Client") {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
@@ -30,13 +32,15 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 	checkupEvent = NULL;
 	netcheckupEvent = NULL;
 	netRequestEvent = NULL;
+
+	reentrantTask = new BaseClientEvent(this);
 
 	setLogging(true);
    	setGlobalLogging(true);
 }
 
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
-		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
+		BaseProtocol(), Mutex("Client") {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
@@ -46,12 +50,14 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 	netcheckupEvent = NULL;
 	netRequestEvent = NULL;
 
+	reentrantTask = new BaseClientEvent(this);
+
 	setLogging(true);
    	setGlobalLogging(true);
 }
 
 BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClient(sock, addr),
-		BaseProtocol(),	ReentrantTask(), Mutex("Client") {
+		BaseProtocol(), Mutex("Client") {
 	bufferedPacket = NULL;
 
 	fragmentedPacket = NULL;
@@ -59,6 +65,8 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 	checkupEvent = NULL;
 	netcheckupEvent = NULL;
 	netRequestEvent = NULL;
+
+	reentrantTask = new BaseClientEvent(this);
 
   	ip = addr.getFullIPAddress();
    	setLockName("Client " + ip);
@@ -134,7 +142,7 @@ void BaseClient::initialize() {
 }
 
 void BaseClient::close() {
-	this->cancel();
+	reentrantTask->cancel();
 
 	checkupEvent->cancel();
 	netcheckupEvent->cancel();
@@ -248,8 +256,8 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 	} else {
 		bufferedPacket = new BaseMultiPacket(pack);
 
-		if (!this->isScheduled())
-			schedule(10);
+		if (!reentrantTask->isScheduled())
+			reentrantTask->schedule(10);
 	}
 }
 
@@ -279,8 +287,8 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		pack->setTimeout(checkupEvent->getCheckupTime());
 		sendBuffer.add(pack);
 
-		if (!this->isScheduled())
-			schedule(10);
+		if (!reentrantTask->isScheduled())
+			reentrantTask->schedule(10);
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -353,7 +361,7 @@ void BaseClient::run() {
 			}
 
 			if (!sendBuffer.isEmpty() || bufferedPacket != NULL) {
-				schedule(10);
+				reentrantTask->schedule(10);
 			}
 		}
 	} catch (SocketException& e) {
@@ -382,7 +390,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 	if (serverSequence - acknowledgedServerSequence > 25) {
 		if (!sendBuffer.isEmpty() || bufferedPacket != NULL)
-			schedule(10);
+			reentrantTask->schedule(10);
 
 		if (sendBuffer.size() > 3000) {
 			StringBuffer msg;

@@ -38,8 +38,9 @@ namespace engine {
 
 	class BaseClientNetStatusCheckupEvent;
 	class BaseClientNetStatusRequestEvent;
+	class BaseClientEvent;
 
-	class BaseClient : public DatagramServiceClient, public BaseProtocol, public ReentrantTask, public Mutex {
+	class BaseClient : public DatagramServiceClient, public BaseProtocol, public Mutex {
 	protected:
 		DatagramServiceThread* service;
 
@@ -59,6 +60,8 @@ namespace engine {
 		String ip;
 
 		Condition connectionEstablishedCondition;
+
+		Reference<BaseClientEvent*> reentrantTask;
 
 		bool clientDisconnected;
 
