@@ -68,7 +68,7 @@ namespace sys {
 		const PriorityQueueEntry* peak() const;
 		const PriorityQueueEntry* poll();
 
-		const bool remove(PriorityQueueEntry* node);
+		bool remove(PriorityQueueEntry* node);
 
 		void clear();
 

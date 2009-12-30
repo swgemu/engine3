@@ -63,7 +63,7 @@ const PriorityQueueEntry* PriorityQueue::poll() {
 	return oldRoot;
 }
 
-const bool PriorityQueue::remove(PriorityQueueEntry* node) {
+bool PriorityQueue::remove(PriorityQueueEntry* node) {
 	if (isEmpty())
 		return false;
 
