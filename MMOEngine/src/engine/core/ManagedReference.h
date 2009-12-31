@@ -26,8 +26,13 @@ namespace engine {
 		ManagedReference(O obj) : Reference<O>(obj) {
 		}
 
-		void operator=(const ManagedReference& ref) {
-			Reference<O>::setObject(ref.object);
+		ManagedReference& operator=(const ManagedReference& ref) {
+			if (this == &ref)
+				return *this;
+
+			Reference<O>::updateObject(ref.object);
+
+			return *this;
 		}
 
 		O operator=(O obj) {

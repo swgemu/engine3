@@ -45,7 +45,7 @@ namespace sys {
 			if (this == &ref)
 				return *this;
 
-			setObject(ref.object);
+			updateObject(ref.object);
 
 			return *this;
 		}
