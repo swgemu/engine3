@@ -244,6 +244,7 @@ MMOEngine/include/system/lang/mersenne/MersenneTwister.h -text
 MMOEngine/include/system/lang/ref/Reference.h -text
 MMOEngine/include/system/lang/ref/ReferenceCounter.h -text
 MMOEngine/include/system/lang/ref/ReferenceSlot.h -text
+MMOEngine/include/system/lang/ref/WeakReference.h -text
 MMOEngine/include/system/lang/types.h -text
 MMOEngine/include/system/lang/types/BaseTypeVariable.h -text
 MMOEngine/include/system/lang/types/Bool.h -text
@@ -536,6 +537,7 @@ MMOEngine/src/system/lang/Long.h -text
 MMOEngine/src/system/lang/Math.cpp -text
 MMOEngine/src/system/lang/Math.h -text
 MMOEngine/src/system/lang/NumberFormatException.h -text
+MMOEngine/src/system/lang/Object.cpp -text
 MMOEngine/src/system/lang/Object.h -text
 MMOEngine/src/system/lang/OutOfMemoryError.h -text
 MMOEngine/src/system/lang/Runnable.h -text
@@ -557,6 +559,7 @@ MMOEngine/src/system/lang/mersenne/MersenneTwister.cpp -text
 MMOEngine/src/system/lang/mersenne/MersenneTwister.h -text
 MMOEngine/src/system/lang/ref/Reference.h -text
 MMOEngine/src/system/lang/ref/ReferenceCounter.h -text
+MMOEngine/src/system/lang/ref/WeakReference.h -text
 MMOEngine/src/system/lang/types.cpp -text
 MMOEngine/src/system/lang/types.h -text
 MMOEngine/src/system/net/InetAddress.cpp -text

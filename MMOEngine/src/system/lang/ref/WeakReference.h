@@ -3,36 +3,34 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#ifndef REFERENCE_H_
-#define REFERENCE_H_
-
-#include "../Object.h"
+#ifndef WEAKREFERENCE_H_
+#define WEAKREFERENCE_H_
 
 namespace sys {
   namespace lang {
 
-	template<class O> class Reference : public Variable {
+	template<class O> class WeakReference : public Variable {
 	protected:
 		O object;
 
 	public:
-		Reference() : Variable() {
+		WeakReference() : Variable() {
 			object = NULL;
 		}
 
-		Reference(const Reference& ref) : Variable() {
+		WeakReference(const WeakReference& ref) : Variable() {
 			initializeObject(ref.object);
 		}
 
-		Reference(O obj) : Variable() {
+		WeakReference(O obj) : Variable() {
 			initializeObject(obj);
 		}
 
-		virtual ~Reference() {
+		virtual ~WeakReference() {
 			releaseObject();
 		}
 
-		virtual int compareTo(const Reference& val) const {
+		virtual int compareTo(const WeakReference& val) const {
 			if (object < val.object)
 				return 1;
 			else if (object > val.object)
@@ -41,7 +39,7 @@ namespace sys {
 				return 0;
 		}
 
-		Reference& operator=(const Reference& ref) {
+		WeakReference& operator=(const WeakReference& ref) {
 			if (this == &ref)
 				return *this;
 
@@ -107,19 +105,13 @@ namespace sys {
 
 		inline void acquireObject() {
 			if (object != NULL) {
-			#ifdef TRACE_REFERENCES
-				object->addHolder(this);
-			#endif
-				object->acquire();
+				object->acquireWeak(this);
 			}
 		}
 
 		inline void releaseObject() {
 			if (object != NULL) {
-			#ifdef TRACE_REFERENCES
-				object->removeHolder(this);
-			#endif
-				object->release();
+				object->releaseWeak(this);
 				object = NULL;
 			}
 		}
@@ -130,4 +122,4 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*REFERENCE_H_*/
+#endif /* WEAKREFERENCE_H_ */

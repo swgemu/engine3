@@ -123,7 +123,6 @@ namespace sys {
 				object = NULL;
 			}
 		}
-
 	};
 
   } // namespace lang
