@@ -7,6 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Time.h"
 
+#include "../lang/System.h"
+
 #include "ReadWriteLock.h"
 
 void ReadWriteLock::rlock(bool doLock) {
