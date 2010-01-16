@@ -58,6 +58,7 @@ MMOEngine/include/engine/core/ManagedObject.h -text
 MMOEngine/include/engine/core/ManagedObject.idl -text
 MMOEngine/include/engine/core/ManagedObjectImplementation.h -text
 MMOEngine/include/engine/core/ManagedReference.h -text
+MMOEngine/include/engine/core/ManagedWeakReference.h -text
 MMOEngine/include/engine/core/ObjectUpdateToDatabaseTask.h -text
 MMOEngine/include/engine/core/ReentrantTask.h -text
 MMOEngine/include/engine/core/Task.h -text
@@ -309,6 +310,7 @@ MMOEngine/src/engine/core/ManagedObject.h -text
 MMOEngine/src/engine/core/ManagedObject.idl -text
 MMOEngine/src/engine/core/ManagedObjectImplementation.cpp -text
 MMOEngine/src/engine/core/ManagedReference.h -text
+MMOEngine/src/engine/core/ManagedWeakReference.h -text
 MMOEngine/src/engine/core/ObjectUpdateToDatabaseTask.cpp -text
 MMOEngine/src/engine/core/ObjectUpdateToDatabaseTask.h -text
 MMOEngine/src/engine/core/ReentrantTask.h -text
