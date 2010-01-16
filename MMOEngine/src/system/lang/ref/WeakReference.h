@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef WEAKREFERENCE_H_
 #define WEAKREFERENCE_H_
 
+#include "../Variable.h"
+
 namespace sys {
   namespace lang {
 
@@ -115,6 +117,8 @@ namespace sys {
 				object = NULL;
 			}
 		}
+
+		friend class Object;
 	};
 
   } // namespace lang

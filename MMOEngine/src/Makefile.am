@@ -20,6 +20,7 @@ libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
 			system/lang/Exception.cpp \
+			system/lang/Object.cpp \
 			system/lang/String.cpp \
 			system/lang/StringBuffer.cpp \
 			system/lang/UnicodeString.cpp \
@@ -29,6 +30,8 @@ libengine3_a_SOURCES = \
 			system/lang/Integer.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/thread/Thread.cpp \
+			system/thread/Lockable.cpp \
+			system/thread/Mutex.cpp \
 			system/thread/ReadWriteLock.cpp \
 			system/net/Socket.cpp \
 			system/net/SocketAddress.cpp \

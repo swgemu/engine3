@@ -34,71 +34,10 @@ namespace sys {
 			wlock(doLock);
 		}
 
-		inline void rlock(bool doLock = true) {
-			if (!doLock)
-				return;
+		void rlock(bool doLock = true);
 
-			lockAcquiring("r");
-
-			#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
-				int res = pthread_rwlock_rdlock(&rwlock);
-				if (res != 0)
-					System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
-			#else
-				#ifndef LOG_LOCKS
-					Atomic::incrementInt((uint32*)&lockCount);
-					int cnt = lockCount;
-				#endif
-
-				Time start;
-				start.addMiliTime(300000);
-
-		    	while (pthread_rwlock_timedrdlock(&rwlock, start.getTimeSpec())) {
-		    		if (!doTrace)
-		    			continue;
-
-		    		traceDeadlock("r");
-
-					start.addMiliTime(1000);
-		    	}
-
-				lockTime.updateToCurrentTime();
-			#endif
-
-			lockAcquired("r");
-		}
-
-		inline void wlock(bool doLock = true) {
-			if (!doLock)
-				return;
-
-			lockAcquiring("w");
-
-			#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
-				int res = pthread_rwlock_wrlock(&rwlock);
-				if (res != 0)
-					System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
-			#else
-				Time start;
-				start.addMiliTime(300000);
-
-		    	while (pthread_rwlock_timedwrlock(&rwlock, start.getTimeSpec())) {
-		    		if (!doTrace)
-		    			continue;
-
-		    		traceDeadlock("w");
-
-					start.addMiliTime(1000);
-		    	}
-
-				lockTime.updateToCurrentTime();
-			#endif
-
-			lockAcquired("w");
-		}
-
+		void wlock(bool doLock = true);
 		void wlock(Mutex* lock);
-
 		void wlock(ReadWriteLock* lock);
 
 		void lock(Lockable* lockable);
@@ -107,81 +46,9 @@ namespace sys {
 			return pthread_rwlock_trywrlock(&rwlock) == 0;
 		}
 
-		inline void unlock(bool doLock = true) {
-			if (!doLock)
-				return;
+		void unlock(bool doLock = true);
 
-			#if defined(TRACE_LOCKS) && !defined(PLATFORM_CYGWIN)
-				if (threadLockHolder == NULL) {
-					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
-							<< " unlocking an unlocked mutex\n";
-					StackTrace::printStackTrace();
-
-					if (unlockTrace != NULL) {
-						System::out << "previously unlocked by\n";
-						unlockTrace->print();
-					}
-
-					raise(SIGSEGV);
-				} else if (threadLockHolder != Thread::getCurrentThread()) {
-					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
-					StackTrace::printStackTrace();
-
-					if (trace != NULL) {
-						System::out << "previously locked at " << lockTime.getMiliTime() << " by\n";
-						trace->print();
-					}
-				}
-			#endif
-
-			lockReleasing();
-
-			int res = pthread_rwlock_unlock(&rwlock);
-			if (res != 0) {
-				System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
-
-				StackTrace::printStackTrace();
-			}
-
-			lockReleased();
-		}
-
-		inline void runlock(bool doLock = true) {
-			if (!doLock)
-				return;
-
-		#ifdef TRACE_LOCKS
-			/*if (threadIDLockHolder == 0) {
-							System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
-									<< " unlocking an unlocked mutex\n";
-							StackTrace::printStackTrace();
-						} else if (threadIDLockHolder != Thread::getCurrentThreadID()) {
-							System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
-							StackTrace::printStackTrace();
-
-							if (trace != NULL) {
-								System::out << "previously locked at " << lockTime.getMiliTime() << " by\n";
-								trace->print();
-							}
-						}*/
-
-			/*delete trace;
-			trace = NULL;
-
-			threadIDLockHolder = 0;*/
-		#endif
-
-			lockReleasing("r");
-
-			int res = pthread_rwlock_unlock(&rwlock);
-			if (res != 0) {
-				System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
-
-				StackTrace::printStackTrace();
-			}
-
-			lockReleased();
-		}
+		void runlock(bool doLock = true);
 
 		inline bool destroy() {
 			pthread_rwlock_wrlock(&rwlock);

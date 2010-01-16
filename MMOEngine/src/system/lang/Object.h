@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ref/ReferenceCounter.h"
 
+#include "ref/WeakReference.h"
+
 #include "Variable.h"
 
 #include "../thread/Mutex.h"
@@ -32,14 +34,12 @@ namespace sys {
 
     class String;
 
-    class WeakReference;
-
 	using namespace sys::io;
 
 	class Object : public ReferenceCounter, public Variable {
 		Mutex referenceMutex;
 
-		Vector<WeakReference*> weakReferences;
+		Vector<WeakReference<Object*>*> weakReferences;
 
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
@@ -95,9 +95,9 @@ namespace sys {
 				destroy();
 		}
 
-		void acquireWeak(WeakReference* ref);
+		void acquireWeak(WeakReference<Object*>* ref);
 
-		void releaseWeak(WeakReference* ref);
+		void releaseWeak(WeakReference<Object*>* ref);
 
 	#ifdef TRACE_REFERENCES
 		void addHolder(void* obj);
@@ -110,6 +110,7 @@ namespace sys {
 	protected:
 		virtual void destroy();
 
+		friend class WeakReference<Object*>;
 	};
 
   } // namespace lang

@@ -11,12 +11,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <pthread.h>
 
 #include "../lang/String.h"
-#include "../lang/Time.h"
 
 #include "../lang/StackTrace.h"
 
 #include "Atomic.h"
 #include "Thread.h"
+
+namespace sys {
+  namespace lang {
+	  class Time;
+  }
+}
 
 namespace sys {
   namespace thread {
@@ -35,50 +40,16 @@ namespace sys {
 		StackTrace* trace;
 		StackTrace* unlockTrace;
 
-		Time lockTime;
+		Time* lockTime;
 
 		bool doLog;
 		bool doTrace;
 
 	public:
-		Lockable() {
-			threadLockHolder = NULL;
+		Lockable();
+		Lockable(const String& s);
 
-			lockCount = 0;
-			currentCount = 0;
-
-			trace = NULL;
-			unlockTrace = NULL;
-
-			doLog = true;
-			doTrace = true;
-		}
-
-		Lockable(const String& s) {
-			threadLockHolder = NULL;
-
-			lockName = s;
-
-			lockCount = 0;
-
-			trace = NULL;
-			unlockTrace = NULL;
-
-			doLog = true;
-			doTrace = true;
-		}
-
-		virtual ~Lockable() {
-			if (trace != NULL) {
-				delete trace;
-				trace = NULL;
-			}
-
-			if (unlockTrace != NULL) {
-				delete unlockTrace;
-				unlockTrace = NULL;
-			}
-		}
+		virtual ~Lockable();
 
 		virtual void lock(bool doLock = true) = 0;
 		virtual void lock(Lockable* lockable) = 0;
@@ -170,21 +141,7 @@ namespace sys {
 		#endif
 		}
 
-		inline void traceDeadlock(const char* modifier = "") {
-  			System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access "
-						<< modifier << "lock #" << currentCount << " at\n";
-
-			StackTrace::printStackTrace();
-
-			if (trace != NULL) {
-				System::out << "locked at " << lockTime.getMiliTime() << " by\n";
-				trace->print();
-			} else {
-				System::out << "no previous stackTrace created\n";
-			}
-
-			while (true) ;
-		}
+		void traceDeadlock(const char* modifier = "");
 
 		inline void refreshTrace() {
 		#ifdef TRACE_LOCKS

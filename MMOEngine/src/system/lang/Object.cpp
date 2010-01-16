@@ -8,28 +8,31 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Object.h"
 
-void Object::acquireWeak(WeakReference* ref) {
-	Locker locker(referenceMutex);
+void Object::acquireWeak(WeakReference<Object*>* ref) {
+	Locker locker(&referenceMutex);
 
 	weakReferences.add(ref);
 }
 
-void Object::release() {
-	if (decreaseCount())
-		destroy();
-}
+void Object::releaseWeak(WeakReference<Object*>* ref) {
+	Locker locker(&referenceMutex);
 
-void Object::releaseWeak(WeakReference* ref) {
-	Locker locker(referenceMutex);
+	for (int i = 0; i < weakReferences.size(); ++i) {
+		WeakReference<Object*>* reference = weakReferences.get(i);
 
-	weakReferences.remove(ref);
+		if (reference == ref) {
+			weakReferences.remove(i);
+
+			break;
+		}
+	}
 }
 
 void Object::destroy() {
-	Locker locker(referenceMutex);
+	Locker locker(&referenceMutex);
 
 	while (!weakReferences.isEmpty()) {
-		WeakReference* ref = weakReferences.get(i);
+		WeakReference<Object*>* ref = weakReferences.get(0);
 		ref->releaseObject();
 	}
 
