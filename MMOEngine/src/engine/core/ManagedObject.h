@@ -9,6 +9,8 @@
 
 #include "engine/core/ManagedReference.h"
 
+#include "engine/core/ManagedWeakReference.h"
+
 namespace engine {
 namespace core {
 
@@ -33,6 +35,10 @@ namespace core {
 class ManagedObject : public DistributedObjectStub {
 public:
 	ManagedObject();
+
+	void acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
+
+	void releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
 
 	void lock(bool doLock = true);
 
@@ -77,6 +83,10 @@ protected:
 
 	virtual ~ManagedObject();
 
+	void _acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
+
+	void _releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
+
 	void _lock(bool doLock = true);
 
 	void _lock(ManagedObject* obj);
@@ -105,6 +115,10 @@ protected:
 public:
 	ManagedObjectImplementation();
 	ManagedObjectImplementation(DummyConstructorParameter* param);
+
+	void acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
+
+	void releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
 
 	void lock(bool doLock = true);
 
@@ -168,6 +182,10 @@ public:
 	ManagedObjectAdapter(ManagedObjectImplementation* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+
+	void acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
+
+	void releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
 
 	void lock(bool doLock);
 

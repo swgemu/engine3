@@ -19,14 +19,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <time.h>
 
 #include "String.h"
+#include "StringBuffer.h"
 #include "Long.h"
 
-#include "../io/Serializable.h"
+#include "../io/StringTokenizer.h"
 
 namespace sys {
   namespace lang {
 
-	class Time : public Serializable {
+	class Time : public Variable {
 		struct timespec ts;
 
 	#ifdef PLATFORM_WIN
@@ -41,24 +42,52 @@ namespace sys {
 	public:
 		Time() {
 			updateToCurrentTime();
-
-			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));
-			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
 		}
 
 		Time(uint32 seconds) {
 			ts.tv_sec = seconds;
 			ts.tv_nsec = 0;
-
-			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));
-			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
 		}
 
-		Time(const Time& time) : Object(), Serializable() {
+		Time(const Time& time) : Variable() {
 			ts = time.ts;
+		}
 
-			addSerializableVariable("tv_sec", (uint32*)(&ts.tv_sec));
-			addSerializableVariable("tv_nsec", (uint32*)(&ts.tv_nsec));
+		bool toString(String& str) {
+			StringBuffer msg;
+			msg << ts.tv_sec << "," << ts.tv_nsec;
+
+			str = msg.toString();
+			return true;
+		}
+
+		bool parseFromString(const String& str, int version = 0) {
+			int separator = str.indexOf(',');
+
+			if (separator == -1)
+				return false;
+
+			String sec = str.subString(0, separator);
+			String nsec = str.subString(separator + 1);
+
+			ts.tv_sec = Integer::valueOf(sec);
+			ts.tv_nsec = Integer::valueOf(nsec);
+
+			return true;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeInt(ts.tv_sec);
+			stream->writeInt(ts.tv_nsec);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			ts.tv_sec = stream->readInt();
+			ts.tv_nsec = stream->readInt();
+
+			return true;
 		}
 
 		inline void updateToCurrentTime() {

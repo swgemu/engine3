@@ -2,6 +2,12 @@
 #include "engine/engine.h"
 #include "ObjectUpdateToDatabaseTask.h"
 
+void ManagedObject::acquireWeak(ManagedWeakReference<ManagedObject*>* ref) {
+}
+
+void ManagedObject::releaseWeak(ManagedWeakReference<ManagedObject*>* ref) {
+}
+
 void ManagedObject::lock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
 

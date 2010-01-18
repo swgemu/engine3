@@ -15,6 +15,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "core/TaskManager.h"
 
 #include "core/ManagedReference.h"
+#include "core/ManagedWeakReference.h"
 #include "core/ManagedObject.h"
 
 //#include "core/util/ManagedVector.h"
