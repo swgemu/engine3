@@ -3,9 +3,11 @@
 #include "ObjectUpdateToDatabaseTask.h"
 
 void ManagedObject::acquireWeak(ManagedWeakReference<ManagedObject*>* ref) {
+	((ManagedObjectImplementation*) _impl)->acquireWeak(ref);
 }
 
 void ManagedObject::releaseWeak(ManagedWeakReference<ManagedObject*>* ref) {
+	((ManagedObjectImplementation*) _impl)->releaseWeak(ref);
 }
 
 void ManagedObject::lock(bool doLock) {
@@ -65,6 +67,14 @@ void ManagedObject::setLockName(const String& name) {
 
 	if (_impl == NULL)
 		_setLockName(name);
+}
+
+void ManagedObjectImplementation::acquireWeak(ManagedWeakReference<ManagedObject* >* ref) {
+	//Object::acquireWeak(ref);
+}
+
+void ManagedObjectImplementation::releaseWeak(ManagedWeakReference<ManagedObject* >* ref) {
+	//Object::releaseWeak(ref);
 }
 
 void ManagedObjectImplementation::lock(bool doLock) {
