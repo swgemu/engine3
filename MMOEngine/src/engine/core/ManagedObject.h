@@ -36,10 +36,6 @@ class ManagedObject : public DistributedObjectStub {
 public:
 	ManagedObject();
 
-	void acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
-
-	void releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
-
 	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
@@ -83,10 +79,6 @@ protected:
 
 	virtual ~ManagedObject();
 
-	void _acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
-
-	void _releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
-
 	void _lock(bool doLock = true);
 
 	void _lock(ManagedObject* obj);
@@ -115,10 +107,6 @@ protected:
 public:
 	ManagedObjectImplementation();
 	ManagedObjectImplementation(DummyConstructorParameter* param);
-
-	void acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
-
-	void releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
 
 	void lock(bool doLock = true);
 
@@ -182,10 +170,6 @@ public:
 	ManagedObjectAdapter(ManagedObjectImplementation* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
-
-	void acquireWeak(ManagedWeakReference<ManagedObject* >* ref);
-
-	void releaseWeak(ManagedWeakReference<ManagedObject* >* ref);
 
 	void lock(bool doLock);
 

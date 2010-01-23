@@ -410,14 +410,6 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	return resp;
 }
 
-void ManagedObjectAdapter::acquireWeak(ManagedWeakReference<ManagedObject* >* ref) {
-	((ManagedObjectImplementation*) impl)->acquireWeak(ref);
-}
-
-void ManagedObjectAdapter::releaseWeak(ManagedWeakReference<ManagedObject* >* ref) {
-	((ManagedObjectImplementation*) impl)->releaseWeak(ref);
-}
-
 void ManagedObjectAdapter::lock(bool doLock) {
 	((ManagedObjectImplementation*) impl)->lock(doLock);
 }

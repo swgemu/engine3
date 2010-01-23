@@ -95,9 +95,9 @@ namespace sys {
 				destroy();
 		}
 
-		void acquireWeak(WeakReference<Object*>* ref);
+		void acquireWeak(void* ref);
 
-		void releaseWeak(WeakReference<Object*>* ref);
+		void releaseWeak(void* ref);
 
 	#ifdef TRACE_REFERENCES
 		void addHolder(void* obj);

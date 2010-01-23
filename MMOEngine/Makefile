@@ -3,7 +3,7 @@
 
 IDLC = /usr/local/bin/idlc
 
-ENGINE_PATH = ../../core3-pub/MMOEngine
+ENGINE_PATH = ../../workspace-pub/MMOEngine
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/util/ManagedVector.idl

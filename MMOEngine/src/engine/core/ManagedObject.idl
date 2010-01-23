@@ -24,11 +24,11 @@ class ManagedObject implements Serializable {
 		updateToDatabaseTask = null;
 	}
 
-	@nativeStub 
-	public native void acquireWeak(ManagedWeakReference<ManagedObject> ref);
+	/*@nativeStub 
+	public native void acquireWeak(WeakReference<ManagedObject> ref);
 
 	@nativeStub 
-	public native void releaseWeak(ManagedWeakReference<ManagedObject> ref);
+	public native void releaseWeak(WeakReference<ManagedObject> ref);*/
 
 	@nativeStub 
 	public native void lock(boolean doLock = true);

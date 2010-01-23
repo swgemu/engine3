@@ -20,7 +20,7 @@ namespace sys {
 			object = NULL;
 		}
 
-		WeakReference(const WeakReference& ref) : Variable() {
+		WeakReference(const WeakReference<O>& ref) : Variable() {
 			initializeObject(ref.object);
 		}
 
@@ -32,7 +32,7 @@ namespace sys {
 			releaseObject();
 		}
 
-		virtual int compareTo(const WeakReference& val) const {
+		virtual int compareTo(const WeakReference<O>& val) const {
 			if (object < val.object)
 				return 1;
 			else if (object > val.object)
@@ -41,7 +41,7 @@ namespace sys {
 				return 0;
 		}
 
-		WeakReference& operator=(const WeakReference& ref) {
+		WeakReference<O>& operator=(const WeakReference<O>& ref) {
 			if (this == &ref)
 				return *this;
 
@@ -114,6 +114,12 @@ namespace sys {
 		inline void releaseObject() {
 			if (object != NULL) {
 				object->releaseWeak(this);
+				object = NULL;
+			}
+		}
+
+		inline void clearObject() {
+			if (object != NULL) {
 				object = NULL;
 			}
 		}
