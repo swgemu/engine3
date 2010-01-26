@@ -14,8 +14,14 @@ ObjectUpdateToDatabaseTask::ObjectUpdateToDatabaseTask(ManagedObject* object) : 
 }
 
 void ObjectUpdateToDatabaseTask::run() {
+	if (object == NULL)
+		return;
+
 	try {
 		object->wlock();
+
+		if (object == NULL)
+			return;
 
 		object->clearUpdateToDatabaseTask();
 		object->updateToDatabase();

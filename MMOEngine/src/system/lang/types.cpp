@@ -22,6 +22,10 @@ template<> bool TypeInfoAtomicBase<const char*>::toString(void* address, String&
 	return true;
 }
 
+template<> bool TypeInfoAtomicBase<void*>::toString(void* address, String& value) {
+	return true;
+}
+
 template<> bool TypeInfoAtomicBase<bool>::toString(void* address, String& value) {
 	value = String::valueOf((bool)(*(bool*)address));
 
@@ -103,6 +107,12 @@ template<> bool TypeInfoAtomicBase<const char*>::toBinaryStream(const void* addr
 	return true;
 }
 
+
+template<> bool TypeInfoAtomicBase<void*>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
+
+	return true;
+}
+
 template<> bool TypeInfoAtomicBase<bool>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
 	stream->writeBoolean(*(bool*)address);
 
@@ -179,6 +189,12 @@ template<> bool TypeInfoAtomicBase<const char*>::parseFromString(void* address, 
 	return false;
 }
 
+
+template<> bool TypeInfoAtomicBase<void*>::parseFromString(void* address, const String& value, int version) {
+	return false;
+}
+
+
 template<> bool TypeInfoAtomicBase<bool>::parseFromString(void* address, const String& value, int version) {
 	*(bool*)address = Bool::valueOf(value);
 
@@ -252,6 +268,10 @@ template<> bool TypeInfoAtomicBase<double>::parseFromString(void* address, const
 }
 
 template<> bool TypeInfoAtomicBase<const char*>::parseFromBinaryStream(void* address, ObjectInputStream* stream) {
+	return false;
+}
+
+template<> bool TypeInfoAtomicBase<void*>::parseFromBinaryStream(void* address, ObjectInputStream* stream) {
 	return false;
 }
 

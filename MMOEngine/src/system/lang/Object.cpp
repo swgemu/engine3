@@ -43,14 +43,14 @@ void Object::destroy() {
 
 #ifdef TRACE_REFERENCES
 void Object::addHolder(void* obj) {
-	Locker locker(referenceMutex);
+	Locker locker(&referenceMutex);
 
 	StackTrace* trace = new StackTrace();
 	referenceHolders.put(obj, trace);
 }
 
 void Object::removeHolder(void* obj) {
-	Locker locker(referenceMutex);
+	Locker locker(&referenceMutex);
 
 	StackTrace* trace = referenceHolders.get(obj);
 
