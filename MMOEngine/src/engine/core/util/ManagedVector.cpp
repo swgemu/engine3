@@ -29,7 +29,6 @@ ManagedVectorImplementation::ManagedVectorImplementation(DummyConstructorParamet
 }
 
 ManagedVectorImplementation::~ManagedVectorImplementation() {
-	ManagedVectorImplementation::finalize();
 }
 
 

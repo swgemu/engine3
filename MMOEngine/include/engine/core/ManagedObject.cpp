@@ -263,7 +263,6 @@ ManagedObjectImplementation::ManagedObjectImplementation(DummyConstructorParamet
 }
 
 ManagedObjectImplementation::~ManagedObjectImplementation() {
-	ManagedObjectImplementation::finalize();
 }
 
 

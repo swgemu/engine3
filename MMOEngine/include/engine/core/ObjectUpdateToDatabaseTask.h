@@ -9,7 +9,7 @@
 #define OBJECTSAVETODATABASETASK_H_
 
 #include "Task.h"
-#include "ManagedReference.h"
+#include "ManagedWeakReference.h"
 
 namespace engine {
   namespace core {
@@ -17,7 +17,7 @@ namespace engine {
     class ManagedObject;
 
 	class ObjectUpdateToDatabaseTask : public Task {
-		ManagedReference<ManagedObject*> object;
+		ManagedWeakReference<ManagedObject*> object;
 
 	public:
 		ObjectUpdateToDatabaseTask(ManagedObject* object);
