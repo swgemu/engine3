@@ -14,11 +14,26 @@
 namespace engine {
  namespace db {
 
+	 class LockDetectMode {
+	 public:
+		 const static uint32 DEFAULT = DB_LOCK_DEFAULT;
+		 const static uint32 EXPIRE = DB_LOCK_EXPIRE;
+		 const static uint32 MAXLOCKS = DB_LOCK_MAXLOCKS;
+		 const static uint32 MAXWRITE = DB_LOCK_MAXWRITE;
+		 const static uint32 MINLOCKS = DB_LOCK_MINLOCKS;
+		 const static uint32 MINWRITE = DB_LOCK_MINWRITE;
+		 //const static uint32 NONE = DB_LOCK_NONE;
+		 const static uint32 OLDEST = DB_LOCK_OLDEST;
+		 const static uint32 RANDOM = DB_LOCK_RANDOM;
+		 const static uint32 YOUNGEST = DB_LOCK_YOUNGEST;
+	 };
+
 	 class EnvironmentConfig {
 		 uint32 environmentFlags;
 		 uint32 threadCount;
+		 uint32 lockDetectMode;
 		 bool logAutoRemove;
-		 int logBufferSize;
+		 int maxLogFileSize;
 
 	 public:
 		 static EnvironmentConfig DEFAULT;
@@ -28,7 +43,8 @@ namespace engine {
 			 environmentFlags = 0;
 			 threadCount = 0;
 			 logAutoRemove = false;
-			 logBufferSize = 10000; //10mb
+			 lockDetectMode = LockDetectMode::DEFAULT;
+			 maxLogFileSize = 10000; //10mb
 		 }
 
 
@@ -57,8 +73,8 @@ namespace engine {
 			 this->logAutoRemove = logAutoRemove;
 		 }
 
-		 inline void setLogBufferSize(int logBufferSize) {
-			 this->logBufferSize = logBufferSize;
+		 inline void setMaxLogFileSize(int maxLogFileSize) {
+			 this->maxLogFileSize = maxLogFileSize;
 		 }
 
 		 inline void setThreaded(bool threaded) {
@@ -66,6 +82,10 @@ namespace engine {
 				 environmentFlags &= ~DB_THREAD;
 			 else
 				 environmentFlags |= DB_THREAD;
+		 }
+
+		 inline void setLockDetectMode(uint32 mode) {
+			 lockDetectMode = mode;
 		 }
 
 		 inline void setThreadCount(int count) {
@@ -92,6 +112,18 @@ namespace engine {
 
 		 inline uint32 getThreadCount() const {
 			 return threadCount;
+		 }
+
+		 inline uint32 getLockDetectMode() const {
+			 return lockDetectMode;
+		 }
+
+		 inline int getMaxLogFileSize() const {
+			 return maxLogFileSize;
+		 }
+
+		 inline bool getLogAutoRemove() const {
+			 return logAutoRemove;
 		 }
 
 	 };

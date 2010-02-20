@@ -25,6 +25,12 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
     ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), this->environmentConfig.getEnvironmentFlags(), 0);
 
+    databaseEnvironment->set_lk_detect(databaseEnvironment, environmentConfig.getLockDetectMode());
+    databaseEnvironment->set_lg_max(databaseEnvironment, environmentConfig.getMaxLogFileSize());
+
+    if (environmentConfig.getLogAutoRemove())
+    	databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
+
     if (ret != 0)
     	throw DatabaseException("unable to open environment handle with ret code " + String::valueOf(ret));
 

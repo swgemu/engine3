@@ -22,20 +22,6 @@ namespace engine {
 	 class Transaction;
 	 class BerkeleyDatabase;
 
-	 class LockDetectMode {
-	 public:
-		 const static uint32 DEFAULT = DB_LOCK_DEFAULT;
-		 const static uint32 EXPIRE = DB_LOCK_EXPIRE;
-		 const static uint32 MAXLOCKS = DB_LOCK_MAXLOCKS;
-		 const static uint32 MAXWRITE = DB_LOCK_MAXWRITE;
-		 const static uint32 MINLOCKS = DB_LOCK_MINLOCKS;
-		 const static uint32 MINWRITE = DB_LOCK_MINWRITE;
-		 //const static uint32 NONE = DB_LOCK_NONE;
-		 const static uint32 OLDEST = DB_LOCK_OLDEST;
-		 const static uint32 RANDOM = DB_LOCK_RANDOM;
-		 const static uint32 YOUNGEST = DB_LOCK_YOUNGEST;
-	 };
-
 	 class Environment {
 	 protected:
 		 String directory;
