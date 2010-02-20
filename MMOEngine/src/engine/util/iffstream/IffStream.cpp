@@ -172,8 +172,8 @@ Chunk* IffStream::openChunk(uint32 chunk) {
 		chunkObject = openedChunk->getNextChunk();
 
 	if (chunk != 0 && chunkObject->getChunkID() != chunk) {
-		Chunk* test = NULL;
-		test->getChunkSize();
+		/*Chunk* test = NULL;
+		test->getChunkSize();*/
 
 		StringBuffer msg;
 		msg << "Could not open chunk:[" << chunk << "] expecting [" << chunkObject->getChunkID() << "]!";

@@ -8,10 +8,11 @@ AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
 endif
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I$src/
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I/usr/local/BerkeleyDB.4.8/include -I$src/
 
 LIBS =  $(SYSTEM_LIBS) \
-		-lmysqlclient -llua -lz \
+		-L/usr/local/BerkeleyDB.4.8/lib \
+		-lmysqlclient -llua -lz -ldb \
 		-lengine3
 
 noinst_LIBRARIES = libengine3.a
@@ -99,6 +100,11 @@ libengine3_a_SOURCES = \
 			engine/util/iffstream/chunks/form/Form.cpp \
 			engine/db/MySqlDatabase.cpp \
 			engine/db/BinaryData.cpp \
+			engine/db/BerkeleyDatabase.cpp \
+			engine/db/Transaction.cpp \
+			engine/db/DatabaseEntry.cpp \
+			engine/db/Environment.cpp \
+			engine/db/Cursor.cpp \
 			engine/log/Logger.cpp \
 			engine/lua/Lua.cpp \
 			engine/lua/LuaFunction.cpp \

@@ -1,0 +1,94 @@
+/*
+ * Environment.h
+ *
+ *  Created on: 13/02/2010
+ *      Author: victor
+ */
+
+#ifndef ENVIRONMENT_H_
+#define ENVIRONMENT_H_
+
+#include "system/lang.h"
+#include "EnvironmentConfig.h"
+#include "TransactionConfig.h"
+#include "DatabaseConfig.h"
+#include "CheckpointConfig.h"
+
+#include <db.h>
+
+namespace engine {
+ namespace db {
+
+	 class Transaction;
+	 class BerkeleyDatabase;
+
+	 class LockDetectMode {
+	 public:
+		 const static uint32 DEFAULT = DB_LOCK_DEFAULT;
+		 const static uint32 EXPIRE = DB_LOCK_EXPIRE;
+		 const static uint32 MAXLOCKS = DB_LOCK_MAXLOCKS;
+		 const static uint32 MAXWRITE = DB_LOCK_MAXWRITE;
+		 const static uint32 MINLOCKS = DB_LOCK_MINLOCKS;
+		 const static uint32 MINWRITE = DB_LOCK_MINWRITE;
+		 //const static uint32 NONE = DB_LOCK_NONE;
+		 const static uint32 OLDEST = DB_LOCK_OLDEST;
+		 const static uint32 RANDOM = DB_LOCK_RANDOM;
+		 const static uint32 YOUNGEST = DB_LOCK_YOUNGEST;
+	 };
+
+	 class Environment {
+	 protected:
+		 String directory;
+		 EnvironmentConfig environmentConfig;
+
+		 DB_ENV* databaseEnvironment;
+
+	 public:
+		 Environment(const String& directory, const EnvironmentConfig& environmentConfig = EnvironmentConfig::DEFAULT);
+		 ~Environment();
+
+		 /**
+		  * Create a new transaction in the database environment.
+		  */
+		 Transaction* beginTransaction(Transaction* parent, const TransactionConfig& config = TransactionConfig::DEFAULT);
+
+		 /**
+		  *  Open a database.
+		  */
+		 BerkeleyDatabase* openDatabase(Transaction* txn, const String& fileName, const String& databaseName, const DatabaseConfig& config = DatabaseConfig::DEFAULT);
+
+		 /**
+		  * Run one iteration of the deadlock detector.
+		  */
+		 int detectDeadlocks(uint32 lockDetectMode = LockDetectMode::DEFAULT);
+
+		 /**
+		  * Synchronously checkpoint the database environment.
+		  */
+		 void checkpoint(const CheckpointConfig& config = CheckpointConfig::DEFAULT);
+
+
+		 /**
+		  * Close the database environment, freeing any allocated resources and closing any underlying subsystems.
+		  */
+		 int close();
+
+		 int failCheck();
+
+
+		 inline DB_ENV* getDatabaseEnvironmentHandle() {
+			 return databaseEnvironment;
+		 }
+
+		 //needs to be implemented, right now works only for current process
+		 static int isAlive(DB_ENV* dbenv, pid_t pid, db_threadid_t tid, u_int32_t flags);
+
+
+	 };
+
+ }
+}
+
+using namespace engine::db;
+
+#endif /* ENVIRONMENT_H_ */

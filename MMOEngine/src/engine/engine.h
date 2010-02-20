@@ -70,6 +70,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PLATFORM_WIN
 #include "db/Database.h"
 #include "db/MySqlDatabase.h"
+#include "db/BerkeleyDatabase.h"
+#include "db/Environment.h"
 
 #include "lua/Lua.h"
 #endif

@@ -22,25 +22,45 @@ namespace engine {
 		virtual ~Database() {
 		}
 	
-		virtual void connect(const String& dbname, const String& user, const String& passw, int port) = 0;
-	
-		virtual void close() = 0;
+		virtual void connect(const String& dbname, const String& user, const String& passw, int port) {
 
-		virtual void executeStatement(const char* statement) = 0;
+		}
+	
+		virtual void close()  {
 
-		virtual void executeStatement(const String& statement) = 0;
-	
-		virtual void executeStatement(const StringBuffer& statement) = 0;
-	
-		virtual ResultSet* executeQuery(const char* statement) = 0;
+		}
 
-		virtual ResultSet* executeQuery(const String& statement) = 0;
-	
-		virtual ResultSet* executeQuery(const StringBuffer& statement) = 0;
+		virtual void executeStatement(const char* statement) {
 
-		virtual void commit() = 0;
+		}
+
+		virtual void executeStatement(const String& statement) {
+
+		}
 	
-		virtual void autocommit(bool doCommit) = 0;
+		virtual void executeStatement(const StringBuffer& statement) {
+
+		}
+	
+		virtual ResultSet* executeQuery(const char* statement) {
+			return NULL;
+		}
+
+		virtual ResultSet* executeQuery(const String& statement) {
+			return NULL;
+		}
+	
+		virtual ResultSet* executeQuery(const StringBuffer& statement) {
+			return NULL;
+		}
+
+		virtual void commit() {
+
+		}
+	
+		virtual void autocommit(bool doCommit) {
+
+		}
 	};
 
   } // namespace db

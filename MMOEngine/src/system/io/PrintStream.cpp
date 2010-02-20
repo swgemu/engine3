@@ -12,14 +12,14 @@ void PrintStream::print(char ch) {
 
 void PrintStream::print(int val) {
 	if (doHex())
-		printf("%ix", val);
+		printf("%x", val);
 	else
 		printf("%i", val);
 }
 
 void PrintStream::print(uint32 val) {
 	if (doHex())
-		printf("%ux", val);
+		printf("%x", val);
 	else
 		printf("%u", val);
 }
