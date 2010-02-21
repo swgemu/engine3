@@ -25,25 +25,25 @@ namespace engine {
 
 	 public:
 		 /**
-		  * Cause an abnormal termination of the transaction.
+		  * Cause an abnormal termination of the transaction, deletes this from memory
 		  *
 		  */
 		 int abort();
 
 		 /**
-		  * End the transaction.
+		  * End the transaction, deletes this from memory regarding result
 		  */
 		 int commit(uint32 flags = 0);
 
 		 /**
-		  * End the transaction, not committing synchronously.
+		  * End the transaction, not committing synchronously, deletes this from memory regarding result
 		  */
 		 inline int commitNoSync() {
 			 return commit(DB_TXN_NOSYNC);
 		 }
 
 		 /**
-		  * End the transaction, committing synchronously.
+		  * End the transaction, committing synchronously, deletes this from memory regarding result
 		  */
 		 inline int commitSync() {
 			 return commit(DB_TXN_SYNC);
