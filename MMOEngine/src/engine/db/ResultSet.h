@@ -1,3 +1,4 @@
+
 /*
 Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
@@ -6,80 +7,40 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef RESULTSET_H_
 #define RESULTSET_H_
 
-#ifdef PLATFORM_MAC
-#include "mysql5/mysql/mysql.h"
-#else
-#include <mysql.h>
-#endif
-
 #include "system/lang.h"
-
-#include "system/lang/Long.h"
 
 namespace engine {
   namespace db {
 
 	class ResultSet {
-		MYSQL *mysql;
-
-		MYSQL_RES *result;
-		MYSQL_ROW row;
-
-		int lastAffectedRow;
-
 	public:
-		ResultSet(MYSQL* db, MYSQL_RES *res) {
-			mysql = db;
-			result = res;
+		ResultSet() {
 		}
 
 		virtual ~ResultSet() {
-			mysql_free_result(result);
 		}
 
-		bool next() {
-			return (row = mysql_fetch_row(result)) != NULL;
-		}
+		virtual bool next() = 0;
 
-		bool getBoolean(int index) {
-			return atoi(row[index]);
-		}
+		virtual bool getBoolean(int index) = 0;
 
-		int getInt(int index) {
-			return atoi(row[index]);
-		}
+		virtual int getInt(int index) = 0;
 
-		sys::uint32 getUnsignedInt(int index) {
-			return (sys::uint32) strtoul(row[index], NULL, 0);
-		}
+		virtual sys::uint32 getUnsignedInt(int index) = 0;
 
-		sys::int64 getLong(int index) {
-			return Long::valueOf(row[index]);
-		}
+		virtual sys::int64 getLong(int index) = 0;
 
-		sys::uint64 getUnsignedLong(int index) {
-			return Long::unsignedvalueOf(row[index]);
-		}
+		virtual sys::uint64 getUnsignedLong(int index) = 0;
 
-		float getFloat(int index) {
-			return atof(row[index]);
-		}
+		virtual float getFloat(int index) = 0;
 
-		char* getString(int index) {
-			return row[index];
-		}
+		virtual char* getString(int index) = 0;
 
-		sys::uint64 getRowsAffected() {
-			return mysql_affected_rows(mysql);
-		}
+		virtual sys::uint64 getRowsAffected() = 0;
 
-		sys::uint64 getLastAffectedRow() {
-			return mysql_insert_id(mysql);
-		}
+		virtual sys::uint64 getLastAffectedRow() = 0;
 
-		inline sys::uint64 size() {
-			return mysql_num_rows(result);
-		}
+		virtual sys::uint64 size() = 0;
 	};
 
   } // namespace db

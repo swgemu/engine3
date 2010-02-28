@@ -66,10 +66,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "orb/DOBObjectManager.h"
 #include "orb/DOBObjectManagerImplementation.h"
 
-
 #ifndef PLATFORM_WIN
 #include "db/Database.h"
-#include "db/MySqlDatabase.h"
+#include "db/mysql/MySqlDatabase.h"
+#include "db/berkley/BerkeleyDatabase.h"
+#include "db/berkley/Environment.h"
 #include "db/BerkeleyDatabase.h"
 #include "db/Environment.h"
 

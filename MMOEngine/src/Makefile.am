@@ -98,13 +98,13 @@ libengine3_a_SOURCES = \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
-			engine/db/MySqlDatabase.cpp \
-			engine/db/BinaryData.cpp \
-			engine/db/BerkeleyDatabase.cpp \
-			engine/db/Transaction.cpp \
-			engine/db/DatabaseEntry.cpp \
-			engine/db/Environment.cpp \
-			engine/db/Cursor.cpp \
+			engine/db/mysql/MySqlDatabase.cpp \
+			engine/db/mysql/BinaryData.cpp \
+			engine/db/berkley/BerkeleyDatabase.cpp \
+			engine/db/berkley/Transaction.cpp \
+			engine/db/berkley/DatabaseEntry.cpp \
+			engine/db/berkley/Environment.cpp \
+			engine/db/berkley/Cursor.cpp \
 			engine/log/Logger.cpp \
 			engine/lua/Lua.cpp \
 			engine/lua/LuaFunction.cpp \

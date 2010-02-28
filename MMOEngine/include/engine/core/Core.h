@@ -7,7 +7,7 @@
 
 #include "TaskManager.h"
 
-#include "../db/MySqlDatabase.h"
+#include "../db/mysql/MySqlDatabase.h"
 
 #include <new>
 
@@ -68,7 +68,7 @@ namespace engine {
 			taskManager->shutdown();
 
 			mysql_thread_end();
-			MySqlDatabase::finalizeLibrary();
+			engine::db::mysql::MySqlDatabase::finalizeLibrary();
 
 			NetworkInterface::finalize();
 

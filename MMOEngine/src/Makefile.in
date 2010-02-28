@@ -313,8 +313,13 @@ libengine3_a_SOURCES = \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
-			engine/db/MySqlDatabase.cpp \
-			engine/db/BinaryData.cpp \
+			engine/db/mysql/MySqlDatabase.cpp \
+			engine/db/mysql/BinaryData.cpp \
+			engine/db/berkley/BerkeleyDatabase.cpp \
+			engine/db/berkley/Transaction.cpp \
+			engine/db/berkley/DatabaseEntry.cpp \
+			engine/db/berkley/Environment.cpp \
+			engine/db/berkley/Cursor.cpp \
 			engine/db/BerkeleyDatabase.cpp \
 			engine/db/Transaction.cpp \
 			engine/db/DatabaseEntry.cpp \
@@ -1568,33 +1573,103 @@ Form.obj: engine/util/iffstream/chunks/form/Form.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Form.obj `if test -f 'engine/util/iffstream/chunks/form/Form.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/chunks/form/Form.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/chunks/form/Form.cpp'; fi`
 
-MySqlDatabase.o: engine/db/MySqlDatabase.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MySqlDatabase.o -MD -MP -MF $(DEPDIR)/MySqlDatabase.Tpo -c -o MySqlDatabase.o `test -f 'engine/db/MySqlDatabase.cpp' || echo '$(srcdir)/'`engine/db/MySqlDatabase.cpp
+MySqlDatabase.o: engine/db/mysql/MySqlDatabase.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MySqlDatabase.o -MD -MP -MF $(DEPDIR)/MySqlDatabase.Tpo -c -o MySqlDatabase.o `test -f 'engine/db/mysql/MySqlDatabase.cpp' || echo '$(srcdir)/'`engine/db/mysql/MySqlDatabase.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/MySqlDatabase.Tpo $(DEPDIR)/MySqlDatabase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/MySqlDatabase.cpp' object='MySqlDatabase.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/mysql/MySqlDatabase.cpp' object='MySqlDatabase.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MySqlDatabase.o `test -f 'engine/db/MySqlDatabase.cpp' || echo '$(srcdir)/'`engine/db/MySqlDatabase.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MySqlDatabase.o `test -f 'engine/db/mysql/MySqlDatabase.cpp' || echo '$(srcdir)/'`engine/db/mysql/MySqlDatabase.cpp
 
-MySqlDatabase.obj: engine/db/MySqlDatabase.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MySqlDatabase.obj -MD -MP -MF $(DEPDIR)/MySqlDatabase.Tpo -c -o MySqlDatabase.obj `if test -f 'engine/db/MySqlDatabase.cpp'; then $(CYGPATH_W) 'engine/db/MySqlDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/MySqlDatabase.cpp'; fi`
+MySqlDatabase.obj: engine/db/mysql/MySqlDatabase.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MySqlDatabase.obj -MD -MP -MF $(DEPDIR)/MySqlDatabase.Tpo -c -o MySqlDatabase.obj `if test -f 'engine/db/mysql/MySqlDatabase.cpp'; then $(CYGPATH_W) 'engine/db/mysql/MySqlDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/mysql/MySqlDatabase.cpp'; fi`
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/MySqlDatabase.Tpo $(DEPDIR)/MySqlDatabase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/MySqlDatabase.cpp' object='MySqlDatabase.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/mysql/MySqlDatabase.cpp' object='MySqlDatabase.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MySqlDatabase.obj `if test -f 'engine/db/MySqlDatabase.cpp'; then $(CYGPATH_W) 'engine/db/MySqlDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/MySqlDatabase.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MySqlDatabase.obj `if test -f 'engine/db/mysql/MySqlDatabase.cpp'; then $(CYGPATH_W) 'engine/db/mysql/MySqlDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/mysql/MySqlDatabase.cpp'; fi`
 
-BinaryData.o: engine/db/BinaryData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.o -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.o `test -f 'engine/db/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/BinaryData.cpp
+BinaryData.o: engine/db/mysql/BinaryData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.o -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.o `test -f 'engine/db/mysql/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/mysql/BinaryData.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BinaryData.Tpo $(DEPDIR)/BinaryData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/BinaryData.cpp' object='BinaryData.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/mysql/BinaryData.cpp' object='BinaryData.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.o `test -f 'engine/db/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/BinaryData.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.o `test -f 'engine/db/mysql/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/mysql/BinaryData.cpp
 
-BinaryData.obj: engine/db/BinaryData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.obj -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.obj `if test -f 'engine/db/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/BinaryData.cpp'; fi`
+BinaryData.obj: engine/db/mysql/BinaryData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.obj -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.obj `if test -f 'engine/db/mysql/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/mysql/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/mysql/BinaryData.cpp'; fi`
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BinaryData.Tpo $(DEPDIR)/BinaryData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/BinaryData.cpp' object='BinaryData.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/mysql/BinaryData.cpp' object='BinaryData.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.obj `if test -f 'engine/db/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/BinaryData.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.obj `if test -f 'engine/db/mysql/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/mysql/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/mysql/BinaryData.cpp'; fi`
+
+BerkeleyDatabase.o: engine/db/berkley/BerkeleyDatabase.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BerkeleyDatabase.o -MD -MP -MF $(DEPDIR)/BerkeleyDatabase.Tpo -c -o BerkeleyDatabase.o `test -f 'engine/db/berkley/BerkeleyDatabase.cpp' || echo '$(srcdir)/'`engine/db/berkley/BerkeleyDatabase.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BerkeleyDatabase.Tpo $(DEPDIR)/BerkeleyDatabase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/BerkeleyDatabase.cpp' object='BerkeleyDatabase.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BerkeleyDatabase.o `test -f 'engine/db/berkley/BerkeleyDatabase.cpp' || echo '$(srcdir)/'`engine/db/berkley/BerkeleyDatabase.cpp
+
+BerkeleyDatabase.obj: engine/db/berkley/BerkeleyDatabase.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BerkeleyDatabase.obj -MD -MP -MF $(DEPDIR)/BerkeleyDatabase.Tpo -c -o BerkeleyDatabase.obj `if test -f 'engine/db/berkley/BerkeleyDatabase.cpp'; then $(CYGPATH_W) 'engine/db/berkley/BerkeleyDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/BerkeleyDatabase.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BerkeleyDatabase.Tpo $(DEPDIR)/BerkeleyDatabase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/BerkeleyDatabase.cpp' object='BerkeleyDatabase.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BerkeleyDatabase.obj `if test -f 'engine/db/berkley/BerkeleyDatabase.cpp'; then $(CYGPATH_W) 'engine/db/berkley/BerkeleyDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/BerkeleyDatabase.cpp'; fi`
+
+Transaction.o: engine/db/berkley/Transaction.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Transaction.o -MD -MP -MF $(DEPDIR)/Transaction.Tpo -c -o Transaction.o `test -f 'engine/db/berkley/Transaction.cpp' || echo '$(srcdir)/'`engine/db/berkley/Transaction.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Transaction.Tpo $(DEPDIR)/Transaction.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/Transaction.cpp' object='Transaction.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Transaction.o `test -f 'engine/db/berkley/Transaction.cpp' || echo '$(srcdir)/'`engine/db/berkley/Transaction.cpp
+
+Transaction.obj: engine/db/berkley/Transaction.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Transaction.obj -MD -MP -MF $(DEPDIR)/Transaction.Tpo -c -o Transaction.obj `if test -f 'engine/db/berkley/Transaction.cpp'; then $(CYGPATH_W) 'engine/db/berkley/Transaction.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/Transaction.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Transaction.Tpo $(DEPDIR)/Transaction.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/Transaction.cpp' object='Transaction.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Transaction.obj `if test -f 'engine/db/berkley/Transaction.cpp'; then $(CYGPATH_W) 'engine/db/berkley/Transaction.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/Transaction.cpp'; fi`
+
+DatabaseEntry.o: engine/db/berkley/DatabaseEntry.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DatabaseEntry.o -MD -MP -MF $(DEPDIR)/DatabaseEntry.Tpo -c -o DatabaseEntry.o `test -f 'engine/db/berkley/DatabaseEntry.cpp' || echo '$(srcdir)/'`engine/db/berkley/DatabaseEntry.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/DatabaseEntry.Tpo $(DEPDIR)/DatabaseEntry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/DatabaseEntry.cpp' object='DatabaseEntry.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DatabaseEntry.o `test -f 'engine/db/berkley/DatabaseEntry.cpp' || echo '$(srcdir)/'`engine/db/berkley/DatabaseEntry.cpp
+
+DatabaseEntry.obj: engine/db/berkley/DatabaseEntry.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DatabaseEntry.obj -MD -MP -MF $(DEPDIR)/DatabaseEntry.Tpo -c -o DatabaseEntry.obj `if test -f 'engine/db/berkley/DatabaseEntry.cpp'; then $(CYGPATH_W) 'engine/db/berkley/DatabaseEntry.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/DatabaseEntry.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/DatabaseEntry.Tpo $(DEPDIR)/DatabaseEntry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/DatabaseEntry.cpp' object='DatabaseEntry.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DatabaseEntry.obj `if test -f 'engine/db/berkley/DatabaseEntry.cpp'; then $(CYGPATH_W) 'engine/db/berkley/DatabaseEntry.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/DatabaseEntry.cpp'; fi`
+
+Environment.o: engine/db/berkley/Environment.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Environment.o -MD -MP -MF $(DEPDIR)/Environment.Tpo -c -o Environment.o `test -f 'engine/db/berkley/Environment.cpp' || echo '$(srcdir)/'`engine/db/berkley/Environment.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Environment.Tpo $(DEPDIR)/Environment.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/Environment.cpp' object='Environment.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Environment.o `test -f 'engine/db/berkley/Environment.cpp' || echo '$(srcdir)/'`engine/db/berkley/Environment.cpp
+
+Environment.obj: engine/db/berkley/Environment.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Environment.obj -MD -MP -MF $(DEPDIR)/Environment.Tpo -c -o Environment.obj `if test -f 'engine/db/berkley/Environment.cpp'; then $(CYGPATH_W) 'engine/db/berkley/Environment.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/Environment.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Environment.Tpo $(DEPDIR)/Environment.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/Environment.cpp' object='Environment.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Environment.obj `if test -f 'engine/db/berkley/Environment.cpp'; then $(CYGPATH_W) 'engine/db/berkley/Environment.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/Environment.cpp'; fi`
+
+Cursor.o: engine/db/berkley/Cursor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Cursor.o -MD -MP -MF $(DEPDIR)/Cursor.Tpo -c -o Cursor.o `test -f 'engine/db/berkley/Cursor.cpp' || echo '$(srcdir)/'`engine/db/berkley/Cursor.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Cursor.Tpo $(DEPDIR)/Cursor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/Cursor.cpp' object='Cursor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Cursor.o `test -f 'engine/db/berkley/Cursor.cpp' || echo '$(srcdir)/'`engine/db/berkley/Cursor.cpp
+
+Cursor.obj: engine/db/berkley/Cursor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Cursor.obj -MD -MP -MF $(DEPDIR)/Cursor.Tpo -c -o Cursor.obj `if test -f 'engine/db/berkley/Cursor.cpp'; then $(CYGPATH_W) 'engine/db/berkley/Cursor.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/Cursor.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Cursor.Tpo $(DEPDIR)/Cursor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/berkley/Cursor.cpp' object='Cursor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Cursor.obj `if test -f 'engine/db/berkley/Cursor.cpp'; then $(CYGPATH_W) 'engine/db/berkley/Cursor.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/berkley/Cursor.cpp'; fi`
 
 BerkeleyDatabase.o: engine/db/BerkeleyDatabase.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BerkeleyDatabase.o -MD -MP -MF $(DEPDIR)/BerkeleyDatabase.Tpo -c -o BerkeleyDatabase.o `test -f 'engine/db/BerkeleyDatabase.cpp' || echo '$(srcdir)/'`engine/db/BerkeleyDatabase.cpp
