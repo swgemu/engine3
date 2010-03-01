@@ -5,8 +5,8 @@
  *      Author: victor
  */
 
-#ifndef ENGINE_DB_TRANSACTION_H_
-#define ENGINE_DB_TRANSACTION_H_
+#ifndef ENGINE_DB_BERKLEY_TRANSACTION_H_
+#define ENGINE_DB_BERKLEY_TRANSACTION_H_
 
 #include <db.h>
 
@@ -68,4 +68,4 @@ namespace engine {
   } // namespace db
 } // namespace engine
 
-#endif /* ENGINE_DB_TRANSACTION_H_ */
+#endif /* ENGINE_DB_BERKLEY_TRANSACTION_H_ */

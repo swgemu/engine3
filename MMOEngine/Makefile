@@ -19,10 +19,10 @@ compile: compile-idlc compile-engine-debug install-lib
 compile-debug: compile-idlc compile-engine-release install-lib
 
 compile-idlc:
-	cd src && $(IDLC) $(IDL_SOURCES)
+	$(IDLC) -sd src $(IDL_SOURCES)
 
 recompile-idlc:
-	cd src && $(IDLC) --rebuild $(IDL_SOURCES)
+	$(IDLC) -rb -sd src $(IDL_SOURCES)
 
 compile-engine-release:
 	cd build/unix && ../../configure && make
@@ -39,6 +39,8 @@ config:
 
 clean: clean-idlc recompile-idlc
 	cd build/unix && make clean
+	cd build/unix/src && rm *
+	cd build/unix/src/.deps && rm *
 	#done
 
 clean-idlc:

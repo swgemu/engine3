@@ -71,8 +71,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "db/mysql/MySqlDatabase.h"
 #include "db/berkley/BerkeleyDatabase.h"
 #include "db/berkley/Environment.h"
-#include "db/BerkeleyDatabase.h"
-#include "db/Environment.h"
 
 #include "lua/Lua.h"
 #endif

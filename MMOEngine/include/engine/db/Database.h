@@ -15,7 +15,6 @@
 namespace engine {
 namespace db {
 
-<<<<<<< .mine
 class Database {
 public:
 	Database() {
@@ -36,72 +35,14 @@ public:
 	virtual void executeStatement(const char* statement) {
 
 	}
-=======
-	class Database {
-	public:
-		Database() {
-		}
-		
-		virtual ~Database() {
-		}
-	
-		virtual void connect(const String& dbname, const String& user, const String& passw, int port) {
 
-		}
-	
-		virtual void close()  {
->>>>>>> .r434
-
-<<<<<<< .mine
 	virtual void executeStatement(const String& statement) {
-=======
-		}
->>>>>>> .r434
 
-<<<<<<< .mine
 	}
-=======
-		virtual void executeStatement(const char* statement) {
 
-		}
-
-		virtual void executeStatement(const String& statement) {
-
-		}
-	
-		virtual void executeStatement(const StringBuffer& statement) {
-
-		}
-	
-		virtual ResultSet* executeQuery(const char* statement) {
-			return NULL;
-		}
->>>>>>> .r434
-
-<<<<<<< .mine
 	virtual void executeStatement(const StringBuffer& statement) {
-=======
-		virtual ResultSet* executeQuery(const String& statement) {
-			return NULL;
-		}
-	
-		virtual ResultSet* executeQuery(const StringBuffer& statement) {
-			return NULL;
-		}
 
-		virtual void commit() {
->>>>>>> .r434
-
-<<<<<<< .mine
 	}
-=======
-		}
-	
-		virtual void autocommit(bool doCommit) {
-
-		}
-	};
->>>>>>> .r434
 
 	virtual ResultSet* executeQuery(const char* statement) {
 		return NULL;

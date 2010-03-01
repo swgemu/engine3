@@ -5,10 +5,11 @@
  *      Author: victor
  */
 
-#ifndef ENVIRONMENT_H_
-#define ENVIRONMENT_H_
+#ifndef ENGINE_DB_BERKLEY_ENVIRONMENT_H_
+#define ENGINE_DB_BERKLEY_ENVIRONMENT_H_
 
 #include "system/lang.h"
+
 #include "EnvironmentConfig.h"
 #include "TransactionConfig.h"
 #include "DatabaseConfig.h"
@@ -74,4 +75,4 @@ namespace engine {
   } // namespace db
 } // namespace engine
 
-#endif /* ENVIRONMENT_H_ */
+#endif /* ENGINE_DB_BERKLEY_ENVIRONMENT_H_ */

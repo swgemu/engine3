@@ -10,7 +10,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley;
+    namespace berkley {
 
 	class CheckpointConfig {
 		uint32 KBytes;

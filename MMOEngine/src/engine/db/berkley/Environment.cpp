@@ -5,9 +5,10 @@
  *      Author: victor
  */
 
+#include "../DatabaseException.h"
+
 #include "Environment.h"
 #include "Transaction.h"
-#include "DatabaseException.h"
 #include "BerkeleyDatabase.h"
 
 using namespace engine::db::berkley;

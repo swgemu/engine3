@@ -5,8 +5,9 @@
  *      Author: victor
  */
 
+#include "../DatabaseException.h"
+
 #include "BerkeleyDatabase.h"
-#include "DatabaseException.h"
 #include "Cursor.h"
 
 using namespace engine::db::berkley;
