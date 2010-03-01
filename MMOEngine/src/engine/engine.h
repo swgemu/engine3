@@ -68,6 +68,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #ifndef PLATFORM_WIN
 #include "db/Database.h"
+#include "db/BinaryData.h"
 #include "db/mysql/MySqlDatabase.h"
 #include "db/berkley/BerkeleyDatabase.h"
 #include "db/berkley/Environment.h"

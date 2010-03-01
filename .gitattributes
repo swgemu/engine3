@@ -74,6 +74,7 @@ MMOEngine/include/engine/core/util/ManagedSortedVector.h -text
 MMOEngine/include/engine/core/util/ManagedVector.h -text
 MMOEngine/include/engine/core/util/ManagedVectorImplementation.h -text
 MMOEngine/include/engine/core/util/ManagedVectorMap.h -text
+MMOEngine/include/engine/db/BinaryData.h -text
 MMOEngine/include/engine/db/Database.h -text
 MMOEngine/include/engine/db/DatabaseException.h -text
 MMOEngine/include/engine/db/ResultSet.h -text
@@ -343,6 +344,8 @@ MMOEngine/src/engine/core/util/ManagedVector.cpp -text
 MMOEngine/src/engine/core/util/ManagedVector.h -text
 MMOEngine/src/engine/core/util/ManagedVector.idl -text
 MMOEngine/src/engine/core/util/ManagedVectorMap.h -text
+MMOEngine/src/engine/db/BinaryData.cpp -text
+MMOEngine/src/engine/db/BinaryData.h -text
 MMOEngine/src/engine/db/Database.h -text
 MMOEngine/src/engine/db/DatabaseException.h -text
 MMOEngine/src/engine/db/ResultSet.h -text
@@ -361,8 +364,6 @@ MMOEngine/src/engine/db/berkley/EnvironmentConfig.h -text
 MMOEngine/src/engine/db/berkley/Transaction.cpp -text
 MMOEngine/src/engine/db/berkley/Transaction.h -text
 MMOEngine/src/engine/db/berkley/TransactionConfig.h -text
-MMOEngine/src/engine/db/mysql/BinaryData.cpp -text
-MMOEngine/src/engine/db/mysql/BinaryData.h -text
 MMOEngine/src/engine/db/mysql/MySqlDatabase.cpp -text
 MMOEngine/src/engine/db/mysql/MySqlDatabase.h -text
 MMOEngine/src/engine/db/mysql/ResultSet.h -text

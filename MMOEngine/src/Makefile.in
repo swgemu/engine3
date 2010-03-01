@@ -92,7 +92,7 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	DistributedObjectStub.$(OBJEXT) DistributedMethod.$(OBJEXT) \
 	ManagedObject.$(OBJEXT) ManagedObjectImplementation.$(OBJEXT) \
 	QuadTree.$(OBJEXT) IffStream.$(OBJEXT) Chunk.$(OBJEXT) \
-	Form.$(OBJEXT) MySqlDatabase.$(OBJEXT) BinaryData.$(OBJEXT) \
+	Form.$(OBJEXT) BinaryData.$(OBJEXT) MySqlDatabase.$(OBJEXT) \
 	BerkeleyDatabase.$(OBJEXT) Transaction.$(OBJEXT) \
 	DatabaseEntry.$(OBJEXT) Environment.$(OBJEXT) Cursor.$(OBJEXT) \
 	Logger.$(OBJEXT) Lua.$(OBJEXT) LuaFunction.$(OBJEXT) \
@@ -313,8 +313,8 @@ libengine3_a_SOURCES = \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
+			engine/db/BinaryData.cpp \
 			engine/db/mysql/MySqlDatabase.cpp \
-			engine/db/mysql/BinaryData.cpp \
 			engine/db/berkley/BerkeleyDatabase.cpp \
 			engine/db/berkley/Transaction.cpp \
 			engine/db/berkley/DatabaseEntry.cpp \
@@ -1568,6 +1568,20 @@ Form.obj: engine/util/iffstream/chunks/form/Form.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Form.obj `if test -f 'engine/util/iffstream/chunks/form/Form.cpp'; then $(CYGPATH_W) 'engine/util/iffstream/chunks/form/Form.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/util/iffstream/chunks/form/Form.cpp'; fi`
 
+BinaryData.o: engine/db/BinaryData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.o -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.o `test -f 'engine/db/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/BinaryData.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BinaryData.Tpo $(DEPDIR)/BinaryData.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/BinaryData.cpp' object='BinaryData.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.o `test -f 'engine/db/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/BinaryData.cpp
+
+BinaryData.obj: engine/db/BinaryData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.obj -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.obj `if test -f 'engine/db/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/BinaryData.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BinaryData.Tpo $(DEPDIR)/BinaryData.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/BinaryData.cpp' object='BinaryData.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.obj `if test -f 'engine/db/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/BinaryData.cpp'; fi`
+
 MySqlDatabase.o: engine/db/mysql/MySqlDatabase.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MySqlDatabase.o -MD -MP -MF $(DEPDIR)/MySqlDatabase.Tpo -c -o MySqlDatabase.o `test -f 'engine/db/mysql/MySqlDatabase.cpp' || echo '$(srcdir)/'`engine/db/mysql/MySqlDatabase.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/MySqlDatabase.Tpo $(DEPDIR)/MySqlDatabase.Po
@@ -1581,20 +1595,6 @@ MySqlDatabase.obj: engine/db/mysql/MySqlDatabase.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/mysql/MySqlDatabase.cpp' object='MySqlDatabase.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MySqlDatabase.obj `if test -f 'engine/db/mysql/MySqlDatabase.cpp'; then $(CYGPATH_W) 'engine/db/mysql/MySqlDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/mysql/MySqlDatabase.cpp'; fi`
-
-BinaryData.o: engine/db/mysql/BinaryData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.o -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.o `test -f 'engine/db/mysql/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/mysql/BinaryData.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BinaryData.Tpo $(DEPDIR)/BinaryData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/mysql/BinaryData.cpp' object='BinaryData.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.o `test -f 'engine/db/mysql/BinaryData.cpp' || echo '$(srcdir)/'`engine/db/mysql/BinaryData.cpp
-
-BinaryData.obj: engine/db/mysql/BinaryData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BinaryData.obj -MD -MP -MF $(DEPDIR)/BinaryData.Tpo -c -o BinaryData.obj `if test -f 'engine/db/mysql/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/mysql/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/mysql/BinaryData.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/BinaryData.Tpo $(DEPDIR)/BinaryData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/mysql/BinaryData.cpp' object='BinaryData.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.obj `if test -f 'engine/db/mysql/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/mysql/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/mysql/BinaryData.cpp'; fi`
 
 BerkeleyDatabase.o: engine/db/berkley/BerkeleyDatabase.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BerkeleyDatabase.o -MD -MP -MF $(DEPDIR)/BerkeleyDatabase.Tpo -c -o BerkeleyDatabase.o `test -f 'engine/db/berkley/BerkeleyDatabase.cpp' || echo '$(srcdir)/'`engine/db/berkley/BerkeleyDatabase.cpp
