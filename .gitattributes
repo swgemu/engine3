@@ -77,6 +77,8 @@ MMOEngine/include/engine/core/util/ManagedVectorMap.h -text
 MMOEngine/include/engine/db/BinaryData.h -text
 MMOEngine/include/engine/db/Database.h -text
 MMOEngine/include/engine/db/DatabaseException.h -text
+MMOEngine/include/engine/db/ObjectDatabase.h -text
+MMOEngine/include/engine/db/ObjectDatabaseManager.h -text
 MMOEngine/include/engine/db/ResultSet.h -text
 MMOEngine/include/engine/db/berkley/BerkeleyDatabase.h -text
 MMOEngine/include/engine/db/berkley/CheckpointConfig.h -text
@@ -184,6 +186,9 @@ MMOEngine/include/engine/service/proxy/StreamProxyClient.h -text
 MMOEngine/include/engine/service/proxy/StreamProxyService.h -text
 MMOEngine/include/engine/service/proxy/StreamProxyServiceClient.h -text
 MMOEngine/include/engine/service/proxy/StreamProxyServiceMap.h -text
+MMOEngine/include/engine/stm/Transaction.h -text
+MMOEngine/include/engine/stm/TransactionalMemoryManager.h -text
+MMOEngine/include/engine/stm/TransactionalObject.h -text
 MMOEngine/include/engine/util/Coordinate.h -text
 MMOEngine/include/engine/util/ObjectFactory.h -text
 MMOEngine/include/engine/util/QuadTree.h -text
@@ -348,6 +353,10 @@ MMOEngine/src/engine/db/BinaryData.cpp -text
 MMOEngine/src/engine/db/BinaryData.h -text
 MMOEngine/src/engine/db/Database.h -text
 MMOEngine/src/engine/db/DatabaseException.h -text
+MMOEngine/src/engine/db/ObjectDatabase.cpp -text
+MMOEngine/src/engine/db/ObjectDatabase.h -text
+MMOEngine/src/engine/db/ObjectDatabaseManager.cpp -text
+MMOEngine/src/engine/db/ObjectDatabaseManager.h -text
 MMOEngine/src/engine/db/ResultSet.h -text
 MMOEngine/src/engine/db/berkley/BerkeleyDatabase.cpp -text
 MMOEngine/src/engine/db/berkley/BerkeleyDatabase.h -text
@@ -498,6 +507,12 @@ MMOEngine/src/engine/service/proxy/StreamProxyService.h -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceClient.cpp -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceClient.h -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceMap.h -text
+MMOEngine/src/engine/stm/Transaction.cpp -text
+MMOEngine/src/engine/stm/Transaction.h -text
+MMOEngine/src/engine/stm/TransactionalMemoryManager.cpp -text
+MMOEngine/src/engine/stm/TransactionalMemoryManager.h -text
+MMOEngine/src/engine/stm/TransactionalObject.cpp -text
+MMOEngine/src/engine/stm/TransactionalObject.h -text
 MMOEngine/src/engine/util/Coordinate.h -text
 MMOEngine/src/engine/util/ObjectFactory.h -text
 MMOEngine/src/engine/util/QuadTree.cpp -text

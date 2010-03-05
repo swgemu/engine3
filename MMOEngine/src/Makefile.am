@@ -99,6 +99,8 @@ libengine3_a_SOURCES = \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
 			engine/db/BinaryData.cpp \
+			engine/db/ObjectDatabase.cpp \
+			engine/db/ObjectDatabaseManager.cpp \
 			engine/db/mysql/MySqlDatabase.cpp \
 			engine/db/berkley/BerkeleyDatabase.cpp \
 			engine/db/berkley/Transaction.cpp \

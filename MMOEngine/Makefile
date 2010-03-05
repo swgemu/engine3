@@ -11,31 +11,32 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 all: compile install-headers
 	#done
 
-all-public: clean compile-debug install-public
+all-public: clean configure compile install-public configure-debug
 	#done
 
-compile: compile-idlc compile-engine-debug install-lib
+rebuild: clean configure-debug compile install-headers
+	#done
 
-compile-debug: compile-idlc compile-engine-release install-lib
+config:
+	autoreconf --force
+	#done
+
+configure:
+	cd build/unix && ../../configure
+
+configure-debug:
+	cd build/unix && ../../configure --enable-debug
+
+compile: compile-idlc compile-engine install-lib
 
 compile-idlc:
 	$(IDLC) -sd src $(IDL_SOURCES)
 
 recompile-idlc:
 	$(IDLC) -rb -sd src $(IDL_SOURCES)
-
-compile-engine-release:
-	cd build/unix && ../../configure && make
-
-compile-engine-debug:
-	cd build/unix && ../../configure --enable-debug && make
-
-install-lib:
-	cp build/unix/src/libengine3.a lib/unix
-
-config:
-	autoreconf --force
-	#done
+	
+compile-engine:
+	cd build/unix && make
 
 clean: clean-idlc recompile-idlc
 	cd build/unix && make clean
@@ -57,6 +58,9 @@ install:
 install-headers:	
 	build/unix/install . > /dev/null 2>&1
 
+install-lib:
+	cp build/unix/src/libengine3.a lib/unix
+
 install-public:
 	build/unix/install $(ENGINE_PATH) -u > /dev/null
 	strip --strip-debug lib/unix/libengine3.a
@@ -66,6 +70,4 @@ install-public:
 pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
-	 	
-rebuild: clean all
 	

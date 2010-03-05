@@ -92,7 +92,8 @@ am_libengine3_a_OBJECTS = System.$(OBJEXT) Exception.$(OBJEXT) \
 	DistributedObjectStub.$(OBJEXT) DistributedMethod.$(OBJEXT) \
 	ManagedObject.$(OBJEXT) ManagedObjectImplementation.$(OBJEXT) \
 	QuadTree.$(OBJEXT) IffStream.$(OBJEXT) Chunk.$(OBJEXT) \
-	Form.$(OBJEXT) BinaryData.$(OBJEXT) MySqlDatabase.$(OBJEXT) \
+	Form.$(OBJEXT) BinaryData.$(OBJEXT) ObjectDatabase.$(OBJEXT) \
+	ObjectDatabaseManager.$(OBJEXT) MySqlDatabase.$(OBJEXT) \
 	BerkeleyDatabase.$(OBJEXT) Transaction.$(OBJEXT) \
 	DatabaseEntry.$(OBJEXT) Environment.$(OBJEXT) Cursor.$(OBJEXT) \
 	Logger.$(OBJEXT) Lua.$(OBJEXT) LuaFunction.$(OBJEXT) \
@@ -314,6 +315,8 @@ libengine3_a_SOURCES = \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
 			engine/db/BinaryData.cpp \
+			engine/db/ObjectDatabase.cpp \
+			engine/db/ObjectDatabaseManager.cpp \
 			engine/db/mysql/MySqlDatabase.cpp \
 			engine/db/berkley/BerkeleyDatabase.cpp \
 			engine/db/berkley/Transaction.cpp \
@@ -426,6 +429,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamingDirectoryServiceImpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NetworkInterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Object.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectDatabase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectDatabaseManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectUpdateToDatabaseTask.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Packet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PrintStream.Po@am__quote@
@@ -1581,6 +1586,34 @@ BinaryData.obj: engine/db/BinaryData.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/BinaryData.cpp' object='BinaryData.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BinaryData.obj `if test -f 'engine/db/BinaryData.cpp'; then $(CYGPATH_W) 'engine/db/BinaryData.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/BinaryData.cpp'; fi`
+
+ObjectDatabase.o: engine/db/ObjectDatabase.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ObjectDatabase.o -MD -MP -MF $(DEPDIR)/ObjectDatabase.Tpo -c -o ObjectDatabase.o `test -f 'engine/db/ObjectDatabase.cpp' || echo '$(srcdir)/'`engine/db/ObjectDatabase.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ObjectDatabase.Tpo $(DEPDIR)/ObjectDatabase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/ObjectDatabase.cpp' object='ObjectDatabase.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ObjectDatabase.o `test -f 'engine/db/ObjectDatabase.cpp' || echo '$(srcdir)/'`engine/db/ObjectDatabase.cpp
+
+ObjectDatabase.obj: engine/db/ObjectDatabase.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ObjectDatabase.obj -MD -MP -MF $(DEPDIR)/ObjectDatabase.Tpo -c -o ObjectDatabase.obj `if test -f 'engine/db/ObjectDatabase.cpp'; then $(CYGPATH_W) 'engine/db/ObjectDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/ObjectDatabase.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ObjectDatabase.Tpo $(DEPDIR)/ObjectDatabase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/ObjectDatabase.cpp' object='ObjectDatabase.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ObjectDatabase.obj `if test -f 'engine/db/ObjectDatabase.cpp'; then $(CYGPATH_W) 'engine/db/ObjectDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/ObjectDatabase.cpp'; fi`
+
+ObjectDatabaseManager.o: engine/db/ObjectDatabaseManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ObjectDatabaseManager.o -MD -MP -MF $(DEPDIR)/ObjectDatabaseManager.Tpo -c -o ObjectDatabaseManager.o `test -f 'engine/db/ObjectDatabaseManager.cpp' || echo '$(srcdir)/'`engine/db/ObjectDatabaseManager.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ObjectDatabaseManager.Tpo $(DEPDIR)/ObjectDatabaseManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/ObjectDatabaseManager.cpp' object='ObjectDatabaseManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ObjectDatabaseManager.o `test -f 'engine/db/ObjectDatabaseManager.cpp' || echo '$(srcdir)/'`engine/db/ObjectDatabaseManager.cpp
+
+ObjectDatabaseManager.obj: engine/db/ObjectDatabaseManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ObjectDatabaseManager.obj -MD -MP -MF $(DEPDIR)/ObjectDatabaseManager.Tpo -c -o ObjectDatabaseManager.obj `if test -f 'engine/db/ObjectDatabaseManager.cpp'; then $(CYGPATH_W) 'engine/db/ObjectDatabaseManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/ObjectDatabaseManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ObjectDatabaseManager.Tpo $(DEPDIR)/ObjectDatabaseManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='engine/db/ObjectDatabaseManager.cpp' object='ObjectDatabaseManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ObjectDatabaseManager.obj `if test -f 'engine/db/ObjectDatabaseManager.cpp'; then $(CYGPATH_W) 'engine/db/ObjectDatabaseManager.cpp'; else $(CYGPATH_W) '$(srcdir)/engine/db/ObjectDatabaseManager.cpp'; fi`
 
 MySqlDatabase.o: engine/db/mysql/MySqlDatabase.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MySqlDatabase.o -MD -MP -MF $(DEPDIR)/MySqlDatabase.Tpo -c -o MySqlDatabase.o `test -f 'engine/db/mysql/MySqlDatabase.cpp' || echo '$(srcdir)/'`engine/db/mysql/MySqlDatabase.cpp
