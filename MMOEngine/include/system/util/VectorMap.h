@@ -36,6 +36,9 @@ namespace sys {
 		}
 
 		VectorMapEntry& operator=(const VectorMapEntry& entry) {
+			if (this == &entry)
+				return *this;
+
 			key = entry.key;
 			value = entry.value;
 
@@ -114,6 +117,9 @@ namespace sys {
 	public:
 		VectorMap();
 		VectorMap(int initsize, int incr);
+		VectorMap(const VectorMap<K, V>& vector);
+
+		VectorMap<K, V>& operator=(const VectorMap<K, V>& vector);
 
 		virtual ~VectorMap();
 
@@ -145,6 +151,22 @@ namespace sys {
 	template<class K, class V> VectorMap<K, V>::VectorMap(int initsize, int incr)
 			: SortedVector<VectorMapEntry<K, V> >(initsize, incr) {
 		setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
+	}
+
+	template<class K, class V> VectorMap<K, V>::VectorMap(const VectorMap<K, V>& vector)
+			: SortedVector<VectorMapEntry<K, V> >(vector) {
+		nullValue = vector.nullValue;
+	}
+
+	template<class K, class V> VectorMap<K, V>& VectorMap<K, V>::operator=(const VectorMap<K, V>& vector) {
+		if (this == &vector)
+			return *this;
+
+		nullValue = vector.nullValue;
+
+		SortedVector<VectorMapEntry<K, V> >::operator=(vector);
+
+		return *this;
 	}
 
 	template<class K, class V> VectorMap<K, V>::~VectorMap() {

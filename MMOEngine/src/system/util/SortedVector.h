@@ -28,6 +28,9 @@ namespace sys {
 	public:
 		SortedVector();
 		SortedVector(int initsize, int incr);
+		SortedVector(const SortedVector<E>& vector);
+
+		SortedVector<E>& operator=(const SortedVector<E>& vector);
 
 		int put(const E& o);
 
@@ -53,7 +56,7 @@ namespace sys {
 			insertPlan = ALLOW_OVERWRITE;
 		}
 
-		inline int getInsertPlan() {
+		inline int getInsertPlan() const {
 			return insertPlan;
 		}
 
@@ -65,6 +68,21 @@ namespace sys {
 
 	template<class E> SortedVector<E>::SortedVector(int initsize, int incr) : Vector<E>(initsize, incr) {
 		insertPlan = ALLOW_DUPLICATE;
+	}
+
+	template<class E> SortedVector<E>::SortedVector(const SortedVector<E>& vector) : Vector<E>(vector) {
+		insertPlan = vector.insertPlan;
+	}
+
+	template<class E> SortedVector<E>& SortedVector<E>::operator=(const SortedVector<E>& vector) {
+		if (this == &vector)
+			return *this;
+
+		insertPlan = vector.getInsertPlan();
+
+		Vector<E>::operator=(vector);
+
+		return *this;
 	}
 
 	template<class E> int SortedVector<E>::put(const E& o) {
@@ -134,7 +152,7 @@ namespace sys {
 		if (index == -1)
 			return false;
 
-		E& oldValue = Vector<E>::elementData[index];
+		//E& oldValue = Vector<E>::elementData[index];
 
 		Vector<E>::remove(index);
 		return true;

@@ -31,6 +31,9 @@ namespace sys {
        Vector();
        Vector(int incr);
        Vector(int initsize, int incr);
+       Vector(const Vector<E>& vector);
+
+       Vector<E>& operator=(const Vector<E>& vector);
 
        virtual ~Vector();
 
@@ -57,8 +60,6 @@ namespace sys {
        void setElementAt(int index, const E& element);
 
        void clone(Vector<E>& vector) const ;
-
-       Vector<E>& operator=(Vector<E>& vector);
 
        bool toString(String& str);
        bool parseFromString(const String& str, int version = 0);
@@ -109,6 +110,21 @@ namespace sys {
 
    template<class E> Vector<E>::Vector(int initsize, int incr) : Variable() {
        init(initsize, incr);
+   }
+
+   template<class E> Vector<E>::Vector(const Vector<E>& vector) : Variable() {
+	   init(vector.size(), vector.size() / 2);
+
+	   vector.clone(*this);
+   }
+
+   template<class E> Vector<E>& Vector<E>::operator=(const Vector<E>& vector) {
+	   if (this == &vector)
+		   return *this;
+
+	   vector.clone(*this);
+
+	   return *this;
    }
 
    template<class E> Vector<E>::~Vector() {
@@ -233,12 +249,6 @@ namespace sys {
                vector.createElementAt(elementData[i], i);
        } else
            memcpy(vector.elementData, elementData, elementCount * sizeof(E));
-   }
-
-   template<class E> Vector<E>& Vector<E>::operator=(Vector<E>& vector) {
-       vector.clone(*this);
-
-       return *this;
    }
 
    template<class E> void Vector<E>::ensureCapacity(int minCapacity, bool copyContent) {
