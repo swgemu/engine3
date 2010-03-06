@@ -3,7 +3,7 @@
 
 IDLC = /usr/local/bin/idlc
 
-ENGINE_PATH = ../../workspace-pub/MMOEngine
+ENGINE_PATH = ../../core3-pub/MMOEngine
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/util/ManagedVector.idl
@@ -11,7 +11,7 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 all: compile install-headers
 	#done
 
-all-public: clean configure-debug compile install-public
+all-public: clean configure-release compile install-public
 	#done
 
 rebuild: clean configure-debug compile install-headers
@@ -21,7 +21,7 @@ config:
 	autoreconf --force
 	#done
 
-configure:
+configure-release:
 	cd build/unix && ../../configure
 
 configure-debug:
