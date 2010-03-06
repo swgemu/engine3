@@ -2,7 +2,7 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 if DEBUG
-AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused
+AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -m32
 else
 AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
 endif
@@ -92,6 +92,9 @@ libengine3_a_SOURCES = \
 			engine/orb/object/DistributedObjectServant.cpp \
 			engine/orb/object/DistributedObjectStub.cpp \
 			engine/orb/object/DistributedMethod.cpp \
+			engine/stm/STMTransaction.cpp \
+			engine/stm/TransactionalObject.cpp \
+			engine/stm/TransactionalMemoryManager.cpp \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
 			engine/util/QuadTree.cpp \

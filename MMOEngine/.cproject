@@ -119,6 +119,14 @@
 <useDefaultCommand>true</useDefaultCommand>
 <runAllBuilders>false</runAllBuilders>
 </target>
+<target name="install" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments>-f Makefile.freebsd</buildArguments>
+<buildTarget>install</buildTarget>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
+<runAllBuilders>false</runAllBuilders>
+</target>
 </buildTargets>
 </storageModule>
 </cconfiguration>

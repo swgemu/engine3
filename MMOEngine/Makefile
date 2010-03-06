@@ -11,7 +11,7 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 all: compile install-headers
 	#done
 
-all-public: clean configure compile install-public configure-debug
+all-public: clean configure-debug compile install-public
 	#done
 
 rebuild: clean configure-debug compile install-headers
