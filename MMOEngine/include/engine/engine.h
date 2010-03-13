@@ -66,6 +66,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "orb/DOBObjectManager.h"
 #include "orb/DOBObjectManagerImplementation.h"
 
+#include "stm/TransactionalMemoryManager.h"
+
 #ifndef PLATFORM_WIN
 #include "db/Database.h"
 #include "db/ObjectDatabase.h"

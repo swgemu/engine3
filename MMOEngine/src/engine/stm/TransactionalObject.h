@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ENGINE_STM_TRANSACTIONALOBJECT_H_
 #define ENGINE_STM_TRANSACTIONALOBJECT_H_
 
+#include "system/lang.h"
+
 namespace engine {
   namespace stm {
 
@@ -13,7 +15,9 @@ namespace engine {
 
 	  };
 
-  } // namessapce stm
+  } // namespace stm
 } // namespace engine
+
+using namespace engine::stm;
 
 #endif /* ENGINE_STM_TRANSACTIONALOBJECT_H_ */

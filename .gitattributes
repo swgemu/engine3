@@ -189,6 +189,8 @@ MMOEngine/include/engine/service/proxy/StreamProxyServiceMap.h -text
 MMOEngine/include/engine/stm/Transaction.h -text
 MMOEngine/include/engine/stm/TransactionalMemoryManager.h -text
 MMOEngine/include/engine/stm/TransactionalObject.h -text
+MMOEngine/include/engine/stm/TransactionalObjectHandle.h -text
+MMOEngine/include/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/include/engine/util/Coordinate.h -text
 MMOEngine/include/engine/util/ObjectFactory.h -text
 MMOEngine/include/engine/util/QuadTree.h -text
@@ -507,12 +509,16 @@ MMOEngine/src/engine/service/proxy/StreamProxyService.h -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceClient.cpp -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceClient.h -text
 MMOEngine/src/engine/service/proxy/StreamProxyServiceMap.h -text
-MMOEngine/src/engine/stm/STMTransaction.cpp -text
+MMOEngine/src/engine/stm/Transaction.cpp -text
 MMOEngine/src/engine/stm/Transaction.h -text
 MMOEngine/src/engine/stm/TransactionalMemoryManager.cpp -text
 MMOEngine/src/engine/stm/TransactionalMemoryManager.h -text
 MMOEngine/src/engine/stm/TransactionalObject.cpp -text
 MMOEngine/src/engine/stm/TransactionalObject.h -text
+MMOEngine/src/engine/stm/TransactionalObjectHandle.cpp -text
+MMOEngine/src/engine/stm/TransactionalObjectHandle.h -text
+MMOEngine/src/engine/stm/TransactionalObjectHeader.cpp -text
+MMOEngine/src/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/src/engine/util/Coordinate.h -text
 MMOEngine/src/engine/util/ObjectFactory.h -text
 MMOEngine/src/engine/util/QuadTree.cpp -text
@@ -636,8 +642,6 @@ MMOEngine/src/system/thread/ReadWriteLock.h -text
 MMOEngine/src/system/thread/Thread.cpp -text
 MMOEngine/src/system/thread/Thread.h -text
 MMOEngine/src/system/thread/ThreadLocal.h -text
-MMOEngine/src/system/util/AdvancedBinaryHeap.cpp -text
-MMOEngine/src/system/util/AdvancedBinaryHeap.h -text
 MMOEngine/src/system/util/ArrayQueue.h -text
 MMOEngine/src/system/util/BinaryHeap.h -text
 MMOEngine/src/system/util/BinarySearchTree.h -text

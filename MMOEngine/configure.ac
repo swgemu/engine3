@@ -1,10 +1,10 @@
-AC_INIT(engine3, 1.0)
+ AC_INIT(engine3, 1.0)
 AC_CANONICAL_SYSTEM
 
 AC_CONFIG_AUX_DIR(build/unix/config)
 AC_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 CXXFLAGS="$CXXFLAGS $C_EXTRA_FLAGS "
 

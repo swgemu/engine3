@@ -29,6 +29,8 @@ using namespace engine::core;
 
 #include "system/io/ObjectOutputStream.h"
 
+#include "engine/stm/TransactionalObject.h"
+
 namespace engine {
 namespace core {
 
@@ -98,7 +100,7 @@ protected:
 	friend class ManagedObjectHelper;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant, public TransactionalObject, public Serializable {
 protected:
 	int persistenceLevel;
 

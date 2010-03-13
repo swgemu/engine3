@@ -38,17 +38,13 @@ recompile-idlc:
 compile-engine:
 	cd build/unix && make
 
-clean: clean-idlc recompile-idlc
+clean: recompile-idlc
 	cd build/unix && make clean
-	cd build/unix/src && rm *
-	cd build/unix/src/.deps && rm *
 	#done
 
-clean-idlc:
-	rm -f src/engine/core/ManagedObject.h
-	rm -f src/engine/core/ManagedObject.cpp
-	rm -f src/engine/core/util/ManagedVector.h
-	rm -f src/engine/core/util/ManagedVector.cpp
+clean-distribution: recompile-idlc
+	cd build/unix && make distclean
+	#done
 
 install:
 	cp bin/idlc /usr/local/bin

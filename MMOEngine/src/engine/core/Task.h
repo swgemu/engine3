@@ -65,20 +65,6 @@ namespace engine {
 		void reschedule(uint64 delay = 0);
 		void reschedule(Time& time);
 
-		/*int compareTo(Task* task) {
-			if (priority == task->priority) {
-				if (this == task)
-					return 0;
-				else if (this < task)
-					return 1;
-				else
-					return -1;
-			} else if (priority < task->priority) {
-				return 1;
-			} else
-				return -1;
-		}*/
-
 		int compareTo(PriorityQueueEntry* node) {
 			Task* task = (Task*) node;
 

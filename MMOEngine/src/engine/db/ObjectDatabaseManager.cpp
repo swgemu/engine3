@@ -1,6 +1,5 @@
 #include "ObjectDatabaseManager.h"
 
-
 using namespace engine::db;
 using namespace engine::db::berkley;
 

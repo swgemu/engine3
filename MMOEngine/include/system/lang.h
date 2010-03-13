@@ -62,7 +62,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "util/HashSet.h"
 #include "util/BinarySearchTree.h"
 #include "util/BinaryHeap.h"
-#include "util/AdvancedBinaryHeap.h"
 
 #include "thread/Atomic.h"
 #include "thread/Thread.h"

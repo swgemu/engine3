@@ -46,7 +46,6 @@ libengine3_a_SOURCES = \
 			system/io/UnicodeTokenizer.cpp \
 			system/io/PrintStream.cpp \
 			system/io/Serializable.cpp \
-			system/util/AdvancedBinaryHeap.cpp \
 			system/util/PriorityQueue.cpp \
 			engine/engine.h \
 			engine/core/Task.cpp \
@@ -92,7 +91,9 @@ libengine3_a_SOURCES = \
 			engine/orb/object/DistributedObjectServant.cpp \
 			engine/orb/object/DistributedObjectStub.cpp \
 			engine/orb/object/DistributedMethod.cpp \
-			engine/stm/STMTransaction.cpp \
+			engine/stm/Transaction.cpp \
+			engine/stm/TransactionalObjectHandle.cpp \
+			engine/stm/TransactionalObjectHeader.cpp \
 			engine/stm/TransactionalObject.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/core/ManagedObject.cpp \

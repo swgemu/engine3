@@ -11,9 +11,11 @@ include system.io.Serializable;
 include system.io.ObjectInputStream;
 include system.io.ObjectOutputStream;
 
+include engine.stm.TransactionalObject;
+
 import engine.core.ObjectUpdateToDatabaseTask;
 
-class ManagedObject implements Serializable {
+class ManagedObject implements TransactionalObject, Serializable {
 	protected int persistenceLevel;
 	
 	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
