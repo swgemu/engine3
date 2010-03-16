@@ -14,7 +14,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/StackTrace.h"
 
-#include "Atomic.h"
+#include "atomic/AtomicInteger.h"
+
 #include "Thread.h"
 
 namespace sys {
@@ -34,7 +35,8 @@ namespace sys {
 
 		Thread* threadLockHolder;
 
-		int lockCount;
+		AtomicInteger lockCount;
+
 		int currentCount;
 
 		StackTrace* trace;
@@ -59,8 +61,7 @@ namespace sys {
 	protected:
 		inline void lockAcquiring(const char* modifier = "") {
 		#ifdef LOG_LOCKS
-			Atomic::incrementInt(&lockCount);
-			int cnt = lockCount;
+			int cnt = lockCount.increment();
 
 			if (doLog)
 				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
@@ -70,8 +71,7 @@ namespace sys {
 
 		inline void lockAcquiring(Lockable* lockable, const char* modifier = "") {
 		#ifdef LOG_LOCKS
-			Atomic::incrementInt(&lockCount);
-			int cnt = lockCount;
+			int cnt = lockCount.increment();
 
 			if (doLog)
 				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName

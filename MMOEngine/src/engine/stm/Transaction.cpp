@@ -14,12 +14,12 @@ using namespace engine::stm;
 
 Transaction::~Transaction() {
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle* handle = readOnlyObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject>* handle = readOnlyObjects.get(i);
 		delete handle;
 	}
 
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject>* handle = readWriteObjects.get(i);
 		delete handle;
 	}
 
@@ -55,27 +55,40 @@ bool Transaction::commit() {
 
 bool Transaction::acquireReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle* handle = readWriteObjects.get(i);
-		TransactionalObjectHeader* header = handle->getObjectHeader();
+		TransactionalObjectHandle<TransactionalObject>* handle = readWriteObjects.get(i);
 
-		if (!header->acquire(this)) {
-			Transaction* competingTransaction = header->getTransaction();
+		if (!handle->acquireHeader(this)) {
+			Transaction* competingTransaction = handle->getCompetingTransaction();
 
 			if (!resolveConflict(competingTransaction))
 				return false;
 		}
 	}
 
-	return true;
+	for (int i = 0; i < readOnlyObjects.size(); ++i) {
+		TransactionalObjectHandle<TransactionalObject>* handle = readOnlyObjects.get(i);
 
+		if (handle->hasObjectContentChanged()) {
+			readOnlyObjects.remove(i--);
+			readWriteObjects.add(handle);
+
+			if (!handle->acquireHeader(this)) {
+				Transaction* competingTransaction = handle->getCompetingTransaction();
+
+				if (!resolveConflict(competingTransaction)) {
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
 }
 
 void Transaction::releaseReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle* handle = readWriteObjects.get(i);
-		TransactionalObjectHeader* header = handle->getObjectHeader();
-
-		header->release(handle->getObjectLocalCopy());
+		TransactionalObjectHandle<TransactionalObject>* handle = readWriteObjects.get(i);
+		handle->releaseHeader();
 
 		delete handle;
 	}
@@ -84,16 +97,16 @@ void Transaction::releaseReadWriteObjects() {
 }
 
 bool Transaction::validateReadOnlyObjects() {
-	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle* handle = readWriteObjects.get(i);
+	for (int i = 0; i < readOnlyObjects.size(); ++i) {
+		TransactionalObjectHandle<TransactionalObject>* handle = readOnlyObjects.get(i);
+
 		if (handle->hasObjectChanged()) {
 			abort();
 			return false;
 		}
 
-		TransactionalObjectHeader* header = handle->getObjectHeader();
+		Transaction* competitorTransaction = handle->getCompetingTransaction();
 
-		Transaction* competitorTransaction = header->getTransaction();
 		if (competitorTransaction != NULL && competitorTransaction->isReadChecking()) {
 			if (!resolveConflict(competitorTransaction))
 				return false;
@@ -119,26 +132,10 @@ bool Transaction::resolveConflict(Transaction* transaction) {
 	}
 }
 
-TransactionalObject* Transaction::openObject(TransactionalObjectHeader* header) {
-	TransactionalObjectHandle* handle = new TransactionalObjectHandle(header);
-
-	readOnlyObjects.add(handle);
-
-	return handle->getObjectLocalCopy();
-}
-
-TransactionalObject* Transaction::openObjectForWrite(TransactionalObjectHeader* header) {
-	TransactionalObjectHandle* handle = new TransactionalObjectHandle(header);
-
-	readWriteObjects.add(handle);
-
-	return handle->getObjectLocalCopy();
-}
-
 Transaction* Transaction::currentTransaction() {
 	return TransactionalMemoryManager::instance()->getTransaction();
 }
 
 bool Transaction::setState(int currentstate, int newstate) {
-	return Atomic::compareAndSwap((uint32*) &status, currentstate, newstate);
+	return status.compareAndSet(currentstate, newstate);
 }

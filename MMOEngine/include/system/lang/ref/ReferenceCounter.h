@@ -8,22 +8,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <signal.h>
 
-#include "../../platform.h"
+#include "system/platform.h"
 
-#include "../System.h"
+#include "system/lang/System.h"
 
-#include "../../thread/Atomic.h"
+#include "system/thread/atomic/AtomicInteger.h"
 
 namespace sys {
   namespace lang {
 
 	class ReferenceCounter {
 	protected:
-		uint32* _references;
+		AtomicInteger _references;
 
 	public:
 		ReferenceCounter() {
-			_references = NULL;
 		}
 
 		ReferenceCounter(ReferenceCounter& counter) {
@@ -31,29 +30,15 @@ namespace sys {
 		}
 
 		virtual ~ReferenceCounter() {
-			finalizeCount();
-		}
-
-	protected:
-		inline void initializeCount() {
-			_references = new uint32();
-			*_references = 0;
-		}
-
-		inline void finalizeCount() {
-			if (_references != NULL) {
-				if (getReferenceCount() > 1) {
-					System::out << "WARNING - reference count was not zero on delete\n";
-					StackTrace::printStackTrace();
-				}
-
-				delete _references;
-				_references = NULL;
+			if (getReferenceCount() > 1) {
+				System::out << "WARNING - reference count was not zero on delete\n";
+				StackTrace::printStackTrace();
 			}
 		}
 
+	protected:
 		inline void increaseCount() {
-			Atomic::incrementInt(_references);
+			_references.increment();
 		}
 
 		inline bool decreaseCount() {
@@ -62,12 +47,12 @@ namespace sys {
 				raise(SIGSEGV);
 			}
 
-			return !Atomic::decrementInt(_references);
+			return _references.decrement() == 0;
 		}
 
 	public:
 		inline uint32 getReferenceCount() {
-			return *_references;
+			return _references;
 		}
 
 	};

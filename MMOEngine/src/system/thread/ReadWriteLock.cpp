@@ -23,8 +23,7 @@ void ReadWriteLock::rlock(bool doLock) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
 	#else
 		#ifndef LOG_LOCKS
-			Atomic::incrementInt((uint32*)&lockCount);
-			int cnt = lockCount;
+			int cnt = lockCount.increment();
 		#endif
 
 		Time start;

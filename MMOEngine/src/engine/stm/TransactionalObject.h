@@ -12,7 +12,6 @@ namespace engine {
   namespace stm {
 
 	  class TransactionalObject {
-
 	  };
 
   } // namespace stm

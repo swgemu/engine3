@@ -47,8 +47,6 @@ namespace sys {
 
 	public:
 		Object() : ReferenceCounter(), Variable() {
-			initializeCount();
-
 		#ifdef TRACE_REFERENCES
 			referenceHolders.setNullValue(NULL);
 		#endif

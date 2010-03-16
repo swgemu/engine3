@@ -4,7 +4,7 @@
 if DEBUG
 AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused
 else
-AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
+AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC -m32
 endif
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
@@ -92,9 +92,6 @@ libengine3_a_SOURCES = \
 			engine/orb/object/DistributedObjectStub.cpp \
 			engine/orb/object/DistributedMethod.cpp \
 			engine/stm/Transaction.cpp \
-			engine/stm/TransactionalObjectHandle.cpp \
-			engine/stm/TransactionalObjectHeader.cpp \
-			engine/stm/TransactionalObject.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedObjectImplementation.cpp \

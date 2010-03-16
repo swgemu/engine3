@@ -14,6 +14,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/Runnable.h"
 
+#include "../lang/String.h"
+
+#include "atomic/AtomicInteger.h"
+
 namespace sys {
   namespace thread {
 
@@ -25,7 +29,9 @@ namespace sys {
 
 		pthread_attr_t attributes;
 
-		//uint32 threadID;
+		String name;
+
+		static AtomicInteger threadCounter;
 
 		static pthread_once_t initThread;
 		static pthread_key_t threadDataKey;
@@ -76,6 +82,9 @@ namespace sys {
 
 		void setSchedulingPolicy(int policy);
 
+		const String& getName() {
+			return name;
+		}
 	};
 
   } // namespace thread

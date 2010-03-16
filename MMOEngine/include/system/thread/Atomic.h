@@ -65,7 +65,7 @@ namespace sys {
 
 		static inline bool compareAndSwap(volatile uint32* value, uint32 oldval, uint32 newval) {
 		#if GCC_VERSION >= 40100
-			return __sync_sub_and_fetch(value, 1);
+			return __sync_bool_compare_and_swap (value, oldval, newval);
 		#elif defined(PLATFORM_MAC)
 			return OSAtomicCompareAndSwapLong(long oldvalue, long newvalue, (volatile int32_t*) value);
 		#elif PLATFORM_FREEBSD
@@ -73,7 +73,46 @@ namespace sys {
 			return *value;
 		#elif defined PLATFORM_LINUX
 			//TODO: find appropriate method
-			return --(*value);
+			 if ( *value == oldval ) {
+				 *value = newval;
+			      return true;
+			  } else {
+			      return false;
+			  }
+		#elif defined PLATFORM_SOLARIS
+			atomic_dec_uint(value);
+			return *value;
+		#elif defined PLATFORM_CYGWIN
+			//TODO: find appropriate method
+			 if ( *value == oldval ) {
+				 *value = newval;
+			      return true;
+			  } else {
+			      return false;
+			  }
+		#else
+			InterlockedCompareExchange(value, newval, oldval);
+
+			return *value == newval;
+		#endif
+		}
+
+		static inline bool compareAndSwap64(volatile uint64* value, uint64 oldval, uint64 newval) {
+		#if GCC_VERSION >= 40100
+			return __sync_bool_compare_and_swap (value, oldval, newval);
+		#elif defined(PLATFORM_MAC)
+			return OSAtomicCompareAndSwapLong(long oldvalue, long newvalue, (volatile int32_t*) value);
+		#elif PLATFORM_FREEBSD
+			atomic_subtract_int(value, 1);
+			return *value;
+		#elif defined PLATFORM_LINUX
+			//TODO: find appropriate method
+			 if ( *value == oldval ) {
+				 *value = newval;
+			      return true;
+			  } else {
+			      return false;
+			  }
 		#elif defined PLATFORM_SOLARIS
 			atomic_dec_uint(value);
 			return *value;

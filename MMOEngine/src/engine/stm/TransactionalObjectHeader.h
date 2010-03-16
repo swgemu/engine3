@@ -15,38 +15,67 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
-	class TransactionalObjectHeader {
-		TransactionalObject* object;
+	template<class O> class TransactionalObjectHandle;
 
-		Transaction* ownerTransaction;
+	template<class O> class TransactionalObjectHeader {
+		O* object;
+
+		AtomicReference<Transaction> ownerTransaction;
 
 	public:
-		TransactionalObjectHeader(TransactionalObject* obj) {
+		TransactionalObjectHeader(O* obj) {
 			object = obj;
 
 			ownerTransaction = NULL;
 		}
 
-		TransactionalObject* get();
+		O* get();
 
-		TransactionalObject* getForUpdate();
+		O* getForUpdate();
 
 	protected:
+		TransactionalObjectHandle<O>* createHandle();
+
 		bool acquire(Transaction* transaction);
 
-		void release(TransactionalObject* newobject);
+		void release(TransactionalObjectHandle<O>* handle);
 
-		TransactionalObject* getObject() {
+		O* getObject() const {
 			return object;
 		}
 
-		Transaction* getTransaction() {
+		Transaction* getTransaction() const {
 			return ownerTransaction;
 		}
 
 		friend class Transaction;
-		friend class TransactionalObjectHandle;
+		friend class TransactionalObjectHandle<O>;
 	};
+
+	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createHandle() {
+		return new TransactionalObjectHandle<O>(this);
+	}
+
+	template<class O> O* TransactionalObjectHeader<O>::get() {
+		return Transaction::currentTransaction()->openObject<O>(this);
+	}
+
+	template<class O> O* TransactionalObjectHeader<O>::getForUpdate() {
+		return Transaction::currentTransaction()->openObjectForWrite<O>(this);
+	}
+
+	template<class O> bool TransactionalObjectHeader<O>::acquire(Transaction* transaction) {
+		return ownerTransaction.compareAndSet(NULL, transaction);
+	}
+
+	template<class O> void TransactionalObjectHeader<O>::release(TransactionalObjectHandle<O>* handle) {
+		O* oldObject = handle->getObject();
+
+		object = handle->getObjectLocalCopy();
+
+		free(oldObject);
+		ownerTransaction = NULL;
+	}
 
   } // namespace stm
 } // namespace engine
