@@ -50,6 +50,8 @@ namespace engine {
 
 		void abort();
 
+		void reset();
+
 		bool acquireReadWriteObjects();
 
 		void releaseReadWriteObjects();
@@ -57,6 +59,8 @@ namespace engine {
 		bool validateReadOnlyObjects();
 
 		bool resolveConflict(Transaction* transaction);
+
+		void discardReadWriteObjects();
 
 		template<class O> O* openObject(TransactionalObjectHeader<O>* header);
 
@@ -88,21 +92,21 @@ namespace engine {
 		TransactionalObjectHandle<TransactionalObject>* handle = openedObjets.get((uint64) header);
 
 		if (handle == NULL) {
-			handle = header->createHandle();
+			handle = (TransactionalObjectHandle<TransactionalObject>*) header->createHandle();
 
 			openedObjets.put((uint64) header, handle);
 
 			readOnlyObjects.add(handle);
 		}
 
-		return handle->getObjectLocalCopy();
+		return (O*) handle->getObjectLocalCopy();
 	}
 
 	template<class O> O* Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
 		TransactionalObjectHandle<TransactionalObject>* handle = openedObjets.get((uint64) header);
 
 		if (handle == NULL) {
-			handle = header->createHandle();
+			handle = (TransactionalObjectHandle<TransactionalObject>*)  header->createHandle();
 
 			openedObjets.put((uint64) header, handle);
 
@@ -113,7 +117,7 @@ namespace engine {
 			readWriteObjects.add(handle);
 		}
 
-		return handle->getObjectLocalCopy();
+		return (O*) handle->getObjectLocalCopy();
 	}
 
   } // namespace stm

@@ -30,6 +30,8 @@ namespace engine {
 
 		void releaseHeader();
 
+		bool discardHeader(Transaction* transaction);
+
 		Transaction* getCompetingTransaction();
 
 		TransactionalObjectHeader<O>* getObjectHeader() {
@@ -67,7 +69,7 @@ namespace engine {
 		objectCopy = (O*) malloc(sizeof(O));
 		memcpy(objectCopy, header->getObject(), sizeof(O));
 
-		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning finished " + String::valueOf((uint64) object));
+		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 	}
 
 	template<class O> TransactionalObjectHandle<O>::~TransactionalObjectHandle() {
@@ -88,6 +90,10 @@ namespace engine {
 		header->release(this);
 
 		objectCopy = NULL;
+	}
+
+	template<class O> bool TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
+		return header->discard(transaction);
 	}
 
 	template<class O> Transaction* TransactionalObjectHandle<O>::getCompetingTransaction() {

@@ -50,6 +50,8 @@ namespace engine {
 
 		void abort();
 
+		void reset();
+
 		bool acquireReadWriteObjects();
 
 		void releaseReadWriteObjects();
@@ -57,6 +59,8 @@ namespace engine {
 		bool validateReadOnlyObjects();
 
 		bool resolveConflict(Transaction* transaction);
+
+		void discardReadWriteObjects();
 
 		template<class O> O* openObject(TransactionalObjectHeader<O>* header);
 
@@ -85,35 +89,35 @@ namespace engine {
 	};
 
 	template<class O> O* Transaction::openObject(TransactionalObjectHeader<O>* header) {
-		TransactionalObjectHandle<O>* handle = (TransactionalObjectHandle<O>*) openedObjets.get((uint64) header);
+		TransactionalObjectHandle<TransactionalObject>* handle = openedObjets.get((uint64) header);
 
 		if (handle == NULL) {
-			handle = header->createHandle();
+			handle = (TransactionalObjectHandle<TransactionalObject>*) header->createHandle();
 
-			openedObjets.put((uint64) header, (TransactionalObjectHandle<TransactionalObject>*) handle);
+			openedObjets.put((uint64) header, handle);
 
-			readOnlyObjects.add((TransactionalObjectHandle<TransactionalObject>*) handle);
+			readOnlyObjects.add(handle);
 		}
 
-		return handle->getObjectLocalCopy();
+		return (O*) handle->getObjectLocalCopy();
 	}
 
 	template<class O> O* Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
-		TransactionalObjectHandle<O>* handle = (TransactionalObjectHandle<O>*) openedObjets.get((uint64) header);
+		TransactionalObjectHandle<TransactionalObject>* handle = openedObjets.get((uint64) header);
 
 		if (handle == NULL) {
-			handle = header->createHandle();
+			handle = (TransactionalObjectHandle<TransactionalObject>*)  header->createHandle();
 
-			openedObjets.put((uint64) header, (TransactionalObjectHandle<TransactionalObject>*) handle);
+			openedObjets.put((uint64) header, handle);
 
-			readWriteObjects.add((TransactionalObjectHandle<TransactionalObject>*) handle);
-		} else if (readOnlyObjects.contains((TransactionalObjectHandle<TransactionalObject>*) handle)) {
-			readOnlyObjects.removeElement((TransactionalObjectHandle<TransactionalObject>*) handle);
+			readWriteObjects.add(handle);
+		} else if (readOnlyObjects.contains(handle)) {
+			readOnlyObjects.removeElement(handle);
 
-			readWriteObjects.add((TransactionalObjectHandle<TransactionalObject>*) handle);
+			readWriteObjects.add(handle);
 		}
 
-		return handle->getObjectLocalCopy();
+		return (O*) handle->getObjectLocalCopy();
 	}
 
   } // namespace stm

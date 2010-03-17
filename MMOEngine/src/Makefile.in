@@ -260,7 +260,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@DEBUG_FALSE@AM_CXXFLAGS = -g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC -m32
+@DEBUG_FALSE@AM_CXXFLAGS = -g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
 @DEBUG_TRUE@AM_CXXFLAGS = -ggdb -Wall -Wextra -Wno-unused
 INCLUDES = $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I/usr/local/BerkeleyDB.4.8/include -I$src/

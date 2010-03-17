@@ -40,6 +40,8 @@ namespace engine {
 
 		void release(TransactionalObjectHandle<O>* handle);
 
+		bool discard(Transaction* transaction);
+
 		O* getObject() const {
 			return object;
 		}
@@ -65,6 +67,9 @@ namespace engine {
 	}
 
 	template<class O> bool TransactionalObjectHeader<O>::acquire(Transaction* transaction) {
+		/*System::out.println("[" + Thread::getCurrentThread()->getName() +"] acquiring (" + String::valueOf((uint64) ownerTransaction.get()) +
+				", " + String::valueOf((uint64) transaction) + ")" );*/
+
 		return ownerTransaction.compareAndSet(NULL, transaction);
 	}
 
@@ -75,6 +80,10 @@ namespace engine {
 
 		free(oldObject);
 		ownerTransaction = NULL;
+	}
+
+	template<class O> bool TransactionalObjectHeader<O>::discard(Transaction* transaction) {
+		return ownerTransaction.compareAndSet(transaction, NULL);
 	}
 
   } // namespace stm

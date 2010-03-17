@@ -4,7 +4,7 @@
 if DEBUG
 AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused
 else
-AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC -m32
+AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
 endif
 
 INCLUDES =  $(SYSTEM_INCLUDES) \

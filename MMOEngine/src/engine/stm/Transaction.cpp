@@ -13,15 +13,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 using namespace engine::stm;
 
 Transaction::~Transaction() {
-	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject>* handle = readOnlyObjects.get(i);
-		delete handle;
-	}
-
-	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject>* handle = readWriteObjects.get(i);
-		delete handle;
-	}
+	reset();
 
 	TransactionalMemoryManager::instance()->clearTransaction();
 }
@@ -53,9 +45,40 @@ bool Transaction::commit() {
 	return true;
 }
 
+void Transaction::abort() {
+	status = ABORTED;
+
+	discardReadWriteObjects();
+}
+
+void Transaction::reset() {
+	status = UNDECIDED;
+
+	openedObjets.removeAll();
+
+	for (int i = 0; i < readOnlyObjects.size(); ++i) {
+		TransactionalObjectHandle<TransactionalObject>* handle = readOnlyObjects.get(i);
+		delete handle;
+	}
+
+	readOnlyObjects.removeAll();
+
+	for (int i = 0; i < readWriteObjects.size(); ++i) {
+		TransactionalObjectHandle<TransactionalObject>* handle = readWriteObjects.get(i);
+		delete handle;
+	}
+
+	readWriteObjects.removeAll();
+}
+
 bool Transaction::acquireReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<TransactionalObject>* handle = readWriteObjects.get(i);
+
+		if (handle->hasObjectChanged()) {
+			abort();
+			return false;
+		}
 
 		if (!handle->acquireHeader(this)) {
 			Transaction* competingTransaction = handle->getCompetingTransaction();
@@ -116,8 +139,13 @@ bool Transaction::validateReadOnlyObjects() {
 	return true;
 }
 
-void Transaction::abort() {
-	status = ABORTED;
+void Transaction::discardReadWriteObjects() {
+	for (int i = 0; i < readWriteObjects.size(); ++i) {
+		TransactionalObjectHandle<TransactionalObject>* handle = readWriteObjects.get(i);
+
+		if (handle->discardHeader(this))
+			break;
+	}
 }
 
 bool Transaction::resolveConflict(Transaction* transaction) {
