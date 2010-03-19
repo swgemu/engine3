@@ -39,7 +39,7 @@ namespace sys {
 	class Object : public ReferenceCounter, public Variable {
 		Mutex referenceMutex;
 
-		Vector<WeakReference<Object*>*> weakReferences;
+		Vector<WeakReference<Object>*> weakReferences;
 
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
@@ -108,7 +108,7 @@ namespace sys {
 	protected:
 		virtual void destroy();
 
-		friend class WeakReference<Object*>;
+		friend class WeakReference<Object>;
 	};
 
   } // namespace lang

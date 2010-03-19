@@ -14,7 +14,7 @@ namespace engine {
     namespace proto {
 
 	class BaseClientNetStatusCheckupEvent : public ReentrantTask {
-		Reference<BaseClient*> client;
+		Reference<BaseClient> client;
 
 	public:
 		BaseClientNetStatusCheckupEvent(BaseClient* cl) : ReentrantTask(25000) {

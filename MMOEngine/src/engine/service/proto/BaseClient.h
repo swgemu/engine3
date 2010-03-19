@@ -46,9 +46,9 @@ namespace engine {
 
 		Vector<BasePacket*> sequenceBuffer;
 
-		Reference<BasePacketChekupEvent*> checkupEvent;
-		Reference<BaseClientNetStatusCheckupEvent*> netcheckupEvent;
-		Reference<BaseClientNetStatusRequestEvent*> netRequestEvent;
+		Reference<BasePacketChekupEvent> checkupEvent;
+		Reference<BaseClientNetStatusCheckupEvent> netcheckupEvent;
+		Reference<BaseClientNetStatusRequestEvent> netRequestEvent;
 
 		BaseMultiPacket* bufferedPacket;
 		BaseFragmentedPacket* fragmentedPacket;
@@ -61,7 +61,7 @@ namespace engine {
 
 		Condition connectionEstablishedCondition;
 
-		Reference<BaseClientEvent*> reentrantTask;
+		Reference<BaseClientEvent> reentrantTask;
 
 		bool clientDisconnected;
 

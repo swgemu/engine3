@@ -13,7 +13,7 @@ namespace sys {
 
 	template<class O> class Reference : public Variable {
 	protected:
-		O object;
+		O* object;
 
 	public:
 		Reference() : Variable() {
@@ -24,7 +24,7 @@ namespace sys {
 			initializeObject(ref.object);
 		}
 
-		Reference(O obj) : Variable() {
+		Reference(O* obj) : Variable() {
 			initializeObject(obj);
 		}
 
@@ -50,19 +50,19 @@ namespace sys {
 			return *this;
 		}
 
-		void operator=(O obj) {
+		void operator=(O* obj) {
 			updateObject(obj);
 		}
 
-		O operator->() const {
+		O* operator->() const {
 			return object;
 		}
 
-		operator O() const {
+		operator O*() const {
 			return object;
 		}
 
-		inline O get() const {
+		inline O* get() const {
 			return object;
 		}
 
@@ -83,7 +83,7 @@ namespace sys {
 		}
 
 	protected:
-		inline void updateObject(O obj) {
+		inline void updateObject(O* obj) {
 			if (obj == object)
 				return;
 
@@ -92,14 +92,14 @@ namespace sys {
 			setObject(obj);
 		}
 
-		inline void setObject(O obj) {
+		inline void setObject(O* obj) {
 			if (obj == object)
 				return;
 
 			initializeObject(obj);
 		}
 
-		inline void initializeObject(O obj) {
+		inline void initializeObject(O* obj) {
 			object = obj;
 
 			acquireObject();

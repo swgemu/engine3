@@ -23,7 +23,7 @@ namespace engine {
 		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref) {
 		}
 
-		ManagedWeakReference(O obj) : WeakReference<O>(obj) {
+		ManagedWeakReference(O* obj) : WeakReference<O>(obj) {
 		}
 
 		ManagedWeakReference& operator=(const ManagedWeakReference& ref) {
@@ -35,7 +35,7 @@ namespace engine {
 			return *this;
 		}
 
-		O operator=(O obj) {
+		O* operator=(O* obj) {
 			WeakReference<O>::updateObject(obj);
 
 			return obj;
@@ -62,7 +62,7 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
-			WeakReference<O>::updateObject((O) obj);
+			WeakReference<O>::updateObject((O*) obj);
 
 			if (obj == NULL)
 				return false;
@@ -71,7 +71,7 @@ namespace engine {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			O object = WeakReference<O>::get();
+			O* object = WeakReference<O>::get();
 
 			if (object != NULL)
 				stream->writeLong(object->_getObjectID());
@@ -84,7 +84,7 @@ namespace engine {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			uint64 oid = stream->readLong();
 
-			O obj = (O) DistributedObjectBroker::instance()->lookUp(oid);
+			O* obj = (O*) DistributedObjectBroker::instance()->lookUp(oid);
 			*this = obj;
 
 			if (obj == NULL)

@@ -11,16 +11,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 void Object::acquireWeak(void* ref) {
 	Locker locker(&referenceMutex);
 
-	weakReferences.add((WeakReference<Object*>*) ref);
+	weakReferences.add((WeakReference<Object>*) ref);
 }
 
 void Object::releaseWeak(void* ref) {
 	Locker locker(&referenceMutex);
 
 	for (int i = 0; i < weakReferences.size(); ++i) {
-		WeakReference<Object*>* reference = weakReferences.get(i);
+		WeakReference<Object>* reference = weakReferences.get(i);
 
-		if (reference == (WeakReference<Object*>*) ref) {
+		if (reference == (WeakReference<Object>*) ref) {
 			weakReferences.remove(i);
 
 			break;
@@ -32,7 +32,7 @@ void Object::destroy() {
 	Locker locker(&referenceMutex);
 
 	while (!weakReferences.isEmpty()) {
-		WeakReference<Object*>* ref = weakReferences.remove(0);
+		WeakReference<Object>* ref = weakReferences.remove(0);
 		ref->clearObject();
 	}
 

@@ -6,24 +6,31 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef MANAGEDREFERENCE_H_
 #define MANAGEDREFERENCE_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 #include "ManagedObject.h"
 
-#include "../orb/DistributedObjectBroker.h"
+#include "engine/orb/DistributedObjectBroker.h"
+
+#include "engine/stm/TransactionalMemoryManager.h"
 
 namespace engine {
   namespace core {
 
 	template<class O> class ManagedReference : public Reference<O> {
+		TransactionalObjectHeader<O>* header;
+
 	public:
 		ManagedReference() : Reference<O>() {
+			header = NULL;
 		}
 
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
+			header = ref.header;
 		}
 
-		ManagedReference(O obj) : Reference<O>(obj) {
+		ManagedReference(O* obj) : Reference<O>(obj) {
+			header = new TransactionalObjectHeader<O>(obj);
 		}
 
 		ManagedReference& operator=(const ManagedReference& ref) {
@@ -32,11 +39,15 @@ namespace engine {
 
 			Reference<O>::updateObject(ref.object);
 
+			header = ref.header;
+
 			return *this;
 		}
 
-		O operator=(O obj) {
+		O* operator=(O* obj) {
 			Reference<O>::updateObject(obj);
+
+			header = obj;
 
 			return obj;
 		}
@@ -62,7 +73,7 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
-			Reference<O>::updateObject((O) obj);
+			Reference<O>::updateObject((O*) obj);
 
 			if (obj == NULL)
 				return false;
@@ -71,7 +82,7 @@ namespace engine {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			O object = Reference<O>::get();
+			O* object = Reference<O>::get();
 
 			if (object != NULL)
 				stream->writeLong(object->_getObjectID());
@@ -84,7 +95,7 @@ namespace engine {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			uint64 oid = stream->readLong();
 
-			O obj = (O) DistributedObjectBroker::instance()->lookUp(oid);
+			O* obj = (O*) DistributedObjectBroker::instance()->lookUp(oid);
 			*this = obj;
 
 			if (obj == NULL)
@@ -92,7 +103,6 @@ namespace engine {
 
 			return true;
 		}
-
 	};
 
   } // namespace core
