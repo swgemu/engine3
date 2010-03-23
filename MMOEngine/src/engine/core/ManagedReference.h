@@ -138,7 +138,7 @@ namespace engine {
 			if (header != NULL)
 				delete header;
 
-			header = new TransactionalObjectHeader<O>(obj);
+			header = new TransactionalObjectHeader<O>((O*)obj);
 		}
 
 		void updateHeader(TransactionalObjectHeader<O>* hdr) {

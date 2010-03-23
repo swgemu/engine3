@@ -23,6 +23,11 @@ namespace sys {
 
 		//static float fabs(float f);
 
+		static float getPrecision(float num, int digits) {
+			float power = pow(10, digits);
+			return float(floor(num * power + .05f) / power);
+		}
+
 		static double acos(double arg) {
 			return ::acos(arg);
 		}

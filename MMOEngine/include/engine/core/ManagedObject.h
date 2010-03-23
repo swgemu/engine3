@@ -29,6 +29,8 @@ using namespace engine::core;
 
 #include "system/io/ObjectOutputStream.h"
 
+#include "engine/stm/TransactionalObject.h"
+
 namespace engine {
 namespace core {
 

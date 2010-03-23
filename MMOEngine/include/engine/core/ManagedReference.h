@@ -67,14 +67,14 @@ namespace engine {
 			return getForUpdate();
 		}
 
-		O* get() const {
+		inline O* get() const {http://www.jwz.org/doc/java.html
 			if (header != NULL)
 				return header->get();
 			else
 				return NULL;
 		}
 
-		O* getForUpdate() const {
+		inline O* getForUpdate() const {
 			if (header != NULL)
 				return header->getForUpdate();
 			else
@@ -134,11 +134,11 @@ namespace engine {
 		}
 
 	protected:
-		void updateHeader(O* obj) {
+		void updateHeader(TransactionalObject* obj) {
 			if (header != NULL)
 				delete header;
 
-			header = new TransactionalObjectHeader<O>(obj);
+			header = new TransactionalObjectHeader<O>((O*)obj);
 		}
 
 		void updateHeader(TransactionalObjectHeader<O>* hdr) {

@@ -6,9 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 package engine.core;
 
 include system.thread.ReadWriteLock;
+
 include system.io.Serializable;
 include system.io.ObjectInputStream;
 include system.io.ObjectOutputStream;
+
+include engine.stm.TransactionalObject;
 
 import engine.core.ObjectUpdateToDatabaseTask;
 
@@ -22,6 +25,12 @@ class ManagedObject implements Serializable {
 		
 		updateToDatabaseTask = null;
 	}
+
+	/*@nativeStub 
+	public native void acquireWeak(WeakReference<ManagedObject> ref);
+
+	@nativeStub 
+	public native void releaseWeak(WeakReference<ManagedObject> ref);*/
 
 	@nativeStub 
 	public native void lock(boolean doLock = true);
