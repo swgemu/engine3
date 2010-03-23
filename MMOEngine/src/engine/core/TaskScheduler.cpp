@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/stm/TransactionalMemoryManager.h"
+
 #include "TaskScheduler.h"
 
 #ifdef VERSION_PUBLIC
@@ -54,15 +56,17 @@ void TaskScheduler::run() {
 
 			TaskManager::instance()->setTaskScheduler(task, NULL);
 
-			task->run();
+			while (true) {
+				task->run();
 
-			task->release();
+				engine::stm::Transaction* transaction =
+						engine::stm::Transaction::currentTransaction();
 
-			/*if (!task->isReentrant())
-				delete task;*/
+				if (transaction->commit())
+					break;
 
-			//should we set NULL taskScheduler for reentrant tasks here?
-
+				transaction->reset();
+			}
 		} catch (Exception& e) {
 			error(e.getMessage());
 		} catch (...) {
@@ -72,6 +76,8 @@ void TaskScheduler::run() {
 				error("[TaskScheduler] unreported Exception caught");
 			#endif
 		}
+
+		task->release();
 	}
 }
 

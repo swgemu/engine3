@@ -23,6 +23,14 @@ ManagedObject::~ManagedObject() {
 }
 
 
+TransactionalObject* ManagedObject::clone() {
+	ManagedObject* objectCopy = new ManagedObject(DummyConstructorParameter::instance());
+	objectCopy->_impl = new ManagedObjectImplementation(DummyConstructorParameter::instance());
+	*(objectCopy->_impl) = *_impl;
+	return (TransactionalObject*) objectCopy;
+}
+
+
 void ManagedObject::_lock(bool doLock) {
 	if (_impl == NULL) {
 		if (!deployed)

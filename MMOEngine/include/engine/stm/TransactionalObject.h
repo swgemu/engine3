@@ -8,11 +8,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "TransactionalMemoryManager.h"
+
 namespace engine {
   namespace stm {
 
-	  class TransactionalObject {
-	  };
+	class TransactionalObject {
+		virtual TransactionalObject* clone() = 0;
+	};
 
   } // namespace stm
 } // namespace engine

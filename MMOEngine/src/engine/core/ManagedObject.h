@@ -34,7 +34,7 @@ using namespace engine::core;
 namespace engine {
 namespace core {
 
-class ManagedObject : public DistributedObjectStub {
+class ManagedObject : public DistributedObjectStub, public TransactionalObject {
 public:
 	ManagedObject();
 
@@ -81,6 +81,8 @@ protected:
 
 	virtual ~ManagedObject();
 
+	TransactionalObject* clone();
+
 	void _lock(bool doLock = true);
 
 	void _lock(ManagedObject* obj);
@@ -98,9 +100,10 @@ protected:
 	void _setLockName(const String& name);
 
 	friend class ManagedObjectHelper;
+	friend class TransactionalObjectHandle<ManagedObject>;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public TransactionalObject, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
 protected:
 	int persistenceLevel;
 

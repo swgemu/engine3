@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/stm/TransactionalMemoryManager.h"
+
 #include "TaskWorkerThread.h"
 
 #include "TaskManager.h"
@@ -29,7 +31,17 @@ void TaskWorkerThread::run() {
 
 	while ((task = taskManager->getTask()) != NULL) {
 		try {
-			task->run();
+			while (true) {
+				task->run();
+
+				engine::stm::Transaction* transaction =
+						engine::stm::Transaction::currentTransaction();
+
+				if (transaction->commit())
+					break;
+
+				transaction->reset();
+			}
 		} catch (Exception& e) {
 			error(e.getMessage());
 		} catch (...) {
@@ -37,9 +49,6 @@ void TaskWorkerThread::run() {
 		}
 
 		task->release();
-
-		/*if (!task->isReentrant())
-			delete task;*/
 	}
 }
 

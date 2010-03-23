@@ -66,9 +66,7 @@ namespace engine {
 
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 
-		objectCopy = (O*) malloc(sizeof(O));
-		memcpy(objectCopy, header->getObject(), sizeof(O));
-
+		objectCopy = (O*) object->clone();
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 	}
 
@@ -77,7 +75,7 @@ namespace engine {
 		object = NULL;
 
 		if (objectCopy != NULL) {
-			free(objectCopy);
+			delete objectCopy;
 			objectCopy = NULL;
 		}
 	}

@@ -13,6 +13,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
+	class TransactionalObject;
 	template<class O> class TransactionalObjectHeader;
 
 	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<TransactionalObject>*> {
@@ -34,15 +35,16 @@ namespace engine {
 		SortedVector<TransactionalObjectHandle<TransactionalObject>*> readOnlyObjects;
 		SortedVector<TransactionalObjectHandle<TransactionalObject>*> readWriteObjects;
 
+		uint64 commitTime;
+		int commitAttempts;
+
 		static const int UNDECIDED = 0;
 		static const int READ_CHECKING = 1;
 		static const int ABORTED = 2;
 		static const int COMMITTED = 3;
 
 	public:
-		Transaction() {
-			status = UNDECIDED;
-		}
+		Transaction();
 
 		virtual ~Transaction();
 
@@ -84,7 +86,11 @@ namespace engine {
 
 		static Transaction* currentTransaction();
 
+		String toString();
+
 	protected:
+		bool doCommit();
+
 		bool setState(int currentstate, int newstate);
 	};
 

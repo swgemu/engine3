@@ -3,62 +3,62 @@
 #include "ObjectUpdateToDatabaseTask.h"
 
 void ManagedObject::lock(bool doLock) {
-	DistributedObjectStub::wlock(doLock);
+	/*DistributedObjectStub::wlock(doLock);
 
 	if (_impl == NULL)
-		_wlock(doLock);
+		_wlock(doLock);*/
 }
 
 void ManagedObject::lock(ManagedObject* obj) {
-	DistributedObjectStub::wlock(obj);
+	/*DistributedObjectStub::wlock(obj);
 
 	if (_impl == NULL)
-		_wlock(obj);
+		_wlock(obj);*/
 }
 
 void ManagedObject::rlock(bool doLock) {
-	DistributedObjectStub::rlock(doLock);
+	/*DistributedObjectStub::rlock(doLock);
 
 	if (_impl == NULL)
-		_rlock(doLock);
+		_rlock(doLock);*/
 }
 
 void ManagedObject::wlock(bool doLock) {
-	DistributedObjectStub::wlock(doLock);
+	/*DistributedObjectStub::wlock(doLock);
 
 	if (_impl == NULL)
-		_wlock(doLock);
+		_wlock(doLock);*/
 }
 
 void ManagedObject::wlock(ManagedObject* obj) {
-	DistributedObjectStub::wlock(obj);
+	/*DistributedObjectStub::wlock(obj);
 
 	if (_impl == NULL)
-		_wlock(obj);
+		_wlock(obj);*/
 }
 
 void ManagedObject::unlock(bool doLock) {
 	if (getPersistenceLevel() == 3)
 		updateToDatabase();
 
-	DistributedObjectStub::unlock(doLock);
+	/*DistributedObjectStub::unlock(doLock);
 
 	if (_impl == NULL)
-		_unlock(doLock);
+		_unlock(doLock);*/
 }
 
 void ManagedObject::runlock(bool doLock) {
-	DistributedObjectStub::runlock(doLock);
+	/*DistributedObjectStub::runlock(doLock);
 
 	if (_impl == NULL)
-		_runlock(doLock);
+		_runlock(doLock);*/
 }
 
 void ManagedObject::setLockName(const String& name) {
-	DistributedObjectStub::setLockName(name);
+	/*DistributedObjectStub::setLockName(name);
 
 	if (_impl == NULL)
-		_setLockName(name);
+		_setLockName(name);*/
 }
 
 void ManagedObjectImplementation::lock(bool doLock) {

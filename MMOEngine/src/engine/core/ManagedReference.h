@@ -8,11 +8,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "engine/stm/TransactionalMemoryManager.h"
+
 #include "ManagedObject.h"
 
 #include "engine/orb/DistributedObjectBroker.h"
-
-#include "engine/stm/TransactionalMemoryManager.h"
 
 namespace engine {
   namespace core {
@@ -33,13 +33,20 @@ namespace engine {
 			header = new TransactionalObjectHeader<O>(obj);
 		}
 
+		~ManagedReference() {
+			if (header != NULL) {
+				delete header;
+				header = NULL;
+			}
+		}
+
 		ManagedReference& operator=(const ManagedReference& ref) {
 			if (this == &ref)
 				return *this;
 
 			Reference<O>::updateObject(ref.object);
 
-			header = ref.header;
+			updateHeader(ref.header);
 
 			return *this;
 		}
@@ -47,9 +54,31 @@ namespace engine {
 		O* operator=(O* obj) {
 			Reference<O>::updateObject(obj);
 
-			header = obj;
+			updateHeader(obj);
 
 			return obj;
+		}
+
+		O* operator->() const {
+			return getForUpdate();
+		}
+
+		operator O*() const {
+			return getForUpdate();
+		}
+
+		inline O* get() const {http://www.jwz.org/doc/java.html
+			if (header != NULL)
+				return header->get();
+			else
+				return NULL;
+		}
+
+		inline O* getForUpdate() const {
+			if (header != NULL)
+				return header->getForUpdate();
+			else
+				return NULL;
 		}
 
 		int compareTo(const ManagedReference& ref) const {
@@ -103,7 +132,22 @@ namespace engine {
 
 			return true;
 		}
-	};
+
+	protected:
+		void updateHeader(TransactionalObject* obj) {
+			if (header != NULL)
+				delete header;
+
+			header = new TransactionalObjectHeader<O>(obj);
+		}
+
+		void updateHeader(TransactionalObjectHeader<O>* hdr) {
+			if (header != NULL)
+				delete header;
+
+			header = new TransactionalObjectHeader<O>(hdr);
+		}
+};
 
   } // namespace core
 } // namespace engine

@@ -12,6 +12,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 using namespace engine::stm;
 
+Transaction::Transaction() {
+	status = UNDECIDED;
+
+	commitAttempts = 0;
+}
+
 Transaction::~Transaction() {
 	reset();
 
@@ -19,6 +25,18 @@ Transaction::~Transaction() {
 }
 
 bool Transaction::commit() {
+	uint64 startTime = System::getMikroTime();
+
+	++commitAttempts;
+
+	bool commited = doCommit();
+
+	commitTime += System::getMikroTime() - startTime;
+
+	return commited;
+}
+
+bool Transaction::doCommit() {
 	if (!isUndecided()) {
 		abort();
 		return false;
@@ -162,6 +180,11 @@ bool Transaction::resolveConflict(Transaction* transaction) {
 
 Transaction* Transaction::currentTransaction() {
 	return TransactionalMemoryManager::instance()->getTransaction();
+}
+
+String Transaction::toString() {
+	return "Transaction [" + Thread::getCurrentThread()->getName() + "] commited in " + Long::toString(commitTime) + " usec with "
+			+ String::valueOf(commitAttempts) + " attempts";
 }
 
 bool Transaction::setState(int currentstate, int newstate) {

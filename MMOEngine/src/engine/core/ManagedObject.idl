@@ -15,7 +15,7 @@ include engine.stm.TransactionalObject;
 
 import engine.core.ObjectUpdateToDatabaseTask;
 
-class ManagedObject implements TransactionalObject, Serializable {
+class ManagedObject implements Serializable {
 	protected int persistenceLevel;
 	
 	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;

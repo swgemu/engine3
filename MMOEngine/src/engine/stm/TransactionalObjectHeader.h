@@ -29,6 +29,12 @@ namespace engine {
 			ownerTransaction = NULL;
 		}
 
+		TransactionalObjectHeader(TransactionalObjectHeader* hdr) {
+			object = hdr->object;
+
+			ownerTransaction = hdr->ownerTransaction;
+		}
+
 		O* get();
 
 		O* getForUpdate();
@@ -78,7 +84,7 @@ namespace engine {
 
 		object = handle->getObjectLocalCopy();
 
-		free(oldObject);
+		delete oldObject;
 		ownerTransaction = NULL;
 	}
 
