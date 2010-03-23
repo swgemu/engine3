@@ -67,7 +67,7 @@ namespace engine {
 			return getForUpdate();
 		}
 
-		inline O* get() const {http://www.jwz.org/doc/java.html
+		inline O* get() const {
 			if (header != NULL)
 				return header->get();
 			else
