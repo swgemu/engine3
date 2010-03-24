@@ -30,6 +30,8 @@ namespace engine {
 		}
 
 		ManagedReference(O* obj) : Reference<O>(obj) {
+			header = NULL;
+
 			updateHeader(obj);
 		}
 

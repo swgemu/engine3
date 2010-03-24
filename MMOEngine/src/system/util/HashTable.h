@@ -96,7 +96,7 @@ namespace sys {
 			return count == 0;
 	    }
 
-	    inline void setNullValue(V val) {
+	    inline void setNullValue(const V& val) {
 	    	nullValue = val;
 	    }
 
