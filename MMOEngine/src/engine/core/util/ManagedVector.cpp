@@ -19,7 +19,8 @@ ManagedVector::~ManagedVector() {
 TransactionalObject* ManagedVector::clone() {
 	ManagedVector* objectCopy = new ManagedVector(DummyConstructorParameter::instance());
 	objectCopy->_impl = new ManagedVectorImplementation(DummyConstructorParameter::instance());
-	*(objectCopy->_impl) = *_impl;
+	*((ManagedVector*) objectCopy->_impl) = *((ManagedVector *) _impl);
+	objectCopy->_impl->_setStub(objectCopy);
 	return (TransactionalObject*) objectCopy;
 }
 

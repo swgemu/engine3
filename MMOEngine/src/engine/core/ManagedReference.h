@@ -30,7 +30,7 @@ namespace engine {
 		}
 
 		ManagedReference(O* obj) : Reference<O>(obj) {
-			header = new TransactionalObjectHeader<O>(obj);
+			updateHeader(obj);
 		}
 
 		~ManagedReference() {
@@ -44,17 +44,13 @@ namespace engine {
 			if (this == &ref)
 				return *this;
 
-			Reference<O>::updateObject(ref.object);
-
-			updateHeader(ref.header);
+			updateObject(ref);
 
 			return *this;
 		}
 
 		O* operator=(O* obj) {
-			Reference<O>::updateObject(obj);
-
-			updateHeader(obj);
+			updateObject(obj);
 
 			return obj;
 		}
@@ -102,7 +98,7 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
-			Reference<O>::updateObject((O*) obj);
+			updateObject((O*) obj);
 
 			if (obj == NULL)
 				return false;
@@ -125,7 +121,8 @@ namespace engine {
 			uint64 oid = stream->readLong();
 
 			O* obj = (O*) DistributedObjectBroker::instance()->lookUp(oid);
-			*this = obj;
+
+			updateObject((O*) obj);
 
 			if (obj == NULL)
 				return false;
@@ -134,7 +131,22 @@ namespace engine {
 		}
 
 	protected:
+		void updateObject(O* obj) {
+			Reference<O>::updateObject(obj);
+
+			updateHeader(obj);
+		}
+
+		void updateObject(ManagedReference& ref) {
+			Reference<O>::updateObject(ref.object);
+
+			updateHeader(ref.header);
+		}
+
 		void updateHeader(TransactionalObject* obj) {
+			if (obj == NULL)
+				return;
+
 			if (header != NULL)
 				delete header;
 

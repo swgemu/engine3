@@ -26,7 +26,8 @@ ManagedObject::~ManagedObject() {
 TransactionalObject* ManagedObject::clone() {
 	ManagedObject* objectCopy = new ManagedObject(DummyConstructorParameter::instance());
 	objectCopy->_impl = new ManagedObjectImplementation(DummyConstructorParameter::instance());
-	*(objectCopy->_impl) = *_impl;
+	*((ManagedObject*) objectCopy->_impl) = *((ManagedObject *) _impl);
+	objectCopy->_impl->_setStub(objectCopy);
 	return (TransactionalObject*) objectCopy;
 }
 
