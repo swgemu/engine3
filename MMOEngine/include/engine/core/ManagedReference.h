@@ -65,7 +65,7 @@ namespace engine {
 
 		inline O* get() const {
 			if (header != NULL)
-				return header->get();
+				return (O*) header->get();
 			else
 				return NULL;
 		}
@@ -157,7 +157,10 @@ namespace engine {
 			if (header != NULL)
 				delete header;
 
-			header = new TransactionalObjectHeader<O>(hdr);
+			if (hdr == NULL)
+				header = NULL;
+			else
+				header = new TransactionalObjectHeader<O>(hdr);
 		}
 };
 

@@ -15,7 +15,22 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHeader;
 
-	template<class O> class TransactionalObjectHandle {
+	class TransactionObjectHandle {
+	public:
+		virtual ~TransactionObjectHandle() {
+
+		}
+
+		virtual bool hasObjectChanged() = 0;
+		virtual bool hasObjectContentChanged() = 0;
+		virtual bool acquireHeader(Transaction* transaction) = 0;
+		virtual bool discardHeader(Transaction* transaction) = 0;
+		virtual void releaseHeader() = 0;
+		virtual Transaction* getCompetingTransaction() = 0;
+		virtual int compareTo(TransactionObjectHandle* handle) = 0;
+	};
+
+	template<class O> class TransactionalObjectHandle : public TransactionObjectHandle {
 		TransactionalObjectHeader<O>* header;
 
 		O* object;
@@ -41,10 +56,10 @@ namespace engine {
 		bool hasObjectChanged();
 		bool hasObjectContentChanged();
 
-		int compareTo(TransactionalObjectHandle<O>* handle) {
-			if (this == handle)
+		int compareTo(TransactionObjectHandle* handle) {
+			if ((TransactionalObjectHandle*) this == handle)
 				return 0;
-			else if (this < handle)
+			else if ((TransactionalObjectHandle*) this < handle)
 				return 1;
 			else
 				return -1;
@@ -75,7 +90,7 @@ namespace engine {
 		object = NULL;
 
 		if (objectCopy != NULL) {
-			delete objectCopy;
+			//delete objectCopy;
 			objectCopy = NULL;
 		}
 	}

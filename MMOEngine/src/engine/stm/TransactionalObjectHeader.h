@@ -84,7 +84,7 @@ namespace engine {
 
 		object = handle->getObjectLocalCopy();
 
-		delete oldObject;
+		//delete oldObject;
 		ownerTransaction = NULL;
 	}
 

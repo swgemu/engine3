@@ -16,13 +16,13 @@ namespace engine {
 	class TransactionalObject;
 	template<class O> class TransactionalObjectHeader;
 
-	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<TransactionalObject>*> {
+	class TransactionalObjectMap : public HashTable<uint64, TransactionObjectHandle*> {
 		int hash(const uint64& key) {
 			return Long::hashCode(key);
 		}
 
 	public:
-		TransactionalObjectMap() : HashTable<uint64, TransactionalObjectHandle<TransactionalObject>*>(1000) {
+		TransactionalObjectMap() : HashTable<uint64, TransactionObjectHandle*>(1000) {
 			setNullValue(NULL);
 		}
 	};
@@ -32,8 +32,8 @@ namespace engine {
 
 		TransactionalObjectMap openedObjets;
 
-		SortedVector<TransactionalObjectHandle<TransactionalObject>*> readOnlyObjects;
-		SortedVector<TransactionalObjectHandle<TransactionalObject>*> readWriteObjects;
+		SortedVector<TransactionObjectHandle*> readOnlyObjects;
+		SortedVector<TransactionObjectHandle*> readWriteObjects;
 
 		uint64 commitTime;
 		int commitAttempts;
@@ -95,24 +95,26 @@ namespace engine {
 	};
 
 	template<class O> O* Transaction::openObject(TransactionalObjectHeader<O>* header) {
-		TransactionalObjectHandle<TransactionalObject>* handle = openedObjets.get((uint64) header);
+		TransactionalObjectHandle<O>* handle = (TransactionalObjectHandle<O>*) openedObjets.get((uint64)header);
 
 		if (handle == NULL) {
-			handle = (TransactionalObjectHandle<TransactionalObject>*) header->createHandle();
+			handle = header->createHandle();
 
 			openedObjets.put((uint64) header, handle);
 
 			readOnlyObjects.add(handle);
 		}
 
-		return (O*) handle->getObjectLocalCopy();
+		O* localCopy = (O*) handle->getObjectLocalCopy();
+
+		return localCopy;
 	}
 
 	template<class O> O* Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
-		TransactionalObjectHandle<TransactionalObject>* handle = openedObjets.get((uint64) header);
+		TransactionalObjectHandle<O>* handle = (TransactionalObjectHandle<O>*) openedObjets.get((uint64) header);
 
 		if (handle == NULL) {
-			handle = (TransactionalObjectHandle<TransactionalObject>*)  header->createHandle();
+			handle = header->createHandle();
 
 			openedObjets.put((uint64) header, handle);
 
@@ -123,7 +125,9 @@ namespace engine {
 			readWriteObjects.add(handle);
 		}
 
-		return (O*) handle->getObjectLocalCopy();
+		O* localCopy = (O*) handle->getObjectLocalCopy();
+
+		return localCopy;
 	}
 
   } // namespace stm

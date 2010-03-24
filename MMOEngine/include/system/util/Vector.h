@@ -113,7 +113,7 @@ namespace sys {
    }
 
    template<class E> Vector<E>::Vector(const Vector<E>& vector) : Variable() {
-	   init(vector.size(), vector.size() / 2);
+	   init(10, 5);
 
 	   vector.clone(*this);
    }
