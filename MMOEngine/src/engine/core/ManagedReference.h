@@ -134,7 +134,7 @@ namespace engine {
 		void updateObject(O* obj) {
 			Reference<O>::updateObject(obj);
 
-			updateHeader(obj);
+			updateHeader((TransactionalObject*) obj);
 		}
 
 		void updateObject(ManagedReference& ref) {
@@ -150,10 +150,7 @@ namespace engine {
 			if (header != NULL)
 				delete header;
 
-			if (obj == NULL)
-				header = NULL;
-			else
-				header = new TransactionalObjectHeader<O>((O*)obj);
+			header = new TransactionalObjectHeader<O>((O*)obj);
 		}
 
 		void updateHeader(TransactionalObjectHeader<O>* hdr) {

@@ -134,7 +134,7 @@ namespace engine {
 		void updateObject(O* obj) {
 			Reference<O>::updateObject(obj);
 
-			updateHeader(obj);
+			updateHeader((TransactionalObject*) obj);
 		}
 
 		void updateObject(ManagedReference& ref) {
