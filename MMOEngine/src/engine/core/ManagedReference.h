@@ -26,11 +26,11 @@ namespace engine {
 		}
 
 		ManagedReference(ManagedReference& ref) : Reference<O>(ref) {
-			header = ref.header;
+			header = new TransactionalObjectHeader<O>(ref.header);
 		}
 
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
-			header = ref.header;
+			header = new TransactionalObjectHeader<O>(ref.header);
 		}
 
 		ManagedReference(const O obj) : Reference<O>(obj) {
