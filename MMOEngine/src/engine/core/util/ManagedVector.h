@@ -25,7 +25,7 @@ protected:
 	TransactionalObject* clone();
 
 	friend class ManagedVectorHelper;
-	friend class TransactionalObjectHandle<ManagedVector>;
+	friend class TransactionalObjectHandle<ManagedVector*>;
 };
 
 class ManagedVectorImplementation : public DistributedObjectServant {

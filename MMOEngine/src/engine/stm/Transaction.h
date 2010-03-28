@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "engine/log/Logger.h"
+
 #include "TransactionalObjectHandle.h"
 
 namespace engine {
@@ -16,24 +18,48 @@ namespace engine {
 	class TransactionalObject;
 	template<class O> class TransactionalObjectHeader;
 
-	class TransactionalObjectMap : public HashTable<uint64, TransactionObjectHandle*> {
+	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*> {
 		int hash(const uint64& key) {
 			return Long::hashCode(key);
 		}
 
 	public:
-		TransactionalObjectMap() : HashTable<uint64, TransactionObjectHandle*>(1000) {
+		TransactionalObjectMap() : HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*>(1000) {
 			setNullValue(NULL);
+		}
+
+		template<class O> TransactionalObjectHandle<O>* put(TransactionalObjectHeader<O>* header, TransactionalObjectHandle<O>* handle) {
+			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*>::put((uint64) header,
+				(TransactionalObjectHandle<TransactionalObject*>*) handle);
+		}
+
+		template<class O> TransactionalObjectHandle<O>* get(TransactionalObjectHeader<O>* header) {
+			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*>::get((uint64) header);
 		}
 	};
 
-	class Transaction {
+	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandle<TransactionalObject*>*> {
+	public:
+		template<class O> void add(TransactionalObjectHandle<O>* handle) {
+			SortedVector<TransactionalObjectHandle<TransactionalObject*>*>::add((TransactionalObjectHandle<TransactionalObject*>*) handle);
+		}
+
+		template<class O> bool removeElement(TransactionalObjectHandle<O>* handle) {
+			return SortedVector<TransactionalObjectHandle<TransactionalObject*>*>::removeElement((TransactionalObjectHandle<TransactionalObject*>*) handle);
+		}
+
+		template<class O> bool contains(TransactionalObjectHandle<O>* handle) {
+			return SortedVector<TransactionalObjectHandle<TransactionalObject*>*>::contains((TransactionalObjectHandle<TransactionalObject*>*) handle);
+		}
+	};
+
+	class Transaction : public Logger {
 		AtomicInteger status;
 
 		TransactionalObjectMap openedObjets;
 
-		SortedVector<TransactionObjectHandle*> readOnlyObjects;
-		SortedVector<TransactionObjectHandle*> readWriteObjects;
+		TransactionalObjectHandleVector readOnlyObjects;
+		TransactionalObjectHandleVector readWriteObjects;
 
 		uint64 commitTime;
 		int commitAttempts;
@@ -64,9 +90,9 @@ namespace engine {
 
 		void discardReadWriteObjects();
 
-		template<class O> O* openObject(TransactionalObjectHeader<O>* header);
+		template<class O> O openObject(TransactionalObjectHeader<O>* header);
 
-		template<class O> O* openObjectForWrite(TransactionalObjectHeader<O>* header);
+		template<class O> O openObjectForWrite(TransactionalObjectHeader<O>* header);
 
 		inline bool isUndecided() {
 			return status == UNDECIDED;
@@ -94,38 +120,38 @@ namespace engine {
 		bool setState(int currentstate, int newstate);
 	};
 
-	template<class O> O* Transaction::openObject(TransactionalObjectHeader<O>* header) {
-		TransactionalObjectHandle<O>* handle = (TransactionalObjectHandle<O>*) openedObjets.get((uint64)header);
+	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {
+		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
 			handle = header->createHandle();
 
-			openedObjets.put((uint64) header, handle);
+			openedObjets.put<O>(header, handle);
 
-			readOnlyObjects.add(handle);
+			readOnlyObjects.add<O>(handle);
 		}
 
-		O* localCopy = (O*) handle->getObjectLocalCopy();
+		O localCopy = (O) handle->getObjectLocalCopy();
 
 		return localCopy;
 	}
 
-	template<class O> O* Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
-		TransactionalObjectHandle<O>* handle = (TransactionalObjectHandle<O>*) openedObjets.get((uint64) header);
+	template<class O> O Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
+		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
 			handle = header->createHandle();
 
-			openedObjets.put((uint64) header, handle);
+			openedObjets.put<O>(header, handle);
 
-			readWriteObjects.add(handle);
+			readWriteObjects.add<O>(handle);
 		} else if (readOnlyObjects.contains(handle)) {
-			readOnlyObjects.removeElement(handle);
+			readOnlyObjects.removeElement<O>(handle);
 
-			readWriteObjects.add(handle);
+			readWriteObjects.add<O>(handle);
 		}
 
-		O* localCopy = (O*) handle->getObjectLocalCopy();
+		O localCopy = (O) handle->getObjectLocalCopy();
 
 		return localCopy;
 	}

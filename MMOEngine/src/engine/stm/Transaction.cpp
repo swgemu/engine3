@@ -12,10 +12,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 using namespace engine::stm;
 
-Transaction::Transaction() {
+Transaction::Transaction() : Logger() {
 	status = UNDECIDED;
 
 	commitAttempts = 0;
+
+	String threadName = Thread::getCurrentThread()->getName();
+
+	setLoggingName("Transaction " + threadName.subString(7, threadName.length()));
 }
 
 Transaction::~Transaction() {
@@ -32,6 +36,11 @@ bool Transaction::commit() {
 	bool commited = doCommit();
 
 	commitTime += System::getMikroTime() - startTime;
+
+	if (commited)
+		info("commited");
+	else
+		info("aborted");
 
 	return commited;
 }
@@ -75,14 +84,14 @@ void Transaction::reset() {
 	openedObjets.removeAll();
 
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionObjectHandle* handle = readOnlyObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject*>* handle = readOnlyObjects.get(i);
 		delete handle;
 	}
 
 	readOnlyObjects.removeAll();
 
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionObjectHandle* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
 		delete handle;
 	}
 
@@ -91,7 +100,7 @@ void Transaction::reset() {
 
 bool Transaction::acquireReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionObjectHandle* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
 			abort();
@@ -107,7 +116,7 @@ bool Transaction::acquireReadWriteObjects() {
 	}
 
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionObjectHandle* handle = readOnlyObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectContentChanged()) {
 			readOnlyObjects.remove(i--);
@@ -128,7 +137,7 @@ bool Transaction::acquireReadWriteObjects() {
 
 void Transaction::releaseReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionObjectHandle* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
 		handle->releaseHeader();
 
 		delete handle;
@@ -139,7 +148,7 @@ void Transaction::releaseReadWriteObjects() {
 
 bool Transaction::validateReadOnlyObjects() {
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionObjectHandle* handle = readOnlyObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
 			abort();
@@ -159,7 +168,7 @@ bool Transaction::validateReadOnlyObjects() {
 
 void Transaction::discardReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionObjectHandle* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
 
 		if (handle->discardHeader(this))
 			break;

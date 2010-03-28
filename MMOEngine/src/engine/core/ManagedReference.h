@@ -25,11 +25,15 @@ namespace engine {
 			header = NULL;
 		}
 
+		ManagedReference(ManagedReference& ref) : Reference<O>(ref) {
+			header = ref.header;
+		}
+
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
 			header = ref.header;
 		}
 
-		ManagedReference(O* obj) : Reference<O>(obj) {
+		ManagedReference(const O obj) : Reference<O>(obj) {
 			header = NULL;
 
 			updateHeader(obj);
@@ -51,28 +55,28 @@ namespace engine {
 			return *this;
 		}
 
-		O* operator=(O* obj) {
+		O operator=(const O obj) {
 			updateObject(obj);
 
 			return obj;
 		}
 
-		O* operator->() const {
+		O operator->() const {
 			return getForUpdate();
 		}
 
-		operator O*() const {
+		operator O() const {
 			return getForUpdate();
 		}
 
-		inline O* get() const {
+		inline O get() const {
 			if (header != NULL)
-				return (O*) header->get();
+				return (O) header->get();
 			else
 				return NULL;
 		}
 
-		inline O* getForUpdate() const {
+		inline O getForUpdate() const {
 			if (header != NULL)
 				return header->getForUpdate();
 			else
@@ -100,7 +104,7 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
-			updateObject((O*) obj);
+			updateObject((O) obj);
 
 			if (obj == NULL)
 				return false;
@@ -109,7 +113,7 @@ namespace engine {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			O* object = Reference<O>::get();
+			O object = Reference<O>::get();
 
 			if (object != NULL)
 				stream->writeLong(object->_getObjectID());
@@ -122,9 +126,9 @@ namespace engine {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			uint64 oid = stream->readLong();
 
-			O* obj = (O*) DistributedObjectBroker::instance()->lookUp(oid);
+			O obj = (O) DistributedObjectBroker::instance()->lookUp(oid);
 
-			updateObject((O*) obj);
+			updateObject((O) obj);
 
 			if (obj == NULL)
 				return false;
@@ -133,13 +137,13 @@ namespace engine {
 		}
 
 	protected:
-		void updateObject(O* obj) {
+		void updateObject(const O obj) {
 			Reference<O>::updateObject(obj);
 
 			updateHeader((TransactionalObject*) obj);
 		}
 
-		void updateObject(ManagedReference& ref) {
+		void updateObject(const ManagedReference& ref) {
 			Reference<O>::updateObject(ref.object);
 
 			updateHeader(ref.header);
@@ -152,7 +156,7 @@ namespace engine {
 			if (header != NULL)
 				delete header;
 
-			header = new TransactionalObjectHeader<O>((O*)obj);
+			header = new TransactionalObjectHeader<O>((O) obj);
 		}
 
 		void updateHeader(TransactionalObjectHeader<O>* hdr) {

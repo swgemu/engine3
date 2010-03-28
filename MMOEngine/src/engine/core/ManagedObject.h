@@ -100,7 +100,7 @@ protected:
 	void _setLockName(const String& name);
 
 	friend class ManagedObjectHelper;
-	friend class TransactionalObjectHandle<ManagedObject>;
+	friend class TransactionalObjectHandle<ManagedObject*>;
 };
 
 class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {

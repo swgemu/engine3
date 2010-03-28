@@ -17,7 +17,7 @@ namespace engine {
     class ManagedObject;
 
 	class ObjectUpdateToDatabaseTask : public Task {
-		ManagedWeakReference<ManagedObject> object;
+		ManagedWeakReference<ManagedObject*> object;
 
 	public:
 		ObjectUpdateToDatabaseTask(ManagedObject* object);

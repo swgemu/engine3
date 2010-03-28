@@ -18,12 +18,12 @@ namespace engine {
 	template<class O> class TransactionalObjectHandle;
 
 	template<class O> class TransactionalObjectHeader {
-		O* object;
+		O object;
 
 		AtomicReference<Transaction> ownerTransaction;
 
 	public:
-		TransactionalObjectHeader(O* obj) {
+		TransactionalObjectHeader(O obj) {
 			object = obj;
 
 			ownerTransaction = NULL;
@@ -35,9 +35,9 @@ namespace engine {
 			ownerTransaction = hdr->ownerTransaction;
 		}
 
-		O* get();
+		O get();
 
-		O* getForUpdate();
+		O getForUpdate();
 
 	protected:
 		TransactionalObjectHandle<O>* createHandle();
@@ -48,7 +48,7 @@ namespace engine {
 
 		bool discard(Transaction* transaction);
 
-		O* getObject() const {
+		O getObject() const {
 			return object;
 		}
 
@@ -64,11 +64,11 @@ namespace engine {
 		return new TransactionalObjectHandle<O>(this);
 	}
 
-	template<class O> O* TransactionalObjectHeader<O>::get() {
+	template<class O> O TransactionalObjectHeader<O>::get() {
 		return Transaction::currentTransaction()->openObject<O>(this);
 	}
 
-	template<class O> O* TransactionalObjectHeader<O>::getForUpdate() {
+	template<class O> O TransactionalObjectHeader<O>::getForUpdate() {
 		return Transaction::currentTransaction()->openObjectForWrite<O>(this);
 	}
 
@@ -80,7 +80,7 @@ namespace engine {
 	}
 
 	template<class O> void TransactionalObjectHeader<O>::release(TransactionalObjectHandle<O>* handle) {
-		O* oldObject = handle->getObject();
+		O oldObject = handle->getObject();
 
 		object = handle->getObjectLocalCopy();
 

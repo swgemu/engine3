@@ -41,7 +41,7 @@ namespace engine {
 
 		uint16 lastTableID;
 
-		Reference<BerkeleyCheckpointTask> checkpointTask;
+		Reference<BerkeleyCheckpointTask*> checkpointTask;
 		uint32 checkpointTime;
 
 	public:

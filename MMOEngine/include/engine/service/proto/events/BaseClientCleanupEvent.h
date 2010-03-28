@@ -6,7 +6,7 @@
 #include "../BaseClient.h"
 
 class BaseClientCleanupEvent : public Task {
-	Reference<BaseClient> client;
+	Reference<BaseClient*> client;
 	
 public:
 	BaseClientCleanupEvent(BaseClient* cl) : Task(60000) {

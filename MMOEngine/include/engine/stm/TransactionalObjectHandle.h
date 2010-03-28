@@ -15,26 +15,11 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHeader;
 
-	class TransactionObjectHandle {
-	public:
-		virtual ~TransactionObjectHandle() {
-
-		}
-
-		virtual bool hasObjectChanged() = 0;
-		virtual bool hasObjectContentChanged() = 0;
-		virtual bool acquireHeader(Transaction* transaction) = 0;
-		virtual bool discardHeader(Transaction* transaction) = 0;
-		virtual void releaseHeader() = 0;
-		virtual Transaction* getCompetingTransaction() = 0;
-		virtual int compareTo(TransactionObjectHandle* handle) = 0;
-	};
-
-	template<class O> class TransactionalObjectHandle : public TransactionObjectHandle {
+	template<class O> class TransactionalObjectHandle {
 		TransactionalObjectHeader<O>* header;
 
-		O* object;
-		O* objectCopy;
+		O object;
+		O objectCopy;
 
 	public:
 		TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr);
@@ -56,7 +41,7 @@ namespace engine {
 		bool hasObjectChanged();
 		bool hasObjectContentChanged();
 
-		int compareTo(TransactionObjectHandle* handle) {
+		int compareTo(TransactionalObjectHandle* handle) {
 			if ((TransactionalObjectHandle*) this == handle)
 				return 0;
 			else if ((TransactionalObjectHandle*) this < handle)
@@ -65,11 +50,11 @@ namespace engine {
 				return -1;
 		}
 
-		O* getObject() {
+		O getObject() {
 			return object;
 		}
 
-		O* getObjectLocalCopy() {
+		O getObjectLocalCopy() {
 			return objectCopy;
 		}
 	};
@@ -81,7 +66,7 @@ namespace engine {
 
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 
-		objectCopy = (O*) object->clone();
+		objectCopy = (O) object->clone();
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 	}
 
