@@ -21,6 +21,7 @@ TransactionalObject* ManagedVector::clone() {
 	objectCopy->_impl = new ManagedVectorImplementation(DummyConstructorParameter::instance());
 	*((ManagedVectorImplementation*) objectCopy->_impl) = *((ManagedVectorImplementation*) _impl);
 	objectCopy->_impl->_setStub(objectCopy);
+	objectCopy->_setObjectID(_getObjectID());
 	return (TransactionalObject*) objectCopy;
 }
 
