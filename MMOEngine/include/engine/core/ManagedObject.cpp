@@ -301,48 +301,48 @@ void ManagedObjectImplementation::_serializationHelperMethod() {
 
 ManagedObjectImplementation::ManagedObjectImplementation() {
 	_initializeImplementation();
-	// engine/core/ManagedObject.idl(24):  		persistenceLevel = 0;
+	// engine/core/ManagedObject.idl(26):  		persistenceLevel = 0;
 	persistenceLevel = 0;
-	// engine/core/ManagedObject.idl(26):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl(28):  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 void ManagedObjectImplementation::writeObject(String& data) {
-	// engine/core/ManagedObject.idl(60):  		Serializable.writeObject(data);
+	// engine/core/ManagedObject.idl(62):  		Serializable.writeObject(data);
 	Serializable::writeObject(data);
 }
 
 void ManagedObjectImplementation::writeObject(ObjectOutputStream* stream) {
-	// engine/core/ManagedObject.idl(65):  		Serializable.writeObject(stream);
+	// engine/core/ManagedObject.idl(67):  		Serializable.writeObject(stream);
 	Serializable::writeObject(stream);
 }
 
 void ManagedObjectImplementation::readObject(const String& data) {
-	// engine/core/ManagedObject.idl(69):  		Serializable.readObject(data);
+	// engine/core/ManagedObject.idl(71):  		Serializable.readObject(data);
 	Serializable::readObject(data);
-	// engine/core/ManagedObject.idl(71):  		initializeTransientMembers();
+	// engine/core/ManagedObject.idl(73):  		initializeTransientMembers();
 	initializeTransientMembers();
 }
 
 void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
-	// engine/core/ManagedObject.idl(76):  		Serializable.readObject(stream);
+	// engine/core/ManagedObject.idl(78):  		Serializable.readObject(stream);
 	Serializable::readObject(stream);
-	// engine/core/ManagedObject.idl(78):  		initializeTransientMembers();
+	// engine/core/ManagedObject.idl(80):  		initializeTransientMembers();
 	initializeTransientMembers();
 }
 
 void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
-	// engine/core/ManagedObject.idl(87):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl(89):  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 bool ManagedObjectImplementation::isPersistent() {
-	// engine/core/ManagedObject.idl(91):  		return persistenceLevel != 0;
+	// engine/core/ManagedObject.idl(93):  		return persistenceLevel != 0;
 	return persistenceLevel != 0;
 }
 
 int ManagedObjectImplementation::getPersistenceLevel() {
-	// engine/core/ManagedObject.idl(95):  		return persistenceLevel;
+	// engine/core/ManagedObject.idl(97):  		return persistenceLevel;
 	return persistenceLevel;
 }
 
@@ -408,6 +408,10 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	case 22:
 		setPersistent(inv->getSignedIntParameter());
 		break;
+	case 23:
+				break;
+	case 24:
+				break;
 	default:
 		return NULL;
 	}

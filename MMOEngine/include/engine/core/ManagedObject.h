@@ -29,6 +29,8 @@ using namespace engine::core;
 
 #include "system/io/ObjectOutputStream.h"
 
+#include "engine/orb/object/DistributedObjectServant.h"
+
 #include "engine/stm/TransactionalObject.h"
 
 namespace engine {
@@ -76,6 +78,10 @@ public:
 
 	void setPersistent(int level);
 
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
+
 protected:
 	ManagedObject(DummyConstructorParameter* param);
 
@@ -97,10 +103,14 @@ protected:
 
 	void _setLockName(const String& name);
 
+	DistributedObjectServant* __getImplementation();
+
+	void __setImplementation(DistributedObjectServant* servant);
+
 	friend class ManagedObjectHelper;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant, public TransactionalObject, public Serializable {
 protected:
 	int persistenceLevel;
 
@@ -147,6 +157,10 @@ public:
 	int getPersistenceLevel();
 
 	void setPersistent(int level);
+
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
 
 	ManagedObject* _this;
 
@@ -209,6 +223,10 @@ public:
 	int getPersistenceLevel();
 
 	void setPersistent(int level);
+
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
 
 protected:
 	String _param0_setLockName__String_;
