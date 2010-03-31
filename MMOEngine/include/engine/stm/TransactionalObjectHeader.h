@@ -23,16 +23,16 @@ namespace engine {
 		AtomicReference<Transaction> ownerTransaction;
 
 	public:
-		TransactionalObjectHeader(O obj) {
-			object = obj;
+		TransactionalObjectHeader() {
+			object = NULL;
 
 			ownerTransaction = NULL;
 		}
 
-		TransactionalObjectHeader(TransactionalObjectHeader* hdr) {
-			object = hdr->object;
+		TransactionalObjectHeader(O obj) {
+			object = obj;
 
-			ownerTransaction = hdr->ownerTransaction;
+			ownerTransaction = NULL;
 		}
 
 		O get();
@@ -42,11 +42,11 @@ namespace engine {
 	protected:
 		TransactionalObjectHandle<O>* createHandle();
 
-		bool acquire(Transaction* transaction);
+		bool acquireObject(Transaction* transaction);
 
-		void release(TransactionalObjectHandle<O>* handle);
+		void releaseObject(TransactionalObjectHandle<O>* handle);
 
-		bool discard(Transaction* transaction);
+		bool discardObject(Transaction* transaction);
 
 		O getObject() const {
 			return object;
@@ -54,6 +54,14 @@ namespace engine {
 
 		Transaction* getTransaction() const {
 			return ownerTransaction;
+		}
+
+		bool isNull() {
+			return object != NULL;
+		}
+
+		void setObject(O obj) {
+			object = obj;
 		}
 
 		friend class Transaction;
@@ -72,14 +80,14 @@ namespace engine {
 		return Transaction::currentTransaction()->openObjectForWrite<O>(this);
 	}
 
-	template<class O> bool TransactionalObjectHeader<O>::acquire(Transaction* transaction) {
+	template<class O> bool TransactionalObjectHeader<O>::acquireObject(Transaction* transaction) {
 		/*System::out.println("[" + Thread::getCurrentThread()->getName() +"] acquiring (" + String::valueOf((uint64) ownerTransaction.get()) +
 				", " + String::valueOf((uint64) transaction) + ")" );*/
 
 		return ownerTransaction.compareAndSet(NULL, transaction);
 	}
 
-	template<class O> void TransactionalObjectHeader<O>::release(TransactionalObjectHandle<O>* handle) {
+	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
 		O oldObject = handle->getObject();
 
 		object = handle->getObjectLocalCopy();
@@ -88,7 +96,7 @@ namespace engine {
 		ownerTransaction = NULL;
 	}
 
-	template<class O> bool TransactionalObjectHeader<O>::discard(Transaction* transaction) {
+	template<class O> bool TransactionalObjectHeader<O>::discardObject(Transaction* transaction) {
 		return ownerTransaction.compareAndSet(transaction, NULL);
 	}
 

@@ -11,30 +11,19 @@
  */
 
 ManagedObject::ManagedObject() {
-	_impl = new ManagedObjectImplementation();
-	_impl->_setStub(this);
+	_setImplementation(new ManagedObjectImplementation());
+	_getImplementation()->_setStub(this);
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
-	_impl = NULL;
 }
 
 ManagedObject::~ManagedObject() {
 }
 
 
-TransactionalObject* ManagedObject::clone() {
-	ManagedObject* objectCopy = new ManagedObject(DummyConstructorParameter::instance());
-	objectCopy->_impl = new ManagedObjectImplementation(DummyConstructorParameter::instance());
-	*((ManagedObjectImplementation*) objectCopy->_impl) = *((ManagedObjectImplementation*) _impl);
-	objectCopy->_impl->_setStub(objectCopy);
-	objectCopy->_setObjectID(_getObjectID());
-	return (TransactionalObject*) objectCopy;
-}
-
-
 void ManagedObject::_lock(bool doLock) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -43,11 +32,11 @@ void ManagedObject::_lock(bool doLock) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->lock(doLock);
+		((ManagedObjectImplementation*) _getImplementation())->lock(doLock);
 }
 
 void ManagedObject::_lock(ManagedObject* obj) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -56,11 +45,11 @@ void ManagedObject::_lock(ManagedObject* obj) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->lock(obj);
+		((ManagedObjectImplementation*) _getImplementation())->lock(obj);
 }
 
 void ManagedObject::_rlock(bool doLock) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -69,11 +58,11 @@ void ManagedObject::_rlock(bool doLock) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->rlock(doLock);
+		((ManagedObjectImplementation*) _getImplementation())->rlock(doLock);
 }
 
 void ManagedObject::_wlock(bool doLock) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -82,11 +71,11 @@ void ManagedObject::_wlock(bool doLock) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->wlock(doLock);
+		((ManagedObjectImplementation*) _getImplementation())->wlock(doLock);
 }
 
 void ManagedObject::_wlock(ManagedObject* obj) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -95,11 +84,11 @@ void ManagedObject::_wlock(ManagedObject* obj) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->wlock(obj);
+		((ManagedObjectImplementation*) _getImplementation())->wlock(obj);
 }
 
 void ManagedObject::_unlock(bool doLock) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -108,11 +97,11 @@ void ManagedObject::_unlock(bool doLock) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->unlock(doLock);
+		((ManagedObjectImplementation*) _getImplementation())->unlock(doLock);
 }
 
 void ManagedObject::_runlock(bool doLock) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -121,11 +110,11 @@ void ManagedObject::_runlock(bool doLock) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->runlock(doLock);
+		((ManagedObjectImplementation*) _getImplementation())->runlock(doLock);
 }
 
 void ManagedObject::_setLockName(const String& name) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -134,11 +123,11 @@ void ManagedObject::_setLockName(const String& name) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->setLockName(name);
+		((ManagedObjectImplementation*) _getImplementation())->setLockName(name);
 }
 
 void ManagedObject::writeObject(String& data) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -147,19 +136,19 @@ void ManagedObject::writeObject(String& data) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->writeObject(data);
+		((ManagedObjectImplementation*) _getImplementation())->writeObject(data);
 }
 
 void ManagedObject::writeObject(ObjectOutputStream* stream) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		throw ObjectNotLocalException(this);
 
 	} else
-		((ManagedObjectImplementation*) _impl)->writeObject(stream);
+		((ManagedObjectImplementation*) _getImplementation())->writeObject(stream);
 }
 
 void ManagedObject::readObject(const String& data) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -168,19 +157,19 @@ void ManagedObject::readObject(const String& data) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->readObject(data);
+		((ManagedObjectImplementation*) _getImplementation())->readObject(data);
 }
 
 void ManagedObject::readObject(ObjectInputStream* stream) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		throw ObjectNotLocalException(this);
 
 	} else
-		((ManagedObjectImplementation*) _impl)->readObject(stream);
+		((ManagedObjectImplementation*) _getImplementation())->readObject(stream);
 }
 
 void ManagedObject::initializeTransientMembers() {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -188,11 +177,11 @@ void ManagedObject::initializeTransientMembers() {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->initializeTransientMembers();
+		((ManagedObjectImplementation*) _getImplementation())->initializeTransientMembers();
 }
 
 void ManagedObject::updateToDatabase() {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -200,11 +189,11 @@ void ManagedObject::updateToDatabase() {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->updateToDatabase();
+		((ManagedObjectImplementation*) _getImplementation())->updateToDatabase();
 }
 
 void ManagedObject::queueUpdateToDatabaseTask() {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -212,11 +201,11 @@ void ManagedObject::queueUpdateToDatabaseTask() {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->queueUpdateToDatabaseTask();
+		((ManagedObjectImplementation*) _getImplementation())->queueUpdateToDatabaseTask();
 }
 
 void ManagedObject::clearUpdateToDatabaseTask() {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -224,11 +213,11 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->clearUpdateToDatabaseTask();
+		((ManagedObjectImplementation*) _getImplementation())->clearUpdateToDatabaseTask();
 }
 
 bool ManagedObject::isPersistent() {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -236,11 +225,11 @@ bool ManagedObject::isPersistent() {
 
 		return method.executeWithBooleanReturn();
 	} else
-		return ((ManagedObjectImplementation*) _impl)->isPersistent();
+		return ((ManagedObjectImplementation*) _getImplementation())->isPersistent();
 }
 
 int ManagedObject::getPersistenceLevel() {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -248,11 +237,11 @@ int ManagedObject::getPersistenceLevel() {
 
 		return method.executeWithSignedIntReturn();
 	} else
-		return ((ManagedObjectImplementation*) _impl)->getPersistenceLevel();
+		return ((ManagedObjectImplementation*) _getImplementation())->getPersistenceLevel();
 }
 
 void ManagedObject::setPersistent(int level) {
-	if (_impl == NULL) {
+	if (isNull()) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -261,7 +250,7 @@ void ManagedObject::setPersistent(int level) {
 
 		method.executeWithVoidReturn();
 	} else
-		((ManagedObjectImplementation*) _impl)->setPersistent(level);
+		((ManagedObjectImplementation*) _getImplementation())->setPersistent(level);
 }
 
 /*
@@ -296,6 +285,13 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
+
+TransactionalObject* ManagedObjectImplementation::clone() {
+	ManagedObjectImplementation* objectCopy = new ManagedObjectImplementation(DummyConstructorParameter::instance());
+	*((ManagedObjectImplementation*) objectCopy) = *this;
+	return (TransactionalObject*) objectCopy;
+}
+
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");

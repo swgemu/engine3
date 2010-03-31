@@ -64,7 +64,7 @@ namespace engine {
 			deployed = val;
 		}
 
-		void _setImplementation(DistributedObjectServant* impl) {
+		virtual void _setImplementation(DistributedObjectServant* impl) {
 			_impl = impl;
 		}
 
@@ -73,7 +73,7 @@ namespace engine {
 			return deployed;
 		}
 
-		inline DistributedObjectServant* _getImplementation() {
+		virtual DistributedObjectServant* _getImplementation() {
 			return _impl;
 		}
 

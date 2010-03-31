@@ -9,20 +9,9 @@
  */
 
 ManagedVector::ManagedVector(DummyConstructorParameter* param) {
-	_impl = NULL;
 }
 
 ManagedVector::~ManagedVector() {
-}
-
-
-TransactionalObject* ManagedVector::clone() {
-	ManagedVector* objectCopy = new ManagedVector(DummyConstructorParameter::instance());
-	objectCopy->_impl = new ManagedVectorImplementation(DummyConstructorParameter::instance());
-	*((ManagedVectorImplementation*) objectCopy->_impl) = *((ManagedVectorImplementation*) _impl);
-	objectCopy->_impl->_setStub(objectCopy);
-	objectCopy->_setObjectID(_getObjectID());
-	return (TransactionalObject*) objectCopy;
 }
 
 
@@ -62,6 +51,13 @@ DistributedObjectStub* ManagedVectorImplementation::_getStub() {
 ManagedVectorImplementation::operator const ManagedVector*() {
 	return _this;
 }
+
+TransactionalObject* ManagedVectorImplementation::clone() {
+	ManagedVectorImplementation* objectCopy = new ManagedVectorImplementation(DummyConstructorParameter::instance());
+	*((ManagedVectorImplementation*) objectCopy) = *this;
+	return (TransactionalObject*) objectCopy;
+}
+
 
 void ManagedVectorImplementation::lock(bool doLock) {
 	_this->lock(doLock);

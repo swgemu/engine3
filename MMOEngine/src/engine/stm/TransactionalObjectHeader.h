@@ -23,16 +23,16 @@ namespace engine {
 		AtomicReference<Transaction> ownerTransaction;
 
 	public:
-		TransactionalObjectHeader(O obj) {
-			object = obj;
+		TransactionalObjectHeader() {
+			object = NULL;
 
 			ownerTransaction = NULL;
 		}
 
-		TransactionalObjectHeader(TransactionalObjectHeader* hdr) {
-			object = hdr->object;
+		TransactionalObjectHeader(O obj) {
+			object = obj;
 
-			ownerTransaction = hdr->ownerTransaction;
+			ownerTransaction = NULL;
 		}
 
 		O get();
@@ -54,6 +54,14 @@ namespace engine {
 
 		Transaction* getTransaction() const {
 			return ownerTransaction;
+		}
+
+		bool isNull() {
+			return object != NULL;
+		}
+
+		void setObject(O obj) {
+			object = obj;
 		}
 
 		friend class Transaction;

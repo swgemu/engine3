@@ -18,32 +18,21 @@ namespace engine {
   namespace core {
 
 	template<class O> class ManagedReference : public Reference<O> {
-		TransactionalObjectHeader<O>* header;
 
 	public:
 		ManagedReference() : Reference<O>() {
-			header = NULL;
 		}
 
 		ManagedReference(ManagedReference& ref) : Reference<O>(ref) {
-			header = new TransactionalObjectHeader<O>(ref.header);
 		}
 
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
-			header = new TransactionalObjectHeader<O>(ref.header);
 		}
 
 		ManagedReference(const O obj) : Reference<O>(obj) {
-			header = NULL;
-
-			updateHeader(obj);
 		}
 
 		~ManagedReference() {
-			if (header != NULL) {
-				delete header;
-				header = NULL;
-			}
 		}
 
 		ManagedReference& operator=(const ManagedReference& ref) {
@@ -59,28 +48,6 @@ namespace engine {
 			updateObject(obj);
 
 			return obj;
-		}
-
-		O operator->() const {
-			return getForUpdate();
-		}
-
-		operator O() const {
-			return getForUpdate();
-		}
-
-		inline O get() const {
-			if (header != NULL)
-				return (O) header->get();
-			else
-				return NULL;
-		}
-
-		inline O getForUpdate() const {
-			if (header != NULL)
-				return header->getForUpdate();
-			else
-				return NULL;
 		}
 
 		int compareTo(const ManagedReference& ref) const {
@@ -139,34 +106,10 @@ namespace engine {
 	protected:
 		void updateObject(const O obj) {
 			Reference<O>::updateObject(obj);
-
-			updateHeader((TransactionalObject*) obj);
 		}
 
 		void updateObject(const ManagedReference& ref) {
 			Reference<O>::updateObject(ref.object);
-
-			updateHeader(ref.header);
-		}
-
-		void updateHeader(TransactionalObject* obj) {
-			if (obj == NULL)
-				return;
-
-			if (header != NULL)
-				delete header;
-
-			header = new TransactionalObjectHeader<O>((O) obj);
-		}
-
-		void updateHeader(TransactionalObjectHeader<O>* hdr) {
-			if (header != NULL)
-				delete header;
-
-			if (hdr == NULL)
-				header = NULL;
-			else
-				header = new TransactionalObjectHeader<O>(hdr);
 		}
 };
 

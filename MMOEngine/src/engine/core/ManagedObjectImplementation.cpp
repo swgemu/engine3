@@ -61,6 +61,14 @@ void ManagedObject::setLockName(const String& name) {
 		_setLockName(name);*/
 }
 
+DistributedObjectServant* ManagedObject::_getImplementation() {
+	return getForUpdate();
+}
+
+void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
+	setObject((ManagedObjectImplementation*) servant);
+}
+
 void ManagedObjectImplementation::lock(bool doLock) {
 	_this->wlock(doLock);
 }

@@ -81,17 +81,17 @@ namespace engine {
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {
-		return header->acquire(transaction);
+		return header->acquireObject(transaction);
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::releaseHeader() {
-		header->release(this);
+		header->releaseObject(this);
 
 		objectCopy = NULL;
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
-		return header->discard(transaction);
+		return header->discardObject(transaction);
 	}
 
 	template<class O> Transaction* TransactionalObjectHandle<O>::getCompetingTransaction() {

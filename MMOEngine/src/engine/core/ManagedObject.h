@@ -29,12 +29,14 @@ using namespace engine::core;
 
 #include "system/io/ObjectOutputStream.h"
 
+#include "engine/orb/object/DistributedObjectServant.h"
+
 #include "engine/stm/TransactionalObject.h"
 
 namespace engine {
 namespace core {
 
-class ManagedObject : public DistributedObjectStub, public TransactionalObject {
+class ManagedObject : public DistributedObjectStub, public TransactionalObjectHeader<class ManagedObjectImplementation*> {
 public:
 	ManagedObject();
 
@@ -76,12 +78,14 @@ public:
 
 	void setPersistent(int level);
 
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
+
 protected:
 	ManagedObject(DummyConstructorParameter* param);
 
 	virtual ~ManagedObject();
-
-	TransactionalObject* clone();
 
 	void _lock(bool doLock = true);
 
@@ -99,11 +103,14 @@ protected:
 
 	void _setLockName(const String& name);
 
+	DistributedObjectServant* __getImplementation();
+
+	void __setImplementation(DistributedObjectServant* servant);
+
 	friend class ManagedObjectHelper;
-	friend class TransactionalObjectHandle<ManagedObject*>;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant, public TransactionalObject, public Serializable {
 protected:
 	int persistenceLevel;
 
@@ -151,6 +158,10 @@ public:
 
 	void setPersistent(int level);
 
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
+
 	ManagedObject* _this;
 
 	operator const ManagedObject*();
@@ -158,6 +169,8 @@ public:
 	DistributedObjectStub* _getStub();
 protected:
 	virtual ~ManagedObjectImplementation();
+
+	TransactionalObject* clone();
 
 	void finalize();
 
@@ -168,6 +181,7 @@ protected:
 	void _serializationHelperMethod();
 
 	friend class ManagedObject;
+	friend class TransactionalObjectHandle<ManagedObjectImplementation*>;
 };
 
 class ManagedObjectAdapter : public DistributedObjectAdapter {
@@ -209,6 +223,10 @@ public:
 	int getPersistenceLevel();
 
 	void setPersistent(int level);
+
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
 
 protected:
 	String _param0_setLockName__String_;
