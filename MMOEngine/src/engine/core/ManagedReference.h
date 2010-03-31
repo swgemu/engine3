@@ -30,7 +30,6 @@ namespace engine {
 		}
 
 		ManagedReference(const O obj) : Reference<O>(obj) {
-			updateHeader(obj);
 		}
 
 		~ManagedReference() {
