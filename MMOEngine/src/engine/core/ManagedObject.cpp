@@ -11,8 +11,8 @@
  */
 
 ManagedObject::ManagedObject() {
-	_setImplementation(new ManagedObjectImplementation());
-	_getImplementation()->_setStub(this);
+	ManagedObject::_setImplementation(new ManagedObjectImplementation());
+	ManagedObject::_getImplementation()->_setStub(this);
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
