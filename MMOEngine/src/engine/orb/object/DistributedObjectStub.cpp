@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "DistributedObjectStub.h"
 
 DistributedObjectStub::DistributedObjectStub() : DistributedObject() {
-	_impl = NULL;
+	_setImplementation(NULL);
 		
 	deployed = false;
 
@@ -38,7 +38,7 @@ DistributedObjectStub::~DistributedObjectStub() {
 }*/
 
 void DistributedObjectStub::deploy() {
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		throw Exception("unable to deploy object");
 	
 	DistributedObjectBroker::instance()->deploy(this);
@@ -47,7 +47,7 @@ void DistributedObjectStub::deploy() {
 }
 
 void DistributedObjectStub::deploy(const char* name) {
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		throw Exception("unable to deploy object");
 
 	DistributedObjectBroker::instance()->deploy(name, this);
@@ -56,7 +56,7 @@ void DistributedObjectStub::deploy(const char* name) {
 }
 
 void DistributedObjectStub::deploy(const String& name) {
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		throw Exception("unable to deploy object");
 	
 	DistributedObjectBroker::instance()->deploy(name, this);
@@ -76,13 +76,13 @@ bool DistributedObjectStub::undeploy() {
 		DistributedObjectBroker::instance()->undeploy(_name);
 		deployed = false; 
 	} else {
-		if (_impl == NULL)
+		if (_getImplementation() == NULL)
 			throw ObjectNotLocalException(this);
 		
 		DistributedObjectBroker::instance()->info("deleting undeployed implementation");
 		
-		delete _impl;
-		_impl = NULL;
+		delete _getImplementation();
+		_setImplementation(NULL);
 	}
 	
 	return true;

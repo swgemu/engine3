@@ -57,7 +57,7 @@ namespace engine {
 		}
 
 		bool isNull() {
-			return object != NULL;
+			return object == NULL;
 		}
 
 		void setObject(O obj) {
