@@ -14,7 +14,8 @@ namespace engine {
 	class Logger {
 		String name;
 
-		static FileWriter* globalLogFile;
+		static AtomicReference<FileWriter> globalLogFile;
+
 		FileWriter* logFile;
 
 		static Time starttime;

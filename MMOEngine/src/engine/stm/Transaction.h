@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
+#include "engine/core/Task.h"
+
 #include "TransactionalObjectHandle.h"
 
 namespace engine {
@@ -63,6 +65,9 @@ namespace engine {
 
 		uint64 commitTime;
 		int commitAttempts;
+
+		Vector<Task*> executingTasks;
+		Vector<Task*> schedulingTasks;
 
 		static const int UNDECIDED = 0;
 		static const int READ_CHECKING = 1;
@@ -118,6 +123,16 @@ namespace engine {
 		bool doCommit();
 
 		bool setState(int currentstate, int newstate);
+
+		void addExecutingTask(Task* task) {
+			executingTasks.add(task);
+		}
+
+		void addSchedulingTask(Task* task) {
+			schedulingTasks.add(task);
+		}
+
+		friend class TaskManager;
 	};
 
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {

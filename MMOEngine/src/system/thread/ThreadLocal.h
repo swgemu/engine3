@@ -6,7 +6,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef THREADLOCAL_H_
 #define THREADLOCAL_H_
 
-#include "Thread.h"
+#include "system/platform.h"
+
+#include <pthread.h>
+
+#include <signal.h>
 
 namespace sys {
  namespace thread {

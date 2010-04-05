@@ -56,7 +56,17 @@ namespace sys {
 		#endif
 		}
 
+		V* operator=(V* ref) {
+			set(ref);
+
+			return ref;
+		}
+
 		operator V*() const {
+			return get();
+		}
+
+		V* operator->() const {
 			return get();
 		}
 	};

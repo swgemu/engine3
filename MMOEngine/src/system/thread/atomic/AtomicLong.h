@@ -82,7 +82,7 @@ namespace sys {
 		}
 
 		void set(uint64 val) {
-			value = val;
+			while (!compareAndSet(value, val)) ;
 		}
 
 		operator uint64() const {

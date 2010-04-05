@@ -6,17 +6,19 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef THREAD_H_
 #define THREAD_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include <pthread.h>
 
 #include <signal.h>
 
-#include "../lang/Runnable.h"
+#include "system/lang/Runnable.h"
 
-#include "../lang/String.h"
+#include "system/lang/String.h"
 
 #include "atomic/AtomicInteger.h"
+
+#include "ThreadLocal.h"
 
 namespace sys {
   namespace thread {
@@ -34,20 +36,13 @@ namespace sys {
 		static AtomicInteger threadCounter;
 
 		static pthread_once_t initThread;
-		static pthread_key_t threadDataKey;
 
-	private:
-		static void initializeThreading();
-
-		static void* executeThread(void* th);
+		static ThreadLocal<Thread> currentThread;
 
 	public:
 		//! allocates a new Thread
 		Thread();
 		virtual ~Thread();
-
-		//! Initializes main thread local key
-		static void initializeMainThread(Thread* mainThread);
 
 	#ifndef PLATFORM_WIN
 		static pid_t getProcessID();
@@ -85,6 +80,14 @@ namespace sys {
 		const String& getName() {
 			return name;
 		}
+
+	protected:
+		static void* executeThread(void* th);
+
+		//! Initializes main thread local key
+		static void initializeThread(Thread* thread);
+
+		friend class Core;
 	};
 
   } // namespace thread

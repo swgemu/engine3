@@ -14,26 +14,19 @@ Distribution of this file for usage outside of Core3 is prohibited.
 AtomicInteger Thread::threadCounter;
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
-pthread_key_t Thread::threadDataKey;
 
-void Thread::initializeThreading() {
-	pthread_key_create(&threadDataKey, NULL);
-}
+ThreadLocal<Thread> Thread::currentThread;
 
-void Thread::initializeMainThread(Thread* mainThread) {
-	pthread_once(&initThread, initializeThreading);
-
-	pthread_setspecific(threadDataKey, mainThread);
+void Thread::initializeThread(Thread* thread) {
+	currentThread.set(thread);
 }
 
 void* Thread::executeThread(void* th) {
-	pthread_once(&initThread, initializeThreading);
+	Thread* impl = (Thread*) th;
 
-	pthread_setspecific(threadDataKey, th);
+	currentThread.set(impl);
 
 	mysql_thread_init();
-
-	Thread* impl = (Thread*) th;
 
 	impl->run();
 
@@ -123,11 +116,7 @@ bool Thread::isDetached() {
 }
 
 Thread* Thread::getCurrentThread() {
-	#ifndef PLATFORM_WIN
-		return (Thread*) pthread_getspecific(threadDataKey);
-	#else
-		return NULL;
-	#endif
+	return currentThread.get();
 }
 
 void Thread::setDetached() {
