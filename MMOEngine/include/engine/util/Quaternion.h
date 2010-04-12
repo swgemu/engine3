@@ -179,11 +179,13 @@ namespace engine {
 		inline float getRadians() {
 			float angle;
 
+			float dirZ = z;
+
 			if (z * z + y * y > 0.0f) {
 				if (z > 0.f && y < 0.0f)
-					w *= -1.0f;
+					dirZ *= -1.0f;
 
-				angle = 2.0f * Math::acos(z);
+				angle = 2.0f * Math::acos(dirZ);
 			} else {
 				angle = 0.0f;
 			}
@@ -191,8 +193,12 @@ namespace engine {
 			return angle;
 		}
 
+		inline float getSpecialDegrees() { // returns 0-100 degrees
+			return (getRadians() / 6.283f) * 100.f;
+		}
+
 		inline float getDegrees() {
-			return (getRadians() / 6.283f) * 100;
+			return (getRadians() / 6.283f) * 360.f;
 		}
 
 		inline bool isIdentity() {
