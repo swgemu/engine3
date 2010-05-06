@@ -179,13 +179,13 @@ namespace engine {
 		inline float getRadians() {
 			float angle;
 
-			float dirZ = z;
+			float dirW = w;
 
-			if (z * z + y * y > 0.0f) {
-				if (z > 0.f && y < 0.0f)
-					dirZ *= -1.0f;
+			if (w * w + y * y > 0.0f) {
+				if (w > 0.f && y < 0.0f)
+					dirW *= -1.0f;
 
-				angle = 2.0f * Math::acos(dirZ);
+				angle = 2.0f * Math::acos(dirW);
 			} else {
 				angle = 0.0f;
 			}
