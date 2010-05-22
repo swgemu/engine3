@@ -71,10 +71,12 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
-			updateObject((O) obj);
-
-			if (obj == NULL)
+			if (obj == NULL) {
+				updateObject(NULL);
 				return false;
+			}
+
+			updateObject((O) obj);
 
 			return true;
 		}
@@ -93,12 +95,14 @@ namespace engine {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			uint64 oid = stream->readLong();
 
-			O obj = (O) DistributedObjectBroker::instance()->lookUp(oid);
+			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(oid);
+
+			if (obj == NULL) {
+				updateObject(NULL);
+				return false;
+			}
 
 			updateObject((O) obj);
-
-			if (obj == NULL)
-				return false;
 
 			return true;
 		}
