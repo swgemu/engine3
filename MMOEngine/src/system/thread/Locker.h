@@ -21,6 +21,10 @@ namespace sys {
 			acquire(lockable);
 		}
 
+		Locker(Lockable* lockable, Lockable* cross) {
+			acquire(lockable, cross);
+		}
+
 		virtual ~Locker() {
 			release();
 		}
@@ -31,6 +35,18 @@ namespace sys {
 
 			Locker::lockable = lockable;
 			lockable->lock(doLock);
+		}
+
+		inline void acquire(Lockable* lockable, Lockable* cross) {
+			Locker::doLock = !lockable->isLockedByCurrentThread();
+
+			Locker::lockable = lockable;
+
+			if (doLock && lockable != cross) {
+				lockable->lock(cross);
+			} else {
+				Locker::doLock = false;
+			}
 		}
 
 	public:

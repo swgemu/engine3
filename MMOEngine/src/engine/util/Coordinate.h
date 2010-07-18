@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef COORDINATE_H_
 #define COORDINATE_H_
 
+#include "Vector3.h"
+
 namespace engine {
   namespace util {
 
@@ -49,6 +51,14 @@ namespace engine {
 			updatePreviousPosition();
 		}
 
+		inline void initializePosition(const Vector3& pos) {
+			positionX = pos.getX();
+			positionZ = pos.getZ();
+			positionY = pos.getY();
+
+			updatePreviousPosition();
+		}
+
 		void randomizePosition(float radius) {
 			updatePreviousPosition();
 
@@ -65,6 +75,14 @@ namespace engine {
 			positionX = x;
 			positionZ = z;
 			positionY = y;
+		}
+
+		inline void setPosition(const Vector3& pos) {
+			updatePreviousPosition();
+
+			positionX = pos.getX();
+			positionZ = pos.getZ();
+			positionY = pos.getY();
 		}
 
 		inline void setPositionX(float x) {
@@ -114,6 +132,10 @@ namespace engine {
 
 		inline float getPreviousPositionY() const {
 			return previousPositionY;
+		}
+
+		inline Vector3 getPosition() const {
+			return Vector3(positionX, positionY, positionZ);
 		}
 
 	};

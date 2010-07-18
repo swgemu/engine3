@@ -18,9 +18,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 	#define LINE_TRACING
 #endif
 
-#ifdef PLATFORM_MAC
+/*#ifdef PLATFORM_MAC
 	#undef LINE_TRACING
-#endif
+#endif*/
 
 namespace sys {
   namespace lang {

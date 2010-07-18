@@ -7,6 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../io/StringTokenizer.h"
 
+#include "../thread/Thread.h"
+
 #include "StackTrace.h"
 
 String StackTrace::binaryName = "core3";
@@ -25,7 +27,12 @@ void StackTrace::print() {
 	#ifdef PLATFORM_UNIX
 		#ifdef LINE_TRACING
 			StringBuffer command;
+
+			#ifdef PLATFORM_MAC
+			command << "atos -p " << Thread::getProcessID();
+			#else
 			command << "/usr/bin/addr2line -e " << binaryName;
+			#endif
 		#else
 		char** tracedSymbols = backtrace_symbols(symbols, count);
 
