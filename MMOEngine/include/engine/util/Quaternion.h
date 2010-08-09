@@ -24,11 +24,20 @@ namespace engine {
 		/**
 		* Creates a quaternion initialized to the quaternion identity.
 		*/
-		inline Quaternion() {
+		Quaternion() {
 			w = 1.0f;
 			x = 0.0f;
 			y = 0.0f;
 			z = 0.0f;
+
+			addSerializableVariables();
+		}
+
+		Quaternion(const Quaternion& qt) : Object(), Serializable() {
+			w = qt.w;
+			x = qt.x;
+			y = qt.y;
+			z = qt.z;
 
 			addSerializableVariables();
 		}
@@ -40,7 +49,7 @@ namespace engine {
 		* float fz = vector z
 		* float fw = scalar
 		*/
-		inline Quaternion(float fw, float fx, float fy, float fz) {
+		Quaternion(float fw, float fx, float fy, float fz) {
 			w = fw;
 			x = fx;
 			y = fy;
@@ -54,7 +63,7 @@ namespace engine {
 		* \param v The vector to base rotation off of. Should be a UNIT vector.
 		* \param angle The angle in radians.
 		*/
-		inline Quaternion(const Vector3& axis, float angle) {
+		Quaternion(const Vector3& axis, float angle) {
 			// Based on the formula q = cos(A/2)+sin(A/2)*(x*i+y*j+z*k).
 			float halfangle = angle * .5;
 			float fsin = Math::sin(halfangle);
@@ -160,32 +169,32 @@ namespace engine {
 		*/
 		//inline Matrix4 toMatrix() { }
 
-		inline float getX() {
+		inline float getX() const {
 			return x;
 		}
 
-		inline float getY() {
+		inline float getY() const {
 			return y;
 		}
 
-		inline float getZ() {
+		inline float getZ() const {
 			return z;
 		}
 
-		inline float getW() {
+		inline float getW() const {
 			return w;
 		}
 
-		inline float getRadians() {
+		inline float getRadians() const {
 			float angle;
 
-			float dirZ = z;
+			float dirW = w;
 
-			if (z * z + y * y > 0.0f) {
-				if (z > 0.f && y < 0.0f)
-					dirZ *= -1.0f;
+			if (w * w + y * y > 0.0f) {
+				if (w > 0.f && y < 0.0f)
+					dirW *= -1.0f;
 
-				angle = 2.0f * Math::acos(dirZ);
+				angle = 2.0f * Math::acos(dirW);
 			} else {
 				angle = 0.0f;
 			}
@@ -193,11 +202,11 @@ namespace engine {
 			return angle;
 		}
 
-		inline float getSpecialDegrees() { // returns 0-100 degrees
+		inline float getSpecialDegrees() const { // returns 0-100 degrees
 			return (getRadians() / 6.283f) * 100.f;
 		}
 
-		inline float getDegrees() {
+		inline float getDegrees() const {
 			return (getRadians() / 6.283f) * 360.f;
 		}
 
@@ -210,6 +219,13 @@ namespace engine {
 			x = fx;
 			y = fy;
 			z = fz;
+		}
+
+		inline void setHeadingDirection(float radians) {
+			float halfAngle = radians / 2;
+
+			w = Math::cos(halfAngle);
+			y = Math::sin(halfAngle);
 		}
 	};
 

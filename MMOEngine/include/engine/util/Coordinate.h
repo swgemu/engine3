@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef COORDINATE_H_
 #define COORDINATE_H_
 
+#include "Vector3.h"
+
 namespace engine {
   namespace util {
 
@@ -18,6 +20,16 @@ namespace engine {
 	public:
 		Coordinate() {
 
+		}
+
+		Coordinate(const Coordinate& ct) {
+			positionX = ct.positionX;
+			positionY = ct.positionY;
+			positionZ = ct.positionZ;
+
+			previousPositionX = ct.previousPositionX;
+			previousPositionY = ct.previousPositionY;
+			previousPositionZ = ct.previousPositionZ;
 		}
 
 		Coordinate(float x, float z, float y) {
@@ -39,6 +51,14 @@ namespace engine {
 			updatePreviousPosition();
 		}
 
+		inline void initializePosition(const Vector3& pos) {
+			positionX = pos.getX();
+			positionZ = pos.getZ();
+			positionY = pos.getY();
+
+			updatePreviousPosition();
+		}
+
 		void randomizePosition(float radius) {
 			updatePreviousPosition();
 
@@ -55,6 +75,14 @@ namespace engine {
 			positionX = x;
 			positionZ = z;
 			positionY = y;
+		}
+
+		inline void setPosition(const Vector3& pos) {
+			updatePreviousPosition();
+
+			positionX = pos.getX();
+			positionZ = pos.getZ();
+			positionY = pos.getY();
 		}
 
 		inline void setPositionX(float x) {
@@ -82,28 +110,32 @@ namespace engine {
 		}
 
 		// getters
-		inline float getPositionX() {
+		inline float getPositionX() const {
 			return positionX;
 		}
 
-		inline float getPositionZ() {
+		inline float getPositionZ() const {
 			return positionZ;
 		}
 
-		inline float getPositionY() {
+		inline float getPositionY() const {
 			return positionY;
 		}
 
-		inline float getPreviousPositionX() {
+		inline float getPreviousPositionX() const {
 			return previousPositionX;
 		}
 
-		inline float getPreviousPositionZ() {
+		inline float getPreviousPositionZ() const {
 			return previousPositionZ;
 		}
 
-		inline float getPreviousPositionY() {
+		inline float getPreviousPositionY() const {
 			return previousPositionY;
+		}
+
+		inline Vector3 getPosition() const {
+			return Vector3(positionX, positionY, positionZ);
 		}
 
 	};

@@ -31,6 +31,14 @@ namespace engine {
 			addSerializableVariables();
 		}
 
+		Vector3(const Vector3& vec) : Object(), Serializable() {
+			x = vec.x;
+			y = vec.y;
+			z = vec.z;
+
+			addSerializableVariables();
+		}
+
 		inline Vector3(const float fx, const float fy, const float fz) {
 			x = fx;
 			y = fy;
@@ -290,16 +298,35 @@ namespace engine {
 		}
 
 		//Getters
-		inline float getX() {
+		inline float getX() const {
 			return x;
 		}
 
-		inline float getY() {
+		inline float getY() const {
 			return y;
 		}
 
-		inline float getZ() {
+		inline float getZ() const {
 			return z;
+		}
+
+		//Setters
+		inline void setX(float xv) {
+			x = xv;
+		}
+
+		inline void setY(float yv) {
+			y = yv;
+		}
+
+		inline void setZ(float zv) {
+			z = zv;
+		}
+
+		inline void set(float x, float z, float y) {
+			this->x = x;
+			this->y = y;
+			this->z = z;
 		}
 
 		friend class Quaternion;
