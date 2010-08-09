@@ -23,10 +23,10 @@ namespace engine {
     namespace rudp {
 
 	class BaseClientEvent : public ReentrantTask {
-		BaseClient* client;
+		RUDPProtocol* client;
 
 	public:
-		BaseClientEvent(BaseClient* cl) {
+		BaseClientEvent(RUDPProtocol* cl) {
 			client = cl;
 		}
 

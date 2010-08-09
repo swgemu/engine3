@@ -14,10 +14,10 @@ namespace engine {
     namespace rudp {
 
 	class BaseClientNetStatusCheckupEvent : public ReentrantTask {
-		Reference<BaseClient*> client;
+		Reference<RUDPProtocol*> client;
 
 	public:
-		BaseClientNetStatusCheckupEvent(BaseClient* cl) : ReentrantTask(25000) {
+		BaseClientNetStatusCheckupEvent(RUDPProtocol* cl) : ReentrantTask(25000) {
 			client = cl;
 		}
 

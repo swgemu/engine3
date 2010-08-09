@@ -11,20 +11,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/core/TaskManager.h"
 #include "engine/core/ReentrantTask.h"
 
+#include "engine/service/ServiceSession.h"
 #include "engine/service/DatagramConnector.h"
 #include "engine/service/DatagramAcceptor.h"
+
+#include "engine/log/Logger.h"
+
+#include "engine/proto/ProtocolCodec.h"
 
 #include "RUDPPacket.h"
 #include "BaseFragmentedPacket.h"
 #include "BaseMultiPacket.h"
 
-#include "BaseProtocol.h"
-
 namespace engine {
   namespace proto {
     namespace rudp {
 
-	class BaseClient;
+	class RUDPProtocol;
 
     } // namespace rudp
   } // namespace proto
@@ -40,8 +43,17 @@ namespace engine {
 	class BaseClientNetStatusRequestEvent;
 	class BaseClientEvent;
 
-	class BaseClient : public DatagramConnector, public BaseProtocol, public Mutex {
+	class RUDPProtocol : public ProtocolCodec, public Logger, public Mutex {
 	protected:
+		sys::uint32 connectionID;
+
+		unsigned int crcSeed;
+
+	    sys::uint32 serverSequence;
+	    sys::uint32 clientSequence;
+
+		Time lastNetStatusTimeStamp;
+
 		DatagramAcceptor* service;
 
 		Vector<RUDPPacket*> sequenceBuffer;
@@ -73,11 +85,9 @@ namespace engine {
 		static const int NETSTATUSREQUEST_TIME = 5000;
 
 	public:
-		BaseClient();
-		BaseClient(const String& addr, int port);
-		BaseClient(SocketImplementation* sock, SocketAddress& addr);
+		RUDPProtocol();
 
-		virtual ~BaseClient();
+		virtual ~RUDPProtocol();
 
 		void initialize();
 
@@ -139,6 +149,23 @@ namespace engine {
 		void flushSendBuffer(int seq);
 
 	public:
+		inline void setConnectionID(sys::uint32 id) {
+			connectionID = id;
+		}
+
+		inline void setSeed(sys::uint32 seed) {
+			crcSeed = seed;
+		}
+
+		// getters
+		inline sys::uint32 getConnectionID() {
+			return connectionID;
+		}
+
+		inline unsigned int getSeed() {
+			return crcSeed;
+		}
+
 		// setters
 		inline void setClientDisconnected() {
 			clientDisconnected = true;

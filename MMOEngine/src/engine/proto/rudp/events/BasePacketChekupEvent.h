@@ -24,13 +24,13 @@ namespace engine {
     namespace rudp {
 
 	class BasePacketChekupEvent : public ReentrantTask {
-		BaseClient* client;
+		RUDPProtocol* client;
 		RUDPPacket* packet;
 
 		sys::uint32 checkupTime;
 
 	public:
-		BasePacketChekupEvent(BaseClient* cl, sys::uint32 time = 5000);
+		BasePacketChekupEvent(RUDPProtocol* cl, sys::uint32 time = 5000);
 
 		void run();
 

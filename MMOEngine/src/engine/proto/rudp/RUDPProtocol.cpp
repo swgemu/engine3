@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/platform.h"
 
-#include "BaseClient.h"
+#include "RUDPSession.h"
 
 #include "events/BaseClientNetStatusCheckupEvent.h"
 #include "events/BaseClientCleanupEvent.h"
@@ -22,8 +22,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/NetStatusRequestMessage.h"
 #include "engine/core/ReentrantTask.h"
 
-BaseClient::BaseClient() : DatagramConnector(),
-		BaseProtocol(), Mutex("Client") {
+
+RUDPProtocol::RUDPProtocol() : Mutex("Client") {
+	crcSeed = 0;
+
+	serverSequence = 0;
+   	clientSequence = 0;
+
+    hasError = false;
+   	disconnected = false;
+   	clientDisconnected = false;
+
+   	acknowledgedServerSequence = -1;
+	realServerSequence = 0;
+	resentPackets = 0;
+
+	service = NULL;
+
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<RUDPPacket*>::NO_DUPLICATE);
 
@@ -33,53 +48,14 @@ BaseClient::BaseClient() : DatagramConnector(),
 	netcheckupEvent = NULL;
 	netRequestEvent = NULL;
 
-	reentrantTask = new BaseClientEvent(this);
+	reentrantTask = NULL;
 
 	setLogging(true);
    	setGlobalLogging(true);
 }
 
-BaseClient::BaseClient(const String& addr, int port) : DatagramConnector(addr, port),
-		BaseProtocol(), Mutex("Client") {
-	bufferedPacket = NULL;
-	receiveBuffer.setInsertPlan(SortedVector<RUDPPacket*>::NO_DUPLICATE);
 
-	fragmentedPacket = NULL;
-
-	checkupEvent = NULL;
-	netcheckupEvent = NULL;
-	netRequestEvent = NULL;
-
-	reentrantTask = new BaseClientEvent(this);
-
-	setLogging(true);
-   	setGlobalLogging(true);
-}
-
-BaseClient::BaseClient(SocketImplementation* sock, SocketAddress& addr) : DatagramConnector(/*sock, addr*/),
-		BaseProtocol(), Mutex("Client") {
-	bufferedPacket = NULL;
-
-	fragmentedPacket = NULL;
-
-	checkupEvent = NULL;
-	netcheckupEvent = NULL;
-	netRequestEvent = NULL;
-
-	reentrantTask = new BaseClientEvent(this);
-
-  	ip = addr.getFullIPAddress();
-   	setLockName("Client " + ip);
-   	//setMutexLogging(false);
-
-   	/*String prip = addr.getFullPrintableIPAddress();
-   	setFileLogger("log/" + prip);*/
-
-   	setLogging(true);
-   	setGlobalLogging(true);
-}
-
-BaseClient::~BaseClient() {
+RUDPProtocol::~RUDPProtocol() {
 	if (service != NULL)
 		service->deleteConnection(this);
 
@@ -107,7 +83,7 @@ BaseClient::~BaseClient() {
 	info("deleted");
 }
 
-void BaseClient::initialize() {
+void RUDPProtocol::initialize() {
 	#ifdef VERSION_PUBLIC
 	SocketAddress addr = ServiceSession::getAddress();
 	uint16 port = addr.getPort();
@@ -115,33 +91,20 @@ void BaseClient::initialize() {
 	ServiceSession::setAddress("localhost", port);
 	#endif
 
-	crcSeed = 0;
-
-	serverSequence = 0;
-   	clientSequence = 0;
-
-    hasError = false;
-   	disconnected = false;
-   	clientDisconnected = false;
-
-   	acknowledgedServerSequence = -1;
-	realServerSequence = 0;
-	resentPackets = 0;
-
-	service = NULL;
-
 	checkupEvent = new BasePacketChekupEvent(this);
 	netcheckupEvent = new BaseClientNetStatusCheckupEvent(this);
 
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
-   	//netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
+   	netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
 
    	netRequestEvent = new BaseClientNetStatusRequestEvent(this);
+
+	reentrantTask = new BaseClientEvent(this);
 }
 
-void BaseClient::close() {
+void RUDPProtocol::close() {
 	reentrantTask->cancel();
 
 	checkupEvent->cancel();
@@ -181,7 +144,7 @@ void BaseClient::close() {
 	closeFileLogger();
 }
 
-void BaseClient::send(Packet* pack, bool doLock) {
+void RUDPProtocol::send(Packet* pack, bool doLock) {
 	lock(doLock);
 
 	try {
@@ -205,7 +168,7 @@ void BaseClient::send(Packet* pack, bool doLock) {
 	unlock(doLock);
 }
 
-void BaseClient::sendPacket(RUDPPacket* pack, bool doLock) {
+void RUDPProtocol::sendPacket(RUDPPacket* pack, bool doLock) {
 	lock(doLock);
 
 	if (!isAvailable()) {
@@ -239,7 +202,7 @@ void BaseClient::sendPacket(RUDPPacket* pack, bool doLock) {
 	unlock(doLock);
 }
 
-void BaseClient::bufferMultiPacket(RUDPPacket* pack) {
+void RUDPProtocol::bufferMultiPacket(RUDPPacket* pack) {
 	if (bufferedPacket != NULL) {
 		if (pack->isDataChannelPacket() && !pack->isMultiPacket()) {
 			if (!bufferedPacket->add(pack)) {
@@ -261,7 +224,7 @@ void BaseClient::bufferMultiPacket(RUDPPacket* pack) {
 	}
 }
 
-void BaseClient::sendSequenceLess(RUDPPacket* pack) {
+void RUDPProtocol::sendSequenceLess(RUDPPacket* pack) {
 	try {
 		#ifdef TRACE_CLIENTS
 			info("SEND(NOSEQ) - " + pack->toStringData());
@@ -279,7 +242,7 @@ void BaseClient::sendSequenceLess(RUDPPacket* pack) {
 	}
 }
 
-void BaseClient::sendSequenced(RUDPPacket* pack) {
+void RUDPProtocol::sendSequenced(RUDPPacket* pack) {
 	if (!isAvailable())
 		return;
 
@@ -302,7 +265,7 @@ void BaseClient::sendSequenced(RUDPPacket* pack) {
 	#endif*/
 }
 
-void BaseClient::sendFragmented(RUDPPacket* pack) {
+void RUDPProtocol::sendFragmented(RUDPPacket* pack) {
 	if (!isAvailable())
 		return;
 
@@ -320,7 +283,7 @@ void BaseClient::sendFragmented(RUDPPacket* pack) {
 	}
 }
 
-void BaseClient::run() {
+void RUDPProtocol::run() {
 	lock();
 
 	try {
@@ -378,7 +341,7 @@ void BaseClient::run() {
 	unlock();
 }
 
-RUDPPacket* BaseClient::getNextSequencedPacket() {
+RUDPPacket* RUDPProtocol::getNextSequencedPacket() {
 	RUDPPacket* pack = NULL;
 
 	/*#ifdef TRACE_CLIENTS
@@ -414,7 +377,7 @@ RUDPPacket* BaseClient::getNextSequencedPacket() {
 	return pack;
 }
 
-bool BaseClient::validatePacket(Packet* pack) {
+bool RUDPProtocol::validatePacket(Packet* pack) {
 	uint16 seq = pack->parseNetShort();
 
 	if (seq < clientSequence) {
@@ -458,7 +421,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 	return true;
 }
 
-Packet* BaseClient::getBufferedPacket() {
+Packet* RUDPProtocol::getBufferedPacket() {
 	if (!receiveBuffer.isEmpty()) {
 		RUDPPacket* packet = receiveBuffer.get(0);
 
@@ -482,7 +445,7 @@ Packet* BaseClient::getBufferedPacket() {
 	return NULL;
 }
 
-RUDPPacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
+RUDPPacket* RUDPProtocol::recieveFragmentedPacket(Packet* pack) {
 	RUDPPacket* packet = NULL;
 
 	if (fragmentedPacket == NULL)
@@ -502,7 +465,7 @@ RUDPPacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 	return packet;
 }
 
-void BaseClient::checkupServerPackets(RUDPPacket* pack) {
+void RUDPProtocol::checkupServerPackets(RUDPPacket* pack) {
 	lock();
 
 	try {
@@ -545,7 +508,7 @@ void BaseClient::checkupServerPackets(RUDPPacket* pack) {
 	unlock();
 }
 
-void BaseClient::resendPackets() {
+void RUDPProtocol::resendPackets() {
 	/*#ifdef TRACE_CLIENTS
 		StringBuffer msg2;
 		msg2 << "[" << seq << "] resending " << MIN(sequenceBuffer.size(), 5) << " packets to \'" << ip << "\' ["
@@ -577,7 +540,7 @@ void BaseClient::resendPackets() {
 	}
 }
 
-void BaseClient::resendPackets(int seq) {
+void RUDPProtocol::resendPackets(int seq) {
 	lock();
 
 	for (int i = 0; i < sequenceBuffer.size(); ++i) {
@@ -607,7 +570,7 @@ void BaseClient::resendPackets(int seq) {
 	unlock();
 }
 
-void BaseClient::balancePacketCheckupTime() {
+void RUDPProtocol::balancePacketCheckupTime() {
 	setPacketCheckupTime(4000);
 
 	#ifdef TRACE_CLIENTS
@@ -617,7 +580,7 @@ void BaseClient::balancePacketCheckupTime() {
 	#endif
 }
 
-void BaseClient::resetPacketCheckupTime() {
+void RUDPProtocol::resetPacketCheckupTime() {
 	setPacketCheckupTime(100);
 
 	#ifdef TRACE_CLIENTS
@@ -627,7 +590,7 @@ void BaseClient::resetPacketCheckupTime() {
 	#endif
 }
 
-void BaseClient::setPacketCheckupTime(uint32 time) {
+void RUDPProtocol::setPacketCheckupTime(uint32 time) {
 	lock();
 
 	try {
@@ -645,7 +608,7 @@ void BaseClient::setPacketCheckupTime(uint32 time) {
 	unlock();
 }
 
-void BaseClient::acknowledgeClientPackets(uint16 seq) {
+void RUDPProtocol::acknowledgeClientPackets(uint16 seq) {
 	lock();
 
 	try {
@@ -671,7 +634,7 @@ void BaseClient::acknowledgeClientPackets(uint16 seq) {
 	unlock();
 }
 
-void BaseClient::acknowledgeServerPackets(uint16 seq) {
+void RUDPProtocol::acknowledgeServerPackets(uint16 seq) {
 	lock();
 
 	try {
@@ -720,7 +683,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 	unlock();
 }
 
-void BaseClient::flushSendBuffer(int seq) {
+void RUDPProtocol::flushSendBuffer(int seq) {
 	while (!sequenceBuffer.isEmpty()) {
 		RUDPPacket* pack = sequenceBuffer.get(0);
 		if (pack->getSequence() > (uint32) seq)
@@ -748,7 +711,7 @@ void BaseClient::flushSendBuffer(int seq) {
 	#endif
 }
 
-void BaseClient::updateNetStatus() {
+void RUDPProtocol::updateNetStatus() {
 	lock();
 
 	try {
@@ -771,7 +734,7 @@ void BaseClient::updateNetStatus() {
 	unlock();
 }
 
-void BaseClient::requestNetStatus() {
+void RUDPProtocol::requestNetStatus() {
 	lock();
 
 	try {
@@ -795,7 +758,7 @@ void BaseClient::requestNetStatus() {
 	unlock();
 }
 
-bool BaseClient::checkNetStatus() {
+bool RUDPProtocol::checkNetStatus() {
 	lock();
 
 	try {
@@ -820,7 +783,7 @@ bool BaseClient::checkNetStatus() {
 	return false;
 }
 
-bool BaseClient::connect() {
+bool RUDPProtocol::connect() {
 	try {
 		lock();
 
@@ -864,7 +827,7 @@ bool BaseClient::connect() {
 	return true;
 }
 
-void BaseClient::notifyReceivedSeed(uint32 seed) {
+void RUDPProtocol::notifyReceivedSeed(uint32 seed) {
 	lock();
 
 	crcSeed = seed;
@@ -873,18 +836,18 @@ void BaseClient::notifyReceivedSeed(uint32 seed) {
 	unlock();
 }
 
-void BaseClient::disconnect(const String& msg, bool doLock) {
+void RUDPProtocol::disconnect(const String& msg, bool doLock) {
 	Logger::error(msg);
 
 	hasError = true;
 	disconnect(doLock);
 }
 
-void BaseClient::disconnect() {
+void RUDPProtocol::disconnect() {
 	disconnect(true);
 }
 
-void BaseClient::disconnect(bool doLock) {
+void RUDPProtocol::disconnect(bool doLock) {
 	lock(doLock);
 
 	if (disconnected) {
@@ -924,7 +887,7 @@ void BaseClient::disconnect(bool doLock) {
 	unlock(doLock);
 }
 
-void BaseClient::reportStats(bool doLog) {
+void RUDPProtocol::reportStats(bool doLog) {
 	int packetloss;
 	if (serverSequence == 0 || resentPackets == 0)
 		packetloss = 0;

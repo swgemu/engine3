@@ -11,10 +11,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../BaseClient.h"
 
 class BaseClientCleanupEvent : public Task {
-	Reference<BaseClient*> client;
+	Reference<RUDPProtocol*> client;
 	
 public:
-	BaseClientCleanupEvent(BaseClient* cl) : Task(60000) {
+	BaseClientCleanupEvent(RUDPProtocol* cl) : Task(60000) {
 		client = cl;
 	}
 	

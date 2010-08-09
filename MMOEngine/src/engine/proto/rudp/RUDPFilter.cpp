@@ -3,7 +3,7 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "BasePacketHandler.h"
+#include "RUDPFilter.h"
 
 #include "packets/SessionIDRequestMessage.h"
 #include "packets/SessionIDResponseMessage.h"
@@ -71,15 +71,15 @@ bool BaseProtocol::processRecieve(Packet* pack) {
 
  */
 
-BasePacketHandler::BasePacketHandler() : Logger() {
-	messageQueue = NULL;
-}
-
-BasePacketHandler::BasePacketHandler(const String& s, MessageQueue* queue) : Logger(s) {
+RUDPFilter::RUDPFilter(MessageQueue* queue) : Logger() {
 	messageQueue = queue;
 }
 
-void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
+RUDPFilter::RUDPFilter(const String& s, MessageQueue* queue) : Logger(s) {
+	messageQueue = queue;
+}
+
+void RUDPFilter::handlePacket(RUDPProtocol* session, Packet* pack) {
 	#ifdef VERSION_PUBLIC
 		DO_TIMELIMIT;
 	#endif
@@ -90,33 +90,33 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 
 	switch (opcode) {
         case 0x0100: //Session Request
-        	doSessionStart(client, pack);
+        	doSessionStart(session, pack);
 	       	break;
         case 0x0200: //Session Response
-        	doSessionResponse(client, pack);
+        	doSessionResponse(session, pack);
         	break;
 		case 0x0300: //Multi-SOE
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
-			handleMultiPacket(client, pack);
+			handleMultiPacket(session, pack);
 			break;
 		case 0x0500: //Disconnect
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
-			doDisconnect(client, pack); //we shouldnt send a disconnect back.
+			doDisconnect(session, pack); //we shouldnt send a disconnect back.
 			break;
 		case 0x0600: //SOE Ping
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
 			break;
 		case 0x0700: //Client Net-Status Request
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
-			doNetStatusResponse(client, pack);
+			doNetStatusResponse(session, pack);
 			break;
 		case 0x0800: //Client Net-Status Response
 			/*if (!client->processRecieve(pack))
@@ -125,39 +125,39 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			doNetStatusResponse(client, pack);*/
 			break;
 		case 0x0900: //Data Channel
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
-			if (!client->validatePacket(pack))
+			if (!session->validatePacket(pack))
 				return;
 
-			handleDataChannelPacket(client, pack);
+			handleDataChannelPacket(session, pack);
 
-			processBufferedPackets(client);
+			processBufferedPackets(session);
 			break;
 		case 0x0D00: //Fragmented
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
-			if (!client->validatePacket(pack))
+			if (!session->validatePacket(pack))
 				return;
 
-			handleFragmentedPacket(client, pack);
+			handleFragmentedPacket(session, pack);
 
-			processBufferedPackets(client);
+			processBufferedPackets(session);
 
 			break;
 		case 0x1100: //Out of order
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
-			doOutOfOrder(client, pack);
+			doOutOfOrder(session, pack);
 			break;
 		case 0x1500: //Acknowledge
-			if (!client->processRecieve(pack))
+			if (!session->processRecieve(pack))
 				return;
 
-			doAcknowledge(client, pack);
+			doAcknowledge(session, pack);
 			break;
 		case 0x1D00: //??
 			break;
@@ -170,19 +170,20 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			break;
 		#endif
 		default:
-			client->processRecieve(pack);
+			session->processRecieve(pack);
 
 			pack->setOffset(0);
 
-			handleDataChannelPacket(client, pack);
+			handleDataChannelPacket(session, pack);
 			break;
 	}
 }
 
-void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
+void RUDPFilter::doSessionStart(RUDPProtocol* client, Packet* pack) {
 	//client->info("session request recieved");
 
-    SessionIDRequestMessage::parse(pack, client);
+    SessionIDRequestMessage::parse(pack, client);			engine/proto/rudp/RUDProtocol.cpp \
+
 
     Packet* msg = new SessionIDResponseMessage(client);
     client->send(msg);
@@ -195,7 +196,7 @@ void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
     */
 }
 
-void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
+void RUDPFilter::doSessionResponse(RUDPProtocol* client, Packet* pack) {
 	client->info("session request recieved");
 
     uint32 seed = SessionIDResponseMessage::parse(pack);
@@ -203,14 +204,14 @@ void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
     client->notifyReceivedSeed(seed);
 }
 
-void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
+void RUDPFilter::doDisconnect(RUDPProtocol* client, Packet* pack) {
 	client->info("SELF DISCONNECTING CLIENT");
 
 	client->setClientDisconnected();
 	client->disconnect();
 }
 
-void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
+void RUDPFilter::doNetStatusResponse(RUDPProtocol* client, Packet* pack) {
 	uint16 tick = NetStatusRequestMessage::parseTick(pack);
 
 	client->updateNetStatus();
@@ -223,7 +224,7 @@ void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
     client->sendPacket(resp);
 }
 
-void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
+void RUDPFilter::doOutOfOrder(RUDPProtocol* client, Packet* pack) {
 	uint16 seq = OutOfOrderMessage::parse(pack);
 
 	client->resendPackets(seq);
@@ -233,12 +234,12 @@ void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 	client->info(msg);*/
 }
 
-void BasePacketHandler::doAcknowledge(BaseClient* client, Packet* pack) {
+void RUDPFilter::doAcknowledge(RUDPProtocol* client, Packet* pack) {
 	uint16 seq = AcknowledgeMessage::parse(pack);
 	client->acknowledgeServerPackets(seq);
 }
 
-void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
+void RUDPFilter::handleMultiPacket(RUDPProtocol* client, Packet* pack) {
 	while (pack->hasData()) {
 		uint8 blockSize = pack->parseByte();
 
@@ -292,7 +293,7 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 	}
 }
 
-void BasePacketHandler::processBufferedPackets(BaseClient* client) {
+void RUDPFilter::processBufferedPackets(RUDPProtocol* client) {
 	while (true) {
 		Packet* pack = client->getBufferedPacket();
 		if (pack == NULL)
@@ -314,7 +315,7 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 	}
 }
 
-void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack) {
+void RUDPFilter::handleDataChannelPacket(RUDPProtocol* client, Packet* pack) {
 	uint16 opCount = pack->parseShort();
 
 	if (opCount == 0x1900) {  // multi DataChannel
@@ -348,7 +349,7 @@ void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack
 	}
 }
 
-void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet* pack, uint16 size) {
+void RUDPFilter::handleDataChannelMultiPacket(RUDPProtocol* client, Packet* pack, uint16 size) {
 	uint16 opCount = pack->parseShort();
 	uint16 parsedsize = 6; // opcode+seq+opCount
 
@@ -389,7 +390,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 	}
 }
 
-void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
+void RUDPFilter::handleFragmentedPacket(RUDPProtocol* client, Packet* pack) {
 	/*BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
 
 	if (fraggedPacket != NULL) {

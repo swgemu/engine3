@@ -3,17 +3,18 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#ifndef BASEPACKETHANDLER_H_
-#define BASEPACKETHANDLER_H_
+#ifndef RUDPFILTER_H_
+#define RUDPFILTER_H_
 
 #include "system/lang.h"
 
 #include "engine/log/Logger.h"
 
 #include "engine/service/ServiceSession.h"
+#include "engine/service/ServiceFilter.h"
 #include "engine/service/AbstractServiceAcceptor.h"
 
-#include "BaseClient.h"
+#include "RUDPProtocol.h"
 
 #include "BaseMessage.h"
 
@@ -21,31 +22,32 @@ namespace engine {
   namespace proto {
     namespace rudp {
 
-	class BasePacketHandler : public Logger {
+	class RUDPFilter : public ProtocolCodecFilter, public Logger {
 		MessageQueue* messageQueue;
 
 	public:
-		BasePacketHandler();
-		BasePacketHandler(const String& s, MessageQueue* queue);
+		RUDPFilter(MessageQueue* queue);
+		RUDPFilter(const String& s, MessageQueue* queue);
 
-		void handlePacket(BaseClient* client, Packet* pack);
+	private:
+		void handlePacket(RUDPProtocol* client, Packet* pack);
 
-		void doSessionStart(BaseClient* client, Packet* pack);
-		void doSessionResponse(BaseClient* client, Packet* pack);
+		void doSessionStart(RUDPProtocol* client, Packet* pack);
+		void doSessionResponse(RUDPProtocol* client, Packet* pack);
 
-		void doDisconnect(BaseClient* client, Packet* pack);
-		void doNetStatusResponse(BaseClient* client, Packet* pack);
-		void doOutOfOrder(BaseClient* client, Packet* pack);
-		void doAcknowledge(BaseClient* client, Packet* pack);
+		void doDisconnect(RUDPProtocol* client, Packet* pack);
+		void doNetStatusResponse(RUDPProtocol* client, Packet* pack);
+		void doOutOfOrder(RUDPProtocol* client, Packet* pack);
+		void doAcknowledge(RUDPProtocol* client, Packet* pack);
 
-		void processBufferedPackets(BaseClient* client);
+		void processBufferedPackets(RUDPProtocol* client);
 
-		void handleMultiPacket(BaseClient* client, Packet* pack);
+		void handleMultiPacket(RUDPProtocol* client, Packet* pack);
 
-		void handleDataChannelPacket(BaseClient* client, Packet* pack);
-		void handleDataChannelMultiPacket(BaseClient* client, Packet* pack, sys::uint16 size);
+		void handleDataChannelPacket(RUDPProtocol* client, Packet* pack);
+		void handleDataChannelMultiPacket(RUDPProtocol* client, Packet* pack, sys::uint16 size);
 
-		void handleFragmentedPacket(BaseClient* client, Packet* pack);
+		void handleFragmentedPacket(RUDPProtocol* client, Packet* pack);
 	};
 
     } // namespace rudp
@@ -54,5 +56,5 @@ namespace engine {
 
 using namespace engine::proto::rudp;
 
-#endif /*BASEPACKETHANDLER_H_*/
+#endif /*RUDPFILTER_H_*/
 
