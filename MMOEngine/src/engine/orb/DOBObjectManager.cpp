@@ -37,6 +37,8 @@ int DOBObjectManager::updatePersistentObject(DistributedObject* object) {
 }
 
 DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* object) {
+	Locker _locker(this);
+
 	DistributedObjectServant* servant = object->_getImplementation();
 
 	DistributedObjectClassHelper* helper = servant->_getClassHelper();
@@ -112,6 +114,12 @@ uint64 DOBObjectManager::getNextFreeObjectID() {
 	client->read(&resp);
 
 	return GetNextFreeObjectIDResponseMessage::parseObjectID(&resp);
+}
+
+void DOBObjectManager::savePersistentObjects() {
+	Locker locker(this);
+
+	localObjectDirectory.savePersistentObjects();
 }
 
 #endif /* DOBOBJECTMANAGER_CPP_ */

@@ -313,6 +313,32 @@ unsigned int BaseProtocol::generateCrc(Packet* pack, int nLength) {
     return ~nCrc;
 }
 
+unsigned int BaseProtocol::generateCRC(Stream* stream, uint32 seed) {
+	char* pData = stream->getBuffer();
+
+	unsigned int nCrc = crcTable[(~seed) & 0xFF];
+	nCrc ^= 0x00FFFFFF;
+	unsigned int nIndex = (seed >> 8) ^ nCrc;
+	nCrc = (nCrc >> 8) & 0x00FFFFFF;
+	nCrc ^= crcTable[nIndex & 0xFF];
+	nIndex = (seed >> 16) ^ nCrc;
+	nCrc = (nCrc >> 8) & 0x00FFFFFF;
+	nCrc ^= crcTable[nIndex & 0xFF];
+	nIndex = (seed >> 24) ^ nCrc;
+	nCrc = (nCrc >> 8) &0x00FFFFFF;
+	nCrc ^= crcTable[nIndex & 0xFF];
+
+	int nLength  = stream->size();
+
+	for (short i = 0; i < nLength; i++) {
+		nIndex = (pData[i]) ^ nCrc;
+		nCrc = (nCrc >> 8) & 0x00FFFFFF;
+		nCrc ^= crcTable[nIndex & 0xFF];
+	}
+
+	return ~nCrc;
+}
+
 void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();

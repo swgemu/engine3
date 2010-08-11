@@ -49,7 +49,7 @@ bool Lua::runFile(const String& filename) {
 		lua_pop(L,1);
 
 		StringBuffer msg;
-		msg << "ERROR " << err;
+		msg << "file:" << filename << " ERROR " << err;
 		info(msg);
 
 		return false;
@@ -66,7 +66,7 @@ void Lua::runFile(const String& filename, lua_State* lState) {
 			const char* err = lua_tostring(lState, -1);
 			lua_pop(lState,1);
 
-			System::out << "ERROR " << err << "\n";
+			System::out << "file:" << filename << " ERROR " << err << "\n";
 		}
 	}
 }

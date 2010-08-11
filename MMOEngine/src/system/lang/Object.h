@@ -47,13 +47,14 @@ namespace sys {
 
 	public:
 		Object() : ReferenceCounter(), Variable() {
+
 		#ifdef TRACE_REFERENCES
 			referenceHolders.setNullValue(NULL);
 		#endif
 		}
 
 		Object(const Object& obj) : ReferenceCounter(), Variable() {
-			_references = obj._references;
+
 		}
 
 		virtual ~Object() {
@@ -63,6 +64,10 @@ namespace sys {
 		#endif
 
 			finalize();
+		}
+
+		virtual bool notifyDestroy() {
+			return true;
 		}
 
 		void finalize() {
@@ -89,8 +94,10 @@ namespace sys {
 		}
 
 		inline void release() {
-			if (decreaseCount())
-				destroy();
+			if (decreaseCount()) {
+				if (notifyDestroy())
+					destroy();
+			}
 		}
 
 		void acquireWeak(void* ref);

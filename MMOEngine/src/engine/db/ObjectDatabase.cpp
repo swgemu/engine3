@@ -29,13 +29,23 @@ ObjectDatabase::~ObjectDatabase() {
 void ObjectDatabase::openDatabase() {
 	DatabaseConfig config;
 	config.setThreaded(true);
-	config.setTransactional(true);
+	//config.setTransactional(true);
 	config.setAllowCreate(true);
 	config.setType(DatabaseType::HASH);
+	config.setReadUncommited(true);
 
 	try {
 
-		objectsDatabase = environment->openDatabase(NULL, databaseFileName, "", config);
+		Transaction* transaction = environment->beginTransaction(NULL);
+
+		objectsDatabase = environment->openDatabase(transaction, databaseFileName, "", config);
+
+		int ret = 0;
+
+		if ((ret = transaction->commit()) != 0) {
+			error(String::valueOf(db_strerror(ret)));
+		}
+
 
 	} catch (Exception& e) {
 		error(e.getMessage());
@@ -59,6 +69,8 @@ void ObjectDatabase::closeDatabase() {
 }
 
 int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
+	//Locker locker(&writeLock);
+
 	int ret = 0;
 
 	DatabaseEntry key, data;
@@ -67,11 +79,21 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 
 	int i = 0;
 
-	do {
-		ret = objectsDatabase->get(NULL, &key, &data);
+	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
-		if (ret == DB_LOCK_DEADLOCK)
-			info("deadlock detected in ObjectDatabse::get.. retrying", true);
+	Transaction* transaction = NULL;
+
+	do {
+		ret  = -1;
+		transaction = databaseManager->getBerkeleyEnvironment()->beginTransaction(NULL);
+
+		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
+
+		if (ret == DB_LOCK_DEADLOCK) {
+			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i), true);
+			transaction->abort();
+			transaction = NULL;
+		}
 
 		++i;
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
@@ -81,17 +103,77 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 
 		objectData->reset();
 	} else if (ret != DB_NOTFOUND) {
-		error("error in ObjectDatabase::getData ret " + String::valueOf(ret));
+		error("error in ObjectDatabase::getData ret " + String::valueOf(db_strerror(ret)));
+
+		if (transaction != NULL)
+			transaction->abort();
 
 		throw DatabaseException("error in ObjectDatabase::getData ret " + String(db_strerror(ret)));
 	}
 
+	if (transaction != NULL) {
+		transaction->commit();
+	}
+
+
 	return ret;
 }
 
-
-int ObjectDatabase::putData(uint64 objKey, ObjectOutputStream* objectData) {
+int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
+	//Locker locker(&writeLock);
 	int ret = -1;
+
+	/*ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
+
+	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
+
+	Transaction* transaction = databaseManager->getLocalTransaction();*/
+
+	DatabaseEntry key, data;
+	key.setData(&objKey, sizeof(uint64));
+	data.setData(stream->getBuffer(), stream->size());
+
+	ret = objectsDatabase->put(transaction, &key, &data);
+
+	return ret;
+}
+
+int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction) {
+	//Locker locker(&writeLock);
+	int ret = -1;
+
+	/*ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
+
+	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
+
+	Transaction* transaction = databaseManager->getLocalTransaction();*/
+
+	DatabaseEntry key;
+	key.setData(&objKey, sizeof(uint64));
+
+	ret = objectsDatabase->del(transaction, &key);
+
+	return ret;
+}
+
+int ObjectDatabase::putData(uint64 objKey, ObjectOutputStream* objectData, Object* obj) {
+	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
+
+	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
+
+	transaction->addUpdateObject(objKey, objectData->clone(0), this, obj);
+
+	return 0;
+	/*Locker locker(&writeLock);
+
+	int ret = -1;
+
+	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
+
+	Transaction* transaction = databaseManager->getLocalTransaction();
+
+	if (transaction == NULL)
+		return 0;
 
 	DatabaseEntry key, data;
 	key.setData(&objKey, sizeof(uint64));
@@ -99,23 +181,46 @@ int ObjectDatabase::putData(uint64 objKey, ObjectOutputStream* objectData) {
 
 	int i = 0;
 
-	Transaction* transaction = NULL;
+	bool local = true;
 
 	do {
-		transaction = environment->beginTransaction(NULL);
+		//transaction = environment->beginTransaction(NULL);
+
+		if (transaction == NULL) {
+			transaction = databaseManager->getBerkeleyEnvironment()->beginTransaction(NULL);
+			local = false;
+		}
 
 		ret = objectsDatabase->put(transaction, &key, &data);
 
-		if (ret == DB_LOCK_DEADLOCK) {
-			info("deadlock detected in ObjectDatabse::get.. retrying", true);
+		if (local && ret == DB_LOCK_DEADLOCK) {
+			info("deadlock detected in ObjectDatabse::putData.. cancelling", true);
 
+			//transaction->abort();
+			databaseManager->failLocalTransaction();
+
+			return 0;
+		} else if (!local && ret == DB_LOCK_DEADLOCK) {
 			transaction->abort();
+			transaction = NULL;
+		} else if (ret != 0) {
+			error("error in ObjectDatabase::putData :" + String::valueOf(ret));
+			databaseManager->failLocalTransaction();
+
+			return 0;
 		}
 
 		++i;
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
 
-	if (ret != 0) {
+	if (!local && transaction != NULL) {
+		transaction->commit();
+	}
+
+*/
+
+
+	/*if (ret != 0) {
 		error("error in ObjectDatabase::putData :" + String::valueOf(ret));
 
 		transaction->abort();
@@ -126,12 +231,22 @@ int ObjectDatabase::putData(uint64 objKey, ObjectOutputStream* objectData) {
 	if (transaction->commitNoSync() != 0) {
 		error("error commiting transaction in ObjectDatabase::putData :" + String::valueOf(ret));
 		exit(1);
-	}
+	}*/
 
-	return ret;
+	//return ret;
 }
 
 int ObjectDatabase::deleteData(uint64 objKey) {
+	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
+
+	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
+
+	transaction->addDeleteObject(objKey, this);
+
+	return 0;
+
+	/*Locker locker(&writeLock);
+
 	int ret = -1;
 
 	DatabaseEntry key;
@@ -140,14 +255,43 @@ int ObjectDatabase::deleteData(uint64 objKey) {
 
 	int i = 0;
 
-	do {
+	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
-		ret = objectsDatabase->del(NULL, &key);
+	Transaction* transaction = databaseManager->getLocalTransaction();
+
+	bool local = true;
+
+	do {
+		if (transaction == NULL) {
+			transaction = databaseManager->getBerkeleyEnvironment()->beginTransaction(NULL);
+			local = false;
+		}
+
+		ret = objectsDatabase->del(transaction, &key);
+
+		if (local && ret == DB_LOCK_DEADLOCK) {
+			info("deadlock detected in ObjectDatabse::deleteData.. cancelling", true);
+
+			//transaction->abort();
+			databaseManager->failLocalTransaction();
+
+			return 0;
+		} else if (!local && ret == DB_LOCK_DEADLOCK) {
+			transaction->abort();
+			transaction = NULL;
+		}
 
 		++i;
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
 
-	return ret;
+	if (!local && transaction != NULL) {
+		transaction->commit();
+	}
+
+
+	return ret;*/
+
+	return 0;
 }
 
 int ObjectDatabase::sync() {
@@ -156,9 +300,15 @@ int ObjectDatabase::sync() {
 	return 0;
 }
 
-ObjectDatabaseIterator::ObjectDatabaseIterator(ObjectDatabase* database) : Logger("ObjectDatabaseIterator") {
+ObjectDatabaseIterator::ObjectDatabaseIterator(ObjectDatabase* database, bool useCurrentThreadTransaction) : Logger("ObjectDatabaseIterator") {
 	databaseHandle = database->getDatabaseHandle();
-	cursor = databaseHandle->openCursor(NULL);
+
+	Transaction* txn = NULL;//ObjectDatabaseManager::instance()->getLocalTransaction();
+
+/*	if (useCurrentThreadTransaction)
+		txn = ObjectDatabaseManager::instance()->getLocalTransaction();*/
+
+	cursor = databaseHandle->openCursor(txn);
 
 	data.setReuseBuffer(true);
 	key.setReuseBuffer(true);
@@ -166,7 +316,8 @@ ObjectDatabaseIterator::ObjectDatabaseIterator(ObjectDatabase* database) : Logge
 
 ObjectDatabaseIterator::ObjectDatabaseIterator(BerkeleyDatabase* dbHandle) : Logger("ObjectDatabaseIterator") {
 	databaseHandle = dbHandle;
-	cursor = databaseHandle->openCursor(NULL);
+	Transaction* txn = NULL; // ObjectDatabaseManager::instance()->getLocalTransaction();
+	cursor = databaseHandle->openCursor(txn);
 
 	data.setReuseBuffer(true);
 	key.setReuseBuffer(true);
@@ -182,12 +333,16 @@ void ObjectDatabaseIterator::resetIterator() {
 		delete cursor;
 	}
 
-	cursor = databaseHandle->openCursor(NULL);
+
+	Transaction* txn = NULL;//
+	//Transaction* txn = ObjectDatabaseManager::instance()->getLocalTransaction();
+
+	cursor = databaseHandle->openCursor(txn);
 }
 
 bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data) {
 	try {
-		if (cursor->getNext(&this->key, &this->data) != 0)
+		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
 			return false;
 
 		key = *(uint64*) (this->key.getData());
@@ -204,7 +359,7 @@ bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* 
 
 bool ObjectDatabaseIterator::getNextValue(ObjectInputStream* data) {
 	try {
-		if (cursor->getNext(&this->key, &this->data) != 0)
+		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
 			return false;
 
 		data->writeStream((char*)this->data.getData(), this->data.getSize());
@@ -223,7 +378,7 @@ bool ObjectDatabaseIterator::getNextValue(ObjectInputStream* data) {
 
 bool ObjectDatabaseIterator::getNextKey(uint64& key) {
 	try {
-		if (cursor->getNext(&this->key, &this->data) != 0)
+		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
 			return false;
 
 		key =  *(uint64*)(this->key.getData());

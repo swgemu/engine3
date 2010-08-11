@@ -22,7 +22,7 @@ void Mutex::lock(bool doLock) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
 	#else
 		Time start;
-		start.addMiliTime(300000);
+		start.addMiliTime(10000);
 
 		while (pthread_mutex_timedlock(&mutex, start.getTimeSpec())) {
 			if (!doTrace)

@@ -5,13 +5,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MessageQueue.h"
 
-MessageQueue::MessageQueue() : Vector<Message*>(100, 50), Condition(), Logger("MessageQueue") {
+MessageQueue::MessageQueue() : Vector<Message*>(1000, 1000), Condition(), Logger("MessageQueue") {
 	blocked = false;
-	waitingForMessage = false;
+	//waitingForMessage = false;
 
 	condMutex = new Mutex("MessageQueue");
 
 	setLogging(false);
+	setGlobalLogging(true);
 	//condMutex->setMutexLogging(false);
 }
 
@@ -35,11 +36,17 @@ void MessageQueue::push(Message* msg) {
 		info(s);
 	#endif
 
-	if (waitingForMessage)
-		signal(condMutex);
+	//if (waitingForMessage)
+	signal(condMutex);
 
 	condMutex->unlock();
 }
+
+/*void MessageQueue::printInfo() {
+	StringBuffer msg;
+	msg << "currently " << size() << " messages in queue";
+	info(msg.toString(), true);
+}*/
 
 Message* MessageQueue::pop() {
 	condMutex->lock();
@@ -54,7 +61,7 @@ Message* MessageQueue::pop() {
 			return NULL;
 		}
 
-		waitingForMessage = true;
+		//waitingForMessage = true;
 		wait(condMutex);
 	}
 
@@ -66,7 +73,7 @@ Message* MessageQueue::pop() {
 		info(s);
 	#endif
 
-	waitingForMessage = false;
+	//waitingForMessage = false;
 	condMutex->unlock();
 
 	return msg;
@@ -77,7 +84,7 @@ void MessageQueue::flush() {
 
 	blocked = true;
 
-	if (waitingForMessage)
+	//if (waitingForMessage)
 		signal(condMutex);
 
 	condMutex->unlock();

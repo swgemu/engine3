@@ -4,6 +4,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "ServiceProcessThread.h"
+#include "../db/ObjectDatabaseManager.h"
 
 ServiceProcessThread::ServiceProcessThread(const String& s) : ServiceThread(s) {
 }
@@ -20,12 +21,16 @@ void ServiceProcessThread::start(ServiceMessageHandlerThread* serv) {
 }
 
 void ServiceProcessThread::run() {
+	ObjectDatabaseManager::instance()->commitLocalTransaction();
+
 	Message* msg;
 
 	while ((msg = server->getMessage()) != NULL) {
 		try {
 			processMessage(msg);
 		} catch (PacketIndexOutOfBoundsException& e) {
+			ObjectDatabaseManager::instance()->commitLocalTransaction();
+
 			if (!handleError(msg, e))
 				break;
 		} catch (...) {
@@ -34,6 +39,8 @@ void ServiceProcessThread::run() {
 		}
 
 		delete msg;
+
+		ObjectDatabaseManager::instance()->commitLocalTransaction();
 	}
 
 	server->flushMessages();

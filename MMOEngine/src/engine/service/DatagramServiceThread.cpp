@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "proto/events/BaseClientCleanUpEvent.hpp"
 #endif
 
+#include "../db/ObjectDatabaseManager.h"
+
 DatagramServiceThread::DatagramServiceThread() : ServiceMessageHandlerThread("") {
 	clients = NULL;
 
@@ -75,6 +77,8 @@ void DatagramServiceThread::stop() {
 }
 
 void DatagramServiceThread::receiveMessages() {
+	ObjectDatabaseManager::instance()->commitLocalTransaction();
+
 	Packet packet;
 
 	#ifdef VERSION_PUBLIC
@@ -118,6 +122,8 @@ void DatagramServiceThread::receiveMessages() {
 				handleMessage(client, &packet);
 
 		} catch (SocketException& e) {
+			ObjectDatabaseManager::instance()->commitLocalTransaction();
+
 			if (client == NULL) {
 				info(e.getMessage());
 			} else if (!handleError(client, e))
@@ -129,6 +135,8 @@ void DatagramServiceThread::receiveMessages() {
 				return;
 			#endif
 		}
+
+		ObjectDatabaseManager::instance()->commitLocalTransaction();
 	}
 }
 

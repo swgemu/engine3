@@ -9,6 +9,7 @@
 
 #include "BerkeleyDatabase.h"
 #include "Cursor.h"
+#include "../ObjectDatabaseManager.h"
 
 using namespace engine::db::berkley;
 
@@ -46,7 +47,7 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 	BerkeleyDatabase::filename = filename;
 	BerkeleyDatabase::databaseName = databaseName;
 
-	this->databaseConfig.setTransactional(true);
+	//this->databaseConfig.setTransactional(true);
 
 	DB_TXN* transaction = NULL;
 

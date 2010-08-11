@@ -72,6 +72,13 @@ namespace engine {
 				databaseFlags &= ~DB_THREAD;
 		}
 
+		void setReadUncommited(bool value) {
+			if (value)
+				databaseFlags |= DB_READ_UNCOMMITTED;
+			else
+				databaseFlags &= ~DB_READ_UNCOMMITTED;
+		}
+
 		inline void setType(DBTYPE type) {
 			databaseType = type;
 		}

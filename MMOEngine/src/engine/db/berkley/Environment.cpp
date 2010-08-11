@@ -24,20 +24,38 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 	if (ret != 0)
 		throw DatabaseException("unable to create environment handle with ret code " + String::valueOf(ret));
 
-	databaseEnvironment->set_thread_count(databaseEnvironment, this->environmentConfig.getThreadCount());
+	int threadCount = environmentConfig.getThreadCount();
 
-    ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), this->environmentConfig.getEnvironmentFlags(), 0);
+	//System::out << "trying to set " << threadCount << " thread count" << endl;
 
-    databaseEnvironment->set_lk_detect(databaseEnvironment, environmentConfig.getLockDetectMode());
+	databaseEnvironment->set_lk_max_locks(databaseEnvironment, 7500);
+	databaseEnvironment->set_lk_max_lockers(databaseEnvironment, 7500);
+	databaseEnvironment->set_lk_max_objects(databaseEnvironment, 7500);
+	databaseEnvironment->set_cachesize(databaseEnvironment, 0, 26214400, 0);
+	databaseEnvironment->set_lg_bsize(databaseEnvironment, 26214400);
+
+	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
+
+	ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER, 0);
+
+	if (ret != 0)
+		throw DatabaseException("unable to open environment handle with ret code " + String(db_strerror(ret)));
+
+    databaseEnvironment->set_isalive(databaseEnvironment, isAlive);
+
+    int lret = databaseEnvironment->set_lk_detect(databaseEnvironment, environmentConfig.getLockDetectMode());
+
+    if (lret != 0) {
+    	throw DatabaseException("error setting lock detect " + String(db_strerror(lret)));
+    }
+
     databaseEnvironment->set_lg_max(databaseEnvironment, environmentConfig.getMaxLogFileSize());
+
+   // databaseEnvironment->set_timeout(databaseEnvironment, 10000 , DB_SET_LOCK_TIMEOUT);
 
     if (environmentConfig.getLogAutoRemove())
     	databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
 
-    if (ret != 0)
-    	throw DatabaseException("unable to open environment handle with ret code " + String::valueOf(ret));
-
-	databaseEnvironment->set_isalive(databaseEnvironment, isAlive);
 }
 
 Environment::~Environment() {
@@ -72,12 +90,18 @@ Transaction* Environment::beginTransaction(Transaction* parent, const Transactio
 
 	Transaction* newTransaction = new Transaction();
 
-	int res = databaseEnvironment->txn_begin(databaseEnvironment, parentTransaction, newTransaction->getDBTXNPTR(), config.getFlags());
+	int res = databaseEnvironment->txn_begin(databaseEnvironment, parentTransaction, newTransaction->getDBTXNPTR(), config.getFlags() /*| DB_TXN_NOWAIT*/);
 
 	if (res != 0) {
 		delete newTransaction;
     	throw DatabaseException("unable to begin transaction with ret code " + String::valueOf(res));
 	}
+
+	/*DB_TXN* newTrans = newTransaction->getDBTXN();
+	int ret = newTrans->set_timeout(newTrans, 5000, DB_SET_LOCK_TIMEOUT );
+
+	if (ret != 0)
+		System::out << String(" error setting timeout " + String(db_strerror(ret)));*/
 
 	return newTransaction;
 }

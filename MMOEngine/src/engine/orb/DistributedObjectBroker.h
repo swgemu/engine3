@@ -78,6 +78,8 @@ namespace engine {
 		void deploy(DistributedObjectStub* obj);
 		void deploy(const String& name, DistributedObjectStub* obj);
 
+		bool destroyObject(DistributedObjectStub* obj);
+
 		DistributedObject* lookUp(const String& name);
 		DistributedObject* lookUp(uint64 objid);
 

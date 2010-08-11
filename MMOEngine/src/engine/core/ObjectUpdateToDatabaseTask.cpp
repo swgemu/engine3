@@ -14,24 +14,23 @@ ObjectUpdateToDatabaseTask::ObjectUpdateToDatabaseTask(ManagedObject* object) : 
 }
 
 void ObjectUpdateToDatabaseTask::run() {
-	if (object == NULL)
+	ManagedReference<ManagedObject*> strongRef = object.get();
+
+	if (strongRef == NULL)
 		return;
 
 	try {
-		object->wlock();
+		strongRef->wlock();
 
-		if (object == NULL)
-			return;
+		strongRef->clearUpdateToDatabaseTask();
+		//strongRef->updateToDatabase();
 
-		object->clearUpdateToDatabaseTask();
-		object->updateToDatabase();
-
-		object->unlock();
+		strongRef->unlock();
 	} catch (Exception& e) {
 		//object->error(e.getMessage());
-		object->unlock();
+		strongRef->unlock();
 	} catch (...) {
 		//object->error("unreported exception caught in ObjectSaveToDatabaseTask::run");
-		object->unlock();
+		strongRef->unlock();
 	}
 }

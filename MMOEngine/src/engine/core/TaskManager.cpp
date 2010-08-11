@@ -11,6 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Task.h"
 #include "ReentrantTask.h"
+#include "../db/ObjectDatabaseManager.h"
 
 TaskManager::TaskManager() : Mutex("TaskManager"), Logger("TaskManager") {
 	currentTaskScheduler = 0;
@@ -20,6 +21,8 @@ TaskManager::~TaskManager() {
 }
 
 void TaskManager::initialize() {
+	ObjectDatabaseManager::instance();
+
 	lock();
 
 	for (int i = 0; i < DEAFULT_WORKER_THREADS; ++i) {
@@ -44,10 +47,15 @@ void TaskManager::initialize() {
 }
 
 void TaskManager::shutdown() {
-	lock();
+	//lock();
 
 	while (!schedulers.isEmpty()) {
+		lock();
+
 		TaskScheduler* scheduler = schedulers.remove(0);
+
+		unlock();
+
 		scheduler->stop();
 
 		delete scheduler;
@@ -56,7 +64,12 @@ void TaskManager::shutdown() {
 	tasks.flush();
 
 	while (!workers.isEmpty()) {
+		lock();
+
 		TaskWorkerThread* worker = workers.remove(0);
+
+		unlock();
+
 		worker->stop();
 
 		delete worker;
@@ -64,11 +77,17 @@ void TaskManager::shutdown() {
 
 	info("stopped");
 
-	unlock();
+	//unlock();
 }
 
 TaskScheduler* TaskManager::getTaskScheduler(bool doLock) {
 	lock(doLock);
+
+	if (schedulers.size() == 0) {
+		unlock(doLock);
+
+		throw Exception("No schedulers available");
+	}
 
 	int index = currentTaskScheduler++ % schedulers.size();
 
@@ -108,11 +127,20 @@ void TaskManager::scheduleTask(Task* task, uint64 delay) {
 		setTaskScheduler(task, scheduler, false);
 
 		unlock();
+	} catch (Exception& e) {
+		error(e.getMessage());
+
+		unlock();
+
+		e.printStackTrace();
 	} catch (...) {
 		error("unreported exception caught on TaskManager::scheduleTask()");
 
 		unlock();
 	}
+
+	if (scheduler == NULL)
+		throw Exception("No schedulers available");
 
 	if (!scheduler->scheduleTask(task, delay))
 		throw IllegalArgumentException("Task was invalid for scheduling");
@@ -140,6 +168,9 @@ void TaskManager::scheduleTask(Task* task, Time& time) {
 
 		unlock();
 	}
+
+	if (scheduler == NULL)
+		throw Exception("No schedulers available");
 
 	if (!scheduler->scheduleTask(task, time))
 		throw IllegalArgumentException("Task was invalid for scheduling");

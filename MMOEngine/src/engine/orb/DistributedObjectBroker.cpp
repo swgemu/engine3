@@ -106,7 +106,7 @@ void DistributedObjectBroker::registerClass(const String& name, DistributedObjec
 }
 
 void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
-	Locker locker(this);
+
 
 	DistributedObjectServant* servant = obj->_getImplementation();
 	if (servant == NULL)
@@ -120,7 +120,10 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 			obj->_setObjectID(objectid);
 		}
 
+		Locker locker(this);
 		namingDirectoryInterface->deploy(obj);
+
+		locker.release();
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
@@ -135,8 +138,6 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 }
 
 void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
-	Locker locker(this);
-
 	DistributedObjectServant* servant = obj->_getImplementation();
 	if (servant == NULL)
 		throw ObjectNotLocalException(obj);
@@ -149,7 +150,11 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 			obj->_setObjectID(objectid);
 		}
 
+		Locker locker(this);
+
 		namingDirectoryInterface->deploy(name, obj);
+
+		locker.release();
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
@@ -171,16 +176,29 @@ DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
-	Locker locker(this);
+	//Locker locker(objectManager);
 
 	DistributedObject* obj = objectManager->getObject(objid);
 
-	locker.release();
+	//locker.release();
 
 	if (obj == NULL)
 		obj = objectManager->loadPersistentObject(objid);
 
 	return obj;
+}
+
+bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
+	Locker locker(this);
+
+	Locker clocker(objectManager, this);
+
+	if (obj->getReferenceCount() > 0)
+		return false;
+
+	obj->undeploy();
+
+	return true;
 }
 
 DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
@@ -189,6 +207,8 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 	DistributedObjectServant* servant = NULL;
 
 	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryInterface->undeploy(name);
+
+	locker.release();
 
 	if (obj != NULL) {
 		DistributedObjectAdapter* adapter = objectManager->removeObject(obj->_getObjectID());
@@ -199,10 +219,8 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 			delete adapter;
 		}
 
-		info("object \'" + obj->_getName() + "\' deployed");
+		info("object \'" + obj->_getName() + "\' undeployed");
 	}
-
-	locker.release();
 
 	if (servant != NULL) {
 		info("deleting servant \'" + name + "\'");

@@ -27,7 +27,7 @@ void ReadWriteLock::rlock(bool doLock) {
 		#endif
 
 		Time start;
-		start.addMiliTime(300000);
+		start.addMiliTime(10000);
 
 		while (pthread_rwlock_timedrdlock(&rwlock, start.getTimeSpec())) {
 			if (!doTrace)
@@ -56,7 +56,7 @@ void ReadWriteLock::wlock(bool doLock) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
 	#else
 		Time start;
-		start.addMiliTime(300000);
+		start.addMiliTime(10000);
 
 		while (pthread_rwlock_timedwrlock(&rwlock, start.getTimeSpec())) {
 			if (!doTrace)

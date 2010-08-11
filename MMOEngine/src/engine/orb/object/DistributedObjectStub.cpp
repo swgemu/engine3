@@ -14,13 +14,16 @@ DistributedObjectStub::DistributedObjectStub() : DistributedObject() {
 
 	_classHelper = NULL;
 
+	destroyed = false;
+
 	#ifdef TRACE_REFERENCING
 		finalizedTrace = NULL;
 	#endif
 }
 
 DistributedObjectStub::~DistributedObjectStub() {
-	undeploy();
+	if (!destroyed)
+		undeploy();
 	
 	#ifdef TRACE_REFERENCING
 		for (int i = 0; i < traces.size(); ++i) {
@@ -44,6 +47,8 @@ void DistributedObjectStub::deploy() {
 	DistributedObjectBroker::instance()->deploy(this);
 	
 	deployed = true;
+
+	destroyed = false;
 }
 
 void DistributedObjectStub::deploy(const char* name) {
@@ -53,6 +58,8 @@ void DistributedObjectStub::deploy(const char* name) {
 	DistributedObjectBroker::instance()->deploy(name, this);
 
 	deployed = true;
+
+	destroyed = false;
 }
 
 void DistributedObjectStub::deploy(const String& name) {
@@ -62,6 +69,8 @@ void DistributedObjectStub::deploy(const String& name) {
 	DistributedObjectBroker::instance()->deploy(name, this);
 
 	deployed = true;
+
+	destroyed = false;
 }
 
 void DistributedObjectStub::deploy(const String& name, uint64 nid) {
@@ -69,11 +78,17 @@ void DistributedObjectStub::deploy(const String& name, uint64 nid) {
 	nameid << name << nid;
 	
 	deploy(nameid.toString());
+
+	destroyed = false;
 }
 
 bool DistributedObjectStub::undeploy() {
 	if (deployed) {
-		DistributedObjectBroker::instance()->undeploy(_name);
+		DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+
+		if (broker != NULL)
+			broker->undeploy(_name);
+
 		deployed = false; 
 	} else {
 		if (_getImplementation() == NULL)
@@ -85,6 +100,8 @@ bool DistributedObjectStub::undeploy() {
 		_setImplementation(NULL);
 	}
 	
+	destroyed = true;
+
 	return true;
 }
 

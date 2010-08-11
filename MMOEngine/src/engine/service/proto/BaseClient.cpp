@@ -84,23 +84,26 @@ BaseClient::~BaseClient() {
 		service->deleteConnection(this);
 
 	if (checkupEvent != NULL) {
-		checkupEvent->cancel();
+			if (checkupEvent->isScheduled())
+			checkupEvent->cancel();
 
-		delete checkupEvent;
+		//delete checkupEvent;
 		checkupEvent = NULL;
 	}
 
 	if (netcheckupEvent != NULL) {
-		netcheckupEvent->cancel();
+		if (checkupEvent->isScheduled())
+			netcheckupEvent->cancel();
 
-		delete netcheckupEvent;
+		//delete netcheckupEvent;
 		netcheckupEvent = NULL;
 	}
 
 	if (netRequestEvent != NULL) {
-		netRequestEvent->cancel();
+		if (checkupEvent->isScheduled())
+			netRequestEvent->cancel();
 
-		delete netRequestEvent;
+		//delete netRequestEvent;
 		netRequestEvent = NULL;
 	}
 
@@ -147,7 +150,7 @@ void BaseClient::close() {
 	checkupEvent->cancel();
 	netcheckupEvent->cancel();
 
-	Task* task = new BaseClientCleanupEvent(this);
+	Reference<Task*> task = new BaseClientCleanupEvent(this);
 	task->schedule();
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
@@ -335,7 +338,8 @@ void BaseClient::run() {
 				checkupEvent->update(pack);
 				pack->setTimeout(checkupEvent->getCheckupTime());
 
-				checkupEvent->schedule(pack->getTimeout());
+				if (!checkupEvent->isScheduled())
+					checkupEvent->schedule(pack->getTimeout());
 			}
 
 			#ifdef TRACE_CLIENTS
@@ -360,7 +364,7 @@ void BaseClient::run() {
 				info(msg);
 			}
 
-			if (!sendBuffer.isEmpty() || bufferedPacket != NULL) {
+			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 				reentrantTask->schedule(10);
 			}
 		}
@@ -389,7 +393,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 	#endif*/
 
 	if (serverSequence - acknowledgedServerSequence > 25) {
-		if (!sendBuffer.isEmpty() || bufferedPacket != NULL)
+		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
 			reentrantTask->schedule(10);
 
 		if (sendBuffer.size() > 3000) {
@@ -532,7 +536,8 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 				info(msg);
 			#endif
 
-			checkupEvent->schedule(pack->getTimeout());
+			if (!checkupEvent->isScheduled())
+				checkupEvent->schedule(pack->getTimeout());
 		}
 	} catch (SocketException& e) {
 		disconnect("on checkupServerPackets() - " + e.getMessage(), false);
@@ -709,7 +714,8 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			checkupEvent->update(pack);
 			pack->setTimeout(checkupEvent->getCheckupTime());
 
-			checkupEvent->schedule(pack->getTimeout());
+			if (!checkupEvent->isScheduled())
+				checkupEvent->schedule(pack->getTimeout());
 		}
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		info("on acknowledgeServerPackets() - " + e.getMessage());
@@ -852,7 +858,8 @@ bool BaseClient::connect() {
 
 		info("connection established");
 
-		netRequestEvent->schedule(NETSTATUSREQUEST_TIME);
+		if (!netRequestEvent->isScheduled())
+			netRequestEvent->schedule(NETSTATUSREQUEST_TIME);
 
 		unlock();
 	} catch (...) {

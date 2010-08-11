@@ -27,6 +27,8 @@ namespace engine {
 		DistributedObjectAdapter* remove(sys::uint64 objid);
 	
 		DistributedObjectAdapter* getAdapter(uint64 objid);
+
+		void savePersistentObjects();
 	};
 
   } // namespace ORB

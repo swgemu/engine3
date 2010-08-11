@@ -1,5 +1,6 @@
 #include "ObjectDatabaseManager.h"
 
+
 using namespace engine::db;
 using namespace engine::db::berkley;
 
@@ -8,6 +9,9 @@ void BerkeleyCheckpointTask::run() {
 }
 
 ObjectDatabaseManager::ObjectDatabaseManager() : Logger("ObjectDatabaseManager") {
+
+	loaded = false;
+
 	setGlobalLogging(true);
 	setLogging(false);
 
@@ -24,9 +28,9 @@ ObjectDatabaseManager::ObjectDatabaseManager() : Logger("ObjectDatabaseManager")
 	lastTableID = 0;
 
 	openEnvironment();
-	loadDatabases();
+	//loadDatabases();
 
-	checkpoint();
+	//checkpoint();
 }
 
 ObjectDatabaseManager::~ObjectDatabaseManager() {
@@ -48,7 +52,8 @@ ObjectDatabaseManager::~ObjectDatabaseManager() {
 void ObjectDatabaseManager::checkpoint() {
 	databaseEnvironment->checkpoint();
 
-	checkpointTask->schedule(CHECKPOINTTIME);
+	if (!checkpointTask->isScheduled())
+		checkpointTask->schedule(CHECKPOINTTIME);
 }
 
 void ObjectDatabaseManager::openEnvironment() {
@@ -61,7 +66,8 @@ void ObjectDatabaseManager::openEnvironment() {
 	config.setThreadCount(50);
 	config.setTransactional(true);
 	config.setInitializeCache(true);
-	config.setMaxLogFileSize(100000); // 100mb
+	config.setMaxLogFileSize(1000 * 1000 * 100); // 100mb
+	config.setLockDetectMode(LockDetectMode::RANDOM);
 
 	try {
 		databaseEnvironment = new Environment("databases", config);
@@ -81,6 +87,9 @@ void ObjectDatabaseManager::openEnvironment() {
 }
 
 void ObjectDatabaseManager::loadDatabases() {
+	if (loaded)
+		return;
+
 	databaseDirectory = new ObjectDatabase(this, "databases.db");
 
 	ObjectDatabaseIterator iterator(databaseDirectory);
@@ -106,6 +115,10 @@ void ObjectDatabaseManager::loadDatabases() {
 
 		tableName.reset();
 	}
+
+	loaded = true;
+
+	checkpoint();
 }
 
 void ObjectDatabaseManager::closeDatabases() {
@@ -147,13 +160,174 @@ ObjectDatabase* ObjectDatabaseManager::loadDatabase(const String& name, bool cre
 	String nm = name;
 	nm.toBinaryStream(&nameData);
 
-	databaseDirectory->putData((uint64)uniqueID, &nameData);
+	databaseDirectory->putData((uint64)uniqueID, &nameData, NULL);
 
 	databases.put(uniqueID, db);
 	nameDirectory.put(name, uniqueID);
 
 	return db;
 }
+
+CurrentTransaction* ObjectDatabaseManager::getCurrentTransaction() {
+	if (!loaded)
+		return  NULL;
+
+	CurrentTransaction* transaction = localTransaction.get();
+
+	if (transaction == NULL) {
+		transaction = new CurrentTransaction();
+
+		localTransaction.set(transaction);
+	}
+
+	return transaction;
+}
+/*
+Transaction* ObjectDatabaseManager::getLocalTransaction() {
+	if (!loaded)
+		return  NULL;
+
+	Transaction* berkeleyTransaction = NULL;
+
+	CurrentTransaction* transaction = localTransaction.get();
+
+	if (transaction == NULL) {
+		transaction = new CurrentTransaction();
+
+		localTransaction.set(transaction);
+	}
+
+	if (transaction->hasFailed())
+		return NULL;
+
+	berkeleyTransaction = transaction->getCurrentTransaction();
+
+	if (berkeleyTransaction == NULL) {
+		berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
+
+		transaction->setCurrentTransaction(berkeleyTransaction);
+	}
+
+	return berkeleyTransaction;
+}
+
+void ObjectDatabaseManager::failLocalTransaction() {
+	CurrentTransaction* transaction = localTransaction.get();
+
+	transaction->setFailed(true);
+	Transaction* berkeley = transaction->getCurrentTransaction();
+
+	if (berkeley != NULL)
+		berkeley->abort();
+
+	transaction->setCurrentTransaction(NULL);
+}*/
+
+void ObjectDatabaseManager::commitLocalTransaction() {
+	if (!loaded)
+		return;
+
+	CurrentTransaction* transaction = localTransaction.get();
+
+	if (transaction == NULL)
+		return;
+
+	/*try {
+		Transaction* berkeley = transaction->getCurrentTransaction();
+
+		if (berkeley == NULL)
+			return;
+
+		if (!transaction->hasFailed()) {
+			int res = berkeley->commitNoSync();
+
+			if (res != 0)
+				error("error commiting local transaction with error " + String::valueOf(res));
+			else
+				info("commited local transaction");
+		}
+
+		transaction->setCurrentTransaction(NULL);
+		transaction->setFailed(false);
+
+	} catch (...) {
+		error("error commiting local tranasction");
+	}*/
+
+	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
+
+	if (updateObjects->size() == 0)
+		return;
+
+	int iteration = 0;
+	int ret = -1;
+	Transaction* berkeleyTransaction = NULL;
+
+	do {
+		ret = -1;
+		berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
+
+		for (int i = 0; i < updateObjects->size(); ++i) {
+			UpdateObject* updateObject = &updateObjects->elementAt(i);
+			ObjectDatabase* db = updateObject->database;
+			uint64 id = updateObject->objectid;
+			Stream* stream = updateObject->stream;
+
+			if (stream != NULL) {
+				ret = db->tryPutData(id, stream, berkeleyTransaction);
+
+				if (ret == DB_LOCK_DEADLOCK) {
+					berkeleyTransaction->abort();
+					info("deadlock detected while trying to putData iterating time " + String::valueOf(iteration), true);
+					break;
+				} else if (ret != 0) {
+					error("error while trying to putData :" + String::valueOf(db_strerror(ret)));
+				}
+
+			} else {
+				ret = db->tryDeleteData(id, berkeleyTransaction);
+
+				if (ret == DB_LOCK_DEADLOCK) {
+					berkeleyTransaction->abort();
+					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration), true);
+					break;
+				} else if (ret != 0) {
+					error("error while trying to deleteData :" + String::valueOf(db_strerror(ret)));
+				}
+			}
+		}
+
+		++iteration;
+	} while (ret == DB_LOCK_DEADLOCK && iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES);
+
+	if (iteration >= ObjectDatabase::DEADLOCK_MAX_RETRIES) {
+		error("error exceeded deadlock retries shutting down");
+		exit(1);
+	}
+
+	if (ret != 0 && ret != DB_NOTFOUND)
+		berkeleyTransaction->abort();
+	else {
+		int commitRet = 0;
+
+		if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
+			error("error commiting berkeley transaction " + String::valueOf(db_strerror(ret)));
+		}
+	}
+
+	for (int i = 0; i < updateObjects->size(); ++i) {
+		UpdateObject* updateObject = &updateObjects->elementAt(i);
+
+		Stream* stream = updateObject->stream;
+
+		if (stream != NULL)
+			delete stream;
+	}
+
+	updateObjects->removeAll();
+
+}
+
 
 void ObjectDatabaseManager::closeEnvironment() {
 	try {

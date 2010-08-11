@@ -69,6 +69,20 @@ void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
 	setObject((ManagedObjectImplementation*) servant);
 }
 
+bool ManagedObject::notifyDestroy() {
+	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+
+	if (broker == NULL)
+		return true;
+	else
+		return DistributedObjectBroker::instance()->destroyObject(this);
+}
+
+
+bool ManagedObjectImplementation::notifyDestroy() {
+	return _this->notifyDestroy();
+}
+
 void ManagedObjectImplementation::lock(bool doLock) {
 	_this->wlock(doLock);
 }
@@ -129,4 +143,6 @@ void ManagedObjectImplementation::setPersistent(int level) {
 void ManagedObjectImplementation::initializeTransientMembers() {
 	if (persistenceLevel == 2)
 		queueUpdateToDatabaseTask();
+
+	lastCRCSave = 0;
 }
