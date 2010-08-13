@@ -330,7 +330,7 @@ unsigned int BaseProtocol::generateCRC(Stream* stream, uint32 seed) {
 
 	int nLength  = stream->size();
 
-	for (short i = 0; i < nLength; i++) {
+	for (int i = 0; i < nLength; i++) {
 		nIndex = (pData[i]) ^ nCrc;
 		nCrc = (nCrc >> 8) & 0x00FFFFFF;
 		nCrc ^= crcTable[nIndex & 0xFF];
