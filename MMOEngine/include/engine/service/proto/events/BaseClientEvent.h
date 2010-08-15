@@ -31,6 +31,11 @@ namespace engine {
 		}
 
 		void run() {
+			/*Reference<BaseClient*> strong = client.get();
+
+			if (strong == NULL)
+				return;*/
+
 			client->run();
 		}
 

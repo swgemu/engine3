@@ -45,7 +45,7 @@ namespace sys {
 			if (doLock && lockable != cross) {
 				lockable->lock(cross);
 			} else {
-				Locker::doLock = false;
+				doLock = false;
 			}
 		}
 

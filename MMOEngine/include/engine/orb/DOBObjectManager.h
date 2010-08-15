@@ -52,6 +52,7 @@ namespace engine {
 
 		virtual uint64 getNextFreeObjectID();
 
+		virtual void savePersistentObjects();
 	};
 
 	}

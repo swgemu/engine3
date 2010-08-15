@@ -287,9 +287,7 @@ ManagedObjectImplementation::operator const ManagedObject*() {
 }
 
 TransactionalObject* ManagedObjectImplementation::clone() {
-	ManagedObjectImplementation* objectCopy = new ManagedObjectImplementation(DummyConstructorParameter::instance());
-	*((ManagedObjectImplementation*) objectCopy) = *this;
-	return (TransactionalObject*) objectCopy;
+	return (TransactionalObject*) new ManagedObjectImplementation(*this);
 }
 
 

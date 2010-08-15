@@ -18,9 +18,9 @@ namespace engine {
 
 		String databaseFileName;
 
-	private:
-		const static int DEADLOCK_MAX_RETRIES = 20;
+		Mutex writeLock;
 
+	private:
 		void closeDatabase();
 		void openDatabase();
 
@@ -31,9 +31,14 @@ namespace engine {
 		ObjectDatabase(ObjectDatabaseManager* dbEnv, const String& dbFileName);
 		~ObjectDatabase();
 
+		const static int DEADLOCK_MAX_RETRIES = 1000;
+
 		int getData(uint64 objKey, ObjectInputStream* objectData);
-		int putData(uint64 objKey, ObjectOutputStream* stream);
+		int putData(uint64 objKey, ObjectOutputStream* stream, Object* object);
 		int deleteData(uint64 objKey);
+
+		int tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction);
+		int tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction);
 
 		int sync();
 
@@ -54,7 +59,7 @@ namespace engine {
 		engine::db::berkley::DatabaseEntry key, data;
 
 	public:
-		ObjectDatabaseIterator(ObjectDatabase* database);
+		ObjectDatabaseIterator(ObjectDatabase* database, bool useCurrentThreadTransaction = false);
 		ObjectDatabaseIterator(engine::db::berkley::BerkeleyDatabase* databaseHandle);
 		~ObjectDatabaseIterator();
 

@@ -8,6 +8,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/platform.h"
 
+#include "system/lang/Variable.h"
+
+#include "system/io/ObjectInputStream.h"
+#include "system/io/ObjectOutputStream.h"
+
 #ifdef PLATFORM_MAC
 #include <libkern/OSAtomic.h>
 #elif PLATFORM_FREEBSD
@@ -20,7 +25,7 @@ namespace sys {
   namespace thread {
 	namespace atomic {
 
-	class AtomicInteger {
+	class AtomicInteger : public Variable {
 		volatile uint32 value;
 
 	public:
@@ -110,6 +115,18 @@ namespace sys {
 
 		operator uint32() const {
 			return value;
+		}
+
+		bool toBinaryStream(sys::io::ObjectOutputStream* stream) {
+			stream->writeInt(value);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream) {
+			*this = stream->readInt();
+
+			return true;
 		}
 	};
 

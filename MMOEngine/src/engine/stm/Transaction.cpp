@@ -37,10 +37,13 @@ bool Transaction::commit() {
 
 	commitTime += System::getMikroTime() - startTime;
 
-	if (commited)
+	if (commited) {
 		info("commited");
-	else
+	} else {
 		info("aborted");
+
+		reset();
+	}
 
 	return commited;
 }

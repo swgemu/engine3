@@ -21,6 +21,8 @@ namespace engine {
 
 		DistributedObjectClassHelper* _classHelper;
 
+		bool destroyed;
+
 	#ifdef TRACE_REFERENCING
 		Vector<StackTrace*> traces;
 

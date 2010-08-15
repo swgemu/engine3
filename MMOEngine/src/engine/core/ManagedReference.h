@@ -23,13 +23,13 @@ namespace engine {
 		ManagedReference() : Reference<O>() {
 		}
 
-		ManagedReference(ManagedReference& ref) : Reference<O>(ref) {
-		}
+		/*ManagedReference(ManagedReference& ref) : Reference<O>(ref) {
+		}*/
 
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
 		}
 
-		ManagedReference(const O obj) : Reference<O>(obj) {
+		ManagedReference(O obj) : Reference<O>(obj) {
 		}
 
 		~ManagedReference() {
@@ -108,7 +108,7 @@ namespace engine {
 		}
 
 	protected:
-		void updateObject(const O obj) {
+		void updateObject(O obj) {
 			Reference<O>::updateObject(obj);
 		}
 

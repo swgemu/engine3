@@ -53,9 +53,7 @@ ManagedVectorImplementation::operator const ManagedVector*() {
 }
 
 TransactionalObject* ManagedVectorImplementation::clone() {
-	ManagedVectorImplementation* objectCopy = new ManagedVectorImplementation(DummyConstructorParameter::instance());
-	*((ManagedVectorImplementation*) objectCopy) = *this;
-	return (TransactionalObject*) objectCopy;
+	return (TransactionalObject*) new ManagedVectorImplementation(*this);
 }
 
 

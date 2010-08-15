@@ -20,8 +20,8 @@ namespace engine {
 		ManagedWeakReference() : WeakReference<O>() {
 		}
 
-		ManagedWeakReference(ManagedWeakReference& ref) : WeakReference<O>(ref) {
-		}
+		/*ManagedWeakReference(ManagedWeakReference& ref) : WeakReference<O>(ref) {
+		}*/
 
 		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref) {
 		}

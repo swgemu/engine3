@@ -83,18 +83,6 @@ namespace engine {
 
 		void abort();
 
-		void reset();
-
-		bool acquireReadWriteObjects();
-
-		void releaseReadWriteObjects();
-
-		bool validateReadOnlyObjects();
-
-		bool resolveConflict(Transaction* transaction);
-
-		void discardReadWriteObjects();
-
 		template<class O> O openObject(TransactionalObjectHeader<O>* header);
 
 		template<class O> O openObjectForWrite(TransactionalObjectHeader<O>* header);
@@ -123,6 +111,18 @@ namespace engine {
 		bool doCommit();
 
 		bool setState(int currentstate, int newstate);
+
+		void reset();
+
+		bool acquireReadWriteObjects();
+
+		void releaseReadWriteObjects();
+
+		bool validateReadOnlyObjects();
+
+		bool resolveConflict(Transaction* transaction);
+
+		void discardReadWriteObjects();
 
 		void addExecutingTask(Task* task) {
 			executingTasks.add(task);

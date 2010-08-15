@@ -6,17 +6,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SINGLETON_H_
 #define SINGLETON_H_
 
-#include "system/lang.h"
+#include "../../system/thread/ReadWriteLock.h"
 
 namespace engine {
 	namespace util {
 
 	template<class O> class SingletonWrapper {
 		O* inst;
+		ReadWriteLock rwlock;
+		bool finalized ;
 
 	public:
 		SingletonWrapper() {
 			inst = NULL;
+			finalized = false;
 		}
 
 		~SingletonWrapper() {
@@ -24,15 +27,35 @@ namespace engine {
 		}
 
 		O* instance() {
-			if (inst == NULL)
-				inst = new O();
+			rwlock.rlock();
+
+			if (inst == NULL && !finalized) {
+				rwlock.runlock();
+
+				rwlock.wlock();
+
+				if (inst == NULL && !finalized)
+					inst = new O();
+
+				rwlock.unlock();
+
+				return inst;
+			}
+
+			rwlock.runlock();
 
 			return inst;
 		}
 
 		void finalize() {
+			rwlock.wlock();
+
 			if (inst != NULL)
 				delete inst;
+
+			finalized = true;
+
+			rwlock.unlock();
 
 			inst = NULL;
 		}

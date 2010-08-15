@@ -40,8 +40,6 @@ void TaskWorkerThread::run() {
 
 				if (transaction->commit())
 					break;
-
-				transaction->reset();
 			}
 		} catch (Exception& e) {
 			error(e.getMessage());

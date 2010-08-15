@@ -25,8 +25,8 @@ namespace sys {
 		ReferenceCounter() {
 		}
 
-		ReferenceCounter(ReferenceCounter& counter) {
-			_references = counter._references;
+		ReferenceCounter(const ReferenceCounter& counter) {
+			//_references = counter._references; this is wrong!
 		}
 
 		virtual ~ReferenceCounter() {

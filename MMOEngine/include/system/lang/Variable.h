@@ -32,8 +32,15 @@ namespace sys {
 
 		}
 
-		virtual bool toString(String& str) = 0;
-		virtual bool parseFromString(const String& str, int version = 0) = 0;
+		virtual bool toString(String& str) {
+			// FIXME: deprecated
+			return false;
+		}
+
+		virtual bool parseFromString(const String& str, int version = 0) {
+			// FIXME: deprecated
+			return false;
+		}
 
 		virtual bool toBinaryStream(ObjectOutputStream* stream) = 0;
 		virtual bool parseFromBinaryStream(ObjectInputStream* stream) = 0;
