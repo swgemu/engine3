@@ -53,7 +53,6 @@ MMOEngine/external/zlib/include/zconf.h -text
 MMOEngine/external/zlib/include/zlib.h -text
 MMOEngine/external/zlib/lib/zlib1.lib -text
 MMOEngine/include/engine/core/Core.h -text
-MMOEngine/include/engine/core/ManagedObject.cpp -text
 MMOEngine/include/engine/core/ManagedObject.h -text
 MMOEngine/include/engine/core/ManagedObject.idl -text
 MMOEngine/include/engine/core/ManagedObjectImplementation.h -text

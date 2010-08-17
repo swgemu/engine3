@@ -56,6 +56,8 @@ public:
 
 	void setLockName(const String& name);
 
+	bool notifyDestroy();
+
 	void writeObject(String& data);
 
 	void writeObject(ObjectOutputStream* stream);
@@ -71,6 +73,10 @@ public:
 	void queueUpdateToDatabaseTask();
 
 	void clearUpdateToDatabaseTask();
+
+	unsigned int getLastCRCSave();
+
+	void setLastCRCSave(unsigned int crc);
 
 	bool isPersistent();
 
@@ -103,6 +109,8 @@ protected:
 
 	void _setLockName(const String& name);
 
+	bool _notifyDestroy();
+
 	DistributedObjectServant* __getImplementation();
 
 	void __setImplementation(DistributedObjectServant* servant);
@@ -114,6 +122,10 @@ class ManagedObjectImplementation : public DistributedObjectServant, public Tran
 protected:
 	int persistenceLevel;
 
+private:
+	unsigned int lastCRCSave;
+
+protected:
 	ObjectUpdateToDatabaseTask* updateToDatabaseTask;
 
 public:
@@ -136,6 +148,8 @@ public:
 
 	void setLockName(const String& name);
 
+	bool notifyDestroy();
+
 	virtual void writeObject(String& data);
 
 	virtual void writeObject(ObjectOutputStream* stream);
@@ -151,6 +165,10 @@ public:
 	virtual void queueUpdateToDatabaseTask();
 
 	void clearUpdateToDatabaseTask();
+
+	unsigned int getLastCRCSave();
+
+	void setLastCRCSave(unsigned int crc);
 
 	bool isPersistent();
 
@@ -206,6 +224,8 @@ public:
 
 	void setLockName(const String& name);
 
+	bool notifyDestroy();
+
 	void writeObject(String& data);
 
 	void readObject(const String& data);
@@ -217,6 +237,10 @@ public:
 	void queueUpdateToDatabaseTask();
 
 	void clearUpdateToDatabaseTask();
+
+	unsigned int getLastCRCSave();
+
+	void setLastCRCSave(unsigned int crc);
 
 	bool isPersistent();
 
