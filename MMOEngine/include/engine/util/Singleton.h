@@ -27,22 +27,14 @@ namespace engine {
 		}
 
 		O* instance() {
-			rwlock.rlock();
-
 			if (inst == NULL && !finalized) {
-				rwlock.runlock();
-
 				rwlock.wlock();
 
 				if (inst == NULL && !finalized)
 					inst = new O();
 
 				rwlock.unlock();
-
-				return inst;
 			}
-
-			rwlock.runlock();
 
 			return inst;
 		}

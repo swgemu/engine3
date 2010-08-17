@@ -224,6 +224,9 @@ void ObjectDatabaseManager::failLocalTransaction() {
 }*/
 
 void ObjectDatabaseManager::commitLocalTransaction() {
+	if (this == NULL)
+		return;
+
 	if (!loaded)
 		return;
 
