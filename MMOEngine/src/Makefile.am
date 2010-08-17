@@ -8,10 +8,10 @@ AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
 endif
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I/usr/local/BerkeleyDB.4.8/include -I$src/
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I/usr/local/BerkeleyDB.5.0/include -I$src/
 
 LIBS =  $(SYSTEM_LIBS) \
-		-L/usr/local/BerkeleyDB.4.8/lib \
+		-L/usr/local/BerkeleyDB.5.0/lib \
 		-lmysqlclient -llua -lz -ldb \
 		-lengine3
 
