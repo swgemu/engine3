@@ -13,13 +13,14 @@ namespace engine {
 
 	template<class O> class SingletonWrapper {
 		O* inst;
-		ReadWriteLock rwlock;
+		pthread_rwlock_t rwlock;
 		bool finalized ;
 
 	public:
 		SingletonWrapper() {
 			inst = NULL;
 			finalized = false;
+			pthread_rwlock_init(&rwlock, NULL);
 		}
 
 		~SingletonWrapper() {
@@ -28,26 +29,29 @@ namespace engine {
 
 		O* instance() {
 			if (inst == NULL && !finalized) {
-				rwlock.wlock();
+				int res = pthread_rwlock_wrlock(&rwlock);//;rwlock.wlock();
+
+				if (res != 0)
+					System::out << "unlock failed on RWLock Singleton (" << res << ")\n";
 
 				if (inst == NULL && !finalized)
 					inst = new O();
 
-				rwlock.unlock();
+				pthread_rwlock_unlock(&rwlock);
 			}
 
 			return inst;
 		}
 
 		void finalize() {
-			rwlock.wlock();
+			pthread_rwlock_wrlock(&rwlock);//;rwlock.wlock();
 
 			if (inst != NULL)
 				delete inst;
 
 			finalized = true;
 
-			rwlock.unlock();
+			pthread_rwlock_unlock(&rwlock);
 
 			inst = NULL;
 		}
