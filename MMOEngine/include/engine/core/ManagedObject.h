@@ -245,10 +245,6 @@ public:
 
 	void setPersistent(int level);
 
-	DistributedObjectServant* _getImplementation();
-
-	void _setImplementation(DistributedObjectServant* servant);
-
 protected:
 	String _param0_setLockName__String_;
 	String _param0_writeObject__String_;

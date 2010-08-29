@@ -61,6 +61,7 @@ void ManagedObject::setLockName(const String& name) {
 		_setLockName(name);*/
 }
 
+#ifdef WITH_STM
 DistributedObjectServant* ManagedObject::_getImplementation() {
 	return getForUpdate();
 }
@@ -68,6 +69,7 @@ DistributedObjectServant* ManagedObject::_getImplementation() {
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
 	setObject((ManagedObjectImplementation*) servant);
 }
+#endif
 
 bool ManagedObject::notifyDestroy() {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();

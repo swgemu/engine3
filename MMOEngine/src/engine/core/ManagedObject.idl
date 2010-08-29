@@ -121,9 +121,11 @@ class ManagedObject implements TransactionalObject, Serializable {
 	 */
 	public native void setPersistent(int level);
 	
+	@local
 	@nativeStub 
 	public native DistributedObjectServant _getImplementation();
 
+	@local
 	@nativeStub 
 	public native void _setImplementation(DistributedObjectServant servant);
 }
