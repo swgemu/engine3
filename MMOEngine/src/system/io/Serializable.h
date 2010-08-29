@@ -153,6 +153,23 @@ namespace sys {
 				type = 0;
 			}
 
+			VariableName(const VariableName& v) : Variable() {
+				name = v.name;
+				version = v.version;
+				type = v.type;
+			}
+
+			VariableName& operator=(const VariableName& v) {
+				if (this == &v)
+					return *this;
+
+				name = v.name;
+				version = v.version;
+				type = v.type;
+
+				return *this;
+			}
+
 			~VariableName() {
 
 			}

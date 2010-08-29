@@ -237,6 +237,7 @@ void Serializable::addSerializableVariable(const char* name, Variable* variable,
 	VariableName varName;
 	varName.setName(name);
 	varName.setVersion(version);
+	varName.setType(0);
 
 	_variables.put(varName, variable);
 }

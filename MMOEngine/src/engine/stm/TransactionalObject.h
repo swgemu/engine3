@@ -14,7 +14,9 @@ namespace engine {
   namespace stm {
 
 	class TransactionalObject {
-		virtual TransactionalObject* clone() = 0;
+		virtual TransactionalObject* clone() {
+			return NULL;
+		}
 
 	public:
 		virtual ~TransactionalObject() {

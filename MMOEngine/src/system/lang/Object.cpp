@@ -31,6 +31,8 @@ void Object::releaseWeak(void* ref) {
 void Object::destroy() {
 	Locker locker(&referenceMutex);
 
+	_destroying = true;
+
 	while (!weakReferences.isEmpty()) {
 		WeakReference<Object*>* ref = weakReferences.remove(0);
 		ref->clearObject();

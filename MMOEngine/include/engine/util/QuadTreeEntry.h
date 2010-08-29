@@ -37,13 +37,23 @@ namespace engine {
 			radius = 0.5f;
 		}
 
+		virtual void notifyAddedToCloseObjects() {
+
+		}
+
+		virtual void notifyRemovedFromCloseObjects() {
+
+		}
+
 		inline void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate = true) {
 			//System::out << "adding in range object:" << obj << "\n";
 
-			if (closeobjects.put(obj) != -1)
+			if (closeobjects.put(obj) != -1) {
 				notifyInsert(obj);
-			else if (doNotifyUpdate)
+				obj->notifyAddedToCloseObjects();
+			} else if (doNotifyUpdate) {
 				notifyPositionUpdate(obj);
+			}
 		}
 
 		inline QuadTreeEntry* getInRangeObject(int index) {
@@ -53,8 +63,10 @@ namespace engine {
 		inline void removeInRangeObject(QuadTreeEntry* obj) {
 			//System::out << "droping in range object:" << obj << "\n";
 
-			if (closeobjects.drop(obj))
+			if (closeobjects.drop(obj)) {
 				notifyDissapear(obj);
+				obj->notifyRemovedFromCloseObjects();
+			}
 			/*else {
 				QuadTreeEntry* obj2 = NULL;
 				obj2->getPositionX();
@@ -67,11 +79,16 @@ namespace engine {
 		inline void removeInRangeObject(int index) {
 			//System::out << "droping in range object with index:" << index << "\n";
 
-			closeobjects.remove(index);
+			QuadTreeEntry* entry = closeobjects.remove(index);
+			entry->notifyRemovedFromCloseObjects();
 		}
 
 		inline void removeInRangeObjects() {
 			//System::out << "droping  all in range objects\n";
+
+			for (int i = 0; i < closeobjects.size(); ++i) {
+				closeobjects.get(i)->notifyRemovedFromCloseObjects();
+			}
 
 			closeobjects.removeAll();
 		}

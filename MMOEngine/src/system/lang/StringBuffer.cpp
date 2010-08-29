@@ -210,7 +210,7 @@ StringBuffer& StringBuffer::insert(int offset, const char* str) {
 
 StringBuffer& StringBuffer::insert(int offset, const char* str, int len) {
 	for (int i = 0; i < len; ++i)
-		insert(offset, str[i]);
+		insert(offset + i, str[i]);
 
 	return *this;
 }

@@ -41,6 +41,8 @@ namespace sys {
 
 		Vector<WeakReference<Object*>*> weakReferences;
 
+		bool _destroying;
+
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 	#endif
@@ -48,13 +50,17 @@ namespace sys {
 	public:
 		Object() : ReferenceCounter(), Variable() {
 
+			_destroying = false;
+
 		#ifdef TRACE_REFERENCES
 			referenceHolders.setNullValue(NULL);
 		#endif
 		}
 
 		Object(const Object& obj) : ReferenceCounter(), Variable() {
+			//_references = obj._references;
 
+			_destroying = false;
 		}
 
 		virtual ~Object() {
@@ -68,6 +74,10 @@ namespace sys {
 
 		virtual bool notifyDestroy() {
 			return true;
+		}
+
+		inline void _setDestroying(bool val) {
+			_destroying = val;
 		}
 
 		void finalize() {
@@ -87,6 +97,10 @@ namespace sys {
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			return false;
+		}
+
+		inline bool _isGettingDestroyed() const {
+			return _destroying;
 		}
 
 		inline void acquire() {

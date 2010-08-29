@@ -50,7 +50,10 @@ ObjectDatabaseManager::~ObjectDatabaseManager() {
 }
 
 void ObjectDatabaseManager::checkpoint() {
-	databaseEnvironment->checkpoint();
+	CheckpointConfig checkpointConfig;
+	checkpointConfig.setForce(true);
+
+	databaseEnvironment->checkpoint(checkpointConfig);
 
 	if (!checkpointTask->isScheduled())
 		checkpointTask->schedule(CHECKPOINTTIME);
@@ -67,7 +70,8 @@ void ObjectDatabaseManager::openEnvironment() {
 	config.setTransactional(true);
 	config.setInitializeCache(true);
 	config.setMaxLogFileSize(1000 * 1000 * 100); // 100mb
-	config.setLockDetectMode(LockDetectMode::RANDOM);
+	//config.setLockDetectMode(LockDetectMode::RANDOM);
+	config.setLockDetectMode(LockDetectMode::YOUNGEST);
 
 	try {
 		databaseEnvironment = new Environment("databases", config);
@@ -182,46 +186,6 @@ CurrentTransaction* ObjectDatabaseManager::getCurrentTransaction() {
 
 	return transaction;
 }
-/*
-Transaction* ObjectDatabaseManager::getLocalTransaction() {
-	if (!loaded)
-		return  NULL;
-
-	Transaction* berkeleyTransaction = NULL;
-
-	CurrentTransaction* transaction = localTransaction.get();
-
-	if (transaction == NULL) {
-		transaction = new CurrentTransaction();
-
-		localTransaction.set(transaction);
-	}
-
-	if (transaction->hasFailed())
-		return NULL;
-
-	berkeleyTransaction = transaction->getCurrentTransaction();
-
-	if (berkeleyTransaction == NULL) {
-		berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
-
-		transaction->setCurrentTransaction(berkeleyTransaction);
-	}
-
-	return berkeleyTransaction;
-}
-
-void ObjectDatabaseManager::failLocalTransaction() {
-	CurrentTransaction* transaction = localTransaction.get();
-
-	transaction->setFailed(true);
-	Transaction* berkeley = transaction->getCurrentTransaction();
-
-	if (berkeley != NULL)
-		berkeley->abort();
-
-	transaction->setCurrentTransaction(NULL);
-}*/
 
 void ObjectDatabaseManager::commitLocalTransaction() {
 	if (this == NULL)
@@ -234,28 +198,6 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 
 	if (transaction == NULL)
 		return;
-
-	/*try {
-		Transaction* berkeley = transaction->getCurrentTransaction();
-
-		if (berkeley == NULL)
-			return;
-
-		if (!transaction->hasFailed()) {
-			int res = berkeley->commitNoSync();
-
-			if (res != 0)
-				error("error commiting local transaction with error " + String::valueOf(res));
-			else
-				info("commited local transaction");
-		}
-
-		transaction->setCurrentTransaction(NULL);
-		transaction->setFailed(false);
-
-	} catch (...) {
-		error("error commiting local tranasction");
-	}*/
 
 	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
 
@@ -294,8 +236,10 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 					berkeleyTransaction->abort();
 					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration), true);
 					break;
-				} else if (ret != 0) {
-					error("error while trying to deleteData :" + String::valueOf(db_strerror(ret)));
+				} else if (ret != 0 && ret != DB_NOTFOUND) {
+					StringBuffer msg;
+					msg << "error while trying to deleteData :" << db_strerror(ret);
+					error(msg.toString());
 				}
 			}
 		}

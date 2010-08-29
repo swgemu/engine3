@@ -100,7 +100,7 @@ DistributedObjectBrokerClient* DistributedObjectBroker::createConnection(Socket*
 }
 
 void DistributedObjectBroker::registerClass(const String& name, DistributedObjectClassHelper* helper) {
-	//Locker locker(this);
+	Locker locker(this);
 
 	classMap.put(name, helper);
 }
@@ -193,8 +193,13 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 
 	Locker clocker(objectManager, this);
 
+	if (obj->_isGettingDestroyed())
+		return false;
+
 	if (obj->getReferenceCount() > 0)
 		return false;
+
+	obj->_setDestroying(true);
 
 	obj->undeploy();
 

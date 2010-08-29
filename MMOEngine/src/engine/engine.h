@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ENGINE_H_
 #define ENGINE_H_
 
-#define WITH_STM
+//#define WITH_STM
 
 #include "system/lang.h"
 
