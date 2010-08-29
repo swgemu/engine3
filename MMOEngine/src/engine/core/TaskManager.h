@@ -39,6 +39,8 @@ namespace engine {
 	public:
 		void initialize();
 
+		void start();
+
 		void shutdown();
 
 		void executeTask(Task* task);

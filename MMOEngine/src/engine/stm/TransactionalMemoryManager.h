@@ -20,13 +20,16 @@ namespace engine {
 	class TransactionalMemoryManager : public Singleton<TransactionalMemoryManager> {
 		ThreadLocal<Transaction> currentTransaction;
 
-	public:
+	protected:
 		TransactionalMemoryManager();
 
 		Transaction* getTransaction();
 
 		void clearTransaction();
-	};
+
+		friend class SingletonWrapper<TransactionalMemoryManager>;
+		friend class Transaction;
+};
 
   } // namespace stm
 } // namespace engine

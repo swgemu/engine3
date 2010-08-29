@@ -28,19 +28,21 @@ void TaskWorkerThread::start(TaskManager* manager) {
 }
 
 void TaskWorkerThread::run() {
-	Task* task = NULL;
+	Reference<Task*> task = NULL;
 
 	while ((task = taskManager->getTask()) != NULL) {
 		try {
-			while (true) {
+		#ifdef WITH_STM
+			engine::stm::Transaction* transaction =	engine::stm::Transaction::currentTransaction();
+
+			do {
 				task->run();
+			} while (!transaction->commit());
 
-				engine::stm::Transaction* transaction =
-						engine::stm::Transaction::currentTransaction();
-
-				if (transaction->commit())
-					break;
-			}
+			delete transaction;
+		#else
+			task->run();
+		#endif
 		} catch (Exception& e) {
 			error(e.getMessage());
 		} catch (...) {

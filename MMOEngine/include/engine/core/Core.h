@@ -29,7 +29,15 @@ namespace engine {
 		}
 
 		virtual void initialize() {
-			engine::stm::Transaction::currentTransaction()->commit();
+		#ifdef WITH_STM
+			engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
+
+			if (!transaction->commit())
+				throw Exception("unable to commit initialization transaction");
+		#endif
+
+			TaskManager* taskManager = getTaskManager();
+			taskManager->start();
 		}
 
 		virtual ~Core() {

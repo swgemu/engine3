@@ -17,6 +17,8 @@ Transaction* TransactionalMemoryManager::getTransaction() {
 	if (transaction == NULL) {
 		transaction = new Transaction();
 
+		transaction->info("created");
+
 		currentTransaction.set(transaction);
 	}
 

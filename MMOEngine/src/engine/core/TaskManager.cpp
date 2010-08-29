@@ -27,16 +27,34 @@ void TaskManager::initialize() {
 
 	for (int i = 0; i < DEAFULT_WORKER_THREADS; ++i) {
 		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(i));
-		worker->start(this);
 
 		workers.add(worker);
 	}
 
 	for (int i = 0; i < DEAFULT_SCHEDULER_THREADS; ++i) {
 		TaskScheduler* scheduler = new TaskScheduler("TaskScheduler" + String::valueOf(i));
-		scheduler->start();
 
 		schedulers.add(scheduler);
+	}
+
+	StringBuffer msg;
+	msg << "initialized";
+	info(msg, true);
+
+	unlock();
+}
+
+void TaskManager::start() {
+	lock();
+
+	for (int i = 0; i < DEAFULT_WORKER_THREADS; ++i) {
+		TaskWorkerThread* worker = workers.get(i);
+		worker->start(this);
+	}
+
+	for (int i = 0; i < DEAFULT_SCHEDULER_THREADS; ++i) {
+		TaskScheduler* scheduler = schedulers.get(i);
+		scheduler->start();
 	}
 
 	StringBuffer msg;
@@ -47,8 +65,6 @@ void TaskManager::initialize() {
 }
 
 void TaskManager::shutdown() {
-	//lock();
-
 	while (!schedulers.isEmpty()) {
 		lock();
 
@@ -76,8 +92,6 @@ void TaskManager::shutdown() {
 	}
 
 	info("stopped");
-
-	//unlock();
 }
 
 TaskScheduler* TaskManager::getTaskScheduler(bool doLock) {

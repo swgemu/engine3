@@ -12,6 +12,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 using namespace engine::stm;
 
+AtomicInteger transactionID;
+
 Transaction::Transaction() : Logger() {
 	status = UNDECIDED;
 
@@ -19,13 +21,14 @@ Transaction::Transaction() : Logger() {
 
 	String threadName = Thread::getCurrentThread()->getName();
 
-	setLoggingName("Transaction " + threadName.subString(7, threadName.length()));
+	int tid = transactionID.increment();
+
+	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
+	setLogging(true);
 }
 
 Transaction::~Transaction() {
 	reset();
-
-	TransactionalMemoryManager::instance()->clearTransaction();
 }
 
 bool Transaction::commit() {
@@ -39,6 +42,8 @@ bool Transaction::commit() {
 
 	if (commited) {
 		info("commited");
+
+		TransactionalMemoryManager::instance()->clearTransaction();
 	} else {
 		info("aborted");
 
