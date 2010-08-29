@@ -18,7 +18,7 @@ MMOEngine/aclocal.m4 -text
 MMOEngine/bin/idlc -text
 MMOEngine/bin/idlc.bat -text
 MMOEngine/bin/idlc.jar -text
-MMOEngine/bin/idlcnon-stm.jar -text
+MMOEngine/bin/idlcstm.jar -text
 MMOEngine/build/unix/Makefile -text
 MMOEngine/build/unix/confSFqHD2/config.h -text
 MMOEngine/build/unix/confSFqHD2/defines.awk -text
