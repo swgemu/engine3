@@ -84,10 +84,6 @@ public:
 
 	void setPersistent(int level);
 
-	DistributedObjectServant* _getImplementation();
-
-	void _setImplementation(DistributedObjectServant* servant);
-
 protected:
 	ManagedObject(DummyConstructorParameter* param);
 
@@ -110,10 +106,6 @@ protected:
 	void _setLockName(const String& name);
 
 	bool _notifyDestroy();
-
-	DistributedObjectServant* __getImplementation();
-
-	void __setImplementation(DistributedObjectServant* servant);
 
 	friend class ManagedObjectHelper;
 };
@@ -175,10 +167,6 @@ public:
 	int getPersistenceLevel();
 
 	void setPersistent(int level);
-
-	DistributedObjectServant* _getImplementation();
-
-	void _setImplementation(DistributedObjectServant* servant);
 
 	ManagedObject* _this;
 

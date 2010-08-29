@@ -100,7 +100,7 @@ DistributedObjectBrokerClient* DistributedObjectBroker::createConnection(Socket*
 }
 
 void DistributedObjectBroker::registerClass(const String& name, DistributedObjectClassHelper* helper) {
-	Locker locker(this);
+	//Locker locker(this);
 
 	classMap.put(name, helper);
 }

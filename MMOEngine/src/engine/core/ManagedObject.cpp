@@ -291,22 +291,6 @@ void ManagedObject::setPersistent(int level) {
 		((ManagedObjectImplementation*) _impl)->setPersistent(level);
 }
 
-DistributedObjectServant* ManagedObject::__getImplementation() {
-	if (_impl == NULL) {
-		throw ObjectNotLocalException(this);
-
-	} else
-		return ((ManagedObjectImplementation*) _impl)->_getImplementation();
-}
-
-void ManagedObject::__setImplementation(DistributedObjectServant* servant) {
-	if (_impl == NULL) {
-		throw ObjectNotLocalException(this);
-
-	} else
-		((ManagedObjectImplementation*) _impl)->_setImplementation(servant);
-}
-
 /*
  *	ManagedObjectImplementation
  */

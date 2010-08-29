@@ -291,31 +291,6 @@ void ManagedObject::setPersistent(int level) {
 		((ManagedObjectImplementation*) _impl)->setPersistent(level);
 }
 
-DistributedObjectServant* ManagedObject::__getImplementation() {
-	if (_impl == NULL) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, 26);
-
-		return (DistributedObjectServant*) method.executeWithObjectReturn();
-	} else
-		return ((ManagedObjectImplementation*) _impl)->_getImplementation();
-}
-
-void ManagedObject::__setImplementation(DistributedObjectServant* servant) {
-	if (_impl == NULL) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, 27);
-		method.addObjectParameter(servant);
-
-		method.executeWithVoidReturn();
-	} else
-		((ManagedObjectImplementation*) _impl)->_setImplementation(servant);
-}
-
 /*
  *	ManagedObjectImplementation
  */
@@ -485,12 +460,6 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	case 25:
 		setPersistent(inv->getSignedIntParameter());
 		break;
-	case 26:
-		resp->insertLong(_getImplementation()->_getObjectID());
-		break;
-	case 27:
-		_setImplementation((DistributedObjectServant*) inv->getObjectParameter());
-		break;
 	default:
 		return NULL;
 	}
@@ -576,14 +545,6 @@ int ManagedObjectAdapter::getPersistenceLevel() {
 
 void ManagedObjectAdapter::setPersistent(int level) {
 	((ManagedObjectImplementation*) impl)->setPersistent(level);
-}
-
-DistributedObjectServant* ManagedObjectAdapter::_getImplementation() {
-	return ((ManagedObjectImplementation*) impl)->_getImplementation();
-}
-
-void ManagedObjectAdapter::_setImplementation(DistributedObjectServant* servant) {
-	((ManagedObjectImplementation*) impl)->_setImplementation(servant);
 }
 
 /*
