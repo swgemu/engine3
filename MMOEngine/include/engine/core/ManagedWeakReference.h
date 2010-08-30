@@ -44,6 +44,14 @@ namespace engine {
 			return obj;
 		}
 
+		inline O get() const {
+			return WeakReference<O>::object;
+		}
+
+		inline O getForUpdate() const {
+			return WeakReference<O>::object;
+		}
+
 		int compareTo(const ManagedWeakReference& ref) const {
 			if (WeakReference<O>::object->_getObjectID() < ref.WeakReference<O>::object->_getObjectID())
 				return 1;
@@ -94,6 +102,15 @@ namespace engine {
 				return false;
 
 			return true;
+		}
+
+	private:
+		O operator->() const {
+			return WeakReference<O>::object;
+		}
+
+		operator O() const {
+			return WeakReference<O>::object;
 		}
 
 	};

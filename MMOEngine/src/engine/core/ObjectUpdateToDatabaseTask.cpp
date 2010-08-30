@@ -10,27 +10,29 @@
 #include "ManagedReference.h"
 
 ObjectUpdateToDatabaseTask::ObjectUpdateToDatabaseTask(ManagedObject* object) : Task(300000) {
-	ObjectUpdateToDatabaseTask::object = object;
+	ObjectUpdateToDatabaseTask::objectRef = object;
 }
 
 void ObjectUpdateToDatabaseTask::run() {
-	ManagedReference<ManagedObject*> strongRef = object.get();
+	ManagedReference<ManagedObject*> strongRef = objectRef.get();
 
-	if (strongRef == NULL)
+	ManagedObject* object = objectRef.getForUpdate();
+
+	if (object == NULL)
 		return;
 
 	try {
-		strongRef->wlock();
+		object->wlock();
 
-		strongRef->clearUpdateToDatabaseTask();
-		//strongRef->updateToDatabase();
+		object->clearUpdateToDatabaseTask();
+		//object->updateToDatabase();
 
-		strongRef->unlock();
+		object->unlock();
 	} catch (Exception& e) {
 		//object->error(e.getMessage());
-		strongRef->unlock();
+		object->unlock();
 	} catch (...) {
 		//object->error("unreported exception caught in ObjectSaveToDatabaseTask::run");
-		strongRef->unlock();
+		object->unlock();
 	}
 }

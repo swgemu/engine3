@@ -3,21 +3,17 @@
 #include "ObjectUpdateToDatabaseTask.h"
 
 void ManagedObject::lock(bool doLock) {
-#ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
 	if (_impl == NULL)
 		_wlock(doLock);
-#endif
 }
 
 void ManagedObject::lock(ManagedObject* obj) {
-#ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
 	if (_impl == NULL)
 		_wlock(obj);
-#endif
 }
 
 void ManagedObject::rlock(bool doLock) {
@@ -30,51 +26,41 @@ void ManagedObject::rlock(bool doLock) {
 }
 
 void ManagedObject::wlock(bool doLock) {
-#ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
 	if (_impl == NULL)
 		_wlock(doLock);
-#endif
 }
 
 void ManagedObject::wlock(ManagedObject* obj) {
-#ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
 	if (_impl == NULL)
 		_wlock(obj);
-#endif
 }
 
 void ManagedObject::unlock(bool doLock) {
 	if (getPersistenceLevel() == 3)
 		updateToDatabase();
 
-#ifndef WITH_STM
 	DistributedObjectStub::unlock(doLock);
 
 	if (_impl == NULL)
 		_unlock(doLock);
-#endif
 }
 
 void ManagedObject::runlock(bool doLock) {
-#ifndef WITH_STM
 	DistributedObjectStub::runlock(doLock);
 
 	if (_impl == NULL)
 		_runlock(doLock);
-#endif
 }
 
 void ManagedObject::setLockName(const String& name) {
-#ifndef WITH_STM
 	DistributedObjectStub::setLockName(name);
 
 	if (_impl == NULL)
 		_setLockName(name);
-#endif
 }
 
 #ifdef WITH_STM

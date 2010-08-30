@@ -39,6 +39,9 @@ class ManagedObject implements TransactionalObject, Serializable {
 	public native void releaseWeak(WeakReference<ManagedObject> ref);*/
 
 	@nativeStub 
+	public native void updateForWrite();
+
+	@nativeStub 
 	public native void lock(boolean doLock = true);
 	
 	@nativeStub 

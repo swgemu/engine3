@@ -50,6 +50,14 @@ namespace engine {
 			return obj;
 		}
 
+		inline O get() const {
+			return Reference<O>::object;
+		}
+
+		inline O getForUpdate() const {
+			return Reference<O>::object;
+		}
+
 		int compareTo(const ManagedReference& ref) const {
 			if (Reference<O>::object->_getObjectID() < ref.Reference<O>::object->_getObjectID())
 				return 1;
@@ -116,6 +124,16 @@ namespace engine {
 		void updateObject(const ManagedReference& ref) {
 			Reference<O>::updateObject(ref.object);
 		}
+
+	private:
+		O operator->() const {
+			return Reference<O>::object;
+		}
+
+		operator O() const {
+			return Reference<O>::object;
+		}
+
 };
 
   } // namespace core

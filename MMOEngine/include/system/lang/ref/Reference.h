@@ -56,6 +56,14 @@ namespace sys {
 			return object;
 		}
 
+		bool operator==(O obj) {
+			return object == obj;
+		}
+
+		bool operator!=(O obj) {
+			return object != obj;
+		}
+
 		O operator->() const {
 			return object;
 		}

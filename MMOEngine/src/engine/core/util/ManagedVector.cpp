@@ -9,7 +9,6 @@
  */
 
 ManagedVector::ManagedVector(DummyConstructorParameter* param) {
-	_impl = NULL;
 }
 
 ManagedVector::~ManagedVector() {
@@ -53,32 +52,30 @@ ManagedVectorImplementation::operator const ManagedVector*() {
 	return _this;
 }
 
+TransactionalObject* ManagedVectorImplementation::clone() {
+	return (TransactionalObject*) new ManagedVectorImplementation(*this);
+}
+
+
 void ManagedVectorImplementation::lock(bool doLock) {
-	_this->lock(doLock);
 }
 
 void ManagedVectorImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
 }
 
 void ManagedVectorImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
 }
 
 void ManagedVectorImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
 }
 
 void ManagedVectorImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
 }
 
 void ManagedVectorImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
 }
 
 void ManagedVectorImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
 }
 
 void ManagedVectorImplementation::_serializationHelperMethod() {

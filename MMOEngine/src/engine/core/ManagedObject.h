@@ -36,9 +36,11 @@ using namespace engine::core;
 namespace engine {
 namespace core {
 
-class ManagedObject : public DistributedObjectStub {
+class ManagedObject : public DistributedObjectStub, public TransactionalObjectHeader<class ManagedObjectImplementation*> {
 public:
 	ManagedObject();
+
+	void updateForWrite();
 
 	void lock(bool doLock = true);
 
@@ -89,6 +91,8 @@ protected:
 
 	virtual ~ManagedObject();
 
+	void _updateForWrite();
+
 	void _lock(bool doLock = true);
 
 	void _lock(ManagedObject* obj);
@@ -123,6 +127,8 @@ protected:
 public:
 	ManagedObjectImplementation();
 	ManagedObjectImplementation(DummyConstructorParameter* param);
+
+	void updateForWrite();
 
 	void lock(bool doLock = true);
 
@@ -176,6 +182,8 @@ public:
 protected:
 	virtual ~ManagedObjectImplementation();
 
+	TransactionalObject* clone();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -185,6 +193,7 @@ protected:
 	void _serializationHelperMethod();
 
 	friend class ManagedObject;
+	friend class TransactionalObjectHandle<ManagedObjectImplementation*>;
 };
 
 class ManagedObjectAdapter : public DistributedObjectAdapter {
@@ -192,6 +201,8 @@ public:
 	ManagedObjectAdapter(ManagedObjectImplementation* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+
+	void updateForWrite();
 
 	void lock(bool doLock);
 
