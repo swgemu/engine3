@@ -16,7 +16,6 @@ ManagedObject::ManagedObject() {
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
-	_impl = NULL;
 }
 
 ManagedObject::~ManagedObject() {
@@ -323,6 +322,11 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
+
+TransactionalObject* ManagedObjectImplementation::clone() {
+	return (TransactionalObject*) new ManagedObjectImplementation(*this);
+}
+
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
