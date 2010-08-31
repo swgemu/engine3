@@ -182,8 +182,6 @@ public:
 protected:
 	virtual ~ManagedObjectImplementation();
 
-	TransactionalObject* clone();
-
 	void finalize();
 
 	void _initializeImplementation();

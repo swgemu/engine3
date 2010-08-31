@@ -39,8 +39,6 @@ public:
 protected:
 	virtual ~ManagedVectorImplementation();
 
-	TransactionalObject* clone();
-
 	void finalize();
 
 	void _initializeImplementation();

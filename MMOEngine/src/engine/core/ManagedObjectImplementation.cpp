@@ -2,6 +2,9 @@
 #include "engine/engine.h"
 #include "ObjectUpdateToDatabaseTask.h"
 
+void ManagedObject::updateForWrite() {
+}
+
 void ManagedObject::lock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
 
@@ -85,6 +88,9 @@ bool ManagedObject::notifyDestroy() {
 
 bool ManagedObjectImplementation::notifyDestroy() {
 	return _this->notifyDestroy();
+}
+
+void ManagedObjectImplementation::updateForWrite() {
 }
 
 void ManagedObjectImplementation::lock(bool doLock) {

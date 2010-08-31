@@ -335,11 +335,6 @@ ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
 
-TransactionalObject* ManagedObjectImplementation::clone() {
-	return (TransactionalObject*) new ManagedObjectImplementation(*this);
-}
-
-
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
 

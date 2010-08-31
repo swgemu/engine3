@@ -40,6 +40,8 @@ class ManagedObject : public DistributedObjectStub, public TransactionalObjectHe
 public:
 	ManagedObject();
 
+	void updateForWrite();
+
 	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
@@ -89,6 +91,8 @@ protected:
 
 	virtual ~ManagedObject();
 
+	void _updateForWrite();
+
 	void _lock(bool doLock = true);
 
 	void _lock(ManagedObject* obj);
@@ -123,6 +127,8 @@ protected:
 public:
 	ManagedObjectImplementation();
 	ManagedObjectImplementation(DummyConstructorParameter* param);
+
+	void updateForWrite();
 
 	void lock(bool doLock = true);
 
@@ -176,8 +182,6 @@ public:
 protected:
 	virtual ~ManagedObjectImplementation();
 
-	TransactionalObject* clone();
-
 	void finalize();
 
 	void _initializeImplementation();
@@ -195,6 +199,8 @@ public:
 	ManagedObjectAdapter(ManagedObjectImplementation* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+
+	void updateForWrite();
 
 	void lock(bool doLock);
 
