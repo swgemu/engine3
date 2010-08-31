@@ -62,7 +62,6 @@ protected:
 	void _serializationHelperMethod();
 
 	friend class ManagedVector;
-	friend class TransactionalObjectHandle<ManagedVectorImplementation*>;
 };
 
 class ManagedVectorAdapter : public DistributedObjectAdapter {

@@ -191,7 +191,6 @@ protected:
 	void _serializationHelperMethod();
 
 	friend class ManagedObject;
-	friend class TransactionalObjectHandle<ManagedObjectImplementation*>;
 };
 
 class ManagedObjectAdapter : public DistributedObjectAdapter {
