@@ -74,6 +74,14 @@ DistributedObjectServant* ManagedObject::_getImplementation() {
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
 	setObject((ManagedObjectImplementation*) servant);
 }
+#else
+DistributedObjectServant* ManagedObject::_getImplementation() {
+	return _impl;
+}
+
+void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
+	_impl = servant;
+}
 #endif
 
 bool ManagedObject::notifyDestroy() {

@@ -126,13 +126,13 @@ namespace engine {
 		}
 
 	private:
-		O operator->() const {
+		/*O operator->() const {
 			return Reference<O>::object;
 		}
 
 		operator O() const {
 			return Reference<O>::object;
-		}
+		}*/
 
 };
 

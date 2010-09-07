@@ -474,6 +474,10 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	case 26:
 		setPersistent(inv->getSignedIntParameter());
 		break;
+	case 27:
+				break;
+	case 28:
+				break;
 	default:
 		return NULL;
 	}

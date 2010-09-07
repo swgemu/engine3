@@ -36,9 +36,11 @@ using namespace engine::core;
 namespace engine {
 namespace core {
 
-class ManagedObject : public DistributedObjectStub, public TransactionalObjectHeader<class ManagedObjectImplementation*> {
+class ManagedObject : public DistributedObjectStub {
 public:
 	ManagedObject();
+
+	void updateForWrite();
 
 	void lock(bool doLock = true);
 
@@ -84,10 +86,16 @@ public:
 
 	void setPersistent(int level);
 
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
+
 protected:
 	ManagedObject(DummyConstructorParameter* param);
 
 	virtual ~ManagedObject();
+
+	void _updateForWrite();
 
 	void _lock(bool doLock = true);
 
@@ -107,10 +115,14 @@ protected:
 
 	bool _notifyDestroy();
 
+	DistributedObjectServant* __getImplementation();
+
+	void __setImplementation(DistributedObjectServant* servant);
+
 	friend class ManagedObjectHelper;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public TransactionalObject, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
 protected:
 	int persistenceLevel;
 
@@ -123,6 +135,8 @@ protected:
 public:
 	ManagedObjectImplementation();
 	ManagedObjectImplementation(DummyConstructorParameter* param);
+
+	void updateForWrite();
 
 	void lock(bool doLock = true);
 
@@ -168,6 +182,10 @@ public:
 
 	void setPersistent(int level);
 
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
+
 	ManagedObject* _this;
 
 	operator const ManagedObject*();
@@ -192,6 +210,8 @@ public:
 	ManagedObjectAdapter(ManagedObjectImplementation* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+
+	void updateForWrite();
 
 	void lock(bool doLock);
 
@@ -232,6 +252,10 @@ public:
 	int getPersistenceLevel();
 
 	void setPersistent(int level);
+
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
 
 protected:
 	String _param0_setLockName__String_;

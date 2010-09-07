@@ -36,7 +36,7 @@ using namespace engine::core;
 namespace engine {
 namespace core {
 
-class ManagedObject : public DistributedObjectStub, public TransactionalObjectHeader<class ManagedObjectImplementation*> {
+class ManagedObject : public DistributedObjectStub {
 public:
 	ManagedObject();
 
@@ -86,6 +86,10 @@ public:
 
 	void setPersistent(int level);
 
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
+
 protected:
 	ManagedObject(DummyConstructorParameter* param);
 
@@ -111,10 +115,14 @@ protected:
 
 	bool _notifyDestroy();
 
+	DistributedObjectServant* __getImplementation();
+
+	void __setImplementation(DistributedObjectServant* servant);
+
 	friend class ManagedObjectHelper;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public TransactionalObject, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
 protected:
 	int persistenceLevel;
 
@@ -173,6 +181,10 @@ public:
 	int getPersistenceLevel();
 
 	void setPersistent(int level);
+
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
 
 	ManagedObject* _this;
 
@@ -240,6 +252,10 @@ public:
 	int getPersistenceLevel();
 
 	void setPersistent(int level);
+
+	DistributedObjectServant* _getImplementation();
+
+	void _setImplementation(DistributedObjectServant* servant);
 
 protected:
 	String _param0_setLockName__String_;

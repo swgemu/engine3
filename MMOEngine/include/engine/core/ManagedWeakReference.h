@@ -105,13 +105,13 @@ namespace engine {
 		}
 
 	private:
-		O operator->() const {
+		/*O operator->() const {
 			return WeakReference<O>::object;
 		}
 
 		operator O() const {
 			return WeakReference<O>::object;
-		}
+		}*/
 
 	};
 

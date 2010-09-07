@@ -5252,6 +5252,13 @@ case "$host_cpu-$host_os" in
       USER_INCLUDES_PATH="/usr/local/include"
       USER_LIBS_PATH="/usr/local/lib"
       ;;
+    *686*linux*)
+      SYSTEM_INCLUDES=""
+      SYSTEM_LIBS="-lrt -ldl -lpthread -lexecinfo"
+      USER_INCLUDES_PATH="/usr/local/include"
+      USER_LIBS_PATH="/usr/local/lib"
+	  CXXFLAGS="$CXXFLAGS -m32 "
+      ;;
     *)
       SYSTEM_INCLUDES=""
       SYSTEM_LIBS="-lrt -ldl -lpthread -lexecinfo"

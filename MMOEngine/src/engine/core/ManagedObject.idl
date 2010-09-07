@@ -17,7 +17,7 @@ include engine.stm.TransactionalObject;
 
 import engine.core.ObjectUpdateToDatabaseTask;
 
-class ManagedObject implements TransactionalObject, Serializable {
+class ManagedObject implements Serializable {
 	protected int persistenceLevel;
 	
 	private transient unsigned int lastCRCSave;
@@ -124,11 +124,9 @@ class ManagedObject implements TransactionalObject, Serializable {
 	 */
 	public native void setPersistent(int level);
 	
-/*	@local
 	@nativeStub 
 	public native DistributedObjectServant _getImplementation();
 
-	@local
 	@nativeStub 
-	public native void _setImplementation(DistributedObjectServant servant);*/
+	public native void _setImplementation(DistributedObjectServant servant);
 }

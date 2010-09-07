@@ -7,11 +7,15 @@ ENGINE_PATH = ../MMOEngine-Pub
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/util/ManagedVector.idl
+
+IDL_DIRECTIVES =
 	
 all: compile install-headers
 	#done
 
-all-public: all-public64 all-public32
+all-public: 
+	make all-public64 
+	make all-public32
 
 all-public32: clean configure-release32 compile install-public
 	cp lib/unix/libengine3.a $(ENGINE_PATH)/lib/linux32
@@ -38,10 +42,10 @@ configure-debug:
 compile: compile-idlc compile-engine install-lib
 
 compile-idlc:
-	$(IDLC) -sd src $(IDL_SOURCES)
+	$(IDLC) $(IDL_DIRECTIVES) -sd src $(IDL_SOURCES)
 
 recompile-idlc:
-	$(IDLC) -rb -sd src $(IDL_SOURCES)
+	$(IDLC) -rb $(IDL_DIRECTIVES) -sd src $(IDL_SOURCES)
 	
 compile-engine:
 	cd build/unix && make
@@ -61,6 +65,7 @@ install:
 
 install-headers:	
 	build/unix/install . > /dev/null 2>&1
+	cp src/engine/core/ManagedObject.idl include/engine/core
 
 install-lib:
 	cp build/unix/src/libengine3.a lib/unix
@@ -70,6 +75,7 @@ install-public:
 	strip --strip-debug lib/unix/libengine3.a
 	cp lib/unix/libengine3.a $(ENGINE_PATH)/lib/unix
 	cp bin/idlc.jar $(ENGINE_PATH)/bin
+	cp src/engine/core/ManagedObject.idl $(ENGINE_PATH)/include/engine/core
 
 pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
