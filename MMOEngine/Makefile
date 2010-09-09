@@ -10,7 +10,9 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 
 IDL_DIRECTIVES =
 	
-all: compile install-headers
+all: 
+
+build: compile install-headers
 	#done
 
 all-public: 
