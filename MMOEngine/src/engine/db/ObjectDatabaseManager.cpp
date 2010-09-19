@@ -102,6 +102,11 @@ void ObjectDatabaseManager::loadDatabases() {
 	ObjectInputStream tableName(20);
 
 	while (iterator.getNextKeyAndValue(tableID, &tableName)) {
+		if (tableID == LASTOBJECTIDKEY) {
+			tableName.reset();
+			continue;
+		}
+
 		String dbName;
 		dbName.parseFromBinaryStream(&tableName);
 
@@ -134,6 +139,8 @@ void ObjectDatabaseManager::closeDatabases() {
 
 	delete databaseDirectory;
 	databaseDirectory = NULL;
+
+	loaded = false;
 }
 
 ObjectDatabase* ObjectDatabaseManager::loadDatabase(const String& name, bool create, uint16 uniqueID) {
@@ -174,17 +181,28 @@ ObjectDatabase* ObjectDatabaseManager::loadDatabase(const String& name, bool cre
 
 CurrentTransaction* ObjectDatabaseManager::getCurrentTransaction() {
 	if (!loaded)
-		return  NULL;
+		return NULL;
 
 	CurrentTransaction* transaction = localTransaction.get();
 
 	if (transaction == NULL) {
-		transaction = new CurrentTransaction();
+		transaction = new CurrentTransaction(databaseEnvironment);
 
 		localTransaction.set(transaction);
 	}
 
 	return transaction;
+}
+
+void ObjectDatabaseManager::startLocalTransaction() {
+	if (this == NULL)
+		return;
+
+	if (!loaded)
+		return;
+
+	CurrentTransaction* trans = getCurrentTransaction();
+	trans->startBerkeleyTransaction();
 }
 
 void ObjectDatabaseManager::commitLocalTransaction() {
@@ -200,17 +218,26 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 		return;
 
 	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
+	Transaction* berkeleyTransaction = transaction->getBerkeleyTransaction();
 
-	if (updateObjects->size() == 0)
+	if (berkeleyTransaction == NULL)
 		return;
+
+	if (updateObjects->size() == 0) {
+		berkeleyTransaction->abort();
+		transaction->clearBerkeleyTransaction();
+		return;
+	}
 
 	int iteration = 0;
 	int ret = -1;
-	Transaction* berkeleyTransaction = NULL;
+
 
 	do {
 		ret = -1;
-		berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
+
+		if (iteration != 0)
+			berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
 
 		for (int i = 0; i < updateObjects->size(); ++i) {
 			UpdateObject* updateObject = &updateObjects->elementAt(i);
@@ -273,6 +300,8 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 
 	updateObjects->removeAll();
 
+	transaction->clearBerkeleyTransaction();
+
 }
 
 
@@ -297,4 +326,25 @@ void ObjectDatabaseManager::getDatabaseName(uint16 tableID, String& name) {
 	ObjectDatabase* db = getDatabase(tableID);
 
 	db->getDatabaseName(name);
+}
+
+void ObjectDatabaseManager::updateLastUsedObjectID(uint64 id) {
+	ObjectOutputStream idData(8);
+
+	TypeInfo<uint64>::toBinaryStream(&id, &idData);
+
+	databaseDirectory->putData(LASTOBJECTIDKEY, &idData, NULL);
+}
+
+uint64 ObjectDatabaseManager::getLastUsedObjectID() {
+	ObjectInputStream idData(8);
+
+	if (databaseDirectory->getData(LASTOBJECTIDKEY, &idData))
+		return 0;
+
+	uint64 id;
+
+	TypeInfo<uint64>::parseFromBinaryStream(&id, &idData);
+
+	return id;
 }

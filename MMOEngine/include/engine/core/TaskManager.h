@@ -29,12 +29,14 @@ namespace engine {
 
 		int currentTaskScheduler;
 
+		bool shuttingDown;
+
 		TaskManager();
 
 		virtual ~TaskManager();
 
 		static const int DEAFULT_WORKER_THREADS = 1;
-		static const int DEAFULT_SCHEDULER_THREADS = 1;
+		static const int DEAFULT_SCHEDULER_THREADS = 8;
 
 	public:
 		void initialize();

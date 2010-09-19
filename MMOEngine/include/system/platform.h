@@ -99,7 +99,7 @@ namespace sys {
 
 	//#define TRACE_REFERENCING
 	#define LINE_TRACING
-	#define TRACE_REFERENCES
+	//#define TRACE_REFERENCES
 
 	#ifdef VERSION_PUBLIC
 	#define CONNECTION_LIMIT 20

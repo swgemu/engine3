@@ -73,7 +73,7 @@ namespace engine {
 			return object;
 		}*/
 
-		uint64 getNextFreeObjectID() {
+		virtual uint64 getNextFreeObjectID() {
 			Locker _locker(this);
 
 			uint64 val = ++nextObjectID;

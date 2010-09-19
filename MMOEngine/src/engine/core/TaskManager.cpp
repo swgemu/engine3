@@ -15,6 +15,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 TaskManager::TaskManager() : Mutex("TaskManager"), Logger("TaskManager") {
 	currentTaskScheduler = 0;
+
+	shuttingDown = false;
 }
 
 TaskManager::~TaskManager() {
@@ -65,6 +67,8 @@ void TaskManager::start() {
 }
 
 void TaskManager::shutdown() {
+	shuttingDown = true;
+
 	while (!schedulers.isEmpty()) {
 		lock();
 
@@ -100,7 +104,10 @@ TaskScheduler* TaskManager::getTaskScheduler(bool doLock) {
 	if (schedulers.size() == 0) {
 		unlock(doLock);
 
-		throw Exception("No schedulers available");
+		if (!shuttingDown)
+			throw Exception("No schedulers available");
+		else
+			return NULL;
 	}
 
 	int index = currentTaskScheduler++ % schedulers.size();
@@ -153,8 +160,12 @@ void TaskManager::scheduleTask(Task* task, uint64 delay) {
 		unlock();
 	}
 
-	if (scheduler == NULL)
-		throw Exception("No schedulers available");
+	if (scheduler == NULL) {
+		if (!shuttingDown)
+			throw Exception("No schedulers available");
+		else
+			return;
+	}
 
 	if (!scheduler->scheduleTask(task, delay))
 		throw IllegalArgumentException("Task was invalid for scheduling");
@@ -183,8 +194,12 @@ void TaskManager::scheduleTask(Task* task, Time& time) {
 		unlock();
 	}
 
-	if (scheduler == NULL)
-		throw Exception("No schedulers available");
+	if (scheduler == NULL) {
+		if (!shuttingDown)
+			throw Exception("No schedulers available");
+		else
+			return;
+	}
 
 	if (!scheduler->scheduleTask(task, time))
 		throw IllegalArgumentException("Task was invalid for scheduling");

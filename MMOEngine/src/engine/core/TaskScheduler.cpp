@@ -53,6 +53,8 @@ void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
+		ObjectDatabaseManager::instance()->startLocalTransaction();
+
 		try {
 			#ifdef VERSION_PUBLIC
 				DO_TIMELIMIT;
@@ -75,6 +77,7 @@ void TaskScheduler::run() {
 			error(e.getMessage());
 		} catch (...) {
 			#ifdef VERSION_PUBLIC
+			ObjectDatabaseManager::instance()->commitLocalTransaction();
 				return;
 			#else
 				error("[TaskScheduler] unreported Exception caught");

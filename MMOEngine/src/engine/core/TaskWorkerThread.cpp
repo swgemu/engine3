@@ -31,6 +31,8 @@ void TaskWorkerThread::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = taskManager->getTask()) != NULL) {
+		ObjectDatabaseManager::instance()->startLocalTransaction();
+
 		try {
 		#ifdef WITH_STM
 			engine::stm::Transaction* transaction =	engine::stm::Transaction::currentTransaction();

@@ -26,6 +26,8 @@ void ServiceProcessThread::run() {
 	Message* msg;
 
 	while ((msg = server->getMessage()) != NULL) {
+		ObjectDatabaseManager::instance()->startLocalTransaction();
+
 		try {
 			processMessage(msg);
 		} catch (PacketIndexOutOfBoundsException& e) {
