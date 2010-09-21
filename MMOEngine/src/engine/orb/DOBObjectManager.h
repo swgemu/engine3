@@ -34,6 +34,7 @@ namespace engine {
 		DOBObjectManager(DistributedObjectBrokerClient* orbClient);
 
 		virtual ~DOBObjectManager() {
+			localObjectDirectory.destroyContainingObjects();
 		}
 
 		virtual DistributedObject* loadPersistentObject(uint64 objid) {

@@ -54,7 +54,7 @@ namespace sys {
 
        void removeRange(int fromIndex, int toIndex);
 
-       void removeAll();
+       void removeAll(int newSize = 10, int newIncrement = 5);
 
        E set(int index, const E& element);
        void setElementAt(int index, const E& element);
@@ -214,12 +214,12 @@ namespace sys {
        --elementCount;
    }
 
-   template<class E> void Vector<E>::removeAll() {
+   template<class E> void Vector<E>::removeAll(int newSize, int newIncrement) {
        destroyElements();
 
        free(elementData);
 
-       init(10, 5);
+       init(newSize, newIncrement);
    }
 
    template<class E> E Vector<E>::set(int index, const E& element) {
@@ -239,8 +239,7 @@ namespace sys {
    }
 
    template<class E> void Vector<E>::clone(Vector<E>& vector) const {
-       vector.removeAll();
-       vector.init(elementCapacity, capacityIncrement);
+       vector.removeAll(elementCapacity, capacityIncrement);
 
        vector.elementCount = elementCount;
 

@@ -42,6 +42,30 @@ DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {
 	return objectMap.get(objid);
 }
 
+void DistributedObjectDirectory::destroyContainingObjects() {
+	//while (objectMap.)
+	HashTableIterator<uint64, DistributedObjectAdapter*> iterator(&objectMap);
+	Vector<Reference<DistributedObject*> > objects(objectMap.size(), 1);
+
+	while (iterator.hasNext()) {
+		DistributedObjectAdapter* adapter = iterator.getNextValue();
+
+		DistributedObject* dobObject = adapter->getStub();
+
+		objects.add(dobObject);
+
+		//Reference<DistributedObject*> holder = dobObject; // acquires/releases object
+
+		/*ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
+
+		if (managedObject != NULL && managedObject->isPersistent()) {
+			Locker locker(managedObject);
+
+			managedObject->updateToDatabase();
+		}*/
+	}
+}
+
 void DistributedObjectDirectory::savePersistentObjects() {
 	/*class DistributedObjectMap : public HashTable<uint64, DistributedObjectAdapter*> {
 

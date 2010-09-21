@@ -29,6 +29,7 @@ namespace engine {
 		DistributedObjectAdapter* getAdapter(uint64 objid);
 
 		void savePersistentObjects();
+		void destroyContainingObjects();
 	};
 
   } // namespace ORB

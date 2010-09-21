@@ -75,15 +75,13 @@ namespace engine {
 		}
 
 		inline void addUpdateObject(uint64 id, Stream* str, engine::db::ObjectDatabase* db, Object* obj) {
-			if (berkeleyTransaction == NULL)
-				berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
+			startBerkeleyTransaction();
 
 			updateObjects.add(UpdateObject(str, id, db, obj));
 		}
 
 		inline void addDeleteObject(uint64 id, engine::db::ObjectDatabase* db) {
-			if (berkeleyTransaction == NULL)
-				berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
+			startBerkeleyTransaction();
 
 			updateObjects.add(UpdateObject(NULL, id, db, NULL));
 		}
