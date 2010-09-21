@@ -13,6 +13,8 @@
 
 #include "berkley/Environment.h"
 
+//#define LASTOBJECTIDKEY 0xFFFFFFFFFFFFFFFF;
+
 namespace engine {
   namespace db {
 
@@ -126,7 +128,7 @@ namespace engine {
 
 	public:
 		const static int CHECKPOINTTIME = 1800000; //msec
-		const static uint64 LASTOBJECTIDKEY = 0xFFFFFFFFFFFFFFFF;
+		const static uint64 LASTOBJECTIDKEY = 0xFFFFFFFF << 32 + 0xFFFFFFFF;
 
 	private:
 		void openEnvironment();
