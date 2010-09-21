@@ -128,7 +128,7 @@ namespace engine {
 
 	public:
 		const static int CHECKPOINTTIME = 1800000; //msec
-		const static uint64 LASTOBJECTIDKEY = 0xFFFFFFFF << 32 + 0xFFFFFFFF;
+		const static uint64 LASTOBJECTIDKEY = uint64((uint64)0xFFFFFFFF << 32) + 0xFFFFFFFF;
 
 	private:
 		void openEnvironment();
