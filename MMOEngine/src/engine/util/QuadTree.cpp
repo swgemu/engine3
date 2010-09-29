@@ -41,13 +41,13 @@ QuadTreeNode::QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadT
 
    	if (!validateNode() || minX > maxX || minY > maxY) {
 		StringBuffer msg;
-		msg << "[QuadTree] invalid node in create - " << toString();
+		msg << "[QuadTree] invalid node in create - " << toStringData();
 		Logger::console.info(msg, true);
    	}
 }
 
 QuadTreeNode::~QuadTreeNode() {
-	if (nwNode != NULL)
+	/*if (nwNode != NULL)
 		delete nwNode;
 
 	if (neNode != NULL)
@@ -57,16 +57,16 @@ QuadTreeNode::~QuadTreeNode() {
  		delete swNode;
 
 	if (seNode != NULL)
-		delete seNode;
+		delete seNode;*/
 }
 
 void QuadTreeNode::addObject(QuadTreeEntry *obj) {
 	if (QuadTree::doLog())
 		System::out << hex << "object [" << obj->getObjectID() <<  "] added to QuadTree"
-					<< toString() << "\n";
+					<< toStringData() << "\n";
 
 	if (!validateNode())
-		System::out << "[QuadTree] invalid node in addObject() - " << toString() << "\n";
+		System::out << "[QuadTree] invalid node in addObject() - " << toStringData() << "\n";
 
 	objects.put(obj);
   	obj->node = this;
@@ -75,13 +75,13 @@ void QuadTreeNode::addObject(QuadTreeEntry *obj) {
 void QuadTreeNode::removeObject(QuadTreeEntry *obj) {
 	if (!objects.drop(obj)) {
 		System::out << hex << "object [" << obj->getObjectID() <<  "] not found on QuadTree"
-					<< toString() << "\n";
+					<< toStringData() << "\n";
 	} else {
     	obj->node = NULL;
 
 		if (QuadTree::doLog())
 			System::out <<  hex << "object [" << obj->getObjectID() <<  "] removed QuadTree"
-						<< toString() << "\n";
+						<< toStringData() << "\n";
 	}
 }
 
@@ -115,11 +115,11 @@ void QuadTreeNode::check () {
 		if (QuadTree::doLog())
 			System::out << "deleteing node (" << this << ")\n";
 
-        delete this;
+        //delete this;
     }
 }
 
-String QuadTreeNode::toString() {
+String QuadTreeNode::toStringData() {
 	StringBuffer s;
 	s << "Node " << this << " (" << (int) minX << ","
 	  << (int) minY << "," << (int) maxX << "," << (int) maxY
@@ -141,13 +141,13 @@ QuadTree::QuadTree(float minx, float miny, float maxx, float maxy) {
 }
 
 QuadTree::~QuadTree() {
-    delete root;
+    //delete root;
 
    	root = NULL;
 }
 
 void QuadTree::setSize(float minx, float miny, float maxx, float maxy) {
-    delete root;
+    //delete root;
 
     root = new QuadTreeNode(minx, miny, maxx, maxy, NULL);
 }
@@ -190,7 +190,7 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 	try {
 		if (QuadTree::doLog()) {
 			System::out << hex << "object [" << obj->getObjectID() <<  "] updating on node "
-						<< obj->node->toString() << " \n" << "(" << obj->getPositionX()
+						<< obj->node->toStringData() << " \n" << "(" << obj->getPositionX()
 						<< ", " << obj->getPositionY() << ")\n";
 		}
 
@@ -244,9 +244,9 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 	}
 }
 
-int QuadTree::inRange(float x, float y, float range) {
+int QuadTree::inRange(float x, float y, float range, SortedVector<QuadTreeEntry*>& objects) {
 	try {
-		return _inRange(root, x, y, range);
+		return _inRange(root, x, y, range, objects);
 	} catch (Exception& e) {
 		System::out << "[QuadTree] " << e.getMessage() << "\n";
 		e.printStackTrace();
@@ -268,11 +268,11 @@ void QuadTree::remove(QuadTreeEntry *obj) {
 		System::out << hex << "object [" << obj->getObjectID() <<  "] removing\n";
 
     if (obj->node != NULL) {
-        QuadTreeNode* node = obj->node;
+        Reference<QuadTreeNode*> node = obj->node;
 
         if (!node->validateNode()) {
 			System::out << "[QuadTree] " << obj->getObjectID() << " error on remove() - invalid Node"
-						<< node->toString() << "\n";
+						<< node->toStringData() << "\n";
         }
 
        	node->removeObject(obj);
@@ -289,8 +289,10 @@ void QuadTree::remove(QuadTreeEntry *obj) {
 }
 
 void QuadTree::removeAll() {
-	if (root != NULL)
-    	delete root;
+	if (root != NULL) {
+		root = NULL;
+    	//delete root;
+	}
 }
 
 /*
@@ -453,7 +455,7 @@ bool QuadTree::_update(QuadTreeNode *node, QuadTreeEntry *obj) {
     //data->IncRef ();
 
     // Go upwards til the object is inside the square.
-    QuadTreeNode *cur = node->parentNode;
+    Reference<QuadTreeNode*> cur = node->parentNode;
     while (cur != NULL && !cur->testInside(obj->positionX, obj->positionY))
         cur = cur->parentNode;
 
@@ -527,7 +529,7 @@ void QuadTree::_inRange(QuadTreeNode *node, QuadTreeEntry *obj, float range) {
 	}
 }
 
-int QuadTree::_inRange(QuadTreeNode *node, float x, float y, float range) {
+int QuadTree::_inRange(QuadTreeNode *node, float x, float y, float range, SortedVector<QuadTreeEntry*>& objects) {
 	int count = 0;
 
  	float rangesq = range * range;
@@ -538,19 +540,21 @@ int QuadTree::_inRange(QuadTreeNode *node, float x, float y, float range) {
 		float deltaX = x - o->positionX;
 		float deltaY = y - o->positionY;
 
-		if (deltaX * deltaX + deltaY * deltaY <= rangesq)
+		if (deltaX * deltaX + deltaY * deltaY <= rangesq) {
 			++count;
+			objects.put(o);
+		}
 	}
 
 	if (node->hasSubNodes()) {
 		if (node->nwNode != NULL && node->nwNode->testInRange(x, y, range))
- 			count += _inRange(node->nwNode, x, y, range);
+ 			count += _inRange(node->nwNode, x, y, range, objects);
 		if (node->neNode != NULL && node->neNode->testInRange(x, y, range))
-			count += _inRange(node->neNode, x, y, range);
+			count += _inRange(node->neNode, x, y, range, objects);
 		if (node->swNode != NULL && node->swNode->testInRange(x, y, range))
-			count += _inRange(node->swNode, x, y, range);
+			count += _inRange(node->swNode, x, y, range, objects);
 		if (node->seNode != NULL && node->seNode->testInRange(x, y, range))
-			count += _inRange(node->seNode, x, y, range);
+			count += _inRange(node->seNode, x, y, range, objects);
 	}
 
 	return count;

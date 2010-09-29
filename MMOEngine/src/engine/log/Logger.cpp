@@ -44,29 +44,29 @@ Logger::~Logger() {
 }
 
 void Logger::setGlobalFileLogger(const char* file) {
-	globalLogFile = new FileWriter(new File(file));
+	//globalLogFile = new FileWriter(new File(file));
 
 	starttime.updateToCurrentTime();
 }
 
 void Logger::setGlobalFileLogger(const String& file) {
-	if (globalLogFile != NULL)
+	/*if (globalLogFile != NULL)
 		closeGlobalFileLogger();
 
-	globalLogFile = new FileWriter(new File(file));
+	globalLogFile = new FileWriter(new File(file));*/
 
 	starttime.updateToCurrentTime();
 }
 
 void Logger::setFileLogger(const char* file) {
-	if (logFile != NULL)
+	/*if (logFile != NULL)
 		closeFileLogger();
 
-	logFile = new FileWriter(new File(file));
+	logFile = new FileWriter(new File(file));*/
 }
 
 void Logger::setFileLogger(const String& file) {
-	logFile = new FileWriter(new File(file));
+	//logFile = new FileWriter(new File(file));
 }
 
 void Logger::closeGlobalFileLogger() {

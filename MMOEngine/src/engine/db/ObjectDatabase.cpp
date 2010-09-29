@@ -153,6 +153,10 @@ int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transactio
 
 	ret = objectsDatabase->del(transaction, &key);
 
+	/*StringBuffer msg;
+	msg << "deleted from DB objid" << hex << objKey;
+	info(msg.toString(), true);*/
+
 	return ret;
 }
 
@@ -164,76 +168,6 @@ int ObjectDatabase::putData(uint64 objKey, ObjectOutputStream* objectData, Objec
 	transaction->addUpdateObject(objKey, objectData->clone(0), this, obj);
 
 	return 0;
-	/*Locker locker(&writeLock);
-
-	int ret = -1;
-
-	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
-
-	Transaction* transaction = databaseManager->getLocalTransaction();
-
-	if (transaction == NULL)
-		return 0;
-
-	DatabaseEntry key, data;
-	key.setData(&objKey, sizeof(uint64));
-	data.setData(objectData->getBuffer(), objectData->size());
-
-	int i = 0;
-
-	bool local = true;
-
-	do {
-		//transaction = environment->beginTransaction(NULL);
-
-		if (transaction == NULL) {
-			transaction = databaseManager->getBerkeleyEnvironment()->beginTransaction(NULL);
-			local = false;
-		}
-
-		ret = objectsDatabase->put(transaction, &key, &data);
-
-		if (local && ret == DB_LOCK_DEADLOCK) {
-			info("deadlock detected in ObjectDatabse::putData.. cancelling", true);
-
-			//transaction->abort();
-			databaseManager->failLocalTransaction();
-
-			return 0;
-		} else if (!local && ret == DB_LOCK_DEADLOCK) {
-			transaction->abort();
-			transaction = NULL;
-		} else if (ret != 0) {
-			error("error in ObjectDatabase::putData :" + String::valueOf(ret));
-			databaseManager->failLocalTransaction();
-
-			return 0;
-		}
-
-		++i;
-	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
-
-	if (!local && transaction != NULL) {
-		transaction->commit();
-	}
-
-*/
-
-
-	/*if (ret != 0) {
-		error("error in ObjectDatabase::putData :" + String::valueOf(ret));
-
-		transaction->abort();
-
-		exit(1);
-	}
-
-	if (transaction->commitNoSync() != 0) {
-		error("error commiting transaction in ObjectDatabase::putData :" + String::valueOf(ret));
-		exit(1);
-	}*/
-
-	//return ret;
 }
 
 int ObjectDatabase::deleteData(uint64 objKey) {
@@ -243,53 +177,9 @@ int ObjectDatabase::deleteData(uint64 objKey) {
 
 	transaction->addDeleteObject(objKey, this);
 
-	return 0;
-
-	/*Locker locker(&writeLock);
-
-	int ret = -1;
-
-	DatabaseEntry key;
-	key.setData(&objKey, sizeof(uint64));
-
-
-	int i = 0;
-
-	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
-
-	Transaction* transaction = databaseManager->getLocalTransaction();
-
-	bool local = true;
-
-	do {
-		if (transaction == NULL) {
-			transaction = databaseManager->getBerkeleyEnvironment()->beginTransaction(NULL);
-			local = false;
-		}
-
-		ret = objectsDatabase->del(transaction, &key);
-
-		if (local && ret == DB_LOCK_DEADLOCK) {
-			info("deadlock detected in ObjectDatabse::deleteData.. cancelling", true);
-
-			//transaction->abort();
-			databaseManager->failLocalTransaction();
-
-			return 0;
-		} else if (!local && ret == DB_LOCK_DEADLOCK) {
-			transaction->abort();
-			transaction = NULL;
-		}
-
-		++i;
-	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
-
-	if (!local && transaction != NULL) {
-		transaction->commit();
-	}
-
-
-	return ret;*/
+	/*StringBuffer msg;
+	msg << "added to deleteData objid" << hex << objKey;
+	info(msg.toString(), true);*/
 
 	return 0;
 }

@@ -43,7 +43,7 @@ void ManagedObject::wlock(ManagedObject* obj) {
 }
 
 void ManagedObject::unlock(bool doLock) {
-	if (getPersistenceLevel() == 3)
+	if (getPersistenceLevel() == 3) // change to 3
 		updateToDatabase();
 
 	DistributedObjectStub::unlock(doLock);
@@ -145,11 +145,11 @@ void ManagedObjectImplementation::updateToDatabase() {
 }
 
 void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
-	if (updateToDatabaseTask != NULL || persistenceLevel != 2)
+	/*if (updateToDatabaseTask != NULL || persistenceLevel != 2)
 		return;
 
 	updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);
-	updateToDatabaseTask->schedule();
+	updateToDatabaseTask->schedule();*/
 }
 
 void ManagedObjectImplementation::setPersistent(int level) {

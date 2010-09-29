@@ -73,9 +73,16 @@ namespace engine {
 		bool parseFromString(const String& str, int version = 0) {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
 
-			WeakReference<O>::updateObject((O) obj);
+			if (obj == NULL) {
+				WeakReference<O>::updateObject(NULL);
+				return false;
+			}
 
-			if (obj == NULL)
+			O castedObject = dynamic_cast<O>(obj);
+
+			WeakReference<O>::updateObject(castedObject);
+
+			if (castedObject == NULL)
 				return false;
 
 			return true;
@@ -95,10 +102,18 @@ namespace engine {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			uint64 oid = stream->readLong();
 
-			O obj = (O) DistributedObjectBroker::instance()->lookUp(oid);
-			*this = obj;
+			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(oid);
 
-			if (obj == NULL)
+			if (obj == NULL) {
+				WeakReference<O>::updateObject(NULL);
+				return false;
+			}
+
+			O castedObject = dynamic_cast<O>(obj);
+
+			WeakReference<O>::updateObject(castedObject);
+
+			if (castedObject == NULL)
 				return false;
 
 			return true;

@@ -47,6 +47,10 @@ void DistributedObjectDirectory::destroyContainingObjects() {
 	HashTableIterator<uint64, DistributedObjectAdapter*> iterator(&objectMap);
 	Vector<Reference<DistributedObject*> > objects(objectMap.size(), 1);
 
+	int i = 0;
+
+	System::out << "[DistributedObjectDirectory] saving persistent objects " << endl;
+
 	while (iterator.hasNext()) {
 		DistributedObjectAdapter* adapter = iterator.getNextValue();
 
@@ -54,16 +58,26 @@ void DistributedObjectDirectory::destroyContainingObjects() {
 
 		objects.add(dobObject);
 
-		//Reference<DistributedObject*> holder = dobObject; // acquires/releases object
-
-		/*ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
+		ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
 
 		if (managedObject != NULL && managedObject->isPersistent()) {
 			Locker locker(managedObject);
 
 			managedObject->updateToDatabase();
-		}*/
+
+			++i;
+		}
+
+		if (i % 512 == 0)
+			ObjectDatabaseManager::instance()->commitLocalTransaction();
+
 	}
+
+	ObjectDatabaseManager::instance()->commitLocalTransaction();
+
+	ObjectDatabaseManager::instance()->checkpoint();
+
+	System::out << "[DistributedObjectDirectory] finished saving "<< i << " persistent objects " << endl;
 }
 
 void DistributedObjectDirectory::savePersistentObjects() {
@@ -95,6 +109,10 @@ void DistributedObjectDirectory::savePersistentObjects() {
 		if (i % 512 == 0)
 			ObjectDatabaseManager::instance()->commitLocalTransaction();
 	}
+
+	ObjectDatabaseManager::instance()->commitLocalTransaction();
+
+	ObjectDatabaseManager::instance()->checkpoint();
 
 	System::out << "[DistributedObjectDirectory] finished saving persistent objects " << endl;
 }

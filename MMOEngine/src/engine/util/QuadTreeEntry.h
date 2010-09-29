@@ -16,7 +16,7 @@ namespace engine {
 
 	class QuadTreeEntry : public Coordinate {
 	protected:
-		QuadTreeNode* node;
+		Reference<QuadTreeNode*> node;
 		bool bounding;
 
 		//int visibilityRange;

@@ -194,7 +194,7 @@ CurrentTransaction* ObjectDatabaseManager::getCurrentTransaction() {
 	return transaction;
 }
 
-void ObjectDatabaseManager::startLocalTransaction() {
+void ObjectDatabaseManager::addTemporaryObject(Object* object) {
 	if (this == NULL)
 		return;
 
@@ -202,7 +202,18 @@ void ObjectDatabaseManager::startLocalTransaction() {
 		return;
 
 	CurrentTransaction* trans = getCurrentTransaction();
-	trans->startBerkeleyTransaction();
+	trans->addTemporaryObject(object);
+}
+
+void ObjectDatabaseManager::startLocalTransaction() {
+	/*if (this == NULL)
+		return;
+
+	if (!loaded)
+		return;
+
+	CurrentTransaction* trans = getCurrentTransaction();
+	trans->startBerkeleyTransaction();*/
 }
 
 void ObjectDatabaseManager::commitLocalTransaction() {
@@ -218,25 +229,31 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 		return;
 
 	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
-	Transaction* berkeleyTransaction = transaction->getBerkeleyTransaction();
+	//Transaction* berkeleyTransaction = transaction->getBerkeleyTransaction();
 
-	if (berkeleyTransaction == NULL)
-		return;
+	transaction->clearTemporaryObjects();
+
+	/*if (berkeleyTransaction == NULL)
+		return;*/
 
 	if (updateObjects->size() == 0) {
-		berkeleyTransaction->abort();
-		transaction->clearBerkeleyTransaction();
+		/*berkeleyTransaction->abort();
+		transaction->clearBerkeleyTransaction();*/
 		return;
 	}
 
 	int iteration = 0;
 	int ret = -1;
 
+	Transaction* berkeleyTransaction = NULL;
+
 
 	do {
 		ret = -1;
 
-		if (iteration != 0)
+
+
+		//if (iteration != 0)
 			berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
 
 		for (int i = 0; i < updateObjects->size(); ++i) {
@@ -250,6 +267,7 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
+					berkeleyTransaction = NULL;
 					info("deadlock detected while trying to putData iterating time " + String::valueOf(iteration), true);
 					break;
 				} else if (ret != 0) {
@@ -261,6 +279,7 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
+					berkeleyTransaction = NULL;
 					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration), true);
 					break;
 				} else if (ret != 0 && ret != DB_NOTFOUND) {
@@ -300,7 +319,7 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 
 	updateObjects->removeAll();
 
-	transaction->clearBerkeleyTransaction();
+	//transaction->clearBerkeleyTransaction();
 
 }
 

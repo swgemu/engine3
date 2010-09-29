@@ -43,11 +43,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace util {
 
-	class QuadTreeNode {
+	class QuadTreeNode : public Object {
 		SortedVector<QuadTreeEntry*> objects;
 
-		QuadTreeNode *parentNode;
-		QuadTreeNode *nwNode, *neNode, *swNode, *seNode;
+		Reference<QuadTreeNode*> parentNode;
+		Reference<QuadTreeNode*> nwNode;
+		Reference<QuadTreeNode*> neNode;
+		Reference<QuadTreeNode*> swNode;
+		Reference<QuadTreeNode*> seNode;
 
 		float minX, minY;
 		float maxX, maxY;
@@ -101,14 +104,14 @@ namespace engine {
 	    	return x >= minX && x < maxX && y >= minY && y < maxY;
 	    }
 
-		String toString();
+		String toStringData();
 
 		friend class QuadTree;
 
 	};
 
 	class QuadTree {
-		QuadTreeNode* root;
+		Reference<QuadTreeNode*> root;
 
 		static bool logTree;
 
@@ -160,7 +163,7 @@ namespace engine {
 		 */
 		void inRange(QuadTreeEntry *obj, float range);
 
-		int inRange(float x, float y, float range);
+		int inRange(float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
 
 	 	/**
 		 * Update object's position in the quad tree.
@@ -181,7 +184,7 @@ namespace engine {
 		bool _update(QuadTreeNode *node, QuadTreeEntry *obj);
 
 		void _inRange(QuadTreeNode *node, QuadTreeEntry *obj, float range);
-		int _inRange(QuadTreeNode *node, float x, float y, float range);
+		int _inRange(QuadTreeNode *node, float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
 
 	public:
 		static void setLogging(bool doLog) {

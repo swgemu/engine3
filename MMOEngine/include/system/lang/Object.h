@@ -39,7 +39,7 @@ namespace sys {
 	class Object : public ReferenceCounter, public Variable {
 		Mutex referenceMutex;
 
-		Vector<WeakReference<Object*>*> weakReferences;
+		Vector<WeakReferenceBase*> weakReferences;
 
 		bool _destroying;
 
@@ -114,9 +114,9 @@ namespace sys {
 			}
 		}
 
-		void acquireWeak(void* ref);
+		void acquireWeak(WeakReferenceBase* ref);
 
-		void releaseWeak(void* ref);
+		void releaseWeak(WeakReferenceBase* ref);
 
 	#ifdef TRACE_REFERENCES
 		void addHolder(void* obj);

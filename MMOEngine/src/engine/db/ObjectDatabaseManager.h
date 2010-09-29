@@ -68,42 +68,60 @@ namespace engine {
 	class CurrentTransaction  {
 		Vector<UpdateObject> updateObjects;
 		engine::db::berkley::Environment* databaseEnvironment;
-		engine::db::berkley::Transaction* berkeleyTransaction;
+		//engine::db::berkley::Transaction* berkeleyTransaction;
+		//Time transactionCreation;
+
+		//stores a references for an object so we dont delete it in the transaction
+		Vector<Reference<Object*> > temporaryObjects;
 
 	public:
 		CurrentTransaction(engine::db::berkley::Environment* env) {
-			berkeleyTransaction = NULL;
+			//berkeleyTransaction = NULL;
 			databaseEnvironment = env;
 		}
 
+		/*int compareTo(CurrentTransaction* trans) {
+			return transactionCreation.compareTo(trans->transactionCreation) * -1;
+		}*/
+
+		inline void addTemporaryObject(Object* obj) {
+			temporaryObjects.add(obj);
+		}
+
+		inline void clearTemporaryObjects() {
+			temporaryObjects.removeAll();
+		}
+
 		inline void addUpdateObject(uint64 id, Stream* str, engine::db::ObjectDatabase* db, Object* obj) {
-			startBerkeleyTransaction();
+			//startBerkeleyTransaction();
 
 			updateObjects.add(UpdateObject(str, id, db, obj));
 		}
 
 		inline void addDeleteObject(uint64 id, engine::db::ObjectDatabase* db) {
-			startBerkeleyTransaction();
+			//startBerkeleyTransaction();
 
 			updateObjects.add(UpdateObject(NULL, id, db, NULL));
 		}
 
-		inline void startBerkeleyTransaction() {
-			if (berkeleyTransaction == NULL)
+		/*inline void startBerkeleyTransaction() {
+			if (berkeleyTransaction == NULL) {
 				berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
-		}
+				transactionCreation.updateToCurrentTime();
+			}
+		}*/
 
 		inline Vector<UpdateObject>* getUpdateVector() {
 			return &updateObjects;
 		}
 
-		inline engine::db::berkley::Transaction* getBerkeleyTransaction() {
+		/*inline engine::db::berkley::Transaction* getBerkeleyTransaction() {
 			return berkeleyTransaction;
 		}
 
 		inline void clearBerkeleyTransaction() {
 			berkeleyTransaction = NULL;
-		}
+		}*/
 
 	};
 
@@ -154,12 +172,13 @@ namespace engine {
 
 		void getDatabaseName(uint16 tableID, String& name);
 
-		/*engine::db::berkley::Transaction* getLocalTransaction();
-
-		void failLocalTransaction();*/
-
 		void commitLocalTransaction();
 		void startLocalTransaction();
+		/**
+		 * Stores a references for to an object while the transaction is alive
+		 * References will be released when the local transaction is commited
+		 */
+		void addTemporaryObject(Object* object);
 
 		CurrentTransaction* getCurrentTransaction();
 
