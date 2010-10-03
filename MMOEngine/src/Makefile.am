@@ -94,6 +94,7 @@ libengine3_a_SOURCES = \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/core/ManagedObject.cpp \
+			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
 			engine/util/QuadTree.cpp \
 			engine/util/iffstream/IffStream.cpp \

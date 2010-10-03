@@ -107,10 +107,12 @@ class ManagedObject implements Serializable {
 		lastCRCSave = crc;
 	}
 	
+	@local
 	public boolean isPersistent() {
 		return persistenceLevel != 0;
 	}
 	
+	@local
 	public int getPersistenceLevel() {
 		return persistenceLevel;
 	}
@@ -122,11 +124,6 @@ class ManagedObject implements Serializable {
 	 * level 2 makes the object auto update every 5 minutes
 	 * level 3 makes the object update to database after each change (write unlock)
 	 */
+	@local
 	public native void setPersistent(int level);
-	
-	@nativeStub 
-	public native DistributedObjectServant _getImplementation();
-
-	@nativeStub 
-	public native void _setImplementation(DistributedObjectServant servant);
 }

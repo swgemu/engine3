@@ -81,7 +81,7 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 
 BaseClient::~BaseClient() {
 	if (service != NULL)
-		service->deleteConnection(this);
+		service->removeConnection(this);
 
 	if (checkupEvent != NULL) {
 			if (checkupEvent->isScheduled())

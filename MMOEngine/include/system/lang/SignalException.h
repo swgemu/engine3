@@ -38,6 +38,7 @@ public:
 	SegmentationFault() : Exception() {
 		System::out << "Segmentation Fault at\n";
 		printStackTrace();
+		exit(1);
 	}
 
 	static int GetSignalNumber() {
@@ -45,7 +46,19 @@ public:
 	}
 };
 
-SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
+class AbortedException : public Exception {
+public:
+	AbortedException() : Exception() {
+		System::out << "Exception aborted at\n";
+		printStackTrace();
+
+		exit(1);
+	}
+
+	static int GetSignalNumber() {
+		return SIGABRT;
+	}
+};
 
 class FloatingPointException : public Exception {
 public:
@@ -57,8 +70,6 @@ public:
 		return SIGFPE;
 	}
 };
-
-SignalTranslator<FloatingPointException> _objFloatingPOintExceptionTranslator;
 
 #endif
 

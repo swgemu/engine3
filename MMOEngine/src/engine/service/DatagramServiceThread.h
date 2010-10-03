@@ -20,18 +20,12 @@ namespace engine {
 		
 		void start(int p, int mconn = 10);
 	
-		virtual void stop();
+		void run();
 
-		virtual bool removeConnection(ServiceClient* client);
-
-		void removeConnections();
+		void stop();
 		
 		// message methods
 		void receiveMessages();
-
-		virtual void handleMessage(ServiceClient* client, Packet* message) = 0;
-
-		virtual bool handleError(ServiceClient* client, Exception& e);
 	};
 
   } // namespace service

@@ -29,12 +29,7 @@ namespace engine {
 		}
 
 		virtual void initialize() {
-		#ifdef WITH_STM
-			engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
-
-			if (!transaction->commit())
-				throw Exception("unable to commit initialization transaction");
-		#endif
+			commitTask();
 
 			TaskManager* taskManager = getTaskManager();
 			taskManager->start();
@@ -52,6 +47,15 @@ namespace engine {
 		static void scheduleTask(Task* task, Time& time) {
 			TaskManager* taskManager = getTaskManager();
 			taskManager->scheduleTask(task, time);
+		}
+
+		static void commitTask() {
+		#ifdef WITH_STM
+			engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
+
+			if (!transaction->commit())
+				throw Exception("unable to commit initialization transaction");
+		#endif
 		}
 
 		static TaskManager* getTaskManager() {

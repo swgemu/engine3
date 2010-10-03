@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include <errno.h>
+
 #include "Mutex.h"
 
 #include "../lang/Time.h"
@@ -53,12 +55,20 @@ void ReadWriteLock::wlock(bool doLock) {
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_wrlock(&rwlock);
 		if (res != 0)
-			System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+			System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
 	#else
 		Time start;
 		start.addMiliTime(10000);
 
-		while (pthread_rwlock_timedwrlock(&rwlock, start.getTimeSpec())) {
+		int result = 0;
+
+		while ((result = pthread_rwlock_timedwrlock(&rwlock, start.getTimeSpec())) != 0) {
+			if (result != ETIMEDOUT) {
+				System::out << "(" << Time::currentNanoTime() << " nsec) wlock() error on RWLock \'" << lockName << "\' (" << strerror(result) << ")\n";
+
+				raise(SIGSEGV);
+			}
+
 			if (!doTrace)
 				continue;
 
@@ -163,7 +173,7 @@ void ReadWriteLock::unlock(bool doLock) {
 
 	int res = pthread_rwlock_unlock(&rwlock);
 	if (res != 0) {
-		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
 
 		StackTrace::printStackTrace();
 	}

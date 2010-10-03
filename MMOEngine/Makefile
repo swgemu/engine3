@@ -6,9 +6,10 @@ IDLC = /usr/local/bin/idlc
 ENGINE_PATH = ../MMOEngine-Pub
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
+			  engine/core/ManagedService.idl \
 			  engine/core/util/ManagedVector.idl
 
-IDL_DIRECTIVES =
+IDL_DIRECTIVES = -stm
 	
 all: 
 

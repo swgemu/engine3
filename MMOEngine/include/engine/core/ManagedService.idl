@@ -1,0 +1,12 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+package engine.core;
+
+import engine.core.ManagedObject;
+
+//@nonTransactional
+class ManagedService extends ManagedObject {
+}

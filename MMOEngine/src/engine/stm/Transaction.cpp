@@ -17,7 +17,8 @@ AtomicInteger transactionID;
 Transaction::Transaction() : Logger() {
 	status = UNDECIDED;
 
-	commitAttempts = 0;
+	commitTime = 0;
+	commitAttempts = 1;
 
 	String threadName = Thread::getCurrentThread()->getName();
 
@@ -32,20 +33,22 @@ Transaction::~Transaction() {
 }
 
 bool Transaction::commit() {
-	uint64 startTime = System::getMikroTime();
+	info("commiting..");
 
-	++commitAttempts;
+	uint64 startTime = System::getMikroTime();
 
 	bool commited = doCommit();
 
 	commitTime += System::getMikroTime() - startTime;
 
 	if (commited) {
-		info("commited");
+		info("commited (" + String::valueOf(commitTime) + "Us, " + String::valueOf(commitAttempts) + " tries)");
 
 		TransactionalMemoryManager::instance()->clearTransaction();
 	} else {
 		info("aborted");
+
+		++commitAttempts;
 
 		reset();
 	}
@@ -104,6 +107,8 @@ void Transaction::reset() {
 	}
 
 	readWriteObjects.removeAll();
+
+	info("reset");
 }
 
 bool Transaction::acquireReadWriteObjects() {

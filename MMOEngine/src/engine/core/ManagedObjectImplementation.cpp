@@ -6,83 +6,77 @@ void ManagedObject::updateForWrite() {
 }
 
 void ManagedObject::lock(bool doLock) {
+#ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_wlock(doLock);
+#endif
 }
 
 void ManagedObject::lock(ManagedObject* obj) {
-	DistributedObjectStub::wlock(obj);
+#ifndef WITH_STM
+DistributedObjectStub::wlock(obj);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_wlock(obj);
+#endif
 }
 
 void ManagedObject::rlock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(doLock);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_rlock(doLock);
 #endif
 }
 
 void ManagedObject::wlock(bool doLock) {
+#ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_wlock(doLock);
+#endif
 }
 
 void ManagedObject::wlock(ManagedObject* obj) {
+#ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_wlock(obj);
+#endif
 }
 
 void ManagedObject::unlock(bool doLock) {
 	if (getPersistenceLevel() == 3) // change to 3
 		updateToDatabase();
 
+#ifndef WITH_STM
 	DistributedObjectStub::unlock(doLock);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_unlock(doLock);
+#endif
 }
 
 void ManagedObject::runlock(bool doLock) {
+#ifndef WITH_STM
 	DistributedObjectStub::runlock(doLock);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_runlock(doLock);
+#endif
 }
 
 void ManagedObject::setLockName(const String& name) {
 	DistributedObjectStub::setLockName(name);
 
-	if (_impl == NULL)
+	if (_getImplementation() == NULL)
 		_setLockName(name);
 }
-
-#ifdef WITH_STM
-DistributedObjectServant* ManagedObject::_getImplementation() {
-	return getForUpdate();
-}
-
-void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
-	setObject((ManagedObjectImplementation*) servant);
-}
-#else
-DistributedObjectServant* ManagedObject::_getImplementation() {
-	return _impl;
-}
-
-void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
-}
-#endif
 
 bool ManagedObject::notifyDestroy() {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
@@ -126,11 +120,11 @@ void ManagedObjectImplementation::unlock(bool doLock) {
 }
 
 void ManagedObjectImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
+	//_this->runlock(doLock);
 }
 
 void ManagedObjectImplementation::setLockName(const String& name) {
-	_this->setLockName(name);
+	//_this->setLockName(name);
 }
 
 void ManagedObjectImplementation::updateToDatabase() {

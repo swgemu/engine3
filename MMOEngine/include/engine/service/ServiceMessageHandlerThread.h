@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ServiceClientMap.h"
 
+#include "ServiceHandler.h"
+
 #include "MessageQueue.h"
 
 namespace engine {
@@ -24,14 +26,16 @@ namespace engine {
 		
 		MessageQueue messageQueue;
 		
+		ServiceHandler* serviceHandler;
+
 	public:
 		ServiceMessageHandlerThread(const String& s);
 		
 		virtual ~ServiceMessageHandlerThread();
 	
-		virtual ServiceClient* createConnection(Socket* sock, SocketAddress& addr) = 0;
-		
-		virtual bool deleteConnection(ServiceClient* client);
+		bool removeConnection(ServiceClient* client);
+
+		void removeConnections();
 
 		// message functions
 		inline void addMessage(Message* msg) {
@@ -53,6 +57,11 @@ namespace engine {
 
 		inline int getServicePort() {
 			return port;
+		}
+
+		// setters
+		void setHandler(ServiceHandler* handler) {
+			serviceHandler = handler;
 		}
 	};
 

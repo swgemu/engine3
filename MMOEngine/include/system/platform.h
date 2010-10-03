@@ -95,7 +95,7 @@ namespace sys {
 	#define MIN(a, b) (a < b ? a : b)
 
 	//#define LOG_LOCKS
-	//#define TRACE_LOCKS
+	#define TRACE_LOCKS
 
 	//#define TRACE_REFERENCING
 	#define LINE_TRACING
@@ -104,6 +104,8 @@ namespace sys {
 	#ifdef VERSION_PUBLIC
 	#define CONNECTION_LIMIT 20
 	#endif
+
+	#define WITH_STM
 
 	namespace lang {
 	} // namespace net

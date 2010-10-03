@@ -64,7 +64,7 @@
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 				<buildTargets>
-					<target name="build" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+					<target name="all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 						<buildCommand>make</buildCommand>
 						<buildArguments>-f Makefile.freebsd</buildArguments>
 						<buildTarget>build</buildTarget>

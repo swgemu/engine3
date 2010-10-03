@@ -117,6 +117,7 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/stm/Transaction.$(OBJEXT) \
 	engine/stm/TransactionalMemoryManager.$(OBJEXT) \
 	engine/core/ManagedObject.$(OBJEXT) \
+	engine/core/ManagedService.$(OBJEXT) \
 	engine/core/ManagedObjectImplementation.$(OBJEXT) \
 	engine/util/QuadTree.$(OBJEXT) \
 	engine/util/iffstream/IffStream.$(OBJEXT) \
@@ -343,6 +344,7 @@ libengine3_a_SOURCES = \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/core/ManagedObject.cpp \
+			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
 			engine/util/QuadTree.cpp \
 			engine/util/iffstream/IffStream.cpp \
@@ -660,6 +662,8 @@ engine/stm/TransactionalMemoryManager.$(OBJEXT):  \
 	engine/stm/$(DEPDIR)/$(am__dirstamp)
 engine/core/ManagedObject.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
+engine/core/ManagedService.$(OBJEXT): engine/core/$(am__dirstamp) \
+	engine/core/$(DEPDIR)/$(am__dirstamp)
 engine/core/ManagedObjectImplementation.$(OBJEXT):  \
 	engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
@@ -768,6 +772,7 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f engine/core/ManagedObject.$(OBJEXT)
 	-rm -f engine/core/ManagedObjectImplementation.$(OBJEXT)
+	-rm -f engine/core/ManagedService.$(OBJEXT)
 	-rm -f engine/core/ObjectUpdateToDatabaseTask.$(OBJEXT)
 	-rm -f engine/core/Task.$(OBJEXT)
 	-rm -f engine/core/TaskManager.$(OBJEXT)
@@ -864,6 +869,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObjectImplementation.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedService.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ObjectUpdateToDatabaseTask.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/Task.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskManager.Po@am__quote@

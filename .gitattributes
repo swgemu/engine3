@@ -58,6 +58,9 @@ MMOEngine/include/engine/core/ManagedObject.h -text
 MMOEngine/include/engine/core/ManagedObject.idl -text
 MMOEngine/include/engine/core/ManagedObjectImplementation.h -text
 MMOEngine/include/engine/core/ManagedReference.h -text
+MMOEngine/include/engine/core/ManagedService.cpp -text
+MMOEngine/include/engine/core/ManagedService.h -text
+MMOEngine/include/engine/core/ManagedService.idl -text
 MMOEngine/include/engine/core/ManagedWeakReference.h -text
 MMOEngine/include/engine/core/ObjectUpdateToDatabaseTask.h -text
 MMOEngine/include/engine/core/ReentrantTask.h -text
@@ -72,6 +75,7 @@ MMOEngine/include/engine/core/thread/RWLockable.h -text
 MMOEngine/include/engine/core/thread/RWLockableImplementation.h -text
 MMOEngine/include/engine/core/util/ManagedSortedVector.h -text
 MMOEngine/include/engine/core/util/ManagedVector.h -text
+MMOEngine/include/engine/core/util/ManagedVector.idl -text
 MMOEngine/include/engine/core/util/ManagedVectorImplementation.h -text
 MMOEngine/include/engine/core/util/ManagedVectorMap.h -text
 MMOEngine/include/engine/db/BinaryData.h -text
@@ -142,6 +146,7 @@ MMOEngine/include/engine/service/MessageQueue.h -text
 MMOEngine/include/engine/service/ServiceClient.h -text
 MMOEngine/include/engine/service/ServiceClientMap.h -text
 MMOEngine/include/engine/service/ServiceException.h -text
+MMOEngine/include/engine/service/ServiceHandler.h -text
 MMOEngine/include/engine/service/ServiceMessageHandlerThread.h -text
 MMOEngine/include/engine/service/ServiceProcessThread.h -text
 MMOEngine/include/engine/service/ServiceThread.h -text
@@ -332,6 +337,9 @@ MMOEngine/src/engine/core/ManagedObject.h -text
 MMOEngine/src/engine/core/ManagedObject.idl -text
 MMOEngine/src/engine/core/ManagedObjectImplementation.cpp -text
 MMOEngine/src/engine/core/ManagedReference.h -text
+MMOEngine/src/engine/core/ManagedService.cpp -text
+MMOEngine/src/engine/core/ManagedService.h -text
+MMOEngine/src/engine/core/ManagedService.idl -text
 MMOEngine/src/engine/core/ManagedWeakReference.h -text
 MMOEngine/src/engine/core/ObjectUpdateToDatabaseTask.cpp -text
 MMOEngine/src/engine/core/ObjectUpdateToDatabaseTask.h -text
@@ -451,6 +459,7 @@ MMOEngine/src/engine/service/ServiceClient.cpp -text
 MMOEngine/src/engine/service/ServiceClient.h -text
 MMOEngine/src/engine/service/ServiceClientMap.h -text
 MMOEngine/src/engine/service/ServiceException.h -text
+MMOEngine/src/engine/service/ServiceHandler.h -text
 MMOEngine/src/engine/service/ServiceMessageHandlerThread.cpp -text
 MMOEngine/src/engine/service/ServiceMessageHandlerThread.h -text
 MMOEngine/src/engine/service/ServiceProcessThread.cpp -text

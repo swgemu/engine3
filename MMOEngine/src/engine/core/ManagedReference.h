@@ -125,11 +125,11 @@ namespace engine {
 			Reference<O>::updateObject(ref.object);
 		}
 
-#ifdef WITH_STM
-	private:
-#else
+//#ifdef WITH_STM
+//	private:
+//#else
 	public:
-#endif
+//#endif
 		O operator->() const {
 			return Reference<O>::object;
 		}

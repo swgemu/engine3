@@ -12,33 +12,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../db/ObjectDatabaseManager.h"
 
 DatagramServiceThread::DatagramServiceThread() : ServiceMessageHandlerThread("") {
-	clients = NULL;
-
 	setLogging(false);
 }
 
 DatagramServiceThread::DatagramServiceThread(const String& s) : ServiceMessageHandlerThread(s) {
-	clients = NULL;
-
 	setLogging(false);
 }
 
 DatagramServiceThread::~DatagramServiceThread() {
-	if (socket != NULL) {
-		delete socket;
-		socket = NULL;
-	}
-
-	if (clients != NULL) {
-		delete clients;
-		clients = NULL;
-	}
 }
 
 void DatagramServiceThread::start(int p, int mconn) {
 	port = p;
 
 	clients = new ServiceClientMap(mconn);
+
+	if (serviceHandler == NULL)
+		throw ServiceException("no service handler assigned");
 
 	try {
 		SocketAddress addr(port);
@@ -55,7 +45,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 		throw ServiceException(e.getMessage());
 	}
 
-	init();
+	serviceHandler->initialize();
 
 	ServiceThread::start();
 
@@ -70,10 +60,14 @@ void DatagramServiceThread::stop() {
 
 		socket->close();
 
-		//removeConnections();
+		removeConnections();
 
 		info("stopped", true);
 	}
+}
+
+void DatagramServiceThread::run() {
+	receiveMessages();
 }
 
 void DatagramServiceThread::receiveMessages() {
@@ -104,7 +98,7 @@ void DatagramServiceThread::receiveMessages() {
 			client = clients->get(netid);
 
 			if (client == NULL)	{
-				if ((client = createConnection(socket, addr)) == NULL) {
+				if ((client = serviceHandler->createConnection(socket, addr)) == NULL) {
 					ObjectDatabaseManager::instance()->commitLocalTransaction();
 					unlock();
 					continue;
@@ -124,7 +118,7 @@ void DatagramServiceThread::receiveMessages() {
 			unlock();
 
 			if (client->isAvailable()) {
-				handleMessage(client, &packet);
+				serviceHandler->handleMessage(client, &packet);
 			}
 
 			ObjectDatabaseManager::instance()->commitLocalTransaction();
@@ -134,7 +128,7 @@ void DatagramServiceThread::receiveMessages() {
 
 			if (client == NULL) {
 				info(e.getMessage());
-			} else if (!handleError(client, e))
+			} else if (!serviceHandler->handleError(client, e))
 				return;
 		} catch (...) {
 			ObjectDatabaseManager::instance()->commitLocalTransaction();
@@ -147,28 +141,5 @@ void DatagramServiceThread::receiveMessages() {
 		}
 
 
-	}
-}
-
-bool DatagramServiceThread::handleError(ServiceClient* client, Exception& e) {
-	info(e.getMessage());
-
-	return true;
-}
-
-bool DatagramServiceThread::removeConnection(ServiceClient* client) {
-	return ServiceMessageHandlerThread::deleteConnection(client);
-}
-
-void DatagramServiceThread::removeConnections() {
-	if (clients == NULL)
-		return;
-
-	clients->resetIterator();
-
-	while (clients->hasNext()) {
-		ServiceClient* client = clients->next();
-
-		delete client;
 	}
 }

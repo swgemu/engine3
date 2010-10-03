@@ -36,7 +36,7 @@ using namespace engine::core;
 namespace engine {
 namespace core {
 
-class ManagedObject : public DistributedObjectStub {
+class ManagedObject : public DistributedObjectStub, public TransactionalObjectHeader<class ManagedObjectImplementation*> {
 public:
 	ManagedObject();
 
@@ -115,14 +115,10 @@ protected:
 
 	bool _notifyDestroy();
 
-	DistributedObjectServant* __getImplementation();
-
-	void __setImplementation(DistributedObjectServant* servant);
-
 	friend class ManagedObjectHelper;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant, public TransactionalObject, public Serializable {
 protected:
 	int persistenceLevel;
 
@@ -182,10 +178,6 @@ public:
 
 	void setPersistent(int level);
 
-	DistributedObjectServant* _getImplementation();
-
-	void _setImplementation(DistributedObjectServant* servant);
-
 	ManagedObject* _this;
 
 	operator const ManagedObject*();
@@ -193,6 +185,8 @@ public:
 	DistributedObjectStub* _getStub();
 protected:
 	virtual ~ManagedObjectImplementation();
+
+	TransactionalObject* clone();
 
 	void finalize();
 
@@ -203,6 +197,7 @@ protected:
 	void _serializationHelperMethod();
 
 	friend class ManagedObject;
+	friend class TransactionalObjectHandle<ManagedObjectImplementation*>;
 };
 
 class ManagedObjectAdapter : public DistributedObjectAdapter {
@@ -246,16 +241,6 @@ public:
 	unsigned int getLastCRCSave();
 
 	void setLastCRCSave(unsigned int crc);
-
-	bool isPersistent();
-
-	int getPersistenceLevel();
-
-	void setPersistent(int level);
-
-	DistributedObjectServant* _getImplementation();
-
-	void _setImplementation(DistributedObjectServant* servant);
 
 protected:
 	String _param0_setLockName__String_;

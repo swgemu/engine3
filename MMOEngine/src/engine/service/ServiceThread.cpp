@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 ServiceThread::ServiceThread(const String& s) : Thread(), Mutex(s + "Thread"), Logger(s) {
 	taskManager = TaskManager::instance();
+	taskManager->setLogging(false);
 
 	setRunning(false);
 }

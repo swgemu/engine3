@@ -7,7 +7,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 ServiceMessageHandlerThread::ServiceMessageHandlerThread(const String& s) : ServiceThread(s) {
 	socket = NULL;
+
 	clients = NULL;
+
+	serviceHandler = NULL;
 }
 
 ServiceMessageHandlerThread::~ServiceMessageHandlerThread() {
@@ -20,13 +23,31 @@ ServiceMessageHandlerThread::~ServiceMessageHandlerThread() {
 		delete clients;
 		clients = NULL;
 	}
+
+	// FIXME: temp hack
+	if (serviceHandler != NULL && serviceHandler != (ServiceHandler*) this) {
+		delete serviceHandler;
+		serviceHandler = NULL;
+	}
 }
 
-bool ServiceMessageHandlerThread::deleteConnection(ServiceClient* client) {
-	lock();
+bool ServiceMessageHandlerThread::removeConnection(ServiceClient* client) {
+	Locker locker(this);
 	
-	bool res = clients->remove(client);
-	
-	unlock();
-	return res;
+	return clients->remove(client);
+}
+
+void ServiceMessageHandlerThread::removeConnections() {
+	if (clients == NULL)
+		return;
+
+	clients->resetIterator();
+
+	while (clients->hasNext()) {
+		ServiceClient* client = clients->next();
+
+		delete client;
+	}
+
+	clients->removeAll();
 }

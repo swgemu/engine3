@@ -119,11 +119,11 @@ namespace engine {
 			return true;
 		}
 
-#ifdef WITH_STM
-	private:
-#else
+//#ifdef WITH_STM
+//	private:
+//#else
 	public:
-#endif
+//#endif
 		O operator->() const {
 			return WeakReference<O>::object;
 		}
