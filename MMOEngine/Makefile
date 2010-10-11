@@ -3,13 +3,15 @@
 
 IDLC = /usr/local/bin/idlc
 
-ENGINE_PATH = ../MMOEngine-Pub
+INSTALL_PATH = /usr/local/engine3
+
+ENGINE_PUB_PATH = ../MMOEngine-Pub
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/ManagedService.idl \
 			  engine/core/util/ManagedVector.idl
 
-IDL_DIRECTIVES = -stm
+IDL_DIRECTIVES =
 	
 all: 
 
@@ -21,10 +23,10 @@ all-public:
 	make all-public32
 
 all-public32: clean configure-release32 compile install-public
-	cp lib/unix/libengine3.a $(ENGINE_PATH)/lib/linux32
+	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux32
 
 all-public64: clean configure-release64 compile install-public
-	cp lib/unix/libengine3.a $(ENGINE_PATH)/lib/linux64
+	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux64
 
 rebuild: clean configure-debug compile install-headers
 	#done
@@ -62,23 +64,19 @@ clean-distribution: recompile-idlc
 	#done
 
 install:
+	mkdir -p ${INSTALL_PATH}/lib
 	cp bin/idlc /usr/local/bin
-	cp bin/idlc.jar /usr/local/lib
-	#cp lib/unix/libengine3.a /usr/local/lib	
+	build/unix/install ${INSTALL_PATH} #> /dev/null 2>&1
 
 install-headers:	
 	build/unix/install . > /dev/null 2>&1
-	cp src/engine/core/ManagedObject.idl include/engine/core
 
 install-lib:
 	cp build/unix/src/libengine3.a lib/unix
 
-install-public:
-	build/unix/install $(ENGINE_PATH) -u > /dev/null
+install-public:	
 	strip --strip-debug lib/unix/libengine3.a
-	cp lib/unix/libengine3.a $(ENGINE_PATH)/lib/unix
-	cp bin/idlc.jar $(ENGINE_PATH)/bin
-	cp src/engine/core/ManagedObject.idl $(ENGINE_PATH)/include/engine/core
+	build/unix/install $(ENGIN	build/unix/install $(ENGINE_PUB_PATH) -u > /dev/null
 
 pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
