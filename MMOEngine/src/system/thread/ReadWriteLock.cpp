@@ -10,6 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../lang/Time.h"
 
 #include "../lang/System.h"
+#include "../lang/StackTrace.h"
 
 #include "ReadWriteLock.h"
 
@@ -21,8 +22,10 @@ void ReadWriteLock::rlock(bool doLock) {
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_rdlock(&rwlock);
-		if (res != 0)
+		if (res != 0) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+			StackTrace::printStackTrace();
+		}
 	#else
 		#ifndef LOG_LOCKS
 			int cnt = lockCount.increment();

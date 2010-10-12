@@ -25,10 +25,10 @@ ServiceMessageHandlerThread::~ServiceMessageHandlerThread() {
 	}
 
 	// FIXME: temp hack
-	if (serviceHandler != NULL && serviceHandler != (ServiceHandler*) this) {
+	/*if (serviceHandler != NULL && serviceHandler != (ServiceHandler*) this) {
 		delete serviceHandler;
 		serviceHandler = NULL;
-	}
+	}*/
 }
 
 bool ServiceMessageHandlerThread::removeConnection(ServiceClient* client) {
@@ -46,7 +46,8 @@ void ServiceMessageHandlerThread::removeConnections() {
 	while (clients->hasNext()) {
 		ServiceClient* client = clients->next();
 
-		delete client;
+		//delete client;
+		client->release();
 	}
 
 	clients->removeAll();

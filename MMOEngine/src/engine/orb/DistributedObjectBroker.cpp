@@ -115,15 +115,16 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 	try {
 		uint64 objectid = obj->_getObjectID();
 
+		Locker locker(objectManager);//Locker locker(this);
+
 		if (objectid == 0) {
 			objectid = objectManager->getNextFreeObjectID();
 			obj->_setObjectID(objectid);
 		}
 
-		Locker locker(this);
 		namingDirectoryInterface->deploy(obj);
 
-		locker.release();
+		//locker.release();
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
@@ -145,16 +146,16 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 	try {
 		uint64 objectid = obj->_getObjectID();
 
+		Locker locker(objectManager);//Locker locker(this);
+
 		if (objectid == 0) {
 			objectid = objectManager->getNextFreeObjectID();
 			obj->_setObjectID(objectid);
 		}
 
-		Locker locker(this);
-
 		namingDirectoryInterface->deploy(name, obj);
 
-		locker.release();
+		//locker.release();
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
@@ -170,7 +171,8 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
-	Locker locker(this);
+	//Locker locker(this);
+	Locker locker(objectManager);
 
 	return namingDirectoryInterface->lookUp(name);
 }
@@ -189,9 +191,11 @@ DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
 }
 
 bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
-	Locker locker(this);
+	/*Locker locker(this);
 
-	Locker clocker(objectManager, this);
+	Locker clocker(objectManager, this);*/
+
+	Locker clocker(objectManager);
 
 	if (obj->_isGettingDestroyed())
 		return false;
@@ -207,7 +211,7 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 }
 
 DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
-	Locker locker(this);
+	Locker locker(objectManager);//Locker locker(this);
 
 	DistributedObjectServant* servant = NULL;
 
@@ -254,7 +258,7 @@ void DistributedObjectBroker::setCustomObjectManager(DOBObjectManager* manager) 
 }
 
 DistributedObjectAdapter* DistributedObjectBroker::getObjectAdapter(uint64 oid) {
-	Locker locker(this);
+	Locker locker(objectManager);//Locker locker(this);
 
 	return objectManager->getAdapter(oid);
 }

@@ -5,6 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DistributedObjectDirectory.h"
 #include "../core/ManagedObject.h"
+#include "../log/Logger.h"
 #include "../db/ObjectDatabaseManager.h"
 
 DistributedObjectDirectory::DistributedObjectDirectory() {
@@ -49,43 +50,23 @@ void DistributedObjectDirectory::destroyContainingObjects() {
 
 	int i = 0;
 
-	System::out << "[DistributedObjectDirectory] saving persistent objects " << endl;
-
 	while (iterator.hasNext()) {
 		DistributedObjectAdapter* adapter = iterator.getNextValue();
 
 		DistributedObject* dobObject = adapter->getStub();
 
 		objects.add(dobObject);
-
-		ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
-
-		if (managedObject != NULL && managedObject->isPersistent()) {
-			Locker locker(managedObject);
-
-			managedObject->updateToDatabase();
-
-			++i;
-		}
-
-		if (i % 512 == 0)
-			ObjectDatabaseManager::instance()->commitLocalTransaction();
-
 	}
 
-	ObjectDatabaseManager::instance()->commitLocalTransaction();
+	savePersistentObjects();
 
-	ObjectDatabaseManager::instance()->checkpoint();
-
-	System::out << "[DistributedObjectDirectory] finished saving "<< i << " persistent objects " << endl;
+	objectMap.removeAll();
 }
 
 void DistributedObjectDirectory::savePersistentObjects() {
-	/*class DistributedObjectMap : public HashTable<uint64, DistributedObjectAdapter*> {
+	Logger::console.info("[DistributedObjectDirectory] saving persistent objects ", true);
 
-
-	};*/
-	System::out << "[DistributedObjectDirectory] saving persistent objects " << endl;
+	//System::out << "[DistributedObjectDirectory] saving persistent objects " << endl;
 
 	int i = 0;
 
@@ -114,5 +95,7 @@ void DistributedObjectDirectory::savePersistentObjects() {
 
 	ObjectDatabaseManager::instance()->checkpoint();
 
-	System::out << "[DistributedObjectDirectory] finished saving persistent objects " << endl;
+	StringBuffer msg;
+	msg << "[DistributedObjectDirectory] finished saving " << i << " persistent objects " << endl;
+	Logger::console.info(msg.toString(), true);
 }

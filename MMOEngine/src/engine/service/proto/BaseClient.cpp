@@ -396,7 +396,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
 			reentrantTask->schedule(10);
 
-		if (sendBuffer.size() > 3000) {
+		if (sendBuffer.size() > 6000) {
 			StringBuffer msg;
 			msg << "WARNING - send buffer overload [" << sendBuffer.size() << "]";
 			error(msg);

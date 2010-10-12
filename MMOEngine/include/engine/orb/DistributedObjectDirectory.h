@@ -30,6 +30,10 @@ namespace engine {
 
 		void savePersistentObjects();
 		void destroyContainingObjects();
+
+		int getSize() {
+			return objectMap.size();
+		}
 	};
 
   } // namespace ORB

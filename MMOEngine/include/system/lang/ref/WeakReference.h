@@ -13,6 +13,10 @@ namespace sys {
   namespace lang {
 
    class WeakReferenceBase {
+   public:
+	   virtual ~WeakReferenceBase() {
+
+	   }
    protected:
 	   virtual void clearObject() = 0;
 
