@@ -76,7 +76,7 @@ install-lib:
 
 install-public:	
 	strip --strip-debug lib/unix/libengine3.a
-	build/unix/install $(ENGIN	build/unix/install $(ENGINE_PUB_PATH) -u > /dev/null
+	build/unix/install $(ENGINE_PUB_PATH) -u > /dev/null
 
 pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
