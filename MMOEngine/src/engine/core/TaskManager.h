@@ -8,77 +8,38 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "../log/Logger.h"
-
-#include "../util/Singleton.h"
-
-#include "TaskQueue.h"
+#include "Task.h"
 
 namespace engine {
   namespace core {
 
-	class TaskWorkerThread;
-	class TaskScheduler;
-	class Task;
-
-	class TaskManager : public Singleton<TaskManager>, public Mutex, public Logger {
-		TaskQueue tasks;
-
-		Vector<TaskWorkerThread*> workers;
-		Vector<TaskScheduler*> schedulers;
-
-		int currentTaskScheduler;
-
-		bool shuttingDown;
-
-		TaskManager();
-
-		virtual ~TaskManager();
-
-		static const int DEAFULT_WORKER_THREADS = 1;
-		static const int DEAFULT_SCHEDULER_THREADS = 1;
-
+	class TaskManager {
 	public:
-		void initialize();
+		virtual void initialize() = 0;
 
-		void start();
+		virtual void start() = 0;
 
-		void shutdown();
+		virtual void shutdown() = 0;
 
-		void executeTask(Task* task);
+		virtual void executeTask(Task* task) = 0;
 
-		void scheduleTask(Task* task, uint64 delay = 0);
-		void scheduleTask(Task* task, Time& time);
+		virtual void scheduleTask(Task* task, uint64 delay = 0) = 0;
+		virtual void scheduleTask(Task* task, Time& time) = 0;
 
-		void rescheduleTask(Task* task, uint64 delay = 0);
-		void rescheduleTask(Task* task, Time& time);
+		virtual void rescheduleTask(Task* task, uint64 delay = 0) = 0;
+		virtual void rescheduleTask(Task* task, Time& time) = 0;
 
-		bool cancelTask(Task* task);
+		virtual bool cancelTask(Task* task) = 0;
 
-		inline void flushTasks() {
-			tasks.flush();
-		}
+		virtual Task* getTask() = 0;
 
-		void testScheduler();
+		virtual void flushTasks() = 0;
 
-		void printInfo();
+		virtual void printInfo() = 0;
 
-		int getScheduledTaskSize();
+		virtual int getScheduledTaskSize() = 0;
 
-		int getExecutingTaskSize();
-
-	private:
-		TaskScheduler* getTaskScheduler(bool doLock = true);
-
-		void setTaskScheduler(Task* task, TaskScheduler* scheduler, bool doLock = true);
-
-		inline Task* getTask() {
-			return tasks.pop();
-		}
-
-		friend class TaskScheduler;
-		friend class TaskWorkerThread;
-		friend class SingletonWrapper<TaskManager>;
+		virtual int getExecutingTaskSize() = 0;
 	};
 
   } // namespace core

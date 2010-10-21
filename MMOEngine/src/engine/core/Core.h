@@ -9,7 +9,8 @@
 
 #include "engine/db/mysql/MySqlDatabase.h"
 
-#include "TaskManager.h"
+#include "TaskManagerImpl.h"
+#include "TransactionalTaskManager.h"
 
 #include <new>
 
@@ -17,86 +18,29 @@ namespace engine {
   namespace core {
 
 	class Core : public Thread {
+		static TaskManager* taskManager;
+
 	public:
-		Core() {
-			initializeContext();
-		}
+		Core();
+		Core(const char* globallogfile);
 
-		Core(const char* globallogfile) {
-			initializeContext();
+		virtual ~Core();
 
-			Logger::setGlobalFileLogger(globallogfile);
-		}
+		virtual void initialize();
 
-		virtual void initialize() {
-			commitTask();
+		static void scheduleTask(Task* task, uint64 time = 0);
+		static void scheduleTask(Task* task, Time& time);
 
-			TaskManager* taskManager = getTaskManager();
-			taskManager->start();
-		}
+		static void commitTask();
 
-		virtual ~Core() {
-			finalizeContext();
-		}
-
-		static void scheduleTask(Task* task, uint64 time = 0) {
-			TaskManager* taskManager = getTaskManager();
-			taskManager->scheduleTask(task, time);
-		}
-
-		static void scheduleTask(Task* task, Time& time) {
-			TaskManager* taskManager = getTaskManager();
-			taskManager->scheduleTask(task, time);
-		}
-
-		static void commitTask() {
-		#ifdef WITH_STM
-			engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
-
-			if (!transaction->commit())
-				throw Exception("unable to commit initialization transaction");
-		#endif
-		}
-
-		static TaskManager* getTaskManager() {
-			return TaskManager::instance();
-		}
+		static TaskManager* getTaskManager();
 
 	protected:
-		void initializeContext() {
-			std::set_new_handler(outOfMemoryHandler);
+		void initializeContext();
 
-			mysql_library_init(0, NULL, NULL);
-			mysql_thread_init();
+		void finalizeContext();
 
-			Socket::initialize();
-
-			TaskManager* taskManager = getTaskManager();
-			taskManager->initialize();
-
-			Thread::initializeThread(this);
-		}
-
-		void finalizeContext() {
-			TaskManager* taskManager = getTaskManager();
-			taskManager->shutdown();
-
-			mysql_thread_end();
-			engine::db::mysql::MySqlDatabase::finalizeLibrary();
-
-			NetworkInterface::finalize();
-
-			Logger::closeGlobalFileLogger();
-		}
-
-		static void outOfMemoryHandler() {
-			System::out << "OutOfMemoryException\n";
-
-			//StackTrace::printStackTrace();
-
-			exit(1);
-		}
-
+		static void outOfMemoryHandler();
 	};
 
   } // namespace core

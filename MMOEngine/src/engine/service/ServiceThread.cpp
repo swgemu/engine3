@@ -3,11 +3,12 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/core/Core.h"
+
 #include "ServiceThread.h"
 
 ServiceThread::ServiceThread(const String& s) : Thread(), Mutex(s + "Thread"), Logger(s) {
-	taskManager = TaskManager::instance();
-	taskManager->setLogging(false);
+	taskManager = Core::getTaskManager();
 
 	setRunning(false);
 }

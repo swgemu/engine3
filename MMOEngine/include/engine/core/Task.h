@@ -8,12 +8,15 @@
 namespace engine {
   namespace core {
 
+	class TaskManager;
 	class TaskScheduler;
 	class TimedTaskQueue;
 
 	class Task : public PriorityQueueEntry, public Runnable, public virtual Object {
 	protected:
-		TaskScheduler* taskScheduler;
+		class TaskManager* taskManager;
+
+		AtomicReference<TaskScheduler> taskScheduler;
 
 		Time nextExecutionTime;
 
@@ -22,40 +25,13 @@ namespace engine {
 		bool reentrantTask;
 
 	public:
-		Task() : PriorityQueueEntry() {
-			taskScheduler = NULL;
+		Task();
+		Task(uint64 mtime);
+		Task(Time& time);
 
-			priority = 3;
+		virtual ~Task();
 
-			reentrantTask = false;
-		}
-
-		Task(uint64 mtime) : PriorityQueueEntry() {
-			taskScheduler = NULL;
-
-			nextExecutionTime.addMiliTime(mtime);
-
-			priority = 3;
-
-			reentrantTask = false;
-		}
-
-		Task(Time& time) : PriorityQueueEntry() {
-			taskScheduler = NULL;
-
-			nextExecutionTime = time;
-
-			priority = 3;
-
-			reentrantTask = false;
-		}
-
-		virtual ~Task() {
-			if (isQueued()) {
-				System::out << "ERROR: scheduled task deleted\n";
-				raise(SIGSEGV);
-			}
-		}
+		void execute();
 
 		bool cancel();
 
@@ -118,11 +94,17 @@ namespace engine {
 		}
 
 		inline bool isScheduled() {
-			return taskScheduler != NULL;
+			return taskScheduler.get() != NULL;
 		}
 
-		inline void setTaskScheduler(TaskScheduler* scheduler) {
-			taskScheduler = scheduler;
+		inline bool setTaskScheduler(TaskScheduler* scheduler) {
+			return taskScheduler.compareAndSet(NULL, scheduler);
+		}
+
+		inline bool clearTaskScheduler() {
+			TaskScheduler* scheduler = taskScheduler.get();
+
+			return taskScheduler.compareAndSet(scheduler, NULL);
 		}
 
 		inline void setPriority(int priority) {

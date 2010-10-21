@@ -19,6 +19,8 @@ namespace engine {
   namespace core {
 
 	class TaskScheduler : public Thread, public Logger {
+		TaskManager* taskManager;
+
 		TimedTaskQueue tasks;
 
 		bool doRun;
@@ -49,8 +51,18 @@ namespace engine {
 			return tasks.add(task, time);
 		}
 
+		void addSchedulerTasks(TaskScheduler* scheduler);
+
 		inline bool cancelTask(Task* task) {
 			return tasks.remove(task);
+		}
+
+		void flushTasks() {
+			tasks.flush();
+		}
+
+		void clearTasks() {
+			tasks.clear();
 		}
 
 		void fixQueue() {
@@ -63,6 +75,14 @@ namespace engine {
 
 		inline void printTasks() {
 			tasks.printQueue();
+		}
+
+		inline TaskManager* getTaskManager() {
+			return taskManager;
+		}
+
+		inline void setTaskManager(TaskManager* manager) {
+			taskManager = manager;
 		}
 	};
 

@@ -39,6 +39,11 @@ namespace sys {
 		
 	};
 
+	/*template<class E> class HashSetIterator : public class HashTableIterator<E, Object*> {
+		HashSetIterator(HashSet<E, Object*>* set)  :  HashTableIterator<E, Object*>(set) {
+		}
+	};*/
+
   } // namespace util
 } // namespace sys
 

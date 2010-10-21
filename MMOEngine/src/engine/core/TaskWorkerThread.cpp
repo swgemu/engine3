@@ -34,17 +34,7 @@ void TaskWorkerThread::run() {
 		ObjectDatabaseManager::instance()->startLocalTransaction();
 
 		try {
-		#ifdef WITH_STM
-			engine::stm::Transaction* transaction =	engine::stm::Transaction::currentTransaction();
-
-			do {
-				task->run();
-			} while (!transaction->commit());
-
-			delete transaction;
-		#else
-			task->run();
-		#endif
+			task->execute();
 		} catch (Exception& e) {
 			error(e.getMessage());
 		} catch (...) {

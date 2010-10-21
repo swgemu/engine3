@@ -16,6 +16,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskManager.h"
 
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
+	taskManager = NULL;
+
 	doRun = false;
 
 	tasks.setTaskScheduler(this);
@@ -25,6 +27,8 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 }
 
 TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
+	taskManager = NULL;
+
 	doRun = false;
 
 	tasks.setTaskScheduler(this);
@@ -56,23 +60,14 @@ void TaskScheduler::run() {
 		ObjectDatabaseManager::instance()->startLocalTransaction();
 
 		try {
-			#ifdef VERSION_PUBLIC
-				DO_TIMELIMIT;
-			#endif
-
-			TaskManager::instance()->setTaskScheduler(task, NULL);
-
-		#ifdef WITH_STM
-			engine::stm::Transaction* transaction =	engine::stm::Transaction::currentTransaction();
-
-			do {
-				task->run();
-			} while (!transaction->commit());
-
-			delete transaction;
-		#else
-			task->run();
+		#ifdef VERSION_PUBLIC
+			DO_TIMELIMIT;
 		#endif
+
+			if (!task->setTaskScheduler(NULL))
+				throw IllegalArgumentException("task was already unscheduled");
+
+			task->execute();
 		} catch (Exception& e) {
 			error(e.getMessage());
 		} catch (...) {
@@ -99,4 +94,8 @@ void TaskScheduler::stop() {
 	}
 
 	info("stopped");
+}
+
+void TaskScheduler::addSchedulerTasks(TaskScheduler* scheduler) {
+	tasks.merge(scheduler->tasks);
 }

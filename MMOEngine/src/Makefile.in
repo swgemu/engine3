@@ -71,8 +71,10 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	system/io/UnicodeTokenizer.$(OBJEXT) \
 	system/io/PrintStream.$(OBJEXT) \
 	system/io/Serializable.$(OBJEXT) \
-	system/util/PriorityQueue.$(OBJEXT) engine/core/Task.$(OBJEXT) \
-	engine/core/TaskManager.$(OBJEXT) \
+	system/util/PriorityQueue.$(OBJEXT) engine/core/Core.$(OBJEXT) \
+	engine/core/Task.$(OBJEXT) \
+	engine/core/TaskManagerImpl.$(OBJEXT) \
+	engine/core/TransactionalTaskManager.$(OBJEXT) \
 	engine/core/TaskScheduler.$(OBJEXT) \
 	engine/core/TaskQueue.$(OBJEXT) \
 	engine/core/TimedTaskQueue.$(OBJEXT) \
@@ -88,12 +90,6 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/service/StreamServiceClient.$(OBJEXT) \
 	engine/service/StreamServiceThread.$(OBJEXT) \
 	engine/service/MessageQueue.$(OBJEXT) \
-	engine/service/proxy/DatagramProxyClient.$(OBJEXT) \
-	engine/service/proxy/DatagramProxyService.$(OBJEXT) \
-	engine/service/proxy/DatagramProxyServiceClient.$(OBJEXT) \
-	engine/service/proxy/StreamProxyClient.$(OBJEXT) \
-	engine/service/proxy/StreamProxyService.$(OBJEXT) \
-	engine/service/proxy/StreamProxyServiceClient.$(OBJEXT) \
 	engine/service/proto/BaseProtocol.$(OBJEXT) \
 	engine/service/proto/BasePacket.$(OBJEXT) \
 	engine/service/proto/BaseMultiPacket.$(OBJEXT) \
@@ -298,8 +294,10 @@ libengine3_a_SOURCES = \
 			system/io/Serializable.cpp \
 			system/util/PriorityQueue.cpp \
 			engine/engine.h \
+			engine/core/Core.cpp \
 			engine/core/Task.cpp \
-			engine/core/TaskManager.cpp \
+			engine/core/TaskManagerImpl.cpp \
+			engine/core/TransactionalTaskManager.cpp \
 			engine/core/TaskScheduler.cpp \
 			engine/core/TaskQueue.cpp \
 			engine/core/TimedTaskQueue.cpp \
@@ -315,12 +313,6 @@ libengine3_a_SOURCES = \
 			engine/service/StreamServiceClient.cpp \
 			engine/service/StreamServiceThread.cpp \
 			engine/service/MessageQueue.cpp \
-			engine/service/proxy/DatagramProxyClient.cpp \
-			engine/service/proxy/DatagramProxyService.cpp \
-			engine/service/proxy/DatagramProxyServiceClient.cpp \
-			engine/service/proxy/StreamProxyClient.cpp \
-			engine/service/proxy/StreamProxyService.cpp \
-			engine/service/proxy/StreamProxyServiceClient.cpp \
 			engine/service/proto/BaseProtocol.cpp \
 			engine/service/proto/BasePacket.cpp \
 			engine/service/proto/BaseMultiPacket.cpp \
@@ -493,9 +485,14 @@ engine/core/$(am__dirstamp):
 engine/core/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/core/$(DEPDIR)
 	@: > engine/core/$(DEPDIR)/$(am__dirstamp)
+engine/core/Core.$(OBJEXT): engine/core/$(am__dirstamp) \
+	engine/core/$(DEPDIR)/$(am__dirstamp)
 engine/core/Task.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/TaskManager.$(OBJEXT): engine/core/$(am__dirstamp) \
+engine/core/TaskManagerImpl.$(OBJEXT): engine/core/$(am__dirstamp) \
+	engine/core/$(DEPDIR)/$(am__dirstamp)
+engine/core/TransactionalTaskManager.$(OBJEXT):  \
+	engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
 engine/core/TaskScheduler.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
@@ -543,30 +540,6 @@ engine/service/StreamServiceThread.$(OBJEXT):  \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
 engine/service/MessageQueue.$(OBJEXT): engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/proxy/$(am__dirstamp):
-	@$(MKDIR_P) engine/service/proxy
-	@: > engine/service/proxy/$(am__dirstamp)
-engine/service/proxy/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) engine/service/proxy/$(DEPDIR)
-	@: > engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
-engine/service/proxy/DatagramProxyClient.$(OBJEXT):  \
-	engine/service/proxy/$(am__dirstamp) \
-	engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
-engine/service/proxy/DatagramProxyService.$(OBJEXT):  \
-	engine/service/proxy/$(am__dirstamp) \
-	engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
-engine/service/proxy/DatagramProxyServiceClient.$(OBJEXT):  \
-	engine/service/proxy/$(am__dirstamp) \
-	engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
-engine/service/proxy/StreamProxyClient.$(OBJEXT):  \
-	engine/service/proxy/$(am__dirstamp) \
-	engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
-engine/service/proxy/StreamProxyService.$(OBJEXT):  \
-	engine/service/proxy/$(am__dirstamp) \
-	engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
-engine/service/proxy/StreamProxyServiceClient.$(OBJEXT):  \
-	engine/service/proxy/$(am__dirstamp) \
-	engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
 engine/service/proto/$(am__dirstamp):
 	@$(MKDIR_P) engine/service/proto
 	@: > engine/service/proto/$(am__dirstamp)
@@ -770,16 +743,18 @@ libengine3.a: $(libengine3_a_OBJECTS) $(libengine3_a_DEPENDENCIES)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f engine/core/Core.$(OBJEXT)
 	-rm -f engine/core/ManagedObject.$(OBJEXT)
 	-rm -f engine/core/ManagedObjectImplementation.$(OBJEXT)
 	-rm -f engine/core/ManagedService.$(OBJEXT)
 	-rm -f engine/core/ObjectUpdateToDatabaseTask.$(OBJEXT)
 	-rm -f engine/core/Task.$(OBJEXT)
-	-rm -f engine/core/TaskManager.$(OBJEXT)
+	-rm -f engine/core/TaskManagerImpl.$(OBJEXT)
 	-rm -f engine/core/TaskQueue.$(OBJEXT)
 	-rm -f engine/core/TaskScheduler.$(OBJEXT)
 	-rm -f engine/core/TaskWorkerThread.$(OBJEXT)
 	-rm -f engine/core/TimedTaskQueue.$(OBJEXT)
+	-rm -f engine/core/TransactionalTaskManager.$(OBJEXT)
 	-rm -f engine/db/BinaryData.$(OBJEXT)
 	-rm -f engine/db/ObjectDatabase.$(OBJEXT)
 	-rm -f engine/db/ObjectDatabaseManager.$(OBJEXT)
@@ -823,12 +798,6 @@ mostlyclean-compile:
 	-rm -f engine/service/proto/BasePacketHandler.$(OBJEXT)
 	-rm -f engine/service/proto/BaseProtocol.$(OBJEXT)
 	-rm -f engine/service/proto/events/BasePacketChekupEvent.$(OBJEXT)
-	-rm -f engine/service/proxy/DatagramProxyClient.$(OBJEXT)
-	-rm -f engine/service/proxy/DatagramProxyService.$(OBJEXT)
-	-rm -f engine/service/proxy/DatagramProxyServiceClient.$(OBJEXT)
-	-rm -f engine/service/proxy/StreamProxyClient.$(OBJEXT)
-	-rm -f engine/service/proxy/StreamProxyService.$(OBJEXT)
-	-rm -f engine/service/proxy/StreamProxyServiceClient.$(OBJEXT)
 	-rm -f engine/stm/Transaction.$(OBJEXT)
 	-rm -f engine/stm/TransactionalMemoryManager.$(OBJEXT)
 	-rm -f engine/util/QuadTree.$(OBJEXT)
@@ -867,16 +836,18 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/Core.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObjectImplementation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedService.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ObjectUpdateToDatabaseTask.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/Task.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskManagerImpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskQueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskScheduler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskWorkerThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TimedTaskQueue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TransactionalTaskManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/BinaryData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabaseManager.Po@am__quote@
@@ -920,12 +891,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BasePacketHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseProtocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/events/$(DEPDIR)/BasePacketChekupEvent.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proxy/$(DEPDIR)/DatagramProxyClient.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proxy/$(DEPDIR)/DatagramProxyService.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proxy/$(DEPDIR)/DatagramProxyServiceClient.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proxy/$(DEPDIR)/StreamProxyClient.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proxy/$(DEPDIR)/StreamProxyService.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proxy/$(DEPDIR)/StreamProxyServiceClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/Transaction.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/TransactionalMemoryManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/QuadTree.Po@am__quote@
@@ -1096,8 +1061,6 @@ distclean-generic:
 	-rm -f engine/service/proto/$(am__dirstamp)
 	-rm -f engine/service/proto/events/$(DEPDIR)/$(am__dirstamp)
 	-rm -f engine/service/proto/events/$(am__dirstamp)
-	-rm -f engine/service/proxy/$(DEPDIR)/$(am__dirstamp)
-	-rm -f engine/service/proxy/$(am__dirstamp)
 	-rm -f engine/stm/$(DEPDIR)/$(am__dirstamp)
 	-rm -f engine/stm/$(am__dirstamp)
 	-rm -f engine/util/$(DEPDIR)/$(am__dirstamp)
@@ -1127,7 +1090,7 @@ clean: clean-am
 clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/service/proxy/$(DEPDIR) engine/stm/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1161,7 +1124,7 @@ install-ps: install-ps-am
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/service/proxy/$(DEPDIR) engine/stm/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

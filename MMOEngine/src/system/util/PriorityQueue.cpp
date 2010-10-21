@@ -98,7 +98,7 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 }
 
 void PriorityQueue::clear() {
-	//reclaimMemory(root);
+	reclaimMemory(root);
 
 	root = NULL;
 	count = 0;
@@ -158,6 +158,7 @@ void PriorityQueue::reclaimMemory(PriorityQueueEntry* node) const {
 		reclaimMemory(node->leftNode);
 		reclaimMemory(node->rightNode);
 
-		delete node;
+		//delete node;
+		node->clear();
 	}
 }

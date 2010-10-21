@@ -40,6 +40,8 @@ namespace sys {
        bool add(const E& element);
        bool add(int index, const E& element);
 
+       void addAll(const Vector<E>& vector);
+
        void insertElementAt(const E& element, int index);
 
        E& get(int index) const;
@@ -151,6 +153,14 @@ namespace sys {
    template<class E> bool Vector<E>::add(int index, const E& element) {
        insertElementAt(element, index);
        return true;
+   }
+
+   template<class E> void Vector<E>::addAll(const Vector<E>& vector) {
+	   for (int i= 0; i < vector.size(); ++i) {
+		   const E& element = vector.get(i);
+
+		   add(element);
+	   }
    }
 
    template<class E> void Vector<E>::insertElementAt(const E& element, int index) {

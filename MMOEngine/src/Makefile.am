@@ -48,8 +48,10 @@ libengine3_a_SOURCES = \
 			system/io/Serializable.cpp \
 			system/util/PriorityQueue.cpp \
 			engine/engine.h \
+			engine/core/Core.cpp \
 			engine/core/Task.cpp \
-			engine/core/TaskManager.cpp \
+			engine/core/TaskManagerImpl.cpp \
+			engine/core/TransactionalTaskManager.cpp \
 			engine/core/TaskScheduler.cpp \
 			engine/core/TaskQueue.cpp \
 			engine/core/TimedTaskQueue.cpp \
@@ -65,12 +67,6 @@ libengine3_a_SOURCES = \
 			engine/service/StreamServiceClient.cpp \
 			engine/service/StreamServiceThread.cpp \
 			engine/service/MessageQueue.cpp \
-			engine/service/proxy/DatagramProxyClient.cpp \
-			engine/service/proxy/DatagramProxyService.cpp \
-			engine/service/proxy/DatagramProxyServiceClient.cpp \
-			engine/service/proxy/StreamProxyClient.cpp \
-			engine/service/proxy/StreamProxyService.cpp \
-			engine/service/proxy/StreamProxyServiceClient.cpp \
 			engine/service/proto/BaseProtocol.cpp \
 			engine/service/proto/BasePacket.cpp \
 			engine/service/proto/BaseMultiPacket.cpp \

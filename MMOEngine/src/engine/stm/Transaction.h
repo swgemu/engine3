@@ -10,7 +10,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
-#include "engine/core/Task.h"
+#include "engine/core/TaskQueue.h"
+#include "engine/core/TaskScheduler.h"
+
+#include "engine/util/Command.h"
 
 #include "TransactionalObjectHandle.h"
 
@@ -66,8 +69,7 @@ namespace engine {
 		uint64 commitTime;
 		int commitAttempts;
 
-		Vector<Task*> executingTasks;
-		Vector<Task*> schedulingTasks;
+		Vector<Command*> commands;
 
 		static const int UNDECIDED = 0;
 		static const int READ_CHECKING = 1;
@@ -123,14 +125,6 @@ namespace engine {
 		bool resolveConflict(Transaction* transaction);
 
 		void discardReadWriteObjects();
-
-		void addExecutingTask(Task* task) {
-			executingTasks.add(task);
-		}
-
-		void addSchedulingTask(Task* task) {
-			schedulingTasks.add(task);
-		}
 
 		friend class TaskManager;
 	};

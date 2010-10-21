@@ -35,6 +35,15 @@ namespace sys {
 
 		virtual int compareTo(PriorityQueueEntry* node) = 0;
 
+		inline void clear() {
+			parentNode = NULL;
+
+			leftNode = NULL;
+			rightNode = NULL;
+
+			enqueued = false;
+		}
+
 		inline void setQueued() {
 			enqueued = true;
 		}
@@ -48,7 +57,6 @@ namespace sys {
 		}
 
 		friend class PriorityQueue;
-
 	};
 
 	class PriorityQueue {
@@ -64,6 +72,8 @@ namespace sys {
 		virtual ~PriorityQueue();
 
 		void add(PriorityQueueEntry* node);
+
+		void merge(PriorityQueue& heap);
 
 		const PriorityQueueEntry* peak() const;
 		const PriorityQueueEntry* poll();
@@ -85,8 +95,6 @@ namespace sys {
 		}
 
 	private:
-		void merge(PriorityQueue& heap);
-
 		PriorityQueueEntry* merge(PriorityQueueEntry* h1, PriorityQueueEntry* h2) const;
 		PriorityQueueEntry* merge1(PriorityQueueEntry* h1, PriorityQueueEntry* h2) const;
 

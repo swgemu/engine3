@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/core/Core.h"
+
 #include "TransactionalMemoryManager.h"
 
 #include "TransactionalObjectHandle.h"
@@ -19,6 +21,9 @@ Transaction::Transaction() : Logger() {
 
 	commitTime = 0;
 	commitAttempts = 1;
+
+	Command* command = (TransactionalTaskManager*) Core::getTaskManager();
+	commands.add(command);
 
 	String threadName = Thread::getCurrentThread()->getName();
 
@@ -80,6 +85,12 @@ bool Transaction::doCommit() {
 
 	releaseReadWriteObjects();
 
+	for (int i = 0; i < commands.size(); ++i) {
+		Command* command = commands.get(i);
+
+		command->execute();
+	}
+
 	return true;
 }
 
@@ -87,6 +98,12 @@ void Transaction::abort() {
 	status = ABORTED;
 
 	discardReadWriteObjects();
+
+	for (int i = 0; i < commands.size(); ++i) {
+		Command* command = commands.get(i);
+
+		command->undo();
+	}
 }
 
 void Transaction::reset() {

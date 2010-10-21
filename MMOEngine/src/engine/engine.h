@@ -39,14 +39,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "service/Message.h"
 
-#include "service/proxy/StreamProxyClient.h"
-#include "service/proxy/StreamProxyServiceClient.h"
-#include "service/proxy/StreamProxyService.h"
-#include "service/proxy/StreamProxyServiceMap.h"
-#include "service/proxy/DatagramProxyServiceClient.h"
-#include "service/proxy/DatagramProxyClient.h"
-#include "service/proxy/DatagramProxyService.h"
-#include "service/proxy/DatagramProxyServiceMap.h"
 #include "service/proto/BaseClient.h"
 #include "service/proto/BaseClientProxy.h"
 #include "service/proto/BasePacket.h"

@@ -1,1 +1,1 @@
-java -cp /usr/local/lib/engine3/idlc.jar org.sr.idlc.compiler.Compiler $@
+java -cp /usr/local/engine3/lib/idlc.jar org.sr.idlc.compiler.Compiler $@
