@@ -64,12 +64,10 @@ void TaskScheduler::run() {
 			DO_TIMELIMIT;
 		#endif
 
-			if (!task->setTaskScheduler(NULL))
-				throw IllegalArgumentException("task was already unscheduled");
-
 			task->execute();
 		} catch (Exception& e) {
 			error(e.getMessage());
+			e.printStackTrace();
 		} catch (...) {
 			#ifdef VERSION_PUBLIC
 			ObjectDatabaseManager::instance()->commitLocalTransaction();
@@ -94,6 +92,33 @@ void TaskScheduler::stop() {
 	}
 
 	info("stopped");
+}
+
+bool TaskScheduler::scheduleTask(Task* task, uint64 delay) {
+	if (task->isQueued())
+		return false;
+
+	if (! tasks.add(task, delay))
+		return false;
+
+	return task->setTaskScheduler(this);
+}
+
+bool TaskScheduler::scheduleTask(Task* task, Time& time) {
+	if (task->isQueued())
+		return false;
+
+	if (!tasks.add(task, time))
+		return false;
+
+	return task->setTaskScheduler(this);
+}
+
+bool TaskScheduler::cancelTask(Task* task) {
+	if (!tasks.remove(task))
+		return false;
+
+	return task->clearTaskScheduler();
 }
 
 void TaskScheduler::addSchedulerTasks(TaskScheduler* scheduler) {

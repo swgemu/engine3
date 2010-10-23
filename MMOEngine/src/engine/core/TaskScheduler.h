@@ -37,25 +37,12 @@ namespace engine {
 
 		void stop();
 
-		inline bool scheduleTask(Task* task, uint64 delay = 0) {
-			if (task->isQueued())
-				return false;
+		bool scheduleTask(Task* task, uint64 delay = 0);
+		bool scheduleTask(Task* task, Time& time);
 
-			return tasks.add(task, delay);
-		}
-
-		inline bool scheduleTask(Task* task, Time& time) {
-			if (task->isQueued())
-				return false;
-
-			return tasks.add(task, time);
-		}
+		bool cancelTask(Task* task);
 
 		void addSchedulerTasks(TaskScheduler* scheduler);
-
-		inline bool cancelTask(Task* task) {
-			return tasks.remove(task);
-		}
 
 		void flushTasks() {
 			tasks.flush();

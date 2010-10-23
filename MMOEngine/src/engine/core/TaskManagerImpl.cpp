@@ -134,8 +134,6 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 	if (scheduler == NULL)
 		return;
 
-	setTaskScheduler(task, scheduler);
-
 	locker.release();
 
 	if (!scheduler->scheduleTask(task, delay))
@@ -151,8 +149,6 @@ void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
 	TaskScheduler* scheduler = getTaskScheduler();
 	if (scheduler == NULL)
 		return;
-
-	task->setTaskScheduler(scheduler);
 
 	locker.release();
 

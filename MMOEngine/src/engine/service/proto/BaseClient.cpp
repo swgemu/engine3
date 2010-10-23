@@ -770,8 +770,11 @@ void BaseClient::updateNetStatus() {
 		#endif
 
 		netcheckupEvent->reschedule(NETSTATUSCHECKUP_TIMEOUT);
+	} catch (Exception& e) {
+		e.printStackTrace();
+		disconnect("Exception on updateNetStatus()", false);
 	} catch (...) {
-		disconnect("unreported exception on checkNetStatus()", false);
+		disconnect("unreported exception on updateNetStatus()", false);
 	}
 
 	unlock();
@@ -818,6 +821,9 @@ bool BaseClient::checkNetStatus() {
 
 		hasError = true;
 		disconnect(false);
+	} catch (Exception& e) {
+		disconnect("Exception on checkNetStatus()", false);
+		e.printStackTrace();
 	} catch (...) {
 		disconnect("unreported exception on checkNetStatus()", false);
 	}
