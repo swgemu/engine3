@@ -796,7 +796,9 @@ void BaseClient::requestNetStatus() {
 		sendPacket(resp, false);
 
 		netRequestEvent->reschedule(NETSTATUSREQUEST_TIME);
-
+	} catch (Exception& e) {
+		e.printStackTrace();
+		disconnect("Exception on requestNetStatus()", false);
 	} catch (...) {
 		disconnect("unreported exception caught in BaseClient::requestNetStatus()", true);
 	}

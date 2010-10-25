@@ -157,15 +157,23 @@ void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
 }
 
 void TaskManagerImpl::rescheduleTask(Task* task, uint64 delay) {
+	task->acquire();
+
 	cancelTask(task);
 
 	scheduleTask(task, delay);
+
+	task->release();
 }
 
 void TaskManagerImpl::rescheduleTask(Task* task, Time& time) {
+	task->acquire();
+
 	cancelTask(task);
 
 	scheduleTask(task, time);
+
+	task->release();
 }
 
 bool TaskManagerImpl::cancelTask(Task* task) {
@@ -272,7 +280,7 @@ public:
 			if (System::random(10) == 0)
 				//TaskManagerImpl::instance()->scheduleTask(this, 100);
 
-			for (int i = 0; i < 0x10000000; ++i) ;
+			for (int i = 0; i < 0x1000; ++i) ;
 
 		} catch (Exception& e) {
 			e.printStackTrace();
@@ -289,7 +297,7 @@ void TaskManagerImpl::testScheduler() {
 		scheduleTask(task, 100 + shift);
 		rescheduleTask(task, shift - 50);
 
-		//Thread::sleep(System::random(5) + 5);
+		Thread::sleep(System::random(5) + 5);
 	}
 
 	/*Task* task = new ReentrantTestTask(1);

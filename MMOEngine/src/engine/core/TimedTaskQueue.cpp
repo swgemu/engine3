@@ -82,6 +82,8 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 
 	task->acquire();
 
+	task->setTaskScheduler(taskScheduler);
+
 	PriorityQueue::add(task);
 
 	#ifdef TRACE_TASKS
@@ -165,7 +167,7 @@ Task* TimedTaskQueue::get() {
 
 	Task* task = (Task*) PriorityQueue::poll();
 
-	task->setTaskScheduler(taskScheduler);
+	task->clearTaskScheduler();
 
 	if (!blocked && task->getNextExecutionTime().isFuture()) {
 		int64 difference = -(uint64) task->getNextExecutionTime().miliDifference();
@@ -220,7 +222,7 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 
 	PriorityQueue::remove(task);
 
-	task->setTaskScheduler(NULL);
+	task->clearTaskScheduler();
 
 	task->release();
 
