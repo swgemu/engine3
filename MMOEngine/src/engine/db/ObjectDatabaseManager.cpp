@@ -70,8 +70,8 @@ void ObjectDatabaseManager::openEnvironment() {
 	config.setTransactional(true);
 	config.setInitializeCache(true);
 	config.setMaxLogFileSize(1000 * 1000 * 100); // 100mb
-	//config.setLockDetectMode(LockDetectMode::RANDOM);
-	config.setLockDetectMode(LockDetectMode::YOUNGEST);
+	config.setLockDetectMode(LockDetectMode::RANDOM);
+	//config.setLockDetectMode(LockDetectMode::YOUNGEST);
 
 	try {
 		databaseEnvironment = new Environment("databases", config);
@@ -166,12 +166,12 @@ ObjectDatabase* ObjectDatabaseManager::loadDatabase(const String& name, bool cre
 	msg << "trying to create database " << name << " with id 0x" << hex << uniqueID;
 	info(msg.toString(), true);
 
-	ObjectOutputStream nameData(20);
+	ObjectOutputStream* nameData = new ObjectOutputStream(20);
 
 	String nm = name;
-	nm.toBinaryStream(&nameData);
+	nm.toBinaryStream(nameData);
 
-	databaseDirectory->putData((uint64)uniqueID, &nameData, NULL);
+	databaseDirectory->putData((uint64)uniqueID, nameData, NULL);
 
 	databases.put(uniqueID, db);
 	nameDirectory.put(name, uniqueID);
@@ -216,7 +216,49 @@ void ObjectDatabaseManager::startLocalTransaction() {
 	trans->startBerkeleyTransaction();*/
 }
 
-void ObjectDatabaseManager::commitLocalTransaction() {
+void ObjectDatabaseManager::abortLocalTransaction() {
+	CurrentTransaction* transaction = localTransaction.get();
+
+	if (transaction == NULL)
+		return;
+
+	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
+
+	transaction->clearTemporaryObjects();
+
+	if (updateObjects->size() == 0) {
+		return;
+	}
+
+	for (int i = 0; i < updateObjects->size(); ++i) {
+		UpdateObject* updateObject = &updateObjects->elementAt(i);
+
+		Stream* stream = updateObject->stream;
+
+		if (stream != NULL)
+			delete stream;
+	}
+
+	updateObjects->removeAll();
+}
+
+engine::db::berkley::Transaction* ObjectDatabaseManager::startTransaction() {
+	Transaction* transaction = databaseEnvironment->beginTransaction(NULL);
+
+	return transaction;
+}
+
+int ObjectDatabaseManager::commitTransaction(engine::db::berkley::Transaction* transaction) {
+	int commitRet;
+
+	if ((commitRet = transaction->commitNoSync()) != 0) {
+		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
+	}
+
+	return commitRet;
+}
+
+void ObjectDatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* masterTransaction) {
 	if (this == NULL)
 		return;
 
@@ -229,16 +271,10 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 		return;
 
 	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
-	//Transaction* berkeleyTransaction = transaction->getBerkeleyTransaction();
 
 	transaction->clearTemporaryObjects();
 
-	/*if (berkeleyTransaction == NULL)
-		return;*/
-
 	if (updateObjects->size() == 0) {
-		/*berkeleyTransaction->abort();
-		transaction->clearBerkeleyTransaction();*/
 		return;
 	}
 
@@ -247,14 +283,10 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 
 	Transaction* berkeleyTransaction = NULL;
 
-
 	do {
 		ret = -1;
 
-
-
-		//if (iteration != 0)
-			berkeleyTransaction = databaseEnvironment->beginTransaction(NULL);
+		berkeleyTransaction = databaseEnvironment->beginTransaction(masterTransaction);
 
 		for (int i = 0; i < updateObjects->size(); ++i) {
 			UpdateObject* updateObject = &updateObjects->elementAt(i);
@@ -304,7 +336,7 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 		int commitRet = 0;
 
 		if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
-			error("error commiting berkeley transaction " + String::valueOf(db_strerror(ret)));
+			error("error commiting berkeley transaction " + String::valueOf(db_strerror(commitRet)));
 		}
 	}
 
@@ -318,8 +350,6 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 	}
 
 	updateObjects->removeAll();
-
-	//transaction->clearBerkeleyTransaction();
 
 }
 
@@ -348,11 +378,11 @@ void ObjectDatabaseManager::getDatabaseName(uint16 tableID, String& name) {
 }
 
 void ObjectDatabaseManager::updateLastUsedObjectID(uint64 id) {
-	ObjectOutputStream idData(8);
+	ObjectOutputStream* idData = new ObjectOutputStream(8);
 
-	TypeInfo<uint64>::toBinaryStream(&id, &idData);
+	TypeInfo<uint64>::toBinaryStream(&id, idData);
 
-	databaseDirectory->putData(LASTOBJECTIDKEY, &idData, NULL);
+	databaseDirectory->putData(LASTOBJECTIDKEY, idData, NULL);
 }
 
 uint64 ObjectDatabaseManager::getLastUsedObjectID() {
