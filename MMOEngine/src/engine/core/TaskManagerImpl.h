@@ -36,8 +36,8 @@ namespace engine {
 
   		SortedVector<Task*> cancelledTasks;
 
-		static const int DEAFULT_WORKER_THREADS = 1;
-		static const int DEAFULT_SCHEDULER_THREADS = 1;
+		static const int DEFAULT_WORKER_THREADS = 1;
+		static const int DEFAULT_SCHEDULER_THREADS = 1;
 
 	public:
 		TaskManagerImpl();
@@ -51,6 +51,9 @@ namespace engine {
 		void start();
 
 		void shutdown();
+
+		Vector<Locker*> blockTaskManager();
+		void unblockTaskManager(Vector<Locker*>& lockers);
 
 		void executeTask(Task* task);
 

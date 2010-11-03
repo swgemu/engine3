@@ -24,7 +24,7 @@ TaskManagerImpl::~TaskManagerImpl() {
 }
 
 void TaskManagerImpl::initialize() {
-	initialize(DEAFULT_WORKER_THREADS, DEAFULT_SCHEDULER_THREADS);
+	initialize(DEFAULT_WORKER_THREADS, DEFAULT_SCHEDULER_THREADS);
 }
 
 void TaskManagerImpl::initialize(int workerCount, int schedulerCount) {
@@ -98,6 +98,39 @@ void TaskManagerImpl::shutdown() {
 	}
 
 	info("stopped");
+}
+
+Vector<Locker*> TaskManagerImpl::blockTaskManager() {
+	Locker locker(this);
+
+	Vector<Locker*> lockers;
+
+	for (int i = 0; i < workers.size(); ++i) {
+		TaskWorkerThread* worker = workers.get(i);
+
+		ReadWriteLock* blockMutex = worker->getBlockMutex();
+
+		Locker* locker = new Locker(blockMutex);
+		lockers.add(locker);
+	}
+
+	for (int i = 0; i < schedulers.size(); ++i) {
+		TaskScheduler* scheduler = schedulers.get(i);
+
+		ReadWriteLock* blockMutex = scheduler->getBlockMutex();
+
+		Locker* locker = new Locker(blockMutex);
+		lockers.add(locker);
+	}
+
+	return lockers;
+}
+
+void TaskManagerImpl::unblockTaskManager(Vector<Locker*>& lockers) {
+	for (int i = 0; i < lockers.size(); ++i)
+		delete lockers.get(i);
+
+	lockers.removeAll();
 }
 
 TaskScheduler* TaskManagerImpl::getTaskScheduler() {

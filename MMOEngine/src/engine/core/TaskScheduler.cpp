@@ -55,6 +55,8 @@ void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
+		blockMutex.rlock();
+
 		try {
 		#ifdef VERSION_PUBLIC
 			DO_TIMELIMIT;
@@ -74,6 +76,8 @@ void TaskScheduler::run() {
 		}
 
 		task->release();
+
+		blockMutex.runlock();
 	}
 }
 
