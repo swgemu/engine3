@@ -100,10 +100,10 @@ void TaskManagerImpl::shutdown() {
 	info("stopped");
 }
 
-Vector<Locker*> TaskManagerImpl::blockTaskManager() {
+Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 	Locker locker(this);
 
-	Vector<Locker*> lockers;
+	Vector<Locker*>* lockers = new Vector<Locker*>();
 
 	for (int i = 0; i < workers.size(); ++i) {
 		TaskWorkerThread* worker = workers.get(i);
@@ -111,7 +111,7 @@ Vector<Locker*> TaskManagerImpl::blockTaskManager() {
 		ReadWriteLock* blockMutex = worker->getBlockMutex();
 
 		Locker* locker = new Locker(blockMutex);
-		lockers.add(locker);
+		lockers->add(locker);
 	}
 
 	for (int i = 0; i < schedulers.size(); ++i) {
@@ -120,17 +120,17 @@ Vector<Locker*> TaskManagerImpl::blockTaskManager() {
 		ReadWriteLock* blockMutex = scheduler->getBlockMutex();
 
 		Locker* locker = new Locker(blockMutex);
-		lockers.add(locker);
+		lockers->add(locker);
 	}
 
 	return lockers;
 }
 
-void TaskManagerImpl::unblockTaskManager(Vector<Locker*>& lockers) {
-	for (int i = 0; i < lockers.size(); ++i)
-		delete lockers.get(i);
+void TaskManagerImpl::unblockTaskManager(Vector<Locker*>* lockers) {
+	for (int i = 0; i < lockers->size(); ++i)
+		delete lockers->get(i);
 
-	lockers.removeAll();
+	lockers->removeAll();
 }
 
 TaskScheduler* TaskManagerImpl::getTaskScheduler() {

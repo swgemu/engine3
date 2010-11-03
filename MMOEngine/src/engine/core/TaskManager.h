@@ -21,6 +21,14 @@ namespace engine {
 
 		virtual void shutdown() = 0;
 
+		virtual Vector<Locker*>* blockTaskManager() {
+			return NULL;
+		}
+
+		virtual void unblockTaskManager(Vector<Locker*>* lockers) {
+
+		}
+
 		virtual void executeTask(Task* task) = 0;
 
 		virtual void scheduleTask(Task* task, uint64 delay = 0) = 0;
