@@ -33,7 +33,7 @@ namespace sys {
 			object = NULL;
 		}
 
-		WeakReference(const WeakReference<O>& ref) : Variable() {
+		WeakReference(const WeakReference<O>& ref) : Variable(), WeakReferenceBase() {
 			initializeObject(ref.object);
 		}
 

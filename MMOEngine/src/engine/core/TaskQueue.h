@@ -21,7 +21,7 @@ namespace engine {
 		Mutex* condMutex;
 
 		bool blocked;
-		bool waitingForTask;
+		//bool waitingForTask;
 
 	public:
 		TaskQueue();

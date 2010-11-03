@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 TaskQueue::TaskQueue() : SortedVector<Task*>(200, 100), Condition(), Logger("TaskQueue") {
 	blocked = false;
-	waitingForTask = false;
+	//waitingForTask = false;
 
 	condMutex = new Mutex("TaskQueue");
 
@@ -39,7 +39,7 @@ void TaskQueue::push(Task* task) {
 		info(s);
 	#endif
 
-	if (waitingForTask)
+	//if (waitingForTask)
 		signal(condMutex);
 
 	condMutex->unlock();
@@ -58,7 +58,7 @@ Task* TaskQueue::pop() {
 			return NULL;
 		}
 
-		waitingForTask = true;
+		//waitingForTask = true;
 		wait(condMutex);
 	}
 
@@ -71,7 +71,7 @@ Task* TaskQueue::pop() {
 		info(s);
 	#endif
 
-	waitingForTask = false;
+	//waitingForTask = false;
 	condMutex->unlock();
 
 	return task;
@@ -82,7 +82,7 @@ void TaskQueue::flush() {
 
 	blocked = true;
 
-	if (waitingForTask)
+	//if (waitingForTask)
 		broadcast(condMutex);
 
 	condMutex->unlock();

@@ -131,11 +131,11 @@ namespace engine {
 	public:
 //#endif
 		O operator->() const {
-			return getForUpdate();
+			return Reference<O>::object;
 		}
 
 		operator O() const {
-			return getForUpdate();;
+			return Reference<O>::object;
 		}
 
 };
