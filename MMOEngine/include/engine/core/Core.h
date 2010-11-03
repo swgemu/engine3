@@ -48,7 +48,7 @@ namespace engine {
 	};
 
 	template<class T> T* Core::lookupObject(const String& name) {
-		return (T*) DistributedObjectBroker::instance()->lookUp(name);
+		return dynamic_cast<T*>(DistributedObjectBroker::instance()->lookUp(name));
 	}
 
   } // namespace core
