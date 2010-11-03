@@ -83,7 +83,6 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/service/ServiceClient.$(OBJEXT) \
 	engine/service/ServiceThread.$(OBJEXT) \
 	engine/service/ServiceMessageHandlerThread.$(OBJEXT) \
-	engine/service/ServiceProcessThread.$(OBJEXT) \
 	engine/service/DatagramServiceClient.$(OBJEXT) \
 	engine/service/DatagramServiceClientProxy.$(OBJEXT) \
 	engine/service/DatagramServiceThread.$(OBJEXT) \
@@ -306,7 +305,6 @@ libengine3_a_SOURCES = \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \
-			engine/service/ServiceProcessThread.cpp \
 			engine/service/DatagramServiceClient.cpp \
 			engine/service/DatagramServiceClientProxy.cpp \
 			engine/service/DatagramServiceThread.cpp \
@@ -518,9 +516,6 @@ engine/service/ServiceThread.$(OBJEXT):  \
 	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
 engine/service/ServiceMessageHandlerThread.$(OBJEXT):  \
-	engine/service/$(am__dirstamp) \
-	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/ServiceProcessThread.$(OBJEXT):  \
 	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
 engine/service/DatagramServiceClient.$(OBJEXT):  \
@@ -786,7 +781,6 @@ mostlyclean-compile:
 	-rm -f engine/service/MessageQueue.$(OBJEXT)
 	-rm -f engine/service/ServiceClient.$(OBJEXT)
 	-rm -f engine/service/ServiceMessageHandlerThread.$(OBJEXT)
-	-rm -f engine/service/ServiceProcessThread.$(OBJEXT)
 	-rm -f engine/service/ServiceThread.$(OBJEXT)
 	-rm -f engine/service/StreamServiceClient.$(OBJEXT)
 	-rm -f engine/service/StreamServiceThread.$(OBJEXT)
@@ -879,7 +873,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/MessageQueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceMessageHandlerThread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceProcessThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/StreamServiceClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/StreamServiceThread.Po@am__quote@

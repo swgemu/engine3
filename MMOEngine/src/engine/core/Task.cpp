@@ -1,5 +1,7 @@
 #include "Core.h"
 
+#include "engine/db/ObjectDatabaseManager.h"
+
 #include "TaskScheduler.h"
 
 #include "Task.h"
@@ -45,9 +47,19 @@ void Task::execute() {
 #ifdef WITH_STM
 	engine::stm::Transaction* transaction =	engine::stm::Transaction::currentTransaction();
 
-	do {
+	while (true) {
+		ObjectDatabaseManager::instance()->startLocalTransaction();
+
 		run();
-	} while (!transaction->commit());
+
+		if (transaction->commit()) {
+			ObjectDatabaseManager::instance()->commitLocalTransaction();
+
+			break;
+		} else {
+			ObjectDatabaseManager::instance()->abortLocalTransaction();
+		}
+	}
 
 	delete transaction;
 #else

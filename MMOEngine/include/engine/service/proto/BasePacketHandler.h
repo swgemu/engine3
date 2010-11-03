@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../../log/Logger.h"
 
 #include "../ServiceClient.h"
-#include "../ServiceMessageHandlerThread.h"
+#include "../ServiceHandler.h"
 
 #include "BaseClient.h"
 
@@ -22,11 +22,11 @@ namespace engine {
     namespace proto {
 
 	class BasePacketHandler : public Logger {
-		MessageQueue* messageQueue;
+		ServiceHandler* serviceHandler;
 
 	public:
 		BasePacketHandler();
-		BasePacketHandler(const String& s, MessageQueue* queue);
+		BasePacketHandler(const String& s, ServiceHandler* handler);
 
 		void handlePacket(BaseClient* client, Packet* pack);
 
@@ -46,6 +46,8 @@ namespace engine {
 		void handleDataChannelMultiPacket(BaseClient* client, Packet* pack, sys::uint16 size);
 
 		void handleFragmentedPacket(BaseClient* client, Packet* pack);
+
+		void processMessage(Message* msg);
 	};
 
     } // namespace proto

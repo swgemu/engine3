@@ -118,6 +118,8 @@ void DatagramServiceThread::receiveMessages() {
 			unlock();
 
 			if (client->isAvailable()) {
+				//serviceFilter->messageReceived(client, &packet);
+
 				serviceHandler->handleMessage(client, &packet);
 			}
 

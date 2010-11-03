@@ -4,7 +4,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "engine/stm/TransactionalMemoryManager.h"
-#include "engine/db/ObjectDatabaseManager.h"
 
 #include "TaskWorkerThread.h"
 
@@ -31,8 +30,6 @@ void TaskWorkerThread::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = taskManager->getTask()) != NULL) {
-		ObjectDatabaseManager::instance()->startLocalTransaction();
-
 		try {
 			task->execute();
 		} catch (Exception& e) {
@@ -40,8 +37,6 @@ void TaskWorkerThread::run() {
 		} catch (...) {
 			error("unreported Exception caught");
 		}
-
-		ObjectDatabaseManager::instance()->commitLocalTransaction();
 
 		task->release();
 	}

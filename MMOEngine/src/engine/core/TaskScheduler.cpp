@@ -7,13 +7,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskScheduler.h"
 
-#include "engine/db/ObjectDatabaseManager.h"
+#include "TaskManager.h"
 
 #ifdef VERSION_PUBLIC
 #include "../service/proto/events/BaseClientCleanUpEvent.hpp"
 #endif
-
-#include "TaskManager.h"
 
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	taskManager = NULL;
@@ -52,15 +50,9 @@ void TaskScheduler::start() {
 }
 
 void TaskScheduler::run() {
-	ObjectDatabaseManager::instance()->commitLocalTransaction();
-
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
-		//task->clearTaskScheduler();
-
-		ObjectDatabaseManager::instance()->startLocalTransaction();
-
 		try {
 		#ifdef VERSION_PUBLIC
 			DO_TIMELIMIT;
@@ -78,8 +70,6 @@ void TaskScheduler::run() {
 				error("[TaskScheduler] unreported Exception caught");
 			#endif
 		}
-
-		ObjectDatabaseManager::instance()->commitLocalTransaction();
 
 		task->release();
 	}

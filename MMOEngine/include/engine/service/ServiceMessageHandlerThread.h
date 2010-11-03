@@ -11,6 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ServiceClientMap.h"
 
 #include "ServiceHandler.h"
+#include "ServiceFilter.h"
 
 #include "MessageQueue.h"
 
@@ -27,6 +28,8 @@ namespace engine {
 		MessageQueue messageQueue;
 		
 		ServiceHandler* serviceHandler;
+
+		ServiceFilter* serviceFilter;
 
 	public:
 		ServiceMessageHandlerThread(const String& s);
@@ -63,7 +66,11 @@ namespace engine {
 		void setHandler(ServiceHandler* handler) {
 			serviceHandler = handler;
 		}
-	};
+
+		void setFilter(ServiceFilter* filter) {
+			serviceFilter = filter;
+		}
+};
 
   } // namespace service
 } // namespace engine

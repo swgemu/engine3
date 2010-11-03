@@ -11,6 +11,8 @@ ServiceMessageHandlerThread::ServiceMessageHandlerThread(const String& s) : Serv
 	clients = NULL;
 
 	serviceHandler = NULL;
+
+	serviceFilter = NULL;
 }
 
 ServiceMessageHandlerThread::~ServiceMessageHandlerThread() {

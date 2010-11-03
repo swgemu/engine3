@@ -10,8 +10,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
-//#include "engine/util/Singleton.h"
-
 #include "TaskManager.h"
 
 #include "TaskQueue.h"
@@ -23,7 +21,7 @@ namespace engine {
 	class TaskScheduler;
 	class Task;
 
-	class TaskManagerImpl : public TaskManager, /*public Singleton<TaskManagerImpl>,*/ public Mutex, public Logger {
+	class TaskManagerImpl : public TaskManager, public Mutex, public Logger {
 		TaskQueue tasks;
 
 		Vector<TaskWorkerThread*> workers;

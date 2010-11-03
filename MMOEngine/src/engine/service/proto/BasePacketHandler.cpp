@@ -19,11 +19,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #endif
 
 BasePacketHandler::BasePacketHandler() : Logger() {
-	messageQueue = NULL;
+	serviceHandler = NULL;
 }
 
-BasePacketHandler::BasePacketHandler(const String& s, MessageQueue* queue) : Logger(s) {
-	messageQueue = queue;
+BasePacketHandler::BasePacketHandler(const String& s, ServiceHandler* handler) : Logger(s) {
+	serviceHandler = handler;
 }
 
 void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
@@ -229,7 +229,7 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 					message->setClient(client);
 					message->setTimeStampMili(System::getMiliTime() + 50);
 
-					messageQueue->push(message);
+					processMessage(message);
 				}
 
 				break;
@@ -278,7 +278,7 @@ void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack
 			message->setClient(client);
 			message->setTimeStampMili(System::getMiliTime() + 50);
 
-			messageQueue->push(message);
+			processMessage(message);
 
 			pack->shiftOffset(blockSize);
 		}
@@ -291,7 +291,7 @@ void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack
 		message->setClient(client);
 		message->setTimeStampMili(System::getMiliTime() + 50);
 
-		messageQueue->push(message);
+		processMessage(message);
 	}
 }
 
@@ -317,7 +317,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 			message->setClient(client);
 			message->setTimeStampMili(System::getMiliTime() + 50);
 
-			messageQueue->push(message);
+			processMessage(message);
 
 			pack->shiftOffset(blockSize);
 		}
@@ -332,7 +332,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 		message->setClient(client);
 		message->setTimeStampMili(System::getMiliTime() + 50);
 
-		messageQueue->push(message);
+		processMessage(message);
 	}
 }
 
@@ -347,4 +347,11 @@ void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack)
 		delete fraggedPacket;
 	} else if (pack->size() < 485)
 		throw Exception("incomplete fragmented packet");
+}
+
+void BasePacketHandler::processMessage(Message* msg) {
+	// FIXME
+	serviceHandler->processMessage(msg);
+
+	//messageQueue->push(message);
 }

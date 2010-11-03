@@ -6,6 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SERVICEHANDLER_H_
 #define SERVICEHANDLER_H_
 
+#include "Message.h"
+
+#include "ServiceClient.h"
+
 namespace engine {
   namespace service {
 
@@ -23,6 +27,8 @@ namespace engine {
 		}
 
 		virtual void handleMessage(ServiceClient* client, Packet* message) = 0;
+
+		virtual void processMessage(Message* message) = 0;
 
 		virtual bool handleError(ServiceClient* client, Exception& e) = 0;
 	};

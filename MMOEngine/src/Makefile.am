@@ -60,7 +60,6 @@ libengine3_a_SOURCES = \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \
-			engine/service/ServiceProcessThread.cpp \
 			engine/service/DatagramServiceClient.cpp \
 			engine/service/DatagramServiceClientProxy.cpp \
 			engine/service/DatagramServiceThread.cpp \

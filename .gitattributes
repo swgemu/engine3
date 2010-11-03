@@ -149,6 +149,7 @@ MMOEngine/include/engine/service/MessageQueue.h -text
 MMOEngine/include/engine/service/ServiceClient.h -text
 MMOEngine/include/engine/service/ServiceClientMap.h -text
 MMOEngine/include/engine/service/ServiceException.h -text
+MMOEngine/include/engine/service/ServiceFilter.h -text
 MMOEngine/include/engine/service/ServiceHandler.h -text
 MMOEngine/include/engine/service/ServiceMessageHandlerThread.h -text
 MMOEngine/include/engine/service/ServiceProcessThread.h -text
@@ -468,11 +469,10 @@ MMOEngine/src/engine/service/ServiceClient.cpp -text
 MMOEngine/src/engine/service/ServiceClient.h -text
 MMOEngine/src/engine/service/ServiceClientMap.h -text
 MMOEngine/src/engine/service/ServiceException.h -text
+MMOEngine/src/engine/service/ServiceFilter.h -text
 MMOEngine/src/engine/service/ServiceHandler.h -text
 MMOEngine/src/engine/service/ServiceMessageHandlerThread.cpp -text
 MMOEngine/src/engine/service/ServiceMessageHandlerThread.h -text
-MMOEngine/src/engine/service/ServiceProcessThread.cpp -text
-MMOEngine/src/engine/service/ServiceProcessThread.h -text
 MMOEngine/src/engine/service/ServiceThread.cpp -text
 MMOEngine/src/engine/service/ServiceThread.h -text
 MMOEngine/src/engine/service/StreamServiceClient.cpp -text

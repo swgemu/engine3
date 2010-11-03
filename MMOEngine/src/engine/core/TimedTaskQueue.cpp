@@ -76,7 +76,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 
 	#ifdef TRACE_TASKS
 		StringBuffer s1;
-		s1 << "adding task " << task->toString();
+		s1 << "adding task " << task->toStringData();
 		info(s1);
 	#endif
 
@@ -88,7 +88,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;
-		s << "added task " << task->toString();
+		s << "added task " << task->toStringData();
 		info(s);
 	#endif
 
@@ -129,7 +129,7 @@ Task* TimedTaskQueue::get() {
 
 		#ifdef TRACE_TASKS
 			StringBuffer s;
-			s << "scheduling " << task->toString();
+			s << "scheduling " << task->toStringData();
 			info(s);
 		#endif
 
