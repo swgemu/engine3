@@ -5,6 +5,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
+#include "engine/db/ObjectDatabaseManager.h"
+
 #include "TaskScheduler.h"
 
 #include "TaskManager.h"
