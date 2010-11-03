@@ -34,6 +34,8 @@ namespace engine {
 		const static int DEADLOCK_MAX_RETRIES = 1000;
 
 		int getData(uint64 objKey, ObjectInputStream* objectData);
+
+		//stream will be deleted
 		int putData(uint64 objKey, ObjectOutputStream* stream, Object* object);
 		int deleteData(uint64 objKey);
 

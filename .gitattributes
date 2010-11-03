@@ -56,7 +56,6 @@ MMOEngine/include/engine/core/Core.h -text
 MMOEngine/include/engine/core/ManagedObject.cpp -text
 MMOEngine/include/engine/core/ManagedObject.h -text
 MMOEngine/include/engine/core/ManagedObject.idl -text
-MMOEngine/include/engine/core/ManagedObjectImplementation.h -text
 MMOEngine/include/engine/core/ManagedReference.h -text
 MMOEngine/include/engine/core/ManagedService.cpp -text
 MMOEngine/include/engine/core/ManagedService.h -text
@@ -113,6 +112,7 @@ MMOEngine/include/engine/orb/DOBObjectManager.h -text
 MMOEngine/include/engine/orb/DOBObjectManagerImplementation.h -text
 MMOEngine/include/engine/orb/DOBPacketHandler.h -text
 MMOEngine/include/engine/orb/DONamingDirectoryService.h -text
+MMOEngine/include/engine/orb/DistributedHelperObjectMap.h -text
 MMOEngine/include/engine/orb/DistributedObjectBroker.h -text
 MMOEngine/include/engine/orb/DistributedObjectBrokerClient.h -text
 MMOEngine/include/engine/orb/DistributedObjectDirectory.h -text
@@ -419,6 +419,7 @@ MMOEngine/src/engine/orb/DOBObjectManagerImplementation.cpp -text
 MMOEngine/src/engine/orb/DOBObjectManagerImplementation.h -text
 MMOEngine/src/engine/orb/DOBPacketHandler.cpp -text
 MMOEngine/src/engine/orb/DOBPacketHandler.h -text
+MMOEngine/src/engine/orb/DistributedHelperObjectMap.h -text
 MMOEngine/src/engine/orb/DistributedObjectBroker.cpp -text
 MMOEngine/src/engine/orb/DistributedObjectBroker.h -text
 MMOEngine/src/engine/orb/DistributedObjectBrokerClient.cpp -text

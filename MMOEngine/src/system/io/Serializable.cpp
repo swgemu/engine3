@@ -119,6 +119,153 @@ int Serializable::getVariableDataOffset(const String& variableName, ObjectInputS
 	return offset;
 }
 
+int Serializable::getVariableNames(Vector<String>& variableNames, ObjectInputStream* stream) {
+	uint16 dataSize = stream->readShort();
+
+	for (int i = 0; i < dataSize; ++i) {
+		String name;
+		name.parseFromBinaryStream(stream);
+
+		variableNames.add(name);
+
+		uint16 varSize = stream->readShort();
+		stream->shiftOffset(varSize);
+	}
+
+	stream->reset();
+
+	return dataSize;
+}
+
+ObjectOutputStream* Serializable::changeVariableData(const String& variableName, ObjectInputStream* object, Stream* newVariableData) {
+	int offset = getVariableDataOffset(variableName, object);
+
+	if (offset == -1)
+		return NULL;
+
+	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
+	object->copy(newData);
+
+	object->reset();
+	object->shiftOffset(offset - 2);
+	uint16 dataSize = object->readShort();
+
+	newData->shiftOffset(offset); //we go data length
+
+	if (dataSize > 0)
+		newData->removeRange(offset, dataSize - 1);
+
+	newData->writeShort(offset - 2, newVariableData->size());
+	newData->insertStream(newVariableData, newVariableData->size(), offset);
+
+	object->reset();
+	//newData->reset();
+
+	return newData;
+}
+
+ObjectOutputStream* Serializable::addVariable(const String& variableName, ObjectInputStream* object, Stream* newVariableData) {
+	object->reset();
+
+	uint16 oldVariableCount = object->readShort();
+
+	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
+	object->copy(newData);
+
+	newData->writeShort(0, oldVariableCount + 1);
+
+	newData->setOffset(newData->size() - 1);
+
+	newData->writeShort(newVariableData->size());
+	newData->writeStream(newVariableData);
+
+	return newData;
+}
+
+ObjectOutputStream* Serializable::deleteVariable(const String& variableName, ObjectInputStream* object) {
+	object->reset();
+
+	uint16 dataSize = object->readShort();
+
+	int startOffset = 0, endOffset = 0;
+
+	for (int i = 0; i < dataSize; ++i) {
+		int currentOffset = object->getOffset();
+
+		String name;
+		name.parseFromBinaryStream(object);
+
+		uint16 varSize = object->readShort();
+
+		if (name == variableName) {
+			//2 bytes size
+			//ascii
+
+			startOffset = currentOffset;
+			endOffset = currentOffset + name.length() + varSize;
+			break;
+		}
+	}
+
+	object->reset();
+
+	if (endOffset == 0)
+		return NULL;
+
+	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
+	object->copy(newData);
+
+	newData->removeRange(startOffset, endOffset);
+	newData->reset();
+
+	return newData;
+}
+
+ObjectOutputStream* Serializable::changeVariableName(const String& variableName, const String& newVariableName, ObjectInputStream* object) {
+	object->reset();
+
+	uint16 dataSize = object->readShort();
+
+	int startOffset = 0, endOffset = 0;
+
+	for (int i = 0; i < dataSize; ++i) {
+		int currentOffset = object->getOffset();
+
+		String name;
+		name.parseFromBinaryStream(object);
+
+		uint16 varSize = object->readShort();
+
+		if (name == variableName) {
+			//2 bytes size
+			//ascii
+
+			startOffset = currentOffset;
+			endOffset = currentOffset + name.length() + 1;
+			break;
+		}
+	}
+
+	object->reset();
+
+	if (endOffset == 0)
+		return NULL;
+
+	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
+	object->copy(newData);
+
+	newData->removeRange(startOffset, endOffset);
+	ObjectOutputStream newName;
+
+	String& nonconst = const_cast<String&>(newVariableName);
+	nonconst.toBinaryStream(&newName);
+
+	//newData->setOffset(startOffset);
+	newData->insertStream(&newName, newName.size(), startOffset);
+
+	return newData;
+}
+
 void Serializable::readObject(ObjectInputStream* stream) {
 	int size = _variables.size();
 
@@ -139,6 +286,8 @@ void Serializable::readObject(ObjectInputStream* stream) {
 		VariableName var;
 		var.setName(name.toCharArray());
 
+		int currentOffset = stream->getOffset();
+
 		if (!_variables.contains(var)) {
 			System::out << "WARNING: variable " << name << " not found when deserializing [" << _className << "] \n";
 
@@ -147,21 +296,27 @@ void Serializable::readObject(ObjectInputStream* stream) {
 			continue;
 		}
 
-		VectorMapEntry<VariableName, void*> e(var);
+		try {
+			VectorMapEntry<VariableName, void*> e(var);
 
-		int pos = _variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
+			int pos = _variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
 
-		VectorMapEntry<VariableName, void*>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
-		VariableName varName = entry->getKey();
-		void* variable = entry->getValue();
+			VectorMapEntry<VariableName, void*>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
+			VariableName varName = entry->getKey();
+			void* variable = entry->getValue();
 
-		int type = varName.getType();
+			int type = varName.getType();
 
-		if (type == 0)
-			((Variable*)variable)->parseFromBinaryStream(stream);
-		else {
-			deSerializeAtomicType(variable, type, stream);
+			if (type == 0)
+				((Variable*)variable)->parseFromBinaryStream(stream);
+			else {
+				deSerializeAtomicType(variable, type, stream);
+			}
+		} catch (...) {
+			System::out << "WARNING: unreported exception caught variable " << name << " not found when deserializing [" << _className << "] \n";
 		}
+
+		stream->setOffset(currentOffset + varSize);
 	}
 }
 

@@ -7,11 +7,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../core/ManagedObject.h"
 #include "../log/Logger.h"
 #include "../db/ObjectDatabaseManager.h"
+#include "DistributedHelperObjectMap.h"
 
 DistributedObjectDirectory::DistributedObjectDirectory() {
+	helperObjectMap = new DistributedHelperObjectMap();
+}
+
+DistributedObjectDirectory::~DistributedObjectDirectory() {
+	//delete helperObjectMap;
+	helperObjectMap = NULL;
 }
 
 DistributedObjectAdapter* DistributedObjectDirectory::add(uint64 objid, DistributedObjectAdapter* adapter) {
+	helperObjectMap->put(objid, adapter->getStub());
+
 	return objectMap.put(objid, adapter);
 }
 
@@ -24,9 +33,10 @@ DistributedObject* DistributedObjectDirectory::get(uint64 objid) {
 
 	}
 
-	if (adapter != NULL)
+	if (adapter != NULL) {
+		helperObjectMap->put(objid, adapter->getStub());
 		return adapter->getStub();
-	else 
+	} else
 		return NULL;
 }
 
@@ -36,6 +46,8 @@ DistributedObjectAdapter* DistributedObjectDirectory::remove(uint64 objid) {
 	if (adapter != NULL)
 		objectMap.remove(objid);
 	
+	helperObjectMap->remove(objid);
+
 	return adapter;
 }
 
@@ -43,32 +55,10 @@ DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {
 	return objectMap.get(objid);
 }
 
-void DistributedObjectDirectory::destroyContainingObjects() {
-	//while (objectMap.)
-	HashTableIterator<uint64, DistributedObjectAdapter*> iterator(&objectMap);
-	Vector<Reference<DistributedObject*> > objects(objectMap.size(), 1);
+void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
+		Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM) {
 
-	int i = 0;
-
-	while (iterator.hasNext()) {
-		DistributedObjectAdapter* adapter = iterator.getNextValue();
-
-		DistributedObject* dobObject = adapter->getStub();
-
-		objects.add(dobObject);
-	}
-
-	savePersistentObjects();
-
-	objectMap.removeAll();
-}
-
-void DistributedObjectDirectory::savePersistentObjects() {
-	Logger::console.info("[DistributedObjectDirectory] saving persistent objects ", true);
-
-	//System::out << "[DistributedObjectDirectory] saving persistent objects " << endl;
-
-	int i = 0;
+	objectsToUpdate.removeAll(objectMap.size(), 1);
 
 	HashTableIterator<uint64, DistributedObjectAdapter*> iterator(&objectMap);
 
@@ -76,26 +66,26 @@ void DistributedObjectDirectory::savePersistentObjects() {
 		DistributedObjectAdapter* adapter = iterator.getNextValue();
 
 		DistributedObject* dobObject = adapter->getStub();
+		DistributedObjectServant* dobServant = adapter->getImplementation();
+
+		if (dobObject->getReferenceCount() == 1)
+			objectsToDeleteFromRAM.add(dobObject);
 
 		ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
 
-		if (managedObject != NULL && managedObject->isPersistent()) {
-			Locker locker(managedObject);
+		if (managedObject == NULL/* || !managedObject->isPersistent()*/)
+			continue;
 
-			managedObject->updateToDatabase();
+		if (dobObject->_isMarkedForDeletion()) {
+			objectsToDelete.add(dobObject);
+		} else if (dobObject->_isUpdated() && ((ManagedObjectImplementation*)dobServant)->isPersistent()) {
+			objectsToUpdate.add(dobObject);
 		}
-
-		++i;
-
-		if (i % 512 == 0)
-			ObjectDatabaseManager::instance()->commitLocalTransaction();
 	}
 
-	ObjectDatabaseManager::instance()->commitLocalTransaction();
-
-	ObjectDatabaseManager::instance()->checkpoint();
-
 	StringBuffer msg;
-	msg << "[DistributedObjectDirectory] finished saving " << i << " persistent objects " << endl;
+	msg << "[DistributedObjectDirectory] marked " << objectsToUpdate.size() << " objects to update and "
+			<< objectsToDelete.size() << " for deletion";
+
 	Logger::console.info(msg.toString(), true);
 }

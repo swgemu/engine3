@@ -54,7 +54,7 @@ namespace sys {
 
        void removeElementAt(int index);
 
-       void removeRange(int fromIndex, int toIndex);
+       virtual void removeRange(int fromIndex, int toIndex);
 
        void removeAll(int newSize = 10, int newIncrement = 5);
 
@@ -399,7 +399,7 @@ namespace sys {
 	   Integer::toBinaryStream(size, stream);
 
 	   for (int i = 0; i < Vector<E>::size(); ++i) {
-		   E obj = Vector<E>::get(i);
+		   E& obj = Vector<E>::get(i);
 
 		   TypeInfo<E>::toBinaryStream(&obj, stream);
 	   }

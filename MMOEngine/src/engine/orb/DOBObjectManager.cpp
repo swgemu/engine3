@@ -116,10 +116,14 @@ uint64 DOBObjectManager::getNextFreeObjectID() {
 	return GetNextFreeObjectIDResponseMessage::parseObjectID(&resp);
 }
 
-void DOBObjectManager::savePersistentObjects() {
+/*void DOBObjectManager::savePersistentObjects() {
 	Locker locker(this);
 
 	localObjectDirectory.savePersistentObjects();
+}*/
+
+void DOBObjectManager::updateModifiedObjectsToDatabase() {
+
 }
 
 #endif /* DOBOBJECTMANAGER_CPP_ */

@@ -38,40 +38,7 @@ namespace engine {
 			return NULL;
 		}
 
-		/*virtual int updatePersistentObject(DistributedObject* object) {
-			return 0;
-		}
-
-		virtual DistributedObjectAdapter* addObject(DistributedObjectStub* object) {
-			DistributedObjectServant* servant = object->_getImplementation();
-
-			DistributedObjectClassHelper* helper = servant->_getClassHelper();
-			DistributedObjectAdapter* adapter = helper->createAdapter(object);
-
-			return objectDirectory.add(object->_getObjectID(), adapter);
-		}*/
-
 		DistributedObject* getObject(uint64 objectID);
-
-		/*virtual DistributedObjectAdapter* getAdapter(uint64 objectID, bool doLock = true) {
-			lock(doLock);
-
-			DistributedObjectAdapter* adapter =  objectDirectory.getAdapter(objectID);
-
-			unlock(doLock);
-
-			return adapter;
-		}
-
-		virtual DistributedObjectAdapter* removeObject(uint64 objectID, bool doLock = true) {
-			lock(doLock);
-
-			DistributedObjectAdapter* object = objectDirectory.remove(objectID);
-
-			unlock(doLock);
-
-			return object;
-		}*/
 
 		virtual uint64 getNextFreeObjectID() {
 			Locker _locker(this);

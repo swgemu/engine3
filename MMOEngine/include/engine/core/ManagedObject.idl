@@ -92,7 +92,7 @@ class ManagedObject implements Serializable {
 	
 	public abstract native void initializeTransientMembers();
 	
-	public abstract native void updateToDatabase();
+	public native void updateToDatabase();
 	public abstract native void queueUpdateToDatabaseTask();
 	
 	public void clearUpdateToDatabaseTask() {

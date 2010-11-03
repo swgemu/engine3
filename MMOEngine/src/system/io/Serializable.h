@@ -99,6 +99,17 @@ namespace sys {
 			static int getVariableDataMap(const String& serializedData, VectorMap<String, String>& map);
 			static int getVariableDataOffset(const String& variableName, ObjectInputStream* stream);
 
+			static int getVariableNames(Vector<String>& variableNames, ObjectInputStream* stream);
+
+			/**
+			 * Returns a new ObjectOutputStream with the modified variable data
+			 * Returns NULL on error
+			 */
+			static ObjectOutputStream* changeVariableData(const String& variableName, ObjectInputStream* object, Stream* newVariableData);
+			static ObjectOutputStream* deleteVariable(const String& variableName, ObjectInputStream* object);
+			static ObjectOutputStream* changeVariableName(const String& variableName, const String& newVariableName, ObjectInputStream* object);
+			static ObjectOutputStream* addVariable(const String& variableName, ObjectInputStream* object, Stream* newVariableData);
+
 			template<typename ClassType> static bool getVariable(const String& variableName, ClassType* address, ObjectInputStream* serializedObject) {
 				int offset = getVariableDataOffset(variableName, serializedObject);
 

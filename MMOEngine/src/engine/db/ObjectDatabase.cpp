@@ -69,8 +69,6 @@ void ObjectDatabase::closeDatabase() {
 }
 
 int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
-	//Locker locker(&writeLock);
-
 	int ret = 0;
 
 	DatabaseEntry key, data;
@@ -120,14 +118,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 }
 
 int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
-	//Locker locker(&writeLock);
 	int ret = -1;
-
-	/*ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
-
-	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
-
-	Transaction* transaction = databaseManager->getLocalTransaction();*/
 
 	DatabaseEntry key, data;
 	key.setData(&objKey, sizeof(uint64));
@@ -139,23 +130,12 @@ int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkle
 }
 
 int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction) {
-	//Locker locker(&writeLock);
 	int ret = -1;
-
-	/*ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
-
-	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
-
-	Transaction* transaction = databaseManager->getLocalTransaction();*/
 
 	DatabaseEntry key;
 	key.setData(&objKey, sizeof(uint64));
 
 	ret = objectsDatabase->del(transaction, &key);
-
-	/*StringBuffer msg;
-	msg << "deleted from DB objid" << hex << objKey;
-	info(msg.toString(), true);*/
 
 	return ret;
 }
@@ -165,7 +145,7 @@ int ObjectDatabase::putData(uint64 objKey, ObjectOutputStream* objectData, Objec
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
 
-	transaction->addUpdateObject(objKey, objectData->clone(0), this, obj);
+	transaction->addUpdateObject(objKey, objectData, this, obj);
 
 	return 0;
 }

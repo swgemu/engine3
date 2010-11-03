@@ -34,12 +34,14 @@ namespace engine {
 		DOBObjectManager(DistributedObjectBrokerClient* orbClient);
 
 		virtual ~DOBObjectManager() {
-			localObjectDirectory.destroyContainingObjects();
+			//localObjectDirectory.destroyContainingObjects();
 		}
 
 		virtual DistributedObject* loadPersistentObject(uint64 objid) {
 			return NULL;
 		}
+
+		virtual void updateModifiedObjectsToDatabase();
 
 		virtual int updatePersistentObject(DistributedObject* object);
 
@@ -53,7 +55,7 @@ namespace engine {
 
 		virtual uint64 getNextFreeObjectID();
 
-		virtual void savePersistentObjects();
+		//virtual void savePersistentObjects();
 	};
 
 	}

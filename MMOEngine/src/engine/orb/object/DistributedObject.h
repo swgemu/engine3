@@ -25,6 +25,9 @@ namespace engine {
 
 		NamingDirectoryService* _namingDirectory;
 
+		bool _updated;
+		bool _markedForDeletion;
+
 	public:
 		DistributedObject();
 
@@ -41,6 +44,14 @@ namespace engine {
 
 		inline void _setObjectID(uint64 id) {
 			_objectID = id;
+		}
+
+		inline void _setUpdated(bool var) {
+			_updated = var;
+		}
+
+		inline void _setMarkedForDeletion(bool var) {
+			_markedForDeletion = var;
 		}
 
 		inline void _setNamingDirectory(NamingDirectoryService* service) {
@@ -62,6 +73,14 @@ namespace engine {
 
 		inline NamingDirectoryService* _getNamingDirectory() {
 			return _namingDirectory;
+		}
+
+		inline bool _isUpdated() {
+			return _updated;
+		}
+
+		inline bool _isMarkedForDeletion() {
+			return _markedForDeletion;
 		}
 	};
 

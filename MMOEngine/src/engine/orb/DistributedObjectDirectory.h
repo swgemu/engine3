@@ -14,11 +14,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace ORB {
 
+    class DistributedHelperObjectMap;
+
 	class DistributedObjectDirectory {
 		DistributedObjectMap objectMap;
+		DistributedHelperObjectMap* helperObjectMap;
 	
 	public:
 		DistributedObjectDirectory();
+		~DistributedObjectDirectory();
 		
 		DistributedObjectAdapter* add(sys::uint64 objid, DistributedObjectAdapter* adapter);
 	
@@ -28,10 +32,18 @@ namespace engine {
 	
 		DistributedObjectAdapter* getAdapter(uint64 objid);
 
-		void savePersistentObjects();
-		void destroyContainingObjects();
 
-		int getSize() {
+		void getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete, Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM);
+
+		inline DistributedObjectMap* getDistributedObjectMap() {
+			return &objectMap;
+		}
+
+		inline DistributedHelperObjectMap* getHelperObjectMap() {
+			return helperObjectMap;
+		}
+
+		inline int getSize() {
 			return objectMap.size();
 		}
 	};

@@ -11,6 +11,9 @@ DistributedObject::DistributedObject() : Object() {
 	_objectID = 0;
 
 	_namingDirectory = NULL;
+
+	_updated = true;
+	_markedForDeletion = false;
 }
 
 DistributedObject::~DistributedObject() {

@@ -89,6 +89,17 @@ void Stream::removeLastBytes(int len) {
 	setSize(newSize);
 }
 
+void Stream::removeRange(int fromIndex, int toIndex) {
+	char* oldElementData = elementData;
+
+	Vector<char>::removeRange(fromIndex, toIndex);
+
+	end = elementData + Vector<char>::size();
+
+	if (oldElementData != elementData || offset > end)
+		offset = (offset - oldElementData) + elementData;
+}
+
 // stream manipulation methods
 void Stream::writeStream(const char *buf, int len) {
 	extendSize(len);
@@ -105,6 +116,39 @@ void Stream::writeStream(Stream* stream, int len) {
 		throw StreamIndexOutOfBoundsException(stream, len);
 
 	writeStream(stream->getBuffer(), len);
+}
+
+void Stream::writeStream(Stream* stream, int len, int offs) {
+	if (len > stream->size())
+		throw StreamIndexOutOfBoundsException(stream, len);
+
+	if ((elementData + offs + len) > end) {
+		setSize(offs + len);
+	}
+
+	memcpy(elementData + offs, stream->getBuffer(), len);
+}
+
+void Stream::insertStream(Stream* stream, int len, int offs) {
+	if (len > stream->size())
+		throw StreamIndexOutOfBoundsException(stream, len);
+
+	if (elementData + offs > end) {
+		writeStream(stream, len);
+
+		return;
+	}
+
+	char* oldElementData = elementData;
+
+	for (int i = 0; i < stream->size(); ++i) {
+		Vector<char>::insertElementAt(stream->getBuffer()[i], offs + i);
+	}
+
+	if (oldElementData != elementData)
+		offset = (offset - oldElementData) + elementData;
+
+	end = elementData + Vector<char>::size();
 }
 
 void Stream::readStream(char *buf, int len) {
