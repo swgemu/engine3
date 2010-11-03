@@ -15,6 +15,10 @@ namespace engine {
 
 	class TaskManager {
 	public:
+		virtual ~TaskManager() {
+
+		}
+
 		virtual void initialize() = 0;
 
 		virtual void start() = 0;
