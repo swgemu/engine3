@@ -50,7 +50,14 @@ void Task::execute() {
 	while (true) {
 		ObjectDatabaseManager::instance()->startLocalTransaction();
 
-		run();
+		try {
+			run();
+		} catch (Exception& e) {
+			Logger::console.error("exception caught while running a task");
+			e.printStackTrace();
+		} catch (...) {
+			Logger::console.error("unreported exception caught while running a task");
+		}
 
 		if (transaction->commit()) {
 			ObjectDatabaseManager::instance()->commitLocalTransaction();
@@ -63,7 +70,18 @@ void Task::execute() {
 
 	delete transaction;
 #else
-	run();
+	ObjectDatabaseManager::instance()->startLocalTransaction();
+
+	try {
+		run();
+	} catch (Exception& e) {
+		Logger::console.error("exception caught while running a task");
+		e.printStackTrace();
+	} catch (...) {
+		Logger::console.error("unreported exception caught while running a task");
+	}
+
+	ObjectDatabaseManager::instance()->commitLocalTransaction();
 #endif
 }
 

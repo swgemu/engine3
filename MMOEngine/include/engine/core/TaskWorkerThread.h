@@ -15,7 +15,7 @@ namespace engine {
 	class TaskManager;
 
 	class TaskWorkerThread : public ServiceThread {
-		ReadWriteLock blockMutex;
+		Mutex blockMutex;
 
 	public:
 		TaskWorkerThread(const String& s);
@@ -28,7 +28,7 @@ namespace engine {
 
 		void stop();
 
-		inline ReadWriteLock* getBlockMutex() {
+		inline Mutex* getBlockMutex() {
 			return &blockMutex;
 		}
 	};

@@ -30,7 +30,7 @@ void TaskWorkerThread::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = taskManager->getTask()) != NULL) {
-		blockMutex.rlock();
+		blockMutex.lock();
 
 		try {
 			task->execute();
@@ -42,7 +42,9 @@ void TaskWorkerThread::run() {
 
 		task->release();
 
-		blockMutex.runlock();
+		task = NULL;
+
+		blockMutex.unlock();
 	}
 }
 

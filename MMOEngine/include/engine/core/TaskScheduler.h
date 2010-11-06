@@ -25,6 +25,8 @@ namespace engine {
 
 		bool doRun;
 
+		Mutex blockMutex;
+
 	public:
 		TaskScheduler();
 		TaskScheduler(const String& s);
@@ -70,6 +72,10 @@ namespace engine {
 
 		inline void setTaskManager(TaskManager* manager) {
 			taskManager = manager;
+		}
+
+		inline Mutex* getBlockMutex() {
+			return &blockMutex;
 		}
 	};
 

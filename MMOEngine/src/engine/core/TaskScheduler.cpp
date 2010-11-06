@@ -55,7 +55,7 @@ void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
-		blockMutex.rlock();
+		blockMutex.lock();
 
 		try {
 		#ifdef VERSION_PUBLIC
@@ -77,7 +77,9 @@ void TaskScheduler::run() {
 
 		task->release();
 
-		blockMutex.runlock();
+		task = NULL;
+
+		blockMutex.unlock();
 	}
 }
 

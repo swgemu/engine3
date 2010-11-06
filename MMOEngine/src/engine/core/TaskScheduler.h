@@ -25,7 +25,7 @@ namespace engine {
 
 		bool doRun;
 
-		ReadWriteLock blockMutex;
+		Mutex blockMutex;
 
 	public:
 		TaskScheduler();
@@ -74,7 +74,7 @@ namespace engine {
 			taskManager = manager;
 		}
 
-		inline ReadWriteLock* getBlockMutex() {
+		inline Mutex* getBlockMutex() {
 			return &blockMutex;
 		}
 	};

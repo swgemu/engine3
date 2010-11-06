@@ -10,14 +10,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../log/Logger.h"
 
-#define TRACE_TASKS
+//#define TRACE_TASKS
 
 namespace engine {
   namespace core {
 
 	class Task;
 
-	class TaskQueue : public SortedVector<Task*>, public Condition, public Logger {
+	class TaskQueue : public Vector<Task*>, public Condition, public Logger {
 		Mutex* condMutex;
 
 		bool blocked;

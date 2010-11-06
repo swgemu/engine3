@@ -340,6 +340,8 @@ void ObjectDatabaseManager::commitLocalTransaction(engine::db::berkley::Transact
 		}
 	}
 
+	int oldSize = updateObjects->size();
+
 	for (int i = 0; i < updateObjects->size(); ++i) {
 		UpdateObject* updateObject = &updateObjects->elementAt(i);
 
@@ -349,7 +351,7 @@ void ObjectDatabaseManager::commitLocalTransaction(engine::db::berkley::Transact
 			delete stream;
 	}
 
-	updateObjects->removeAll();
+	updateObjects->removeAll(oldSize, 50);
 
 }
 
