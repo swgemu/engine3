@@ -26,11 +26,6 @@ ObjectDatabaseManager::ObjectDatabaseManager() : Logger("ObjectDatabaseManager")
 	checkpointTask = new BerkeleyCheckpointTask(this);
 
 	lastTableID = 0;
-
-	openEnvironment();
-	//loadDatabases();
-
-	//checkpoint();
 }
 
 ObjectDatabaseManager::~ObjectDatabaseManager() {
@@ -38,8 +33,6 @@ ObjectDatabaseManager::~ObjectDatabaseManager() {
 
 	delete databaseDirectory;
 	databaseDirectory = NULL;
-
-	closeEnvironment();
 
 	delete databaseEnvironment;
 	databaseEnvironment = NULL;
@@ -94,6 +87,8 @@ void ObjectDatabaseManager::loadDatabases() {
 	if (loaded)
 		return;
 
+	openEnvironment();
+
 	databaseDirectory = new ObjectDatabase(this, "databases.db");
 
 	ObjectDatabaseIterator iterator(databaseDirectory);
@@ -139,6 +134,8 @@ void ObjectDatabaseManager::closeDatabases() {
 
 	delete databaseDirectory;
 	databaseDirectory = NULL;
+
+	closeEnvironment();
 
 	loaded = false;
 }
@@ -357,8 +354,10 @@ void ObjectDatabaseManager::commitLocalTransaction(engine::db::berkley::Transact
 
 
 void ObjectDatabaseManager::closeEnvironment() {
-	try {
+	if (!loaded)
+		return;
 
+	try {
 		int ret = databaseEnvironment->close();
 
 		if (ret != 0) {
