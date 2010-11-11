@@ -71,8 +71,6 @@ void DatagramServiceThread::run() {
 }
 
 void DatagramServiceThread::receiveMessages() {
-	ObjectDatabaseManager::instance()->commitLocalTransaction();
-
 	Packet packet;
 
 	#ifdef VERSION_PUBLIC
@@ -93,13 +91,10 @@ void DatagramServiceThread::receiveMessages() {
 
 			lock();
 
-			ObjectDatabaseManager::instance()->startLocalTransaction();
-
 			client = clients->get(netid);
 
 			if (client == NULL)	{
 				if ((client = serviceHandler->createConnection(socket, addr)) == NULL) {
-					ObjectDatabaseManager::instance()->commitLocalTransaction();
 					unlock();
 					continue;
 				}
@@ -108,7 +103,6 @@ void DatagramServiceThread::receiveMessages() {
 
 				#ifdef VERSION_PUBLIC
 					if (clients->size() > CONNECTION_LIMIT) {
-						ObjectDatabaseManager::instance()->commitLocalTransaction();
 						unlock();
 						return;
 					}
@@ -123,25 +117,19 @@ void DatagramServiceThread::receiveMessages() {
 				serviceHandler->handleMessage(client, &packet);
 			}
 
-			ObjectDatabaseManager::instance()->commitLocalTransaction();
 
 		} catch (SocketException& e) {
-			ObjectDatabaseManager::instance()->commitLocalTransaction();
-
 			if (client == NULL) {
 				info(e.getMessage());
 			} else if (!serviceHandler->handleError(client, e))
 				return;
 		} catch (...) {
-			ObjectDatabaseManager::instance()->commitLocalTransaction();
-
 			error("unreported Exception caught");
 
 			#ifdef VERSION_PUBLIC
 				return;
 			#endif
 		}
-
 
 	}
 }

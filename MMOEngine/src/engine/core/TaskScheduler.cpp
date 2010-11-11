@@ -68,7 +68,7 @@ void TaskScheduler::run() {
 			e.printStackTrace();
 		} catch (...) {
 			#ifdef VERSION_PUBLIC
-			ObjectDatabaseManager::instance()->commitLocalTransaction();
+				blockMutex.unlock();
 				return;
 			#else
 				error("[TaskScheduler] unreported Exception caught");
