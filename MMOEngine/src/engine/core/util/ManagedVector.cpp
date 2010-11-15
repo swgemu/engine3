@@ -16,7 +16,10 @@ ManagedVector::~ManagedVector() {
 
 
 DistributedObjectServant* ManagedVector::_getImplementation() {
-	return _impl;}
+
+	_updated = true;
+	return _impl;
+}
 
 void ManagedVector::_setImplementation(DistributedObjectServant* servant) {
 	_impl = servant;}
