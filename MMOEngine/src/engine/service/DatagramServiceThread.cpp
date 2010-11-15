@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/core/Core.h"
+
 #include "DatagramServiceThread.h"
 
 #ifdef VERSION_PUBLIC
@@ -117,7 +119,9 @@ void DatagramServiceThread::receiveMessages() {
 				serviceHandler->handleMessage(client, &packet);
 			}
 
-
+		#ifdef WITH_STM
+			Core::commitTask();
+		#endif
 		} catch (SocketException& e) {
 			if (client == NULL) {
 				info(e.getMessage());

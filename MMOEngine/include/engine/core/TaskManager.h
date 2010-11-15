@@ -35,6 +35,8 @@ namespace engine {
 
 		virtual void executeTask(Task* task) = 0;
 
+		virtual bool isTaskScheduled(Task* task) = 0;
+
 		virtual void scheduleTask(Task* task, uint64 delay = 0) = 0;
 		virtual void scheduleTask(Task* task, Time& time) = 0;
 

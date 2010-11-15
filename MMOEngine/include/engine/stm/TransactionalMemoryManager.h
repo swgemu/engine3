@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/util/Singleton.h"
 
+#include "engine/stm/service/TransactionalSocketManager.h"
+
 #include "Transaction.h"
 
 #include "TransactionalObjectHeader.h"
@@ -18,7 +20,14 @@ namespace engine {
   namespace stm {
 
 	class TransactionalMemoryManager : public Singleton<TransactionalMemoryManager> {
+		TransactionalSocketManager* socketManager;
+
 		ThreadLocal<Transaction> currentTransaction;
+
+	public:
+		TransactionalSocketManager* getSocketManager() {
+			return socketManager;
+		}
 
 	protected:
 		TransactionalMemoryManager();

@@ -51,7 +51,6 @@ libengine3_a_SOURCES = \
 			engine/core/Core.cpp \
 			engine/core/Task.cpp \
 			engine/core/TaskManagerImpl.cpp \
-			engine/core/TransactionalTaskManager.cpp \
 			engine/core/TaskScheduler.cpp \
 			engine/core/TaskQueue.cpp \
 			engine/core/TimedTaskQueue.cpp \
@@ -88,6 +87,8 @@ libengine3_a_SOURCES = \
 			engine/orb/object/DistributedMethod.cpp \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
+			engine/stm/task/TransactionalTaskManager.cpp \
+			engine/stm/service/TransactionalSocketManager.cpp \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \

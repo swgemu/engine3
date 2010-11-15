@@ -18,6 +18,8 @@ TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager")
 	currentTaskScheduler = 0;
 
 	shuttingDown = false;
+
+	setLogging(true);
 }
 
 TaskManagerImpl::~TaskManagerImpl() {
@@ -47,7 +49,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount) {
 
 	StringBuffer msg;
 	msg << "initialized";
-	info(msg, true);
+	info(msg);
 }
 
 void TaskManagerImpl::start() {
@@ -65,7 +67,7 @@ void TaskManagerImpl::start() {
 
 	StringBuffer msg;
 	msg << "started";
-	info(msg, true);
+	info(msg);
 }
 
 void TaskManagerImpl::shutdown() {
@@ -155,6 +157,14 @@ void TaskManagerImpl::setTaskScheduler(Task* task, TaskScheduler* scheduler) {
 
 void TaskManagerImpl::executeTask(Task* task) {
 	tasks.push(task);
+}
+
+bool TaskManagerImpl::isTaskScheduled(Task* task) {
+#ifdef WITH_STM
+	return !cancelledTasks.contains(task);
+#else
+	return task->isScheduled();
+#endif
 }
 
 void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {

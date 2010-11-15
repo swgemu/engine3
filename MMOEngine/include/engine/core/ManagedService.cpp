@@ -16,10 +16,7 @@ ManagedService::~ManagedService() {
 
 
 DistributedObjectServant* ManagedService::_getImplementation() {
-
-	_updated = true;
-	return _impl;
-}
+	return _impl;}
 
 void ManagedService::_setImplementation(DistributedObjectServant* servant) {
 	_impl = servant;}

@@ -5,14 +5,9 @@
 
 #include "engine/log/Logger.h"
 
-#include "engine/stm/TransactionalMemoryManager.h"
-
 #include "engine/orb/DistributedObjectBroker.h"
 
-#include "engine/db/mysql/MySqlDatabase.h"
-
-#include "TaskManagerImpl.h"
-#include "TransactionalTaskManager.h"
+#include "TaskManager.h"
 
 #include <new>
 

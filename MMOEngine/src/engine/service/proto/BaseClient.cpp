@@ -5,6 +5,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #define TRACE_CLIENTS
 
+#include "engine/core/Core.h"
+
 #include "BaseClient.h"
 
 #include "events/BaseClientNetStatusCheckupEvent.h"
@@ -849,6 +851,10 @@ bool BaseClient::connect() {
 
 		Packet* sreq = new SessionIDRequestMessage();
 		send(sreq, false);
+
+	#ifdef WITH_STM
+		Core::commitTask();
+	#endif
 
 		if (crcSeed == 0) {
 			Time timeout;

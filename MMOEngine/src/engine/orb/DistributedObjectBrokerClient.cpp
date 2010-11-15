@@ -38,9 +38,11 @@ void DistributedObjectBrokerClient::run() {
 	}
 }
 
-void DistributedObjectBrokerClient::send(Packet* pack) {
+bool DistributedObjectBrokerClient::send(Packet* pack) {
 	//info("SEND " + pack->toString(), true);
 	StreamServiceClient::send(pack);
 	
 	delete pack;
+
+	return true;
 }

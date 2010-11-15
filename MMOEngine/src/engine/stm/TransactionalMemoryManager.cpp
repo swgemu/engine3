@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 using namespace engine::stm;
 
 TransactionalMemoryManager::TransactionalMemoryManager() {
-
+	socketManager = new TransactionalSocketManager();
 }
 
 Transaction* TransactionalMemoryManager::getTransaction() {

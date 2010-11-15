@@ -30,6 +30,8 @@ namespace engine {
 
 		void close();
 
+		virtual bool send(Packet* packet) = 0;
+
 		bool isAvailable();
 
 		inline bool isDisconnected() {
@@ -60,9 +62,12 @@ namespace engine {
 			return addr.getNetworkID();
 		}
 
-		inline SocketAddress& getAddress()
-		{
+		inline SocketAddress& getAddress() {
 			return addr;
+		}
+
+		inline Socket* getSocket() {
+			return socket;
 		}
 	};
 

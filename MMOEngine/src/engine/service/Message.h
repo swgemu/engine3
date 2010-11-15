@@ -30,6 +30,12 @@ namespace engine {
 			client = NULL;
 		}
 	
+		Message(Packet* packet, ServiceClient* clt) {
+			packet->copy(this, 0);
+
+			client = clt;
+		}
+
 		virtual ~Message() {
 		}
 		

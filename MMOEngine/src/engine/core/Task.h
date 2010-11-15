@@ -33,6 +33,8 @@ namespace engine {
 
 		void execute();
 
+		bool isScheduled();
+
 		bool cancel();
 
 		void schedule(uint64 delay = 0);
@@ -91,10 +93,6 @@ namespace engine {
 
 		inline bool isReentrant() {
 			return reentrantTask;
-		}
-
-		inline bool isScheduled() {
-			return taskScheduler.get() != NULL;
 		}
 
 		inline bool setTaskScheduler(TaskScheduler* scheduler) {

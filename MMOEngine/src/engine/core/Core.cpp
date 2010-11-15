@@ -3,6 +3,13 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/stm/TransactionalMemoryManager.h"
+
+#include "TaskManagerImpl.h"
+#include "engine/stm/task/TransactionalTaskManager.h"
+
+#include "engine/db/mysql/MySqlDatabase.h"
+
 #include "Core.h"
 
 TaskManager* Core::taskManager;

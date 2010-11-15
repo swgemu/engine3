@@ -7,6 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TransactionalMemoryManager.h"
 
+#include "task/TransactionalTaskManager.h"
+
 #include "TransactionalObjectHandle.h"
 #include "TransactionalObjectHeader.h"
 
@@ -23,6 +25,9 @@ Transaction::Transaction() : Logger() {
 	commitAttempts = 1;
 
 	Command* command = (TransactionalTaskManager*) Core::getTaskManager();
+	commands.add(command);
+
+	command = TransactionalMemoryManager::instance()->getSocketManager();
 	commands.add(command);
 
 	String threadName = Thread::getCurrentThread()->getName();

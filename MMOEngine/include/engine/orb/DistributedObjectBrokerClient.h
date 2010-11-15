@@ -24,7 +24,7 @@ namespace engine {
 		
 		void run();
 		
-		void send(Packet* pack);
+		bool send(Packet* pack);
 		
 		inline DistributedObjectBroker* getBroker() {
 			return orb;

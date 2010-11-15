@@ -314,10 +314,7 @@ void ManagedObject::setPersistent(int level) {
 }
 
 DistributedObjectServant* ManagedObject::_getImplementation() {
-
-	_updated = true;
-	return _impl;
-}
+	return _impl;}
 
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
 	_impl = servant;}

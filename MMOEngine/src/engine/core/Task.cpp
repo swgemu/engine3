@@ -2,6 +2,8 @@
 
 #include "engine/db/ObjectDatabaseManager.h"
 
+#include "engine/stm/TransactionalMemoryManager.h"
+
 #include "TaskScheduler.h"
 
 #include "Task.h"
@@ -82,6 +84,18 @@ void Task::execute() {
 	}
 
 	ObjectDatabaseManager::instance()->commitLocalTransaction();
+#endif
+}
+
+
+bool Task::isScheduled() {
+#ifdef WITH_STM
+	if  (taskScheduler.get() == NULL)
+		return false;
+
+	return Core::getTaskManager()->isTaskScheduled(this);
+#else
+	return taskScheduler.get() != NULL;
 #endif
 }
 

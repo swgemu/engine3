@@ -3,6 +3,11 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/core/Core.h"
+
+#include "engine/stm/TransactionalMemoryManager.h"
+#include "engine/stm/service/TransactionalSocketManager.h"
+
 #include "DatagramServiceClient.h"
 
 DatagramServiceClient::DatagramServiceClient()
@@ -36,6 +41,10 @@ void DatagramServiceClient::recieveMessages() {
 				continue;
 
 			handleMessage(&packet);
+
+		#ifdef WITH_STM
+			Core::commitTask();
+		#endif
 		} catch (SocketException& e) {
 			System::out << e.getMessage() << "\n";
 
@@ -48,9 +57,16 @@ bool DatagramServiceClient::send(Packet* pack) {
 	if (packetLossChance != 0 && System::random(100) < (uint32) packetLossChance)
 		return false;
 
-	if (socket != NULL)
+	if (socket != NULL) {
+		// FIXME: temp hack for stm
+	#ifdef WITH_STM
+		Message* message = new Message(pack, this);
+
+		TransactionalMemoryManager::instance()->getSocketManager()->sendMessage(message);
+	#else
 		socket->sendTo(pack, &addr);
-	else
+	#endif
+	} else
 		throw SocketException();
 
 	return true;
