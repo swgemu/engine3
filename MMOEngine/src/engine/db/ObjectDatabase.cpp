@@ -5,67 +5,10 @@
 using namespace engine::db;
 using namespace engine::db::berkley;
 
-ObjectDatabase::ObjectDatabase(ObjectDatabaseManager* dbEnv, const String& dbFileName) {
-	environment = dbEnv->getBerkeleyEnvironment();
+ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName)
+	: LocalDatabase(dbEnv, dbFileName) {
 
 	setLoggingName("ObjectDatabase " + dbFileName);
-	setGlobalLogging(true);
-	setLogging(false);
-
-	databaseFileName = dbFileName;
-
-	openDatabase();
-
-	//setFileLogger("log/berkeley.log");
-}
-
-ObjectDatabase::~ObjectDatabase() {
-	closeDatabase();
-
-	delete objectsDatabase;
-	objectsDatabase = NULL;
-}
-
-void ObjectDatabase::openDatabase() {
-	DatabaseConfig config;
-	config.setThreaded(true);
-	//config.setTransactional(true);
-	config.setAllowCreate(true);
-	config.setType(DatabaseType::HASH);
-	config.setReadUncommited(true);
-
-	try {
-
-		Transaction* transaction = environment->beginTransaction(NULL);
-
-		objectsDatabase = environment->openDatabase(transaction, databaseFileName, "", config);
-
-		int ret = 0;
-
-		if ((ret = transaction->commit()) != 0) {
-			error(String::valueOf(db_strerror(ret)));
-		}
-
-
-	} catch (Exception& e) {
-		error(e.getMessage());
-		exit(1);
-	}
-}
-
-void ObjectDatabase::closeDatabase() {
-	try {
-
-		objectsDatabase->close(true);
-
-		info("database closed", true);
-
-	} catch (Exception &e) {
-		error("Error closing database (" + databaseFileName + "):");
-		error(e.getMessage());
-	} catch (...) {
-		error("unreported exception caught while trying to open berkeley DB ");
-	}
 }
 
 int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
@@ -77,13 +20,11 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 
 	int i = 0;
 
-	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
-
 	Transaction* transaction = NULL;
 
 	do {
 		ret  = -1;
-		transaction = databaseManager->getBerkeleyEnvironment()->beginTransaction(NULL);
+		transaction = environment->beginTransaction(NULL);
 
 		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
 
@@ -140,125 +81,49 @@ int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transactio
 	return ret;
 }
 
-int ObjectDatabase::putData(uint64 objKey, ObjectOutputStream* objectData, Object* obj) {
+int ObjectDatabase::putData(uint64 objKey, Stream* objectData, Object* obj) {
 	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
 
-	transaction->addUpdateObject(objKey, objectData, this, obj);
+	ObjectOutputStream* key = new ObjectOutputStream(8, 8);
+	TypeInfo<uint64>::toBinaryStream(&objKey, key);
+	transaction->addUpdateObject(key, objectData, this, obj);
 
 	return 0;
 }
 
 int ObjectDatabase::deleteData(uint64 objKey) {
-	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
+	ObjectOutputStream* key = new ObjectOutputStream(8, 8);
+	TypeInfo<uint64>::toBinaryStream(&objKey, key);
 
-	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
-
-	transaction->addDeleteObject(objKey, this);
+	return LocalDatabase::deleteData(key);
 
 	/*StringBuffer msg;
 	msg << "added to deleteData objid" << hex << objKey;
 	info(msg.toString(), true);*/
-
-	return 0;
-}
-
-int ObjectDatabase::sync() {
-	objectsDatabase->sync();
-
-	return 0;
-}
-
-ObjectDatabaseIterator::ObjectDatabaseIterator(ObjectDatabase* database, bool useCurrentThreadTransaction) : Logger("ObjectDatabaseIterator") {
-	databaseHandle = database->getDatabaseHandle();
-
-	Transaction* txn = NULL;//ObjectDatabaseManager::instance()->getLocalTransaction();
-
-/*	if (useCurrentThreadTransaction)
-		txn = ObjectDatabaseManager::instance()->getLocalTransaction();*/
-
-	cursor = databaseHandle->openCursor(txn);
-
-	data.setReuseBuffer(true);
-	key.setReuseBuffer(true);
-}
-
-ObjectDatabaseIterator::ObjectDatabaseIterator(BerkeleyDatabase* dbHandle) : Logger("ObjectDatabaseIterator") {
-	databaseHandle = dbHandle;
-	Transaction* txn = NULL; // ObjectDatabaseManager::instance()->getLocalTransaction();
-	cursor = databaseHandle->openCursor(txn);
-
-	data.setReuseBuffer(true);
-	key.setReuseBuffer(true);
-}
-
-ObjectDatabaseIterator::~ObjectDatabaseIterator() {
-	closeCursor();
-}
-
-void ObjectDatabaseIterator::resetIterator() {
-	if (cursor != NULL) {
-		cursor->close();
-		delete cursor;
-	}
-
-
-	Transaction* txn = NULL;//
-	//Transaction* txn = ObjectDatabaseManager::instance()->getLocalTransaction();
-
-	cursor = databaseHandle->openCursor(txn);
 }
 
 bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data) {
-	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
-			return false;
+	ObjectInputStream stream(8, 8);
 
-		key = *(uint64*) (this->key.getData());
-		data->writeStream((char*)this->data.getData(), this->data.getSize());
+	bool res = LocalDatabaseIterator::getNextKeyAndValue(&stream, data);
 
-		data->reset();
-
-	} catch (...) {
-		error("unreported exception caught in ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, String& data)");
+	if (res == true) {
+		key = stream.readLong();
 	}
 
-	return true;
-}
-
-bool ObjectDatabaseIterator::getNextValue(ObjectInputStream* data) {
-	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
-			return false;
-
-		data->writeStream((char*)this->data.getData(), this->data.getSize());
-
-		data->reset();
-
-	} catch(Exception &e) {
-		error("Error in ObjectDatabaseIterator::getNextValue(String& data)");
-		error(e.getMessage());
-	} catch (...) {
-		error("unreported exception caught in ObjectDatabaseIterator::getNextValue(String& data)");
-	}
-
-	return true;
+	return res;
 }
 
 bool ObjectDatabaseIterator::getNextKey(uint64& key) {
-	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
-			return false;
+	ObjectInputStream stream(8, 8);
 
-		key =  *(uint64*)(this->key.getData());
+	bool res = LocalDatabaseIterator::getNextKey(&stream);
 
-	}  catch(Exception &e) {
-		error("Error in ObjectDatabaseIterator::getNextKey");
-		error(e.getMessage());
-	} catch (...) {
-		error("unreported exception caught  in ObjectDatabaseIterator::getNextKey(uint64& key) ");
+	if (res == true) {
+		key = stream.readLong();
 	}
 
-	return true;
+	return res;
 }

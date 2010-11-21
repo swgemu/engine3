@@ -7,79 +7,51 @@
 
 #include "berkley/BerkeleyDatabase.h"
 
+#include "LocalDatabase.h"
+
 namespace engine {
   namespace db {
 
-	class ObjectDatabaseManager;
+	class DatabaseManager;
 
-	class ObjectDatabase : public Logger {
-		engine::db::berkley::BerkeleyDatabase* objectsDatabase;
-		engine::db::berkley::Environment* environment;
-
-		String databaseFileName;
-
-		Mutex writeLock;
-
-	private:
-		void closeDatabase();
-		void openDatabase();
-
+	class ObjectDatabase : public LocalDatabase {
+	protected:
 		ObjectDatabase() {
 		}
 
 	public:
-		ObjectDatabase(ObjectDatabaseManager* dbEnv, const String& dbFileName);
-		~ObjectDatabase();
-
-		const static int DEADLOCK_MAX_RETRIES = 1000;
+		ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName);
 
 		int getData(uint64 objKey, ObjectInputStream* objectData);
 
 		//stream will be deleted
-		int putData(uint64 objKey, ObjectOutputStream* stream, Object* object);
+		int putData(uint64 objKey, Stream* stream, Object* object);
 		int deleteData(uint64 objKey);
 
 		int tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction);
 		int tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction);
 
-		int sync();
-
-		inline engine::db::berkley::BerkeleyDatabase* getDatabaseHandle() {
-			return objectsDatabase;
-		}
-
-		inline void getDatabaseName(String& name) {
-			name = databaseFileName.replaceFirst(".db", "");
+		bool isObjectDatabase() {
+			return true;
 		}
 
 	};
 
-	class ObjectDatabaseIterator : public Logger {
-		engine::db::berkley::Cursor* cursor;
-		engine::db::berkley::BerkeleyDatabase* databaseHandle;
-
-		engine::db::berkley::DatabaseEntry key, data;
-
+	class ObjectDatabaseIterator : public LocalDatabaseIterator {
 	public:
-		ObjectDatabaseIterator(ObjectDatabase* database, bool useCurrentThreadTransaction = false);
-		ObjectDatabaseIterator(engine::db::berkley::BerkeleyDatabase* databaseHandle);
-		~ObjectDatabaseIterator();
+		ObjectDatabaseIterator(ObjectDatabase* database, bool useCurrentThreadTransaction = false)
+			: LocalDatabaseIterator(database, useCurrentThreadTransaction) {
 
-		void resetIterator();
+		}
+
+		ObjectDatabaseIterator(engine::db::berkley::BerkeleyDatabase* databaseHandle) :
+			LocalDatabaseIterator(databaseHandle) {
+
+		}
 
 		bool getNextKeyAndValue(uint64& key, ObjectInputStream* data);
-		bool getNextValue(ObjectInputStream* data);
 		bool getNextKey(uint64& key);
 
-		inline void closeCursor() {
-			if (cursor != NULL) {
-				cursor->close();
-
-				delete cursor;
-			}
-
-			cursor = NULL;
-		}
 	};
 
   } // namespace db

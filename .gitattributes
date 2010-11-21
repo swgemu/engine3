@@ -83,6 +83,8 @@ MMOEngine/include/engine/core/util/ManagedVectorMap.h -text
 MMOEngine/include/engine/db/BinaryData.h -text
 MMOEngine/include/engine/db/Database.h -text
 MMOEngine/include/engine/db/DatabaseException.h -text
+MMOEngine/include/engine/db/DatabaseManager.h -text
+MMOEngine/include/engine/db/LocalDatabase.h -text
 MMOEngine/include/engine/db/ObjectDatabase.h -text
 MMOEngine/include/engine/db/ObjectDatabaseManager.h -text
 MMOEngine/include/engine/db/ResultSet.h -text
@@ -376,6 +378,10 @@ MMOEngine/src/engine/db/BinaryData.cpp -text
 MMOEngine/src/engine/db/BinaryData.h -text
 MMOEngine/src/engine/db/Database.h -text
 MMOEngine/src/engine/db/DatabaseException.h -text
+MMOEngine/src/engine/db/DatabaseManager.cpp -text
+MMOEngine/src/engine/db/DatabaseManager.h -text
+MMOEngine/src/engine/db/LocalDatabase.cpp -text
+MMOEngine/src/engine/db/LocalDatabase.h -text
 MMOEngine/src/engine/db/ObjectDatabase.cpp -text
 MMOEngine/src/engine/db/ObjectDatabase.h -text
 MMOEngine/src/engine/db/ObjectDatabaseManager.cpp -text
