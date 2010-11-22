@@ -489,6 +489,8 @@ Packet* BaseClient::getBufferedPacket() {
 }
 
 BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
+	//Logger::console.info("recieveFragmentedPacket " + pack->toStringData());
+
 	BasePacket* packet = NULL;
 
 	if (fragmentedPacket == NULL)
@@ -497,7 +499,7 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 	fragmentedPacket->addFragment(pack);
 
 	if (fragmentedPacket->isComplete()) {
-		fragmentedPacket->setOffset(2);
+		fragmentedPacket->setOffset(0);
 
 		//Logger::console.info("completed fragmented packet");
 

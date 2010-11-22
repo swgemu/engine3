@@ -262,6 +262,8 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 }
 
 void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack) {
+	//Logger::console.info("handleDataChannelPacket " + pack->toStringData());
+
 	uint16 opCount = pack->parseShort();
 
 	if (opCount == 0x1900) {  // multi DataChannel
@@ -340,8 +342,6 @@ void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack)
 	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
 
 	if (fraggedPacket != NULL) {
-		client->validatePacket(fraggedPacket);
-
 		handleDataChannelPacket(client, fraggedPacket);
 
 		delete fraggedPacket;
