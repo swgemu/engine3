@@ -41,7 +41,17 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 
 	int packetOffset = pack->getOffset();
 
-	insertStream(pack->getBuffer() + packetOffset, pack->size() - packetOffset/* - 3*/);
+	int readBytes = pack->size() - packetOffset;
+
+	if (readBytes + size() > offset)
+		readBytes = offset - size();
+
+	if (readBytes < 0) {
+		Logger::console.error("error parsing fragmented packet readBytes < 0");
+		return false;
+	}
+
+	insertStream(pack->getBuffer() + packetOffset, readBytes/* - 3*/);
 
 	/*Logger::console.info("received next segment of fragmented packet ("
 				+ String::valueOf(seq) + ") - size = " + String::valueOf(offset));*/
