@@ -30,12 +30,13 @@ void BaseFragmentedPacket::addFragment(Packet* pack) {
 	if (offset == 0) {
 		offset = pack->parseNetInt(4);
 
-		insertStream(pack->getBuffer() + 8, 496 - 8 - 3);
+		insertStream(pack->getBuffer() + 8, pack->size() - 8/* - 3*/);
 
 		/*Logger::console.info("received first segment of fragmented packet ("
 				+ String::valueOf(seq) + ") - size = " + String::valueOf(offset));*/
 	} else {
-		int fragsize = MIN(496, pack->size()) - 4/* - 3*/;
+		//int fragsize = MIN(496, pack->size()) - 4/* - 3*/;
+		int fragsize = pack->size() - 4/* - 3*/;
 
 		//offset -= 3;
 

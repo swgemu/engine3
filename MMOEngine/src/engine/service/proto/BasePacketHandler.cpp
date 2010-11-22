@@ -339,6 +339,8 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 }
 
 void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
+	//Logger::console.info("handleFragmentedPacket " + pack->toStringData());
+
 	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
 
 	if (fraggedPacket != NULL) {
