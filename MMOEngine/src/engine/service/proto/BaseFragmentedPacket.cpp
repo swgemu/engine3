@@ -25,31 +25,26 @@ BaseFragmentedPacket::~BaseFragmentedPacket() {
 }
 
 bool BaseFragmentedPacket::addFragment(Packet* pack) {
-	uint32 seq = pack->parseNetShort(2);
+	//uint32 seq = pack->parseNetShort();
 
 	if (offset == 0) {
-		offset = pack->parseNetInt(4);
+		offset = pack->parseNetInt();
 
 		if (offset < 0 || offset > 50000) {
 			Logger::console.error("received fragmented packet with size too big = (" + String::valueOf(offset) + ")");
 			return false;
 		}
 
-		insertStream(pack->getBuffer() + 8, pack->size() - 8/* - 3*/);
-
 		/*Logger::console.info("received first segment of fragmented packet ("
-				+ String::valueOf(seq) + ") - size = " + String::valueOf(offset));*/
-	} else {
-		//int fragsize = MIN(496, pack->size()) - 4/* - 3*/;
-		int fragsize = pack->size() - 4/* - 3*/;
-
-		//offset -= 3;
-
-		insertStream(pack->getBuffer() + 4, fragsize);
-
-		/*Logger::console.info("received next segment of fragmented packet ("
-				+ String::valueOf(seq) + ") - size = " + String::valueOf(fragsize));*/
+						+ String::valueOf(seq) + ") - size = " + String::valueOf(offset));*/
 	}
+
+	int packetOffset = pack->getOffset();
+
+	insertStream(pack->getBuffer() + packetOffset, pack->size() - packetOffset/* - 3*/);
+
+	/*Logger::console.info("received next segment of fragmented packet ("
+				+ String::valueOf(seq) + ") - size = " + String::valueOf(offset));*/
 
 	return true;
 }

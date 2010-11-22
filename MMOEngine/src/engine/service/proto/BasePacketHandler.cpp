@@ -211,14 +211,19 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 			case 0x0001: //OK
 				AcknowledgeOkMessage::parseOk(pack);
 				break;
-			case 0x0D00: //Fragmented
+			case 0x0D00: {//Fragmented
 				if (!client->validatePacket(pack))
 					break;
 
-				handleFragmentedPacket(client, pack);
+				BaseMessage* fragPiece = new BaseMessage(pack, pack->getOffset(), pack->getOffset() + blockSize);
+
+				handleFragmentedPacket(client, fragPiece);
+
+				delete fragPiece;
 
 				processBufferedPackets(client);
 				break;
+			}
 			default:
 				if (!(opcode >> 8))	{
 					BaseMessage* message = new BaseMessage(pack, offset, offset + blockSize);
