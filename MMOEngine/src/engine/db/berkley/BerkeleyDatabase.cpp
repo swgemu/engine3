@@ -27,6 +27,7 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
 
 	dbp->set_pagesize(dbp, 16384);
+	dbp->set_flags(dbp, DB_CHKSUM);
 
 	ret = dbp->open(dbp,        /* DB structure pointer */
 			NULL,       /* Transaction pointer */
@@ -64,6 +65,7 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
 
 	dbp->set_pagesize(dbp, 16384);
+	dbp->set_flags(dbp, DB_CHKSUM);
 
 	ret = dbp->open(dbp,        /* DB structure pointer */
 			transaction,       /* Transaction pointer */

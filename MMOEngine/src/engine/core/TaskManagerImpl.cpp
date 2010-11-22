@@ -230,7 +230,10 @@ bool TaskManagerImpl::cancelTask(Task* task) {
 
 		locker.release();
 
-		return scheduler->cancelTask(task);
+		if (scheduler != NULL)
+			return scheduler->cancelTask(task);
+		else
+			return false;
 	} else {
 		cancelledTasks.put(task);
 

@@ -28,7 +28,7 @@ namespace engine {
 
 		BaseMessage(Packet* pack, int start) : BasePacket(pack->size() - start) {
 			if (start < 0)
-				throw new PacketIndexOutOfBoundsException(pack, start);
+				throw PacketIndexOutOfBoundsException(pack, start);
 	
 			insertStream(pack->getBuffer() + start, pack->size() - start);
 
@@ -37,10 +37,10 @@ namespace engine {
 	
 		BaseMessage(Packet* pack, int startoffs, int endoffs) : BasePacket(endoffs - startoffs) {
 			if (startoffs < 0)
-				throw new PacketIndexOutOfBoundsException(pack, startoffs);
+				throw PacketIndexOutOfBoundsException(pack, startoffs);
 	
 			if (endoffs > pack->size())
-				throw new PacketIndexOutOfBoundsException(pack, endoffs);
+				throw PacketIndexOutOfBoundsException(pack, endoffs);
 			
 			insertStream(pack->getBuffer() + startoffs, endoffs - startoffs);
 			

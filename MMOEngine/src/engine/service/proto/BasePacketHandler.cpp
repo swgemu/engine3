@@ -32,98 +32,102 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 	#endif
 
 	//info("READ - " + pack->toString());
+		try {
+			uint16 opcode = pack->parseShort();
 
-	uint16 opcode = pack->parseShort();
+			switch (opcode) {
+			case 0x0100: //Session Request
+				doSessionStart(client, pack);
+				break;
+			case 0x0200: //Session Response
+				doSessionResponse(client, pack);
+				break;
+			case 0x0300: //Multi-SOE
+				if (!client->processRecieve(pack))
+					return;
 
-	switch (opcode) {
-        case 0x0100: //Session Request
-        	doSessionStart(client, pack);
-	       	break;
-        case 0x0200: //Session Response
-        	doSessionResponse(client, pack);
-        	break;
-		case 0x0300: //Multi-SOE
-			if (!client->processRecieve(pack))
-				return;
+				handleMultiPacket(client, pack);
+				break;
+			case 0x0500: //Disconnect
+				if (!client->processRecieve(pack))
+					return;
 
-			handleMultiPacket(client, pack);
-			break;
-		case 0x0500: //Disconnect
-			if (!client->processRecieve(pack))
-				return;
+				doDisconnect(client, pack); //we shouldnt send a disconnect back.
+				break;
+			case 0x0600: //SOE Ping
+				if (!client->processRecieve(pack))
+					return;
 
-			doDisconnect(client, pack); //we shouldnt send a disconnect back.
-			break;
-		case 0x0600: //SOE Ping
-			if (!client->processRecieve(pack))
-				return;
+				break;
+			case 0x0700: //Client Net-Status Request
+				if (!client->processRecieve(pack))
+					return;
 
-			break;
-		case 0x0700: //Client Net-Status Request
-			if (!client->processRecieve(pack))
-				return;
-
-			doNetStatusResponse(client, pack);
-			break;
-		case 0x0800: //Client Net-Status Response
-			/*if (!client->processRecieve(pack))
+				doNetStatusResponse(client, pack);
+				break;
+			case 0x0800: //Client Net-Status Response
+				/*if (!client->processRecieve(pack))
 				return;
 
 			doNetStatusResponse(client, pack);*/
-			break;
-		case 0x0900: //Data Channel
-			if (!client->processRecieve(pack))
-				return;
+				break;
+			case 0x0900: //Data Channel
+				if (!client->processRecieve(pack))
+					return;
 
-			if (!client->validatePacket(pack))
-				return;
+				if (!client->validatePacket(pack))
+					return;
 
-			handleDataChannelPacket(client, pack);
+				handleDataChannelPacket(client, pack);
 
-			processBufferedPackets(client);
-			break;
-		case 0x0D00: //Fragmented
-			if (!client->processRecieve(pack))
-				return;
+				processBufferedPackets(client);
+				break;
+			case 0x0D00: //Fragmented
+				if (!client->processRecieve(pack))
+					return;
 
-			if (!client->validatePacket(pack))
-				return;
+				if (!client->validatePacket(pack))
+					return;
 
-			handleFragmentedPacket(client, pack);
+				handleFragmentedPacket(client, pack);
 
-			processBufferedPackets(client);
+				processBufferedPackets(client);
 
-			break;
-		case 0x1100: //Out of order
-			if (!client->processRecieve(pack))
-				return;
+				break;
+			case 0x1100: //Out of order
+				if (!client->processRecieve(pack))
+					return;
 
-			doOutOfOrder(client, pack);
-			break;
-		case 0x1500: //Acknowledge
-			if (!client->processRecieve(pack))
-				return;
+				doOutOfOrder(client, pack);
+				break;
+			case 0x1500: //Acknowledge
+				if (!client->processRecieve(pack))
+					return;
 
-			doAcknowledge(client, pack);
-			break;
-		case 0x1D00: //??
-			break;
-		#ifdef VERSION_PUBLIC
-		case 0x1F00: //??
-			BaseClientCleanUpEvent::cleanUp(NULL);
-			break;
-		case 0x2000: //??
-			BaseClientCleanUpEvent::cleanUp(NULL);
-			break;
-		#endif
-		default:
-			client->processRecieve(pack);
+				doAcknowledge(client, pack);
+				break;
+			case 0x1D00: //??
+				break;
+#ifdef VERSION_PUBLIC
+			case 0x1F00: //??
+				BaseClientCleanUpEvent::cleanUp(NULL);
+				break;
+			case 0x2000: //??
+				BaseClientCleanUpEvent::cleanUp(NULL);
+				break;
+#endif
+			default:
+				client->processRecieve(pack);
 
-			pack->setOffset(0);
+				pack->setOffset(0);
 
-			handleDataChannelPacket(client, pack);
-			break;
-	}
+				handleDataChannelPacket(client, pack);
+				break;
+			}
+		} catch (Exception& e) {
+			Logger::console.error(e.getMessage());
+			e.printStackTrace();
+		}
 }
 
 void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
@@ -215,7 +219,12 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 				if (!client->validatePacket(pack))
 					break;
 
-				BaseMessage* fragPiece = new BaseMessage(pack, pack->getOffset(), pack->getOffset() + blockSize);
+				int endOffset = pack->getOffset() + blockSize - 4;
+
+				if (endOffset > pack->size())
+					endOffset = pack->size();
+
+				BaseMessage* fragPiece = new BaseMessage(pack, pack->getOffset(), endOffset);
 
 				handleFragmentedPacket(client, fragPiece);
 
@@ -352,8 +361,8 @@ void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack)
 		handleDataChannelPacket(client, fraggedPacket);
 
 		delete fraggedPacket;
-	} else if (pack->size() < 485)
-		throw Exception("incomplete fragmented packet");
+	} /*else if (pack->size() < 485)
+		throw Exception("incomplete fragmented packet");*/
 }
 
 void BasePacketHandler::processMessage(Message* msg) {

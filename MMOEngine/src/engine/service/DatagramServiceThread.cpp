@@ -127,6 +127,13 @@ void DatagramServiceThread::receiveMessages() {
 				info(e.getMessage());
 			} else if (!serviceHandler->handleError(client, e))
 				return;
+		} catch (Exception& e) {
+			error(e.getMessage());
+			e.printStackTrace();
+
+			#ifdef VERSION_PUBLIC
+				return;
+			#endif
 		} catch (...) {
 			error("unreported Exception caught");
 
