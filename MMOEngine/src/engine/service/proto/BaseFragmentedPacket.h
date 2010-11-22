@@ -23,7 +23,7 @@ namespace engine {
 
 		~BaseFragmentedPacket();
 
-		void addFragment(Packet* pack);
+		bool addFragment(Packet* pack);
 
 		BasePacket* getFragment();
 

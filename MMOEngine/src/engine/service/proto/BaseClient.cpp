@@ -3,7 +3,7 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#define TRACE_CLIENTS
+//#define TRACE_CLIENTS
 
 #include "engine/core/Core.h"
 
@@ -496,15 +496,49 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 	if (fragmentedPacket == NULL)
 		fragmentedPacket = new BaseFragmentedPacket();
 
-	fragmentedPacket->addFragment(pack);
-
-	if (fragmentedPacket->isComplete()) {
-		fragmentedPacket->setOffset(0);
-
-		//Logger::console.info("completed fragmented packet");
-
-		packet = fragmentedPacket;
+	if (!fragmentedPacket->addFragment(pack)) {
+		delete fragmentedPacket;
 		fragmentedPacket = NULL;
+
+		return NULL;
+	}
+
+	try {
+
+		if (fragmentedPacket->isComplete()) {
+			fragmentedPacket->setOffset(0);
+
+			//Logger::console.info("completed fragmented packet");
+
+			packet = fragmentedPacket;
+			fragmentedPacket = NULL;
+		}
+	} catch (Exception& e) {
+		Logger::console.error(e.getMessage());
+		Logger::console.error(pack->toStringData());
+
+		if (fragmentedPacket != NULL) {
+			StringBuffer msg;
+			msg << "current fragmented packet.." << fragmentedPacket->toStringData();
+			Logger::console.error(msg.toString());
+
+			delete fragmentedPacket;
+			fragmentedPacket = NULL;
+			packet = NULL;
+		}
+	} catch (...) {
+		Logger::console.error("unreproted exception caught in BasePacket* BaseClient::recieveFragmentedPacket");
+		Logger::console.error(pack->toStringData());
+
+		if (fragmentedPacket != NULL) {
+			StringBuffer msg;
+			msg << "current fragmented packet.." << fragmentedPacket->toStringData();
+			Logger::console.error(msg.toString());
+
+			delete fragmentedPacket;
+			fragmentedPacket = NULL;
+			packet = NULL;
+		}
 	}
 
 	return packet;
