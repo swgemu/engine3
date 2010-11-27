@@ -72,6 +72,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <Strings.h>
 #endif
 
+#ifdef PLATFORM_MAC
+#include <math.h>
+
+extern "C" int isnan (double);
+extern "C" int isinf (double);
+#endif
+
 namespace sys {
 	typedef unsigned long long uint64;
 	typedef unsigned int uint32;
