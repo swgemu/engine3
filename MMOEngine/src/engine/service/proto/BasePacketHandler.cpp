@@ -164,14 +164,15 @@ void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
 void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 	uint16 tick = NetStatusRequestMessage::parseTick(pack);
 
-	client->updateNetStatus();
+	if (client->updateNetStatus(tick)) {
 
-    /*StringBuffer msg;
-    msg << hex << "NETSTAT respond with 0x" << tick << "\n";
-	info(msg);*/
+		/*StringBuffer msg;
+    	msg << hex << "NETSTAT respond with 0x" << tick << "\n";
+		info(msg);*/
 
-    BasePacket* resp = new NetStatusResponseMessage(tick);
-    client->sendPacket(resp);
+		BasePacket* resp = new NetStatusResponseMessage(tick);
+		client->sendPacket(resp);
+	}
 }
 
 void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {

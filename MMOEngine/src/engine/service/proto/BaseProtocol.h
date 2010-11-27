@@ -25,6 +25,8 @@ namespace engine {
 	    sys::uint32 clientSequence;
 
 		Time lastNetStatusTimeStamp;
+		uint16 lastRecievedNetStatusTick;
+		uint16 erroneusTicks;
 
 		static const int COMPRESSION_BUFFER_MAX = 800;
 

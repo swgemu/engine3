@@ -106,7 +106,7 @@ namespace engine {
 		void acknowledgeClientPackets(sys::uint16 seq);
 		void acknowledgeServerPackets(sys::uint16 seq);
 
-		void updateNetStatus();
+		bool updateNetStatus(sys::uint16 recievedTick = 0);
 		bool checkNetStatus();
 		void requestNetStatus();
 

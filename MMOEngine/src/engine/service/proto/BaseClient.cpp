@@ -792,16 +792,41 @@ void BaseClient::flushSendBuffer(int seq) {
 	#endif
 }
 
-void BaseClient::updateNetStatus() {
+bool BaseClient::updateNetStatus(uint16 recievedTick) {
 	lock();
 
 	try {
 		if (!isAvailable()) {
 			unlock();
-			return;
+			return false;
+		}
+
+		uint16 hostByte = htons(recievedTick);
+
+		if (lastRecievedNetStatusTick != 0) {
+			uint16 clientDelta = hostByte - lastRecievedNetStatusTick;
+			uint16 serverDelta = lastNetStatusTimeStamp.miliDifference();
+
+			/*StringBuffer msg;
+			msg << "recievedTick: " << hostByte << " clientDelta:" << clientDelta << " serverDelta:" << serverDelta;
+			info(msg, true);*/
+
+			if (clientDelta > serverDelta) {
+				uint16 difference = clientDelta - serverDelta;
+
+				if ((difference > 100) && (++erroneusTicks > 2)) {
+					disconnect("client clock desync", false);
+
+					unlock();
+
+					return false;
+				}
+			} else
+				erroneusTicks = 0;
 		}
 
 		lastNetStatusTimeStamp.updateToCurrentTime();
+		lastRecievedNetStatusTick = hostByte;
 
 		#ifdef TRACE_CLIENTS
 			info("setting net status");
@@ -816,6 +841,8 @@ void BaseClient::updateNetStatus() {
 	}
 
 	unlock();
+
+	return true;
 }
 
 void BaseClient::requestNetStatus() {

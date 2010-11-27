@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 BaseProtocol::BaseProtocol() : Logger("PROTO") {
 	crcSeed = 0;
+	lastRecievedNetStatusTick = 0;
+	erroneusTicks = 0;
 }
 
 void BaseProtocol::prepareSend(BasePacket* pack) {
