@@ -59,7 +59,8 @@ const PriorityQueueEntry* PriorityQueue::poll() {
 
 	oldRoot->setUnqueued();
 
-	--count;
+	assert (--count >= 0);
+
 	return oldRoot;
 }
 
@@ -93,7 +94,8 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 
 	oldNode->setUnqueued();
 
-	--count;
+	assert(--count >= 0);
+
 	return true;
 }
 
@@ -109,6 +111,10 @@ void PriorityQueue::merge(PriorityQueue& heap) {
 		return;
 
 	root = merge(root, heap.root);
+
+	count += heap.count;
+
+	heap.count = 0;
 	heap.root = NULL;
 }
 
@@ -119,9 +125,7 @@ PriorityQueueEntry* PriorityQueue::merge(PriorityQueueEntry* h1, PriorityQueueEn
 	if (h2 == NULL)
 		return h1;
 
-	if (h1 == h2) {
-		int i = 2 * 2;
-	}
+	assert(h1 != h2);
 
 	if (h1->compareTo(h2) > 0)
 		return merge1(h1, h2);
@@ -134,6 +138,8 @@ PriorityQueueEntry* PriorityQueue::merge1(PriorityQueueEntry* h1, PriorityQueueE
 		h1->leftNode = h2;
 		h2->parentNode = h1;
 	} else {
+		assert(h1->rightNode != h2);
+
 		h1->rightNode = merge(h1->rightNode, h2);
 		h1->rightNode->parentNode = h1;
 

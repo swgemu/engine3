@@ -55,6 +55,8 @@ namespace engine {
 			Message* pack = new Message();
 			copy(pack, startoffs);
 			
+			pack->client = client;
+
 			return pack;
 		}
 	

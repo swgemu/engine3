@@ -28,7 +28,8 @@ namespace engine {
 
 		virtual ~TaskQueue();
 
-		void push(Task* msg);
+		void push(Task* task);
+		void pushAll(const Vector<Task*>& tasks);
 
 		Task* pop();
 

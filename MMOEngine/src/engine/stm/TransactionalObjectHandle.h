@@ -30,7 +30,7 @@ namespace engine {
 
 		void releaseHeader();
 
-		bool discardHeader(Transaction* transaction);
+		void discardHeader(Transaction* transaction);
 
 		Transaction* getCompetingTransaction();
 
@@ -74,10 +74,7 @@ namespace engine {
 		header = NULL;
 		object = NULL;
 
-		if (objectCopy != NULL) {
-			//delete objectCopy;
-			objectCopy = NULL;
-		}
+		assert(objectCopy == NULL);
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {
@@ -90,8 +87,11 @@ namespace engine {
 		objectCopy = NULL;
 	}
 
-	template<class O> bool TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
-		return header->discardObject(transaction);
+	template<class O> void TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
+		header->discardObject(transaction);
+
+		delete objectCopy;
+		objectCopy = NULL;
 	}
 
 	template<class O> Transaction* TransactionalObjectHandle<O>::getCompetingTransaction() {

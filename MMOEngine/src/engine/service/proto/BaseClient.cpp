@@ -82,9 +82,6 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 }
 
 BaseClient::~BaseClient() {
-	if (service != NULL)
-		service->removeConnection(this);
-
 	if (checkupEvent != NULL) {
 			if (checkupEvent->isScheduled())
 			checkupEvent->cancel();
@@ -125,7 +122,6 @@ void BaseClient::initialize() {
 	serverSequence = 0;
    	clientSequence = 0;
 
-    hasError = false;
    	disconnected = false;
    	clientDisconnected = false;
 
@@ -201,7 +197,7 @@ void BaseClient::send(Packet* pack, bool doLock) {
 	} catch (SocketException& e) {
 		error("on send()" + e.getMessage());
 
-		hasError = true;
+		setError();
 		disconnect(false);
 	}
 
@@ -886,7 +882,7 @@ bool BaseClient::checkNetStatus() {
 
 		info("netStatusTimeout on client");
 
-		hasError = true;
+		setError();
 		disconnect(false);
 	} catch (Exception& e) {
 		disconnect("Exception on checkNetStatus()", false);
@@ -960,12 +956,8 @@ void BaseClient::notifyReceivedSeed(uint32 seed) {
 void BaseClient::disconnect(const String& msg, bool doLock) {
 	Logger::error(msg);
 
-	hasError = true;
+	setError();
 	disconnect(doLock);
-}
-
-void BaseClient::disconnect() {
-	disconnect(true);
 }
 
 void BaseClient::disconnect(bool doLock) {
@@ -981,7 +973,7 @@ void BaseClient::disconnect(bool doLock) {
 			info("disconnecting client");
 		#endif
 
-		if (!hasError) {
+		if (!hasError()) {
 			if (bufferedPacket != NULL)
 				delete bufferedPacket;
 
@@ -997,15 +989,21 @@ void BaseClient::disconnect(bool doLock) {
 		}
 	} catch (SocketException& e) {
 		error("disconnecting client");
-		hasError = true;
+		setError();
 	} catch (...) {
 		error("unreported exception on disconnect()");
-		hasError = true;
+		setError();
 	}
 
 	close();
 
 	unlock(doLock);
+
+	if (service != NULL) {
+		service->removeConnection(this);
+
+		service = NULL;
+	}
 }
 
 void BaseClient::reportStats(bool doLog) {

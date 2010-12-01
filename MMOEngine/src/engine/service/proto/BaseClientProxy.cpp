@@ -28,7 +28,6 @@ void BaseClientProxy::init(DatagramServiceThread* serv) {
 	serverSequence = 0;
    	clientSequence = 0;
 
-    hasError = false;
    	disconnected = false;
    	clientDisconnected = false;
 

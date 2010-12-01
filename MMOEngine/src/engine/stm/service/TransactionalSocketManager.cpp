@@ -12,13 +12,17 @@ TransactionalSocketManager::TransactionalSocketManager() : Logger("Transactional
 void TransactionalSocketManager::sendMessage(Message* message) {
 	MessageQueue* queue = getLocalMessageQueue();
 
+	//info("queuing message");
+
+	message->acquire();
+
 	queue->push(message);
 }
 
 void TransactionalSocketManager::execute() {
 	MessageQueue* queue = getLocalMessageQueue();
 
-	info("sending " + String::valueOf(queue->size()) + " messages");
+	//info("sending " + String::valueOf(queue->size()) + " messages");
 
 	for (int i = 0; i < queue->size(); ++i) {
 		Message* message = queue->get(i);
@@ -32,7 +36,7 @@ void TransactionalSocketManager::execute() {
 				socket->sendTo(message, &addr);
 		}
 
-		delete message;
+		message->release();
 	}
 
 	queue->removeAll();
@@ -56,7 +60,7 @@ MessageQueue* TransactionalSocketManager::getLocalMessageQueue() {
 	if (queue == NULL) {
 		queue = new MessageQueue();
 
-		info("message queue created");
+		//info("message queue created");
 
 		sentMessages.set(queue);
 	}

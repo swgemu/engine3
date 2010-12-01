@@ -6,6 +6,11 @@
 #include "system/lang.h"
 
 namespace engine {
+
+  namespace stm {
+  	  class LocalTaskManager;
+  }
+
   namespace core {
 
 	class TaskManager;
@@ -118,6 +123,7 @@ namespace engine {
 		}
 
 		friend class TimedTaskQueue;
+		friend class engine::stm::LocalTaskManager;
 	};
 
   } // namespace core

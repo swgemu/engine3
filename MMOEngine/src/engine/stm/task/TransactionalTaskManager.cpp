@@ -20,37 +20,43 @@ void TransactionalTaskManager::shutdown() {
 }
 
 void TransactionalTaskManager::executeTask(Task* task) {
-	TaskManagerImpl* manager = getLocalTaskManager();
+	LocalTaskManager* manager = getLocalTaskManager();
 
 	manager->executeTask(task);
 }
 
 void TransactionalTaskManager::scheduleTask(Task* task, uint64 delay) {
-	TaskManagerImpl* manager = getLocalTaskManager();
+	LocalTaskManager* manager = getLocalTaskManager();
+
+	//manager->info("scheduling task");
 
 	manager->scheduleTask(task, delay);
 }
 
 void TransactionalTaskManager::scheduleTask(Task* task, Time& time) {
-	TaskManagerImpl* manager = getLocalTaskManager();
+	LocalTaskManager* manager = getLocalTaskManager();
+
+	//manager->info("scheduling task");
 
 	manager->scheduleTask(task, time);
 }
 
 void TransactionalTaskManager::rescheduleTask(Task* task, uint64 delay) {
-	TaskManagerImpl* manager = getLocalTaskManager();
+	LocalTaskManager* manager = getLocalTaskManager();
 
 	manager->rescheduleTask(task, delay);
 }
 
 void TransactionalTaskManager::rescheduleTask(Task* task, Time& time) {
-	TaskManagerImpl* impl = getLocalTaskManager();
+	LocalTaskManager* impl = getLocalTaskManager();
 
 	impl->rescheduleTask(task, time);
 }
 
 bool TransactionalTaskManager::cancelTask(Task* task) {
-	TaskManagerImpl* manager = getLocalTaskManager();
+	LocalTaskManager* manager = getLocalTaskManager();
+
+	//manager->info("cancelling task");
 
 	return manager->cancelTask(task);
 }
@@ -60,9 +66,9 @@ Task* TransactionalTaskManager::getTask() {
 }
 
 bool TransactionalTaskManager::isTaskScheduled(Task* task) {
-	TaskManagerImpl* manager = getLocalTaskManager();
+	LocalTaskManager* manager = getLocalTaskManager();
 
-	return manager->isTaskScheduled(task);
+	return manager->isTaskScheduled(task) || (taskManager->isTaskScheduled(task) && !manager->isTaskCancelled(task));
 }
 
 void TransactionalTaskManager::flushTasks() {
@@ -82,29 +88,22 @@ int TransactionalTaskManager::getExecutingTaskSize() {
 }
 
 void TransactionalTaskManager::execute() {
-	TaskManagerImpl* localTaskManager = getLocalTaskManager();
+	LocalTaskManager* localTaskManager = getLocalTaskManager();
 
-	taskManager->mergeTasks(localTaskManager);
-
-	localTaskManager->clearTasks();
+	localTaskManager->mergeTasks(taskManager);
 }
 
 void TransactionalTaskManager::undo() {
-	TaskManagerImpl* localTaskManager = getLocalTaskManager();
+	LocalTaskManager* localTaskManager = getLocalTaskManager();
 
-	localTaskManager->clearTasks();
+	localTaskManager->flushTasks();
 }
 
-TaskManagerImpl* TransactionalTaskManager::getLocalTaskManager() {
-	TaskManagerImpl* impl = localTaskManager.get();
+LocalTaskManager* TransactionalTaskManager::getLocalTaskManager() {
+	LocalTaskManager* impl = localTaskManager.get();
 
 	if (impl == NULL) {
-		String threadName = Thread::getCurrentThread()->getName();
-
-		impl = new TaskManagerImpl();
-		impl->setLogging(true);
-		impl->setLoggingName("LocalTaskManager (" + threadName +")");
-		impl->initialize(0, 1);
+		impl = new LocalTaskManager();
 
 		localTaskManager.set(impl);
 	}

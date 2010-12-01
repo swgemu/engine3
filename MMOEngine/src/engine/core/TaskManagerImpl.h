@@ -34,8 +34,6 @@ namespace engine {
 
 		bool shuttingDown;
 
-  		SortedVector<Task*> cancelledTasks;
-
 		static const int DEFAULT_WORKER_THREADS = 10;
 		static const int DEFAULT_SCHEDULER_THREADS = 4;
 
@@ -56,6 +54,7 @@ namespace engine {
 		void unblockTaskManager(Vector<Locker*>* lockers);
 
 		void executeTask(Task* task);
+		void executeTasks(const Vector<Task*>& tasks);
 
 		bool isTaskScheduled(Task* task);
 
@@ -67,11 +66,7 @@ namespace engine {
 
 		bool cancelTask(Task* task);
 
-		void mergeTasks(TaskManagerImpl* manager);
-
 		void flushTasks();
-
-		void clearTasks();
 
 		void testScheduler();
 
@@ -85,11 +80,6 @@ namespace engine {
 		TaskScheduler* getTaskScheduler();
 
 		void setTaskScheduler(Task* task, TaskScheduler* scheduler);
-
-		bool isRunning() {
-			// FIXME - hack
-			return !workers.isEmpty();
-		}
 
 		inline Task* getTask() {
 			return tasks.pop();

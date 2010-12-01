@@ -137,10 +137,7 @@ void DatagramServiceThread::receiveMessages() {
 		} catch (...) {
 			error("unreported Exception caught");
 
-			#ifdef VERSION_PUBLIC
-				return;
-			#endif
+			raise(SIGINT);
 		}
-
 	}
 }

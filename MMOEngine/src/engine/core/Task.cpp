@@ -89,14 +89,7 @@ void Task::execute() {
 
 
 bool Task::isScheduled() {
-#ifdef WITH_STM
-	if  (taskScheduler.get() == NULL)
-		return false;
-
-	return Core::getTaskManager()->isTaskScheduled(this);
-#else
-	return taskScheduler.get() != NULL;
-#endif
+	return taskManager->isTaskScheduled(this);
 }
 
 bool Task::cancel() {

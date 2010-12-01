@@ -45,6 +45,28 @@ void TaskQueue::push(Task* task) {
 	condMutex->unlock();
 }
 
+void TaskQueue::pushAll(const Vector<Task*>& tasks) {
+	condMutex->lock();
+
+	if (blocked) {
+		condMutex->unlock();
+		return;
+	}
+
+	Vector<Task*>::addAll(tasks);
+
+	#ifdef TRACE_TASKS
+		StringBuffer s;
+		s << size() << " tasks in queue";
+		info(s);
+	#endif
+
+	//if (waitingForTask)
+		signal(condMutex);
+
+	condMutex->unlock();
+}
+
 Task* TaskQueue::pop() {
 	condMutex->lock();
 
@@ -87,5 +109,3 @@ void TaskQueue::flush() {
 
 	condMutex->unlock();
 }
-
-

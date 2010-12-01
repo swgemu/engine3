@@ -68,8 +68,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <memory>
 
+#include <assert.h>
+
 #ifdef PLATFORM_SOLARIS
 #include <Strings.h>
+#endif
+
+#ifdef PLATFORM_MAC
+#include <math.h>
+
+extern "C" int isnan (double);
+extern "C" int isinf (double);
 #endif
 
 namespace sys {

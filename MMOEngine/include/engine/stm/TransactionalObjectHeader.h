@@ -46,7 +46,7 @@ namespace engine {
 
 		void releaseObject(TransactionalObjectHandle<O>* handle);
 
-		bool discardObject(Transaction* transaction);
+		void discardObject(Transaction* transaction);
 
 		O getObject() const {
 			return object;
@@ -88,16 +88,15 @@ namespace engine {
 	}
 
 	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
-		O oldObject = handle->getObject();
+		delete object;
 
 		object = handle->getObjectLocalCopy();
 
-		//delete oldObject;
 		ownerTransaction = NULL;
 	}
 
-	template<class O> bool TransactionalObjectHeader<O>::discardObject(Transaction* transaction) {
-		return ownerTransaction.compareAndSet(transaction, NULL);
+	template<class O> void TransactionalObjectHeader<O>::discardObject(Transaction* transaction) {
+		assert(ownerTransaction.compareAndSet(transaction, NULL));
 	}
 
   } // namespace stm

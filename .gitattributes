@@ -203,6 +203,7 @@ MMOEngine/include/engine/stm/TransactionalObject.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/include/engine/stm/service/TransactionalSocketManager.h -text
+MMOEngine/include/engine/stm/task/LocalTaskManager.h -text
 MMOEngine/include/engine/stm/task/TransactionalTaskManager.h -text
 MMOEngine/include/engine/util/Command.h -text
 MMOEngine/include/engine/util/Coordinate.h -text
@@ -533,6 +534,8 @@ MMOEngine/src/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/src/engine/stm/service/TransactionalSocketManager.cpp -text
 MMOEngine/src/engine/stm/service/TransactionalSocketManager.h -text
+MMOEngine/src/engine/stm/task/LocalTaskManager.cpp -text
+MMOEngine/src/engine/stm/task/LocalTaskManager.h -text
 MMOEngine/src/engine/stm/task/TransactionalTaskManager.cpp -text
 MMOEngine/src/engine/stm/task/TransactionalTaskManager.h -text
 MMOEngine/src/engine/util/Command.h -text

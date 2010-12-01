@@ -33,6 +33,8 @@ void TaskWorkerThread::run() {
 		blockMutex.lock();
 
 		try {
+			//info("executing task", true);
+
 			task->execute();
 		} catch (Exception& e) {
 			error(e.getMessage());

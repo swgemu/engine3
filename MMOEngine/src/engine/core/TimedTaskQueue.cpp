@@ -62,14 +62,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 	if (blocked) {
 		condMutex->unlock(doLock);
 		return false;
-	} /*else if (task->getNextExecutionTime().isPast()) {
-		error("past task scheduled - " + task->toStringData());
-
-
-
-		condMutex->unlock(doLock);
-		return false;
-	}*/
+	}
 
 	if (task->isQueued())
 		remove(task, false);
@@ -82,7 +75,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 
 	task->acquire();
 
-	task->setTaskScheduler(taskScheduler);
+	assert(task->setTaskScheduler(taskScheduler));
 
 	PriorityQueue::add(task);
 
@@ -91,6 +84,28 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		s << "added task " << task->toStringData();
 		info(s);
 	#endif
+
+	if (PriorityQueue::peak() == task && waitingForTask) {
+		changePlan = true;
+		signal(condMutex);
+	}
+
+	condMutex->unlock(doLock);
+
+	return true;
+}
+
+bool TimedTaskQueue::addAll(PriorityQueue& queue, bool doLock) {
+	condMutex->lock(doLock);
+
+	if (blocked) {
+		condMutex->unlock(doLock);
+		return false;
+	}
+
+	Task* task = (Task*) queue.peak();
+
+	PriorityQueue::merge(queue);
 
 	if (PriorityQueue::peak() == task && waitingForTask) {
 		changePlan = true;
@@ -167,7 +182,7 @@ Task* TimedTaskQueue::get() {
 
 	Task* task = (Task*) PriorityQueue::poll();
 
-	task->clearTaskScheduler();
+	assert(task->clearTaskScheduler());
 
 	if (!blocked && task->getNextExecutionTime().isFuture()) {
 		int64 difference = -(uint64) task->getNextExecutionTime().miliDifference();
@@ -222,7 +237,7 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 
 	PriorityQueue::remove(task);
 
-	task->clearTaskScheduler();
+	assert(task->clearTaskScheduler());
 
 	task->release();
 

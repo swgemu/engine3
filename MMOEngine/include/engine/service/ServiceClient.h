@@ -16,7 +16,7 @@ namespace engine {
 		SocketAddress addr;
 		Socket* socket;
 
-		bool hasError, disconnected;
+		bool errored, disconnected;
 
 		int packetLossChance;
 
@@ -38,6 +38,10 @@ namespace engine {
 			return disconnected;
 		}
 
+		inline bool hasError() {
+			return errored;
+		}
+
 		virtual void finalize();
 
 		virtual void acquire();
@@ -50,7 +54,7 @@ namespace engine {
 		}
 
 		inline void setError() {
-			hasError = true;
+			errored = true;
 		}
 
 		inline void setPacketLoss(int ratio) {

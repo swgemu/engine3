@@ -159,12 +159,12 @@ void TaskManagerImpl::executeTask(Task* task) {
 	tasks.push(task);
 }
 
+void TaskManagerImpl::executeTasks(const Vector<Task*>& taskList) {
+	tasks.pushAll(taskList);
+}
+
 bool TaskManagerImpl::isTaskScheduled(Task* task) {
-#ifdef WITH_STM
-	return !cancelledTasks.contains(task);
-#else
-	return task->isScheduled();
-#endif
+	return task->getTaskScheduler() != NULL;
 }
 
 void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
@@ -225,34 +225,11 @@ bool TaskManagerImpl::cancelTask(Task* task) {
 	if (!task->isScheduled())
 		return false;
 
-	if (isRunning()) {
-		TaskScheduler* scheduler = task->getTaskScheduler();
+	TaskScheduler* scheduler = task->getTaskScheduler();
 
-		locker.release();
+	locker.release();
 
-		if (scheduler != NULL)
-			return scheduler->cancelTask(task);
-		else
-			return false;
-	} else {
-		cancelledTasks.put(task);
-
-		return true;
-	}
-}
-
-void TaskManagerImpl::clearTasks() {
-	Locker locker(this);
-
-	tasks.removeAll();
-
-	for (int i = 0; i < schedulers.size(); ++i) {
-		TaskScheduler* scheduler = schedulers.get(i);
-
-		scheduler->clearTasks();
-	}
-
-	cancelledTasks.removeAll();
+	return scheduler->cancelTask(task);
 }
 
 void TaskManagerImpl::flushTasks() {
@@ -266,23 +243,6 @@ void TaskManagerImpl::flushTasks() {
 		scheduler->flushTasks();
 	}
 
-}
-
-void TaskManagerImpl::mergeTasks(TaskManagerImpl* manager) {
-	Locker locker(this);
-
-	tasks.addAll(manager->tasks);
-
-	for (int i = 0; i < cancelledTasks.size(); ++i) {
-		Task* task = cancelledTasks.get(i);
-
-		cancelTask(task);
-	}
-
-	TaskScheduler* scheduler = getTaskScheduler();
-
-	// FIXME - temp hack
-	scheduler->addSchedulerTasks(manager->getTaskScheduler());
 }
 
 void TaskManagerImpl::printInfo() {

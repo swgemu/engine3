@@ -39,6 +39,8 @@ namespace engine {
 
 		bool add(Task* e, bool doLock = true);
 
+		bool addAll(PriorityQueue& queue, bool doLock = true);
+
 		Task* get();
 
 		bool remove(Task* e, bool doLock = true);

@@ -62,6 +62,8 @@ void TaskScheduler::run() {
 			DO_TIMELIMIT;
 		#endif
 
+			//info("executing scheduled task", true);
+
 			task->execute();
 		} catch (Exception& e) {
 			error(e.getMessage());
@@ -116,5 +118,10 @@ bool TaskScheduler::cancelTask(Task* task) {
 }
 
 void TaskScheduler::addSchedulerTasks(TaskScheduler* scheduler) {
-	tasks.merge(scheduler->tasks);
+	Task* task = NULL;
+
+	while ((task = (Task*) scheduler->tasks.poll()) != NULL)
+			tasks.add(task);
+
+	//tasks.addAll(scheduler->tasks);
 }

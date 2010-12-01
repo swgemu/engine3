@@ -111,6 +111,7 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/stm/Transaction.$(OBJEXT) \
 	engine/stm/TransactionalMemoryManager.$(OBJEXT) \
 	engine/stm/task/TransactionalTaskManager.$(OBJEXT) \
+	engine/stm/task/LocalTaskManager.$(OBJEXT) \
 	engine/stm/service/TransactionalSocketManager.$(OBJEXT) \
 	engine/core/ManagedObject.$(OBJEXT) \
 	engine/core/ManagedService.$(OBJEXT) \
@@ -121,7 +122,9 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/util/iffstream/chunks/form/Form.$(OBJEXT) \
 	engine/db/BinaryData.$(OBJEXT) \
 	engine/db/ObjectDatabase.$(OBJEXT) \
+	engine/db/DatabaseManager.$(OBJEXT) \
 	engine/db/ObjectDatabaseManager.$(OBJEXT) \
+	engine/db/LocalDatabase.$(OBJEXT) \
 	engine/db/mysql/MySqlDatabase.$(OBJEXT) \
 	engine/db/berkley/BerkeleyDatabase.$(OBJEXT) \
 	engine/db/berkley/Transaction.$(OBJEXT) \
@@ -334,6 +337,7 @@ libengine3_a_SOURCES = \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/stm/task/TransactionalTaskManager.cpp \
+			engine/stm/task/LocalTaskManager.cpp \
 			engine/stm/service/TransactionalSocketManager.cpp \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedService.cpp \
@@ -344,7 +348,9 @@ libengine3_a_SOURCES = \
 			engine/util/iffstream/chunks/form/Form.cpp \
 			engine/db/BinaryData.cpp \
 			engine/db/ObjectDatabase.cpp \
+			engine/db/DatabaseManager.cpp \
 			engine/db/ObjectDatabaseManager.cpp \
+			engine/db/LocalDatabase.cpp \
 			engine/db/mysql/MySqlDatabase.cpp \
 			engine/db/berkley/BerkeleyDatabase.cpp \
 			engine/db/berkley/Transaction.cpp \
@@ -636,6 +642,9 @@ engine/stm/task/$(DEPDIR)/$(am__dirstamp):
 engine/stm/task/TransactionalTaskManager.$(OBJEXT):  \
 	engine/stm/task/$(am__dirstamp) \
 	engine/stm/task/$(DEPDIR)/$(am__dirstamp)
+engine/stm/task/LocalTaskManager.$(OBJEXT):  \
+	engine/stm/task/$(am__dirstamp) \
+	engine/stm/task/$(DEPDIR)/$(am__dirstamp)
 engine/stm/service/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/service
 	@: > engine/stm/service/$(am__dirstamp)
@@ -697,7 +706,11 @@ engine/db/BinaryData.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
 engine/db/ObjectDatabase.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
+engine/db/DatabaseManager.$(OBJEXT): engine/db/$(am__dirstamp) \
+	engine/db/$(DEPDIR)/$(am__dirstamp)
 engine/db/ObjectDatabaseManager.$(OBJEXT): engine/db/$(am__dirstamp) \
+	engine/db/$(DEPDIR)/$(am__dirstamp)
+engine/db/LocalDatabase.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
 engine/db/mysql/$(am__dirstamp):
 	@$(MKDIR_P) engine/db/mysql
@@ -767,6 +780,8 @@ mostlyclean-compile:
 	-rm -f engine/core/TaskWorkerThread.$(OBJEXT)
 	-rm -f engine/core/TimedTaskQueue.$(OBJEXT)
 	-rm -f engine/db/BinaryData.$(OBJEXT)
+	-rm -f engine/db/DatabaseManager.$(OBJEXT)
+	-rm -f engine/db/LocalDatabase.$(OBJEXT)
 	-rm -f engine/db/ObjectDatabase.$(OBJEXT)
 	-rm -f engine/db/ObjectDatabaseManager.$(OBJEXT)
 	-rm -f engine/db/berkley/BerkeleyDatabase.$(OBJEXT)
@@ -811,6 +826,7 @@ mostlyclean-compile:
 	-rm -f engine/stm/Transaction.$(OBJEXT)
 	-rm -f engine/stm/TransactionalMemoryManager.$(OBJEXT)
 	-rm -f engine/stm/service/TransactionalSocketManager.$(OBJEXT)
+	-rm -f engine/stm/task/LocalTaskManager.$(OBJEXT)
 	-rm -f engine/stm/task/TransactionalTaskManager.$(OBJEXT)
 	-rm -f engine/util/QuadTree.$(OBJEXT)
 	-rm -f engine/util/iffstream/IffStream.$(OBJEXT)
@@ -860,6 +876,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskWorkerThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TimedTaskQueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/BinaryData.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/DatabaseManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/LocalDatabase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabaseManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/BerkeleyDatabase.Po@am__quote@
@@ -904,6 +922,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/Transaction.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/TransactionalMemoryManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/service/$(DEPDIR)/TransactionalSocketManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/LocalTaskManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/TransactionalTaskManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/QuadTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/$(DEPDIR)/IffStream.Po@am__quote@

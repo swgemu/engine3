@@ -68,6 +68,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <memory>
 
+#include <assert.h>
+
 #ifdef PLATFORM_SOLARIS
 #include <Strings.h>
 #endif

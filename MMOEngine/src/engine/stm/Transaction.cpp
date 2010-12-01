@@ -43,7 +43,7 @@ Transaction::~Transaction() {
 }
 
 bool Transaction::commit() {
-	info("commiting..");
+	//info("commiting..");
 
 	uint64 startTime = System::getMikroTime();
 
@@ -52,7 +52,9 @@ bool Transaction::commit() {
 	commitTime += System::getMikroTime() - startTime;
 
 	if (commited) {
-		info("commited (" + String::valueOf(commitTime) + "Us, " + String::valueOf(commitAttempts) + " tries)");
+		info("commited (" + String::valueOf(commitTime) + "Us, "
+				+ String::valueOf(commitAttempts) + " tries, R/W objects "
+				+readOnlyObjects.size() + "/" + readWriteObjects.size() +")");
 
 		TransactionalMemoryManager::instance()->clearTransaction();
 	} else {
@@ -130,7 +132,7 @@ void Transaction::reset() {
 
 	readWriteObjects.removeAll();
 
-	info("reset");
+	//info("reset");
 }
 
 bool Transaction::acquireReadWriteObjects() {
@@ -205,8 +207,7 @@ void Transaction::discardReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
 
-		if (handle->discardHeader(this))
-			break;
+		handle->discardHeader(this);
 	}
 }
 

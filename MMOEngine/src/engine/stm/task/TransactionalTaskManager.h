@@ -11,7 +11,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/core/TaskQueue.h"
 
 #include "engine/core/TaskManager.h"
-#include "engine/core/TaskManagerImpl.h"
+
+#include "engine/stm/task/LocalTaskManager.h"
 
 namespace engine {
   namespace stm {
@@ -19,7 +20,7 @@ namespace engine {
   	class TransactionalTaskManager : public TaskManager, public Command {
   		TaskManagerImpl* taskManager;
 
-  		ThreadLocal<TaskManagerImpl>  localTaskManager;
+  		ThreadLocal<LocalTaskManager>  localTaskManager;
 
   	  public:
   		void initialize();
@@ -55,7 +56,7 @@ namespace engine {
   		void undo();
 
   	  protected:
-  		TaskManagerImpl* getLocalTaskManager();
+  		LocalTaskManager* getLocalTaskManager();
 
   	  };
 

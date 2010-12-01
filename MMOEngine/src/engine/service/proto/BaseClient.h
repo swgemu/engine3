@@ -120,8 +120,7 @@ namespace engine {
 			disconnect(String(msg), doLock);
 		}
 
-		void disconnect();
-		virtual void disconnect(bool doLock);
+		void disconnect(bool doLock = true);
 
 		void reportStats(bool doLog = false);
 
@@ -139,6 +138,10 @@ namespace engine {
 		void flushSendBuffer(int seq);
 
 	public:
+		inline bool isClientDisconnected() {
+			return clientDisconnected;
+		}
+
 		// setters
 		inline void setClientDisconnected() {
 			clientDisconnected = true;
