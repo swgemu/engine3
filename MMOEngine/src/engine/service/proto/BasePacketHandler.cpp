@@ -268,6 +268,7 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 
 			handleDataChannelMultiPacket(client, pack, blockSize);
 		} else if (pack->parseShort(0) == 0x0D00) {
+			pack->shiftOffset(4);
 			handleFragmentedPacket(client, pack);
 		} else
 			handleDataChannelPacket(client, pack);
@@ -355,6 +356,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 
 void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
 	//Logger::console.info("handleFragmentedPacket " + pack->toStringData());
+	//pack must have offset after sequence 0D 00 XX XX HERE
 
 	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
 

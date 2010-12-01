@@ -961,10 +961,11 @@ void BaseClient::disconnect(const String& msg, bool doLock) {
 }
 
 void BaseClient::disconnect(bool doLock) {
-	lock(doLock);
+	//lock(doLock);
+	Locker locker(this);
 
 	if (disconnected) {
-		unlock(doLock);
+		//unlock(doLock);
 		return;
 	}
 
@@ -997,7 +998,8 @@ void BaseClient::disconnect(bool doLock) {
 
 	close();
 
-	unlock(doLock);
+	//unlock(doLock);
+	locker.release();
 
 	if (service != NULL) {
 		service->removeConnection(this);
