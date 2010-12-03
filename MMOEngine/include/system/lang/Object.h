@@ -61,6 +61,10 @@ namespace sys {
 			//_references = obj._references;
 
 			_destroying = false;
+
+		#ifdef TRACE_REFERENCES
+			referenceHolders.setNullValue(NULL);
+		#endif
 		}
 
 		virtual ~Object() {

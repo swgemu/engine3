@@ -20,13 +20,26 @@ IffStream::IffStream(const String& filename) : FileInputStream(new File(filename
 }
 
 IffStream::~IffStream() {
-	close();
+	if (file != NULL && file->exists())
+		close();
 
 	while (mainChunks.size() > 0)
 		delete mainChunks.remove(0);
+
+	delete file;
+	file = NULL;
 }
 
 bool IffStream::parseChunks() {
+	if (file == NULL) {
+		close();
+		throw InvalidFileTypeException(this);
+	}
+
+	if (!file->exists()) {
+		throw InvalidFileTypeException(this);
+	}
+
 	dataSize = file->size();
 
 	if (dataSize < 8) {

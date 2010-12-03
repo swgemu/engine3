@@ -399,9 +399,9 @@ namespace sys {
 	   Integer::toBinaryStream(size, stream);
 
 	   for (int i = 0; i < Vector<E>::size(); ++i) {
-		   E& obj = Vector<E>::get(i);
+		   E* obj = &Vector<E>::get(i);
 
-		   TypeInfo<E>::toBinaryStream(&obj, stream);
+		   TypeInfo<E>::toBinaryStream(obj, stream);
 	   }
 
 	   return true;
