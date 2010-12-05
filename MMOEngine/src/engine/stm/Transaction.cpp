@@ -35,7 +35,8 @@ Transaction::Transaction() : Logger() {
 	int tid = transactionID.increment();
 
 	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
-	setLogging(true);
+	setLogging(false);
+	setGlobalLogging(true);
 }
 
 Transaction::~Transaction() {
@@ -47,6 +48,9 @@ bool Transaction::commit() {
 
 	uint64 startTime = System::getMikroTime();
 
+	int readOnlyObjectsCount = readOnlyObjects.size();
+	int readWriteObjectsCount = readWriteObjects.size();
+
 	bool commited = doCommit();
 
 	commitTime += System::getMikroTime() - startTime;
@@ -54,7 +58,7 @@ bool Transaction::commit() {
 	if (commited) {
 		info("commited (" + String::valueOf(commitTime) + "Us, "
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
-				+readOnlyObjects.size() + "/" + readWriteObjects.size() +")");
+				+readOnlyObjectsCount + "/" + readWriteObjectsCount +")");
 
 		TransactionalMemoryManager::instance()->clearTransaction();
 	} else {

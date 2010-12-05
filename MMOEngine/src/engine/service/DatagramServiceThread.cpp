@@ -81,7 +81,7 @@ void DatagramServiceThread::receiveMessages() {
 	#endif
 
 	while (doRun) {
-		ServiceClient* client = NULL;
+		Reference<ServiceClient*> client = NULL;
 
 		try	{
 			SocketAddress addr;
@@ -122,6 +122,8 @@ void DatagramServiceThread::receiveMessages() {
 		#ifdef WITH_STM
 			Core::commitTask();
 		#endif
+
+			client = NULL;
 		} catch (SocketException& e) {
 			if (client == NULL) {
 				info(e.getMessage());

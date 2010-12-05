@@ -174,8 +174,7 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 		throw IllegalArgumentException("task is already scheduled");
 
 	TaskScheduler* scheduler = getTaskScheduler();
-	if (scheduler == NULL)
-		return;
+	assert (scheduler != NULL);
 
 	locker.release();
 
@@ -190,8 +189,7 @@ void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
 		throw IllegalArgumentException("task is already scheduled");
 
 	TaskScheduler* scheduler = getTaskScheduler();
-	if (scheduler == NULL)
-		return;
+	assert (scheduler != NULL);
 
 	locker.release();
 
@@ -226,8 +224,12 @@ bool TaskManagerImpl::cancelTask(Task* task) {
 		return false;
 
 	TaskScheduler* scheduler = task->getTaskScheduler();
+	//assert (scheduler != NULL);
 
 	locker.release();
+
+	if (scheduler == NULL)
+		return false;
 
 	return scheduler->cancelTask(task);
 }
