@@ -7,10 +7,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define VECTOR3_H_
 
 #include "system/io/Serializable.h"
+#include "system/lang/Math.h"
+#include "system/lang/DivisionByZeroException.h"
 
 namespace engine {
   namespace util {
-	class Vector3 : public Serializable {
+	class Vector3 : public Variable {
 	protected:
 		float x, y, z;
 
@@ -28,15 +30,15 @@ namespace engine {
 			y = 0;
 			z = 0;
 
-			addSerializableVariables();
+			//addSerializableVariables();
 		}
 
-		Vector3(const Vector3& vec) : Object(), Serializable() {
+		Vector3(const Vector3& vec) : Variable() {
 			x = vec.x;
 			y = vec.y;
 			z = vec.z;
 
-			addSerializableVariables();
+			//addSerializableVariables();
 		}
 
 		inline Vector3(const float fx, const float fy, const float fz) {
@@ -44,7 +46,7 @@ namespace engine {
 			y = fy;
 			z = fz;
 
-			addSerializableVariables();
+			//addSerializableVariables();
 		}
 
 		/**
@@ -55,7 +57,7 @@ namespace engine {
 			y = coord[1];
 			z = coord[2];
 
-			addSerializableVariables();
+			//addSerializableVariables();
 		}
 
 		/**
@@ -66,7 +68,7 @@ namespace engine {
 			y = (float) coord[1];
 			z = (float) coord[2];
 
-			addSerializableVariables();
+			//addSerializableVariables();
 		}
 
 		/**
@@ -77,19 +79,36 @@ namespace engine {
 			y = scalar;
 			z = scalar;;
 
-			addSerializableVariables();
+			//addSerializableVariables();
 		}
 
 		virtual ~Vector3() {
 		}
 
-		inline void addSerializableVariables() {
+		/*inline void addSerializableVariables() {
 			addSerializableVariable("x", &x);
 			addSerializableVariable("y", &y);
 			addSerializableVariable("z", &z);
-		}
+		}*/
 
 	public:
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeFloat(x);
+			stream->writeFloat(z);
+			stream->writeFloat(y);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			x = stream->readFloat();
+			z = stream->readFloat();
+			y = stream->readFloat();
+
+			return true;
+		}
+
 		/**
 		 * Returns the exact length of the vector. Should be used sparingly as it
 		 * uses much CPU power. Use squaredLength for comparing lengths.
@@ -295,6 +314,58 @@ namespace engine {
 				return true;
 
 			return false;
+		}
+
+		Vector3 getMin(const Vector3& vec) const {
+			Vector3 minVector;
+
+			if (x < vec.x)
+				minVector.setX(x);
+			else
+				minVector.setX(vec.x);
+
+			if (y < vec.y)
+				minVector.setY(y);
+			else
+				minVector.setY(vec.y);
+
+			if (z < vec.z)
+				minVector.setZ(z);
+			else
+				minVector.setZ(vec.z);
+
+			return minVector;
+		}
+
+		inline Vector3 getMax(const Vector3& vec) const {
+			Vector3 maxVector;
+
+			if (x > vec.x)
+				maxVector.setX(x);
+			else
+				maxVector.setX(vec.x);
+
+			if (y > vec.y)
+				maxVector.setY(y);
+			else
+				maxVector.setY(vec.y);
+
+			if (z > vec.z)
+				maxVector.setZ(z);
+			else
+				maxVector.setZ(vec.z);
+
+			return maxVector;
+		}
+
+		inline float normalize() {
+			float magnitude = length();
+
+			x /= magnitude;
+			y /= magnitude;
+			z /= magnitude;
+
+			return magnitude;
 		}
 
 		//Getters

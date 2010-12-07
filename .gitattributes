@@ -205,6 +205,7 @@ MMOEngine/include/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/include/engine/stm/service/TransactionalSocketManager.h -text
 MMOEngine/include/engine/stm/task/LocalTaskManager.h -text
 MMOEngine/include/engine/stm/task/TransactionalTaskManager.h -text
+MMOEngine/include/engine/util/AABBTree.h -text
 MMOEngine/include/engine/util/Command.h -text
 MMOEngine/include/engine/util/Coordinate.h -text
 MMOEngine/include/engine/util/ObjectFactory.h -text
@@ -213,6 +214,8 @@ MMOEngine/include/engine/util/QuadTreeEntry.h -text
 MMOEngine/include/engine/util/Quaternion.h -text
 MMOEngine/include/engine/util/ResourcePool.h -text
 MMOEngine/include/engine/util/Singleton.h -text
+MMOEngine/include/engine/util/Sphere.h -text
+MMOEngine/include/engine/util/Triangle.h -text
 MMOEngine/include/engine/util/Vector3.h -text
 MMOEngine/include/engine/util/iffstream/IffStream.h -text
 MMOEngine/include/engine/util/iffstream/chunks/Chunk.h -text
@@ -538,6 +541,8 @@ MMOEngine/src/engine/stm/task/LocalTaskManager.cpp -text
 MMOEngine/src/engine/stm/task/LocalTaskManager.h -text
 MMOEngine/src/engine/stm/task/TransactionalTaskManager.cpp -text
 MMOEngine/src/engine/stm/task/TransactionalTaskManager.h -text
+MMOEngine/src/engine/util/AABBTree.cpp -text
+MMOEngine/src/engine/util/AABBTree.h -text
 MMOEngine/src/engine/util/Command.h -text
 MMOEngine/src/engine/util/Coordinate.h -text
 MMOEngine/src/engine/util/ObjectFactory.h -text
@@ -547,6 +552,8 @@ MMOEngine/src/engine/util/QuadTreeEntry.h -text
 MMOEngine/src/engine/util/Quaternion.h -text
 MMOEngine/src/engine/util/ResourcePool.h -text
 MMOEngine/src/engine/util/Singleton.h -text
+MMOEngine/src/engine/util/Sphere.h -text
+MMOEngine/src/engine/util/Triangle.h -text
 MMOEngine/src/engine/util/Vector3.h -text
 MMOEngine/src/engine/util/iffstream/IffStream.cpp -text
 MMOEngine/src/engine/util/iffstream/IffStream.h -text
