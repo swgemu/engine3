@@ -145,13 +145,13 @@ AABB Triangle::triAABB() const {
 
 bool Sphere::intersects(const Triangle& tri) const {
 	// Early exit if one of the vertices is inside the sphere
-	StringBuffer msg;
+	/*StringBuffer msg;
 	msg << "checking against triangle:";
 	msg << "vertex[0] x:" << tri.getVertex(0)[0] << " y:" << tri.getVertex(0)[1] << " z:" << tri.getVertex(0)[2] << endl;
 	msg << "vertex[1] x:" << tri.getVertex(1)[0]<< " y:" << tri.getVertex(1)[1] << " z:" << tri.getVertex(1)[2];
 	msg << "vertex[2] x:" << tri.getVertex(2)[0]<< " y:" << tri.getVertex(2)[1] << " z:" << tri.getVertex(2)[2];
 
-	Logger::console.info(msg.toString(), true);
+	Logger::console.info(msg.toString(), true);*/
 
 	float mRadius2 = radiusSquared;
 
@@ -384,15 +384,16 @@ bool Sphere::intersects(const AABB& aabb) const {
 	bool ret = ( distSqrtToOrigin <= radiusSquared);
 
 	StringBuffer msg;
+
+	/*if (ret)
+		msg << "intersecting with mbox distance ";
+	else
+		msg << "not intersecting with mbox distance";
+
 	msg << "distSqrtToOrigin:" << distSqrtToOrigin << " distNotSquared:" << sqrt(distSqrtToOrigin);
 	msg << " radiusSquared:" << radiusSquared;
 
-	/*if (ret) {
-		Logger::console.info("intersecting with mbox distance " + msg.toString(), true);
-	} else
-		Logger::console.info("not intersecting with mbox distance" + msg.toString(), true);
-
-		*/
+	Logger::console.info(msg.toString(), true);*/
 
 	return ret;
 }
