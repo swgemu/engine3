@@ -9,7 +9,11 @@ ENGINE_PUB_PATH = ../MMOEngine-Pub
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/ManagedService.idl \
-			  engine/core/util/ManagedVector.idl
+			  engine/core/util/ManagedVector.idl \
+			  engine/util/QuadTreeEntry.idl \
+			  engine/util/Observer.idl \
+			  engine/util/Observable.idl \
+			  engine/util/Facade.idl
 
 IDL_DIRECTIVES =
 	

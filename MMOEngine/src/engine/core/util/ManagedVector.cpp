@@ -9,7 +9,6 @@
  */
 
 ManagedVector::ManagedVector(DummyConstructorParameter* param) {
-	_impl = NULL;
 }
 
 ManagedVector::~ManagedVector() {

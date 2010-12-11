@@ -1,0 +1,238 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+package engine.util;
+
+include system.lang.ref.Reference;
+include system.lang.Math;
+include system.util.SortedVector;
+
+import engine.core.ManagedObject;
+
+import engine.util.Observable;
+import engine.util.Vector3;
+include engine.util.Coordinate;
+import engine.util.QuadTree;
+import engine.util.QuadTreeNode;
+
+class QuadTreeEntry extends Observable implements Coordinate {
+	transient protected Reference<QuadTreeNode> node;
+	
+	protected boolean bounding;
+
+	@dereferenced
+	transient protected SortedVector<QuadTreeEntry> closeobjects;
+
+	native float positionX;
+	native float positionY;
+	native float positionZ;
+	
+	protected float radius;
+
+	public native QuadTreeEntry(QuadTreeNode n = null);
+	
+	public abstract void notifyAddedToCloseObjects() {
+	}
+
+	public abstract void notifyRemovedFromCloseObjects() {
+	}
+
+	public void addInRangeObject(QuadTreeEntry obj, boolean doNotifyUpdate = true) {
+		//System::out << "adding in range object:" << obj << "\n";
+
+		if (closeobjects.put(obj) != -1) {
+			notifyInsert(obj);
+			obj.notifyAddedToCloseObjects();
+		} else if (doNotifyUpdate) {
+			notifyPositionUpdate(obj);
+		}
+	}
+	
+	public QuadTreeEntry getInRangeObject(int index) {
+		return closeobjects.get(index);
+	}
+
+	public void removeInRangeObject(QuadTreeEntry obj) {
+		//System::out << "droping in range object:" << obj << "\n";
+
+		if (closeobjects.drop(obj)) {
+			notifyDissapear(obj);
+			obj.notifyRemovedFromCloseObjects();
+		}
+		/*else {
+			QuadTreeEntry* obj2 = NULL;
+			obj2->getPositionX();
+
+			System::out << hex << "[0x" << obj->objectID << "] was not found in close objects for [0x"
+				 << objectID << dec << "]\n";
+		}*/
+	}
+
+	public void removeInRangeObject(int index) {
+		//System::out << "droping in range object with index:" << index << "\n";
+
+		QuadTreeEntry entry = closeobjects.remove(index);
+		
+		entry.notifyRemovedFromCloseObjects();
+	}
+
+	public void removeInRangeObjects() {
+		//System::out << "droping  all in range objects\n";
+
+		for (int i = 0; i < closeobjects.size(); ++i) {
+			closeobjects.get(i).notifyRemovedFromCloseObjects();
+		}
+
+		closeobjects.removeAll();
+	}
+
+	public boolean containsInRangeObject(QuadTreeEntry obj) {
+		return closeobjects.contains(obj);
+	}
+
+	public abstract boolean isInRange(QuadTreeEntry obj, float range) {
+		return isInRange(obj.getPositionX(), obj.getPositionY(), range);
+	}
+
+	public boolean isInRange(float x, float y, float range) {
+	 	float rangesq = range * range;
+
+		float deltaX = x - positionX;
+		float deltaY = y - positionY;
+
+		if (deltaX * deltaX + deltaY * deltaY <= rangesq)
+			return true;
+		else
+			return false;
+	}
+
+	public float getDistanceTo(QuadTreeEntry obj) {
+		float x = obj.getPositionX();
+		float y = obj.getPositionY();
+
+		float deltaX = x - positionX;
+		float deltaY = y - positionY;
+
+		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+	}
+
+	@local
+	public boolean isInSWArea(QuadTreeNode node) {
+		return positionX >= node.minX && positionX < node.dividerX &&
+        	positionY >= node.minY && positionY < node.dividerY;
+	}
+
+	@local
+	public boolean isInSEArea(QuadTreeNode node) {
+		return positionX >= node.dividerX && positionX < node.maxX &&
+  			positionY >= node.minY && positionY < node.dividerY;
+	}
+    	
+	@local
+	public boolean isInNWArea(QuadTreeNode node) {
+		return positionX >= node.minX && positionX < node.dividerX &&
+         	positionY >= node.dividerY && positionY < node.maxY;
+	}
+
+	@local
+	public boolean isInArea(QuadTreeNode node) {
+    	return (positionX + radius > node.dividerX && positionX - radius < node.dividerX) ||
+            (positionY + radius > node.dividerY && positionY - radius < node.dividerY);
+	}
+
+	public abstract void notifyInsert(QuadTreeEntry obj) {
+	}
+
+	public abstract void notifyPositionUpdate(QuadTreeEntry obj) {
+	}
+
+	public abstract void notifyDissapear(QuadTreeEntry obj) {
+	}
+
+	public float getPositionX() {
+		return Coordinate.getPositionX();
+	}
+
+	public float getPositionZ() {
+		return Coordinate.getPositionZ();
+	}
+
+	public float getPositionY() {
+		return Coordinate.getPositionY();
+	}
+
+	public float getPreviousPositionX() {
+		return Coordinate.getPreviousPositionX();
+	}
+
+	public float getPreviousPositionZ() {
+		return Coordinate.getPreviousPositionZ();
+	}
+
+	public float getPreviousPositionY() {
+		return Coordinate.getPreviousPositionY();
+	}
+
+	@local
+	@dereferenced
+	public Vector3 getPosition() {
+		return Coordinate.getPosition();
+	}
+
+	public void setPosition(float x, float z, float y) {
+		Coordinate.setPosition(x, z, y);
+	}
+
+	public void initializePosition(float x, float z, float y) {
+		Coordinate.initializePosition(x, z, y);
+	}
+
+	public abstract int compareTo(QuadTreeEntry obj) {
+		if (getObjectID() < obj.getObjectID())
+			return 1;
+		else if (getObjectID() > obj.getObjectID())
+			return -1;
+		else
+			return 0;
+	}
+
+	public boolean isInQuadTree() {
+		return node != null;
+	}
+
+	public int inRangeObjectCount() {
+		return closeobjects.size();
+	}
+
+	@local
+	public QuadTreeNode getNode() {
+		return node;
+	}
+	
+	public abstract unsigned long getObjectID() {
+		return 0;
+	}
+	
+	public float getRadius() {
+		return radius;
+	}
+	
+	public boolean isBounding() {
+		return bounding;
+	}
+	
+	@local
+	public void setNode(QuadTreeNode n) {
+		node = n;
+	}
+	
+	public void setBounding() {
+		bounding = true;
+	}
+	
+	public void clearBounding() {
+		bounding = false;
+	}
+}

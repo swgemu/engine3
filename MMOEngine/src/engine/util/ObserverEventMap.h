@@ -1,0 +1,42 @@
+/*
+ * ObserverEventMap.h
+ *
+ *  Created on: 20/06/2010
+ *      Author: victor
+ */
+
+#ifndef OBSERVEREVENTMAP_H_
+#define OBSERVEREVENTMAP_H_
+
+namespace engine {
+ namespace util {
+	 class Observable;
+	 class Observer;
+ }
+}
+
+using namespace engine::util;
+
+#include "system/lang.h"
+
+#include "engine/core/ManagedReference.h"
+
+class ObserverEventMap : public VectorMap<uint32, SortedVector<ManagedReference<Observer*> > > {
+public:
+	ObserverEventMap() {
+		setNoDuplicateInsertPlan();
+	}
+
+	void notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1 = NULL, int64 arg2 = 0);
+
+	void registerObserver(uint32 eventType, Observer* observer);
+
+	void dropObserver(uint32 eventType, Observer* observer);
+
+	SortedVector<ManagedReference<Observer*> >* getObservers(uint32 eventType);
+
+	int getObserverCount(uint32 eventType);
+};
+
+
+#endif /* OBSERVEREVENTMAP_H_ */

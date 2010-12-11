@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+package engine.util;
+
+include engine.core.ManagedObject;
+//import engine.core.ManagedReference;
+
+import engine.log.Logger;
+
+import engine.util.Observable;
+
+@nonTransactional
+class Observer extends ManagedObject {
+	
+	public abstract int notifyObserverEvent(unsigned int eventType, Observable observable, ManagedObject arg1, long arg2) {
+		return 1;
+	}
+	
+	public abstract native unsigned long getObjectID();
+	
+	/**
+	 * Compares object ids of this object with obj
+	 * @pre { this object is locked, obj is not null }
+	 * @post {this object is locked }
+	 * @param obj SceneObject that will be compared to
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 */
+	public int compareTo(Observer obj) {
+		if (getObjectID() < obj.getObjectID())
+			return 1;
+		else if (getObjectID() > obj.getObjectID())
+			return -1;
+		else
+			return 0;
+	}
+}

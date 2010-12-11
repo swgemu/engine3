@@ -27,9 +27,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
-#include "../log/Logger.h"
+#include "engine/log/Logger.h"
 
 /**
  * A quad tree is a 2D data structure that keeps lots of objects nicely
@@ -40,75 +40,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTreeEntry.h"
 
+#include "QuadTreeNode.h"
+
 namespace engine {
   namespace util {
-
-	class QuadTreeNode : public Object {
-		SortedVector<QuadTreeEntry*> objects;
-
-		Reference<QuadTreeNode*> parentNode;
-		Reference<QuadTreeNode*> nwNode;
-		Reference<QuadTreeNode*> neNode;
-		Reference<QuadTreeNode*> swNode;
-		Reference<QuadTreeNode*> seNode;
-
-		float minX, minY;
-		float maxX, maxY;
-
-	public:
-		QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadTreeNode *parent);
-
-		~QuadTreeNode();
-
-		// Add a object to this node
-		void addObject(QuadTreeEntry *obj);
-
-		QuadTreeEntry* getObject(int index) {
-			return objects.get(index);
-		}
-
-	  	// Remove a object by GUID
-	  	void removeObject(QuadTreeEntry *obj);
-
-	  	void removeObject(int index) {
-			QuadTreeEntry* obj = objects.remove(index);
-	    	obj->node = NULL;
-	  	}
-
-		// Approximative test if a circle with center in x,y and
-	    // given radius crosses this node.
-	    bool testInRange(float x, float y, float range);
-
-	   	// Check if this node makes any sense to exist
-		void check();
-
-	    bool validateNode() {
-	    	if (minX > maxX || minY > maxY/* || objects.size() > 1000*/)
-	    		return false;
-	    	else
-	    		return true;
-	    }
-
-	   	// Check if this node has any associated objects
-	   	inline bool isEmpty() {
-	   		return objects.isEmpty();
-	   	}
-
-	  	// Check if this node has children nodes
-		inline bool hasSubNodes() {
-			return nwNode != NULL || neNode != NULL || swNode != NULL || seNode != NULL;
-		}
-
-	  	// Test if the point is inside this node
-	    inline bool testInside(float x, float y) const {
-	    	return x >= minX && x < maxX && y >= minY && y < maxY;
-	    }
-
-		String toStringData();
-
-		friend class QuadTree;
-
-	};
 
 	class QuadTree {
 		Reference<QuadTreeNode*> root;
