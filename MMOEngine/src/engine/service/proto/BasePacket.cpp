@@ -55,7 +55,7 @@ int BasePacket::compareTo(BasePacket* pack) {
 }
 
 void BasePacket::close() {
-	if (size() < 80)
+	if (size() < 100)
 		insertByte(doComp = false);
 	else
 		insertByte(doComp);

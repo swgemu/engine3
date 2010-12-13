@@ -17,6 +17,9 @@ BaseMultiPacket::~BaseMultiPacket() {
 }
 	
 bool BaseMultiPacket::add(BasePacket* pack) {
+	/*if (pack->size() - 4 > 0xFF);
+		return false;*/
+
 	if (singlePacket != NULL) {
 		insertShort(0x0900);
 		insertShort(0);
@@ -47,6 +50,17 @@ void BaseMultiPacket::insertPacket(BasePacket* pack) {
 	if (size >= 0xFF) {
 		insertByte(0xFF);
 		insertShortNet(size);
+
+		//something wrong here client is sending out of orders for our multi packets with size >= 0xFF
+		/*if (size == 0xFF) {
+			//insertShortNet(size - 0xFF);
+			insertByte(0);
+			insertByte(0xFF);
+		} else {
+			insertByte(1);
+			insertByte(size - 0xFF);
+		}*/
+
 	} else
 		insertByte(size);
 		

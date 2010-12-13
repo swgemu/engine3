@@ -242,7 +242,7 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 
 void BaseClient::bufferMultiPacket(BasePacket* pack) {
 	if (bufferedPacket != NULL) {
-		if (pack->isDataChannelPacket() && !pack->isMultiPacket()) {
+		if (pack->isDataChannelPacket() && !pack->isMultiPacket() && (pack->size() - 4 < 0xFF)) { // client is sending out of orders for our multi packets with size >= 0xFF
 			if (!bufferedPacket->add(pack)) {
 				sendSequenced(bufferedPacket->getPacket());
 
@@ -255,7 +255,10 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 			sendSequenced(pack);
 		}
 	} else {
-		bufferedPacket = new BaseMultiPacket(pack);
+		if (pack->isDataChannelPacket() && !pack->isMultiPacket() && (pack->size() - 4 < 0xFF))
+			bufferedPacket = new BaseMultiPacket(pack);
+		else
+			sendSequenced(pack);
 
 		if (!reentrantTask->isScheduled())
 			reentrantTask->schedule(10);

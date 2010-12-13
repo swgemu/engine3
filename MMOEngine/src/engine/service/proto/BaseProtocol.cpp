@@ -218,6 +218,8 @@ bool BaseProtocol::compress(Packet* pack) {
    	//if (false) {
     	delete [] output;
 
+    	pack->writeByte(pack->getOffset() - 3, 0); //update compression byte to 0
+
       	return false; //We didn't compress it.
   	} else {
 		pack->reset();

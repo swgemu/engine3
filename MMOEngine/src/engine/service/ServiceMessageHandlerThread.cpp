@@ -34,7 +34,8 @@ ServiceMessageHandlerThread::~ServiceMessageHandlerThread() {
 }
 
 bool ServiceMessageHandlerThread::removeConnection(ServiceClient* client) {
-	serviceHandler->deleteConnection(client);
+	if (serviceHandler != NULL)
+		serviceHandler->deleteConnection(client);
 
 	Locker locker(this);
 	
