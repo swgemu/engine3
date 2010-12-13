@@ -7,8 +7,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define QUATERNION_H_
 
 #include "Vector3.h"
-
+#include "Matrix3.h"
 #include "system/io/Serializable.h"
+#include "system/lang/String.h"
 
 namespace engine {
   namespace util {
@@ -135,20 +136,23 @@ namespace engine {
 			return (w * q.w + x * q.x + y * q.y + z * q.z);
 		}
 
-		inline float length() const {
+		inline float lengthSquared() const {
 			return (w * w + x * x + y * y + z * z);
 		}
 
-		inline float normalize() {
-			float len = length();
+		inline float length() const {
+			return Math::sqrt(lengthSquared());
+		}
 
-			float magnitude = Math::sqrt(len);
+		inline float normalize() {
+			float magnitude = length();
+
 			w /= magnitude;
 			x /= magnitude;
 			y /= magnitude;
 			z /= magnitude;
 
-			return len;
+			return magnitude;
 		}
 
 		/**
@@ -168,6 +172,17 @@ namespace engine {
 		* \return Matrix4 The matrix4 equivalent of this quaternion.
 		*/
 		//inline Matrix4 toMatrix() { }
+
+		Matrix3 toMatrix3() {
+			/*float len = length();
+
+			if (len > 0.9999 && len < 1.0001)
+				throw Exception("quaternion is not normalized");*/
+
+			return Matrix3(Vector3(1 - 2 * (y * y +  z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)),
+					Vector3(2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)),
+					Vector3(2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)));
+		}
 
 		inline float getX() const {
 			return x;

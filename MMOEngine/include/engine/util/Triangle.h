@@ -9,11 +9,13 @@
 #define TRIANGLE_H_
 
 #include "Vector3.h"
+#include "Matrix4.h"
 
 namespace engine {
  namespace util {
 
 	class AABB;
+	class Ray;
 
 	class Triangle : public Variable {
 		Vector3 vertices[3];
@@ -43,6 +45,11 @@ namespace engine {
 			return *this;
 		}
 
+		void transform(const Matrix4& worldMatrix) {
+			for (int i = 0; i < 3; ++i)
+				vertices[i] = vertices[i] * worldMatrix;
+		}
+
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			for (int i = 0; i < 3; ++i) {
 				vertices[i].toBinaryStream(stream);
@@ -68,6 +75,16 @@ namespace engine {
 		}
 
 		AABB triAABB() const;
+
+		//    Input:  a ray Ray
+		//    Output: intersectionPoint = intersection point (when it exists)
+		//    Return: -1 = triangle is degenerate (a segment or point)
+		//             0 = disjoint (no intersect)
+		//             1 = intersect in unique point I1
+		//             2 = are in the same plane
+		//int intersects(const Ray& ray, Vector3& intersectionPoint);
+
+		bool intersects(const Ray& ray, float maxDistance);
 
 		Vector3 getNormal() const {
 			Vector3 normal;

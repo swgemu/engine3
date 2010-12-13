@@ -8,10 +8,15 @@
 #include "AABBTree.h"
 #include "../log/Logger.h"
 #include "../../system/lang/String.h"
+#include "Quaternion.h"
+#include "Vector3.h"
+#include "Matrix4.h"
 
 #define SQR(x) ((x) * (x))
 
 #define MAX_FLOAT 3.4028235E38;
+#define SMALL_NUM  0.00000001
+#define LOCAL_EPSILON 0.000001f
 
 using namespace sys::lang;
 
@@ -142,6 +147,100 @@ AABB Triangle::triAABB() const {
 	// falls back to distance to the plane, so return it
 	return test;
 }*/
+
+bool Triangle::intersects(const Ray& ray, float maxDistance) {
+	// Find vectors for two edges sharing vert0
+	Vector3 edge1 = vertices[1] - vertices[0];
+	Vector3 edge2 = vertices[2] - vertices[0];
+
+	// Begin calculating determinant - also used to calculate U parameter
+	Vector3 rayDirectionNormalized = ray.direction;
+	//rayDirectionNormalized.normalize();
+	Vector3 pvec = rayDirectionNormalized.crossProduct(edge2);
+
+	// If determinant is near zero, ray lies in plane of triangle
+	float det = edge1.dotProduct(pvec);
+		// the non-culling branch
+
+	if (det > -LOCAL_EPSILON && det < LOCAL_EPSILON)
+		return false;
+
+	float OneOverDet = 1.0f / det;
+
+	// Calculate distance from vert0 to ray origin
+	Vector3 tvec = ray.origin - vertices[0];
+
+	// Calculate U parameter and test bounds
+	float mU, mV;
+	mU = (tvec.dotProduct(pvec)) * OneOverDet;
+	//		if(IR(u)&0x80000000 || u>1.0f)					return FALSE;
+	if (mU < 0 || mU > 1.f)
+		return false;
+
+	// prepare to test V parameter
+	Vector3 qvec = tvec.crossProduct(edge1);
+
+	// Calculate V parameter and test bounds
+	mV = (rayDirectionNormalized.dotProduct(qvec)) * OneOverDet;
+	if (mV < 0.f || mU + mV > 1.0f)
+		return false;
+
+	// Calculate t, ray intersects triangle
+	float mDistance = (edge2.dotProduct(qvec)) * OneOverDet;
+	// Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
+	if (mDistance < 0)
+		return false;
+
+	/*String a = "ray/triangle intersecting with mDistance:";
+	a += String::valueOf(mDistance);
+	a += " maxDistance:";
+	a += String::valueOf(maxDistance);
+	Logger::console.info(a, true);*/
+
+	if (mDistance <= maxDistance)
+		return true;
+	else
+		return false;
+
+	//return true;
+}
+
+bool AABB::intersects(const Ray &r, float t0, float t1) const {
+	/*StringBuffer msg;
+	msg << "checking ray intersect against mBounds box:";
+	msg << "mbounds[0] x:" << mBounds[0][0] << " y:" << mBounds[0][1] << " z:" << mBounds[0][2] << endl;
+	msg << "mbounds[1] x:" << mBounds[1][0] << " y:" << mBounds[1][1] << " z:" << mBounds[1][2];
+
+	Logger::console.info(msg.toString(), true);*/
+
+	float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+	tmin = (mBounds[r.sign[0]].getX() - r.origin.getX()) * r.invDirection.getX();
+	tmax = (mBounds[1 - r.sign[0]].getX() - r.origin.getX()) * r.invDirection.getX();
+	tymin = (mBounds[r.sign[1]].getY() - r.origin.getY()) * r.invDirection.getY();
+	tymax = (mBounds[1 - r.sign[1]].getY() - r.origin.getY()) * r.invDirection.getY();
+
+	if ( (tmin > tymax) || (tymin > tmax) )
+		return false;
+
+	if (tymin > tmin)
+		tmin = tymin;
+	if (tymax < tmax)
+		tmax = tymax;
+
+	tzmin = (mBounds[r.sign[2]].getZ() - r.origin.getZ()) * r.invDirection.getZ();
+	tzmax = (mBounds[1 - r.sign[2]].getZ() - r.origin.getZ()) * r.invDirection.getZ();
+
+	if ( (tmin > tzmax) || (tzmin > tmax) )
+		return false;
+
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+
+	return ( (tmin < t1) && (tmax > t0) );
+}
 
 bool Sphere::intersects(const Triangle& tri) const {
 	// Early exit if one of the vertices is inside the sphere
@@ -343,7 +442,7 @@ bool Sphere::intersects(const Triangle& tri) const {
 
 // constructs this aabb tree node from a triangle list and creates its children recursively
 // note node box is initialised to the first triangle's box
-AABBNode::AABBNode(Vector<Triangle>& trilist, int depth, const Heuristic& heurdata) : mBox(trilist) {
+AABBNode::AABBNode(Vector<Triangle>& trilist, int depth, const AABBTreeHeuristic& heurdata) : mBox(trilist) {
 	// test our build heuristic - if passes, make children
 	if (depth < (int)heurdata.maxdepth && trilist.size() > (int)heurdata.mintricnt &&
 		(trilist.size() > (int)heurdata.tartricnt || mBox.errorMetric() > heurdata.minerror)) {
@@ -375,7 +474,11 @@ AABBNode::AABBNode(Vector<Triangle>& trilist, int depth, const Heuristic& heurda
 		mChildren[0] = NULL;
 
 		// copy triangle list
-		mTriangles = trilist;
+		if (heurdata.storePrimitives) {
+			mTriangles = trilist;
+		} else {
+			mTriangles.removeAll(1, 0);
+		}
 	}
 }
 
@@ -405,6 +508,31 @@ AABBNode::~AABBNode() {
 		delete mChildren[0];
 		delete mChildren[1];
 	}
+}
+
+bool AABBNode::intersects(const Ray& ray, float t1, bool checkPrimitives) {
+	if (mBox.intersects(ray, 0.f, t1)) {
+		if (mChildren[0]) {
+			// recurse to children
+			if (!mChildren[0]->intersects(ray, t1, checkPrimitives))
+				return mChildren[1]->intersects(ray, t1, checkPrimitives);
+			else
+				return true;
+
+		} else { // is a leaf
+			if (checkPrimitives) {
+				for (int i = 0; i < mTriangles.size(); ++i) {
+					//Vector3 intersectionPoint;
+
+					if (mTriangles.get(i).intersects(ray, t1))
+						return true;
+				}
+			} else
+				return true;
+		}
+	}
+
+	return false;
 }
 
 bool AABBNode::testCollide(const Sphere& testsphere) const {

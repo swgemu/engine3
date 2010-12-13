@@ -102,6 +102,7 @@ libengine3_a_SOURCES = \
 			engine/util/Observable.cpp \
 .			engine/util/Facade.cpp \
 			engine/util/AABBTree.cpp \
+			engine/util/Matrix4.cpp \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \

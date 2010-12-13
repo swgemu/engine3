@@ -10,8 +10,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/lang/Math.h"
 #include "system/lang/DivisionByZeroException.h"
 
+#include "Matrix4.h"
+
 namespace engine {
   namespace util {
+
 	class Vector3 : public Variable {
 	protected:
 		float x, y, z;
@@ -220,6 +223,12 @@ namespace engine {
 
 		inline Vector3 operator * (const Vector3& v) const {
 			return Vector3(x * v.x, y * v.y, z * v.z);
+		}
+
+		Vector3 operator*(const Matrix4& mat) const {
+			return Vector3(x * mat[0][0] + y * mat[1][0] + z * mat[2][0] + mat[3][0],
+					x * mat[0][1] + y * mat[1][1] + z * mat[2][1] + mat[3][1],
+					x * mat[0][2] + y * mat[1][2] + z * mat[2][2] + mat[3][2]);
 		}
 
 		inline Vector3 operator / (const Vector3& v) const {
