@@ -68,27 +68,25 @@ class ManagedObject implements Serializable {
 	@nativeStub
 	public native boolean notifyDestroy();
 	
-	public abstract void writeObject(string data) {
+	/*public abstract void writeObject(string data) {
 		Serializable.writeObject(data);
-	}
+	}*/
 	
 	@local
-	public abstract void writeObject(ObjectOutputStream stream) {
-		Serializable.writeObject(stream);
-	}
+	@noImplementationDeclaration
+	public native void writeObject(ObjectOutputStream stream);
 	
-	public abstract void readObject(final string data) {
+	@local
+	@noImplementationDeclaration
+	public native void readObject(ObjectInputStream stream);
+
+	
+	/*public abstract void readObject(final string data) {
 		Serializable.readObject(data);
 		
 		initializeTransientMembers();
-	}
+	}*/
 	
-	@local
-	public abstract void readObject(ObjectInputStream stream) {
-		Serializable.readObject(stream);
-		
-		initializeTransientMembers();
-	}
 	
 	public abstract native void initializeTransientMembers();
 	

@@ -24,6 +24,7 @@ namespace sys {
 		class VariableName;
 
 		class Serializable : public virtual Object {
+		protected:
 			String _className;
 			VectorMap<VariableName, void*> _variables;
 
@@ -86,6 +87,10 @@ namespace sys {
 
 			inline void _setClassName(const String& name) {
 				_className = name;
+			}
+
+			inline String& _getClassName() {
+				return _className;
 			}
 
 			static int getObjectData(const String& str, String& obj);

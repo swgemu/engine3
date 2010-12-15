@@ -60,11 +60,7 @@ public:
 
 	bool notifyDestroy();
 
-	void writeObject(String& data);
-
 	void writeObject(ObjectOutputStream* stream);
-
-	void readObject(const String& data);
 
 	void readObject(ObjectInputStream* stream);
 
@@ -152,14 +148,6 @@ public:
 
 	bool notifyDestroy();
 
-	virtual void writeObject(String& data);
-
-	virtual void writeObject(ObjectOutputStream* stream);
-
-	virtual void readObject(const String& data);
-
-	virtual void readObject(ObjectInputStream* stream);
-
 	virtual void initializeTransientMembers();
 
 	void updateToDatabase();
@@ -183,6 +171,8 @@ public:
 	operator const ManagedObject*();
 
 	DistributedObjectStub* _getStub();
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~ManagedObjectImplementation();
 
@@ -193,6 +183,8 @@ protected:
 	void _setStub(DistributedObjectStub* stub);
 
 	void _serializationHelperMethod();
+	bool readObjectMember(ObjectInputStream* stream, const String& name);
+	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedObject;
 };
@@ -223,10 +215,6 @@ public:
 
 	bool notifyDestroy();
 
-	void writeObject(String& data);
-
-	void readObject(const String& data);
-
 	void initializeTransientMembers();
 
 	void updateToDatabase();
@@ -241,8 +229,6 @@ public:
 
 protected:
 	String _param0_setLockName__String_;
-	String _param0_writeObject__String_;
-	String _param0_readObject__String_;
 };
 
 class ManagedObjectHelper : public DistributedObjectClassHelper, public Singleton<ManagedObjectHelper> {

@@ -161,20 +161,6 @@ bool ManagedObject::_notifyDestroy() {
 		return _implementation->notifyDestroy();
 }
 
-void ManagedObject::writeObject(String& data) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
-	if (_implementation == NULL) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, 16);
-		method.addAsciiParameter(data);
-
-		method.executeWithVoidReturn();
-	} else
-		_implementation->writeObject(data);
-}
-
 void ManagedObject::writeObject(ObjectOutputStream* stream) {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {
@@ -182,20 +168,6 @@ void ManagedObject::writeObject(ObjectOutputStream* stream) {
 
 	} else
 		_implementation->writeObject(stream);
-}
-
-void ManagedObject::readObject(const String& data) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
-	if (_implementation == NULL) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, 17);
-		method.addAsciiParameter(data);
-
-		method.executeWithVoidReturn();
-	} else
-		_implementation->readObject(data);
 }
 
 void ManagedObject::readObject(ObjectInputStream* stream) {
@@ -213,7 +185,7 @@ void ManagedObject::initializeTransientMembers() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 18);
+		DistributedMethod method(this, 16);
 
 		method.executeWithVoidReturn();
 	} else
@@ -226,7 +198,7 @@ void ManagedObject::updateToDatabase() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 19);
+		DistributedMethod method(this, 17);
 
 		method.executeWithVoidReturn();
 	} else
@@ -239,7 +211,7 @@ void ManagedObject::queueUpdateToDatabaseTask() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 20);
+		DistributedMethod method(this, 18);
 
 		method.executeWithVoidReturn();
 	} else
@@ -252,7 +224,7 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 21);
+		DistributedMethod method(this, 19);
 
 		method.executeWithVoidReturn();
 	} else
@@ -265,7 +237,7 @@ unsigned int ManagedObject::getLastCRCSave() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 22);
+		DistributedMethod method(this, 20);
 
 		return method.executeWithUnsignedIntReturn();
 	} else
@@ -278,7 +250,7 @@ void ManagedObject::setLastCRCSave(unsigned int crc) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 23);
+		DistributedMethod method(this, 21);
 		method.addUnsignedIntParameter(crc);
 
 		method.executeWithVoidReturn();
@@ -341,6 +313,7 @@ void ManagedObjectImplementation::_initializeImplementation() {
 	_setClassHelper(ManagedObjectHelper::instance());
 
 	_serializationHelperMethod();
+	_serializationHelperMethod();
 }
 
 void ManagedObjectImplementation::_setStub(DistributedObjectStub* stub) {
@@ -358,7 +331,70 @@ ManagedObjectImplementation::operator const ManagedObject*() {
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
 
-	addSerializableVariable("persistenceLevel", &persistenceLevel);
+}
+
+void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		String _name;
+		_name.parseFromBinaryStream(stream);
+
+		uint16 _varSize = stream->readShort();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ManagedObjectImplementation::readObjectMember(stream, _name)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
+	initializeTransientMembers();
+}
+
+bool ManagedObjectImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
+	if (_name == "_className") {
+		TypeInfo<String>::parseFromBinaryStream(&_className, stream);
+		return true;
+	}
+
+	if (_name == "persistenceLevel") {
+		TypeInfo<int >::parseFromBinaryStream(&persistenceLevel, stream);
+		return true;
+	}
+
+
+	return false;
+}
+
+void ManagedObjectImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ManagedObjectImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	String _name;
+	int _offset;
+	uint16 _totalSize;
+	_name = "persistenceLevel";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<int >::toBinaryStream(&persistenceLevel, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
+
+	_name = "_className";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<String>::toBinaryStream(&_className, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+	return 2;
 }
 
 ManagedObjectImplementation::ManagedObjectImplementation() {
@@ -371,52 +407,28 @@ ManagedObjectImplementation::ManagedObjectImplementation() {
 	updateToDatabaseTask = NULL;
 }
 
-void ManagedObjectImplementation::writeObject(String& data) {
-	// engine/core/ManagedObject.idl(72):  		Serializable.writeObject(data);
-	Serializable::writeObject(data);
-}
-
-void ManagedObjectImplementation::writeObject(ObjectOutputStream* stream) {
-	// engine/core/ManagedObject.idl(77):  		Serializable.writeObject(stream);
-	Serializable::writeObject(stream);
-}
-
-void ManagedObjectImplementation::readObject(const String& data) {
-	// engine/core/ManagedObject.idl(81):  		Serializable.readObject(data);
-	Serializable::readObject(data);
-	// engine/core/ManagedObject.idl(83):  		initializeTransientMembers();
-	initializeTransientMembers();
-}
-
-void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
-	// engine/core/ManagedObject.idl(88):  		Serializable.readObject(stream);
-	Serializable::readObject(stream);
-	// engine/core/ManagedObject.idl(90):  		initializeTransientMembers();
-	initializeTransientMembers();
-}
-
 void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
-	// engine/core/ManagedObject.idl(99):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl(97):  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 unsigned int ManagedObjectImplementation::getLastCRCSave() {
-	// engine/core/ManagedObject.idl(103):  		return lastCRCSave;
+	// engine/core/ManagedObject.idl(101):  		return lastCRCSave;
 	return lastCRCSave;
 }
 
 void ManagedObjectImplementation::setLastCRCSave(unsigned int crc) {
-	// engine/core/ManagedObject.idl(107):  		lastCRCSave = crc;
+	// engine/core/ManagedObject.idl(105):  		lastCRCSave = crc;
 	lastCRCSave = crc;
 }
 
 bool ManagedObjectImplementation::isPersistent() {
-	// engine/core/ManagedObject.idl(112):  		return persistenceLevel != 0;
+	// engine/core/ManagedObject.idl(110):  		return persistenceLevel != 0;
 	return persistenceLevel != 0;
 }
 
 int ManagedObjectImplementation::getPersistenceLevel() {
-	// engine/core/ManagedObject.idl(117):  		return persistenceLevel;
+	// engine/core/ManagedObject.idl(115):  		return persistenceLevel;
 	return persistenceLevel;
 }
 
@@ -462,27 +474,21 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		resp->insertBoolean(notifyDestroy());
 		break;
 	case 16:
-		writeObject(inv->getAsciiParameter(_param0_writeObject__String_));
-		break;
-	case 17:
-		readObject(inv->getAsciiParameter(_param0_readObject__String_));
-		break;
-	case 18:
 		initializeTransientMembers();
 		break;
-	case 19:
+	case 17:
 		updateToDatabase();
 		break;
-	case 20:
+	case 18:
 		queueUpdateToDatabaseTask();
 		break;
-	case 21:
+	case 19:
 		clearUpdateToDatabaseTask();
 		break;
-	case 22:
+	case 20:
 		resp->insertInt(getLastCRCSave());
 		break;
-	case 23:
+	case 21:
 		setLastCRCSave(inv->getUnsignedIntParameter());
 		break;
 	default:
@@ -530,14 +536,6 @@ void ManagedObjectAdapter::setLockName(const String& name) {
 
 bool ManagedObjectAdapter::notifyDestroy() {
 	return ((ManagedObjectImplementation*) impl)->notifyDestroy();
-}
-
-void ManagedObjectAdapter::writeObject(String& data) {
-	((ManagedObjectImplementation*) impl)->writeObject(data);
-}
-
-void ManagedObjectAdapter::readObject(const String& data) {
-	((ManagedObjectImplementation*) impl)->readObject(data);
 }
 
 void ManagedObjectAdapter::initializeTransientMembers() {

@@ -11,19 +11,11 @@
 
 #include "engine/core/ManagedWeakReference.h"
 
-namespace engine {
-namespace log {
-
-class Logger;
-
-} // namespace log
-} // namespace engine
-
-using namespace engine::log;
-
 #include "engine/core/ManagedObject.h"
 
 #include "engine/util/SessionFacadeType.h"
+
+#include "engine/log/Logger.h"
 
 namespace engine {
 namespace util {
@@ -76,6 +68,8 @@ public:
 	operator const Facade*();
 
 	DistributedObjectStub* _getStub();
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~FacadeImplementation();
 
@@ -100,6 +94,8 @@ protected:
 	void runlock(bool doLock = true);
 
 	void _serializationHelperMethod();
+	bool readObjectMember(ObjectInputStream* stream, const String& name);
+	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Facade;
 };

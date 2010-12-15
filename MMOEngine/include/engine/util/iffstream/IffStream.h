@@ -14,10 +14,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
  namespace util {
 
-	 class IffStream : public FileInputStream, public Logger {
+	 class IffStream : public Logger {
 		 uint32 dataSize;
 
 		 String fileName;
+
+		 //ObjectInputStream* data;
 
 		 Vector<Chunk*> mainChunks;
 		 int lastOpenedChunk;
@@ -27,10 +29,11 @@ namespace engine {
 		 ObjectFactory<Chunk* (Chunk* par, uint32 id, uint32 size, char* data), uint32> chunkFactory;
 
 	 public:
-		 IffStream(const String& filename);
+		 IffStream();
+		 //IffStream(const String& filename);
 		 ~IffStream();
 
-		 bool parseChunks();
+		 bool parseChunks(sys::byte* data, int size, const String& filename);
 
 		 template <class K> void registerChunk(uint32 key) {
 			 chunkFactory.registerObject<K>(key);
@@ -78,7 +81,7 @@ namespace engine {
 
 		 void getBytes(int bytes, void* dest);
 
-		 void close();
+		 //void close();
 
 	 private:
 		 void loadMainChunks(char* dataBuffer);

@@ -96,6 +96,7 @@ void ObserverImplementation::_initializeImplementation() {
 	_setClassHelper(ObserverHelper::instance());
 
 	_serializationHelperMethod();
+	_serializationHelperMethod();
 }
 
 void ObserverImplementation::_setStub(DistributedObjectStub* stub) {
@@ -144,6 +145,48 @@ void ObserverImplementation::_serializationHelperMethod() {
 
 	_setClassName("Observer");
 
+}
+
+void ObserverImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		String _name;
+		_name.parseFromBinaryStream(stream);
+
+		uint16 _varSize = stream->readShort();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ObserverImplementation::readObjectMember(stream, _name)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
+	initializeTransientMembers();
+}
+
+bool ObserverImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
+	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+		return true;
+
+
+	return false;
+}
+
+void ObserverImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ObserverImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	String _name;
+	int _offset;
+	uint16 _totalSize;
+
+	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
 }
 
 int ObserverImplementation::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {

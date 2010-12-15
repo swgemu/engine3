@@ -533,6 +533,7 @@ void QuadTreeEntryImplementation::_initializeImplementation() {
 	_setClassHelper(QuadTreeEntryHelper::instance());
 
 	_serializationHelperMethod();
+	_serializationHelperMethod();
 }
 
 void QuadTreeEntryImplementation::_setStub(DistributedObjectStub* stub) {
@@ -581,11 +582,113 @@ void QuadTreeEntryImplementation::_serializationHelperMethod() {
 
 	_setClassName("QuadTreeEntry");
 
-	addSerializableVariable("bounding", &bounding);
-	addSerializableVariable("positionX", &positionX);
-	addSerializableVariable("positionY", &positionY);
-	addSerializableVariable("positionZ", &positionZ);
-	addSerializableVariable("radius", &radius);
+}
+
+void QuadTreeEntryImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		String _name;
+		_name.parseFromBinaryStream(stream);
+
+		uint16 _varSize = stream->readShort();
+
+		int _currentOffset = stream->getOffset();
+
+		if(QuadTreeEntryImplementation::readObjectMember(stream, _name)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
+	initializeTransientMembers();
+}
+
+bool QuadTreeEntryImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
+	if (ObservableImplementation::readObjectMember(stream, _name))
+		return true;
+
+	if (_name == "bounding") {
+		TypeInfo<bool >::parseFromBinaryStream(&bounding, stream);
+		return true;
+	}
+
+	if (_name == "positionX") {
+		TypeInfo<float >::parseFromBinaryStream(&positionX, stream);
+		return true;
+	}
+
+	if (_name == "positionY") {
+		TypeInfo<float >::parseFromBinaryStream(&positionY, stream);
+		return true;
+	}
+
+	if (_name == "positionZ") {
+		TypeInfo<float >::parseFromBinaryStream(&positionZ, stream);
+		return true;
+	}
+
+	if (_name == "radius") {
+		TypeInfo<float >::parseFromBinaryStream(&radius, stream);
+		return true;
+	}
+
+
+	return false;
+}
+
+void QuadTreeEntryImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = QuadTreeEntryImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	String _name;
+	int _offset;
+	uint16 _totalSize;
+	_name = "bounding";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<bool >::toBinaryStream(&bounding, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
+	_name = "positionX";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<float >::toBinaryStream(&positionX, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
+	_name = "positionY";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<float >::toBinaryStream(&positionY, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
+	_name = "positionZ";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<float >::toBinaryStream(&positionZ, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
+	_name = "radius";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<float >::toBinaryStream(&radius, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
+
+	return 5 + ObservableImplementation::writeObjectMembers(stream);
 }
 
 void QuadTreeEntryImplementation::notifyAddedToCloseObjects() {

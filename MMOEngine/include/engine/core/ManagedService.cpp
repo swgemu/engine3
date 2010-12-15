@@ -48,6 +48,7 @@ void ManagedServiceImplementation::_initializeImplementation() {
 	_setClassHelper(ManagedServiceHelper::instance());
 
 	_serializationHelperMethod();
+	_serializationHelperMethod();
 }
 
 void ManagedServiceImplementation::_setStub(DistributedObjectStub* stub) {
@@ -96,6 +97,48 @@ void ManagedServiceImplementation::_serializationHelperMethod() {
 
 	_setClassName("ManagedService");
 
+}
+
+void ManagedServiceImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		String _name;
+		_name.parseFromBinaryStream(stream);
+
+		uint16 _varSize = stream->readShort();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ManagedServiceImplementation::readObjectMember(stream, _name)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
+	initializeTransientMembers();
+}
+
+bool ManagedServiceImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
+	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+		return true;
+
+
+	return false;
+}
+
+void ManagedServiceImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ManagedServiceImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ManagedServiceImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	String _name;
+	int _offset;
+	uint16 _totalSize;
+
+	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
 }
 
 /*

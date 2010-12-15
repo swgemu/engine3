@@ -110,6 +110,7 @@ void ObservableImplementation::_initializeImplementation() {
 	_setClassHelper(ObservableHelper::instance());
 
 	_serializationHelperMethod();
+	_serializationHelperMethod();
 }
 
 void ObservableImplementation::_setStub(DistributedObjectStub* stub) {
@@ -158,7 +159,61 @@ void ObservableImplementation::_serializationHelperMethod() {
 
 	_setClassName("Observable");
 
-	addSerializableVariable("observerEventMap", &observerEventMap);
+}
+
+void ObservableImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		String _name;
+		_name.parseFromBinaryStream(stream);
+
+		uint16 _varSize = stream->readShort();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ObservableImplementation::readObjectMember(stream, _name)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
+	initializeTransientMembers();
+}
+
+bool ObservableImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
+	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+		return true;
+
+	if (_name == "observerEventMap") {
+		TypeInfo<ObserverEventMap >::parseFromBinaryStream(&observerEventMap, stream);
+		return true;
+	}
+
+
+	return false;
+}
+
+void ObservableImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ObservableImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	String _name;
+	int _offset;
+	uint16 _totalSize;
+	_name = "observerEventMap";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<ObserverEventMap >::toBinaryStream(&observerEventMap, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
+
+	return 1 + ManagedObjectImplementation::writeObjectMembers(stream);
 }
 
 void ObservableImplementation::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {

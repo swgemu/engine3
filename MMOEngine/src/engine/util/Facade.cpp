@@ -89,6 +89,7 @@ void FacadeImplementation::_initializeImplementation() {
 	_setClassHelper(FacadeHelper::instance());
 
 	_serializationHelperMethod();
+	_serializationHelperMethod();
 }
 
 void FacadeImplementation::_setStub(DistributedObjectStub* stub) {
@@ -137,6 +138,48 @@ void FacadeImplementation::_serializationHelperMethod() {
 
 	_setClassName("Facade");
 
+}
+
+void FacadeImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		String _name;
+		_name.parseFromBinaryStream(stream);
+
+		uint16 _varSize = stream->readShort();
+
+		int _currentOffset = stream->getOffset();
+
+		if(FacadeImplementation::readObjectMember(stream, _name)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
+	initializeTransientMembers();
+}
+
+bool FacadeImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
+	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+		return true;
+
+
+	return false;
+}
+
+void FacadeImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = FacadeImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int FacadeImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	String _name;
+	int _offset;
+	uint16 _totalSize;
+
+	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
 }
 
 FacadeImplementation::FacadeImplementation() {

@@ -130,8 +130,13 @@ namespace sys {
 			checkForOverflow();
 		}
 
-		void operator=(const Time& t) {
+		Time& operator=(const Time& t) {
+			if (this == &t)
+				return *this;
+
 			ts = t.ts;
+
+			return *this;
 		}
 
 		int compareTo(Time& t) {

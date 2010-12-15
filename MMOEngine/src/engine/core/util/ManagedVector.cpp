@@ -47,6 +47,7 @@ void ManagedVectorImplementation::_initializeImplementation() {
 	_setClassHelper(ManagedVectorHelper::instance());
 
 	_serializationHelperMethod();
+	_serializationHelperMethod();
 }
 
 void ManagedVectorImplementation::_setStub(DistributedObjectStub* stub) {
@@ -92,6 +93,57 @@ void ManagedVectorImplementation::runlock(bool doLock) {
 void ManagedVectorImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedVector");
 
+}
+
+void ManagedVectorImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		String _name;
+		_name.parseFromBinaryStream(stream);
+
+		uint16 _varSize = stream->readShort();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ManagedVectorImplementation::readObjectMember(stream, _name)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
+	initializeTransientMembers();
+}
+
+bool ManagedVectorImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
+	if (_name == "_className") {
+		TypeInfo<String>::parseFromBinaryStream(&_className, stream);
+		return true;
+	}
+
+
+	return false;
+}
+
+void ManagedVectorImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ManagedVectorImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ManagedVectorImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	String _name;
+	int _offset;
+	uint16 _totalSize;
+
+	_name = "_className";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<String>::toBinaryStream(&_className, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+	return 1;
 }
 
 /*
