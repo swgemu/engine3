@@ -7,8 +7,10 @@
 
 #include "exceptions.h"
 
-IffStream::IffStream(const String& filename) : FileInputStream(new File(filename)) {
-	fileName = filename;
+IffStream::IffStream() {
+	//fileName = filename;
+
+	//data = str;
 
 	openedChunk = NULL;
 
@@ -16,49 +18,52 @@ IffStream::IffStream(const String& filename) : FileInputStream(new File(filename
 
 	dataSize = 0;
 
-	setLoggingName("IffStream " + filename);
+	setLoggingName("IffStream ");
 }
 
 IffStream::~IffStream() {
-	if (file != NULL && file->exists())
-		close();
+	/*if (file != NULL && file->exists())
+		close();*/
 
 	while (mainChunks.size() > 0)
 		delete mainChunks.remove(0);
 
-	delete file;
-	file = NULL;
+	/*delete file;
+	file = NULL;*/
 }
 
-bool IffStream::parseChunks() {
-	if (file == NULL) {
+bool IffStream::parseChunks(sys::byte* data, int size, const String& filename) {
+	fileName = filename;
+	/*if (file == NULL) {
 		close();
 		throw InvalidFileTypeException(this);
 	}
 
 	if (!file->exists()) {
 		throw InvalidFileTypeException(this);
-	}
+	}*/
 
-	dataSize = file->size();
+	dataSize = size;//data->size();//file->size();
 
 	if (dataSize < 8) {
-		close();
+		//close();
 		throw InvalidFileTypeException(this);
 	}
 
 	// allocate memory:
-	char* dataBuffer = new char[dataSize];
+	//char* dataBuffer = new char[dataSize];
 
 	// read data as a block:
-	FileInputStream::read((sys::byte*)dataBuffer, dataSize);
+	//FileInputStream::read((sys::byte*)dataBuffer, dataSize);
+
+	char* dataBuffer = (char*)data;//data->getBuffer();
 
 	registerChunk<Form>(0x464F524D); //'FORM'
 	registerChunk<Data>(0x44415441); //'DATA'
 
 	loadMainChunks(dataBuffer);
 
-	delete [] dataBuffer;
+	//delete [] dataBuffer;
 
 	return true;
 }
@@ -207,12 +212,12 @@ void IffStream::closeChunk(uint32 chunk) {
 
 }
 
-void IffStream::close() {
+/*void IffStream::close() {
 	FileInputStream::close();
 
 	delete file;
 	file = NULL;
-}
+}*/
 
 void IffStream::skipChunks(int num) {
 	if (openedChunk != NULL) {

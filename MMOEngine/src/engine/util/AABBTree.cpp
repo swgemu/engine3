@@ -85,9 +85,13 @@ void AABB::encompass(const AABB& encbox) {
 
 // get the aabb for this triangle (used for making group aabb)
 AABB Triangle::triAABB() const {
+	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
+	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
+	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+
 	// new aabb with min as minimum of 3 verts and maximum max of 3 verts
-	return AABB(vertices[0].getMin(vertices[1]).getMin(vertices[2]),
-			vertices[0].getMax(vertices[1]).getMax(vertices[2]));
+	return AABB(vert0.getMin(vert1).getMin(vert2),
+			vert0.getMax(vert1).getMax(vert2));
 }
 
 // distance squared to a point from the tri
@@ -150,8 +154,13 @@ AABB Triangle::triAABB() const {
 
 bool Triangle::intersects(const Ray& ray, float maxDistance) {
 	// Find vectors for two edges sharing vert0
-	Vector3 edge1 = vertices[1] - vertices[0];
-	Vector3 edge2 = vertices[2] - vertices[0];
+	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
+	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
+	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+
+
+	Vector3 edge1 = vert1 - vert0;
+	Vector3 edge2 = vert2 - vert0;
 
 	// Begin calculating determinant - also used to calculate U parameter
 	Vector3 rayDirectionNormalized = ray.direction;
@@ -168,7 +177,7 @@ bool Triangle::intersects(const Ray& ray, float maxDistance) {
 	float OneOverDet = 1.0f / det;
 
 	// Calculate distance from vert0 to ray origin
-	Vector3 tvec = ray.origin - vertices[0];
+	Vector3 tvec = ray.origin - vert0;
 
 	// Calculate U parameter and test bounds
 	float mU, mV;
