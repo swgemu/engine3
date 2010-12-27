@@ -17,6 +17,7 @@ void Form::parseData() {
 
 void Form::parseSubObjects() {
 	int type = readNetInt();
+
 	int size = readNetInt();
 
 	Chunk* chunk = iffStream->createChunk(this, type, size, offset);

@@ -481,6 +481,7 @@ AABBNode::AABBNode(Vector<Triangle>& trilist, int depth, const AABBTreeHeuristic
 
 		// set the first child to null (identifies a leaf)
 		mChildren[0] = NULL;
+		mChildren[1] = NULL;
 
 		// copy triangle list
 		if (heurdata.storePrimitives) {

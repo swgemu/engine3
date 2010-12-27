@@ -34,6 +34,8 @@ IffStream::~IffStream() {
 
 bool IffStream::parseChunks(sys::byte* data, int size, const String& filename) {
 	fileName = filename;
+
+	setLoggingName("IffStream " + fileName);
 	/*if (file == NULL) {
 		close();
 		throw InvalidFileTypeException(this);
