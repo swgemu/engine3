@@ -6,8 +6,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ENGINE_STM_TRANSACTIONALOBJECTHANDLE_H_
 #define ENGINE_STM_TRANSACTIONALOBJECTHANDLE_H_
 
-#include "TransactionalObject.h"
-
 namespace engine {
   namespace stm {
 
@@ -18,7 +16,7 @@ namespace engine {
 	template<class O> class TransactionalObjectHandle {
 		TransactionalObjectHeader<O>* header;
 
-		O object;
+		Reference<O> object;
 		O objectCopy;
 
 	public:
@@ -66,7 +64,7 @@ namespace engine {
 
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 
-		objectCopy = (O) object->clone();
+		objectCopy = dynamic_cast<O>(object->clone());
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 	}
 

@@ -112,6 +112,7 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/stm/TransactionalMemoryManager.$(OBJEXT) \
 	engine/stm/task/TransactionalTaskManager.$(OBJEXT) \
 	engine/stm/task/LocalTaskManager.$(OBJEXT) \
+	engine/stm/orb/TransactionalObjectManager.$(OBJEXT) \
 	engine/stm/service/TransactionalSocketManager.$(OBJEXT) \
 	engine/core/ManagedObject.$(OBJEXT) \
 	engine/core/ManagedService.$(OBJEXT) \
@@ -123,7 +124,7 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/util/ObserverImplementation.$(OBJEXT) \
 	engine/util/ObserverEventMap.$(OBJEXT) \
 	engine/util/Observable.$(OBJEXT) engine/util/Facade.$(OBJEXT) \
-	engine/util/AABBTree.$(OBJEXT) \
+	engine/util/AABBTree.$(OBJEXT) engine/util/Matrix4.$(OBJEXT) \
 	engine/util/iffstream/IffStream.$(OBJEXT) \
 	engine/util/iffstream/chunks/Chunk.$(OBJEXT) \
 	engine/util/iffstream/chunks/form/Form.$(OBJEXT) \
@@ -345,6 +346,7 @@ libengine3_a_SOURCES = \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/stm/task/TransactionalTaskManager.cpp \
 			engine/stm/task/LocalTaskManager.cpp \
+			engine/stm/orb/TransactionalObjectManager.cpp \
 			engine/stm/service/TransactionalSocketManager.cpp \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedService.cpp \
@@ -358,6 +360,7 @@ libengine3_a_SOURCES = \
 			engine/util/Observable.cpp \
 .			engine/util/Facade.cpp \
 			engine/util/AABBTree.cpp \
+			engine/util/Matrix4.cpp \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
@@ -660,6 +663,15 @@ engine/stm/task/TransactionalTaskManager.$(OBJEXT):  \
 engine/stm/task/LocalTaskManager.$(OBJEXT):  \
 	engine/stm/task/$(am__dirstamp) \
 	engine/stm/task/$(DEPDIR)/$(am__dirstamp)
+engine/stm/orb/$(am__dirstamp):
+	@$(MKDIR_P) engine/stm/orb
+	@: > engine/stm/orb/$(am__dirstamp)
+engine/stm/orb/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) engine/stm/orb/$(DEPDIR)
+	@: > engine/stm/orb/$(DEPDIR)/$(am__dirstamp)
+engine/stm/orb/TransactionalObjectManager.$(OBJEXT):  \
+	engine/stm/orb/$(am__dirstamp) \
+	engine/stm/orb/$(DEPDIR)/$(am__dirstamp)
 engine/stm/service/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/service
 	@: > engine/stm/service/$(am__dirstamp)
@@ -701,6 +713,8 @@ engine/util/Observable.$(OBJEXT): engine/util/$(am__dirstamp) \
 engine/util/Facade.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
 engine/util/AABBTree.$(OBJEXT): engine/util/$(am__dirstamp) \
+	engine/util/$(DEPDIR)/$(am__dirstamp)
+engine/util/Matrix4.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
 engine/util/iffstream/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/iffstream
@@ -858,11 +872,13 @@ mostlyclean-compile:
 	-rm -f engine/service/proto/events/BasePacketChekupEvent.$(OBJEXT)
 	-rm -f engine/stm/Transaction.$(OBJEXT)
 	-rm -f engine/stm/TransactionalMemoryManager.$(OBJEXT)
+	-rm -f engine/stm/orb/TransactionalObjectManager.$(OBJEXT)
 	-rm -f engine/stm/service/TransactionalSocketManager.$(OBJEXT)
 	-rm -f engine/stm/task/LocalTaskManager.$(OBJEXT)
 	-rm -f engine/stm/task/TransactionalTaskManager.$(OBJEXT)
 	-rm -f engine/util/AABBTree.$(OBJEXT)
 	-rm -f engine/util/Facade.$(OBJEXT)
+	-rm -f engine/util/Matrix4.$(OBJEXT)
 	-rm -f engine/util/Observable.$(OBJEXT)
 	-rm -f engine/util/Observer.$(OBJEXT)
 	-rm -f engine/util/ObserverEventMap.$(OBJEXT)
@@ -962,11 +978,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/events/$(DEPDIR)/BasePacketChekupEvent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/Transaction.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/TransactionalMemoryManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/orb/$(DEPDIR)/TransactionalObjectManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/service/$(DEPDIR)/TransactionalSocketManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/LocalTaskManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/TransactionalTaskManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/AABBTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Facade.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Matrix4.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/ObserverEventMap.Po@am__quote@
@@ -1143,6 +1161,8 @@ distclean-generic:
 	-rm -f engine/service/proto/events/$(am__dirstamp)
 	-rm -f engine/stm/$(DEPDIR)/$(am__dirstamp)
 	-rm -f engine/stm/$(am__dirstamp)
+	-rm -f engine/stm/orb/$(DEPDIR)/$(am__dirstamp)
+	-rm -f engine/stm/orb/$(am__dirstamp)
 	-rm -f engine/stm/service/$(DEPDIR)/$(am__dirstamp)
 	-rm -f engine/stm/service/$(am__dirstamp)
 	-rm -f engine/stm/task/$(DEPDIR)/$(am__dirstamp)
@@ -1174,7 +1194,7 @@ clean: clean-am
 clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1208,7 +1228,7 @@ install-ps: install-ps-am
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

@@ -21,6 +21,8 @@ class ObjectUpdateToDatabaseTask;
 
 using namespace engine::core;
 
+#include "system/lang/Object.h"
+
 #include "system/thread/ReadWriteLock.h"
 
 #include "system/io/Serializable.h"
@@ -30,8 +32,6 @@ using namespace engine::core;
 #include "system/io/ObjectOutputStream.h"
 
 #include "engine/orb/object/DistributedObjectServant.h"
-
-#include "engine/stm/TransactionalObject.h"
 
 namespace engine {
 namespace core {

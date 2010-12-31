@@ -24,7 +24,12 @@ Transaction::Transaction() : Logger() {
 	commitTime = 0;
 	commitAttempts = 1;
 
+	task = NULL;
+
 	Command* command = (TransactionalTaskManager*) Core::getTaskManager();
+	commands.add(command);
+
+	command = TransactionalMemoryManager::instance()->getObjectManager();
 	commands.add(command);
 
 	command = TransactionalMemoryManager::instance()->getSocketManager();
@@ -43,8 +48,22 @@ Transaction::~Transaction() {
 	reset();
 }
 
+void Transaction::start() {
+	start(task);
+}
+
+void Transaction::start(Runnable* task) {
+	assert(task != NULL && "task was NULL");
+
+	Transaction::task = task;
+
+	TransactionalMemoryManager::instance()->setTransaction(this);
+
+	task->run();
+}
+
 bool Transaction::commit() {
-	//info("commiting..");
+	info("commiting..");
 
 	uint64 startTime = System::getMikroTime();
 
@@ -69,12 +88,20 @@ bool Transaction::commit() {
 		reset();
 	}
 
+	for (int i = 0; i < helpedTransactions.size(); ++i) {
+		Transaction* helpedTransaction = helpedTransactions.get(i);
+
+		helpedTransaction->start();
+
+		helpedTransaction->commit();
+	}
+
 	return commited;
 }
 
 bool Transaction::doCommit() {
 	if (!isUndecided()) {
-		abort();
+		doAbort();
 		return false;
 	}
 
@@ -82,7 +109,7 @@ bool Transaction::doCommit() {
 		return false;
 
 	if (!setState(UNDECIDED, READ_CHECKING)) {
-		abort();
+		doAbort();
 		return false;
 	}
 
@@ -90,7 +117,7 @@ bool Transaction::doCommit() {
 		return false;
 
 	if (!setState(READ_CHECKING, COMMITTED)) {
-		abort();
+		doAbort();
 		return false;
 	}
 
@@ -106,6 +133,14 @@ bool Transaction::doCommit() {
 }
 
 void Transaction::abort() {
+	info("aborting");
+
+	setState(ABORTED);
+}
+
+void Transaction::doAbort() {
+	info("doing abort");
+
 	status = ABORTED;
 
 	discardReadWriteObjects();
@@ -123,28 +158,30 @@ void Transaction::reset() {
 	openedObjets.removeAll();
 
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject*>* handle = readOnlyObjects.get(i);
+		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 		delete handle;
 	}
 
 	readOnlyObjects.removeAll();
 
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 		delete handle;
 	}
 
 	readWriteObjects.removeAll();
 
-	//info("reset");
+	info("reset");
 }
 
 bool Transaction::acquireReadWriteObjects() {
+	info("acquiring read/write objects");
+
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			abort();
+			doAbort();
 			return false;
 		}
 
@@ -157,7 +194,7 @@ bool Transaction::acquireReadWriteObjects() {
 	}
 
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject*>* handle = readOnlyObjects.get(i);
+		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectContentChanged()) {
 			readOnlyObjects.remove(i--);
@@ -173,26 +210,34 @@ bool Transaction::acquireReadWriteObjects() {
 		}
 	}
 
+	info("finished acquiring read/write objects");
+
 	return true;
 }
 
 void Transaction::releaseReadWriteObjects() {
+	info("releasing read/write objects");
+
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 		handle->releaseHeader();
 
 		delete handle;
 	}
 
 	readWriteObjects.removeAll();
+
+	info("finished releasing read/write objects");
 }
 
 bool Transaction::validateReadOnlyObjects() {
+	info("validating read only objects");
+
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject*>* handle = readOnlyObjects.get(i);
+		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			abort();
+			doAbort();
 			return false;
 		}
 
@@ -204,27 +249,44 @@ bool Transaction::validateReadOnlyObjects() {
 		}
 	}
 
+	info("finished validating read only objects");
+
 	return true;
 }
 
 void Transaction::discardReadWriteObjects() {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<TransactionalObject*>* handle = readWriteObjects.get(i);
+		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
 		handle->discardHeader(this);
 	}
 }
 
 bool Transaction::resolveConflict(Transaction* transaction) {
-	if (transaction > this) {
-		transaction->abort();
+	if (transaction->compareTo(this) < 0) {
+		helpTransaction(transaction);
 
 		return true;
 	} else {
-		this->abort();
+		this->doAbort();
 
 		return false;
 	}
+}
+
+void Transaction::helpTransaction(Transaction* transaction) {
+	helpedTransactions.add(transaction);
+
+	transaction->abort();
+}
+
+int Transaction::compareTo(Transaction* transaction) {
+	if (transaction > this)
+		return 1;
+	else if (transaction < this)
+		return -1;
+	else
+		return 0;
 }
 
 Transaction* Transaction::currentTransaction() {
@@ -234,6 +296,10 @@ Transaction* Transaction::currentTransaction() {
 String Transaction::toString() {
 	return "Transaction [" + Thread::getCurrentThread()->getName() + "] commited in " + Long::toString(commitTime) + " usec with "
 			+ String::valueOf(commitAttempts) + " attempts";
+}
+
+bool Transaction::setState(int newstate) {
+	return setState(status.get(), newstate);
 }
 
 bool Transaction::setState(int currentstate, int newstate) {

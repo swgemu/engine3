@@ -36,4 +36,4 @@ namespace engine {
 
 using namespace engine::stm;
 
-#endif /* SOCKETMANAGER_H_ */
+#endif /* TRANSACTIONALSOCKETMANAGER_H_ */

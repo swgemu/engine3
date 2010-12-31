@@ -76,14 +76,6 @@ namespace sys {
 			return object;
 		}
 
-		bool toString(String& str) {
-			return object->toString(str);
-		}
-
-		bool parseFromString(const String& str, int version = 0) {
-			return object->parseFromString(str, version);
-		}
-
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			return object->toBinaryStream(stream);
 		}

@@ -49,25 +49,15 @@ void Task::execute() {
 #ifdef WITH_STM
 	engine::stm::Transaction* transaction =	engine::stm::Transaction::currentTransaction();
 
-	while (true) {
-		ObjectDatabaseManager::instance()->startLocalTransaction();
+	try {
+		transaction->start(this);
 
-		try {
-			run();
-		} catch (Exception& e) {
-			Logger::console.error("exception caught while running a task");
-			e.printStackTrace();
-		} catch (...) {
-			Logger::console.error("unreported exception caught while running a task");
-		}
-
-		if (transaction->commit()) {
-			ObjectDatabaseManager::instance()->commitLocalTransaction();
-
-			break;
-		} else {
-			ObjectDatabaseManager::instance()->abortLocalTransaction();
-		}
+		transaction->commit();
+	} catch (Exception& e) {
+		Logger::console.error("exception caught while running a task");
+		e.printStackTrace();
+	} catch (...) {
+		Logger::console.error("unreported exception caught while running a task");
 	}
 
 	delete transaction;

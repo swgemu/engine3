@@ -20,41 +20,40 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
-	class TransactionalObject;
 	template<class O> class TransactionalObjectHeader;
 
-	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*> {
+	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<Object*>*> {
 		int hash(const uint64& key) {
 			return Long::hashCode(key);
 		}
 
 	public:
-		TransactionalObjectMap() : HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*>(1000) {
+		TransactionalObjectMap() : HashTable<uint64, TransactionalObjectHandle<Object*>*>(1000) {
 			setNullValue(NULL);
 		}
 
 		template<class O> TransactionalObjectHandle<O>* put(TransactionalObjectHeader<O>* header, TransactionalObjectHandle<O>* handle) {
-			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*>::put((uint64) header,
-				(TransactionalObjectHandle<TransactionalObject*>*) handle);
+			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<Object*>*>::put((uint64) header,
+				(TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> TransactionalObjectHandle<O>* get(TransactionalObjectHeader<O>* header) {
-			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<TransactionalObject*>*>::get((uint64) header);
+			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<Object*>*>::get((uint64) header);
 		}
 	};
 
-	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandle<TransactionalObject*>*> {
+	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandle<Object*>*> {
 	public:
 		template<class O> void add(TransactionalObjectHandle<O>* handle) {
-			SortedVector<TransactionalObjectHandle<TransactionalObject*>*>::add((TransactionalObjectHandle<TransactionalObject*>*) handle);
+			SortedVector<TransactionalObjectHandle<Object*>*>::add((TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> bool removeElement(TransactionalObjectHandle<O>* handle) {
-			return SortedVector<TransactionalObjectHandle<TransactionalObject*>*>::removeElement((TransactionalObjectHandle<TransactionalObject*>*) handle);
+			return SortedVector<TransactionalObjectHandle<Object*>*>::removeElement((TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> bool contains(TransactionalObjectHandle<O>* handle) {
-			return SortedVector<TransactionalObjectHandle<TransactionalObject*>*>::contains((TransactionalObjectHandle<TransactionalObject*>*) handle);
+			return SortedVector<TransactionalObjectHandle<Object*>*>::contains((TransactionalObjectHandle<Object*>*) handle);
 		}
 	};
 
@@ -69,6 +68,10 @@ namespace engine {
 		uint64 commitTime;
 		int commitAttempts;
 
+		Runnable* task;
+
+		Vector<Transaction*> helpedTransactions;
+
 		Vector<Command*> commands;
 
 		static const int UNDECIDED = 0;
@@ -81,6 +84,9 @@ namespace engine {
 
 		virtual ~Transaction();
 
+		void start();
+		void start(Runnable* task);
+
 		bool commit();
 
 		void abort();
@@ -88,6 +94,8 @@ namespace engine {
 		template<class O> O openObject(TransactionalObjectHeader<O>* header);
 
 		template<class O> O openObjectForWrite(TransactionalObjectHeader<O>* header);
+
+		template<class O> O getOpenedRWObject(TransactionalObjectHeader<O>* header);
 
 		inline bool isUndecided() {
 			return status == UNDECIDED;
@@ -105,6 +113,8 @@ namespace engine {
 			return status == COMMITTED;
 		}
 
+		int compareTo(Transaction* transaction);
+
 		static Transaction* currentTransaction();
 
 		String toString();
@@ -112,6 +122,9 @@ namespace engine {
 	protected:
 		bool doCommit();
 
+		void doAbort();
+
+		bool setState(int newstate);
 		bool setState(int currentstate, int newstate);
 
 		void reset();
@@ -123,6 +136,8 @@ namespace engine {
 		bool validateReadOnlyObjects();
 
 		bool resolveConflict(Transaction* transaction);
+
+		void helpTransaction(Transaction* transaction);
 
 		void discardReadWriteObjects();
 
@@ -146,6 +161,8 @@ namespace engine {
 	}
 
 	template<class O> O Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
+		info("opening opbject");
+
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
@@ -163,6 +180,18 @@ namespace engine {
 		O localCopy = (O) handle->getObjectLocalCopy();
 
 		return localCopy;
+	}
+
+	template<class O> O Transaction::getOpenedRWObject(TransactionalObjectHeader<O>* header) {
+		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
+
+		if (status == READ_CHECKING)
+			resolveConflict(currentTransaction());
+
+		if (status == COMMITTED)
+			return handle->getObjectLocalCopy();
+		else
+			return handle->getObject();
 	}
 
   } // namespace stm

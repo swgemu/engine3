@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 using namespace engine::stm;
 
 TransactionalMemoryManager::TransactionalMemoryManager() {
+	objectManager = new TransactionalObjectManager();
+
 	socketManager = new TransactionalSocketManager();
 }
 
@@ -23,6 +25,12 @@ Transaction* TransactionalMemoryManager::getTransaction() {
 	}
 
 	return transaction;
+}
+
+void TransactionalMemoryManager::setTransaction(Transaction* transaction) {
+	assert(currentTransaction.get() == NULL);
+
+	currentTransaction.set(transaction);
 }
 
 void TransactionalMemoryManager::clearTransaction() {

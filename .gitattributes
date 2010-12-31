@@ -202,6 +202,7 @@ MMOEngine/include/engine/stm/TransactionalMemoryManager.h -text
 MMOEngine/include/engine/stm/TransactionalObject.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHeader.h -text
+MMOEngine/include/engine/stm/orb/TransactionalObjectManager.h -text
 MMOEngine/include/engine/stm/service/TransactionalSocketManager.h -text
 MMOEngine/include/engine/stm/task/LocalTaskManager.h -text
 MMOEngine/include/engine/stm/task/TransactionalTaskManager.h -text
@@ -554,9 +555,10 @@ MMOEngine/src/engine/stm/Transaction.cpp -text
 MMOEngine/src/engine/stm/Transaction.h -text
 MMOEngine/src/engine/stm/TransactionalMemoryManager.cpp -text
 MMOEngine/src/engine/stm/TransactionalMemoryManager.h -text
-MMOEngine/src/engine/stm/TransactionalObject.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHeader.h -text
+MMOEngine/src/engine/stm/orb/TransactionalObjectManager.cpp -text
+MMOEngine/src/engine/stm/orb/TransactionalObjectManager.h -text
 MMOEngine/src/engine/stm/service/TransactionalSocketManager.cpp -text
 MMOEngine/src/engine/stm/service/TransactionalSocketManager.h -text
 MMOEngine/src/engine/stm/task/LocalTaskManager.cpp -text

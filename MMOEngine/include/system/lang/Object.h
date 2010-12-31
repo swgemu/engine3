@@ -76,6 +76,10 @@ namespace sys {
 			finalize();
 		}
 
+		virtual Object* clone() {
+			assert(0 && "clone method not declared");
+		}
+
 		virtual bool notifyDestroy() {
 			return true;
 		}
@@ -85,14 +89,6 @@ namespace sys {
 		}
 
 		void finalize() {
-		}
-
-		bool toString(String& str) {
-			return false;
-		}
-
-		bool parseFromString(const String& str, int version = 0) {
-			return false;
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {

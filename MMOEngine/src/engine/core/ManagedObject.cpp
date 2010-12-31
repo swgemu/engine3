@@ -399,36 +399,36 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 
 ManagedObjectImplementation::ManagedObjectImplementation() {
 	_initializeImplementation();
-	// engine/core/ManagedObject.idl(28):  		persistenceLevel = 0;
+	// engine/core/ManagedObject.idl(27):  		persistenceLevel = 0;
 	persistenceLevel = 0;
-	// engine/core/ManagedObject.idl(30):  		lastCRCSave = 0;
+	// engine/core/ManagedObject.idl(29):  		lastCRCSave = 0;
 	lastCRCSave = 0;
-	// engine/core/ManagedObject.idl(32):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl(31):  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
-	// engine/core/ManagedObject.idl(97):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl(96):  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 unsigned int ManagedObjectImplementation::getLastCRCSave() {
-	// engine/core/ManagedObject.idl(101):  		return lastCRCSave;
+	// engine/core/ManagedObject.idl(100):  		return lastCRCSave;
 	return lastCRCSave;
 }
 
 void ManagedObjectImplementation::setLastCRCSave(unsigned int crc) {
-	// engine/core/ManagedObject.idl(105):  		lastCRCSave = crc;
+	// engine/core/ManagedObject.idl(104):  		lastCRCSave = crc;
 	lastCRCSave = crc;
 }
 
 bool ManagedObjectImplementation::isPersistent() {
-	// engine/core/ManagedObject.idl(110):  		return persistenceLevel != 0;
+	// engine/core/ManagedObject.idl(109):  		return persistenceLevel != 0;
 	return persistenceLevel != 0;
 }
 
 int ManagedObjectImplementation::getPersistenceLevel() {
-	// engine/core/ManagedObject.idl(115):  		return persistenceLevel;
+	// engine/core/ManagedObject.idl(114):  		return persistenceLevel;
 	return persistenceLevel;
 }
 

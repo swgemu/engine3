@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define WEAKREFERENCE_H_
 
 #include "../Variable.h"
+
 #include "../../thread/ReadWriteLock.h"
 
 namespace sys {
@@ -88,14 +89,6 @@ namespace sys {
 			rwlock.unlock();
 
 			return copy;
-		}
-
-		bool toString(String& str) {
-			return object->toString(str);
-		}
-
-		bool parseFromString(const String& str, int version = 0) {
-			return object->parseFromString(str, version);
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
