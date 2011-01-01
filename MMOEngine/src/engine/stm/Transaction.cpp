@@ -57,6 +57,8 @@ void Transaction::start(Runnable* task) {
 
 	Transaction::task = task;
 
+	info("starting transaction");
+
 	TransactionalMemoryManager::instance()->setTransaction(this);
 
 	task->run();
@@ -91,9 +93,12 @@ bool Transaction::commit() {
 	for (int i = 0; i < helpedTransactions.size(); ++i) {
 		Transaction* helpedTransaction = helpedTransactions.get(i);
 
+		info("helping transaction " + helpedTransaction->getLoggingName());
+
 		helpedTransaction->start();
 
-		helpedTransaction->commit();
+		if (helpedTransaction->commit())
+			delete helpedTransaction;
 	}
 
 	return commited;

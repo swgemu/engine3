@@ -28,7 +28,9 @@ Transaction* TransactionalMemoryManager::getTransaction() {
 }
 
 void TransactionalMemoryManager::setTransaction(Transaction* transaction) {
-	assert(currentTransaction.get() == NULL);
+	Transaction* current = currentTransaction.get();
+
+	assert(current == NULL || current == transaction);
 
 	currentTransaction.set(transaction);
 }

@@ -52,15 +52,14 @@ void Task::execute() {
 	try {
 		transaction->start(this);
 
-		transaction->commit();
+		if (transaction->commit())
+			delete transaction;
 	} catch (Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
 	} catch (...) {
 		Logger::console.error("unreported exception caught while running a task");
 	}
-
-	delete transaction;
 #else
 	ObjectDatabaseManager::instance()->startLocalTransaction();
 
