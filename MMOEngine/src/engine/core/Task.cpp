@@ -47,13 +47,12 @@ Task::~Task() {
 
 void Task::execute() {
 #ifdef WITH_STM
-	engine::stm::Transaction* transaction =	engine::stm::Transaction::currentTransaction();
+	Reference<engine::stm::Transaction*> transaction = engine::stm::Transaction::currentTransaction();
 
 	try {
 		transaction->start(this);
 
-		if (transaction->commit())
-			delete transaction;
+		transaction->commit();
 	} catch (Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();

@@ -57,7 +57,9 @@ namespace engine {
 		}
 	};
 
-	class Transaction : public Logger {
+	class Transaction : public Object, public Logger {
+		int tid;
+
 		AtomicInteger status;
 
 		TransactionalObjectMap openedObjets;
@@ -70,7 +72,9 @@ namespace engine {
 
 		Runnable* task;
 
-		Vector<Transaction*> helpedTransactions;
+		AtomicReference<Transaction> helperTransaction;
+
+		Vector<Reference<Transaction*> > helpedTransactions;
 
 		Vector<Command*> commands;
 
@@ -122,7 +126,9 @@ namespace engine {
 	protected:
 		bool doCommit();
 
-		void doAbort();
+		void doAbort(const char* reason = "");
+
+		void doHelpTransactions();
 
 		bool setState(int newstate);
 		bool setState(int currentstate, int newstate);
@@ -138,6 +144,14 @@ namespace engine {
 		bool resolveConflict(Transaction* transaction);
 
 		void helpTransaction(Transaction* transaction);
+
+		bool setHelperTransaction(Transaction* transaction) {
+			return helperTransaction.compareAndSet(NULL, transaction);
+		}
+
+		void clearHelperTransaction() {
+			return helperTransaction.set(NULL);
+		}
 
 		void discardReadWriteObjects();
 
@@ -185,8 +199,10 @@ namespace engine {
 	template<class O> O Transaction::getOpenedRWObject(TransactionalObjectHeader<O>* header) {
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
-		if (status == READ_CHECKING)
-			resolveConflict(currentTransaction());
+		Reference<Transaction*> transaction = currentTransaction();
+
+		if (status == READ_CHECKING && transaction->compareTo(this) > 0)
+			transaction->helpTransaction(this);
 
 		if (status == COMMITTED)
 			return handle->getObjectLocalCopy();

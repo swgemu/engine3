@@ -54,6 +54,10 @@ namespace engine {
 			return ownerTransaction;
 		}
 
+		bool hasObject(O obj) const {
+			return object == obj;
+		}
+
 		bool isNull() {
 			return object == NULL;
 		}

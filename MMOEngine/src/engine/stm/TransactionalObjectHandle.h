@@ -97,7 +97,7 @@ namespace engine {
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::hasObjectChanged() {
-		return object != header->getObject();
+		return !header->hasObject(object);
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::hasObjectContentChanged() {

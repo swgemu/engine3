@@ -66,6 +66,8 @@ namespace sys {
 
 		static void sleep(uint64 millis, uint64 nanos);
 
+		static void yield();
+
 		bool isDetached();
 
 		static Thread* getCurrentThread();

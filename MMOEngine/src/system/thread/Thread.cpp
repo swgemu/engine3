@@ -108,6 +108,10 @@ void Thread::sleep(uint64 millis, uint64 nanos) {
 	#endif
 }
 
+void Thread::yield() {
+	pthread_yield();
+}
+
 bool Thread::isDetached() {
 	int state;
 	pthread_attr_getdetachstate(&attributes, &state);

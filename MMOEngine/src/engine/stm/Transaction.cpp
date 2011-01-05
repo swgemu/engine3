@@ -35,17 +35,17 @@ Transaction::Transaction() : Logger() {
 	command = TransactionalMemoryManager::instance()->getSocketManager();
 	commands.add(command);
 
-	String threadName = Thread::getCurrentThread()->getName();
 
-	int tid = transactionID.increment();
+	tid = transactionID.increment();
 
-	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
 	setLogging(false);
 	setGlobalLogging(true);
 }
 
 Transaction::~Transaction() {
 	reset();
+
+	info("deleted");
 }
 
 void Transaction::start() {
@@ -56,6 +56,10 @@ void Transaction::start(Runnable* task) {
 	assert(task != NULL && "task was NULL");
 
 	Transaction::task = task;
+
+	String threadName = Thread::getCurrentThread()->getName();
+
+	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
 
 	info("starting transaction");
 
@@ -81,32 +85,33 @@ bool Transaction::commit() {
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
 				+readOnlyObjectsCount + "/" + readWriteObjectsCount +")");
 
-		TransactionalMemoryManager::instance()->clearTransaction();
+		doHelpTransactions();
 	} else {
 		info("aborted");
 
 		++commitAttempts;
 
-		reset();
+		if (helperTransaction.get() == NULL && helperTransaction.compareAndSet(NULL, this)) {
+			reset();
+
+			info("helping self");
+
+			Thread::yield();
+
+			start();
+
+			return commit();
+		}
 	}
 
-	for (int i = 0; i < helpedTransactions.size(); ++i) {
-		Transaction* helpedTransaction = helpedTransactions.get(i);
-
-		info("helping transaction " + helpedTransaction->getLoggingName());
-
-		helpedTransaction->start();
-
-		if (helpedTransaction->commit())
-			delete helpedTransaction;
-	}
+	Thread::yield();
 
 	return commited;
 }
 
 bool Transaction::doCommit() {
 	if (!isUndecided()) {
-		doAbort();
+		doAbort("transaction not in UNDECIDED state on commit");
 		return false;
 	}
 
@@ -114,7 +119,7 @@ bool Transaction::doCommit() {
 		return false;
 
 	if (!setState(UNDECIDED, READ_CHECKING)) {
-		doAbort();
+		doAbort("status change UNDECIED -> READ CHECKING failed");
 		return false;
 	}
 
@@ -122,7 +127,7 @@ bool Transaction::doCommit() {
 		return false;
 
 	if (!setState(READ_CHECKING, COMMITTED)) {
-		doAbort();
+		doAbort("status change READ CHECKING -> COMMITED failed");
 		return false;
 	}
 
@@ -134,17 +139,22 @@ bool Transaction::doCommit() {
 		command->execute();
 	}
 
+	TransactionalMemoryManager::instance()->clearTransaction();
+
 	return true;
 }
 
 void Transaction::abort() {
-	info("aborting");
-
 	setState(ABORTED);
+
+	if (status == ABORTED)
+		info("aborting");
+	else
+		info("aborting failed");
 }
 
-void Transaction::doAbort() {
-	info("doing abort");
+void Transaction::doAbort(const char* reason) {
+	info("doing abort: " + String(reason));
 
 	status = ABORTED;
 
@@ -154,6 +164,24 @@ void Transaction::doAbort() {
 		Command* command = commands.get(i);
 
 		command->undo();
+	}
+
+	reset();
+}
+
+void Transaction::doHelpTransactions() {
+	for (int i = 0; i < helpedTransactions.size(); ++i) {
+		Reference<Transaction*> helpedTransaction = helpedTransactions.get(i);
+
+		if (helpedTransaction->isUndecided()) {
+			info("helping transaction " + helpedTransaction->getLoggingName());
+
+			helpedTransaction->start();
+
+			helpedTransaction->commit();
+		} else {
+			helpedTransaction->clearHelperTransaction();
+		}
 	}
 }
 
@@ -176,6 +204,8 @@ void Transaction::reset() {
 
 	readWriteObjects.removeAll();
 
+	TransactionalMemoryManager::instance()->clearTransaction();
+
 	info("reset");
 }
 
@@ -186,7 +216,7 @@ bool Transaction::acquireReadWriteObjects() {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			doAbort();
+			doAbort("object has changed on acquiring RW objects");
 			return false;
 		}
 
@@ -242,7 +272,7 @@ bool Transaction::validateReadOnlyObjects() {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			doAbort();
+			doAbort("object has changed on validating RO objects");
 			return false;
 		}
 
@@ -269,20 +299,33 @@ void Transaction::discardReadWriteObjects() {
 
 bool Transaction::resolveConflict(Transaction* transaction) {
 	if (transaction->compareTo(this) < 0) {
+		info("abrting conflicting transction " + transaction->getLoggingName());
+
 		helpTransaction(transaction);
 
 		return true;
 	} else {
-		this->doAbort();
+		info("aborting self due to conflict");
+
+		transaction->helpTransaction(this);
+
+		this->doAbort("conflict with other transaction");
 
 		return false;
 	}
 }
 
 void Transaction::helpTransaction(Transaction* transaction) {
-	helpedTransactions.add(transaction);
+	if (!transaction->setHelperTransaction((this)))
+		return;
 
 	transaction->abort();
+
+	if (transaction->isAborted()) {
+		info("adding helped transaction " + transaction->getLoggingName());
+
+		helpedTransactions.add(transaction);
+	}
 }
 
 int Transaction::compareTo(Transaction* transaction) {
