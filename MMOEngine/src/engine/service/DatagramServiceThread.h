@@ -23,9 +23,14 @@ namespace engine {
 		void run();
 
 		void stop();
-		
+
+	//protected:
 		// message methods
 		void receiveMessages();
+
+		void receiveMessage(Packet* packet, SocketAddress& addr);
+
+		//friend class MessageReceiverTask;
 	};
 
   } // namespace service

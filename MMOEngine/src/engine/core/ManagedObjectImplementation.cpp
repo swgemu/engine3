@@ -41,6 +41,15 @@ void ManagedObject::wlock(bool doLock) {
 #endif
 }
 
+void ManagedObject::wlock(Lockable* obj) {
+#ifndef WITH_STM
+	DistributedObjectStub::wlock(obj);
+
+	if (_getImplementation() == NULL)
+		_wlock(obj);
+#endif
+}
+
 void ManagedObject::wlock(ManagedObject* obj) {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
@@ -109,6 +118,10 @@ void ManagedObjectImplementation::rlock(bool doLock) {
 
 void ManagedObjectImplementation::wlock(bool doLock) {
 	_this->wlock(doLock);
+}
+
+void ManagedObjectImplementation::wlock(Lockable* obj) {
+	_this->wlock(obj);
 }
 
 void ManagedObjectImplementation::wlock(ManagedObject* obj) {

@@ -898,6 +898,20 @@ bool BaseClient::checkNetStatus() {
 	return false;
 }
 
+class ConnectTask : public Task {
+	Reference<BaseClient*> client;
+
+public:
+	ConnectTask(BaseClient* cli) {
+		client = cli;
+	}
+
+	void run() {
+		Packet* sreq = new SessionIDRequestMessage();
+		client->send(sreq, false);
+	}
+};
+
 bool BaseClient::connect() {
 	try {
 		lock();
@@ -911,12 +925,8 @@ bool BaseClient::connect() {
 
 		info("sending session request");
 
-		Packet* sreq = new SessionIDRequestMessage();
-		send(sreq, false);
-
-	#ifdef WITH_STM
-		Core::commitTask();
-	#endif
+		Reference<Task*> task = new ConnectTask(this);
+		task->execute();
 
 		if (crcSeed == 0) {
 			Time timeout;

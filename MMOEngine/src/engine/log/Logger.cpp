@@ -148,6 +148,40 @@ void Logger::error(const StringBuffer& msg) {
 	error(s);
 }
 
+void Logger::debug(const char* msg) {
+	printTime(false);
+
+	System::out << " [" << name << "] DEBUG - " << msg << "\n";
+
+	log(msg);
+}
+
+void Logger::debug(const String& msg) {
+	debug(msg.toCharArray());
+}
+
+void Logger::debug(const StringBuffer& msg) {
+	String s = msg.toString();
+	debug(s);
+}
+
+void Logger::warning(const char* msg) {
+	printTime(false);
+
+	System::out << " [" << name << "] WARNING - " << msg << "\n";
+
+	log(msg);
+}
+
+void Logger::warning(const String& msg) {
+	warning(msg.toCharArray());
+}
+
+void Logger::warning(const StringBuffer& msg) {
+	String s = msg.toString();
+	warning(s);
+}
+
 void Logger::getTime(String& times, bool getFull) {
 	Time time;
 	StringBuffer str;

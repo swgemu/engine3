@@ -50,7 +50,7 @@ namespace engine {
 		}
 
 		inline AABBNode* getRightChild() {
-			return mChildren[0];
+			return mChildren[1];
 		}
 
 	};

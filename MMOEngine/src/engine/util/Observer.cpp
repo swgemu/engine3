@@ -70,7 +70,8 @@ DistributedObjectServant* Observer::_getImplementation() {
 }
 
 void Observer::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;}
+	_impl = servant;
+}
 
 /*
  *	ObserverImplementation

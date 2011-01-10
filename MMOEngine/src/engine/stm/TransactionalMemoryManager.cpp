@@ -13,6 +13,19 @@ TransactionalMemoryManager::TransactionalMemoryManager() {
 	socketManager = new TransactionalSocketManager();
 }
 
+class PureTask : public Task {
+public:
+	void run() {
+		Logger::console.warning("pure transaction called");
+	}
+};
+
+void TransactionalMemoryManager::commitPureTransaction() {
+	Reference<Task*> task = new PureTask();
+
+	task->execute();
+}
+
 Transaction* TransactionalMemoryManager::getTransaction() {
 	Transaction* transaction = currentTransaction.get();
 

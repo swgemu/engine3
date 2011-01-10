@@ -67,7 +67,8 @@ DistributedObjectServant* Facade::_getImplementation() {
 }
 
 void Facade::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;}
+	_impl = servant;
+}
 
 /*
  *	FacadeImplementation

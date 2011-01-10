@@ -17,7 +17,7 @@ namespace engine {
 		TransactionalObjectHeader<O>* header;
 
 		Reference<O> object;
-		O objectCopy;
+		Reference<O> objectCopy;
 
 	public:
 		TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr);
@@ -88,7 +88,6 @@ namespace engine {
 	template<class O> void TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
 		header->discardObject(transaction);
 
-		delete objectCopy;
 		objectCopy = NULL;
 	}
 

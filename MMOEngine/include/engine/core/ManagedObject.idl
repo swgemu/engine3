@@ -7,6 +7,7 @@ package engine.core;
 
 include system.lang.Object;
 include system.thread.ReadWriteLock;
+include system.thread.Lockable;
 
 include system.io.Serializable;
 include system.io.ObjectInputStream;
@@ -52,9 +53,13 @@ class ManagedObject implements Serializable {
 	@nativeStub 
 	public native void wlock(boolean doLock = true);
 
+	@local
+	@nativeStub 
+	public native void wlock(Lockable obj);
+
 	@nativeStub 
 	public native void wlock(ManagedObject obj);
-	
+
 	@nativeStub 
 	public native void unlock(boolean doLock = true);
 

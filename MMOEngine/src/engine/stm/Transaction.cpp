@@ -22,6 +22,7 @@ Transaction::Transaction() : Logger() {
 	status = UNDECIDED;
 
 	commitTime = 0;
+	runTime = 0;
 	commitAttempts = 1;
 
 	task = NULL;
@@ -52,7 +53,7 @@ void Transaction::start() {
 	start(task);
 }
 
-void Transaction::start(Runnable* task) {
+void Transaction::start(Task* task) {
 	assert(task != NULL && "task was NULL");
 
 	Transaction::task = task;
@@ -65,7 +66,11 @@ void Transaction::start(Runnable* task) {
 
 	TransactionalMemoryManager::instance()->setTransaction(this);
 
+	uint64 startTime = System::getMikroTime();
+
 	task->run();
+
+	runTime += System::getMikroTime() - startTime;
 }
 
 bool Transaction::commit() {
@@ -81,9 +86,9 @@ bool Transaction::commit() {
 	commitTime += System::getMikroTime() - startTime;
 
 	if (commited) {
-		info("commited (" + String::valueOf(commitTime) + "Us, "
+		info("commited (" + String::valueOf(runTime / 1000) + "ms / " + String::valueOf(commitTime) + "Us, "
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
-				+readOnlyObjectsCount + "/" + readWriteObjectsCount +")");
+				+readOnlyObjectsCount + " / " + readWriteObjectsCount +")");
 
 		doHelpTransactions();
 	} else {
@@ -255,12 +260,9 @@ void Transaction::releaseReadWriteObjects() {
 
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
+
 		handle->releaseHeader();
-
-		delete handle;
 	}
-
-	readWriteObjects.removeAll();
 
 	info("finished releasing read/write objects");
 }

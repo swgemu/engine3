@@ -53,6 +53,14 @@ namespace engine {
 		void error(const String& msg);
 		void error(const StringBuffer& msg);
 
+		void debug(const char* msg);
+		void debug(const String& msg);
+		void debug(const StringBuffer& msg);
+
+		void warning(const char* msg);
+		void warning(const String& msg);
+		void warning(const StringBuffer& msg);
+
 		static void getTime(String& time, bool getFull = true);
 		static void printTime(bool getFull = true);
 

@@ -28,10 +28,6 @@ Core::~Core() {
 	finalizeContext();
 }
 
-void Core::initialize() {
-	commitTask();
-}
-
 void Core::initializeContext() {
 	taskManager = NULL;
 
@@ -62,6 +58,26 @@ void Core::finalizeContext() {
 	Logger::closeGlobalFileLogger();
 }
 
+class CoreInitializationTask : public Task {
+	Core* core;
+
+public:
+	CoreInitializationTask(Core* core) {
+		CoreInitializationTask::core = core;
+	}
+
+	void run() {
+		core->initialize();
+	}
+};
+
+void Core::start() {
+	Reference<Task*> initializerTask = new CoreInitializationTask(this);
+	initializerTask->execute();
+
+	run();
+}
+
 void Core::scheduleTask(Task* task, uint64 time) {
 	TaskManager* taskManager = getTaskManager();
 	taskManager->scheduleTask(task, time);
@@ -70,15 +86,6 @@ void Core::scheduleTask(Task* task, uint64 time) {
 void Core::scheduleTask(Task* task, Time& time) {
 	TaskManager* taskManager = getTaskManager();
 	taskManager->scheduleTask(task, time);
-}
-
-void Core::commitTask() {
-#ifdef WITH_STM
-	engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
-
-	if (!transaction->commit())
-		throw Exception("unable to commit initialization transaction");
-#endif
 }
 
 TaskManager* Core::getTaskManager() {

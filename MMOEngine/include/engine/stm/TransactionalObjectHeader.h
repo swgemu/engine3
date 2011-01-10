@@ -32,6 +32,8 @@ namespace engine {
 		TransactionalObjectHeader(O obj) {
 			object = obj;
 
+			assert(object->getReferenceCount() != 0);
+
 			ownerTransaction = NULL;
 		}
 
@@ -71,7 +73,11 @@ namespace engine {
 	};
 
 	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createHandle() {
-		return new TransactionalObjectHandle<O>(this);
+		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>(this);
+
+		assert(object->getReferenceCount() != 0);
+
+		return handle;
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::getObject() {

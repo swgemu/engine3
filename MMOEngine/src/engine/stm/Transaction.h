@@ -67,16 +67,18 @@ namespace engine {
 		TransactionalObjectHandleVector readOnlyObjects;
 		TransactionalObjectHandleVector readWriteObjects;
 
-		uint64 commitTime;
-		int commitAttempts;
-
-		Runnable* task;
+		Reference<Task*> task;
 
 		AtomicReference<Transaction> helperTransaction;
 
 		Vector<Reference<Transaction*> > helpedTransactions;
 
 		Vector<Command*> commands;
+
+		uint64 commitTime;
+		uint64 runTime;
+
+		int commitAttempts;
 
 		static const int UNDECIDED = 0;
 		static const int READ_CHECKING = 1;
@@ -89,7 +91,7 @@ namespace engine {
 		virtual ~Transaction();
 
 		void start();
-		void start(Runnable* task);
+		void start(Task* task);
 
 		bool commit();
 
@@ -175,7 +177,7 @@ namespace engine {
 	}
 
 	template<class O> O Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
-		info("opening opbject");
+		//info("opening opbject");
 
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 

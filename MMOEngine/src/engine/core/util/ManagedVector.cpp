@@ -22,7 +22,8 @@ DistributedObjectServant* ManagedVector::_getImplementation() {
 }
 
 void ManagedVector::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;}
+	_impl = servant;
+}
 
 /*
  *	ManagedVectorImplementation

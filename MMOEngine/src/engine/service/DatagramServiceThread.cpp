@@ -72,6 +72,29 @@ void DatagramServiceThread::run() {
 	receiveMessages();
 }
 
+class MessageReceiverTask : public Task {
+	DatagramServiceThread* service;
+
+	Packet* message;
+	SocketAddress address;
+
+public:
+	MessageReceiverTask(DatagramServiceThread* serv, Packet* packet, SocketAddress& addr) {
+		service = serv;
+
+		message = packet->clone();
+		address = addr;
+	}
+
+	~MessageReceiverTask() {
+		delete message;
+	}
+
+	void run() {
+		service->receiveMessage(message, address);
+	}
+};
+
 void DatagramServiceThread::receiveMessages() {
 	Packet packet;
 
@@ -81,54 +104,16 @@ void DatagramServiceThread::receiveMessages() {
 	#endif
 
 	while (doRun) {
-		Reference<ServiceClient*> client = NULL;
-
 		try	{
 			SocketAddress addr;
 
 			if (!socket->recieveFrom(&packet, &addr))
 				continue;
 
-			uint64 netid = addr.getNetworkID();
-
-			lock();
-
-			client = clients->get(netid);
-
-			if (client == NULL)	{
-				if ((client = serviceHandler->createConnection(socket, addr)) == NULL) {
-					unlock();
-					continue;
-				}
-
-				clients->add(client);
-
-				#ifdef VERSION_PUBLIC
-					if (clients->size() > CONNECTION_LIMIT) {
-						unlock();
-						return;
-					}
-				#endif
-			}
-
-			unlock();
-
-			if (client->isAvailable()) {
-				//serviceFilter->messageReceived(client, &packet);
-
-				serviceHandler->handleMessage(client, &packet);
-			}
-
-		#ifdef WITH_STM
-			Core::commitTask();
-		#endif
-
-			client = NULL;
+			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
+			receiverTask->execute();
 		} catch (SocketException& e) {
-			if (client == NULL) {
-				info(e.getMessage());
-			} else if (!serviceHandler->handleError(client, e))
-				return;
+			info(e.getMessage());
 		} catch (Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();
@@ -139,7 +124,47 @@ void DatagramServiceThread::receiveMessages() {
 		} catch (...) {
 			error("unreported Exception caught");
 
-			raise(SIGINT);
+			assert(0);
 		}
+	}
+}
+
+void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) {
+	Reference<ServiceClient*> client = NULL;
+
+	try	{
+		uint64 netid = addr.getNetworkID();
+
+		lock();
+
+		client = clients->get(netid);
+
+		if (client == NULL)	{
+			if ((client = serviceHandler->createConnection(socket, addr)) == NULL) {
+				unlock();
+
+				return;
+			}
+
+			clients->add(client);
+
+			#ifdef VERSION_PUBLIC
+				if (clients->size() > CONNECTION_LIMIT) {
+					unlock();
+					return;
+				}
+			#endif
+		}
+
+		unlock();
+
+		if (client->isAvailable()) {
+			//serviceFilter->messageReceived(client, &packet);
+
+			serviceHandler->handleMessage(client, packet);
+		}
+	} catch (SocketException& e) {
+		if (!serviceHandler->handleError(client, e))
+			setRunning(false);
 	}
 }

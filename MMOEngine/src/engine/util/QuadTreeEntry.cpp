@@ -503,7 +503,8 @@ DistributedObjectServant* QuadTreeEntry::_getImplementation() {
 }
 
 void QuadTreeEntry::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;}
+	_impl = servant;
+}
 
 /*
  *	QuadTreeEntryImplementation

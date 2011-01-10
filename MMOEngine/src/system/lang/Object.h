@@ -12,15 +12,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Variable.h"
 
-#include "../thread/Mutex.h"
+#include "system/thread/Mutex.h"
 
-#include "../util/Vector.h"
+#include "system/util/Vector.h"
 
 #ifdef TRACE_REFERENCES
 #include "ref/Reference.h"
 
-#include "../util/VectorMap.h"
+#include "system/util/VectorMap.h"
 #endif
+
+#include "system/util/VectorMap.h"
 
 namespace sys {
 	namespace io {
@@ -43,13 +45,15 @@ namespace sys {
 
 		bool _destroying;
 
+		static VectorMap<void*, StackTrace*> createHolders;
+		static VectorMap<void*, StackTrace*> deleteHolders;
+
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 	#endif
 
 	public:
 		Object() : ReferenceCounter(), Variable() {
-
 			_destroying = false;
 
 		#ifdef TRACE_REFERENCES
@@ -58,8 +62,6 @@ namespace sys {
 		}
 
 		Object(const Object& obj) : ReferenceCounter(), Variable() {
-			//_references = obj._references;
-
 			_destroying = false;
 
 		#ifdef TRACE_REFERENCES
@@ -72,7 +74,6 @@ namespace sys {
 			for (int i = 0; i < referenceHolders.size(); ++i)
 				delete referenceHolders.get(i);
 		#endif
-
 			finalize();
 		}
 
@@ -108,9 +109,19 @@ namespace sys {
 		}
 
 		inline void release() {
+			if (_references.get() == 0) {
+				printf("Object already delted by\n");
+
+				//deleteHolders.get((void*) this)->print();
+			}
+
+			//deleteHolders.put(this, new StackTrace());
+			//assert(deleteHolders.get((void*) this) != NULL);
+
 			if (decreaseCount()) {
-				if (notifyDestroy())
+				if (notifyDestroy()) {
 					destroy();
+				}
 			}
 		}
 

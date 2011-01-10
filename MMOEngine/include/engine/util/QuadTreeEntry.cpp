@@ -12,14 +12,31 @@
 
 #include "engine/util/QuadTreeNode.h"
 
+
+// Imported class dependencies
+
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
+
+#include "system/io/ObjectOutputStream.h"
+
+#include "engine/util/ObserverEventMap.h"
+
+#include "system/io/ObjectInputStream.h"
+
+#include "engine/util/Observable.h"
+
+#include "engine/util/Observer.h"
+
+#include "engine/core/ManagedObject.h"
+
 /*
  *	QuadTreeEntryStub
  */
 
 QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParameter::instance()) {
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
-	_impl = _implementation;
-	_impl->_setStub(this);
+	ManagedObject::_setImplementation(_implementation);
+	_implementation->_setStub(this);
 }
 
 QuadTreeEntry::QuadTreeEntry(DummyConstructorParameter* param) : Observable(param) {
@@ -507,11 +524,11 @@ void QuadTreeEntry::clearBounding() {
 DistributedObjectServant* QuadTreeEntry::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
 
 void QuadTreeEntry::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;}
+	setObject(dynamic_cast<ManagedObjectImplementation*>(servant));
+}
 
 /*
  *	QuadTreeEntryImplementation
@@ -549,32 +566,30 @@ QuadTreeEntryImplementation::operator const QuadTreeEntry*() {
 	return _this;
 }
 
+Object* QuadTreeEntryImplementation::clone() {
+	return (Object*) new QuadTreeEntryImplementation(*this);
+}
+
+
 void QuadTreeEntryImplementation::lock(bool doLock) {
-	_this->lock(doLock);
 }
 
 void QuadTreeEntryImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
 }
 
 void QuadTreeEntryImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
 }
 
 void QuadTreeEntryImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
 }
 
 void QuadTreeEntryImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
 }
 
 void QuadTreeEntryImplementation::_serializationHelperMethod() {

@@ -29,6 +29,8 @@ namespace engine {
 		ThreadLocal<Transaction> currentTransaction;
 
 	public:
+		static void commitPureTransaction();
+
 		TransactionalObjectManager* getObjectManager() {
 			//FIXME: temp hack
 			objectManager->initialize();

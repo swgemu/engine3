@@ -84,7 +84,8 @@ DistributedObjectServant* Observable::_getImplementation() {
 }
 
 void Observable::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;}
+	_impl = servant;
+}
 
 /*
  *	ObservableImplementation

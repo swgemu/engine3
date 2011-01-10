@@ -32,6 +32,27 @@ DatagramServiceClient::~DatagramServiceClient() {
 	close();
 }
 
+class MessageReceiverTask : public Task {
+	Reference<DatagramServiceClient*> client;
+
+	Packet* message;
+
+public:
+	MessageReceiverTask(DatagramServiceClient* cli, Packet* packet) {
+		client = cli;
+
+		message = packet->clone();
+	}
+
+	~MessageReceiverTask() {
+		delete message;
+	}
+
+	void run() {
+		client->handleMessage(message);
+	}
+};
+
 void DatagramServiceClient::recieveMessages() {
 	Packet packet;
 
@@ -40,11 +61,8 @@ void DatagramServiceClient::recieveMessages() {
 			if (!read(&packet))
 				continue;
 
-			handleMessage(&packet);
-
-		#ifdef WITH_STM
-			Core::commitTask();
-		#endif
+			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet);
+			receiverTask->execute();
 		} catch (SocketException& e) {
 			System::out << e.getMessage() << "\n";
 

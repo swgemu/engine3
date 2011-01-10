@@ -23,14 +23,14 @@ namespace engine {
 
 		virtual ~Core();
 
-		virtual void initialize();
+		void start();
+
+		virtual void initialize() = 0;
 
 		template<class T> static T* lookupObject(const String& name);
 
 		static void scheduleTask(Task* task, uint64 time = 0);
 		static void scheduleTask(Task* task, Time& time);
-
-		static void commitTask();
 
 		static TaskManager* getTaskManager();
 

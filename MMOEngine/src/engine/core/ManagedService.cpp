@@ -22,7 +22,8 @@ DistributedObjectServant* ManagedService::_getImplementation() {
 }
 
 void ManagedService::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;}
+	_impl = servant;
+}
 
 /*
  *	ManagedServiceImplementation
