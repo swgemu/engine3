@@ -47,15 +47,15 @@ class ManagedObject implements Serializable {
 	@nativeStub 
 	public native void lock(ManagedObject obj);
 
+	@local
+	@nativeStub 
+	public native void lock(Lockable obj);
+
 	@nativeStub 
 	public native void rlock(boolean doLock = true);
 
 	@nativeStub 
 	public native void wlock(boolean doLock = true);
-
-	@local
-	@nativeStub 
-	public native void wlock(Lockable obj);
 
 	@nativeStub 
 	public native void wlock(ManagedObject obj);

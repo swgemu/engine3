@@ -30,7 +30,7 @@ namespace engine {
 		int workerThreads;
 		int schedulerThreads;
 
-		int currentTaskScheduler;
+		AtomicInteger currentTaskScheduler;
 
 		bool shuttingDown;
 

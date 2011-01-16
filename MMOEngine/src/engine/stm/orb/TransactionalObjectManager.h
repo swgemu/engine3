@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef TRANSACTIONALOBJECTMANAGER_H_
 #define TRANSACTIONALOBJECTMANAGER_H_
 
+#include "system/lang.h"
+
 #include "engine/util/Command.h"
 
 namespace engine {
@@ -21,6 +23,7 @@ namespace engine {
 
   		void undo();
 
+  		void deleteObject(Object* object);
   	};
 
   } // namespace stm

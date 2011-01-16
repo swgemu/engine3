@@ -21,3 +21,7 @@ void TransactionalObjectManager::execute() {
 void TransactionalObjectManager::undo() {
 	ObjectDatabaseManager::instance()->abortLocalTransaction();
 }
+
+void TransactionalObjectManager::deleteObject(Object* object) {
+	//Transaction::currentTransaction()->
+}

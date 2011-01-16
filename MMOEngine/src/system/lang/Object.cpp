@@ -8,9 +8,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Object.h"
 
-VectorMap<void*, StackTrace*> Object::createHolders;
-VectorMap<void*, StackTrace*> Object::deleteHolders;
-
 void Object::acquireWeak(WeakReferenceBase* ref) {
 	Locker locker(&referenceMutex);
 
@@ -43,7 +40,7 @@ void Object::destroy() {
 
 	locker.release();
 
-	delete this;
+	//delete this;
 }
 
 #ifdef TRACE_REFERENCES

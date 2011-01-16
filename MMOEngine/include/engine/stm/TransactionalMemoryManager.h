@@ -21,15 +21,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
-	class TransactionalMemoryManager : public Singleton<TransactionalMemoryManager> {
+	class TransactionalMemoryManager : public Singleton<TransactionalMemoryManager>, public Logger {
 		TransactionalObjectManager* objectManager;
 
 		TransactionalSocketManager* socketManager;
 
 		ThreadLocal<Transaction> currentTransaction;
 
+		AtomicInteger startedTransactions;
+		AtomicInteger commitedTransactions;
+		AtomicInteger abortedTransactions;
+
 	public:
 		static void commitPureTransaction();
+
+		void printStatistics();
 
 		TransactionalObjectManager* getObjectManager() {
 			//FIXME: temp hack
@@ -47,9 +53,11 @@ namespace engine {
 
 		Transaction* getTransaction();
 
-		void setTransaction(Transaction* transaction);
+		void startTransaction(Transaction* transaction);
 
-		void clearTransaction();
+		void commitTransaction();
+
+		void abortTransaction();
 
 		friend class SingletonWrapper<TransactionalMemoryManager>;
 		friend class Transaction;

@@ -15,8 +15,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ReentrantTask.h"
 
 TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager") {
-	currentTaskScheduler = 0;
-
 	shuttingDown = false;
 
 	setLogging(true);
@@ -145,7 +143,7 @@ TaskScheduler* TaskManagerImpl::getTaskScheduler() {
 			return NULL;
 	}
 
-	int index = currentTaskScheduler++ % schedulers.size();
+	int index = currentTaskScheduler.increment() % schedulers.size();
 
 	return schedulers.get(index);
 }

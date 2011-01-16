@@ -45,9 +45,6 @@ namespace sys {
 
 		bool _destroying;
 
-		static VectorMap<void*, StackTrace*> createHolders;
-		static VectorMap<void*, StackTrace*> deleteHolders;
-
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 	#endif
@@ -109,14 +106,8 @@ namespace sys {
 		}
 
 		inline void release() {
-			if (_references.get() == 0) {
-				printf("Object already delted by\n");
-
-				//deleteHolders.get((void*) this)->print();
-			}
-
-			//deleteHolders.put(this, new StackTrace());
-			//assert(deleteHolders.get((void*) this) != NULL);
+			if (_references.get() == 0)
+				assert(0 && "Object already delted");
 
 			if (decreaseCount()) {
 				if (notifyDestroy()) {

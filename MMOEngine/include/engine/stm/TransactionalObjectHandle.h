@@ -16,8 +16,8 @@ namespace engine {
 	template<class O> class TransactionalObjectHandle {
 		TransactionalObjectHeader<O>* header;
 
-		Reference<O> object;
-		Reference<O> objectCopy;
+		Reference<Object*> object;
+		Reference<Object*> objectCopy;
 
 	public:
 		TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr);
@@ -48,11 +48,11 @@ namespace engine {
 				return -1;
 		}
 
-		O getObject() {
+		Object* getObject() {
 			return object;
 		}
 
-		O getObjectLocalCopy() {
+		Object* getObjectLocalCopy() {
 			return objectCopy;
 		}
 	};
@@ -64,7 +64,7 @@ namespace engine {
 
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 
-		objectCopy = dynamic_cast<O>(object->clone());
+		objectCopy = object->clone();
 		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 	}
 
@@ -72,7 +72,7 @@ namespace engine {
 		header = NULL;
 		object = NULL;
 
-		assert(objectCopy == NULL);
+		//assert(objectCopy == NULL);
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {

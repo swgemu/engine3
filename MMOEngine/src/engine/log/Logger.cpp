@@ -193,6 +193,9 @@ void Logger::getTime(String& times, bool getFull) {
 
 	str << "(" << (elapsed / 1000) << " s)";
 
+	if (getFull)
+		str << " " << Thread::getCurrentThread()->getName() << " -";
+
 	times = str.toString();
 }
 
@@ -206,6 +209,9 @@ void Logger::printTime(bool getFull) {
 		System::out << time.getMiliTime() << " msec ";
 
 	System::out << "(" << (elapsed / 1000) << " s)";
+
+	if (getFull)
+		System::out << " " << Thread::getCurrentThread()->getName() << " -";
 }
 
 uint64 Logger::getElapsedTime() {

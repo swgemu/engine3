@@ -198,6 +198,7 @@ MMOEngine/include/engine/service/proxy/StreamProxyService.h -text
 MMOEngine/include/engine/service/proxy/StreamProxyServiceClient.h -text
 MMOEngine/include/engine/service/proxy/StreamProxyServiceMap.h -text
 MMOEngine/include/engine/stm/Transaction.h -text
+MMOEngine/include/engine/stm/TransactionAbortedException.h -text
 MMOEngine/include/engine/stm/TransactionalMemoryManager.h -text
 MMOEngine/include/engine/stm/TransactionalObject.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHandle.h -text
@@ -553,6 +554,7 @@ MMOEngine/src/engine/service/proto/packets/SessionIDRequestMessage.h -text
 MMOEngine/src/engine/service/proto/packets/SessionIDResponseMessage.h -text
 MMOEngine/src/engine/stm/Transaction.cpp -text
 MMOEngine/src/engine/stm/Transaction.h -text
+MMOEngine/src/engine/stm/TransactionAbortedException.h -text
 MMOEngine/src/engine/stm/TransactionalMemoryManager.cpp -text
 MMOEngine/src/engine/stm/TransactionalMemoryManager.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHandle.h -text

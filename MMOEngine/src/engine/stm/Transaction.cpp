@@ -36,7 +36,6 @@ Transaction::Transaction() : Logger() {
 	command = TransactionalMemoryManager::instance()->getSocketManager();
 	commands.add(command);
 
-
 	tid = transactionID.increment();
 
 	setLogging(false);
@@ -64,11 +63,15 @@ void Transaction::start(Task* task) {
 
 	info("starting transaction");
 
-	TransactionalMemoryManager::instance()->setTransaction(this);
+	TransactionalMemoryManager::instance()->startTransaction(this);
 
 	uint64 startTime = System::getMikroTime();
 
-	task->run();
+	try {
+		task->run();
+	} catch (Exception& e) {
+		abort();
+	}
 
 	runTime += System::getMikroTime() - startTime;
 }
@@ -91,17 +94,17 @@ bool Transaction::commit() {
 				+readOnlyObjectsCount + " / " + readWriteObjectsCount +")");
 
 		doHelpTransactions();
+
+		//delete this;
 	} else {
 		info("aborted");
 
 		++commitAttempts;
 
 		if (helperTransaction.get() == NULL && helperTransaction.compareAndSet(NULL, this)) {
-			reset();
+			Thread::yield();
 
 			info("helping self");
-
-			Thread::yield();
 
 			start();
 
@@ -144,7 +147,7 @@ bool Transaction::doCommit() {
 		command->execute();
 	}
 
-	TransactionalMemoryManager::instance()->clearTransaction();
+	TransactionalMemoryManager::instance()->commitTransaction();
 
 	return true;
 }
@@ -172,10 +175,13 @@ void Transaction::doAbort(const char* reason) {
 	}
 
 	reset();
+
+	TransactionalMemoryManager::instance()->abortTransaction();
 }
 
 void Transaction::doHelpTransactions() {
 	for (int i = 0; i < helpedTransactions.size(); ++i) {
+		//Transaction* helpedTransaction = helpedTransactions.get(i);
 		Reference<Transaction*> helpedTransaction = helpedTransactions.get(i);
 
 		if (helpedTransaction->isUndecided()) {
@@ -191,7 +197,7 @@ void Transaction::doHelpTransactions() {
 }
 
 void Transaction::reset() {
-	status = UNDECIDED;
+	info("reset");
 
 	openedObjets.removeAll();
 
@@ -209,9 +215,7 @@ void Transaction::reset() {
 
 	readWriteObjects.removeAll();
 
-	TransactionalMemoryManager::instance()->clearTransaction();
-
-	info("reset");
+	status = UNDECIDED;
 }
 
 bool Transaction::acquireReadWriteObjects() {
@@ -227,6 +231,10 @@ bool Transaction::acquireReadWriteObjects() {
 
 		if (!handle->acquireHeader(this)) {
 			Transaction* competingTransaction = handle->getCompetingTransaction();
+			if (competingTransaction == NULL) {
+				doAbort("conflict with already released transaction");
+				return false;
+			}
 
 			if (!resolveConflict(competingTransaction))
 				return false;

@@ -64,6 +64,8 @@ namespace engine {
 
 		TransactionalObjectMap openedObjets;
 
+		//SortedVector<Object*> deletedObjects;
+
 		TransactionalObjectHandleVector readOnlyObjects;
 		TransactionalObjectHandleVector readWriteObjects;
 
@@ -72,6 +74,7 @@ namespace engine {
 		AtomicReference<Transaction> helperTransaction;
 
 		Vector<Reference<Transaction*> > helpedTransactions;
+		//Vector<Transaction*> helpedTransactions;
 
 		Vector<Command*> commands;
 
@@ -101,7 +104,7 @@ namespace engine {
 
 		template<class O> O openObjectForWrite(TransactionalObjectHeader<O>* header);
 
-		template<class O> O getOpenedRWObject(TransactionalObjectHeader<O>* header);
+		template<class O> O getOpenedObject(TransactionalObjectHeader<O>* header);
 
 		inline bool isUndecided() {
 			return status == UNDECIDED;
@@ -157,7 +160,10 @@ namespace engine {
 
 		void discardReadWriteObjects();
 
+		void deleteObject(Object* object);
+
 		friend class TaskManager;
+		friend class TransactionalObjectManager;
 	};
 
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {
@@ -171,8 +177,9 @@ namespace engine {
 			readOnlyObjects.add<O>(handle);
 		}
 
-		O localCopy = (O) handle->getObjectLocalCopy();
+		O localCopy = dynamic_cast<O>(handle->getObjectLocalCopy());
 
+		assert(localCopy != NULL);
 		return localCopy;
 	}
 
@@ -193,23 +200,25 @@ namespace engine {
 			readWriteObjects.add<O>(handle);
 		}
 
-		O localCopy = (O) handle->getObjectLocalCopy();
+		O localCopy = dynamic_cast<O>(handle->getObjectLocalCopy());
 
+		assert(localCopy != NULL);
 		return localCopy;
 	}
 
-	template<class O> O Transaction::getOpenedRWObject(TransactionalObjectHeader<O>* header) {
+	template<class O> O Transaction::getOpenedObject(TransactionalObjectHeader<O>* header) {
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
-		Reference<Transaction*> transaction = currentTransaction();
+		//Reference<Transaction*> transaction = currentTransaction();
+		Transaction* transaction = currentTransaction();
 
 		if (status == READ_CHECKING && transaction->compareTo(this) > 0)
 			transaction->helpTransaction(this);
 
 		if (status == COMMITTED)
-			return handle->getObjectLocalCopy();
+			return dynamic_cast<O>(handle->getObjectLocalCopy());
 		else
-			return handle->getObject();
+			return dynamic_cast<O>(handle->getObject());
 	}
 
   } // namespace stm

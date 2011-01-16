@@ -48,6 +48,7 @@ Task::~Task() {
 void Task::execute() {
 #ifdef WITH_STM
 	Reference<engine::stm::Transaction*> transaction = engine::stm::Transaction::currentTransaction();
+	//engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
 
 	try {
 		transaction->start(this);

@@ -11,17 +11,19 @@
 
 // Imported class dependencies
 
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
 #include "system/io/ObjectOutputStream.h"
 
-#include "engine/util/ObserverEventMap.h"
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
 
 #include "system/io/ObjectInputStream.h"
 
-#include "engine/util/Observable.h"
-
 #include "engine/util/Observer.h"
+
+#include "engine/util/ObserverEventMap.h"
+
+#include "system/thread/Lockable.h"
+
+#include "engine/util/Observable.h"
 
 #include "engine/core/ManagedObject.h"
 
@@ -86,7 +88,7 @@ DistributedObjectServant* Observer::_getImplementation() {
 	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
 
 void Observer::_setImplementation(DistributedObjectServant* servant) {
-	setObject(dynamic_cast<ManagedObjectImplementation*>(servant));
+	setObject(dynamic_cast<ObserverImplementation*>(servant));
 }
 
 /*

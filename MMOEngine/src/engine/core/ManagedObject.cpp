@@ -64,6 +64,15 @@ void ManagedObject::_lock(ManagedObject* obj) {
 		_implementation->lock(obj);
 }
 
+void ManagedObject::_lock(Lockable* obj) {
+	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+
+	} else
+		_implementation->lock(obj);
+}
+
 void ManagedObject::_rlock(bool doLock) {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {
@@ -90,15 +99,6 @@ void ManagedObject::_wlock(bool doLock) {
 		method.executeWithVoidReturn();
 	} else
 		_implementation->wlock(doLock);
-}
-
-void ManagedObject::_wlock(Lockable* obj) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
-	if (_implementation == NULL) {
-		throw ObjectNotLocalException(this);
-
-	} else
-		_implementation->wlock(obj);
 }
 
 void ManagedObject::_wlock(ManagedObject* obj) {

@@ -48,11 +48,11 @@ public:
 
 	void lock(ManagedObject* obj);
 
+	void lock(Lockable* obj);
+
 	void rlock(bool doLock = true);
 
 	void wlock(bool doLock = true);
-
-	void wlock(Lockable* obj);
 
 	void wlock(ManagedObject* obj);
 
@@ -101,11 +101,11 @@ protected:
 
 	void _lock(ManagedObject* obj);
 
+	void _lock(Lockable* obj);
+
 	void _rlock(bool doLock = true);
 
 	void _wlock(bool doLock = true);
-
-	void _wlock(Lockable* obj);
 
 	void _wlock(ManagedObject* obj);
 
@@ -140,11 +140,11 @@ public:
 
 	void lock(ManagedObject* obj);
 
+	void lock(Lockable* obj);
+
 	void rlock(bool doLock = true);
 
 	void wlock(bool doLock = true);
-
-	void wlock(Lockable* obj);
 
 	void wlock(ManagedObject* obj);
 

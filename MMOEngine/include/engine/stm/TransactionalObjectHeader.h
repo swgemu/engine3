@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TransactionalMemoryManager.h"
 
+#include "TransactionAbortedException.h"
+
 #include "Transaction.h"
 
 namespace engine {
@@ -18,7 +20,7 @@ namespace engine {
 	template<class O> class TransactionalObjectHandle;
 
 	template<class O> class TransactionalObjectHeader {
-		Reference<O> object;
+		Reference<Object*> object;
 
 		AtomicReference<Transaction> ownerTransaction;
 
@@ -30,9 +32,7 @@ namespace engine {
 		}
 
 		TransactionalObjectHeader(O obj) {
-			object = obj;
-
-			assert(object->getReferenceCount() != 0);
+			setObject(obj);
 
 			ownerTransaction = NULL;
 		}
@@ -50,13 +50,13 @@ namespace engine {
 
 		void discardObject(Transaction* transaction);
 
-		O getObject();
+		Object* getObject();
 
 		Transaction* getTransaction() const {
 			return ownerTransaction;
 		}
 
-		bool hasObject(O obj) const {
+		bool hasObject(Object* obj) const {
 			return object == obj;
 		}
 
@@ -65,7 +65,7 @@ namespace engine {
 		}
 
 		void setObject(O obj) {
-			object = obj;
+			object = dynamic_cast<Object*>(obj);
 		}
 
 		friend class Transaction;
@@ -75,15 +75,14 @@ namespace engine {
 	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createHandle() {
 		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>(this);
 
-		assert(object->getReferenceCount() != 0);
-
 		return handle;
 	}
 
-	template<class O> O TransactionalObjectHeader<O>::getObject() {
+	template<class O> Object* TransactionalObjectHeader<O>::getObject() {
 		if (ownerTransaction != NULL)
-			return ownerTransaction->getOpenedRWObject(this);
-		else
+			throw TransactionAbortedException();
+			//return ownerTransaction->getOpenedObject(this);
+		 else
 			return object;
 	}
 
@@ -104,6 +103,8 @@ namespace engine {
 
 	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
 		object = handle->getObjectLocalCopy();
+
+		//ownerTransaction->release();
 
 		ownerTransaction = NULL;
 	}

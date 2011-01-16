@@ -9,11 +9,13 @@
 
 // Imported class dependencies
 
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
 #include "system/io/ObjectOutputStream.h"
 
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
+
 #include "system/io/ObjectInputStream.h"
+
+#include "system/thread/Lockable.h"
 
 #include "engine/core/ManagedObject.h"
 
@@ -94,7 +96,7 @@ DistributedObjectServant* Observable::_getImplementation() {
 	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
 
 void Observable::_setImplementation(DistributedObjectServant* servant) {
-	setObject(dynamic_cast<ManagedObjectImplementation*>(servant));
+	setObject(dynamic_cast<ObservableImplementation*>(servant));
 }
 
 /*
