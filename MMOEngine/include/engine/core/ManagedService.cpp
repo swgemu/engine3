@@ -4,19 +4,6 @@
 
 #include "ManagedService.h"
 
-
-// Imported class dependencies
-
-#include "system/io/ObjectOutputStream.h"
-
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
-#include "system/io/ObjectInputStream.h"
-
-#include "system/thread/Lockable.h"
-
-#include "engine/core/ManagedObject.h"
-
 /*
  *	ManagedServiceStub
  */
@@ -31,10 +18,11 @@ ManagedService::~ManagedService() {
 DistributedObjectServant* ManagedService::_getImplementation() {
 
 	_updated = true;
-	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
+	return _impl;
+}
 
 void ManagedService::_setImplementation(DistributedObjectServant* servant) {
-	setObject(dynamic_cast<ManagedServiceImplementation*>(servant));
+	_impl = servant;
 }
 
 /*
@@ -77,30 +65,32 @@ ManagedServiceImplementation::operator const ManagedService*() {
 	return _this;
 }
 
-Object* ManagedServiceImplementation::clone() {
-	return (Object*) new ManagedServiceImplementation(*this);
-}
-
-
 void ManagedServiceImplementation::lock(bool doLock) {
+	_this->lock(doLock);
 }
 
 void ManagedServiceImplementation::lock(ManagedObject* obj) {
+	_this->lock(obj);
 }
 
 void ManagedServiceImplementation::rlock(bool doLock) {
+	_this->rlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(bool doLock) {
+	_this->wlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(ManagedObject* obj) {
+	_this->wlock(obj);
 }
 
 void ManagedServiceImplementation::unlock(bool doLock) {
+	_this->unlock(doLock);
 }
 
 void ManagedServiceImplementation::runlock(bool doLock) {
+	_this->runlock(doLock);
 }
 
 void ManagedServiceImplementation::_serializationHelperMethod() {

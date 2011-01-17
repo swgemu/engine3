@@ -79,6 +79,9 @@ void TransactionalMemoryManager::abortTransaction() {
 }
 
 void TransactionalMemoryManager::printStatistics() {
+	if (startedTransactions.get() <= 1)
+		return;
+
 	StringBuffer str;
 	str << "started " << startedTransactions.get() << ", " << "commited " << commitedTransactions.get() << ", "
 			<< "aborted " << abortedTransactions.get();

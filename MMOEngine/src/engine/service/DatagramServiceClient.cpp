@@ -32,20 +32,22 @@ DatagramServiceClient::~DatagramServiceClient() {
 	close();
 }
 
-class MessageReceiverTask : public Task {
+class ClientMessageReceiverTask : public Task {
 	Reference<DatagramServiceClient*> client;
 
 	Packet* message;
 
 public:
-	MessageReceiverTask(DatagramServiceClient* cli, Packet* packet) {
+	ClientMessageReceiverTask(DatagramServiceClient* cli, Packet* packet) {
 		client = cli;
+		printf("FUCK\n");
 
 		message = packet->clone();
 	}
 
-	~MessageReceiverTask() {
+	~ClientMessageReceiverTask() {
 		delete message;
+		message = NULL;
 	}
 
 	void run() {
@@ -61,7 +63,7 @@ void DatagramServiceClient::recieveMessages() {
 			if (!read(&packet))
 				continue;
 
-			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet);
+			Reference<Task*> receiverTask = new ClientMessageReceiverTask(this, &packet);
 			receiverTask->execute();
 		} catch (SocketException& e) {
 			System::out << e.getMessage() << "\n";

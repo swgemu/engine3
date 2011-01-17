@@ -8,25 +8,6 @@
 
 #include "engine/util/Observable.h"
 
-
-// Imported class dependencies
-
-#include "system/io/ObjectOutputStream.h"
-
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
-#include "system/io/ObjectInputStream.h"
-
-#include "engine/util/Observer.h"
-
-#include "engine/util/ObserverEventMap.h"
-
-#include "system/thread/Lockable.h"
-
-#include "engine/util/Observable.h"
-
-#include "engine/core/ManagedObject.h"
-
 /*
  *	ObserverStub
  */
@@ -85,10 +66,11 @@ int Observer::compareTo(Observer* obj) {
 DistributedObjectServant* Observer::_getImplementation() {
 
 	_updated = true;
-	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
+	return _impl;
+}
 
 void Observer::_setImplementation(DistributedObjectServant* servant) {
-	setObject(dynamic_cast<ObserverImplementation*>(servant));
+	_impl = servant;
 }
 
 /*
@@ -131,30 +113,32 @@ ObserverImplementation::operator const Observer*() {
 	return _this;
 }
 
-Object* ObserverImplementation::clone() {
-	return this;
-}
-
-
 void ObserverImplementation::lock(bool doLock) {
+	_this->lock(doLock);
 }
 
 void ObserverImplementation::lock(ManagedObject* obj) {
+	_this->lock(obj);
 }
 
 void ObserverImplementation::rlock(bool doLock) {
+	_this->rlock(doLock);
 }
 
 void ObserverImplementation::wlock(bool doLock) {
+	_this->wlock(doLock);
 }
 
 void ObserverImplementation::wlock(ManagedObject* obj) {
+	_this->wlock(obj);
 }
 
 void ObserverImplementation::unlock(bool doLock) {
+	_this->unlock(doLock);
 }
 
 void ObserverImplementation::runlock(bool doLock) {
+	_this->runlock(doLock);
 }
 
 void ObserverImplementation::_serializationHelperMethod() {

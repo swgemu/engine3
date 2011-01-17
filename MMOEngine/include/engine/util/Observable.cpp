@@ -6,19 +6,6 @@
 
 #include "engine/log/Logger.h"
 
-
-// Imported class dependencies
-
-#include "system/io/ObjectOutputStream.h"
-
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
-#include "system/io/ObjectInputStream.h"
-
-#include "system/thread/Lockable.h"
-
-#include "engine/core/ManagedObject.h"
-
 /*
  *	ObservableStub
  */
@@ -93,10 +80,11 @@ int Observable::getObserverCount(unsigned int eventType) {
 DistributedObjectServant* Observable::_getImplementation() {
 
 	_updated = true;
-	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
+	return _impl;
+}
 
 void Observable::_setImplementation(DistributedObjectServant* servant) {
-	setObject(dynamic_cast<ObservableImplementation*>(servant));
+	_impl = servant;
 }
 
 /*
@@ -139,30 +127,32 @@ ObservableImplementation::operator const Observable*() {
 	return _this;
 }
 
-Object* ObservableImplementation::clone() {
-	return (Object*) new ObservableImplementation(*this);
-}
-
-
 void ObservableImplementation::lock(bool doLock) {
+	_this->lock(doLock);
 }
 
 void ObservableImplementation::lock(ManagedObject* obj) {
+	_this->lock(obj);
 }
 
 void ObservableImplementation::rlock(bool doLock) {
+	_this->rlock(doLock);
 }
 
 void ObservableImplementation::wlock(bool doLock) {
+	_this->wlock(doLock);
 }
 
 void ObservableImplementation::wlock(ManagedObject* obj) {
+	_this->wlock(obj);
 }
 
 void ObservableImplementation::unlock(bool doLock) {
+	_this->unlock(doLock);
 }
 
 void ObservableImplementation::runlock(bool doLock) {
+	_this->runlock(doLock);
 }
 
 void ObservableImplementation::_serializationHelperMethod() {

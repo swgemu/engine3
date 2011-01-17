@@ -37,6 +37,8 @@ void Stream::copy(Stream* stream, int startoffs) {
 
 	stream->reset();
 	stream->writeStream(elementData + startoffs, newSize);
+
+	stream->offset = stream->elementData;
 }
 
 void Stream::setSize(int len, bool copyContent) {

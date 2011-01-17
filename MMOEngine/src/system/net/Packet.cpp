@@ -14,66 +14,12 @@ Packet::Packet(int size) : Stream(size, RAW_MAX_SIZE), ObjectInputStream(), Obje
 Packet::~Packet() {
 }
 
-/*void Packet::create(char *buf[], int len) {
-	setSize(len);
-
-	memcpy(elementData, buf, len);
-}*/
-
 Packet* Packet::clone(int startoffs) {
-	int newSize = size() - startoffs;
-	Packet* p = new Packet(newSize);
-	p->insertStream(elementData + startoffs, newSize);
+	Packet* pack = new Packet();
+	copy(pack, startoffs);
 
-	return p;
+	return pack;
 }
-
-/*void Packet::copy(Packet* pack, int startoffs) {
-	int newSize = size() - startoffs;
-
-	pack->reset();
-	pack->insertStream(elementData + startoffs, newSize);
-}
-
-void Packet::setSize(int len, bool copyContent) {
-	char* oldElementData = elementData;
-	Vector<char>::setSize(len, copyContent);
-
-	if (oldElementData != elementData)
-		offset = (offset - oldElementData) + elementData;
-
-	end = elementData + len;
-}
-
-void Packet::extendSize(int len, bool copyContent) {
-	if ((offset += len) > end) {
-		char* oldElementData = elementData;
-		Vector<char>::setSize(offset - elementData);
-
-		if (oldElementData != elementData)
-			offset = (offset - oldElementData) + elementData;
-
-		end = offset;
-	}
-}
-
-void Packet::clear() {
-	Vector<char>::setSize(0);
-
-	end = offset = elementData;
-}
-
-void Packet::reset() {
-	offset = elementData;
-}
-
-void Packet::removeLastBytes(int len) {
-	int newSize = size() - len;
-	if (newSize < 0)
-		throw PacketIndexOutOfBoundsException(this, newSize);
-
-	setSize(newSize);
-}*/
 
 String Packet::toStringData() {
 	StringBuffer str;
