@@ -12,7 +12,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../DatagramServiceThread.h"
 
 #include "engine/core/TaskManager.h"
-#include "engine/core/ReentrantTask.h"
 
 #include "BasePacket.h"
 #include "BaseFragmentedPacket.h"

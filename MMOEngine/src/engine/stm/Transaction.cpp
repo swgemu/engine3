@@ -16,10 +16,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 using namespace engine::stm;
 
-AtomicInteger transactionID;
-
-Transaction::Transaction() : Logger() {
-	status = UNDECIDED;
+Transaction::Transaction(int id) : Logger() {
+	status = INITIAL;
 
 	commitTime = 0;
 	runTime = 0;
@@ -36,7 +34,7 @@ Transaction::Transaction() : Logger() {
 	command = TransactionalMemoryManager::instance()->getSocketManager();
 	commands.add(command);
 
-	tid = transactionID.increment();
+	tid = id;
 
 	setLogging(false);
 	setGlobalLogging(true);
@@ -48,11 +46,17 @@ Transaction::~Transaction() {
 	info("deleted");
 }
 
-void Transaction::start() {
-	start(task);
+bool Transaction::start() {
+	return start(task);
 }
 
-void Transaction::start(Task* task) {
+bool Transaction::start(Task* task) {
+	if (!setState(INITIAL, UNDECIDED)) {
+		info("failed to start transaction (state " + String::valueOf(status) + ")");
+
+		return false;
+	}
+
 	assert(task != NULL && "task was NULL");
 
 	Transaction::task = task;
@@ -65,15 +69,23 @@ void Transaction::start(Task* task) {
 
 	TransactionalMemoryManager::instance()->startTransaction(this);
 
+	helperTransaction = NULL;
+
 	uint64 startTime = System::getMikroTime();
 
 	try {
 		task->run();
+	} catch (TransactionAbortedException& e) {
+		abort();
 	} catch (Exception& e) {
+		e.printStackTrace();
+
 		abort();
 	}
 
 	runTime += System::getMikroTime() - startTime;
+
+	return true;
 }
 
 bool Transaction::commit() {
@@ -97,16 +109,15 @@ bool Transaction::commit() {
 
 		//delete this;
 	} else {
-		info("aborted");
+		doAbort();
 
-		++commitAttempts;
-
-		if (helperTransaction.get() == NULL && helperTransaction.compareAndSet(NULL, this)) {
+		if (helperTransaction.compareAndSet(NULL, this)) {
 			Thread::yield();
 
 			info("helping self");
 
-			start();
+			if (!start())
+				return false;
 
 			return commit();
 		}
@@ -119,23 +130,27 @@ bool Transaction::commit() {
 
 bool Transaction::doCommit() {
 	if (!isUndecided()) {
-		doAbort("transaction not in UNDECIDED state on commit");
+		info("transaction not in UNDECIDED state on commit");
 		return false;
 	}
 
-	if (!acquireReadWriteObjects())
+	if (!acquireReadWriteObjects()) {
+		info("failed to acquire read write objects");
 		return false;
+	}
 
 	if (!setState(UNDECIDED, READ_CHECKING)) {
-		doAbort("status change UNDECIED -> READ CHECKING failed");
+		info("status change UNDECIED -> READ CHECKING failed");
 		return false;
 	}
 
-	if (!validateReadOnlyObjects())
+	if (!validateReadOnlyObjects()) {
+		info("failed to validate read only objects");
 		return false;
+	}
 
 	if (!setState(READ_CHECKING, COMMITTED)) {
-		doAbort("status change READ CHECKING -> COMMITED failed");
+		info("status change READ CHECKING -> COMMITED failed");
 		return false;
 	}
 
@@ -153,7 +168,12 @@ bool Transaction::doCommit() {
 }
 
 void Transaction::abort() {
-	setState(ABORTED);
+	int currentStatus = status;
+
+	if (currentStatus == COMMITTED || currentStatus == INITIAL)
+		return;
+
+	setState(currentStatus, ABORTED);
 
 	if (status == ABORTED)
 		info("aborting");
@@ -161,9 +181,7 @@ void Transaction::abort() {
 		info("aborting failed");
 }
 
-void Transaction::doAbort(const char* reason) {
-	info("doing abort: " + String(reason));
-
+void Transaction::doAbort() {
 	status = ABORTED;
 
 	discardReadWriteObjects();
@@ -173,6 +191,10 @@ void Transaction::doAbort(const char* reason) {
 
 		command->undo();
 	}
+
+	info("aborted");
+
+	++commitAttempts;
 
 	reset();
 
@@ -184,15 +206,16 @@ void Transaction::doHelpTransactions() {
 		//Transaction* helpedTransaction = helpedTransactions.get(i);
 		Reference<Transaction*> helpedTransaction = helpedTransactions.get(i);
 
-		if (helpedTransaction->isUndecided()) {
-			info("helping transaction " + helpedTransaction->getLoggingName());
-
-			helpedTransaction->start();
-
-			helpedTransaction->commit();
-		} else {
-			helpedTransaction->clearHelperTransaction();
+		while (!helpedTransaction->isInitial() && !helpedTransaction->isCommited()) {
+			Thread::yield();
 		}
+
+		info("helping transaction " + helpedTransaction->getLoggingName());
+
+		if (!helpedTransaction->start())
+			continue;
+
+		helpedTransaction->commit();
 	}
 }
 
@@ -200,6 +223,8 @@ void Transaction::reset() {
 	info("reset");
 
 	openedObjets.removeAll();
+
+	localObjectCache.removeAll();
 
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
@@ -215,7 +240,7 @@ void Transaction::reset() {
 
 	readWriteObjects.removeAll();
 
-	status = UNDECIDED;
+	status = INITIAL;
 }
 
 bool Transaction::acquireReadWriteObjects() {
@@ -225,23 +250,25 @@ bool Transaction::acquireReadWriteObjects() {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			doAbort("object has changed on acquiring RW objects");
+			info("object has changed on acquiring RW objects");
 			return false;
 		}
 
-		if (!handle->acquireHeader(this)) {
+		while (!handle->acquireHeader(this)) {
 			Transaction* competingTransaction = handle->getCompetingTransaction();
 			if (competingTransaction == NULL) {
-				doAbort("conflict with already released transaction");
+				info("conflict with already released transaction");
 				return false;
 			}
 
 			if (!resolveConflict(competingTransaction))
 				return false;
+
+			Thread::yield();
 		}
 	}
 
-	for (int i = 0; i < readOnlyObjects.size(); ++i) {
+	/*for (int i = 0; i < readOnlyObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectContentChanged()) {
@@ -256,7 +283,7 @@ bool Transaction::acquireReadWriteObjects() {
 				}
 			}
 		}
-	}
+	}*/
 
 	info("finished acquiring read/write objects");
 
@@ -282,7 +309,7 @@ bool Transaction::validateReadOnlyObjects() {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			doAbort("object has changed on validating RO objects");
+			info("object has changed on validating RO objects");
 			return false;
 		}
 
@@ -309,29 +336,27 @@ void Transaction::discardReadWriteObjects() {
 
 bool Transaction::resolveConflict(Transaction* transaction) {
 	if (transaction->compareTo(this) < 0) {
-		info("abrting conflicting transction " + transaction->getLoggingName());
+		info("aborting conflicting transction " + transaction->getLoggingName());
 
 		helpTransaction(transaction);
 
-		return true;
+		return transaction->isAborted();
 	} else {
 		info("aborting self due to conflict");
 
-		transaction->helpTransaction(this);
-
-		this->doAbort("conflict with other transaction");
+		//transaction->helpTransaction(this);
 
 		return false;
 	}
 }
 
 void Transaction::helpTransaction(Transaction* transaction) {
-	if (!transaction->setHelperTransaction((this)))
-		return;
-
 	transaction->abort();
 
 	if (transaction->isAborted()) {
+		if (!transaction->setHelperTransaction((this)))
+			return;
+
 		info("adding helped transaction " + transaction->getLoggingName());
 
 		helpedTransactions.add(transaction);

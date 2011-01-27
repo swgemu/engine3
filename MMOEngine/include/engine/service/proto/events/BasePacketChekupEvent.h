@@ -23,7 +23,7 @@ namespace engine {
   namespace service {
     namespace proto {
 
-	class BasePacketChekupEvent : public ReentrantTask {
+	class BasePacketChekupEvent : public Task {
 		BaseClient* client;
 		BasePacket* packet;
 

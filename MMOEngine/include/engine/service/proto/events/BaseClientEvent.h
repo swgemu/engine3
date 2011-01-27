@@ -22,7 +22,7 @@ namespace engine {
   namespace service {
     namespace proto {
 
-	class BaseClientEvent : public ReentrantTask {
+	class BaseClientEvent : public Task {
 		BaseClient* client;
 
 	public:

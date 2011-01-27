@@ -57,6 +57,26 @@ namespace engine {
 		}
 	};
 
+	class TransactionalObjectHeaderMap : public HashTable<uint64, TransactionalObjectHeader<Object*>*> {
+		int hash(const uint64& key) {
+			return Long::hashCode(key);
+		}
+
+	public:
+		TransactionalObjectHeaderMap() : HashTable<uint64, TransactionalObjectHeader<Object*>*>(1000) {
+			setNullValue(NULL);
+		}
+
+		template<class O> TransactionalObjectHeader<O>* put(Object* object, TransactionalObjectHeader<O>* header) {
+			return (TransactionalObjectHeader<O>*) HashTable<uint64, TransactionalObjectHeader<Object*>*>::put((uint64) object,
+				(TransactionalObjectHeader<Object*>*) header);
+		}
+
+		template<class O> TransactionalObjectHeader<O>* get(O object) {
+			return (TransactionalObjectHeader<O>*) HashTable<uint64, TransactionalObjectHeader<Object*>*>::get((uint64) dynamic_cast<O>(object));
+		}
+	};
+
 	class Transaction : public Object, public Logger {
 		int tid;
 
@@ -68,6 +88,8 @@ namespace engine {
 
 		TransactionalObjectHandleVector readOnlyObjects;
 		TransactionalObjectHandleVector readWriteObjects;
+
+		TransactionalObjectHeaderMap localObjectCache;
 
 		Reference<Task*> task;
 
@@ -83,28 +105,33 @@ namespace engine {
 
 		int commitAttempts;
 
-		static const int UNDECIDED = 0;
-		static const int READ_CHECKING = 1;
-		static const int ABORTED = 2;
-		static const int COMMITTED = 3;
+		static const int INITIAL = 0;
+		static const int UNDECIDED = 1;
+		static const int READ_CHECKING = 2;
+		static const int ABORTED = 3;
+		static const int COMMITTED = 4;
 
 	public:
-		Transaction();
+		Transaction(int id);
 
 		virtual ~Transaction();
 
-		void start();
-		void start(Task* task);
+		bool start();
+		bool start(Task* task);
 
 		bool commit();
 
 		void abort();
 
-		template<class O> O openObject(TransactionalObjectHeader<O>* header);
+		int compareTo(Transaction* transaction);
 
-		template<class O> O openObjectForWrite(TransactionalObjectHeader<O>* header);
+		static Transaction* currentTransaction();
 
-		template<class O> O getOpenedObject(TransactionalObjectHeader<O>* header);
+		String toString();
+
+		inline bool isInitial() {
+			return status == INITIAL;
+		}
 
 		inline bool isUndecided() {
 			return status == UNDECIDED;
@@ -122,16 +149,26 @@ namespace engine {
 			return status == COMMITTED;
 		}
 
-		int compareTo(Transaction* transaction);
+		int getIdentifier() {
+			return tid;
+		}
 
-		static Transaction* currentTransaction();
-
-		String toString();
+		Task* getTask() {
+			return task;
+		}
 
 	protected:
+		template<class O> O openObject(TransactionalObjectHeader<O>* header);
+
+		template<class O> O openObjectForWrite(TransactionalObjectHeader<O>* header);
+
+		template<class O> O getOpenedObject(TransactionalObjectHeader<O>* header);
+
+		template<class O> TransactionalObjectHeader<O>* getHeader(O object);
+
 		bool doCommit();
 
-		void doAbort(const char* reason = "");
+		void doAbort();
 
 		void doHelpTransactions();
 
@@ -164,23 +201,37 @@ namespace engine {
 
 		friend class TaskManager;
 		friend class TransactionalObjectManager;
+		template<class O> friend class TransactionalObjectHeader;
+		template<class O> friend class TransactionalReference;
 	};
+
+	template<class O> TransactionalObjectHeader<O>* Transaction::getHeader(O object) {
+		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
+
+		if (header == NULL) {
+			return new TransactionalObjectHeader<O>(object);
+		}
+
+		return header;
+	}
 
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
-			handle = header->createHandle();
+			handle = header->createReadOnlyHandle();
+
+			localObjectCache.put(handle->getObject(), header);
 
 			openedObjets.put<O>(header, handle);
 
 			readOnlyObjects.add<O>(handle);
 		}
 
-		O localCopy = dynamic_cast<O>(handle->getObjectLocalCopy());
+		O object = dynamic_cast<O>(handle->getObject());
 
-		assert(localCopy != NULL);
-		return localCopy;
+		assert(object != NULL);
+		return object;
 	}
 
 	template<class O> O Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
@@ -189,7 +240,9 @@ namespace engine {
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
-			handle = header->createHandle();
+			handle = header->createWriteHandle();
+
+			localObjectCache.put(handle->getObjectLocalCopy(), header);
 
 			openedObjets.put<O>(header, handle);
 

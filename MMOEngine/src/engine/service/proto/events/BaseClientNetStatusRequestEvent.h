@@ -15,11 +15,11 @@ namespace engine {
   namespace service {
     namespace proto {
 
-	class BaseClientNetStatusRequestEvent : public ReentrantTask {
+	class BaseClientNetStatusRequestEvent : public Task {
 		Reference<BaseClient*> client;
 
 	public:
-		BaseClientNetStatusRequestEvent(BaseClient* cl) : ReentrantTask(5000) {
+		BaseClientNetStatusRequestEvent(BaseClient* cl) : Task(5000) {
 			client = cl;
 		}
 

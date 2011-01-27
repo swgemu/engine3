@@ -12,7 +12,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskScheduler.h"
 
 #include "Task.h"
-#include "ReentrantTask.h"
 
 TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager") {
 	shuttingDown = false;
@@ -172,7 +171,8 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 		throw IllegalArgumentException("task is already scheduled");
 
 	TaskScheduler* scheduler = getTaskScheduler();
-	assert (scheduler != NULL);
+	if (scheduler == NULL)
+		return;
 
 	locker.release();
 
@@ -269,28 +269,6 @@ public:
 
 	void run() {
 		System::out.println("test" + String::valueOf(value));
-	}
-};
-
-class ReentrantTestTask : public ReentrantTask {
-	int value;
-
-public:
-	ReentrantTestTask(int val) {
-		value = val;
-	}
-
-	void run() {
-		try {
-			//System::out.println("test" + String::valueOf(value));
-			if (System::random(10) == 0)
-				//TaskManagerImpl::instance()->scheduleTask(this, 100);
-
-			for (int i = 0; i < 0x1000; ++i) ;
-
-		} catch (Exception& e) {
-			e.printStackTrace();
-		}
 	}
 };
 

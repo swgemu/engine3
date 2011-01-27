@@ -20,7 +20,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/OutOfOrderMessage.h"
 #include "packets/DisconnectMessage.h"
 #include "packets/NetStatusRequestMessage.h"
-#include "engine/core/ReentrantTask.h"
 
 #include "system/platform.h"
 

@@ -20,7 +20,7 @@ namespace engine {
 		Reference<Object*> objectCopy;
 
 	public:
-		TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr);
+		TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr, bool forWrite);
 
 		virtual ~TransactionalObjectHandle();
 
@@ -57,15 +57,19 @@ namespace engine {
 		}
 	};
 
-	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr) {
+	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr, bool forWrite) {
 		header = hdr;
 
 		object = header->getObject();
 
-		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
+		if (forWrite) {
+			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 
-		objectCopy = object->clone();
-		//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
+			objectCopy = object->clone();
+
+			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
+		} else
+			objectCopy = NULL;
 	}
 
 	template<class O> TransactionalObjectHandle<O>::~TransactionalObjectHandle() {

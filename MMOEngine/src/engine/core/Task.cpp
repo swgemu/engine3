@@ -14,8 +14,7 @@ Task::Task() : PriorityQueueEntry() {
 	taskManager = Core::getTaskManager();
 
 	priority = 3;
-
-	reentrantTask = false;
+	period = 0;
 }
 
 Task::Task(uint64 mtime) : PriorityQueueEntry() {
@@ -24,8 +23,7 @@ Task::Task(uint64 mtime) : PriorityQueueEntry() {
 	nextExecutionTime.addMiliTime(mtime);
 
 	priority = 3;
-
-	reentrantTask = false;
+	period = 0;
 }
 
 Task::Task(Time& time) : PriorityQueueEntry() {
@@ -34,8 +32,7 @@ Task::Task(Time& time) : PriorityQueueEntry() {
 	nextExecutionTime = time;
 
 	priority = 3;
-
-	reentrantTask = false;
+	period = 0;
 }
 
 Task::~Task() {
@@ -51,7 +48,8 @@ void Task::execute() {
 	//engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
 
 	try {
-		transaction->start(this);
+		if (!transaction->start(this))
+			return;
 
 		transaction->commit();
 	} catch (Exception& e) {
@@ -65,6 +63,10 @@ void Task::execute() {
 
 	try {
 		run();
+
+		if (isPeriodic())
+			schedule(period);
+
 	} catch (Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
@@ -90,6 +92,18 @@ void Task::schedule(uint64 delay) {
 }
 
 void Task::schedule(Time& time) {
+	taskManager->scheduleTask(this, time);
+}
+
+void Task::schedulePeriodic(uint64 delay, uint64 period) {
+	setPeriod(period);
+
+	taskManager->scheduleTask(this, delay);
+}
+
+void Task::schedulePeriodic(Time& time, uint64 period) {
+	setPeriod(period);
+
 	taskManager->scheduleTask(this, time);
 }
 

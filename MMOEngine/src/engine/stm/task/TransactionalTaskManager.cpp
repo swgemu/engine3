@@ -3,12 +3,16 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/stm/Transaction.h"
+
 #include "TransactionalTaskManager.h"
 
 void TransactionalTaskManager::initialize() {
 	taskManager = new TaskManagerImpl();
 	taskManager->setLoggingName("TransactionalTaskmanager");
-	taskManager->initialize(1, 1);
+	taskManager->initialize(4, 1);
+	taskManager->setLogging(false);
+	taskManager->setGlobalLogging(false);
 }
 
 void TransactionalTaskManager::start() {
@@ -91,6 +95,11 @@ void TransactionalTaskManager::execute() {
 	LocalTaskManager* localTaskManager = getLocalTaskManager();
 
 	localTaskManager->mergeTasks(taskManager);
+
+	Task* task = Transaction::currentTransaction()->getTask();
+
+	if (task->isPeriodic())
+		taskManager->scheduleTask(task, task->getPeriod());
 }
 
 void TransactionalTaskManager::undo() {

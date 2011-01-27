@@ -16,24 +16,39 @@ public:
 	}
 };
 
-class TransactionalMemoryManagerStatisticsTask : public ReentrantTask {
+class TransactionalMemoryManagerStatisticsTask : public Task {
 public:
 	void run() {
 		TransactionalMemoryManager::instance()->printStatistics();
-
-		Core::getTaskManager()->scheduleTask(this, 1000);
 	}
 };
+
+Vector<bool> commitedTrans;
 
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
 	objectManager = new TransactionalObjectManager();
 
 	socketManager = new TransactionalSocketManager();
 
-	Core::getTaskManager()->scheduleTask(new TransactionalMemoryManagerStatisticsTask(), 1000);
+	Task* task = new TransactionalMemoryManagerStatisticsTask();
+	task->schedulePeriodic(1000, 1000);
 
-	setLogging(true);
-	setGlobalLogging(true);
+	for (int i = 0; i < 101000; ++i)
+		commitedTrans.add(false);
+
+	setLogging(false);
+	setGlobalLogging(false);
+}
+
+TransactionalMemoryManager::~TransactionalMemoryManager() {
+	printf("Undone transactions: ");
+
+	for (unsigned int i = 1; i < transactionID.get(); ++i) {
+		if (!commitedTrans.get(i))
+			printf("%i ", i);
+	}
+
+	printf("\n");
 }
 
 void TransactionalMemoryManager::commitPureTransaction() {
@@ -46,7 +61,7 @@ Transaction* TransactionalMemoryManager::getTransaction() {
 	Transaction* transaction = currentTransaction.get();
 
 	if (transaction == NULL) {
-		transaction = new Transaction();
+		transaction = new Transaction(transactionID.increment());
 
 		//transaction->info("created");
 
@@ -59,6 +74,11 @@ Transaction* TransactionalMemoryManager::getTransaction() {
 void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
 	Transaction* current = currentTransaction.get();
 
+	/*while (commitedTrans.size() < transaction->getIdentifier())
+		commitedTrans.add(false);*/
+
+	//commitedTrans.add(transaction->getIdentifier(), false);
+
 	assert(current == NULL || current == transaction);
 
 	currentTransaction.set(transaction);
@@ -67,6 +87,11 @@ void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
 }
 
 void TransactionalMemoryManager::commitTransaction() {
+	Transaction* transaction = currentTransaction.get();
+	commitedTrans.set(transaction->getIdentifier(), true);
+
+	info("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
+
 	currentTransaction.set(NULL);
 
 	commitedTransactions.increment();
@@ -83,10 +108,11 @@ void TransactionalMemoryManager::printStatistics() {
 		return;
 
 	StringBuffer str;
-	str << "started " << startedTransactions.get() << ", " << "commited " << commitedTransactions.get() << ", "
+	str << "started " << String::valueOf(startedTransactions.get() - 1) << ", "
+			<< "commited " << String::valueOf(commitedTransactions.get() - 1) << ", "
 			<< "aborted " << abortedTransactions.get();
 
-	info(str);
+	info(str, true);
 
 	startedTransactions.set(0);
 	commitedTransactions.set(0);

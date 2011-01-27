@@ -11,7 +11,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "core/Core.h"
 
 #include "core/Task.h"
-#include "core/ReentrantTask.h"
 #include "core/TaskManager.h"
 
 #include "core/ManagedReference.h"

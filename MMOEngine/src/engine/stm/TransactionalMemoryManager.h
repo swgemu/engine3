@@ -18,6 +18,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TransactionalObjectHeader.h"
 
+#include "TransactionalReference.h"
+
 namespace engine {
   namespace stm {
 
@@ -27,6 +29,8 @@ namespace engine {
 		TransactionalSocketManager* socketManager;
 
 		ThreadLocal<Transaction> currentTransaction;
+
+		AtomicInteger transactionID;
 
 		AtomicInteger startedTransactions;
 		AtomicInteger commitedTransactions;
@@ -50,6 +54,8 @@ namespace engine {
 
 	protected:
 		TransactionalMemoryManager();
+
+		~TransactionalMemoryManager();
 
 		Transaction* getTransaction();
 

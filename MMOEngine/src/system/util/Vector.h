@@ -63,8 +63,8 @@ namespace sys {
 
        void clone(Vector<E>& vector) const ;
 
-       bool toString(String& str);
-       bool parseFromString(const String& str, int version = 0);
+       /*bool toString(String& str);
+       bool parseFromString(const String& str, int version = 0);*/
 
        bool toBinaryStream(ObjectOutputStream* stream);
 
@@ -330,7 +330,7 @@ namespace sys {
 	   destroyElementRange(0, elementCount);
    }
 
-   template<class E> bool Vector<E>::toString(String& str) {
+   /*template<class E> bool Vector<E>::toString(String& str) {
 	   str = "{";
 	   str += String::valueOf(size());
 
@@ -391,7 +391,7 @@ namespace sys {
 	   }
 
 	   return true;
-   }
+   }*/
 
    template<class E> bool Vector<E>::toBinaryStream(ObjectOutputStream* stream) {
 	   int size = Vector<E>::size();

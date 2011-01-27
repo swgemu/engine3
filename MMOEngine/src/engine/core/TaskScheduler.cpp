@@ -114,6 +114,8 @@ bool TaskScheduler::cancelTask(Task* task) {
 	/*if (!task->clearTaskScheduler())
 		return false;*/
 
+	task->setPeriod(0);
+
 	return tasks.remove(task);
 }
 

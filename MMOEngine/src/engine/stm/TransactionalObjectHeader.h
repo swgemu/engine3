@@ -42,7 +42,9 @@ namespace engine {
 		O getForUpdate();
 
 	protected:
-		TransactionalObjectHandle<O>* createHandle();
+		TransactionalObjectHandle<O>* createReadOnlyHandle();
+
+		TransactionalObjectHandle<O>* createWriteHandle();
 
 		bool acquireObject(Transaction* transaction);
 
@@ -72,8 +74,14 @@ namespace engine {
 		friend class TransactionalObjectHandle<O>;
 	};
 
-	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createHandle() {
-		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>(this);
+	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createReadOnlyHandle() {
+		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>(this, false);
+
+		return handle;
+	}
+
+	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createWriteHandle() {
+		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>(this, true);
 
 		return handle;
 	}

@@ -27,7 +27,7 @@ namespace engine {
 
 		int priority;
 
-		bool reentrantTask;
+		uint64 period;
 
 	public:
 		Task();
@@ -44,6 +44,9 @@ namespace engine {
 
 		void schedule(uint64 delay = 0);
 		void schedule(Time& time);
+
+		void schedulePeriodic(uint64 delay, uint64 period);
+		void schedulePeriodic(Time& time, uint64 period);
 
 		void reschedule(uint64 delay = 0);
 		void reschedule(Time& time);
@@ -96,8 +99,8 @@ namespace engine {
 			return priority;
 		}
 
-		inline bool isReentrant() {
-			return reentrantTask;
+		inline bool isPeriodic() {
+			return period != 0;
 		}
 
 		inline bool setTaskScheduler(TaskScheduler* scheduler) {
@@ -114,12 +117,12 @@ namespace engine {
 			Task::priority = priority;
 		}
 
-		inline void setReentrant() {
-			reentrantTask = true;
+		inline uint64 getPeriod() {
+			return period;
 		}
 
-		inline void setNonReentrant() {
-			reentrantTask = false;
+		inline void setPeriod(uint64 per) {
+			period = per;
 		}
 
 		friend class TimedTaskQueue;
