@@ -9,6 +9,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <unistd.h>
 #endif
 
+#ifdef PLATFORM_MAC
+#include <sched.h>
+#endif
+
 #include <mysql.h>
 
 AtomicInteger Thread::threadCounter;
@@ -109,7 +113,11 @@ void Thread::sleep(uint64 millis, uint64 nanos) {
 }
 
 void Thread::yield() {
+#ifndef PLATFORM_MAC
 	pthread_yield();
+#else
+	sched_yield();
+#endif
 }
 
 bool Thread::isDetached() {
