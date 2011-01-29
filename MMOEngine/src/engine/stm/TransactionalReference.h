@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
-	template<class O> class TransactionalReference {
+  	template<class O> class TransactionalReference {
 		TransactionalObjectHeader<O>* header;
 
 	public:
@@ -51,11 +51,11 @@ namespace engine {
 		}
 
 		O operator->() {
-			return get();
+			return getForUpdate();
 		}
 
 		operator O() {
-			return get();
+			return getForUpdate();
 		}
 
 		O get() {
@@ -73,15 +73,18 @@ namespace engine {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			return header->get()->toBinaryStream(stream);
+			return get()->toBinaryStream(stream);
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			return header->get()->parseFromBinaryStream(stream);
+			return getForUpdate()->parseFromBinaryStream(stream);
 		}
 
 	protected:
 		TransactionalObjectHeader<O>* getHeader(O object) {
+			if (object == NULL)
+				return NULL;
+
 			return Transaction::currentTransaction()->getHeader(object);
 		}
 
@@ -93,6 +96,5 @@ namespace engine {
 
   } // namespace stm
 } // namespace engine
-
 
 #endif /* ENGINE_STM_TRANSACTIONALREFERENCE_H_ */

@@ -57,6 +57,8 @@ using namespace engine::util;
 
 #include "system/util/SortedVector.h"
 
+#include "engine/stm/TransactionalReference.h"
+
 #include "engine/util/Coordinate.h"
 
 #include "engine/util/Observable.h"

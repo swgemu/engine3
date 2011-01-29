@@ -31,6 +31,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
+#ifdef WITH_STM
+#include "engine/stm/TransactionalReference.h"
+#endif
+
 /**
  * A quad tree is a 2D data structure that keeps lots of objects nicely
  * sorted in a tree with four children in every node, so that queries like
@@ -46,7 +50,11 @@ namespace engine {
   namespace util {
 
 	class QuadTree {
+	#ifdef WITH_STM
+		TransactionalReference<QuadTreeNode*> root;
+	#else
 		Reference<QuadTreeNode*> root;
+	#endif
 
 		static bool logTree;
 

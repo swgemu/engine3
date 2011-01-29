@@ -29,6 +29,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#ifdef WITH_STM
+#include "engine/stm/TransactionalReference.h"
+#endif
+
 /**
  * A quad tree is a 2D data structure that keeps lots of objects nicely
  * sorted in a tree with four children in every node, so that queries like
@@ -44,11 +48,19 @@ namespace engine {
 	class QuadTreeNode : public Object {
 		SortedVector<QuadTreeEntry*> objects;
 
+	#ifdef WTH_STM
+		TransactionalReference<QuadTreeNode*> parentNode;
+		TransactionalReference<QuadTreeNode*> nwNode;
+		TransactionalReference<QuadTreeNode*> neNode;
+		TransactionalReference<QuadTreeNode*> swNode;
+		TransactionalReference<QuadTreeNode*> seNode;
+	#else
 		Reference<QuadTreeNode*> parentNode;
 		Reference<QuadTreeNode*> nwNode;
 		Reference<QuadTreeNode*> neNode;
 		Reference<QuadTreeNode*> swNode;
 		Reference<QuadTreeNode*> seNode;
+	#endif
 
 		float minX, minY;
 		float maxX, maxY;
@@ -59,6 +71,10 @@ namespace engine {
 		QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadTreeNode *parent);
 
 		~QuadTreeNode();
+
+		Object* clone() {
+			return new QuadTreeNode(*this);
+		}
 
 		// Add a object to this node
 		void addObject(QuadTreeEntry *obj);

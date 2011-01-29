@@ -9,6 +9,8 @@ include system.lang.ref.Reference;
 include system.lang.Math;
 include system.util.SortedVector;
 
+include engine.stm.TransactionalReference;
+
 import engine.core.ManagedObject;
 
 import engine.util.Observable;
@@ -18,7 +20,9 @@ import engine.util.QuadTree;
 import engine.util.QuadTreeNode;
 
 class QuadTreeEntry extends Observable implements Coordinate {
+	@dereferenced
 	transient protected Reference<QuadTreeNode> node;
+	//transient protected TransactionalReference<QuadTreeNode> node;
 	
 	protected boolean bounding;
 

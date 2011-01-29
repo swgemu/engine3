@@ -462,7 +462,7 @@ bool QuadTree::_update(QuadTreeNode *node, QuadTreeEntry *obj) {
     //data->IncRef ();
 
     // Go upwards til the object is inside the square.
-    Reference<QuadTreeNode*> cur = node->parentNode;
+    QuadTreeNode* cur = node->parentNode;
     while (cur != NULL && !cur->testInside(obj))
         cur = cur->parentNode;
 
