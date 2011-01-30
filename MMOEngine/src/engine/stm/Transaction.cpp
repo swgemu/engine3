@@ -37,7 +37,7 @@ Transaction::Transaction(int id) : Logger() {
 	tid = id;
 
 	setLogging(false);
-	setGlobalLogging(true);
+	setGlobalLogging(false);
 }
 
 Transaction::~Transaction() {
@@ -101,7 +101,7 @@ bool Transaction::commit() {
 	commitTime += System::getMikroTime() - startTime;
 
 	if (commited) {
-		info("commited (" + String::valueOf(runTime / 1000) + "ms / " + String::valueOf(commitTime) + "Us, "
+		info("commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
 				+readOnlyObjectsCount + " / " + readWriteObjectsCount +")");
 

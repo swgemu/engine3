@@ -23,7 +23,8 @@ public:
 	}
 };
 
-Vector<bool> commitedTrans;
+//Vector<bool> commitedTrans;
+bool initializationTransactionStarted;
 
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
 	objectManager = new TransactionalObjectManager();
@@ -33,22 +34,24 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 	Task* task = new TransactionalMemoryManagerStatisticsTask();
 	task->schedulePeriodic(1000, 1000);
 
-	for (int i = 0; i < 101000; ++i)
-		commitedTrans.add(false);
+	/*for (int i = 0; i < 101000; ++i)
+		commitedTrans.add(false);*/
+
+	initializationTransactionStarted = false;
 
 	setLogging(false);
 	setGlobalLogging(false);
 }
 
 TransactionalMemoryManager::~TransactionalMemoryManager() {
-	printf("Undone transactions: ");
+	/*printf("Undone transactions: ");
 
 	for (unsigned int i = 1; i < transactionID.get(); ++i) {
 		if (!commitedTrans.get(i))
 			printf("%i ", i);
 	}
 
-	printf("\n");
+	printf("\n");*/
 }
 
 void TransactionalMemoryManager::commitPureTransaction() {
@@ -81,6 +84,12 @@ void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
 
 	assert(current == NULL || current == transaction);
 
+	if (transaction->getIdentifier() != 1) {
+		while (!initializationTransactionStarted) {
+			Thread::sleep(1000);
+		}
+	}
+
 	currentTransaction.set(transaction);
 
 	startedTransactions.increment();
@@ -88,13 +97,16 @@ void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
 
 void TransactionalMemoryManager::commitTransaction() {
 	Transaction* transaction = currentTransaction.get();
-	commitedTrans.set(transaction->getIdentifier(), true);
+	//commitedTrans.set(transaction->getIdentifier(), true);
 
 	info("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
 
 	currentTransaction.set(NULL);
 
 	commitedTransactions.increment();
+
+	if (transaction->getIdentifier() == 1)
+		initializationTransactionStarted = true;
 }
 
 void TransactionalMemoryManager::abortTransaction() {
