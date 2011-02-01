@@ -216,6 +216,7 @@ bool BaseProtocol::compress(Packet* pack) {
 
    	if (compSize + 3 >= nLength) {
    	//if (false) {
+   		deflateEnd(&packet);
     	delete [] output;
 
     	pack->writeByte(pack->getOffset() - 3, 0); //update compression byte to 0
