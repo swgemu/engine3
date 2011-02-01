@@ -809,7 +809,7 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 			msg << "recievedTick: " << hostByte << " clientDelta:" << clientDelta << " serverDelta:" << serverDelta;
 			info(msg, true);*/
 
-			if (clientDelta > serverDelta) {
+			/*if (clientDelta > serverDelta) {
 				uint16 difference = clientDelta - serverDelta;
 
 				if ((difference > 100) && (++erroneusTicks > 2)) {
@@ -819,7 +819,7 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 
 					return false;
 				}
-			} else
+			} else*/
 				erroneusTicks = 0;
 		}
 
