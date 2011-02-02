@@ -38,7 +38,14 @@ void Stream::copy(Stream* stream, int startoffs) {
 	stream->reset();
 	stream->writeStream(elementData + startoffs, newSize);
 
-	stream->offset = stream->elementData;
+
+	/* TA: resetting the offset breaks message->clone() for BaseProtocol
+	 * because it expects the offset to be at the end.
+	 * if startoffs == 0, means we copy all the packet -> we can copy the offset too of the original packet
+	 */
+
+	if (startoffs == 0)
+		stream->offset = stream->elementData + (offset - elementData);
 }
 
 void Stream::setSize(int len, bool copyContent) {
