@@ -779,26 +779,6 @@ float QuadTreeEntryImplementation::getDistanceTo(QuadTreeEntry* obj) {
 	return Math::sqrt(deltaX * deltaX + deltaY * deltaY);
 }
 
-bool QuadTreeEntryImplementation::isInSWArea(QuadTreeNode* node) {
-	// engine/util/QuadTreeEntry.idl(127):   	positionY >= node.minY && positionY < node.dividerY;
-	return positionX >= node->minX && positionX < node->dividerX && positionY >= node->minY && positionY < node->dividerY;
-}
-
-bool QuadTreeEntryImplementation::isInSEArea(QuadTreeNode* node) {
-	// engine/util/QuadTreeEntry.idl(133):   			positionY >= node.minY && positionY < node.dividerY;
-	return positionX >= node->dividerX && positionX < node->maxX && positionY >= node->minY && positionY < node->dividerY;
-}
-
-bool QuadTreeEntryImplementation::isInNWArea(QuadTreeNode* node) {
-	// engine/util/QuadTreeEntry.idl(139):   	positionY >= node.dividerY && positionY < node.maxY;
-	return positionX >= node->minX && positionX < node->dividerX && positionY >= node->dividerY && positionY < node->maxY;
-}
-
-bool QuadTreeEntryImplementation::isInArea(QuadTreeNode* node) {
-	// engine/util/QuadTreeEntry.idl(145):   (positionY + radius > node.dividerY && positionY - radius < node.dividerY);
-	return (positionX + radius > node->dividerX && positionX - radius < node->dividerX) || (positionY + radius > node->dividerY && positionY - radius < node->dividerY);
-}
-
 void QuadTreeEntryImplementation::notifyInsert(QuadTreeEntry* obj) {
 }
 
@@ -809,105 +789,100 @@ void QuadTreeEntryImplementation::notifyDissapear(QuadTreeEntry* obj) {
 }
 
 float QuadTreeEntryImplementation::getPositionX() {
-	// engine/util/QuadTreeEntry.idl(159):  		return Coordinate.getPositionX();
+	// engine/util/QuadTreeEntry.idl(147):  		return Coordinate.getPositionX();
 	return Coordinate::getPositionX();
 }
 
 float QuadTreeEntryImplementation::getPositionZ() {
-	// engine/util/QuadTreeEntry.idl(163):  		return Coordinate.getPositionZ();
+	// engine/util/QuadTreeEntry.idl(151):  		return Coordinate.getPositionZ();
 	return Coordinate::getPositionZ();
 }
 
 float QuadTreeEntryImplementation::getPositionY() {
-	// engine/util/QuadTreeEntry.idl(167):  		return Coordinate.getPositionY();
+	// engine/util/QuadTreeEntry.idl(155):  		return Coordinate.getPositionY();
 	return Coordinate::getPositionY();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionX() {
-	// engine/util/QuadTreeEntry.idl(171):  		return Coordinate.getPreviousPositionX();
+	// engine/util/QuadTreeEntry.idl(159):  		return Coordinate.getPreviousPositionX();
 	return Coordinate::getPreviousPositionX();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionZ() {
-	// engine/util/QuadTreeEntry.idl(175):  		return Coordinate.getPreviousPositionZ();
+	// engine/util/QuadTreeEntry.idl(163):  		return Coordinate.getPreviousPositionZ();
 	return Coordinate::getPreviousPositionZ();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionY() {
-	// engine/util/QuadTreeEntry.idl(179):  		return Coordinate.getPreviousPositionY();
+	// engine/util/QuadTreeEntry.idl(167):  		return Coordinate.getPreviousPositionY();
 	return Coordinate::getPreviousPositionY();
 }
 
 Vector3 QuadTreeEntryImplementation::getPosition() {
-	// engine/util/QuadTreeEntry.idl(185):  		return Coordinate.getPosition();
+	// engine/util/QuadTreeEntry.idl(173):  		return Coordinate.getPosition();
 	return Coordinate::getPosition();
 }
 
 void QuadTreeEntryImplementation::setPosition(float x, float z, float y) {
-	// engine/util/QuadTreeEntry.idl(189):  		Coordinate.setPosition(x, z, y);
+	// engine/util/QuadTreeEntry.idl(177):  		Coordinate.setPosition(x, z, y);
 	Coordinate::setPosition(x, z, y);
 }
 
 void QuadTreeEntryImplementation::initializePosition(float x, float z, float y) {
-	// engine/util/QuadTreeEntry.idl(193):  		Coordinate.initializePosition(x, z, y);
+	// engine/util/QuadTreeEntry.idl(181):  		Coordinate.initializePosition(x, z, y);
 	Coordinate::initializePosition(x, z, y);
 }
 
 int QuadTreeEntryImplementation::compareTo(QuadTreeEntry* obj) {
-	// engine/util/QuadTreeEntry.idl(197):  
-	if (getObjectID() < obj->getObjectID())	// engine/util/QuadTreeEntry.idl(198):  			return 1;
+	// engine/util/QuadTreeEntry.idl(185):  
+	if (getObjectID() < obj->getObjectID())	// engine/util/QuadTreeEntry.idl(186):  			return 1;
 	return 1;
 
-	else 	// engine/util/QuadTreeEntry.idl(199):  
-	if (getObjectID() > obj->getObjectID())	// engine/util/QuadTreeEntry.idl(200):  			return -1;
+	else 	// engine/util/QuadTreeEntry.idl(187):  
+	if (getObjectID() > obj->getObjectID())	// engine/util/QuadTreeEntry.idl(188):  			return -1;
 	return -1;
 
-	else 	// engine/util/QuadTreeEntry.idl(202):  			return 0;
+	else 	// engine/util/QuadTreeEntry.idl(190):  			return 0;
 	return 0;
 }
 
 bool QuadTreeEntryImplementation::isInQuadTree() {
-	// engine/util/QuadTreeEntry.idl(206):  		return node != null;
-	return node != NULL;
+	// engine/util/QuadTreeEntry.idl(194):  		return node != null;
+	return (&node) != NULL;
 }
 
 int QuadTreeEntryImplementation::inRangeObjectCount() {
-	// engine/util/QuadTreeEntry.idl(210):  		return closeobjects.size();
+	// engine/util/QuadTreeEntry.idl(198):  		return closeobjects.size();
 	return (&closeobjects)->size();
 }
 
 QuadTreeNode* QuadTreeEntryImplementation::getNode() {
-	// engine/util/QuadTreeEntry.idl(215):  		return node;
-	return node;
+	// engine/util/QuadTreeEntry.idl(203):  		return node.get();
+	return (&node)->get();
 }
 
 unsigned long long QuadTreeEntryImplementation::getObjectID() {
-	// engine/util/QuadTreeEntry.idl(219):  		return 0;
+	// engine/util/QuadTreeEntry.idl(207):  		return 0;
 	return 0;
 }
 
 float QuadTreeEntryImplementation::getRadius() {
-	// engine/util/QuadTreeEntry.idl(223):  		return radius;
+	// engine/util/QuadTreeEntry.idl(211):  		return radius;
 	return radius;
 }
 
 bool QuadTreeEntryImplementation::isBounding() {
-	// engine/util/QuadTreeEntry.idl(227):  		return bounding;
+	// engine/util/QuadTreeEntry.idl(215):  		return bounding;
 	return bounding;
 }
 
-void QuadTreeEntryImplementation::setNode(QuadTreeNode* n) {
-	// engine/util/QuadTreeEntry.idl(232):  		node = n;
-	node = n;
-}
-
 void QuadTreeEntryImplementation::setBounding() {
-	// engine/util/QuadTreeEntry.idl(236):  		bounding = true;
+	// engine/util/QuadTreeEntry.idl(222):  		bounding = true;
 	bounding = true;
 }
 
 void QuadTreeEntryImplementation::clearBounding() {
-	// engine/util/QuadTreeEntry.idl(240):  		bounding = false;
+	// engine/util/QuadTreeEntry.idl(226):  		bounding = false;
 	bounding = false;
 }
 
