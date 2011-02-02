@@ -147,13 +147,14 @@ ObjectOutputStream* Serializable::changeVariableData(const String& variableName,
 	object->copy(newData);
 
 	object->reset();
+	newData->reset();
 	object->shiftOffset(offset - 2);
 	uint16 dataSize = object->readShort();
 
 	newData->shiftOffset(offset); //we go data length
 
 	if (dataSize > 0)
-		newData->removeRange(offset, dataSize - 1);
+		newData->removeRange(offset, offset + dataSize);
 
 	newData->writeShort(offset - 2, newVariableData->size());
 	newData->insertStream(newVariableData, newVariableData->size(), offset);
