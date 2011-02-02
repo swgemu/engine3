@@ -847,8 +847,8 @@ int QuadTreeEntryImplementation::compareTo(QuadTreeEntry* obj) {
 }
 
 bool QuadTreeEntryImplementation::isInQuadTree() {
-	// engine/util/QuadTreeEntry.idl(194):  		return node != null;
-	return (&node) != NULL;
+	// engine/util/QuadTreeEntry.idl(194):  		return node.get() != null;
+	return (&node)->get() != NULL;
 }
 
 int QuadTreeEntryImplementation::inRangeObjectCount() {

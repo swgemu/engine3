@@ -191,7 +191,7 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	}
 
 	public boolean isInQuadTree() {
-		return node != null;
+		return node.get() != null;
 	}
 
 	public int inRangeObjectCount() {
