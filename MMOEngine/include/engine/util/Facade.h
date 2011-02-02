@@ -23,8 +23,6 @@ using namespace engine::log;
 
 #include "engine/core/ManagedObject.h"
 
-#include "engine/util/SessionFacadeType.h"
-
 namespace engine {
 namespace util {
 

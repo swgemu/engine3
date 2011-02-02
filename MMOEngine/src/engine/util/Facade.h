@@ -13,8 +13,6 @@
 
 #include "engine/core/ManagedObject.h"
 
-#include "engine/util/SessionFacadeType.h"
-
 #include "engine/log/Logger.h"
 
 namespace engine {

@@ -10,7 +10,7 @@ include engine.core.ManagedObject;
 
 import engine.log.Logger;
 
-include engine.util.SessionFacadeType;
+//include engine.util.SessionFacadeType;
 
 class Facade extends ManagedObject implements Logger {
 	public Facade() {

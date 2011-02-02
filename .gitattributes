@@ -227,7 +227,6 @@ MMOEngine/include/engine/util/Observer.cpp -text
 MMOEngine/include/engine/util/Observer.h -text
 MMOEngine/include/engine/util/Observer.idl -text
 MMOEngine/include/engine/util/ObserverEventMap.h -text
-MMOEngine/include/engine/util/ObserverEventType.h -text
 MMOEngine/include/engine/util/QuadTree.h -text
 MMOEngine/include/engine/util/QuadTreeEntry.cpp -text
 MMOEngine/include/engine/util/QuadTreeEntry.h -text
@@ -236,7 +235,6 @@ MMOEngine/include/engine/util/QuadTreeNode.h -text
 MMOEngine/include/engine/util/Quaternion.h -text
 MMOEngine/include/engine/util/Ray.h -text
 MMOEngine/include/engine/util/ResourcePool.h -text
-MMOEngine/include/engine/util/SessionFacadeType.h -text
 MMOEngine/include/engine/util/Singleton.h -text
 MMOEngine/include/engine/util/Sphere.h -text
 MMOEngine/include/engine/util/Triangle.h -text
@@ -589,7 +587,6 @@ MMOEngine/src/engine/util/Observer.h -text
 MMOEngine/src/engine/util/Observer.idl -text
 MMOEngine/src/engine/util/ObserverEventMap.cpp -text
 MMOEngine/src/engine/util/ObserverEventMap.h -text
-MMOEngine/src/engine/util/ObserverEventType.h -text
 MMOEngine/src/engine/util/ObserverImplementation.cpp -text
 MMOEngine/src/engine/util/QuadTree.cpp -text
 MMOEngine/src/engine/util/QuadTree.h -text
@@ -601,7 +598,6 @@ MMOEngine/src/engine/util/QuadTreeNode.h -text
 MMOEngine/src/engine/util/Quaternion.h -text
 MMOEngine/src/engine/util/Ray.h -text
 MMOEngine/src/engine/util/ResourcePool.h -text
-MMOEngine/src/engine/util/SessionFacadeType.h -text
 MMOEngine/src/engine/util/Singleton.h -text
 MMOEngine/src/engine/util/Sphere.h -text
 MMOEngine/src/engine/util/Triangle.h -text
