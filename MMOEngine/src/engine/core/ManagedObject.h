@@ -48,8 +48,6 @@ public:
 
 	void lock(ManagedObject* obj);
 
-	void lock(Lockable* obj);
-
 	void rlock(bool doLock = true);
 
 	void wlock(bool doLock = true);
@@ -67,6 +65,10 @@ public:
 	void writeObject(ObjectOutputStream* stream);
 
 	void readObject(ObjectInputStream* stream);
+
+	bool toBinaryStream(ObjectOutputStream* stream);
+
+	bool parseFromBinaryStream(ObjectInputStream* stream);
 
 	void initializeTransientMembers();
 
@@ -101,8 +103,6 @@ protected:
 
 	void _lock(ManagedObject* obj);
 
-	void _lock(Lockable* obj);
-
 	void _rlock(bool doLock = true);
 
 	void _wlock(bool doLock = true);
@@ -120,7 +120,7 @@ protected:
 	friend class ManagedObjectHelper;
 };
 
-class ManagedObjectImplementation : public DistributedObjectServant, public Serializable {
+class ManagedObjectImplementation : public DistributedObjectServant {
 protected:
 	int persistenceLevel;
 
@@ -129,6 +129,8 @@ private:
 
 protected:
 	ObjectUpdateToDatabaseTask* updateToDatabaseTask;
+
+	String _className;
 
 public:
 	ManagedObjectImplementation();
@@ -139,8 +141,6 @@ public:
 	void lock(bool doLock = true);
 
 	void lock(ManagedObject* obj);
-
-	void lock(Lockable* obj);
 
 	void rlock(bool doLock = true);
 
@@ -155,6 +155,10 @@ public:
 	void setLockName(const String& name);
 
 	bool notifyDestroy();
+
+	bool toBinaryStream(ObjectOutputStream* stream);
+
+	bool parseFromBinaryStream(ObjectInputStream* stream);
 
 	virtual void initializeTransientMembers();
 
@@ -172,6 +176,10 @@ public:
 
 	int getPersistenceLevel();
 
+protected:
+	void _setClassName(const String& name);
+
+public:
 	void setPersistent(int level);
 
 	ManagedObject* _this;

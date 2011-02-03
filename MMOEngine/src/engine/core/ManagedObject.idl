@@ -17,12 +17,14 @@ include engine.orb.object.DistributedObjectServant;
 
 import engine.core.ObjectUpdateToDatabaseTask;
 
-class ManagedObject implements Serializable {
+class ManagedObject {
 	protected int persistenceLevel;
 	
 	private transient unsigned int lastCRCSave;
 	
 	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
+	
+	protected transient string _className; //idlc automatically loads/saves this from streams
 	
 	public ManagedObject() {
 		persistenceLevel = 0;
@@ -47,9 +49,9 @@ class ManagedObject implements Serializable {
 	@nativeStub 
 	public native void lock(ManagedObject obj);
 
-	@local
+	/*@local
 	@nativeStub 
-	public native void lock(Lockable obj);
+	public native void lock(Lockable obj);*/
 
 	@nativeStub 
 	public native void rlock(boolean doLock = true);
@@ -83,7 +85,18 @@ class ManagedObject implements Serializable {
 	@local
 	@noImplementationDeclaration
 	public native void readObject(ObjectInputStream stream);
+	
+	@local
+	public boolean toBinaryStream(ObjectOutputStream stream) {
+		writeObject(stream);
+		return true;	
+	}
 
+	@local
+	public boolean parseFromBinaryStream(ObjectInputStream stream) {
+		readObject(stream);
+		return true;
+	}
 	
 	/*public abstract void readObject(final string data) {
 		Serializable.readObject(data);
@@ -117,6 +130,10 @@ class ManagedObject implements Serializable {
 	@local
 	public int getPersistenceLevel() {
 		return persistenceLevel;
+	}
+	
+	protected void _setClassName(final string name) {
+		_className = name;
 	}
 	
 	/**
