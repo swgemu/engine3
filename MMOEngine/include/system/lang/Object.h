@@ -78,6 +78,16 @@ namespace sys {
 			assert(0 && "clone method not declared");
 		}
 
+		virtual int compareTo(Object* object) {
+			if (this == object)
+				return 0;
+			else if (this < object)
+				return 1;
+			else
+				return -1;
+		}
+
+
 		virtual bool notifyDestroy() {
 			return true;
 		}

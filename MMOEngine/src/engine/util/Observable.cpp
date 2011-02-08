@@ -292,7 +292,7 @@ ObservableHelper* ObservableHelper::staticInitializer = ObservableHelper::instan
 ObservableHelper::ObservableHelper() {
 	className = "Observable";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void ObservableHelper::finalizeHelper() {

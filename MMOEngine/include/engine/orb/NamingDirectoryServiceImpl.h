@@ -22,17 +22,25 @@ namespace engine {
 		NamingDirectoryServiceImpl();
 		NamingDirectoryServiceImpl(const String& address);
 	
-		void deploy(DistributedObjectStub* stub);
-		void deploy(const String& name, DistributedObjectStub* stub);
+		bool deploy(DistributedObjectStub* stub);
+		bool deploy(const String& name, DistributedObjectStub* stub);
 	
 		DistributedObject* lookUp(const String& name);
 		
 		DistributedObject* undeploy(const String& name);
 		
+		HashTableIterator<String, DistributedObjectStub*> getObjects() {
+			return objectNameMap.iterator();
+		}
+
+		void clearNameMap() {
+			objectNameMap.removeAll();
+		}
+
 		inline bool isRootDirectory() {
 			return rootNamingDirectory == NULL;
 		}
-		
+
 		// setters
 		inline void setRootNamingDirectory(NamingDirectoryService* directory) {
 			rootNamingDirectory = directory;

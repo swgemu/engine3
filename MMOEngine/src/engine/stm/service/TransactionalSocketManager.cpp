@@ -6,7 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TransactionalSocketManager.h"
 
 TransactionalSocketManager::TransactionalSocketManager() : Logger("TransactionalSocketManager") {
-	setLogging(true);
+	setLogging(false);
+	setGlobalLogging(true);
 }
 
 void TransactionalSocketManager::sendMessage(Message* message) {
@@ -22,7 +23,7 @@ void TransactionalSocketManager::sendMessage(Message* message) {
 void TransactionalSocketManager::execute() {
 	MessageQueue* queue = getLocalMessageQueue();
 
-	//info("sending " + String::valueOf(queue->size()) + " messages");
+	info("sending " + String::valueOf(queue->size()) + " messages");
 
 	for (int i = 0; i < queue->size(); ++i) {
 		Message* message = queue->get(i);

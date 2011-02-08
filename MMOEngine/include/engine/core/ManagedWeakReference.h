@@ -8,9 +8,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "ManagedObject.h"
+#include "Core.h"
 
-#include "../orb/DistributedObjectBroker.h"
+#include "ManagedObject.h"
 
 namespace engine {
   namespace core {
@@ -71,7 +71,7 @@ namespace engine {
 		}
 
 		bool parseFromString(const String& str, int version = 0) {
-			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str));
+			DistributedObject* obj = Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str));
 
 			if (obj == NULL) {
 				WeakReference<O>::updateObject(NULL);
@@ -102,7 +102,7 @@ namespace engine {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			uint64 oid = stream->readLong();
 
-			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(oid);
+			DistributedObject* obj = Core::getObjectBroker()->lookUp(oid);
 
 			if (obj == NULL) {
 				WeakReference<O>::updateObject(NULL);

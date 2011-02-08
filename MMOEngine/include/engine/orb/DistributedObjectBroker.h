@@ -8,9 +8,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "../util/Singleton.h"
+#include "engine/util/Singleton.h"
 
-#include "../service/StreamServiceThread.h"
+#include "engine/service/StreamServiceThread.h"
+
+#include "ObjectBroker.h"
 
 #include "DistributedObjectDirectory.h"
 
@@ -30,23 +32,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "object/DistributedMethod.h"
 
-#include "packets/DeployObjectMessage.h"
-#include "packets/MethodReturnMessage.h"
-
-#include "object/ObjectNotDeployedException.h"
-#include "object/ObjectNotLocalException.h"
-
 namespace engine {
+  namespace core {
+  	class Core;
+  };
+
   namespace ORB {
 
 	class DOBObjectManager;
 
 	class DistributedObjectBrokerClient;
 
-	class DistributedObjectBroker : public StreamServiceThread, public Singleton<DistributedObjectBroker> {
-		static DistributedObjectBroker* impl;
-
+	class DistributedObjectBroker : public StreamServiceThread, public ObjectBroker, public Singleton<DistributedObjectBroker> {
 		String address;
+
 		NamingDirectoryService* namingDirectoryInterface;
 
 		DistributedObjectClassHelperMap classMap;
@@ -56,7 +55,7 @@ namespace engine {
 
 		DistributedObjectBrokerClient* orbClient;
 
-	private:
+	protected:
 		DistributedObjectBroker();
 
 		virtual ~DistributedObjectBroker();
@@ -84,7 +83,6 @@ namespace engine {
 		DistributedObject* lookUp(uint64 objid);
 
 		DistributedObjectStub* undeploy(const String& name);
-		void undeploy(DistributedObjectStub* obj, bool doLock = true);
 
 		DistributedObjectAdapter* getObjectAdapter(const String& name);
 		DistributedObjectAdapter* getObjectAdapter(uint64 oid);
@@ -117,6 +115,7 @@ namespace engine {
 			orbClient = client;
 		}
 
+		friend class engine::core::Core;
 		friend class NamingDirectoryService;
 
 		friend class SingletonWrapper<DistributedObjectBroker>;

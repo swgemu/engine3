@@ -8,11 +8,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "Core.h"
+
 #include "engine/stm/TransactionalMemoryManager.h"
 
 #include "ManagedObject.h"
-
-#include "engine/orb/DistributedObjectBroker.h"
 
 namespace engine {
   namespace core {
@@ -77,7 +77,7 @@ namespace engine {
 		}
 
 		bool parseFromString(const String& str, int version = 0) {
-			O obj = dynamic_cast<O>(DistributedObjectBroker::instance()->lookUp(UnsignedLong::valueOf(str)));
+			O obj = dynamic_cast<O>(Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)));
 
 			if (obj == NULL) {
 				updateObject(NULL);
@@ -103,7 +103,7 @@ namespace engine {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			uint64 oid = stream->readLong();
 
-			O obj = dynamic_cast<O>(DistributedObjectBroker::instance()->lookUp(oid));
+			O obj = dynamic_cast<O>(Core::getObjectBroker()->lookUp(oid));
 
 
 			if (obj == NULL) {

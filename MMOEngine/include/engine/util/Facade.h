@@ -5,23 +5,15 @@
 #ifndef FACADE_H_
 #define FACADE_H_
 
-#include "engine/orb/DistributedObjectBroker.h"
+#include "engine/core/Core.h"
 
 #include "engine/core/ManagedReference.h"
 
 #include "engine/core/ManagedWeakReference.h"
 
-namespace engine {
-namespace log {
-
-class Logger;
-
-} // namespace log
-} // namespace engine
-
-using namespace engine::log;
-
 #include "engine/core/ManagedObject.h"
+
+#include "engine/log/Logger.h"
 
 namespace engine {
 namespace util {

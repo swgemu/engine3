@@ -5,51 +5,11 @@
 #ifndef QUADTREEENTRY_H_
 #define QUADTREEENTRY_H_
 
-#include "engine/orb/DistributedObjectBroker.h"
+#include "engine/core/Core.h"
 
 #include "engine/core/ManagedReference.h"
 
 #include "engine/core/ManagedWeakReference.h"
-
-namespace engine {
-namespace core {
-
-class ManagedObject;
-
-} // namespace core
-} // namespace engine
-
-using namespace engine::core;
-
-namespace engine {
-namespace util {
-
-class Vector3;
-
-} // namespace util
-} // namespace engine
-
-using namespace engine::util;
-
-namespace engine {
-namespace util {
-
-class QuadTree;
-
-} // namespace util
-} // namespace engine
-
-using namespace engine::util;
-
-namespace engine {
-namespace util {
-
-class QuadTreeNode;
-
-} // namespace util
-} // namespace engine
-
-using namespace engine::util;
 
 #include "system/lang/ref/Reference.h"
 
@@ -61,7 +21,15 @@ using namespace engine::util;
 
 #include "engine/util/Coordinate.h"
 
+#include "engine/core/ManagedObject.h"
+
 #include "engine/util/Observable.h"
+
+#include "engine/util/Vector3.h"
+
+#include "engine/util/QuadTree.h"
+
+#include "engine/util/QuadTreeNode.h"
 
 namespace engine {
 namespace util {

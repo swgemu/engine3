@@ -609,7 +609,7 @@ ManagedObjectHelper* ManagedObjectHelper::staticInitializer = ManagedObjectHelpe
 ManagedObjectHelper::ManagedObjectHelper() {
 	className = "ManagedObject";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void ManagedObjectHelper::finalizeHelper() {

@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 void TransactionalTaskManager::initialize() {
 	taskManager = new TaskManagerImpl();
 	taskManager->setLoggingName("TransactionalTaskmanager");
-	taskManager->initialize(8, 4);
+	taskManager->initialize(1, 1);
 	taskManager->setLogging(false);
 	taskManager->setGlobalLogging(false);
 }

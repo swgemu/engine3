@@ -40,7 +40,7 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 	initializationTransactionStarted = false;
 
 	setLogging(false);
-	setGlobalLogging(false);
+	setGlobalLogging(true);
 }
 
 TransactionalMemoryManager::~TransactionalMemoryManager() {
@@ -119,10 +119,15 @@ void TransactionalMemoryManager::printStatistics() {
 	if (startedTransactions.get() <= 1)
 		return;
 
+	TaskManager* taskManager = Core::getTaskManager();
+
 	StringBuffer str;
-	str << "started " << String::valueOf(startedTransactions.get() - 1) << ", "
+	str << "transactions(started " << String::valueOf(startedTransactions.get() - 1) << ", "
 			<< "commited " << String::valueOf(commitedTransactions.get() - 1) << ", "
-			<< "aborted " << abortedTransactions.get();
+			<< "aborted " << abortedTransactions.get() << ") - tasks ("
+			<< "exectuing " << taskManager->getExecutingTaskSize() << ", "
+			<< "scheduled " << taskManager->getScheduledTaskSize() << ")";
+
 
 	info(str, true);
 

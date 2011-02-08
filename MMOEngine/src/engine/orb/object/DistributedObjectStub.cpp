@@ -3,7 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../DistributedObjectBroker.h"
+#include "engine/core/Core.h"
+
+#include "engine/orb/DistributedObjectBroker.h"
 
 #include "DistributedObjectStub.h"
 
@@ -44,7 +46,7 @@ void DistributedObjectStub::deploy() {
 	if (_getImplementation() == NULL)
 		throw Exception("unable to deploy object");
 	
-	DistributedObjectBroker::instance()->deploy(this);
+	Core::getObjectBroker()->deploy(this);
 	
 	deployed = true;
 
@@ -55,7 +57,7 @@ void DistributedObjectStub::deploy(const char* name) {
 	if (_getImplementation() == NULL)
 		throw Exception("unable to deploy object");
 
-	DistributedObjectBroker::instance()->deploy(name, this);
+	Core::getObjectBroker()->deploy(name, this);
 
 	deployed = true;
 
@@ -66,7 +68,7 @@ void DistributedObjectStub::deploy(const String& name) {
 	if (_getImplementation() == NULL)
 		throw Exception("unable to deploy object");
 	
-	DistributedObjectBroker::instance()->deploy(name, this);
+	Core::getObjectBroker()->deploy(name, this);
 
 	deployed = true;
 
@@ -84,7 +86,7 @@ void DistributedObjectStub::deploy(const String& name, uint64 nid) {
 
 bool DistributedObjectStub::undeploy() {
 	if (deployed) {
-		DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+		ObjectBroker* broker = Core::getObjectBroker();
 
 		if (broker != NULL)
 			broker->undeploy(_name);
@@ -94,9 +96,9 @@ bool DistributedObjectStub::undeploy() {
 		if (_getImplementation() == NULL)
 			throw ObjectNotLocalException(this);
 		
-		DistributedObjectBroker::instance()->info("deleting undeployed implementation");
+		//ObjectBroker::instance()->info("deleting undeployed implementation");
 		
-		delete _getImplementation();
+		//delete _getImplementation();
 		_setImplementation(NULL);
 	}
 	

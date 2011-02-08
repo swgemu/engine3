@@ -40,7 +40,6 @@ class ClientMessageReceiverTask : public Task {
 public:
 	ClientMessageReceiverTask(DatagramServiceClient* cli, Packet* packet) {
 		client = cli;
-		printf("FUCK\n");
 
 		message = packet->clone();
 	}

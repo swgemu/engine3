@@ -72,6 +72,8 @@ namespace sys {
 
 	    bool containsKey(const K& key);
 
+	    HashTableIterator<K, V> iterator();
+
 	    V remove(const K& key);
 
 	    void removeAll();
@@ -247,6 +249,10 @@ namespace sys {
 		}
 
 		return false;
+	}
+
+	template<class K, class V> HashTableIterator<K, V> HashTable<K,V>::iterator() {
+		return HashTableIterator<K, V>(this);
 	}
 
 	template<class K, class V> V HashTable<K,V>::remove(const K& key) {

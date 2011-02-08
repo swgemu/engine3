@@ -123,28 +123,16 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	}
 
 	@local
-	public boolean isInSWArea(QuadTreeNode node) {
-		return positionX >= node.minX && positionX < node.dividerX &&
-        	positionY >= node.minY && positionY < node.dividerY;
-	}
+	public native boolean isInSWArea(QuadTreeNode node);
 
 	@local
-	public boolean isInSEArea(QuadTreeNode node) {
-		return positionX >= node.dividerX && positionX < node.maxX &&
-  			positionY >= node.minY && positionY < node.dividerY;
-	}
+	public native boolean isInSEArea(QuadTreeNode node);
     	
 	@local
-	public boolean isInNWArea(QuadTreeNode node) {
-		return positionX >= node.minX && positionX < node.dividerX &&
-         	positionY >= node.dividerY && positionY < node.maxY;
-	}
+	public native boolean isInNWArea(QuadTreeNode node);
 
 	@local
-	public boolean isInArea(QuadTreeNode node) {
-    	return (positionX + radius > node.dividerX && positionX - radius < node.dividerX) ||
-            (positionY + radius > node.dividerY && positionY - radius < node.dividerY);
-	}
+	public native boolean isInArea(QuadTreeNode node);
 
 	public abstract void notifyInsert(QuadTreeEntry obj) {
 	}
@@ -203,7 +191,7 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	}
 
 	public boolean isInQuadTree() {
-		return node != null;
+		return node.get() != null;
 	}
 
 	public int inRangeObjectCount() {
@@ -212,7 +200,7 @@ class QuadTreeEntry extends Observable implements Coordinate {
 
 	@local
 	public QuadTreeNode getNode() {
-		return node;
+		return node.get();
 	}
 	
 	public abstract unsigned long getObjectID() {
@@ -228,9 +216,7 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	}
 	
 	@local
-	public void setNode(QuadTreeNode n) {
-		node = n;
-	}
+	public native void setNode(QuadTreeNode n);
 	
 	public void setBounding() {
 		bounding = true;

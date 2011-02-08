@@ -27,6 +27,10 @@ public:
 		setNoDuplicateInsertPlan();
 	}
 
+	ObserverEventMap(const ObserverEventMap& map) : VectorMap<uint32, SortedVector<ManagedReference<Observer*> > >(map) {
+		setNoDuplicateInsertPlan();
+	}
+
 	void notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1 = NULL, int64 arg2 = 0);
 
 	void registerObserver(uint32 eventType, Observer* observer);

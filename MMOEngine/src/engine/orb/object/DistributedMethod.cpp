@@ -3,14 +3,16 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../DistributedObjectBroker.h"
-#include "../DistributedObjectBrokerClient.h"
+#include "engine/core/Core.h"
+
+#include "engine/orb/DistributedObjectBroker.h"
+#include "engine/orb/DistributedObjectBrokerClient.h"
 
 #include "DistributedObject.h"
 
 #include "DistributedMethod.h"
 
-#include "../packets/InvokeMethodMessage.h"
+#include "engine/orb/packets/InvokeMethodMessage.h"
 
 DistributedMethod::DistributedMethod(DistributedObject* obj, uint32 methid) {
 	object = obj;
@@ -128,7 +130,7 @@ DistributedObject* DistributedMethod::executeWithObjectReturn() {
 
 	uint64 objid = resp.parseLong(8);
 	if (objid != 0)
-		return DistributedObjectBroker::instance()->lookUp(objid);
+		return Core::getObjectBroker()->lookUp(objid);
 	else
 		return NULL;
 }

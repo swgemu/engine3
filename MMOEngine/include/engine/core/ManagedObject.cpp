@@ -12,8 +12,8 @@
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
-	_impl = _implementation;
-	_impl->_setStub(this);
+	ManagedObject::_setImplementation(_implementation);
+	_implementation->_setStub(this);
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
@@ -60,15 +60,6 @@ void ManagedObject::_lock(ManagedObject* obj) {
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
-	} else
-		_implementation->lock(obj);
-}
-
-void ManagedObject::_lock(Lockable* obj) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
-	if (_implementation == NULL) {
-		throw ObjectNotLocalException(this);
-
 	} else
 		_implementation->lock(obj);
 }
@@ -188,6 +179,24 @@ void ManagedObject::readObject(ObjectInputStream* stream) {
 		_implementation->readObject(stream);
 }
 
+bool ManagedObject::toBinaryStream(ObjectOutputStream* stream) {
+	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+
+	} else
+		return _implementation->toBinaryStream(stream);
+}
+
+bool ManagedObject::parseFromBinaryStream(ObjectInputStream* stream) {
+	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+
+	} else
+		return _implementation->parseFromBinaryStream(stream);
+}
+
 void ManagedObject::initializeTransientMembers() {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {
@@ -297,11 +306,10 @@ void ManagedObject::setPersistent(int level) {
 DistributedObjectServant* ManagedObject::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
 
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
+	setObject(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
 
 /*
@@ -337,6 +345,11 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
+
+Object* ManagedObjectImplementation::clone() {
+	return (Object*) new ManagedObjectImplementation(*this);
+}
+
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
@@ -409,37 +422,56 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 
 ManagedObjectImplementation::ManagedObjectImplementation() {
 	_initializeImplementation();
-	// engine/core/ManagedObject.idl(28):  		persistenceLevel = 0;
+	// engine/core/ManagedObject.idl(30):  		persistenceLevel = 0;
 	persistenceLevel = 0;
-	// engine/core/ManagedObject.idl(30):  		lastCRCSave = 0;
+	// engine/core/ManagedObject.idl(32):  		lastCRCSave = 0;
 	lastCRCSave = 0;
-	// engine/core/ManagedObject.idl(32):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl(34):  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
+bool ManagedObjectImplementation::toBinaryStream(ObjectOutputStream* stream) {
+	// engine/core/ManagedObject.idl(91):  		writeObject(stream);
+	writeObject(stream);
+	// engine/core/ManagedObject.idl(92):  		return true;
+	return true;
+}
+
+bool ManagedObjectImplementation::parseFromBinaryStream(ObjectInputStream* stream) {
+	// engine/core/ManagedObject.idl(97):  		readObject(stream);
+	readObject(stream);
+	// engine/core/ManagedObject.idl(98):  		return true;
+	return true;
+}
+
 void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
-	// engine/core/ManagedObject.idl(101):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl(114):  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 unsigned int ManagedObjectImplementation::getLastCRCSave() {
-	// engine/core/ManagedObject.idl(105):  		return lastCRCSave;
+	// engine/core/ManagedObject.idl(118):  		return lastCRCSave;
 	return lastCRCSave;
 }
 
 void ManagedObjectImplementation::setLastCRCSave(unsigned int crc) {
-	// engine/core/ManagedObject.idl(109):  		lastCRCSave = crc;
+	// engine/core/ManagedObject.idl(122):  		lastCRCSave = crc;
 	lastCRCSave = crc;
 }
 
 bool ManagedObjectImplementation::isPersistent() {
-	// engine/core/ManagedObject.idl(114):  		return persistenceLevel != 0;
+	// engine/core/ManagedObject.idl(127):  		return persistenceLevel != 0;
 	return persistenceLevel != 0;
 }
 
 int ManagedObjectImplementation::getPersistenceLevel() {
-	// engine/core/ManagedObject.idl(119):  		return persistenceLevel;
+	// engine/core/ManagedObject.idl(132):  		return persistenceLevel;
 	return persistenceLevel;
+}
+
+void ManagedObjectImplementation::_setClassName(const String& name) {
+	// engine/core/ManagedObject.idl(136):  		_className = name;
+	_className = name;
 }
 
 /*
@@ -581,7 +613,7 @@ ManagedObjectHelper* ManagedObjectHelper::staticInitializer = ManagedObjectHelpe
 ManagedObjectHelper::ManagedObjectHelper() {
 	className = "ManagedObject";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void ManagedObjectHelper::finalizeHelper() {

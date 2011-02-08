@@ -256,7 +256,7 @@ ObserverHelper* ObserverHelper::staticInitializer = ObserverHelper::instance();
 ObserverHelper::ObserverHelper() {
 	className = "Observer";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void ObserverHelper::finalizeHelper() {

@@ -1123,7 +1123,7 @@ QuadTreeEntryHelper* QuadTreeEntryHelper::staticInitializer = QuadTreeEntryHelpe
 QuadTreeEntryHelper::QuadTreeEntryHelper() {
 	className = "QuadTreeEntry";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void QuadTreeEntryHelper::finalizeHelper() {

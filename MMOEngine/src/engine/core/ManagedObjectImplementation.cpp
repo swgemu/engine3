@@ -88,12 +88,12 @@ void ManagedObject::setLockName(const String& name) {
 }
 
 bool ManagedObject::notifyDestroy() {
-	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+	ObjectBroker* broker = Core::getObjectBroker();
 
 	if (broker == NULL)
 		return true;
 	else
-		return DistributedObjectBroker::instance()->destroyObject(this);
+		return broker->destroyObject(this);
 }
 
 

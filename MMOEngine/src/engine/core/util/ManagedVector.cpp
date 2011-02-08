@@ -174,7 +174,7 @@ ManagedVectorHelper* ManagedVectorHelper::staticInitializer = ManagedVectorHelpe
 ManagedVectorHelper::ManagedVectorHelper() {
 	className = "ManagedVector";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void ManagedVectorHelper::finalizeHelper() {

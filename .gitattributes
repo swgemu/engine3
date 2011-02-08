@@ -120,6 +120,7 @@ MMOEngine/include/engine/orb/DistributedObjectBrokerClient.h -text
 MMOEngine/include/engine/orb/DistributedObjectDirectory.h -text
 MMOEngine/include/engine/orb/NamingDirectoryService.h -text
 MMOEngine/include/engine/orb/NamingDirectoryServiceImpl.h -text
+MMOEngine/include/engine/orb/ObjectBroker.h -text
 MMOEngine/include/engine/orb/object/DistributedMethod.h -text
 MMOEngine/include/engine/orb/object/DistributedObject.h -text
 MMOEngine/include/engine/orb/object/DistributedObjectAdapter.h -text
@@ -204,6 +205,7 @@ MMOEngine/include/engine/stm/TransactionalObject.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/include/engine/stm/TransactionalReference.h -text
+MMOEngine/include/engine/stm/orb/LocalObjectManager.h -text
 MMOEngine/include/engine/stm/orb/TransactionalObjectManager.h -text
 MMOEngine/include/engine/stm/service/TransactionalSocketManager.h -text
 MMOEngine/include/engine/stm/task/LocalTaskManager.h -text
@@ -462,6 +464,7 @@ MMOEngine/src/engine/orb/NamingDirectoryService.cpp -text
 MMOEngine/src/engine/orb/NamingDirectoryService.h -text
 MMOEngine/src/engine/orb/NamingDirectoryServiceImpl.cpp -text
 MMOEngine/src/engine/orb/NamingDirectoryServiceImpl.h -text
+MMOEngine/src/engine/orb/ObjectBroker.h -text
 MMOEngine/src/engine/orb/object/DistributedMethod.cpp -text
 MMOEngine/src/engine/orb/object/DistributedMethod.h -text
 MMOEngine/src/engine/orb/object/DistributedObject.cpp -text
@@ -558,6 +561,8 @@ MMOEngine/src/engine/stm/TransactionalMemoryManager.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/src/engine/stm/TransactionalReference.h -text
+MMOEngine/src/engine/stm/orb/LocalObjectManager.cpp -text
+MMOEngine/src/engine/stm/orb/LocalObjectManager.h -text
 MMOEngine/src/engine/stm/orb/TransactionalObjectManager.cpp -text
 MMOEngine/src/engine/stm/orb/TransactionalObjectManager.h -text
 MMOEngine/src/engine/stm/service/TransactionalSocketManager.cpp -text

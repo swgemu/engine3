@@ -17,7 +17,7 @@ NamingDirectoryServiceImpl::NamingDirectoryServiceImpl(const String& address)
 	rootNamingDirectory = new NamingDirectoryService(address);
 }
 
-void NamingDirectoryServiceImpl::deploy(DistributedObjectStub* stub) {
+bool NamingDirectoryServiceImpl::deploy(DistributedObjectStub* stub) {
 	String name = stub->_getName();
 	uint64 objectid = stub->_getObjectID();
 
@@ -30,15 +30,16 @@ void NamingDirectoryServiceImpl::deploy(DistributedObjectStub* stub) {
 		stub->_setName(name);
 	}
 
-	if (objectNameMap.put(name, stub) != NULL)
-		DistributedObjectBroker::instance()->error("object \'" + name + "\' already deployed");
+	return deploy(name, stub);
 }
 
-void NamingDirectoryServiceImpl::deploy(const String& name, DistributedObjectStub* stub) {
+bool NamingDirectoryServiceImpl::deploy(const String& name, DistributedObjectStub* stub) {
 	if (objectNameMap.put(name, stub) != NULL)
-		DistributedObjectBroker::instance()->error("object \'" + name + "\' already deployed");
+		return false;
 
 	stub->_setName(name);
+
+	return true;
 }
 
 DistributedObject* NamingDirectoryServiceImpl::lookUp(const String& name) {

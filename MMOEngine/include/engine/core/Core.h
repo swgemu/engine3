@@ -5,7 +5,7 @@
 
 #include "engine/log/Logger.h"
 
-#include "engine/orb/DistributedObjectBroker.h"
+#include "engine/orb/ObjectBroker.h"
 
 #include "TaskManager.h"
 
@@ -16,6 +16,8 @@ namespace engine {
 
 	class Core : public Thread {
 		static TaskManager* taskManager;
+
+		static ObjectBroker* objectBroker;
 
 	public:
 		Core();
@@ -34,6 +36,8 @@ namespace engine {
 
 		static TaskManager* getTaskManager();
 
+		static ObjectBroker* getObjectBroker();
+
 	protected:
 		void initializeContext();
 
@@ -43,7 +47,7 @@ namespace engine {
 	};
 
 	template<class T> T* Core::lookupObject(const String& name) {
-		return dynamic_cast<T*>(DistributedObjectBroker::instance()->lookUp(name));
+		return dynamic_cast<T*>(Core::getObjectBroker()->lookUp(name));
 	}
 
   } // namespace core

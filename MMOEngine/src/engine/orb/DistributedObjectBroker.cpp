@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/core/Core.h"
+
 #include "engine/service/proto/BasePacketHandler.h"
 
 #include "DistributedObjectBroker.h"
@@ -45,6 +47,10 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 		objectManager = NULL;
 	}*/
 }
+
+/*ObjectBroker* DistributedObjectBroker::instance() {
+	return Core::getObjectBroker();
+}*/
 
 DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr, int port) {
 	DistributedObjectBroker* inst = DistributedObjectBroker::instance();
@@ -106,8 +112,6 @@ void DistributedObjectBroker::registerClass(const String& name, DistributedObjec
 }
 
 void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
-
-
 	DistributedObjectServant* servant = obj->_getImplementation();
 	if (servant == NULL)
 		throw ObjectNotLocalException(obj);
@@ -115,16 +119,15 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 	try {
 		uint64 objectid = obj->_getObjectID();
 
-		Locker locker(objectManager);//Locker locker(this);
+		Locker locker(objectManager);
 
 		if (objectid == 0) {
 			objectid = objectManager->getNextFreeObjectID();
 			obj->_setObjectID(objectid);
 		}
 
-		namingDirectoryInterface->deploy(obj);
-
-		//locker.release();
+		if (!namingDirectoryInterface->deploy(obj))
+			warning("object already deployed");
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
@@ -146,16 +149,15 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 	try {
 		uint64 objectid = obj->_getObjectID();
 
-		Locker locker(objectManager);//Locker locker(this);
+		Locker locker(objectManager);
 
 		if (objectid == 0) {
 			objectid = objectManager->getNextFreeObjectID();
 			obj->_setObjectID(objectid);
 		}
 
-		namingDirectoryInterface->deploy(name, obj);
-
-		//locker.release();
+		if (!namingDirectoryInterface->deploy(name, obj))
+			warning("object \'" + name + "\' already deployed");
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;

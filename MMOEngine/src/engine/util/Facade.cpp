@@ -252,7 +252,7 @@ FacadeHelper* FacadeHelper::staticInitializer = FacadeHelper::instance();
 FacadeHelper::FacadeHelper() {
 	className = "Facade";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void FacadeHelper::finalizeHelper() {

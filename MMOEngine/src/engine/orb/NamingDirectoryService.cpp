@@ -25,10 +25,12 @@ NamingDirectoryService::NamingDirectoryService(const String& address) {
 NamingDirectoryService::~NamingDirectoryService() {
 }
 
-void NamingDirectoryService::deploy(DistributedObjectStub* stub) {
+bool NamingDirectoryService::deploy(DistributedObjectStub* stub) {
+	return false;
 }
 
-void NamingDirectoryService::deploy(const String& name, DistributedObjectStub* stub) {
+bool NamingDirectoryService::deploy(const String& name, DistributedObjectStub* stub) {
+	return false;
 }
 
 DistributedObject* NamingDirectoryService::lookUp(const String& name) {

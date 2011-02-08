@@ -26,8 +26,8 @@ namespace engine {
 		
 		virtual ~NamingDirectoryService();
 	
-		virtual void deploy(DistributedObjectStub* stub);
-		virtual void deploy(const String& name, DistributedObjectStub* stub);
+		virtual bool deploy(DistributedObjectStub* stub);
+		virtual bool deploy(const String& name, DistributedObjectStub* stub);
 	
 		virtual DistributedObject* lookUp(const String& name);
 		

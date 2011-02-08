@@ -169,7 +169,7 @@ ManagedServiceHelper* ManagedServiceHelper::staticInitializer = ManagedServiceHe
 ManagedServiceHelper::ManagedServiceHelper() {
 	className = "ManagedService";
 
-	DistributedObjectBroker::instance()->registerClass(className, this);
+	Core::getObjectBroker()->registerClass(className, this);
 }
 
 void ManagedServiceHelper::finalizeHelper() {
