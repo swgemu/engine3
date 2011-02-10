@@ -69,10 +69,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "lua/Lua.h"
 #endif
 
-#include "util/QuadTree.h"
-#include "util/Quaternion.h"
-#include "util/Vector3.h"
-#include "util/AABBTree.h"
+#include "util/u3d/QuadTree.h"
+#include "util/u3d/Quaternion.h"
+#include "util/u3d/Vector3.h"
+#include "util/u3d/AABBTree.h"
 #include "util/iffstream/IffStream.h"
 
 

@@ -110,12 +110,8 @@
 				</buildTargets>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.pathentry">
-				<pathentry kind="out" path=""/>
-				<pathentry kind="out" path="bin"/>
-				<pathentry kind="out" path="lib"/>
 				<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
-				<pathentry excluding="src/" kind="src" path=""/>
-				<pathentry kind="src" path="src"/>
+				<pathentry kind="out" path=""/>
 			</storageModule>
 		</cconfiguration>
 	</storageModule>

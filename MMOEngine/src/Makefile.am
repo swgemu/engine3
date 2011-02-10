@@ -95,16 +95,16 @@ libengine3_a_SOURCES = \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
-			engine/util/QuadTree.cpp \
-			engine/util/QuadTreeEntry.cpp \
-			engine/util/QuadTreeEntryImplementation.cpp \
 			engine/util/Observer.cpp \
 			engine/util/ObserverImplementation.cpp \
 			engine/util/ObserverEventMap.cpp \
 			engine/util/Observable.cpp \
 .			engine/util/Facade.cpp \
-			engine/util/AABBTree.cpp \
-			engine/util/Matrix4.cpp \
+			engine/util/u3d/QuadTree.cpp \
+			engine/util/u3d/QuadTreeEntry.cpp \
+			engine/util/u3d/QuadTreeEntryImplementation.cpp \
+			engine/util/u3d/AABBTree.cpp \
+			engine/util/u3d/Matrix4.cpp \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \

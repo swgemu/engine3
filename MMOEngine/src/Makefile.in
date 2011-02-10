@@ -118,14 +118,15 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/core/ManagedObject.$(OBJEXT) \
 	engine/core/ManagedService.$(OBJEXT) \
 	engine/core/ManagedObjectImplementation.$(OBJEXT) \
-	engine/util/QuadTree.$(OBJEXT) \
-	engine/util/QuadTreeEntry.$(OBJEXT) \
-	engine/util/QuadTreeEntryImplementation.$(OBJEXT) \
 	engine/util/Observer.$(OBJEXT) \
 	engine/util/ObserverImplementation.$(OBJEXT) \
 	engine/util/ObserverEventMap.$(OBJEXT) \
 	engine/util/Observable.$(OBJEXT) engine/util/Facade.$(OBJEXT) \
-	engine/util/AABBTree.$(OBJEXT) engine/util/Matrix4.$(OBJEXT) \
+	engine/util/u3d/QuadTree.$(OBJEXT) \
+	engine/util/u3d/QuadTreeEntry.$(OBJEXT) \
+	engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT) \
+	engine/util/u3d/AABBTree.$(OBJEXT) \
+	engine/util/u3d/Matrix4.$(OBJEXT) \
 	engine/util/iffstream/IffStream.$(OBJEXT) \
 	engine/util/iffstream/chunks/Chunk.$(OBJEXT) \
 	engine/util/iffstream/chunks/form/Form.$(OBJEXT) \
@@ -353,16 +354,16 @@ libengine3_a_SOURCES = \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
-			engine/util/QuadTree.cpp \
-			engine/util/QuadTreeEntry.cpp \
-			engine/util/QuadTreeEntryImplementation.cpp \
 			engine/util/Observer.cpp \
 			engine/util/ObserverImplementation.cpp \
 			engine/util/ObserverEventMap.cpp \
 			engine/util/Observable.cpp \
 .			engine/util/Facade.cpp \
-			engine/util/AABBTree.cpp \
-			engine/util/Matrix4.cpp \
+			engine/util/u3d/QuadTree.cpp \
+			engine/util/u3d/QuadTreeEntry.cpp \
+			engine/util/u3d/QuadTreeEntryImplementation.cpp \
+			engine/util/u3d/AABBTree.cpp \
+			engine/util/u3d/Matrix4.cpp \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
@@ -699,13 +700,6 @@ engine/util/$(am__dirstamp):
 engine/util/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/$(DEPDIR)
 	@: > engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/QuadTree.$(OBJEXT): engine/util/$(am__dirstamp) \
-	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/QuadTreeEntry.$(OBJEXT): engine/util/$(am__dirstamp) \
-	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/QuadTreeEntryImplementation.$(OBJEXT):  \
-	engine/util/$(am__dirstamp) \
-	engine/util/$(DEPDIR)/$(am__dirstamp)
 engine/util/Observer.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
 engine/util/ObserverImplementation.$(OBJEXT):  \
@@ -717,10 +711,24 @@ engine/util/Observable.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
 engine/util/Facade.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/AABBTree.$(OBJEXT): engine/util/$(am__dirstamp) \
-	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/Matrix4.$(OBJEXT): engine/util/$(am__dirstamp) \
-	engine/util/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/$(am__dirstamp):
+	@$(MKDIR_P) engine/util/u3d
+	@: > engine/util/u3d/$(am__dirstamp)
+engine/util/u3d/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) engine/util/u3d/$(DEPDIR)
+	@: > engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/QuadTree.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/QuadTreeEntry.$(OBJEXT):  \
+	engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT):  \
+	engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/AABBTree.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/Matrix4.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/iffstream/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/iffstream
 	@: > engine/util/iffstream/$(am__dirstamp)
@@ -882,19 +890,19 @@ mostlyclean-compile:
 	-rm -f engine/stm/service/TransactionalSocketManager.$(OBJEXT)
 	-rm -f engine/stm/task/LocalTaskManager.$(OBJEXT)
 	-rm -f engine/stm/task/TransactionalTaskManager.$(OBJEXT)
-	-rm -f engine/util/AABBTree.$(OBJEXT)
 	-rm -f engine/util/Facade.$(OBJEXT)
-	-rm -f engine/util/Matrix4.$(OBJEXT)
 	-rm -f engine/util/Observable.$(OBJEXT)
 	-rm -f engine/util/Observer.$(OBJEXT)
 	-rm -f engine/util/ObserverEventMap.$(OBJEXT)
 	-rm -f engine/util/ObserverImplementation.$(OBJEXT)
-	-rm -f engine/util/QuadTree.$(OBJEXT)
-	-rm -f engine/util/QuadTreeEntry.$(OBJEXT)
-	-rm -f engine/util/QuadTreeEntryImplementation.$(OBJEXT)
 	-rm -f engine/util/iffstream/IffStream.$(OBJEXT)
 	-rm -f engine/util/iffstream/chunks/Chunk.$(OBJEXT)
 	-rm -f engine/util/iffstream/chunks/form/Form.$(OBJEXT)
+	-rm -f engine/util/u3d/AABBTree.$(OBJEXT)
+	-rm -f engine/util/u3d/Matrix4.$(OBJEXT)
+	-rm -f engine/util/u3d/QuadTree.$(OBJEXT)
+	-rm -f engine/util/u3d/QuadTreeEntry.$(OBJEXT)
+	-rm -f engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT)
 	-rm -f system/io/BufferedReader.$(OBJEXT)
 	-rm -f system/io/File.$(OBJEXT)
 	-rm -f system/io/PrintStream.$(OBJEXT)
@@ -989,19 +997,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/service/$(DEPDIR)/TransactionalSocketManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/LocalTaskManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/TransactionalTaskManager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/AABBTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Facade.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Matrix4.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/ObserverEventMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/ObserverImplementation.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/QuadTree.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/QuadTreeEntry.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/QuadTreeEntryImplementation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/$(DEPDIR)/IffStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/$(DEPDIR)/Chunk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/form/$(DEPDIR)/Form.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/AABBTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Matrix4.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntry.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntryImplementation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/BufferedReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/File.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/PrintStream.Po@am__quote@
@@ -1182,6 +1190,8 @@ distclean-generic:
 	-rm -f engine/util/iffstream/chunks/$(am__dirstamp)
 	-rm -f engine/util/iffstream/chunks/form/$(DEPDIR)/$(am__dirstamp)
 	-rm -f engine/util/iffstream/chunks/form/$(am__dirstamp)
+	-rm -f engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+	-rm -f engine/util/u3d/$(am__dirstamp)
 	-rm -f system/io/$(DEPDIR)/$(am__dirstamp)
 	-rm -f system/io/$(am__dirstamp)
 	-rm -f system/lang/$(DEPDIR)/$(am__dirstamp)
@@ -1201,7 +1211,7 @@ clean: clean-am
 clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1235,7 +1245,7 @@ install-ps: install-ps-am
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

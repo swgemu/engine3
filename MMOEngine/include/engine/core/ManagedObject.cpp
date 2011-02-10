@@ -12,8 +12,8 @@
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
-	ManagedObject::_setImplementation(_implementation);
-	_implementation->_setStub(this);
+	_impl = _implementation;
+	_impl->_setStub(this);
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
@@ -306,10 +306,11 @@ void ManagedObject::setPersistent(int level) {
 DistributedObjectServant* ManagedObject::_getImplementation() {
 
 	_updated = true;
-	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
+	return _impl;
+}
 
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
-	setObject(dynamic_cast<ManagedObjectImplementation*>(servant));
+	_impl = servant;
 }
 
 /*
@@ -345,11 +346,6 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
-
-Object* ManagedObjectImplementation::clone() {
-	return (Object*) new ManagedObjectImplementation(*this);
-}
-
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
