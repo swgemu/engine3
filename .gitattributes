@@ -215,6 +215,7 @@ MMOEngine/include/engine/util/Coordinate.h -text
 MMOEngine/include/engine/util/Facade.cpp -text
 MMOEngine/include/engine/util/Facade.h -text
 MMOEngine/include/engine/util/Facade.idl -text
+MMOEngine/include/engine/util/ObjectContainer.h -text
 MMOEngine/include/engine/util/ObjectFactory.h -text
 MMOEngine/include/engine/util/Observable.cpp -text
 MMOEngine/include/engine/util/Observable.h -text
@@ -472,8 +473,6 @@ MMOEngine/src/engine/orb/object/DistributedObject.h -text
 MMOEngine/src/engine/orb/object/DistributedObjectAdapter.h -text
 MMOEngine/src/engine/orb/object/DistributedObjectClassHelper.h -text
 MMOEngine/src/engine/orb/object/DistributedObjectClassHelperMap.h -text
-MMOEngine/src/engine/orb/object/DistributedObjectMap.h -text
-MMOEngine/src/engine/orb/object/DistributedObjectNameMap.h -text
 MMOEngine/src/engine/orb/object/DistributedObjectServant.cpp -text
 MMOEngine/src/engine/orb/object/DistributedObjectServant.h -text
 MMOEngine/src/engine/orb/object/DistributedObjectStub.cpp -text
@@ -575,6 +574,7 @@ MMOEngine/src/engine/util/Command.h -text
 MMOEngine/src/engine/util/Facade.cpp -text
 MMOEngine/src/engine/util/Facade.h -text
 MMOEngine/src/engine/util/Facade.idl -text
+MMOEngine/src/engine/util/ObjectContainer.h -text
 MMOEngine/src/engine/util/ObjectFactory.h -text
 MMOEngine/src/engine/util/Observable.cpp -text
 MMOEngine/src/engine/util/Observable.h -text

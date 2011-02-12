@@ -8,6 +8,10 @@ namespace sys {
 	}
 
 	namespace lang {
+		class Integer;
+		class UnsignedInteger;
+		class Long;
+		class UnsignedLong;
 		class String;
 	}
 }
@@ -40,6 +44,8 @@ public:
 
 	static const int BOOL = 0x80;
 
+	static unsigned int hashCode(const T& val);
+
 	static bool toString(void* address, sys::lang::String& value);
 	static bool toBinaryStream(const void* address, ObjectOutputStream* stream);
 
@@ -55,6 +61,7 @@ public:
 			return 0;
 	}
 
+	static T nullValue();
 };
 
 template<typename T> class TypeInfoConstructedBase {
@@ -62,6 +69,10 @@ public:
 	static const bool needConstructor = true;
 
 	static const int type = -1;
+
+	static unsigned int hashCode(const T& val) {
+		return val.hashCode();
+	}
 
 	static bool toString(T* address, sys::lang::String& value) {
 		return address->toString(value);
@@ -80,6 +91,10 @@ public:
 
 	static int compare(const T& val1, const T& val2) {
 		return val1.compareTo(val2);
+	}
+
+	static T nullValue() {
+		return T();
 	}
 };
 
@@ -141,7 +156,6 @@ public:
 template<typename T> class TypeInfoAtomicPointer : public TypeInfoAtomicBase<T> {
 public:
 	static const int type = TypeInfoAtomicBase<T>::POINTER;
-
 };
 
 template<typename T> class TypeInfoAtomicBool : public TypeInfoAtomicBase<T> {
@@ -171,6 +185,10 @@ public:
 
 	static int compare(T* val1, T* val2) {
 		return val1->compareTo(val2);
+	}
+
+	static T* nullValue() {
+		return NULL;
 	}
 };
 

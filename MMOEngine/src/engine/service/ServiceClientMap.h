@@ -17,11 +17,7 @@ namespace engine {
 			public HashTableIterator<uint64, ServiceClient*> {
 				
 		int maxConnections;
-	
-		int hash(const uint64& key) {
-	        return Long::hashCode(key);
-		}
-	
+
 	public:
 		ServiceClientMap(int maxconn) : HashTable<uint64, ServiceClient*>((int) (maxconn * 1.25f)),
 				HashTableIterator<uint64, ServiceClient*>(this) {

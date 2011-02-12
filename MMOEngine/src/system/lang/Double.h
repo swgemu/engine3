@@ -53,6 +53,12 @@ namespace sys {
 		static float valueOf(const String& str) {
 			return atof(str.toCharArray());
 		}
+
+		static uint32 hashCode(double value) {
+			// TODO
+			return (unsigned int)((uint64) value ^ ((uint64) value >> 32));
+		}
+
 	};
 
   } // namespace lang

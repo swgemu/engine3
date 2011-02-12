@@ -59,6 +59,12 @@ namespace sys {
 		static float valueOf(const String& str) {
 			return atof(str.toCharArray());
 		}
+
+		static uint32 hashCode(float value) {
+			//TODO
+			return (uint32) value;
+		}
+
 	};
 
   } // namespace lang

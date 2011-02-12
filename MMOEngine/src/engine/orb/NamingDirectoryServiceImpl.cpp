@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "NamingDirectoryServiceImpl.h"
 
 NamingDirectoryServiceImpl::NamingDirectoryServiceImpl()
-		: NamingDirectoryService() {
+		: NamingDirectoryService(), objectNameMap(300000) {
 	rootNamingDirectory = NULL;
 }
 

@@ -7,14 +7,77 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "types.h"
 
-#include "../io/ObjectOutputStream.h"
-#include "../io/ObjectInputStream.h"
+#include "system/io/ObjectOutputStream.h"
+#include "system/io/ObjectInputStream.h"
 
+#include "Bool.h"
+#include "Byte.h"
 #include "Character.h"
+#include "Short.h"
 #include "Long.h"
 #include "Integer.h"
 #include "Float.h"
-#include "Bool.h"
+#include "Double.h"
+
+/*template<> unsigned int TypeInfoAtomicPointer<const char*>::hashCode(const char*& val) {
+	return String(val).hashCode();
+}*/
+
+template<> unsigned int TypeInfoAtomicBase<bool>::hashCode(const bool& val) {
+	return Bool::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<char>::hashCode(const char& val) {
+	return Character::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<uint8>::hashCode(const uint8& val) {
+	return Byte::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<uint16>::hashCode(const uint16& val) {
+	return UnsignedShort::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<int8>::hashCode(const int8& val) {
+	return Character::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<int16>::hashCode(const int16& val) {
+	return Short::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<uint32>::hashCode(const uint32& val) {
+	return UnsignedInteger::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<int32>::hashCode(const int32& val) {
+	return Integer::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<uint64>::hashCode(const uint64& val) {
+	return UnsignedLong::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<int64>::hashCode(const int64& val) {
+	return Long::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<float>::hashCode(const float& val) {
+	return Float::hashCode(val);
+}
+
+template<> unsigned int TypeInfoAtomicBase<double>::hashCode(const double& val) {
+	return Double::hashCode(val);
+}
+
+/*template<> unsigned int TypeInfoAtomicBase<void*>::hashCode(const void* val) {
+#ifdef PLATFORM64
+	return UnsignedLong::hashCode((uint64) val);
+#else
+	return UnsignedInteger::hashCode((uint32) val);
+#endif
+}*/
 
 template<> bool TypeInfoAtomicBase<const char*>::toString(void* address, String& value) {
 	value = String((const char*)address);
@@ -347,3 +410,38 @@ template<> bool TypeInfoAtomicBase<double>::parseFromBinaryStream(void* address,
 	return true;
 }
 
+template<> uint8 TypeInfoAtomicBase<uint8>::nullValue() {
+	return 0;
+}
+
+template<> int8 TypeInfoAtomicBase<int8>::nullValue() {
+	return -1;
+}
+
+template<> uint16 TypeInfoAtomicBase<uint16>::nullValue() {
+	return 0;
+}
+
+template<> int16 TypeInfoAtomicBase<int16>::nullValue() {
+	return -1;
+}
+
+template<> uint32 TypeInfoAtomicBase<uint32>::nullValue() {
+	return 0;
+}
+
+template<> int32 TypeInfoAtomicBase<int32>::nullValue() {
+	return -1;
+}
+
+template<> uint64 TypeInfoAtomicBase<uint64>::nullValue() {
+	return 0;
+}
+
+template<> int64 TypeInfoAtomicBase<int64>::nullValue() {
+	return -1;
+}
+
+template<> void* TypeInfoAtomicBase<void*>::nullValue() {
+	return NULL;
+}

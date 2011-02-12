@@ -23,13 +23,8 @@ namespace engine {
 	template<class O> class TransactionalObjectHeader;
 
 	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<Object*>*> {
-		int hash(const uint64& key) {
-			return Long::hashCode(key);
-		}
-
 	public:
 		TransactionalObjectMap() : HashTable<uint64, TransactionalObjectHandle<Object*>*>(1000) {
-			setNullValue(NULL);
 		}
 
 		template<class O> TransactionalObjectHandle<O>* put(TransactionalObjectHeader<O>* header, TransactionalObjectHandle<O>* handle) {
@@ -58,13 +53,8 @@ namespace engine {
 	};
 
 	class TransactionalObjectHeaderMap : public HashTable<uint64, TransactionalObjectHeader<Object*>*> {
-		int hash(const uint64& key) {
-			return Long::hashCode(key);
-		}
-
 	public:
 		TransactionalObjectHeaderMap() : HashTable<uint64, TransactionalObjectHeader<Object*>*>(1000) {
-			setNullValue(NULL);
 		}
 
 		template<class O> TransactionalObjectHeader<O>* put(Object* object, TransactionalObjectHeader<O>* header) {

@@ -14,13 +14,8 @@ namespace engine {
   namespace ORB {
 
 	class DistributedObjectClassHelperMap : public HashTable<String, DistributedObjectClassHelper*> {
-		int hash(const String& key) {
-	        return key.hashCode();
-		}
-
 	public:
 		DistributedObjectClassHelperMap() : HashTable<String, DistributedObjectClassHelper*>(1000) {
-			setNullValue(NULL);
 		}
 
 		~DistributedObjectClassHelperMap() {

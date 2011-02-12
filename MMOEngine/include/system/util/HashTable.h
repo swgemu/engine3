@@ -54,7 +54,9 @@ namespace sys {
 
 	    int modCount;
 
-	    virtual int hash(const K& key) = 0;
+	    virtual int hash(const K& key) {
+	    	return TypeInfo<K>::hashCode(key);
+	    }
 
 	protected:
 		V nullValue;
@@ -156,6 +158,8 @@ namespace sys {
 	}
 
 	template<class K, class V> void HashTable<K,V>::init(int initialCapacity, float loadFactor) {
+		setNullValue(TypeInfo<V>::nullValue());
+
 		if (initialCapacity == 0)
 			HashTable::initialCapacity = 1;
 

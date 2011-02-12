@@ -63,6 +63,10 @@ namespace sys {
 			}
 		}
 
+		static uint32 hashCode(bool value) {
+			return (uint32) value;
+		}
+
 	};
 
   } // namespace lang

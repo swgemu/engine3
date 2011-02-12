@@ -55,6 +55,10 @@ namespace sys {
 			return true;
 		}
 
+		static uint32 hashCode(int16 value) {
+			return (uint32) value;
+		}
+
 	};
 
 	class UnsignedShort : public BaseTypeVariable<uint16> {
@@ -89,6 +93,10 @@ namespace sys {
 			*this = stream->readShort();
 
 			return true;
+		}
+
+		static uint32 hashCode(uint16 value) {
+			return (uint32) value;
 		}
 
 	};

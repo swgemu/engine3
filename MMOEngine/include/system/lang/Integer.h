@@ -87,6 +87,10 @@ namespace sys {
 			return val;
 		}
 
+		static uint32 hashCode(uint32 value) {
+			return value;
+		}
+
 	};
 
   } // namespace lang

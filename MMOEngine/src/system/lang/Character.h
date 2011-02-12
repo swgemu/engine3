@@ -132,6 +132,11 @@ namespace sys {
 
 			return true;
 		}
+
+		static uint32 hashCode(unsigned char value) {
+			return (uint32) value;
+		}
+
 	};
 
   } // namespace lang

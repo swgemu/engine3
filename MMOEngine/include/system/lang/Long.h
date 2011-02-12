@@ -59,8 +59,8 @@ namespace sys {
 			  return true;
 		  }
 
-		  static int hashCode(uint64 value) {
-			  return (int)(value ^ (value >> 32));
+		  static unsigned int hashCode(uint64 value) {
+			  return (unsigned int)(value ^ (value >> 32));
 		  }
 
 		  static int64 valueOf(const String& str) {
@@ -182,6 +182,10 @@ namespace sys {
 			  }
 
 			  return val;
+		  }
+
+		  static unsigned int hashCode(int64 value) {
+			  return (unsigned int)(value ^ (value >> 32));
 		  }
 	  };
 

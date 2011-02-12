@@ -8,15 +8,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "NamingDirectoryService.h"
 
-#include "object/DistributedObjectNameMap.h"
-
 namespace engine {
   namespace ORB {
 
 	class NamingDirectoryServiceImpl : public NamingDirectoryService {
 		NamingDirectoryService* rootNamingDirectory;
 
-		DistributedObjectNameMap objectNameMap;
+		HashTable<String, DistributedObjectStub*> objectNameMap;
 		
 	public:
 		NamingDirectoryServiceImpl();

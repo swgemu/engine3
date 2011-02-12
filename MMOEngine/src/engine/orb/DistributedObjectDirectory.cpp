@@ -3,13 +3,17 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine//core/ManagedObject.h"
+
+#include "engine/db/ObjectDatabaseManager.h"
+
+#include "engine/log/Logger.h"
+
 #include "DistributedObjectDirectory.h"
-#include "../core/ManagedObject.h"
-#include "../log/Logger.h"
-#include "../db/ObjectDatabaseManager.h"
+
 #include "DistributedHelperObjectMap.h"
 
-DistributedObjectDirectory::DistributedObjectDirectory() {
+DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000){
 	helperObjectMap = new DistributedHelperObjectMap();
 }
 

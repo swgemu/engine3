@@ -9,15 +9,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "object/DistributedObject.h"
 #include "object/DistributedObjectAdapter.h"
 
-#include "object/DistributedObjectMap.h"
-
 namespace engine {
   namespace ORB {
 
     class DistributedHelperObjectMap;
 
 	class DistributedObjectDirectory {
-		DistributedObjectMap objectMap;
+    	HashTable<uint64, DistributedObjectAdapter*> objectMap;
+
 		DistributedHelperObjectMap* helperObjectMap;
 	
 	public:
@@ -34,10 +33,6 @@ namespace engine {
 
 
 		void getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete, Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM);
-
-		inline DistributedObjectMap* getDistributedObjectMap() {
-			return &objectMap;
-		}
 
 		inline DistributedHelperObjectMap* getHelperObjectMap() {
 			return helperObjectMap;

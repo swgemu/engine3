@@ -14,13 +14,8 @@ namespace engine {
   namespace ORB {
 
 	class DistributedObjectNameMap : public HashTable<String, DistributedObjectStub*> {
-		int hash(const String& key) {
-	        return key.hashCode();
-		}
-
 	public:
 		DistributedObjectNameMap() : HashTable<String, DistributedObjectStub*>(100) {
-			setNullValue(NULL);
 		}
 
 	};
