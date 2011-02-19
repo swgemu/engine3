@@ -604,6 +604,7 @@ MMOEngine/src/engine/util/u3d/AABB.h -text
 MMOEngine/src/engine/util/u3d/AABBNode.h -text
 MMOEngine/src/engine/util/u3d/AABBTree.cpp -text
 MMOEngine/src/engine/util/u3d/AABBTree.h -text
+MMOEngine/src/engine/util/u3d/AStarAlgorithm.h -text
 MMOEngine/src/engine/util/u3d/Coordinate.h -text
 MMOEngine/src/engine/util/u3d/Matrix3.h -text
 MMOEngine/src/engine/util/u3d/Matrix4.cpp -text

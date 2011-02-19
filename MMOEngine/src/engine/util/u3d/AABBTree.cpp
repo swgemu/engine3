@@ -156,12 +156,13 @@ AABB Triangle::triAABB() const {
 	return test;
 }*/
 
-bool Triangle::intersects(const Ray& ray, float maxDistance) {
+bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersectionDistance) {
 	// Find vectors for two edges sharing vert0
+	intersectionDistance = 0;
+
 	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
 	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
 	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
-
 
 	Vector3 edge1 = vert1 - vert0;
 	Vector3 edge2 = vert2 - vert0;
@@ -210,9 +211,11 @@ bool Triangle::intersects(const Ray& ray, float maxDistance) {
 	a += String::valueOf(maxDistance);
 	Logger::console.info(a, true);*/
 
-	if (mDistance <= maxDistance)
+	if (mDistance <= maxDistance) {
+		intersectionDistance = mDistance;
+
 		return true;
-	else
+	} else
 		return false;
 
 	//return true;
@@ -500,9 +503,9 @@ bool Sphere::intersects(const AABB& aabb) const {
 	float distSqrtToOrigin = aabb.distSqrd(origin);
 	bool ret = ( distSqrtToOrigin <= radiusSquared);
 
-	StringBuffer msg;
+	/*StringBuffer msg;
 
-	/*if (ret)
+	if (ret)
 		msg << "intersecting with mbox distance ";
 	else
 		msg << "not intersecting with mbox distance";
@@ -524,12 +527,12 @@ AABBNode::~AABBNode() {
 	}
 }
 
-bool AABBNode::intersects(const Ray& ray, float t1, bool checkPrimitives) {
-	if (mBox.intersects(ray, 0.f, t1)) {
+bool AABBNode::intersects(const Ray& ray, float distance, float& intersectionDistance, bool checkPrimitives) {
+	if (mBox.intersects(ray, 0.f, distance)) {
 		if (mChildren[0]) {
 			// recurse to children
-			if (!mChildren[0]->intersects(ray, t1, checkPrimitives))
-				return mChildren[1]->intersects(ray, t1, checkPrimitives);
+			if (!mChildren[0]->intersects(ray, distance, intersectionDistance, checkPrimitives))
+				return mChildren[1]->intersects(ray, distance, intersectionDistance, checkPrimitives);
 			else
 				return true;
 
@@ -538,7 +541,7 @@ bool AABBNode::intersects(const Ray& ray, float t1, bool checkPrimitives) {
 				for (int i = 0; i < mTriangles.size(); ++i) {
 					//Vector3 intersectionPoint;
 
-					if (mTriangles.get(i).intersects(ray, t1))
+					if (mTriangles.get(i).intersects(ray, distance, intersectionDistance))
 						return true;
 				}
 			} else
