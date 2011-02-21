@@ -6,6 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/orb/DistributedObjectBroker.h"
 #include "engine/orb/DOBObjectManager.h"
 
+#include "engine/stm/TransactionAbortedException.h"
 
 #include "LocalObjectManager.h"
 
@@ -40,6 +41,10 @@ void LocalObjectManager::commitObjectChanges() {
 		objectBroker->destroyObject(object);
 	}
 
+	info("deployed " + String::valueOf(localObjectDirectory.size())
+			+ ", undeployed " + String::valueOf(undeployedObjects.size())
+			+ ", destroyed " + String::valueOf(destroyedObjects.size()));
+
 	clearObjectChanges();
 }
 
@@ -62,17 +67,35 @@ void LocalObjectManager::deploy(DistributedObjectStub* obj) {
 	deploy(name, obj);
 }
 
-void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) {
-	if (lookUp(name) != NULL) {
-		warning("object \'" + name + "\' (0x" + String::valueOf(obj) + ") already deployed");
-	} else {
-		objectManager->createObjectID(name, obj);
+//HashTable<uint64,StackTrace*> traces;
 
-		assert(localNamingDirectory.put(name, obj) == NULL);
+void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) {
+	objectManager->createObjectID(name, obj);
+
+	const String& objectName = obj->_getName();
+
+	assert(!objectName.isEmpty());
+
+	if (lookUp(objectName) != NULL) {
+		warning("object \'" + objectName + "\' (0x" + String::valueOf(obj) + ") already deployed");
+
+		/*traces.get(obj->_getObjectID())->print();
+
+		printf("new\n");
+
+		StackTrace::printStackTrace();
+
+		assert(0);*/
+
+		throw TransactionAbortedException();
+	} else {
+		//traces.put(obj->_getObjectID(), new StackTrace());
+
+		assert(localNamingDirectory.put(objectName, obj) == NULL);
 
 		assert(localObjectDirectory.put(obj->_getObjectID(), obj) == NULL);
 
-		info("object " + name + " deployed");
+		info("object " + objectName + " deployed");
 
 		undeployedObjects.drop(obj);
 	}
@@ -98,9 +121,12 @@ DistributedObject* LocalObjectManager::lookUp(const String& name) {
 }
 
 DistributedObject* LocalObjectManager::lookUp(uint64 objid) {
-	DistributedObject* object = NULL; //namingDirectory->lookUp(objid);
-	//if (object == NULL && !undeployedObjects.contains(objid))
+	DistributedObject* object = localObjectDirectory.get(objid);
+	if (object == NULL)
 		object = objectBroker->lookUp(objid);
+
+	if (object != NULL && undeployedObjects.contains((DistributedObjectStub*) object))
+		return NULL;
 
 	return object;
 }
