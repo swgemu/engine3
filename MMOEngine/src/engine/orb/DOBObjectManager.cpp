@@ -106,6 +106,10 @@ DistributedObjectAdapter* DOBObjectManager::removeObject(uint64 objectID) {
 	return object;
 }
 
+void DOBObjectManager::createObjectID(const String& name, DistributedObjectStub* object) {
+	assert(0);
+}
+
 uint64 DOBObjectManager::getNextFreeObjectID() {
 	Packet* msg = new GetNextFreeObjectIDMessage(true);
 	client->send(msg);

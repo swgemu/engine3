@@ -185,22 +185,22 @@ int FacadeImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 
 FacadeImplementation::FacadeImplementation() {
 	_initializeImplementation();
-	// engine/util/Facade.idl(17):  		Logger.setLoggingName("Facade");
+	// engine/util/Facade.idl():  		Logger.setLoggingName("Facade");
 	Logger::setLoggingName("Facade");
 }
 
 int FacadeImplementation::initializeSession() {
-	// engine/util/Facade.idl(21):  		return 0;
+	// engine/util/Facade.idl():  		return 0;
 	return 0;
 }
 
 int FacadeImplementation::cancelSession() {
-	// engine/util/Facade.idl(25):  		return 0;
+	// engine/util/Facade.idl():  		return 0;
 	return 0;
 }
 
 int FacadeImplementation::clearSession() {
-	// engine/util/Facade.idl(29):  		return 0;
+	// engine/util/Facade.idl():  		return 0;
 	return 0;
 }
 
@@ -211,17 +211,19 @@ int FacadeImplementation::clearSession() {
 FacadeAdapter::FacadeAdapter(FacadeImplementation* obj) : ManagedObjectAdapter(obj) {
 }
 
+enum {RPC_INITIALIZESESSION__ = 6,RPC_CANCELSESSION__,RPC_CLEARSESSION__};
+
 Packet* FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);
 
 	switch (methid) {
-	case 6:
+	case RPC_INITIALIZESESSION__:
 		resp->insertSignedInt(initializeSession());
 		break;
-	case 7:
+	case RPC_CANCELSESSION__:
 		resp->insertSignedInt(cancelSession());
 		break;
-	case 8:
+	case RPC_CLEARSESSION__:
 		resp->insertSignedInt(clearSession());
 		break;
 	default:

@@ -7,11 +7,11 @@
 namespace engine {
   namespace ORB {
 
-	class DistributedHelperObjectMap : public HashTable<uint64, Reference<DistributedObject*> > {
+	/*class DistributedHelperObjectMap : public HashTable<uint64, Reference<DistributedObject*> > {
 	public:
 		DistributedHelperObjectMap() : HashTable<uint64, Reference<DistributedObject*> >(30000) {
 		};
-	};
+	};*/
 
   }
 }

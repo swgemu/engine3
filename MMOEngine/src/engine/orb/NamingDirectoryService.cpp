@@ -25,15 +25,11 @@ NamingDirectoryService::NamingDirectoryService(const String& address) {
 NamingDirectoryService::~NamingDirectoryService() {
 }
 
-bool NamingDirectoryService::deploy(DistributedObjectStub* stub) {
+bool NamingDirectoryService::bind(const String& name, DistributedObjectStub* stub) {
 	return false;
 }
 
-bool NamingDirectoryService::deploy(const String& name, DistributedObjectStub* stub) {
-	return false;
-}
-
-DistributedObject* NamingDirectoryService::lookUp(const String& name) {
+DistributedObject* NamingDirectoryService::lookup(const String& name) {
 	Packet* msg = new LookUpObjectMessage(name);
 	brokerClient->send(msg);
 			
@@ -65,7 +61,7 @@ DistributedObject* NamingDirectoryService::lookUp(const String& name) {
 	return obj;
 }
 
-DistributedObject* NamingDirectoryService::undeploy(const String& name) {
+DistributedObject* NamingDirectoryService::unbind(const String& name) {
 	DistributedObject* obj = NULL;
 	
 	return obj;

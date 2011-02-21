@@ -42,9 +42,6 @@ namespace engine {
 		void printStatistics();
 
 		TransactionalObjectManager* getObjectManager() {
-			//FIXME: temp hack
-			objectManager->initialize();
-
 			return objectManager;
 		}
 

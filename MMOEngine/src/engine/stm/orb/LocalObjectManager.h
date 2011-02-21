@@ -20,8 +20,11 @@ namespace engine {
 
   	class LocalObjectManager : public ObjectBroker, public Logger {
   		DistributedObjectBroker* objectBroker;
+  		DOBObjectManager* objectManager;
 
-  		NamingDirectoryServiceImpl* namingDirectory;
+  		HashTable<uint64, DistributedObjectStub*> localObjectDirectory;
+
+  		HashTable<String, DistributedObjectStub*> localNamingDirectory;
 
   		SortedVector<DistributedObjectStub*> undeployedObjects;
   		SortedVector<DistributedObjectStub*> destroyedObjects;

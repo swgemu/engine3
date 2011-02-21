@@ -191,20 +191,20 @@ int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 }
 
 int ObserverImplementation::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
-	// engine/util/Observer.idl(19):  		return 1;
+	// engine/util/Observer.idl():  		return 1;
 	return 1;
 }
 
 int ObserverImplementation::compareTo(Observer* obj) {
-	// engine/util/Observer.idl(32):  
-	if (getObjectID() < obj->getObjectID())	// engine/util/Observer.idl(33):  			return 1;
+	// engine/util/Observer.idl():  			return 0;
+	if (getObjectID() < obj->getObjectID())	// engine/util/Observer.idl():  			return 1;
 	return 1;
 
-	else 	// engine/util/Observer.idl(34):  
-	if (getObjectID() > obj->getObjectID())	// engine/util/Observer.idl(35):  			return -1;
+	else 	// engine/util/Observer.idl():  			return 0;
+	if (getObjectID() > obj->getObjectID())	// engine/util/Observer.idl():  			return -1;
 	return -1;
 
-	else 	// engine/util/Observer.idl(37):  			return 0;
+	else 	// engine/util/Observer.idl():  			return 0;
 	return 0;
 }
 
@@ -215,17 +215,19 @@ int ObserverImplementation::compareTo(Observer* obj) {
 ObserverAdapter::ObserverAdapter(ObserverImplementation* obj) : ManagedObjectAdapter(obj) {
 }
 
+enum {RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_ = 6,RPC_GETOBJECTID__,RPC_COMPARETO__OBSERVER_};
+
 Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);
 
 	switch (methid) {
-	case 6:
+	case RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_:
 		resp->insertSignedInt(notifyObserverEvent(inv->getUnsignedIntParameter(), (Observable*) inv->getObjectParameter(), (ManagedObject*) inv->getObjectParameter(), inv->getSignedLongParameter()));
 		break;
-	case 7:
+	case RPC_GETOBJECTID__:
 		resp->insertLong(getObjectID());
 		break;
-	case 8:
+	case RPC_COMPARETO__OBSERVER_:
 		resp->insertSignedInt(compareTo((Observer*) inv->getObjectParameter()));
 		break;
 	default:

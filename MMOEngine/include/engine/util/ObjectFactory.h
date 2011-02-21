@@ -29,7 +29,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef OBJECTFACTORY_H_
 #define OBJECTFACTORY_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 namespace engine {
 	namespace util {

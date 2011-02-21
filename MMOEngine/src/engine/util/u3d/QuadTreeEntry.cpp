@@ -691,91 +691,91 @@ void QuadTreeEntryImplementation::notifyRemovedFromCloseObjects() {
 }
 
 void QuadTreeEntryImplementation::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
-	// engine/util/u3d/QuadTreeEntry.idl(50):  
+	// engine/util/u3d/QuadTreeEntry.idl():  	}
 	if ((&closeobjects)->put(obj) != -1){
-	// engine/util/u3d/QuadTreeEntry.idl(51):  			notifyInsert(obj);
+	// engine/util/u3d/QuadTreeEntry.idl():  			notifyInsert(obj);
 	notifyInsert(obj);
-	// engine/util/u3d/QuadTreeEntry.idl(52):  			obj.notifyAddedToCloseObjects();
+	// engine/util/u3d/QuadTreeEntry.idl():  			obj.notifyAddedToCloseObjects();
 	obj->notifyAddedToCloseObjects();
 }
 
-	else 	// engine/util/u3d/QuadTreeEntry.idl(53):  	}
+	else 	// engine/util/u3d/QuadTreeEntry.idl():  	}
 	if (doNotifyUpdate){
-	// engine/util/u3d/QuadTreeEntry.idl(54):  			notifyPositionUpdate(obj);
+	// engine/util/u3d/QuadTreeEntry.idl():  			notifyPositionUpdate(obj);
 	notifyPositionUpdate(obj);
 }
 }
 
 QuadTreeEntry* QuadTreeEntryImplementation::getInRangeObject(int index) {
-	// engine/util/u3d/QuadTreeEntry.idl(59):  		return closeobjects.get(index);
+	// engine/util/u3d/QuadTreeEntry.idl():  		return closeobjects.get(index);
 	return (&closeobjects)->get(index);
 }
 
 void QuadTreeEntryImplementation::removeInRangeObject(QuadTreeEntry* obj) {
-	// engine/util/u3d/QuadTreeEntry.idl(65):  	}
+	// engine/util/u3d/QuadTreeEntry.idl():  	}
 	if ((&closeobjects)->drop(obj)){
-	// engine/util/u3d/QuadTreeEntry.idl(66):  			notifyDissapear(obj);
+	// engine/util/u3d/QuadTreeEntry.idl():  			notifyDissapear(obj);
 	notifyDissapear(obj);
-	// engine/util/u3d/QuadTreeEntry.idl(67):  			obj.notifyRemovedFromCloseObjects();
+	// engine/util/u3d/QuadTreeEntry.idl():  			obj.notifyRemovedFromCloseObjects();
 	obj->notifyRemovedFromCloseObjects();
 }
 }
 
 void QuadTreeEntryImplementation::removeInRangeObject(int index) {
-	// engine/util/u3d/QuadTreeEntry.idl(81):  		QuadTreeEntry entry = closeobjects.remove(index);
+	// engine/util/u3d/QuadTreeEntry.idl():  		QuadTreeEntry entry = closeobjects.remove(index);
 	QuadTreeEntry* entry = (&closeobjects)->remove(index);
-	// engine/util/u3d/QuadTreeEntry.idl(83):  		entry.notifyRemovedFromCloseObjects();
+	// engine/util/u3d/QuadTreeEntry.idl():  		entry.notifyRemovedFromCloseObjects();
 	entry->notifyRemovedFromCloseObjects();
 }
 
 void QuadTreeEntryImplementation::removeInRangeObjects() {
-	// engine/util/u3d/QuadTreeEntry.idl(89):  
-	for (	// engine/util/u3d/QuadTreeEntry.idl(89):  		for (int i = 0;
+	// engine/util/u3d/QuadTreeEntry.idl():  		}
+	for (	// engine/util/u3d/QuadTreeEntry.idl():  		for (int i = 0;
 	int i = 0;
 	i < (&closeobjects)->size();
  ++i) {
-	// engine/util/u3d/QuadTreeEntry.idl(90):  			closeobjects.get(i).notifyRemovedFromCloseObjects();
+	// engine/util/u3d/QuadTreeEntry.idl():  			closeobjects.get(i).notifyRemovedFromCloseObjects();
 	(&closeobjects)->get(i)->notifyRemovedFromCloseObjects();
 }
-	// engine/util/u3d/QuadTreeEntry.idl(93):  		closeobjects.removeAll();
+	// engine/util/u3d/QuadTreeEntry.idl():  		closeobjects.removeAll();
 	(&closeobjects)->removeAll();
 }
 
 bool QuadTreeEntryImplementation::containsInRangeObject(QuadTreeEntry* obj) {
-	// engine/util/u3d/QuadTreeEntry.idl(97):  		return closeobjects.contains(obj);
+	// engine/util/u3d/QuadTreeEntry.idl():  		return closeobjects.contains(obj);
 	return (&closeobjects)->contains(obj);
 }
 
 bool QuadTreeEntryImplementation::isInRange(QuadTreeEntry* obj, float range) {
-	// engine/util/u3d/QuadTreeEntry.idl(101):  		return isInRange(obj.getPositionX(), obj.getPositionY(), range);
+	// engine/util/u3d/QuadTreeEntry.idl():  		return isInRange(obj.getPositionX(), obj.getPositionY(), range);
 	return isInRange(obj->getPositionX(), obj->getPositionY(), range);
 }
 
 bool QuadTreeEntryImplementation::isInRange(float x, float y, float range) {
-	// engine/util/u3d/QuadTreeEntry.idl(105):  	 	float rangesq = range * range;
+	// engine/util/u3d/QuadTreeEntry.idl():  	 	float rangesq = range * range;
 	float rangesq = range * range;
-	// engine/util/u3d/QuadTreeEntry.idl(107):  		float deltaX = x - positionX;
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaX = x - positionX;
 	float deltaX = x - positionX;
-	// engine/util/u3d/QuadTreeEntry.idl(108):  		float deltaY = y - positionY;
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaY = y - positionY;
 	float deltaY = y - positionY;
-	// engine/util/u3d/QuadTreeEntry.idl(110):  
-	if (deltaX * deltaX + deltaY * deltaY <= rangesq)	// engine/util/u3d/QuadTreeEntry.idl(111):  			return true;
+	// engine/util/u3d/QuadTreeEntry.idl():  			return false;
+	if (deltaX * deltaX + deltaY * deltaY <= rangesq)	// engine/util/u3d/QuadTreeEntry.idl():  			return true;
 	return true;
 
-	else 	// engine/util/u3d/QuadTreeEntry.idl(113):  			return false;
+	else 	// engine/util/u3d/QuadTreeEntry.idl():  			return false;
 	return false;
 }
 
 float QuadTreeEntryImplementation::getDistanceTo(QuadTreeEntry* obj) {
-	// engine/util/u3d/QuadTreeEntry.idl(117):  		float x = obj.getPositionX();
+	// engine/util/u3d/QuadTreeEntry.idl():  		float x = obj.getPositionX();
 	float x = obj->getPositionX();
-	// engine/util/u3d/QuadTreeEntry.idl(118):  		float y = obj.getPositionY();
+	// engine/util/u3d/QuadTreeEntry.idl():  		float y = obj.getPositionY();
 	float y = obj->getPositionY();
-	// engine/util/u3d/QuadTreeEntry.idl(120):  		float deltaX = x - positionX;
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaX = x - positionX;
 	float deltaX = x - positionX;
-	// engine/util/u3d/QuadTreeEntry.idl(121):  		float deltaY = y - positionY;
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaY = y - positionY;
 	float deltaY = y - positionY;
-	// engine/util/u3d/QuadTreeEntry.idl(123):  		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	return Math::sqrt(deltaX * deltaX + deltaY * deltaY);
 }
 
@@ -789,100 +789,100 @@ void QuadTreeEntryImplementation::notifyDissapear(QuadTreeEntry* obj) {
 }
 
 float QuadTreeEntryImplementation::getPositionX() {
-	// engine/util/u3d/QuadTreeEntry.idl(148):  		return Coordinate.getPositionX();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPositionX();
 	return Coordinate::getPositionX();
 }
 
 float QuadTreeEntryImplementation::getPositionZ() {
-	// engine/util/u3d/QuadTreeEntry.idl(152):  		return Coordinate.getPositionZ();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPositionZ();
 	return Coordinate::getPositionZ();
 }
 
 float QuadTreeEntryImplementation::getPositionY() {
-	// engine/util/u3d/QuadTreeEntry.idl(156):  		return Coordinate.getPositionY();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPositionY();
 	return Coordinate::getPositionY();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionX() {
-	// engine/util/u3d/QuadTreeEntry.idl(160):  		return Coordinate.getPreviousPositionX();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPreviousPositionX();
 	return Coordinate::getPreviousPositionX();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionZ() {
-	// engine/util/u3d/QuadTreeEntry.idl(164):  		return Coordinate.getPreviousPositionZ();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPreviousPositionZ();
 	return Coordinate::getPreviousPositionZ();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionY() {
-	// engine/util/u3d/QuadTreeEntry.idl(168):  		return Coordinate.getPreviousPositionY();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPreviousPositionY();
 	return Coordinate::getPreviousPositionY();
 }
 
 Vector3 QuadTreeEntryImplementation::getPosition() {
-	// engine/util/u3d/QuadTreeEntry.idl(174):  		return Coordinate.getPosition();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPosition();
 	return Coordinate::getPosition();
 }
 
 void QuadTreeEntryImplementation::setPosition(float x, float z, float y) {
-	// engine/util/u3d/QuadTreeEntry.idl(178):  		Coordinate.setPosition(x, z, y);
+	// engine/util/u3d/QuadTreeEntry.idl():  		Coordinate.setPosition(x, z, y);
 	Coordinate::setPosition(x, z, y);
 }
 
 void QuadTreeEntryImplementation::initializePosition(float x, float z, float y) {
-	// engine/util/u3d/QuadTreeEntry.idl(182):  		Coordinate.initializePosition(x, z, y);
+	// engine/util/u3d/QuadTreeEntry.idl():  		Coordinate.initializePosition(x, z, y);
 	Coordinate::initializePosition(x, z, y);
 }
 
 int QuadTreeEntryImplementation::compareTo(QuadTreeEntry* obj) {
-	// engine/util/u3d/QuadTreeEntry.idl(186):  
-	if (getObjectID() < obj->getObjectID())	// engine/util/u3d/QuadTreeEntry.idl(187):  			return 1;
+	// engine/util/u3d/QuadTreeEntry.idl():  			return 0;
+	if (getObjectID() < obj->getObjectID())	// engine/util/u3d/QuadTreeEntry.idl():  			return 1;
 	return 1;
 
-	else 	// engine/util/u3d/QuadTreeEntry.idl(188):  
-	if (getObjectID() > obj->getObjectID())	// engine/util/u3d/QuadTreeEntry.idl(189):  			return -1;
+	else 	// engine/util/u3d/QuadTreeEntry.idl():  			return 0;
+	if (getObjectID() > obj->getObjectID())	// engine/util/u3d/QuadTreeEntry.idl():  			return -1;
 	return -1;
 
-	else 	// engine/util/u3d/QuadTreeEntry.idl(191):  			return 0;
+	else 	// engine/util/u3d/QuadTreeEntry.idl():  			return 0;
 	return 0;
 }
 
 bool QuadTreeEntryImplementation::isInQuadTree() {
-	// engine/util/u3d/QuadTreeEntry.idl(195):  		return node.get() != null;
+	// engine/util/u3d/QuadTreeEntry.idl():  		return node.get() != null;
 	return (&node)->get() != NULL;
 }
 
 int QuadTreeEntryImplementation::inRangeObjectCount() {
-	// engine/util/u3d/QuadTreeEntry.idl(199):  		return closeobjects.size();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return closeobjects.size();
 	return (&closeobjects)->size();
 }
 
 QuadTreeNode* QuadTreeEntryImplementation::getNode() {
-	// engine/util/u3d/QuadTreeEntry.idl(204):  		return node.get();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return node.get();
 	return (&node)->get();
 }
 
 unsigned long long QuadTreeEntryImplementation::getObjectID() {
-	// engine/util/u3d/QuadTreeEntry.idl(208):  		return 0;
+	// engine/util/u3d/QuadTreeEntry.idl():  		return 0;
 	return 0;
 }
 
 float QuadTreeEntryImplementation::getRadius() {
-	// engine/util/u3d/QuadTreeEntry.idl(212):  		return radius;
+	// engine/util/u3d/QuadTreeEntry.idl():  		return radius;
 	return radius;
 }
 
 bool QuadTreeEntryImplementation::isBounding() {
-	// engine/util/u3d/QuadTreeEntry.idl(216):  		return bounding;
+	// engine/util/u3d/QuadTreeEntry.idl():  		return bounding;
 	return bounding;
 }
 
 void QuadTreeEntryImplementation::setBounding() {
-	// engine/util/u3d/QuadTreeEntry.idl(223):  		bounding = true;
+	// engine/util/u3d/QuadTreeEntry.idl():  		bounding = true;
 	bounding = true;
 }
 
 void QuadTreeEntryImplementation::clearBounding() {
-	// engine/util/u3d/QuadTreeEntry.idl(227):  		bounding = false;
+	// engine/util/u3d/QuadTreeEntry.idl():  		bounding = false;
 	bounding = false;
 }
 
@@ -893,98 +893,100 @@ void QuadTreeEntryImplementation::clearBounding() {
 QuadTreeEntryAdapter::QuadTreeEntryAdapter(QuadTreeEntryImplementation* obj) : ObservableAdapter(obj) {
 }
 
+enum {RPC_NOTIFYADDEDTOCLOSEOBJECTS__ = 6,RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__,RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_,RPC_GETINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_INRANGEOBJECTCOUNT__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_CLEARBOUNDING__};
+
 Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);
 
 	switch (methid) {
-	case 6:
+	case RPC_NOTIFYADDEDTOCLOSEOBJECTS__:
 		notifyAddedToCloseObjects();
 		break;
-	case 7:
+	case RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__:
 		notifyRemovedFromCloseObjects();
 		break;
-	case 8:
+	case RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_:
 		addInRangeObject((QuadTreeEntry*) inv->getObjectParameter(), inv->getBooleanParameter());
 		break;
-	case 9:
+	case RPC_GETINRANGEOBJECT__INT_:
 		resp->insertLong(getInRangeObject(inv->getSignedIntParameter())->_getObjectID());
 		break;
-	case 10:
+	case RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_:
 		removeInRangeObject((QuadTreeEntry*) inv->getObjectParameter());
 		break;
-	case 11:
+	case RPC_REMOVEINRANGEOBJECT__INT_:
 		removeInRangeObject(inv->getSignedIntParameter());
 		break;
-	case 12:
+	case RPC_REMOVEINRANGEOBJECTS__:
 		removeInRangeObjects();
 		break;
-	case 13:
+	case RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_:
 		resp->insertBoolean(containsInRangeObject((QuadTreeEntry*) inv->getObjectParameter()));
 		break;
-	case 14:
+	case RPC_ISINRANGE__QUADTREEENTRY_FLOAT_:
 		resp->insertBoolean(isInRange((QuadTreeEntry*) inv->getObjectParameter(), inv->getFloatParameter()));
 		break;
-	case 15:
+	case RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_:
 		resp->insertBoolean(isInRange(inv->getFloatParameter(), inv->getFloatParameter(), inv->getFloatParameter()));
 		break;
-	case 16:
+	case RPC_GETDISTANCETO__QUADTREEENTRY_:
 		resp->insertFloat(getDistanceTo((QuadTreeEntry*) inv->getObjectParameter()));
 		break;
-	case 17:
+	case RPC_NOTIFYINSERT__QUADTREEENTRY_:
 		notifyInsert((QuadTreeEntry*) inv->getObjectParameter());
 		break;
-	case 18:
+	case RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_:
 		notifyPositionUpdate((QuadTreeEntry*) inv->getObjectParameter());
 		break;
-	case 19:
+	case RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_:
 		notifyDissapear((QuadTreeEntry*) inv->getObjectParameter());
 		break;
-	case 20:
+	case RPC_GETPOSITIONX__:
 		resp->insertFloat(getPositionX());
 		break;
-	case 21:
+	case RPC_GETPOSITIONZ__:
 		resp->insertFloat(getPositionZ());
 		break;
-	case 22:
+	case RPC_GETPOSITIONY__:
 		resp->insertFloat(getPositionY());
 		break;
-	case 23:
+	case RPC_GETPREVIOUSPOSITIONX__:
 		resp->insertFloat(getPreviousPositionX());
 		break;
-	case 24:
+	case RPC_GETPREVIOUSPOSITIONZ__:
 		resp->insertFloat(getPreviousPositionZ());
 		break;
-	case 25:
+	case RPC_GETPREVIOUSPOSITIONY__:
 		resp->insertFloat(getPreviousPositionY());
 		break;
-	case 26:
+	case RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_:
 		setPosition(inv->getFloatParameter(), inv->getFloatParameter(), inv->getFloatParameter());
 		break;
-	case 27:
+	case RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_:
 		initializePosition(inv->getFloatParameter(), inv->getFloatParameter(), inv->getFloatParameter());
 		break;
-	case 28:
+	case RPC_COMPARETO__QUADTREEENTRY_:
 		resp->insertSignedInt(compareTo((QuadTreeEntry*) inv->getObjectParameter()));
 		break;
-	case 29:
+	case RPC_ISINQUADTREE__:
 		resp->insertBoolean(isInQuadTree());
 		break;
-	case 30:
+	case RPC_INRANGEOBJECTCOUNT__:
 		resp->insertSignedInt(inRangeObjectCount());
 		break;
-	case 31:
+	case RPC_GETOBJECTID__:
 		resp->insertLong(getObjectID());
 		break;
-	case 32:
+	case RPC_GETRADIUS__:
 		resp->insertFloat(getRadius());
 		break;
-	case 33:
+	case RPC_ISBOUNDING__:
 		resp->insertBoolean(isBounding());
 		break;
-	case 34:
+	case RPC_SETBOUNDING__:
 		setBounding();
 		break;
-	case 35:
+	case RPC_CLEARBOUNDING__:
 		clearBounding();
 		break;
 	default:

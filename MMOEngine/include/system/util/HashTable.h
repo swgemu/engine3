@@ -161,7 +161,9 @@ namespace sys {
 		setNullValue(TypeInfo<V>::nullValue());
 
 		if (initialCapacity == 0)
-			HashTable::initialCapacity = 1;
+			initialCapacity = 1;
+
+		HashTable::initialCapacity = initialCapacity;
 
 		table = (Entry<K, V>**) malloc(initialCapacity * sizeof(Entry<K, V>*));
 		memset(table, 0, initialCapacity * sizeof(Entry<K, V>*));

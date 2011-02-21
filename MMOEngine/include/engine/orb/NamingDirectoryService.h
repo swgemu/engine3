@@ -26,12 +26,11 @@ namespace engine {
 		
 		virtual ~NamingDirectoryService();
 	
-		virtual bool deploy(DistributedObjectStub* stub);
-		virtual bool deploy(const String& name, DistributedObjectStub* stub);
+		virtual bool bind(const String& name, DistributedObjectStub* stub);
 	
-		virtual DistributedObject* lookUp(const String& name);
+		virtual DistributedObject* lookup(const String& name);
 		
-		virtual DistributedObject* undeploy(const String& name);
+		virtual DistributedObject* unbind(const String& name);
 		
 		inline DistributedObjectBrokerClient* getClient() {
 			return brokerClient;

@@ -104,7 +104,7 @@ namespace engine {
 		//             2 = are in the same plane
 		//int intersects(const Ray& ray, Vector3& intersectionPoint);
 
-		bool intersects(const Ray& ray, float maxDistance);
+		bool intersects(const Ray& ray, float maxDistance, float& intersectionDistance);
 
 		Vector3 getNormal() const {
 			Vector3 normal;

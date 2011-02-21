@@ -418,55 +418,55 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 
 ManagedObjectImplementation::ManagedObjectImplementation() {
 	_initializeImplementation();
-	// engine/core/ManagedObject.idl(30):  		persistenceLevel = 0;
+	// engine/core/ManagedObject.idl():  		persistenceLevel = 0;
 	persistenceLevel = 0;
-	// engine/core/ManagedObject.idl(32):  		lastCRCSave = 0;
+	// engine/core/ManagedObject.idl():  		lastCRCSave = 0;
 	lastCRCSave = 0;
-	// engine/core/ManagedObject.idl(34):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl():  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 bool ManagedObjectImplementation::toBinaryStream(ObjectOutputStream* stream) {
-	// engine/core/ManagedObject.idl(91):  		writeObject(stream);
+	// engine/core/ManagedObject.idl():  		writeObject(stream);
 	writeObject(stream);
-	// engine/core/ManagedObject.idl(92):  		return true;
+	// engine/core/ManagedObject.idl():  		return true;
 	return true;
 }
 
 bool ManagedObjectImplementation::parseFromBinaryStream(ObjectInputStream* stream) {
-	// engine/core/ManagedObject.idl(97):  		readObject(stream);
+	// engine/core/ManagedObject.idl():  		readObject(stream);
 	readObject(stream);
-	// engine/core/ManagedObject.idl(98):  		return true;
+	// engine/core/ManagedObject.idl():  		return true;
 	return true;
 }
 
 void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
-	// engine/core/ManagedObject.idl(114):  		updateToDatabaseTask = null;
+	// engine/core/ManagedObject.idl():  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
 }
 
 unsigned int ManagedObjectImplementation::getLastCRCSave() {
-	// engine/core/ManagedObject.idl(118):  		return lastCRCSave;
+	// engine/core/ManagedObject.idl():  		return lastCRCSave;
 	return lastCRCSave;
 }
 
 void ManagedObjectImplementation::setLastCRCSave(unsigned int crc) {
-	// engine/core/ManagedObject.idl(122):  		lastCRCSave = crc;
+	// engine/core/ManagedObject.idl():  		lastCRCSave = crc;
 	lastCRCSave = crc;
 }
 
 bool ManagedObjectImplementation::isPersistent() {
-	// engine/core/ManagedObject.idl(127):  		return persistenceLevel != 0;
+	// engine/core/ManagedObject.idl():  		return persistenceLevel != 0;
 	return persistenceLevel != 0;
 }
 
 int ManagedObjectImplementation::getPersistenceLevel() {
-	// engine/core/ManagedObject.idl(132):  		return persistenceLevel;
+	// engine/core/ManagedObject.idl():  		return persistenceLevel;
 	return persistenceLevel;
 }
 
 void ManagedObjectImplementation::_setClassName(const String& name) {
-	// engine/core/ManagedObject.idl(136):  		_className = name;
+	// engine/core/ManagedObject.idl():  		_className = name;
 	_className = name;
 }
 
@@ -477,56 +477,58 @@ void ManagedObjectImplementation::_setClassName(const String& name) {
 ManagedObjectAdapter::ManagedObjectAdapter(ManagedObjectImplementation* obj) : DistributedObjectAdapter((DistributedObjectServant*) obj) {
 }
 
+enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,};
+
 Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);
 
 	switch (methid) {
-	case 6:
+	case RPC_UPDATEFORWRITE__:
 		updateForWrite();
 		break;
-	case 7:
+	case RPC_LOCK__BOOL_:
 		lock(inv->getBooleanParameter());
 		break;
-	case 8:
+	case RPC_LOCK__MANAGEDOBJECT_:
 		lock((ManagedObject*) inv->getObjectParameter());
 		break;
-	case 9:
+	case RPC_RLOCK__BOOL_:
 		rlock(inv->getBooleanParameter());
 		break;
-	case 10:
+	case RPC_WLOCK__BOOL_:
 		wlock(inv->getBooleanParameter());
 		break;
-	case 11:
+	case RPC_WLOCK__MANAGEDOBJECT_:
 		wlock((ManagedObject*) inv->getObjectParameter());
 		break;
-	case 12:
+	case RPC_UNLOCK__BOOL_:
 		unlock(inv->getBooleanParameter());
 		break;
-	case 13:
+	case RPC_RUNLOCK__BOOL_:
 		runlock(inv->getBooleanParameter());
 		break;
-	case 14:
+	case RPC_SETLOCKNAME__STRING_:
 		setLockName(inv->getAsciiParameter(_param0_setLockName__String_));
 		break;
-	case 15:
+	case RPC_NOTIFYDESTROY__:
 		resp->insertBoolean(notifyDestroy());
 		break;
-	case 16:
+	case RPC_INITIALIZETRANSIENTMEMBERS__:
 		initializeTransientMembers();
 		break;
-	case 17:
+	case RPC_UPDATETODATABASE__:
 		updateToDatabase();
 		break;
-	case 18:
+	case RPC_QUEUEUPDATETODATABASETASK__:
 		queueUpdateToDatabaseTask();
 		break;
-	case 19:
+	case RPC_CLEARUPDATETODATABASETASK__:
 		clearUpdateToDatabaseTask();
 		break;
-	case 20:
+	case RPC_GETLASTCRCSAVE__:
 		resp->insertInt(getLastCRCSave());
 		break;
-	case 21:
+	case RPC_SETLASTCRCSAVE__INT_:
 		setLastCRCSave(inv->getUnsignedIntParameter());
 		break;
 	default:

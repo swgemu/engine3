@@ -118,16 +118,14 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 
 	try {
 		uint64 objectid = obj->_getObjectID();
+		String name = obj->_getName();
 
 		Locker locker(objectManager);
 
-		if (objectid == 0) {
-			objectid = objectManager->getNextFreeObjectID();
-			obj->_setObjectID(objectid);
-		}
+		objectManager->createObjectID(name, obj);
 
-		if (!namingDirectoryInterface->deploy(obj))
-			warning("object already deployed");
+		if (!namingDirectoryInterface->bind(name, obj))
+			error("object \'" + name + "\' already bound");
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
@@ -147,21 +145,16 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 		throw ObjectNotLocalException(obj);
 
 	try {
-		uint64 objectid = obj->_getObjectID();
-
 		Locker locker(objectManager);
 
-		if (objectid == 0) {
-			objectid = objectManager->getNextFreeObjectID();
-			obj->_setObjectID(objectid);
-		}
+		objectManager->createObjectID(name, obj);
 
-		if (!namingDirectoryInterface->deploy(name, obj))
-			warning("object \'" + name + "\' already deployed");
+		if (!namingDirectoryInterface->bind(name, obj))
+			error("object \'" + name + "\' already bound");
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
-			msg << "obejctid 0x" << hex << objectid << " already deployed";
+			msg << "obejctid 0x" << hex << obj->_getObjectID() << " already deployed";
 			error(msg.toString());
 			StackTrace::printStackTrace();
 		} else
@@ -176,7 +169,7 @@ DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
 	//Locker locker(this);
 	Locker locker(objectManager);
 
-	return namingDirectoryInterface->lookUp(name);
+	return namingDirectoryInterface->lookup(name);
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
@@ -217,7 +210,7 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 
 	DistributedObjectServant* servant = NULL;
 
-	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryInterface->undeploy(name);
+	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryInterface->unbind(name);
 
 	locker.release();
 

@@ -239,6 +239,7 @@ MMOEngine/include/engine/util/iffstream/exceptions/NoOpenedChunkException.h -tex
 MMOEngine/include/engine/util/u3d/AABB.h -text
 MMOEngine/include/engine/util/u3d/AABBNode.h -text
 MMOEngine/include/engine/util/u3d/AABBTree.h -text
+MMOEngine/include/engine/util/u3d/AStarAlgorithm.h -text
 MMOEngine/include/engine/util/u3d/Coordinate.h -text
 MMOEngine/include/engine/util/u3d/Matrix3.h -text
 MMOEngine/include/engine/util/u3d/Matrix4.h -text
@@ -454,7 +455,6 @@ MMOEngine/src/engine/orb/DOBObjectManagerImplementation.cpp -text
 MMOEngine/src/engine/orb/DOBObjectManagerImplementation.h -text
 MMOEngine/src/engine/orb/DOBPacketHandler.cpp -text
 MMOEngine/src/engine/orb/DOBPacketHandler.h -text
-MMOEngine/src/engine/orb/DistributedHelperObjectMap.h -text
 MMOEngine/src/engine/orb/DistributedObjectBroker.cpp -text
 MMOEngine/src/engine/orb/DistributedObjectBroker.h -text
 MMOEngine/src/engine/orb/DistributedObjectBrokerClient.cpp -text

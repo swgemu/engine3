@@ -4,20 +4,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "engine/orb/DistributedObjectBroker.h"
+#include "engine/orb/DOBObjectManager.h"
+
 
 #include "LocalObjectManager.h"
 
-LocalObjectManager::LocalObjectManager() : Logger("LocalObjectManager") {
+LocalObjectManager::LocalObjectManager() : Logger("LocalObjectManager"),
+		localObjectDirectory(100000), localNamingDirectory(100000) {
 	objectBroker = DistributedObjectBroker::instance();
 
-	namingDirectory = new NamingDirectoryServiceImpl();
+	objectManager = objectBroker->getObjectManager();
 
-	setLogging(true);
+	setLogging(false);
 	setGlobalLogging(true);
 }
 
 void LocalObjectManager::commitObjectChanges() {
-	HashTableIterator<String,DistributedObjectStub*> iterator = namingDirectory->getObjects();
+	HashTableIterator<uint64,DistributedObjectStub*> iterator = localObjectDirectory.iterator();
 
 	while (iterator.hasNext()) {
 		DistributedObjectStub* object = iterator.next();
@@ -41,7 +44,8 @@ void LocalObjectManager::commitObjectChanges() {
 }
 
 void LocalObjectManager::clearObjectChanges() {
-	namingDirectory->clearNameMap();
+	localObjectDirectory.removeAll();
+	localNamingDirectory.removeAll();
 
 	undeployedObjects.removeAll();
 	destroyedObjects.removeAll();
@@ -51,19 +55,23 @@ void LocalObjectManager::registerClass(const String& name, DistributedObjectClas
 }
 
 void LocalObjectManager::deploy(DistributedObjectStub* obj) {
-	if (!namingDirectory->deploy(obj)) {
-		warning("object already deployed");
-	} else {
-		info("object " + String::valueOf(obj->_getObjectID()) + " deployed");
+	String name = obj->_getName();
 
-		undeployedObjects.drop(obj);
-	}
+	objectManager->createObjectID(name, obj);
+
+	deploy(name, obj);
 }
 
 void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) {
-	if (!namingDirectory->deploy(name, obj)) {
-		warning("object \'" + name + "\'  already deployed");
+	if (lookUp(name) != NULL) {
+		warning("object \'" + name + "\' (0x" + String::valueOf(obj) + ") already deployed");
 	} else {
+		objectManager->createObjectID(name, obj);
+
+		assert(localNamingDirectory.put(name, obj) == NULL);
+
+		assert(localObjectDirectory.put(obj->_getObjectID(), obj) == NULL);
+
 		info("object " + name + " deployed");
 
 		undeployedObjects.drop(obj);
@@ -71,7 +79,7 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 }
 
 DistributedObjectStub* LocalObjectManager::undeploy(const String& name) {
-	DistributedObjectStub * object = (DistributedObjectStub*) namingDirectory->undeploy(name);
+	DistributedObjectStub * object = localNamingDirectory.get(name);
 	if (object != NULL)
 		undeployedObjects.put(object);
 
@@ -79,7 +87,7 @@ DistributedObjectStub* LocalObjectManager::undeploy(const String& name) {
 }
 
 DistributedObject* LocalObjectManager::lookUp(const String& name) {
-	DistributedObject* object = namingDirectory->lookUp(name);
+	DistributedObject* object = localNamingDirectory.get(name);
 	if (object == NULL)
 		object = objectBroker->lookUp(name);
 

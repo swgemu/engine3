@@ -9,15 +9,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "object/DistributedObject.h"
 #include "object/DistributedObjectAdapter.h"
 
+#include "engine/util/ObjectContainer.h"
+
 namespace engine {
   namespace ORB {
-
-    class DistributedHelperObjectMap;
 
 	class DistributedObjectDirectory {
     	HashTable<uint64, DistributedObjectAdapter*> objectMap;
 
-		DistributedHelperObjectMap* helperObjectMap;
+    	ObjectContainer<uint64, DistributedObject*>* helperObjectMap;
+    	//HashTable<uint64, Reference<DistributedObject*> >* helperObjectMap;
 	
 	public:
 		DistributedObjectDirectory();
@@ -28,15 +29,12 @@ namespace engine {
 		DistributedObject* get(sys::uint64 objid);
 		
 		DistributedObjectAdapter* remove(sys::uint64 objid);
-	
+
+		void removeHelper(sys::uint64 objid);
+
 		DistributedObjectAdapter* getAdapter(uint64 objid);
 
-
 		void getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete, Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM);
-
-		inline DistributedHelperObjectMap* getHelperObjectMap() {
-			return helperObjectMap;
-		}
 
 		inline int getSize() {
 			return objectMap.size();

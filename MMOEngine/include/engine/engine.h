@@ -73,6 +73,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "util/u3d/Quaternion.h"
 #include "util/u3d/Vector3.h"
 #include "util/u3d/AABBTree.h"
+#include "util/u3d/AStarAlgorithm.h"
 #include "util/iffstream/IffStream.h"
 
 

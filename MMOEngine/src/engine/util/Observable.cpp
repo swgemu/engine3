@@ -218,22 +218,22 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 }
 
 void ObservableImplementation::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
-	// engine/util/Observable.idl(21):  		observerEventMap.notifyObservers(eventType, this, arg1, arg2);
+	// engine/util/Observable.idl():  		observerEventMap.notifyObservers(eventType, this, arg1, arg2);
 	(&observerEventMap)->notifyObservers(eventType, _this, arg1, arg2);
 }
 
 void ObservableImplementation::registerObserver(unsigned int eventType, Observer* observer) {
-	// engine/util/Observable.idl(25):  		observerEventMap.registerObserver(eventType, observer);
+	// engine/util/Observable.idl():  		observerEventMap.registerObserver(eventType, observer);
 	(&observerEventMap)->registerObserver(eventType, observer);
 }
 
 void ObservableImplementation::dropObserver(unsigned int eventType, Observer* observer) {
-	// engine/util/Observable.idl(29):  		observerEventMap.dropObserver(eventType, observer);
+	// engine/util/Observable.idl():  		observerEventMap.dropObserver(eventType, observer);
 	(&observerEventMap)->dropObserver(eventType, observer);
 }
 
 int ObservableImplementation::getObserverCount(unsigned int eventType) {
-	// engine/util/Observable.idl(33):  		return observerEventMap.getObserverCount(eventType);
+	// engine/util/Observable.idl():  		return observerEventMap.getObserverCount(eventType);
 	return (&observerEventMap)->getObserverCount(eventType);
 }
 
@@ -244,20 +244,22 @@ int ObservableImplementation::getObserverCount(unsigned int eventType) {
 ObservableAdapter::ObservableAdapter(ObservableImplementation* obj) : ManagedObjectAdapter(obj) {
 }
 
+enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 6,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_};
+
 Packet* ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);
 
 	switch (methid) {
-	case 6:
+	case RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_:
 		notifyObservers(inv->getUnsignedIntParameter(), (ManagedObject*) inv->getObjectParameter(), inv->getSignedLongParameter());
 		break;
-	case 7:
+	case RPC_REGISTEROBSERVER__INT_OBSERVER_:
 		registerObserver(inv->getUnsignedIntParameter(), (Observer*) inv->getObjectParameter());
 		break;
-	case 8:
+	case RPC_DROPOBSERVER__INT_OBSERVER_:
 		dropObserver(inv->getUnsignedIntParameter(), (Observer*) inv->getObjectParameter());
 		break;
-	case 9:
+	case RPC_GETOBSERVERCOUNT__INT_:
 		resp->insertSignedInt(getObserverCount(inv->getUnsignedIntParameter()));
 		break;
 	default:

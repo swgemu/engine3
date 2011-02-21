@@ -20,14 +20,13 @@ namespace engine {
 		NamingDirectoryServiceImpl();
 		NamingDirectoryServiceImpl(const String& address);
 	
-		bool deploy(DistributedObjectStub* stub);
-		bool deploy(const String& name, DistributedObjectStub* stub);
+		bool bind(const String& name, DistributedObjectStub* stub);
 	
-		DistributedObject* lookUp(const String& name);
+		DistributedObject* lookup(const String& name);
 		
-		DistributedObject* undeploy(const String& name);
+		DistributedObject* unbind(const String& name);
 		
-		HashTableIterator<String, DistributedObjectStub*> getObjects() {
+		HashTableIterator<String, DistributedObjectStub*> getBoundObjects() {
 			return objectNameMap.iterator();
 		}
 

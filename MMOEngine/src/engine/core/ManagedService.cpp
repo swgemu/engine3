@@ -149,6 +149,8 @@ int ManagedServiceImplementation::writeObjectMembers(ObjectOutputStream* stream)
 ManagedServiceAdapter::ManagedServiceAdapter(ManagedServiceImplementation* obj) : ManagedObjectAdapter(obj) {
 }
 
+enum {};
+
 Packet* ManagedServiceAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);
 

@@ -11,10 +11,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DistributedObjectDirectory.h"
 
-#include "DistributedHelperObjectMap.h"
+class DirectoryKeyHandler : public KeyHandler<uint64> {
+	AtomicLong id;
+
+public:
+	uint64 generateKey() {
+		return id.increment();
+	}
+};
 
 DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000){
-	helperObjectMap = new DistributedHelperObjectMap();
+	helperObjectMap = new ObjectContainer<uint64, DistributedObject*>(new DirectoryKeyHandler());
 }
 
 DistributedObjectDirectory::~DistributedObjectDirectory() {
@@ -23,7 +30,7 @@ DistributedObjectDirectory::~DistributedObjectDirectory() {
 }
 
 DistributedObjectAdapter* DistributedObjectDirectory::add(uint64 objid, DistributedObjectAdapter* adapter) {
-	helperObjectMap->put(objid, adapter->getStub());
+	helperObjectMap->add(objid, adapter->getStub());
 
 	return objectMap.put(objid, adapter);
 }
@@ -38,7 +45,7 @@ DistributedObject* DistributedObjectDirectory::get(uint64 objid) {
 	}
 
 	if (adapter != NULL) {
-		helperObjectMap->put(objid, adapter->getStub());
+		helperObjectMap->add(objid, adapter->getStub());
 		return adapter->getStub();
 	} else
 		return NULL;
@@ -53,6 +60,10 @@ DistributedObjectAdapter* DistributedObjectDirectory::remove(uint64 objid) {
 	helperObjectMap->remove(objid);
 
 	return adapter;
+}
+
+void DistributedObjectDirectory::removeHelper(uint64 objid) {
+	helperObjectMap->remove(objid);
 }
 
 DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {

@@ -27,9 +27,11 @@ all-public:
 	make all-public32
 
 all-public32: clean configure-release32 compile install-public
+	rm -f $(ENGINE_PUB_PATH)/lib/linux32/libengine3.a
 	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux32
 
 all-public64: clean configure-release64 compile install-public
+	rm -f $(ENGINE_PUB_PATH)/lib/linux64/libengine3.a
 	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux64
 
 rebuild: clean configure-debug compile install-headers
@@ -81,8 +83,8 @@ install-lib:
 install-public:	
 	strip --strip-debug lib/unix/libengine3.a
 	build/unix/install $(ENGINE_PUB_PATH) -u > /dev/null
-	rm $(ENGINE_PUB_PATH)/lib/idlc.jar
-	rm $(ENGINE_PUB_PATH)/lib/libengine3.a
+	rm -f $(ENGINE_PUB_PATH)/lib/idlc.jar
+	rm -f $(ENGINE_PUB_PATH)/lib/libengine3.a
 
 pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h

@@ -30,7 +30,7 @@ namespace engine {
 		bool testCollide(const Sphere& testsphere) const;
 
 		//only checks boxes, triangles not implemented yet
-		bool intersects(const Ray& ray, float t1, bool checkPrimitives = false);
+		bool intersects(const Ray& ray, float distance, float& intersectionDistance, bool checkPrimitives = false);
 
 		//returns all the triangles from the mesh
 		void getTriangles(Vector<Triangle>& triangles) {

@@ -53,6 +53,8 @@ namespace engine {
 
 		virtual DistributedObjectAdapter* removeObject(uint64 objectID);
 
+		virtual void createObjectID(const String& name, DistributedObjectStub* object);
+
 		virtual uint64 getNextFreeObjectID();
 
 		//virtual void savePersistentObjects();

@@ -17,23 +17,7 @@ NamingDirectoryServiceImpl::NamingDirectoryServiceImpl(const String& address)
 	rootNamingDirectory = new NamingDirectoryService(address);
 }
 
-bool NamingDirectoryServiceImpl::deploy(DistributedObjectStub* stub) {
-	String name = stub->_getName();
-	uint64 objectid = stub->_getObjectID();
-
-	if (name.isEmpty()) {
-		StringBuffer orbname;
-		orbname << "_OrbObject" << objectid;
-
-		name = orbname.toString();
-
-		stub->_setName(name);
-	}
-
-	return deploy(name, stub);
-}
-
-bool NamingDirectoryServiceImpl::deploy(const String& name, DistributedObjectStub* stub) {
+bool NamingDirectoryServiceImpl::bind(const String& name, DistributedObjectStub* stub) {
 	if (objectNameMap.put(name, stub) != NULL)
 		return false;
 
@@ -42,11 +26,11 @@ bool NamingDirectoryServiceImpl::deploy(const String& name, DistributedObjectStu
 	return true;
 }
 
-DistributedObject* NamingDirectoryServiceImpl::lookUp(const String& name) {
+DistributedObject* NamingDirectoryServiceImpl::lookup(const String& name) {
 	return objectNameMap.get(name);
 }
 
-DistributedObject* NamingDirectoryServiceImpl::undeploy(const String& name) {
+DistributedObject* NamingDirectoryServiceImpl::unbind(const String& name) {
 	DistributedObject* obj = objectNameMap.get(name);
 
 	if (obj != NULL)
