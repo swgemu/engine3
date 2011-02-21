@@ -27,7 +27,7 @@ public:
 bool initializationTransactionStarted;
 
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
-	objectManager = new TransactionalObjectManager();
+	objectManager = (TransactionalObjectManager*) Core::getObjectBroker();
 
 	socketManager = new TransactionalSocketManager();
 
