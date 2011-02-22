@@ -117,6 +117,7 @@ namespace sys {
 
 	public:
 		HashTableIterator();
+		HashTableIterator(const HashTableIterator<K, V>& iter);
 		HashTableIterator(HashTable<K,V>* Table);
 
 		V& getNextValue();
@@ -403,6 +404,14 @@ namespace sys {
 		eIndex = -1;
 
 		e = NULL;
+	}
+
+	template<class K, class V> HashTableIterator<K,V>::HashTableIterator(const HashTableIterator<K, V>& iter) {
+		htable = iter.htable;
+		e = iter.e;
+
+		position = iter.position;
+		eIndex = iter.eIndex;
 	}
 
 	template<class K, class V> HashTableIterator<K,V>::HashTableIterator(HashTable<K,V>* Table) {
