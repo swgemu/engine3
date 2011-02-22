@@ -34,5 +34,7 @@ void ObjectUpdateToDatabaseTask::run() {
 	} catch (...) {
 		//object->error("unreported exception caught in ObjectSaveToDatabaseTask::run");
 		object->unlock();
+
+		throw;
 	}
 }

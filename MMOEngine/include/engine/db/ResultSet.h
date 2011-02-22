@@ -12,7 +12,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace db {
 
-	class ResultSet {
+	class ResultSet : public Object {
 	public:
 		ResultSet() {
 		}

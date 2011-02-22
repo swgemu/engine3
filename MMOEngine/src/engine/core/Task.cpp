@@ -55,8 +55,6 @@ void Task::execute() {
 	} catch (Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
-	} catch (...) {
-		Logger::console.error("unreported exception caught while running a task");
 	}
 #else
 	ObjectDatabaseManager::instance()->startLocalTransaction();
