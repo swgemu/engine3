@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HASHSET_H_
 #define HASHSET_H_
 
-#include "../lang/Object.h"
+#include "system/lang/Object.h"
 
 #include "HashTable.h"
 

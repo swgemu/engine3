@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef VECTORMAP_H_
 #define VECTORMAP_H_
 
+#include "system/platform.h"
+
 #include "SortedVector.h"
 
 namespace sys {

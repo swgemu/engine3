@@ -6,16 +6,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef VECTOR_H_
 #define VECTOR_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../lang/String.h"
+#include "system/lang/String.h"
 
-#include "../lang/ArrayIndexOutOfBoundsException.h"
-#include "../lang/IllegalArgumentException.h"
+#include "system/lang/ArrayIndexOutOfBoundsException.h"
+#include "system/lang/IllegalArgumentException.h"
 
-#include "../lang/types.h"
+#include "system/lang/types.h"
 
-#include "../lang/Integer.h"
+#include "system/lang/Integer.h"
 
 namespace sys {
  namespace util {

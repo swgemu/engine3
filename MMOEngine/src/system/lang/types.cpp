@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include <limits>
+
 #include "String.h"
 
 #include "types.h"
@@ -444,4 +446,16 @@ template<> int64 TypeInfoAtomicBase<int64>::nullValue() {
 
 template<> void* TypeInfoAtomicBase<void*>::nullValue() {
 	return NULL;
+}
+
+template<> float TypeInfoAtomicBase<float>::nullValue() {
+	return std::numeric_limits<float>::quiet_NaN();
+}
+
+template<> double TypeInfoAtomicBase<double>::nullValue() {
+	return std::numeric_limits<double>::quiet_NaN();
+}
+
+template<> bool TypeInfoAtomicBase<bool>::nullValue() {
+	return false;
 }

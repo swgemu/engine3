@@ -6,13 +6,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HASHTABLE_H_
 #define HASHTABLE_H_
 
-#include "../lang.h"
+#include "system/lang.h"
 
-#include "../lang/StringBuffer.h"
-#include "../lang/Variable.h"
-#include "../io/Serializable.h"
-#include "../io/ObjectOutputStream.h"
-#include "../io/ObjectInputStream.h"
+#include "system/lang/StringBuffer.h"
+#include "system/lang/Variable.h"
+
+#include "system/io/Serializable.h"
+#include "system/io/ObjectOutputStream.h"
+#include "system/io/ObjectInputStream.h"
 
 namespace sys {
   namespace util {
