@@ -157,13 +157,13 @@ bool Transaction::doCommit() {
 		return false;
 	}
 
-	releaseReadWriteObjects();
-
 	for (int i = 0; i < commands.size(); ++i) {
 		Command* command = commands.get(i);
 
 		command->execute();
 	}
+
+	releaseReadWriteObjects();
 
 	TransactionalMemoryManager::instance()->commitTransaction();
 
