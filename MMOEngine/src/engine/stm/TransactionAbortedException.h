@@ -6,9 +6,9 @@
 namespace engine {
   namespace stm {
 
-	class TransactionAbortedException : public Exception {
+	class TransactionAbortedException {
 	public:
-		TransactionAbortedException() : Exception("TransactionAbortedException") {
+		TransactionAbortedException() {
 		}
 	};
 
