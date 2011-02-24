@@ -124,8 +124,13 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 
 		objectManager->createObjectID(name, obj);
 
-		if (!namingDirectoryInterface->bind(name, obj))
+		name = obj->_getName();
+
+		if (!namingDirectoryInterface->bind(name, obj)) {
 			error("object \'" + name + "\' already bound");
+
+			StackTrace::printStackTrace();
+		}
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
@@ -149,8 +154,13 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 
 		objectManager->createObjectID(name, obj);
 
-		if (!namingDirectoryInterface->bind(name, obj))
-			error("object \'" + name + "\' already bound");
+		String newName = obj->_getName();
+
+		if (!namingDirectoryInterface->bind(newName, obj)) {
+			error("object \'" + newName + "\' already bound");
+
+			StackTrace::printStackTrace();
+		}
 
 		if (objectManager->addObject(obj) != NULL) {
 			StringBuffer msg;
