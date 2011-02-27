@@ -48,7 +48,7 @@ namespace sys {
 			#if GCC_VERSION >= 40100
 				return __sync_sub_and_fetch(&value, 1);
 			#elif defined(PLATFORM_MAC)
-				return OSAtomicDecrement32((volatile int32_t*) &value);
+				return OSAtomicDecrement64((volatile int64_t*) &value);
 			#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
 				//TODO: find appropriate method
 				return --(value);
