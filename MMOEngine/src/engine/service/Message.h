@@ -76,6 +76,14 @@ namespace engine {
 		inline ServiceClient* getClient() {
 			return client;
 		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			return Vector<char>::toBinaryStream(stream);
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			return Vector<char>::parseFromBinaryStream(stream);
+		}
 	};
 
   } // namespace service
