@@ -241,6 +241,7 @@ MMOEngine/include/engine/util/u3d/AABBNode.h -text
 MMOEngine/include/engine/util/u3d/AABBTree.h -text
 MMOEngine/include/engine/util/u3d/AStarAlgorithm.h -text
 MMOEngine/include/engine/util/u3d/Coordinate.h -text
+MMOEngine/include/engine/util/u3d/Funnel.h -text
 MMOEngine/include/engine/util/u3d/Matrix3.h -text
 MMOEngine/include/engine/util/u3d/Matrix4.h -text
 MMOEngine/include/engine/util/u3d/QuadTree.h -text
@@ -250,8 +251,12 @@ MMOEngine/include/engine/util/u3d/QuadTreeEntry.idl -text
 MMOEngine/include/engine/util/u3d/QuadTreeNode.h -text
 MMOEngine/include/engine/util/u3d/Quaternion.h -text
 MMOEngine/include/engine/util/u3d/Ray.h -text
+MMOEngine/include/engine/util/u3d/Segment.h -text
 MMOEngine/include/engine/util/u3d/Sphere.h -text
 MMOEngine/include/engine/util/u3d/Triangle.h -text
+MMOEngine/include/engine/util/u3d/TriangleNode.h -text
+MMOEngine/include/engine/util/u3d/TriangulationAStar.h -text
+MMOEngine/include/engine/util/u3d/TriangulationAStarAlgorithm.h -text
 MMOEngine/include/engine/util/u3d/Vector3.h -text
 MMOEngine/include/engine/util/u3d/Vector4.h -text
 MMOEngine/include/system/io/BufferedReader.h -text
@@ -606,6 +611,8 @@ MMOEngine/src/engine/util/u3d/AABBTree.cpp -text
 MMOEngine/src/engine/util/u3d/AABBTree.h -text
 MMOEngine/src/engine/util/u3d/AStarAlgorithm.h -text
 MMOEngine/src/engine/util/u3d/Coordinate.h -text
+MMOEngine/src/engine/util/u3d/Funnel.cpp -text
+MMOEngine/src/engine/util/u3d/Funnel.h -text
 MMOEngine/src/engine/util/u3d/Matrix3.h -text
 MMOEngine/src/engine/util/u3d/Matrix4.cpp -text
 MMOEngine/src/engine/util/u3d/Matrix4.h -text
@@ -618,8 +625,15 @@ MMOEngine/src/engine/util/u3d/QuadTreeEntryImplementation.cpp -text
 MMOEngine/src/engine/util/u3d/QuadTreeNode.h -text
 MMOEngine/src/engine/util/u3d/Quaternion.h -text
 MMOEngine/src/engine/util/u3d/Ray.h -text
+MMOEngine/src/engine/util/u3d/Segment.cpp -text
+MMOEngine/src/engine/util/u3d/Segment.h -text
+MMOEngine/src/engine/util/u3d/Sphere.cpp -text
 MMOEngine/src/engine/util/u3d/Sphere.h -text
+MMOEngine/src/engine/util/u3d/Triangle.cpp -text
 MMOEngine/src/engine/util/u3d/Triangle.h -text
+MMOEngine/src/engine/util/u3d/TriangleNode.h -text
+MMOEngine/src/engine/util/u3d/TriangulationAStarAlgorithm.cpp -text
+MMOEngine/src/engine/util/u3d/TriangulationAStarAlgorithm.h -text
 MMOEngine/src/engine/util/u3d/Vector3.h -text
 MMOEngine/src/engine/util/u3d/Vector4.h -text
 MMOEngine/src/system/io/BufferedReader.cpp -text

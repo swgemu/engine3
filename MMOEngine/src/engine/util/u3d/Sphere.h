@@ -9,6 +9,7 @@
 #define SPHERE_H_
 
 #include "Vector3.h"
+#include "Triangle.h"
 
 namespace engine {
  namespace util {

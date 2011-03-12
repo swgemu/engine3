@@ -20,79 +20,26 @@ namespace engine {
 
 	class Triangle : public Variable {
 		//Vector3 vertices[3];
+	protected:
 		float vertices[9]; // optimizing for ram...
 
 	public:
-		Triangle() {
+		Triangle();
 
-		}
+		Triangle(const Triangle& tri);
 
-		Triangle(const Triangle& tri) : Variable() {
-			for (int i = 0; i < 9; ++i) {
-				vertices[i] = tri.vertices[i];
-			}
-		}
+		Triangle(const Vector3 vert[]);
 
-		Triangle(const Vector3 vert[]) {
-			vertices[0] = vert[0].getX();
-			vertices[1] = vert[0].getY();
-			vertices[2] = vert[0].getZ();
+		Triangle& operator=(const Triangle& tri);
 
-			vertices[3] = vert[1].getX();
-			vertices[4] = vert[1].getY();
-			vertices[5] = vert[1].getZ();
+		void transform(const Matrix4& worldMatrix);
 
-			vertices[6] = vert[2].getX();
-			vertices[7] = vert[2].getY();
-			vertices[8] = vert[2].getZ();
-		}
+		bool toBinaryStream(ObjectOutputStream* stream);
 
-		Triangle& operator=(const Triangle& tri) {
-			for (int i = 0; i < 9; ++i) {
-				vertices[i] = tri.vertices[i];
-			}
-
-			return *this;
-		}
-
-		void transform(const Matrix4& worldMatrix) {
-			for (int i = 0; i < 9; i += 3) {
-				Vector3 vertex(vertices[i], vertices[i + 1], vertices[i + 2]);
-				vertex = vertex * worldMatrix;
-
-				vertices[i] = vertex.getX();
-				vertices[i + 1] = vertex.getY();
-				vertices[i + 2] = vertex.getZ();
-			}
-		}
-
-		bool toBinaryStream(ObjectOutputStream* stream) {
-			for (int i = 0; i < 9; ++i) {
-				TypeInfo<float>::toBinaryStream(&vertices[i], stream);
-			}
-
-			return true;
-		}
-
-		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			for (int i = 0; i < 9; ++i) {
-				TypeInfo<float>::parseFromBinaryStream(&vertices[i], stream);
-			}
-
-			return true;
-		}
-
-		// distance squared to a point from the tri
-		//float distSqrd(const Vector3& point) const;
+		bool parseFromBinaryStream(ObjectInputStream* stream);
 
 		// calculate the midpoint
-		Vector3 midPoint() const {
-			Vector3 vert0(vertices[0], vertices[1], vertices[2]);
-			Vector3 vert2(vertices[3], vertices[4], vertices[5]);
-			Vector3 vert1(vertices[6], vertices[7], vertices[8]);
-
-			return (vert0 + vert1 + vert2) * (1.0f / 3.0f);
-		}
+		Vector3 midPoint() const;
 
 		AABB triAABB() const;
 
@@ -106,21 +53,45 @@ namespace engine {
 
 		bool intersects(const Ray& ray, float maxDistance, float& intersectionDistance);
 
-		Vector3 getNormal() const {
-			Vector3 normal;
+		Vector3 getNormal() const;
 
-			Vector3 vert0(vertices[0], vertices[1], vertices[2]);
-			Vector3 vert2(vertices[3], vertices[4], vertices[5]);
-			Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+		/**
+		 * returns 0 on success
+		 */
+		int getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertexB);
 
-			Vector3 v1 = vert1 - vert0;
-			Vector3 v2 = vert2 - vert0;
+		Vector3 getLeftSharedVertex(Triangle* tri);
+		Vector3 getRightSharedVertex(Triangle* tri);
 
-			normal = v1.crossProduct(v2);
+		Vector3 getBarycenter();
 
-			normal.normalize();
+		float area() const;
 
-			return normal;
+		//uses vertices x and z
+		float area2D() const;
+
+		static float area2D(const Vector3& a, const Vector3& b, const Vector3& c) {
+			float ax = b[0] - a[0];
+			float ay = b[2] - a[2];
+
+			float bx = c[0] - a[0];
+			float by = c[2] - a[2];
+
+			return bx * ay - ax * by;
+		}
+
+		inline void set(const Vector3 vert[]) {
+			vertices[0] = vert[0].getX();
+			vertices[1] = vert[0].getY();
+			vertices[2] = vert[0].getZ();
+
+			vertices[3] = vert[1].getX();
+			vertices[4] = vert[1].getY();
+			vertices[5] = vert[1].getZ();
+
+			vertices[6] = vert[2].getX();
+			vertices[7] = vert[2].getY();
+			vertices[8] = vert[2].getZ();
 		}
 
 		inline Vector3 getVertex(int i) const {

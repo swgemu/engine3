@@ -103,6 +103,11 @@ namespace sys {
 	#define MAX(a, b) (a > b ? a : b)
 	#define MIN(a, b) (a < b ? a : b)
 
+	#define SQR(x) ((x) * (x))
+
+	#define MAX_FLOAT 3.4028235E38;
+	#define SMALL_NUM  0.00000001
+
 	//#define LOG_LOCKS
 	//#define TRACE_LOCKS
 
