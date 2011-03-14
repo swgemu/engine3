@@ -170,6 +170,30 @@ AABBNode::~AABBNode() {
 	}
 }
 
+int AABBNode::intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result) {
+	float intersectionDistance;
+	Triangle* triangle;
+
+	if (mBox.intersects(ray, 0.f, maxDistance)) {
+		if (mChildren[0]) {
+			// recurse to children
+			mChildren[0]->intersects(ray, maxDistance, result);
+			mChildren[1]->intersects(ray, maxDistance, result);
+
+		} else { // is a leaf
+			for (int i = 0; i < mTriangles.size(); ++i) {
+				//Vector3 intersectionPoint;
+
+				if (mTriangles.get(i)->intersects(ray, maxDistance, intersectionDistance)) {
+					result.put(IntersectionResult(intersectionDistance, mTriangles.get(i)));
+				}
+			}
+		}
+	}
+
+	return result.size();
+}
+
 //bool intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives = false);
 bool AABBNode::intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives) {
 	if (mBox.intersects(ray, 0.f, distance)) {
