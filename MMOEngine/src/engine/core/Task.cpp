@@ -11,28 +11,19 @@
 #include "TaskManager.h"
 
 Task::Task() : PriorityQueueEntry() {
-	taskManager = Core::getTaskManager();
-
-	priority = 3;
-	period = 0;
+	initialize();
 }
 
 Task::Task(uint64 mtime) : PriorityQueueEntry() {
-	taskManager = Core::getTaskManager();
+	initialize();
 
 	nextExecutionTime.addMiliTime(mtime);
-
-	priority = 3;
-	period = 0;
 }
 
 Task::Task(Time& time) : PriorityQueueEntry() {
-	taskManager = Core::getTaskManager();
+	initialize();
 
 	nextExecutionTime = time;
-
-	priority = 3;
-	period = 0;
 }
 
 Task::~Task() {
@@ -40,6 +31,24 @@ Task::~Task() {
 		System::out << "ERROR: scheduled task deleted\n";
 		raise(SIGSEGV);
 	}
+
+#ifdef TRACE_TASKS
+	if (scheduleTrace != NULL) {
+		delete scheduleTrace;
+		scheduleTrace = NULL;
+	}
+#endif
+}
+
+void Task::initialize() {
+	taskManager = Core::getTaskManager();
+
+	priority = 3;
+	period = 0;
+
+#ifdef TRACE_TASKS
+	scheduleTrace = NULL;
+#endif
 }
 
 void Task::execute() {

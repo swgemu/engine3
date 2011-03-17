@@ -29,7 +29,6 @@ void Object::releaseWeak(WeakReferenceBase* ref) {
 }
 
 void Object::destroy() {
-#ifndef WITH_STM
 	Locker locker(&referenceMutex);
 
 	_destroying = true;
@@ -42,7 +41,6 @@ void Object::destroy() {
 	locker.release();
 
 	delete this;
-#endif
 }
 
 #ifdef TRACE_REFERENCES

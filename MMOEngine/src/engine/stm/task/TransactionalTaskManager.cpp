@@ -12,7 +12,7 @@ void TransactionalTaskManager::initialize() {
 	taskManager->setLoggingName("TransactionalTaskmanager");
 	taskManager->initialize(1, 1);
 	taskManager->setLogging(false);
-	taskManager->setGlobalLogging(false);
+	taskManager->setGlobalLogging(true);
 }
 
 void TransactionalTaskManager::start() {
@@ -72,7 +72,10 @@ Task* TransactionalTaskManager::getTask() {
 bool TransactionalTaskManager::isTaskScheduled(Task* task) {
 	LocalTaskManager* manager = getLocalTaskManager();
 
-	return manager->isTaskScheduled(task) || (taskManager->isTaskScheduled(task) && !manager->isTaskCancelled(task));
+	if (!manager->isMerging())
+		return manager->isTaskScheduled(task) || (taskManager->isTaskScheduled(task) && !manager->isTaskCancelled(task));
+	else
+		return taskManager->isTaskScheduled(task);
 }
 
 void TransactionalTaskManager::flushTasks() {

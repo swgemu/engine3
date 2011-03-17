@@ -123,10 +123,15 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/util/ObserverEventMap.$(OBJEXT) \
 	engine/util/Observable.$(OBJEXT) engine/util/Facade.$(OBJEXT) \
 	engine/util/u3d/QuadTree.$(OBJEXT) \
+	engine/util/u3d/Segment.$(OBJEXT) \
 	engine/util/u3d/QuadTreeEntry.$(OBJEXT) \
 	engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT) \
+	engine/util/u3d/TriangulationAStarAlgorithm.$(OBJEXT) \
 	engine/util/u3d/AABBTree.$(OBJEXT) \
+	engine/util/u3d/Sphere.$(OBJEXT) \
+	engine/util/u3d/Triangle.$(OBJEXT) \
 	engine/util/u3d/Matrix4.$(OBJEXT) \
+	engine/util/u3d/Funnel.$(OBJEXT) \
 	engine/util/iffstream/IffStream.$(OBJEXT) \
 	engine/util/iffstream/chunks/Chunk.$(OBJEXT) \
 	engine/util/iffstream/chunks/form/Form.$(OBJEXT) \
@@ -360,10 +365,15 @@ libengine3_a_SOURCES = \
 			engine/util/Observable.cpp \
 .			engine/util/Facade.cpp \
 			engine/util/u3d/QuadTree.cpp \
+			engine/util/u3d/Segment.cpp \
 			engine/util/u3d/QuadTreeEntry.cpp \
 			engine/util/u3d/QuadTreeEntryImplementation.cpp \
+			engine/util/u3d/TriangulationAStarAlgorithm.cpp \
 			engine/util/u3d/AABBTree.cpp \
+			engine/util/u3d/Sphere.cpp \
+			engine/util/u3d/Triangle.cpp \
 			engine/util/u3d/Matrix4.cpp \
+			engine/util/u3d/Funnel.cpp \
 			engine/util/iffstream/IffStream.cpp \
 			engine/util/iffstream/chunks/Chunk.cpp \
 			engine/util/iffstream/chunks/form/Form.cpp \
@@ -719,15 +729,26 @@ engine/util/u3d/$(DEPDIR)/$(am__dirstamp):
 	@: > engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/QuadTree.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/Segment.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/QuadTreeEntry.$(OBJEXT):  \
 	engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT):  \
 	engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/TriangulationAStarAlgorithm.$(OBJEXT):  \
+	engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/AABBTree.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/Sphere.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/Triangle.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/Matrix4.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/Funnel.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/iffstream/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/iffstream
@@ -899,10 +920,15 @@ mostlyclean-compile:
 	-rm -f engine/util/iffstream/chunks/Chunk.$(OBJEXT)
 	-rm -f engine/util/iffstream/chunks/form/Form.$(OBJEXT)
 	-rm -f engine/util/u3d/AABBTree.$(OBJEXT)
+	-rm -f engine/util/u3d/Funnel.$(OBJEXT)
 	-rm -f engine/util/u3d/Matrix4.$(OBJEXT)
 	-rm -f engine/util/u3d/QuadTree.$(OBJEXT)
 	-rm -f engine/util/u3d/QuadTreeEntry.$(OBJEXT)
 	-rm -f engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT)
+	-rm -f engine/util/u3d/Segment.$(OBJEXT)
+	-rm -f engine/util/u3d/Sphere.$(OBJEXT)
+	-rm -f engine/util/u3d/Triangle.$(OBJEXT)
+	-rm -f engine/util/u3d/TriangulationAStarAlgorithm.$(OBJEXT)
 	-rm -f system/io/BufferedReader.$(OBJEXT)
 	-rm -f system/io/File.$(OBJEXT)
 	-rm -f system/io/PrintStream.$(OBJEXT)
@@ -1006,10 +1032,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/$(DEPDIR)/Chunk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/form/$(DEPDIR)/Form.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/AABBTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Funnel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Matrix4.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntryImplementation.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Segment.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Sphere.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Triangle.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/TriangulationAStarAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/BufferedReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/File.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/PrintStream.Po@am__quote@

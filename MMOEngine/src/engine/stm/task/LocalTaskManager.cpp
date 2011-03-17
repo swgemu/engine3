@@ -6,6 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "LocalTaskManager.h"
 
 void LocalTaskManager::initialize() {
+	merging = false;
 }
 
 void LocalTaskManager::start() {
@@ -29,6 +30,10 @@ void LocalTaskManager::scheduleTask(Task* task, uint64 delay) {
 
 		if (delay != 0)
 			task->updateExecutionTime(delay);
+
+	#ifdef TRACE_TASKS
+		task->setScheduleTrace();
+	#endif
 	}
 }
 
@@ -40,6 +45,10 @@ void LocalTaskManager::scheduleTask(Task* task, Time& time) {
 		task->acquire();
 
 		task->setExecutionTime(time);
+
+	#ifdef TRACE_TASKS
+		task->setScheduleTrace();
+	#endif
 	}
 }
 
@@ -79,6 +88,8 @@ bool LocalTaskManager::isTaskCancelled(Task* task) {
 }
 
 void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
+	merging = true;
+
 	manager->info("executing " + String::valueOf(executedTasks.size()) +
 			", adding " + String::valueOf(scheduledTasks.size()) +
 			", canceling " + String::valueOf(cancelledTasks.size()) +" tasks");
@@ -103,13 +114,17 @@ void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
 		try {
 			manager->scheduleTask(task, task->getNextExecutionTime());
 		} catch (IllegalArgumentException& e) {
-			manager->error(e.getMessage() + " for " + task->toStringData());
+			//manager->error(e.getMessage() + " for " + task->toStringData());
+
+			manager->rescheduleTask(task, task->getNextExecutionTime());
 		}
 
 		task->release();
 	}
 
 	flushTasks();
+
+	merging = false;
 }
 
 void LocalTaskManager::flushTasks() {

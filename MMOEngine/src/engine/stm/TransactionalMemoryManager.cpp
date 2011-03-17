@@ -12,7 +12,7 @@ using namespace engine::stm;
 class PureTask : public Task {
 public:
 	void run() {
-		Logger::console.warning("pure transaction called");
+		//Logger::console.warning("pure transaction called");
 	}
 };
 
@@ -40,7 +40,7 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 	initializationTransactionStarted = false;
 
 	setLogging(false);
-	setGlobalLogging(true);
+	setGlobalLogging(false);
 }
 
 TransactionalMemoryManager::~TransactionalMemoryManager() {
@@ -129,7 +129,7 @@ void TransactionalMemoryManager::printStatistics() {
 			<< "scheduled " << taskManager->getScheduledTaskSize() << ")";
 
 
-	info(str, true);
+	info(str);
 
 	startedTransactions.set(0);
 	commitedTransactions.set(0);

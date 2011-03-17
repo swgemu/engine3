@@ -12,8 +12,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Task.h"
 
-//#define TRACE_TASKS
-
 namespace engine {
   namespace core {
 

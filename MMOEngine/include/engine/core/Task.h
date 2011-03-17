@@ -29,6 +29,10 @@ namespace engine {
 
 		uint64 period;
 
+	#ifdef TRACE_TASKS
+		StackTrace* scheduleTrace;
+	#endif
+
 	public:
 		Task();
 		Task(uint64 mtime);
@@ -75,6 +79,8 @@ namespace engine {
 		}
 
 	protected:
+		void initialize();
+
 		void setExecutionTime(Time& time) {
 			nextExecutionTime = time;
 		}
@@ -124,6 +130,21 @@ namespace engine {
 		inline void setPeriod(uint64 per) {
 			period = per;
 		}
+
+	#ifdef TRACE_TASKS
+		void setScheduleTrace() {
+			if (scheduleTrace != NULL)
+				delete scheduleTrace;
+
+			scheduleTrace = new StackTrace();
+		}
+
+		void printScheduleTrace() {
+			assert(scheduleTrace != NULL);
+
+			scheduleTrace->print();
+		}
+	#endif
 
 		friend class TimedTaskQueue;
 		friend class engine::stm::LocalTaskManager;

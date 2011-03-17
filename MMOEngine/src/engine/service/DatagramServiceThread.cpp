@@ -91,6 +91,8 @@ public:
 	}
 
 	void run() {
+		message->reset();
+
 		service->receiveMessage(message, address);
 	}
 };

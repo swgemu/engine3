@@ -20,6 +20,8 @@ namespace engine {
   		SortedVector<Task*> scheduledTasks;
   		SortedVector<Task*> cancelledTasks;
 
+  		bool merging;
+
   	  public:
   		void initialize();
 
@@ -52,6 +54,10 @@ namespace engine {
   		int getScheduledTaskSize();
 
   		int getExecutingTaskSize();
+
+  		bool isMerging() {
+  			return merging;
+  		}
   	  };
 
   } // namespace stm

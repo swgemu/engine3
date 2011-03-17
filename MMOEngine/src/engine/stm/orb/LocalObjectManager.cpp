@@ -17,7 +17,7 @@ LocalObjectManager::LocalObjectManager() : Logger("LocalObjectManager"),
 	objectManager = objectBroker->getObjectManager();
 
 	setLogging(false);
-	setGlobalLogging(true);
+	setGlobalLogging(false);
 }
 
 void LocalObjectManager::commitObjectChanges() {

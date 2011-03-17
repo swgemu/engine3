@@ -3,12 +3,17 @@
 
 #include "system/lang/Exception.h"
 
+#include "Transaction.h"
+
 namespace engine {
   namespace stm {
 
 	class TransactionAbortedException {
 	public:
 		TransactionAbortedException() {
+			Transaction* currentTransaction = Transaction::currentTransaction();
+
+			currentTransaction->abort();
 		}
 	};
 

@@ -11,6 +11,52 @@
 
 #include "engine/core/ManagedWeakReference.h"
 
+namespace engine {
+namespace core {
+
+class ManagedObject;
+
+} // namespace core
+} // namespace engine
+
+using namespace engine::core;
+
+namespace engine {
+namespace util {
+namespace u3d {
+
+class Vector3;
+
+} // namespace u3d
+} // namespace util
+} // namespace engine
+
+using namespace engine::util::u3d;
+
+namespace engine {
+namespace util {
+namespace u3d {
+
+class QuadTree;
+
+} // namespace u3d
+} // namespace util
+} // namespace engine
+
+using namespace engine::util::u3d;
+
+namespace engine {
+namespace util {
+namespace u3d {
+
+class QuadTreeNode;
+
+} // namespace u3d
+} // namespace util
+} // namespace engine
+
+using namespace engine::util::u3d;
+
 #include "system/lang/ref/Reference.h"
 
 #include "system/lang/Math.h"
@@ -21,15 +67,7 @@
 
 #include "engine/util/u3d/Coordinate.h"
 
-#include "engine/core/ManagedObject.h"
-
 #include "engine/util/Observable.h"
-
-#include "engine/util/u3d/Vector3.h"
-
-#include "engine/util/u3d/QuadTree.h"
-
-#include "engine/util/u3d/QuadTreeNode.h"
 
 namespace engine {
 namespace util {

@@ -11,9 +11,17 @@
 
 #include "engine/core/ManagedWeakReference.h"
 
-#include "engine/core/ManagedObject.h"
+namespace engine {
+namespace log {
 
-#include "engine/log/Logger.h"
+class Logger;
+
+} // namespace log
+} // namespace engine
+
+using namespace engine::log;
+
+#include "engine/core/ManagedObject.h"
 
 namespace engine {
 namespace util {

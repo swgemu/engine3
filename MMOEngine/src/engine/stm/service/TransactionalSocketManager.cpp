@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 TransactionalSocketManager::TransactionalSocketManager() : Logger("TransactionalSocketManager") {
 	setLogging(false);
-	setGlobalLogging(true);
+	setGlobalLogging(false);
 }
 
 void TransactionalSocketManager::sendMessage(Message* message) {

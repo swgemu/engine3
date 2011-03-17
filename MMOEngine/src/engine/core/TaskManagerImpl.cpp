@@ -167,8 +167,13 @@ bool TaskManagerImpl::isTaskScheduled(Task* task) {
 void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 	Locker locker(this);
 
-	if (task->isScheduled())
+	if (task->isScheduled()) {
+	#ifdef TRACE_TASKS
+		task->printScheduleTrace();
+	#endif
+
 		throw IllegalArgumentException("task is already scheduled");
+	}
 
 	TaskScheduler* scheduler = getTaskScheduler();
 	if (scheduler == NULL)
@@ -183,8 +188,13 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
 	Locker locker(this);
 
-	if (task->isScheduled())
+	if (task->isScheduled()) {
+	#ifdef TRACE_TASKS
+		task->printScheduleTrace();
+	#endif
+
 		throw IllegalArgumentException("task is already scheduled");
+	}
 
 	TaskScheduler* scheduler = getTaskScheduler();
 	assert (scheduler != NULL);
