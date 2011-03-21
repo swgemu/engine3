@@ -10,6 +10,8 @@
  *	ManagedObjectStub
  */
 
+enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,};
+
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
 	_impl = _implementation;
@@ -29,7 +31,7 @@ void ManagedObject::_updateForWrite() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 6);
+		DistributedMethod method(this, RPC_UPDATEFORWRITE__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -42,7 +44,7 @@ void ManagedObject::_lock(bool doLock) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 7);
+		DistributedMethod method(this, RPC_LOCK__BOOL_);
 		method.addBooleanParameter(doLock);
 
 		method.executeWithVoidReturn();
@@ -56,7 +58,7 @@ void ManagedObject::_lock(ManagedObject* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 8);
+		DistributedMethod method(this, RPC_LOCK__MANAGEDOBJECT_);
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
@@ -70,7 +72,7 @@ void ManagedObject::_rlock(bool doLock) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 9);
+		DistributedMethod method(this, RPC_RLOCK__BOOL_);
 		method.addBooleanParameter(doLock);
 
 		method.executeWithVoidReturn();
@@ -84,7 +86,7 @@ void ManagedObject::_wlock(bool doLock) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 10);
+		DistributedMethod method(this, RPC_WLOCK__BOOL_);
 		method.addBooleanParameter(doLock);
 
 		method.executeWithVoidReturn();
@@ -98,7 +100,7 @@ void ManagedObject::_wlock(ManagedObject* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 11);
+		DistributedMethod method(this, RPC_WLOCK__MANAGEDOBJECT_);
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
@@ -112,7 +114,7 @@ void ManagedObject::_unlock(bool doLock) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 12);
+		DistributedMethod method(this, RPC_UNLOCK__BOOL_);
 		method.addBooleanParameter(doLock);
 
 		method.executeWithVoidReturn();
@@ -126,7 +128,7 @@ void ManagedObject::_runlock(bool doLock) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 13);
+		DistributedMethod method(this, RPC_RUNLOCK__BOOL_);
 		method.addBooleanParameter(doLock);
 
 		method.executeWithVoidReturn();
@@ -140,7 +142,7 @@ void ManagedObject::_setLockName(const String& name) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 14);
+		DistributedMethod method(this, RPC_SETLOCKNAME__STRING_);
 		method.addAsciiParameter(name);
 
 		method.executeWithVoidReturn();
@@ -154,7 +156,7 @@ bool ManagedObject::_notifyDestroy() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 15);
+		DistributedMethod method(this, RPC_NOTIFYDESTROY__);
 
 		return method.executeWithBooleanReturn();
 	} else
@@ -203,7 +205,7 @@ void ManagedObject::initializeTransientMembers() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 16);
+		DistributedMethod method(this, RPC_INITIALIZETRANSIENTMEMBERS__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -216,7 +218,7 @@ void ManagedObject::updateToDatabase() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 17);
+		DistributedMethod method(this, RPC_UPDATETODATABASE__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -229,7 +231,7 @@ void ManagedObject::queueUpdateToDatabaseTask() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 18);
+		DistributedMethod method(this, RPC_QUEUEUPDATETODATABASETASK__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -242,7 +244,7 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 19);
+		DistributedMethod method(this, RPC_CLEARUPDATETODATABASETASK__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -255,7 +257,7 @@ unsigned int ManagedObject::getLastCRCSave() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 20);
+		DistributedMethod method(this, RPC_GETLASTCRCSAVE__);
 
 		return method.executeWithUnsignedIntReturn();
 	} else
@@ -268,7 +270,7 @@ void ManagedObject::setLastCRCSave(unsigned int crc) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 21);
+		DistributedMethod method(this, RPC_SETLASTCRCSAVE__INT_);
 		method.addUnsignedIntParameter(crc);
 
 		method.executeWithVoidReturn();
@@ -476,8 +478,6 @@ void ManagedObjectImplementation::_setClassName(const String& name) {
 
 ManagedObjectAdapter::ManagedObjectAdapter(ManagedObjectImplementation* obj) : DistributedObjectAdapter((DistributedObjectServant*) obj) {
 }
-
-enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,};
 
 Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);

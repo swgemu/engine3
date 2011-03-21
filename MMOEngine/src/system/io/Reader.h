@@ -1,10 +1,12 @@
 #ifndef READER_H_
 #define READER_H_
 
+#include "system/lang/Object.h"
+
 namespace sys {
   namespace io {
 
-  	class Reader {
+  	class Reader : public Object {
   	public:
   		virtual ~Reader() {
   		}

@@ -14,6 +14,64 @@ namespace engine {
 
  	struct AABBTreeHeuristic;
 
+ 	class IntersectionResult : public Variable {
+ 		float intersectionDistance;
+ 		Triangle* triangle;
+
+ 	public:
+ 		IntersectionResult() : Variable() {
+ 			intersectionDistance = 0;
+ 			triangle = NULL;
+ 		}
+
+ 		IntersectionResult(float intersectionDistance, Triangle* triangle) : Variable() {
+ 			this->intersectionDistance = intersectionDistance;
+ 			this->triangle = triangle;
+ 		}
+
+ 		IntersectionResult(const IntersectionResult& r)  : Variable() {
+ 			intersectionDistance = r.intersectionDistance;
+ 			triangle = r.triangle;
+ 		}
+
+ 		IntersectionResult& operator=(const IntersectionResult& r) {
+ 			if (this == &r)
+ 				return *this;
+
+ 			intersectionDistance = r.intersectionDistance;
+ 			triangle = r.triangle;
+
+ 			return *this;
+ 		}
+
+ 		bool toBinaryStream(ObjectOutputStream* stream) {
+ 			return false;
+ 		}
+
+ 		bool parseFromBinaryStream(ObjectInputStream* stream) {
+ 			return false;
+ 		}
+
+ 		int compareTo(const IntersectionResult& r) const {
+ 			if (intersectionDistance < r.intersectionDistance)
+ 				return 1;
+ 			else if (intersectionDistance > r.intersectionDistance)
+ 				return -1;
+ 			else
+ 				return 0;
+ 		}
+
+ 		inline float getIntersectionDistance() {
+ 			return intersectionDistance;
+ 		}
+
+ 		inline Triangle* getTriangle() {
+ 			return triangle;
+ 		}
+
+
+ 	};
+
 	class AABBNode {
 	protected:
 		AABB mBox; // node's bounding box
@@ -30,10 +88,15 @@ namespace engine {
 		bool testCollide(const Sphere& testsphere) const;
 
 		/**
-		 * Checks for intersection against ray
+		 * Checks for intersection against ray, stops on any intersection
 		 * @return intersectionDistance, triangle which it intersects
 		 */
 		bool intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives = false);
+
+		/**
+		 * Checks for all intersections
+		 */
+		int intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result);
 
 		//returns all the triangles from the mesh
 		void getTriangles(Vector<Triangle*>& triangles) {

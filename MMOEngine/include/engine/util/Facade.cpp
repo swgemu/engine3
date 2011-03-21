@@ -10,6 +10,8 @@
  *	FacadeStub
  */
 
+enum {RPC_INITIALIZESESSION__ = 6,RPC_CANCELSESSION__,RPC_CLEARSESSION__};
+
 Facade::Facade() : ManagedObject(DummyConstructorParameter::instance()) {
 	FacadeImplementation* _implementation = new FacadeImplementation();
 	_impl = _implementation;
@@ -29,7 +31,7 @@ int Facade::initializeSession() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 6);
+		DistributedMethod method(this, RPC_INITIALIZESESSION__);
 
 		return method.executeWithSignedIntReturn();
 	} else
@@ -42,7 +44,7 @@ int Facade::cancelSession() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 7);
+		DistributedMethod method(this, RPC_CANCELSESSION__);
 
 		return method.executeWithSignedIntReturn();
 	} else
@@ -55,7 +57,7 @@ int Facade::clearSession() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 8);
+		DistributedMethod method(this, RPC_CLEARSESSION__);
 
 		return method.executeWithSignedIntReturn();
 	} else
@@ -212,8 +214,6 @@ int FacadeImplementation::clearSession() {
 
 FacadeAdapter::FacadeAdapter(FacadeImplementation* obj) : ManagedObjectAdapter(obj) {
 }
-
-enum {RPC_INITIALIZESESSION__ = 6,RPC_CANCELSESSION__,RPC_CLEARSESSION__};
 
 Packet* FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);

@@ -12,6 +12,8 @@
  *	ObserverStub
  */
 
+enum {RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_ = 6,RPC_GETOBJECTID__,RPC_COMPARETO__OBSERVER_};
+
 Observer::Observer(DummyConstructorParameter* param) : ManagedObject(param) {
 }
 
@@ -25,7 +27,7 @@ int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 6);
+		DistributedMethod method(this, RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_);
 		method.addUnsignedIntParameter(eventType);
 		method.addObjectParameter(observable);
 		method.addObjectParameter(arg1);
@@ -42,7 +44,7 @@ unsigned long long Observer::getObjectID() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 7);
+		DistributedMethod method(this, RPC_GETOBJECTID__);
 
 		return method.executeWithUnsignedLongReturn();
 	} else
@@ -55,7 +57,7 @@ int Observer::compareTo(Observer* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 8);
+		DistributedMethod method(this, RPC_COMPARETO__OBSERVER_);
 		method.addObjectParameter(obj);
 
 		return method.executeWithSignedIntReturn();
@@ -214,8 +216,6 @@ int ObserverImplementation::compareTo(Observer* obj) {
 
 ObserverAdapter::ObserverAdapter(ObserverImplementation* obj) : ManagedObjectAdapter(obj) {
 }
-
-enum {RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_ = 6,RPC_GETOBJECTID__,RPC_COMPARETO__OBSERVER_};
 
 Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);

@@ -20,40 +20,33 @@ namespace sys {
 		AtomicInteger reference;
 	#endif
 
+		Reference<V*> objectReference;
+
 	public:
 		AtomicReference() {
 		}
 
 		AtomicReference(V* ref) {
-		#ifdef PLATFORM_64
-			reference.set((uint64) ref);
-		#else
-			reference.set((uint32) ref);
-		#endif
+			reference.set(toReferenceValue(ref));
 		}
 
 		bool compareAndSet(V* oldref, V* newref) {
-		#ifdef PLATFORM_64
-			return reference.compareAndSet((uint64) oldref, (uint64) newref);
-		#else
-			return reference.compareAndSet((uint32) oldref, (uint32) newref);
-		#endif
+			if (reference.compareAndSet(toReferenceValue(oldref), toReferenceValue(newref))) {
+				//objectReference = newref;
+
+				return true;
+			} else
+				return false;
 		}
 
 		V* get() const {
-		#ifdef PLATFORM_64
 			return (V*) reference.get();
-		#else
-			return (V*) reference.get();
-		#endif
 		}
 
 		void set(V* ref) {
-		#ifdef PLATFORM_64
-			reference.set((uint64) ref);
-		#else
-			reference.set((uint32) ref);
-		#endif
+			reference.set(toReferenceValue(ref));
+
+			//objectReference = ref;
 		}
 
 		V* operator=(V* ref) {
@@ -69,6 +62,18 @@ namespace sys {
 		V* operator->() const {
 			return get();
 		}
+
+	protected:
+	#ifdef PLATFORM_64
+		uint64 toReferenceValue(V* ref) {
+			return (uint64) ref;
+		}
+	#else
+		uint32 toReferenceValue(V* ref) {
+			return (uint32) ref;
+		}
+	#endif
+
 	};
 
 	} // namespace atomic

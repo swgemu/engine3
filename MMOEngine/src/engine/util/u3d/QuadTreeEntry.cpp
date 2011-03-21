@@ -8,6 +8,8 @@
  *	QuadTreeEntryStub
  */
 
+enum {RPC_NOTIFYADDEDTOCLOSEOBJECTS__ = 6,RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__,RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_,RPC_GETINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_INRANGEOBJECTCOUNT__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_CLEARBOUNDING__};
+
 QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParameter::instance()) {
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
 	_impl = _implementation;
@@ -27,7 +29,7 @@ void QuadTreeEntry::notifyAddedToCloseObjects() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 6);
+		DistributedMethod method(this, RPC_NOTIFYADDEDTOCLOSEOBJECTS__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -40,7 +42,7 @@ void QuadTreeEntry::notifyRemovedFromCloseObjects() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 7);
+		DistributedMethod method(this, RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -53,7 +55,7 @@ void QuadTreeEntry::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 8);
+		DistributedMethod method(this, RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_);
 		method.addObjectParameter(obj);
 		method.addBooleanParameter(doNotifyUpdate);
 
@@ -68,7 +70,7 @@ QuadTreeEntry* QuadTreeEntry::getInRangeObject(int index) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 9);
+		DistributedMethod method(this, RPC_GETINRANGEOBJECT__INT_);
 		method.addSignedIntParameter(index);
 
 		return (QuadTreeEntry*) method.executeWithObjectReturn();
@@ -82,7 +84,7 @@ void QuadTreeEntry::removeInRangeObject(QuadTreeEntry* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 10);
+		DistributedMethod method(this, RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_);
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
@@ -96,7 +98,7 @@ void QuadTreeEntry::removeInRangeObject(int index) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 11);
+		DistributedMethod method(this, RPC_REMOVEINRANGEOBJECT__INT_);
 		method.addSignedIntParameter(index);
 
 		method.executeWithVoidReturn();
@@ -110,7 +112,7 @@ void QuadTreeEntry::removeInRangeObjects() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 12);
+		DistributedMethod method(this, RPC_REMOVEINRANGEOBJECTS__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -123,7 +125,7 @@ bool QuadTreeEntry::containsInRangeObject(QuadTreeEntry* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 13);
+		DistributedMethod method(this, RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_);
 		method.addObjectParameter(obj);
 
 		return method.executeWithBooleanReturn();
@@ -137,7 +139,7 @@ bool QuadTreeEntry::isInRange(QuadTreeEntry* obj, float range) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 14);
+		DistributedMethod method(this, RPC_ISINRANGE__QUADTREEENTRY_FLOAT_);
 		method.addObjectParameter(obj);
 		method.addFloatParameter(range);
 
@@ -152,7 +154,7 @@ bool QuadTreeEntry::isInRange(float x, float y, float range) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 15);
+		DistributedMethod method(this, RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_);
 		method.addFloatParameter(x);
 		method.addFloatParameter(y);
 		method.addFloatParameter(range);
@@ -168,7 +170,7 @@ float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 16);
+		DistributedMethod method(this, RPC_GETDISTANCETO__QUADTREEENTRY_);
 		method.addObjectParameter(obj);
 
 		return method.executeWithFloatReturn();
@@ -218,7 +220,7 @@ void QuadTreeEntry::notifyInsert(QuadTreeEntry* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 17);
+		DistributedMethod method(this, RPC_NOTIFYINSERT__QUADTREEENTRY_);
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
@@ -232,7 +234,7 @@ void QuadTreeEntry::notifyPositionUpdate(QuadTreeEntry* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 18);
+		DistributedMethod method(this, RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_);
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
@@ -246,7 +248,7 @@ void QuadTreeEntry::notifyDissapear(QuadTreeEntry* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 19);
+		DistributedMethod method(this, RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_);
 		method.addObjectParameter(obj);
 
 		method.executeWithVoidReturn();
@@ -260,7 +262,7 @@ float QuadTreeEntry::getPositionX() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 20);
+		DistributedMethod method(this, RPC_GETPOSITIONX__);
 
 		return method.executeWithFloatReturn();
 	} else
@@ -273,7 +275,7 @@ float QuadTreeEntry::getPositionZ() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 21);
+		DistributedMethod method(this, RPC_GETPOSITIONZ__);
 
 		return method.executeWithFloatReturn();
 	} else
@@ -286,7 +288,7 @@ float QuadTreeEntry::getPositionY() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 22);
+		DistributedMethod method(this, RPC_GETPOSITIONY__);
 
 		return method.executeWithFloatReturn();
 	} else
@@ -299,7 +301,7 @@ float QuadTreeEntry::getPreviousPositionX() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 23);
+		DistributedMethod method(this, RPC_GETPREVIOUSPOSITIONX__);
 
 		return method.executeWithFloatReturn();
 	} else
@@ -312,7 +314,7 @@ float QuadTreeEntry::getPreviousPositionZ() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 24);
+		DistributedMethod method(this, RPC_GETPREVIOUSPOSITIONZ__);
 
 		return method.executeWithFloatReturn();
 	} else
@@ -325,7 +327,7 @@ float QuadTreeEntry::getPreviousPositionY() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 25);
+		DistributedMethod method(this, RPC_GETPREVIOUSPOSITIONY__);
 
 		return method.executeWithFloatReturn();
 	} else
@@ -347,7 +349,7 @@ void QuadTreeEntry::setPosition(float x, float z, float y) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 26);
+		DistributedMethod method(this, RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_);
 		method.addFloatParameter(x);
 		method.addFloatParameter(z);
 		method.addFloatParameter(y);
@@ -363,7 +365,7 @@ void QuadTreeEntry::initializePosition(float x, float z, float y) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 27);
+		DistributedMethod method(this, RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_);
 		method.addFloatParameter(x);
 		method.addFloatParameter(z);
 		method.addFloatParameter(y);
@@ -379,7 +381,7 @@ int QuadTreeEntry::compareTo(QuadTreeEntry* obj) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 28);
+		DistributedMethod method(this, RPC_COMPARETO__QUADTREEENTRY_);
 		method.addObjectParameter(obj);
 
 		return method.executeWithSignedIntReturn();
@@ -393,7 +395,7 @@ bool QuadTreeEntry::isInQuadTree() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 29);
+		DistributedMethod method(this, RPC_ISINQUADTREE__);
 
 		return method.executeWithBooleanReturn();
 	} else
@@ -406,7 +408,7 @@ int QuadTreeEntry::inRangeObjectCount() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 30);
+		DistributedMethod method(this, RPC_INRANGEOBJECTCOUNT__);
 
 		return method.executeWithSignedIntReturn();
 	} else
@@ -428,7 +430,7 @@ unsigned long long QuadTreeEntry::getObjectID() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 31);
+		DistributedMethod method(this, RPC_GETOBJECTID__);
 
 		return method.executeWithUnsignedLongReturn();
 	} else
@@ -441,7 +443,7 @@ float QuadTreeEntry::getRadius() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 32);
+		DistributedMethod method(this, RPC_GETRADIUS__);
 
 		return method.executeWithFloatReturn();
 	} else
@@ -454,7 +456,7 @@ bool QuadTreeEntry::isBounding() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 33);
+		DistributedMethod method(this, RPC_ISBOUNDING__);
 
 		return method.executeWithBooleanReturn();
 	} else
@@ -476,7 +478,7 @@ void QuadTreeEntry::setBounding() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 34);
+		DistributedMethod method(this, RPC_SETBOUNDING__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -489,7 +491,7 @@ void QuadTreeEntry::clearBounding() {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 35);
+		DistributedMethod method(this, RPC_CLEARBOUNDING__);
 
 		method.executeWithVoidReturn();
 	} else
@@ -892,8 +894,6 @@ void QuadTreeEntryImplementation::clearBounding() {
 
 QuadTreeEntryAdapter::QuadTreeEntryAdapter(QuadTreeEntryImplementation* obj) : ObservableAdapter(obj) {
 }
-
-enum {RPC_NOTIFYADDEDTOCLOSEOBJECTS__ = 6,RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__,RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_,RPC_GETINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_INRANGEOBJECTCOUNT__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_CLEARBOUNDING__};
 
 Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);

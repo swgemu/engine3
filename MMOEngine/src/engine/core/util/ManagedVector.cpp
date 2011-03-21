@@ -8,6 +8,8 @@
  *	ManagedVectorStub
  */
 
+enum {};
+
 ManagedVector::ManagedVector(DummyConstructorParameter* param) {
 }
 
@@ -153,8 +155,6 @@ int ManagedVectorImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 
 ManagedVectorAdapter::ManagedVectorAdapter(ManagedVectorImplementation* obj) : DistributedObjectAdapter((DistributedObjectServant*) obj) {
 }
-
-enum {};
 
 Packet* ManagedVectorAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);

@@ -10,6 +10,8 @@
  *	ObservableStub
  */
 
+enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 6,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_};
+
 Observable::Observable(DummyConstructorParameter* param) : ManagedObject(param) {
 }
 
@@ -23,7 +25,7 @@ void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, lo
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 6);
+		DistributedMethod method(this, RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_);
 		method.addUnsignedIntParameter(eventType);
 		method.addObjectParameter(arg1);
 		method.addSignedLongParameter(arg2);
@@ -39,7 +41,7 @@ void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 7);
+		DistributedMethod method(this, RPC_REGISTEROBSERVER__INT_OBSERVER_);
 		method.addUnsignedIntParameter(eventType);
 		method.addObjectParameter(observer);
 
@@ -54,7 +56,7 @@ void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 8);
+		DistributedMethod method(this, RPC_DROPOBSERVER__INT_OBSERVER_);
 		method.addUnsignedIntParameter(eventType);
 		method.addObjectParameter(observer);
 
@@ -69,7 +71,7 @@ int Observable::getObserverCount(unsigned int eventType) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
-		DistributedMethod method(this, 9);
+		DistributedMethod method(this, RPC_GETOBSERVERCOUNT__INT_);
 		method.addUnsignedIntParameter(eventType);
 
 		return method.executeWithSignedIntReturn();
@@ -243,8 +245,6 @@ int ObservableImplementation::getObserverCount(unsigned int eventType) {
 
 ObservableAdapter::ObservableAdapter(ObservableImplementation* obj) : ManagedObjectAdapter(obj) {
 }
-
-enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 6,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_};
 
 Packet* ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	Packet* resp = new MethodReturnMessage(0);

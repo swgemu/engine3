@@ -1,10 +1,12 @@
 #ifndef WRITER_H_
 #define WRITER_H_
 
+#include "system/lang/Object.h"
+
 namespace sys {
   namespace io {
 
-  	class Writer {
+  	class Writer : public Object {
   	public:
   		virtual ~Writer() {
   		}
