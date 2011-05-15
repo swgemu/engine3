@@ -30,6 +30,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTree.h"
 
+QuadTreeNode::QuadTreeNode() {
+	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
+
+   	parentNode = NULL;
+   	nwNode = neNode = swNode = seNode = NULL;
+
+   	minX = 0;
+   	minY = 0;
+   	maxX = 0;
+   	maxY = 0;
+
+    dividerX = 0;
+    dividerY = 0;
+}
+
 QuadTreeNode::QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadTreeNode *parent) {
 	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
 
@@ -44,7 +59,7 @@ QuadTreeNode::QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadT
    	if (!validateNode() || minX > maxX || minY > maxY) {
 		StringBuffer msg;
 		msg << "[QuadTree] invalid node in create - " << toStringData();
-		Logger::console.info(msg, true);
+		Logger::console.error(msg);
    	}
 
     dividerX = (minX + maxX) / 2;
@@ -64,6 +79,7 @@ QuadTreeNode::~QuadTreeNode() {
 	if (seNode != NULL)
 		delete seNode;*/
 }
+
 
 void QuadTreeNode::addObject(QuadTreeEntry *obj) {
 	if (QuadTree::doLog())
@@ -161,6 +177,10 @@ QuadTree::~QuadTree() {
     //delete root;
 
    	root = NULL;
+}
+
+Object* QuadTree::clone() {
+	return dynamic_cast<Object*>(new QuadTree(*this));
 }
 
 void QuadTree::setSize(float minx, float miny, float maxx, float maxy) {

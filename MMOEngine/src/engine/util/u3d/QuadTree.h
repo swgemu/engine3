@@ -50,7 +50,7 @@ namespace engine {
   namespace util {
   	namespace u3d {
 
-	class QuadTree {
+	class QuadTree : public Object {
 	#ifdef WITH_STM
 		TransactionalReference<QuadTreeNode*> root;
 	#else
@@ -64,6 +64,8 @@ namespace engine {
 		QuadTree(float minx, float miny, float maxx, float maxy);
 
 		~QuadTree();
+
+		Object* clone();
 
 		/**
 		 * Clear all the objects from the quadtree and set it to have

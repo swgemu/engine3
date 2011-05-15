@@ -22,6 +22,7 @@ class ManagedObject {
 	
 	private transient unsigned int lastCRCSave;
 	
+	@pointer
 	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
 	
 	protected transient string _className; //idlc automatically loads/saves this from streams

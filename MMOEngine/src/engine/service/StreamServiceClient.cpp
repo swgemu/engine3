@@ -80,7 +80,7 @@ void StreamServiceClient::receiveMessages() {
 }
 
 bool StreamServiceClient::handleError(Exception& e) {
-	Logger::console.info("(" + addr.getFullIPAddress() + ") - " + e.getMessage(), true);
+	Logger::console.info("(" + addr.getFullIPAddress() + ") - " + e.getMessage());
 
 	return false;
 }

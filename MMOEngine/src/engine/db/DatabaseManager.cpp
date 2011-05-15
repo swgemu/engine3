@@ -12,7 +12,7 @@ DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 	loaded = false;
 
 	setGlobalLogging(true);
-	setLogging(false);
+	setInfoLogLevel();
 
 	databases.setNullValue(NULL);
 	databases.setNoDuplicateInsertPlan();
@@ -39,7 +39,7 @@ DatabaseManager::~DatabaseManager() {
 
 	checkpointTask->cancel();
 
-	info("closed", true);
+	info("closed");
 }
 
 void DatabaseManager::checkpoint() {
@@ -135,7 +135,7 @@ void DatabaseManager::loadDatabases() {
 		}
 
 		msg << dbName << " with id 0x" << hex << (uint16)tableID;
-		info(msg.toString(), true);
+		info(msg);
 
 		databases.put((uint16)tableID, db);
 		nameDirectory.put(dbName, tableID);
@@ -149,7 +149,7 @@ void DatabaseManager::loadDatabases() {
 
 	StringBuffer msg;
 	msg << "loaded database version: " << currentVersion;
-	info(msg.toString(), true);
+	info(msg);
 
 	loaded = true;
 
@@ -195,7 +195,7 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 
 	StringBuffer msg;
 	msg << "trying to create database " << name << " with id 0x" << hex << uniqueID;
-	info(msg.toString(), true);
+	info(msg);
 
 	ObjectOutputStream* nameData = new ObjectOutputStream(20);
 
@@ -347,7 +347,8 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
 					berkeleyTransaction = NULL;
-					info("deadlock detected while trying to putData iterating time " + String::valueOf(iteration), true);
+
+					info("deadlock detected while trying to putData iterating time " + String::valueOf(iteration));
 					break;
 				} else if (ret != 0) {
 					error("error while trying to putData :" + String::valueOf(db_strerror(ret)));
@@ -359,7 +360,8 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
 					berkeleyTransaction = NULL;
-					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration), true);
+
+					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration));
 					break;
 				} else if (ret != 0 && ret != DB_NOTFOUND) {
 					StringBuffer msg;

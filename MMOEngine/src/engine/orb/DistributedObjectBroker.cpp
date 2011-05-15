@@ -26,7 +26,7 @@ DistributedObjectBroker::DistributedObjectBroker()
 
 	orbClient = NULL;
 
-	setLogging(false);
+	setInfoLogLevel();
 }
 
 DistributedObjectBroker::~DistributedObjectBroker() {
@@ -68,7 +68,7 @@ void DistributedObjectBroker::initialize() {
 	if (address.isEmpty()) {
 		namingDirectoryInterface = new NamingDirectoryServiceImpl();
 
-		info("root naming directory initialized", true);
+		info("root naming directory initialized");
 	} else {
 		namingDirectoryInterface = new NamingDirectoryService(address);
 		orbClient = namingDirectoryInterface->getClient();
@@ -94,7 +94,7 @@ void DistributedObjectBroker::shutdown() {
 
 		ServiceThread::stop(false);
 
-		info("stopped", true);
+		info("stopped");
 	}
 }
 
@@ -138,7 +138,7 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 			error(msg.toString());
 			StackTrace::printStackTrace();
 		} else
-			info("object \'" + obj->_getName() + "\' deployed");
+			debug("object \'" + obj->_getName() + "\' deployed");
 	} catch (Exception& e) {
 		error(e.getMessage());
 	}
@@ -168,7 +168,7 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 			error(msg.toString());
 			StackTrace::printStackTrace();
 		} else
-			info("object \'" + obj->_getName() + "\' deployed");
+			debug("object \'" + obj->_getName() + "\' deployed");
 
 	} catch (Exception& e) {
 		error(e.getMessage());
@@ -233,11 +233,11 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 			delete adapter;
 		}
 
-		info("object \'" + obj->_getName() + "\' undeployed");
+		debug("object \'" + obj->_getName() + "\' undeployed");
 	}
 
 	if (servant != NULL) {
-		info("deleting servant \'" + name + "\'");
+		debug("deleting servant \'" + name + "\'");
 
 		delete servant;
 	}

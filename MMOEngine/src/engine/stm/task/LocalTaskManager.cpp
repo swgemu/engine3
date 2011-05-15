@@ -5,8 +5,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "LocalTaskManager.h"
 
-void LocalTaskManager::initialize() {
+LocalTaskManager::LocalTaskManager() {
 	merging = false;
+}
+
+void LocalTaskManager::initialize() {
 }
 
 void LocalTaskManager::start() {
@@ -90,9 +93,9 @@ bool LocalTaskManager::isTaskCancelled(Task* task) {
 void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
 	merging = true;
 
-	manager->info("executing " + String::valueOf(executedTasks.size()) +
+	/*manager->info("executing " + String::valueOf(executedTasks.size()) +
 			", adding " + String::valueOf(scheduledTasks.size()) +
-			", canceling " + String::valueOf(cancelledTasks.size()) +" tasks");
+			", canceling " + String::valueOf(cancelledTasks.size()) +" tasks");*/
 
 	manager->executeTasks(executedTasks);
 

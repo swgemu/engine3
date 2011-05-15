@@ -21,7 +21,7 @@ namespace engine {
   namespace service {
     namespace proto {
 
-	class BasePacketHandler : public Logger {
+	class BasePacketHandler : public Logger, public Object {
 		ServiceHandler* serviceHandler;
 
 	public:

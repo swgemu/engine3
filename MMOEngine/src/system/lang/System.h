@@ -24,7 +24,7 @@ namespace sys {
 	#endif // CLK_TCK
 
 	class System {
-		static ThreadLocal<MTRand> mtrand;
+		static ThreadLocal<MTRand*> mtrand;
 
 	public:
 		static class PrintStream out;

@@ -17,7 +17,7 @@ LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName) {
 
 	setLoggingName("LocalDatabase " + dbFileName);
 	setGlobalLogging(true);
-	setLogging(false);
+	setInfoLogLevel();
 
 	databaseFileName = dbFileName;
 
@@ -77,7 +77,7 @@ void LocalDatabase::closeDatabase() {
 
 		objectsDatabase->close(true);
 
-		info("database closed", true);
+		info("database closed");
 
 	} catch (Exception &e) {
 		error("Error closing database (" + databaseFileName + "):");
@@ -105,7 +105,8 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
 
 		if (ret == DB_LOCK_DEADLOCK) {
-			info("deadlock detected in LocalDatabase::get.. retrying iteration " + String::valueOf(i), true);
+			info("deadlock detected in LocalDatabase::get.. retrying iteration " + String::valueOf(i));
+
 			transaction->abort();
 			transaction = NULL;
 		}
@@ -153,7 +154,7 @@ int LocalDatabase::deleteData(Stream* inputKey) {
 
 	/*StringBuffer msg;
 		msg << "added to deleteData objid" << hex << objKey;
-		info(msg.toString(), true);*/
+		info(msg);*/
 
 	return 0;
 }

@@ -21,7 +21,7 @@ namespace engine {
   	class TransactionalObjectManager : public ObjectBroker, public Command {
   		DistributedObjectBroker* objectBroker;
 
-  		ThreadLocal<LocalObjectManager> localObjectManager;
+  		ThreadLocal<LocalObjectManager*> localObjectManager;
 
   	public:
   		TransactionalObjectManager();

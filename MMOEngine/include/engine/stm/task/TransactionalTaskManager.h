@@ -20,7 +20,10 @@ namespace engine {
   	class TransactionalTaskManager : public TaskManager, public Command {
   		TaskManagerImpl* taskManager;
 
-  		ThreadLocal<LocalTaskManager>  localTaskManager;
+  		ThreadLocal<LocalTaskManager*>  localTaskManager;
+
+		static const int WORKER_THREADS = 1;
+		static const int SCHEDULER_THREADS = 1;
 
   	  public:
   		void initialize();

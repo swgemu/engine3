@@ -17,7 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace service {
   	
-	class ServiceThread : public Thread, public Mutex, public Logger {
+	class ServiceThread : public Thread, public Mutex, public Logger, public Object {
 	protected:
 		TaskManager* taskManager;
 		

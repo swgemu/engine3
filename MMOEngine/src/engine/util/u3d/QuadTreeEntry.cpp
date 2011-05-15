@@ -602,23 +602,13 @@ bool QuadTreeEntryImplementation::readObjectMember(ObjectInputStream* stream, co
 	if (ObservableImplementation::readObjectMember(stream, _name))
 		return true;
 
+	if (_name == "coordinates") {
+		TypeInfo<Coordinate >::parseFromBinaryStream(&coordinates, stream);
+		return true;
+	}
+
 	if (_name == "bounding") {
 		TypeInfo<bool >::parseFromBinaryStream(&bounding, stream);
-		return true;
-	}
-
-	if (_name == "positionX") {
-		TypeInfo<float >::parseFromBinaryStream(&positionX, stream);
-		return true;
-	}
-
-	if (_name == "positionY") {
-		TypeInfo<float >::parseFromBinaryStream(&positionY, stream);
-		return true;
-	}
-
-	if (_name == "positionZ") {
-		TypeInfo<float >::parseFromBinaryStream(&positionZ, stream);
 		return true;
 	}
 
@@ -642,35 +632,19 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	String _name;
 	int _offset;
 	uint16 _totalSize;
+	_name = "coordinates";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<Coordinate >::toBinaryStream(&coordinates, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
 	_name = "bounding";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);
 	TypeInfo<bool >::toBinaryStream(&bounding, stream);
-	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
-	stream->writeShort(_offset, _totalSize);
-
-	_name = "positionX";
-	_name.toBinaryStream(stream);
-	_offset = stream->getOffset();
-	stream->writeShort(0);
-	TypeInfo<float >::toBinaryStream(&positionX, stream);
-	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
-	stream->writeShort(_offset, _totalSize);
-
-	_name = "positionY";
-	_name.toBinaryStream(stream);
-	_offset = stream->getOffset();
-	stream->writeShort(0);
-	TypeInfo<float >::toBinaryStream(&positionY, stream);
-	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
-	stream->writeShort(_offset, _totalSize);
-
-	_name = "positionZ";
-	_name.toBinaryStream(stream);
-	_offset = stream->getOffset();
-	stream->writeShort(0);
-	TypeInfo<float >::toBinaryStream(&positionZ, stream);
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
@@ -683,7 +657,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 5 + ObservableImplementation::writeObjectMembers(stream);
+	return 3 + ObservableImplementation::writeObjectMembers(stream);
 }
 
 void QuadTreeEntryImplementation::notifyAddedToCloseObjects() {
@@ -756,10 +730,10 @@ bool QuadTreeEntryImplementation::isInRange(QuadTreeEntry* obj, float range) {
 bool QuadTreeEntryImplementation::isInRange(float x, float y, float range) {
 	// engine/util/u3d/QuadTreeEntry.idl():  	 	float rangesq = range * range;
 	float rangesq = range * range;
-	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaX = x - positionX;
-	float deltaX = x - positionX;
-	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaY = y - positionY;
-	float deltaY = y - positionY;
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaX = x - coordinates.getPositionX();
+	float deltaX = x - (&coordinates)->getPositionX();
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaY = y - coordinates.getPositionY();
+	float deltaY = y - (&coordinates)->getPositionY();
 	// engine/util/u3d/QuadTreeEntry.idl():  			return false;
 	if (deltaX * deltaX + deltaY * deltaY <= rangesq)	// engine/util/u3d/QuadTreeEntry.idl():  			return true;
 	return true;
@@ -773,10 +747,10 @@ float QuadTreeEntryImplementation::getDistanceTo(QuadTreeEntry* obj) {
 	float x = obj->getPositionX();
 	// engine/util/u3d/QuadTreeEntry.idl():  		float y = obj.getPositionY();
 	float y = obj->getPositionY();
-	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaX = x - positionX;
-	float deltaX = x - positionX;
-	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaY = y - positionY;
-	float deltaY = y - positionY;
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaX = x - coordinates.getPositionX();
+	float deltaX = x - (&coordinates)->getPositionX();
+	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaY = y - coordinates.getPositionY();
+	float deltaY = y - (&coordinates)->getPositionY();
 	// engine/util/u3d/QuadTreeEntry.idl():  		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	return Math::sqrt(deltaX * deltaX + deltaY * deltaY);
 }
@@ -791,48 +765,48 @@ void QuadTreeEntryImplementation::notifyDissapear(QuadTreeEntry* obj) {
 }
 
 float QuadTreeEntryImplementation::getPositionX() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPositionX();
-	return Coordinate::getPositionX();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return coordinates.getPositionX();
+	return (&coordinates)->getPositionX();
 }
 
 float QuadTreeEntryImplementation::getPositionZ() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPositionZ();
-	return Coordinate::getPositionZ();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return coordinates.getPositionZ();
+	return (&coordinates)->getPositionZ();
 }
 
 float QuadTreeEntryImplementation::getPositionY() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPositionY();
-	return Coordinate::getPositionY();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return coordinates.getPositionY();
+	return (&coordinates)->getPositionY();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionX() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPreviousPositionX();
-	return Coordinate::getPreviousPositionX();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return coordinates.getPreviousPositionX();
+	return (&coordinates)->getPreviousPositionX();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionZ() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPreviousPositionZ();
-	return Coordinate::getPreviousPositionZ();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return coordinates.getPreviousPositionZ();
+	return (&coordinates)->getPreviousPositionZ();
 }
 
 float QuadTreeEntryImplementation::getPreviousPositionY() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPreviousPositionY();
-	return Coordinate::getPreviousPositionY();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return coordinates.getPreviousPositionY();
+	return (&coordinates)->getPreviousPositionY();
 }
 
 Vector3 QuadTreeEntryImplementation::getPosition() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return Coordinate.getPosition();
-	return Coordinate::getPosition();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return coordinates.getPosition();
+	return (&coordinates)->getPosition();
 }
 
 void QuadTreeEntryImplementation::setPosition(float x, float z, float y) {
-	// engine/util/u3d/QuadTreeEntry.idl():  		Coordinate.setPosition(x, z, y);
-	Coordinate::setPosition(x, z, y);
+	// engine/util/u3d/QuadTreeEntry.idl():  		coordinates.setPosition(x, z, y);
+	(&coordinates)->setPosition(x, z, y);
 }
 
 void QuadTreeEntryImplementation::initializePosition(float x, float z, float y) {
-	// engine/util/u3d/QuadTreeEntry.idl():  		Coordinate.initializePosition(x, z, y);
-	Coordinate::initializePosition(x, z, y);
+	// engine/util/u3d/QuadTreeEntry.idl():  		coordinates.initializePosition(x, z, y);
+	(&coordinates)->initializePosition(x, z, y);
 }
 
 int QuadTreeEntryImplementation::compareTo(QuadTreeEntry* obj) {
@@ -849,8 +823,8 @@ int QuadTreeEntryImplementation::compareTo(QuadTreeEntry* obj) {
 }
 
 bool QuadTreeEntryImplementation::isInQuadTree() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return node.get() != null;
-	return (&node)->get() != NULL;
+	// engine/util/u3d/QuadTreeEntry.idl():  		return node != null;
+	return node != NULL;
 }
 
 int QuadTreeEntryImplementation::inRangeObjectCount() {
@@ -859,8 +833,8 @@ int QuadTreeEntryImplementation::inRangeObjectCount() {
 }
 
 QuadTreeNode* QuadTreeEntryImplementation::getNode() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return node.get();
-	return (&node)->get();
+	// engine/util/u3d/QuadTreeEntry.idl():  		return node;
+	return node;
 }
 
 unsigned long long QuadTreeEntryImplementation::getObjectID() {

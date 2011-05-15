@@ -52,6 +52,7 @@ libengine3_a_AR = $(AR) $(ARFLAGS)
 libengine3_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
+	system/lang/MemoryManager.$(OBJEXT) \
 	system/lang/Exception.$(OBJEXT) system/lang/Object.$(OBJEXT) \
 	system/lang/String.$(OBJEXT) \
 	system/lang/StringBuffer.$(OBJEXT) \
@@ -284,6 +285,7 @@ noinst_LIBRARIES = libengine3.a
 libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
+			system/lang/MemoryManager.cpp \
 			system/lang/Exception.cpp \
 			system/lang/Object.cpp \
 			system/lang/String.cpp \
@@ -436,6 +438,8 @@ system/lang/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/lang/$(DEPDIR)
 	@: > system/lang/$(DEPDIR)/$(am__dirstamp)
 system/lang/System.$(OBJEXT): system/lang/$(am__dirstamp) \
+	system/lang/$(DEPDIR)/$(am__dirstamp)
+system/lang/MemoryManager.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
 system/lang/Exception.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
@@ -940,6 +944,7 @@ mostlyclean-compile:
 	-rm -f system/lang/Exception.$(OBJEXT)
 	-rm -f system/lang/Integer.$(OBJEXT)
 	-rm -f system/lang/Math.$(OBJEXT)
+	-rm -f system/lang/MemoryManager.$(OBJEXT)
 	-rm -f system/lang/Object.$(OBJEXT)
 	-rm -f system/lang/StackTrace.$(OBJEXT)
 	-rm -f system/lang/String.$(OBJEXT)
@@ -1052,6 +1057,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Exception.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Integer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Math.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/MemoryManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/StackTrace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/String.Po@am__quote@

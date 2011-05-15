@@ -14,7 +14,7 @@ namespace engine {
   namespace stm {
 
   	class TransactionalSocketManager : public Command, public Logger {
-  		ThreadLocal<MessageQueue> sentMessages;
+  		ThreadLocal<MessageQueue*> sentMessages;
 
   	public:
   		TransactionalSocketManager();

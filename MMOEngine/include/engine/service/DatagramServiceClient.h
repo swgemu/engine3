@@ -6,15 +6,18 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef DATAGRAMSERVICECLIENT_H_
 #define DATAGRAMSERVICECLIENT_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 #include "ServiceClient.h"
+#include "ServiceHandler.h"
 
 namespace engine {
   namespace service {
 
 	class DatagramServiceClient : public ServiceClient {
 	protected:
+		ServiceHandler* serviceHandler;
+
 		bool doRun;
 
 	public:
@@ -24,14 +27,23 @@ namespace engine {
 
 		virtual ~DatagramServiceClient();
 		
+		void stop() {
+			doRun = false;
+		}
+
 		void recieveMessages();
+
+		void handleMessage(Packet* message) {
+			serviceHandler->handleMessage(this, message);
+		}
 
 		// socket methods
 		bool send(Packet* pack);
 
 		bool read(Packet* pack);
 
-		virtual void handleMessage(Packet* message) {
+		void setHandler(ServiceHandler* handler) {
+			serviceHandler = handler;
 		}
 
 	};

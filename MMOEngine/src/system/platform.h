@@ -105,11 +105,11 @@ namespace sys {
 
 	#define SQR(x) ((x) * (x))
 
-	#define MAX_FLOAT 3.4028235E38;
+	#define MAX_FLOAT 3.4028235E38
 	#define SMALL_NUM  0.00000001
 
 	//#define LOG_LOCKS
-	//#define TRACE_LOCKS
+	#define TRACE_LOCKS
 
 	//#define TRACE_REFERENCING
 	#define LINE_TRACING

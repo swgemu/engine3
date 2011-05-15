@@ -14,11 +14,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../db/ObjectDatabaseManager.h"
 
 DatagramServiceThread::DatagramServiceThread() : ServiceMessageHandlerThread("") {
-	setLogging(false);
+	setInfoLogLevel();
 }
 
 DatagramServiceThread::DatagramServiceThread(const String& s) : ServiceMessageHandlerThread(s) {
-	setLogging(false);
+	setInfoLogLevel();
 }
 
 DatagramServiceThread::~DatagramServiceThread() {
@@ -53,7 +53,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 
 	StringBuffer msg;
 	msg << "started on port " << port;
-	info(msg, true);
+	info(msg);
 }
 
 void DatagramServiceThread::stop() {
@@ -64,7 +64,7 @@ void DatagramServiceThread::stop() {
 
 		removeConnections();
 
-		info("stopped", true);
+		info("stopped");
 	}
 }
 
@@ -115,7 +115,7 @@ void DatagramServiceThread::receiveMessages() {
 			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
 			receiverTask->execute();
 		} catch (SocketException& e) {
-			info(e.getMessage());
+			debug(e.getMessage());
 		} catch (Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();
@@ -137,16 +137,13 @@ void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) 
 	try	{
 		uint64 netid = addr.getNetworkID();
 
-		lock();
+		Locker locker(this);
 
 		client = clients->get(netid);
 
 		if (client == NULL)	{
-			if ((client = serviceHandler->createConnection(socket, addr)) == NULL) {
-				unlock();
-
+			if ((client = serviceHandler->createConnection(socket, addr)) == NULL)
 				return;
-			}
 
 			clients->add(client);
 
@@ -158,7 +155,7 @@ void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) 
 			#endif
 		}
 
-		unlock();
+		locker.release();
 
 		if (client->isAvailable()) {
 			//serviceFilter->messageReceived(client, &packet);

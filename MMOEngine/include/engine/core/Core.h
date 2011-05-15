@@ -46,6 +46,19 @@ namespace engine {
 		static void outOfMemoryHandler();
 	};
 
+	class SegmentationFault : public Exception {
+	public:
+		SegmentationFault() : Exception() {
+			System::out << "Segmentation Fault at\n";
+			printStackTrace();
+			exit(1);
+		}
+
+		static int GetSignalNumber() {
+			return SIGSEGV;
+		}
+	};
+
 	template<class T> T* Core::lookupObject(const String& name) {
 		return dynamic_cast<T*>(Core::getObjectBroker()->lookUp(name));
 	}

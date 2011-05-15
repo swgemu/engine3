@@ -4,7 +4,6 @@
 
 #include "SignalException.h"
 
-SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 SignalTranslator<AbortedException> g_objAbortedExceptionTranslator;
 SignalTranslator<FloatingPointException> _objFloatingPOintExceptionTranslator;
 

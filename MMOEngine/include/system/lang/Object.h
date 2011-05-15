@@ -115,16 +115,7 @@ namespace sys {
 			increaseCount();
 		}
 
-		inline void release() {
-			if (_references.get() == 0)
-				assert(0 && "Object already delted");
-
-			if (decreaseCount()) {
-				if (notifyDestroy()) {
-					destroy();
-				}
-			}
-		}
+		void release();
 
 		void acquireWeak(WeakReferenceBase* ref);
 
@@ -141,6 +132,7 @@ namespace sys {
 	protected:
 		virtual void destroy();
 
+		friend class MemoryManager;
 		friend class WeakReference<Object*>;
 	};
 

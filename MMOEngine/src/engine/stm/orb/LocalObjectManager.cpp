@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "LocalObjectManager.h"
 
 LocalObjectManager::LocalObjectManager() : Logger("LocalObjectManager"),
-		localObjectDirectory(100000), localNamingDirectory(100000) {
+		localObjectDirectory(1000), localNamingDirectory(1000) {
 	objectBroker = DistributedObjectBroker::instance();
 
 	objectManager = objectBroker->getObjectManager();
@@ -35,11 +35,11 @@ void LocalObjectManager::commitObjectChanges() {
 		objectBroker->undeploy(object->_getName());
 	}
 
-	for (int i = 0; i < destroyedObjects.size(); ++i) {
+	/*for (int i = 0; i < destroyedObjects.size(); ++i) {
 		DistributedObjectStub* object = destroyedObjects.get(i);
 
 		objectBroker->destroyObject(object);
-	}
+	}*/
 
 	info("deployed " + String::valueOf(localObjectDirectory.size())
 			+ ", undeployed " + String::valueOf(undeployedObjects.size())
@@ -132,7 +132,7 @@ DistributedObject* LocalObjectManager::lookUp(uint64 objid) {
 }
 
 bool LocalObjectManager::destroyObject(DistributedObjectStub* obj) {
-	destroyedObjects.put(obj);
+	//destroyedObjects.put(obj);
 
 	return true;
 }

@@ -8,6 +8,7 @@ using namespace engine::db::berkley;
 ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName)
 	: LocalDatabase(dbEnv, dbFileName) {
 
+	setInfoLogLevel();
 	setLoggingName("ObjectDatabase " + dbFileName);
 }
 
@@ -29,7 +30,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
 
 		if (ret == DB_LOCK_DEADLOCK) {
-			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i), true);
+			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i));
 			transaction->abort();
 			transaction = NULL;
 		}
@@ -101,7 +102,7 @@ int ObjectDatabase::deleteData(uint64 objKey) {
 
 	/*StringBuffer msg;
 	msg << "added to deleteData objid" << hex << objKey;
-	info(msg.toString(), true);*/
+	info(msg);*/
 }
 
 bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data) {

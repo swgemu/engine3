@@ -23,6 +23,8 @@ namespace engine {
   		bool merging;
 
   	  public:
+  		LocalTaskManager();
+
   		void initialize();
 
   		void start();

@@ -20,9 +20,11 @@ include engine.util.u3d.Coordinate;
 import engine.util.u3d.QuadTree;
 import engine.util.u3d.QuadTreeNode;
 
-class QuadTreeEntry extends Observable implements Coordinate {
+class QuadTreeEntry extends Observable {
 	@dereferenced
-	transient protected Reference<QuadTreeNode> node;
+	protected Coordinate coordinates;
+	
+	transient protected QuadTreeNode node;
 	//transient protected TransactionalReference<QuadTreeNode> node;
 	
 	protected boolean bounding;
@@ -30,10 +32,6 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	@dereferenced
 	transient protected SortedVector<QuadTreeEntry> closeobjects;
 
-	native float positionX;
-	native float positionY;
-	native float positionZ;
-	
 	protected float radius;
 
 	public native QuadTreeEntry(QuadTreeNode n = null);
@@ -104,8 +102,8 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	public boolean isInRange(float x, float y, float range) {
 	 	float rangesq = range * range;
 
-		float deltaX = x - positionX;
-		float deltaY = y - positionY;
+		float deltaX = x - coordinates.getPositionX();
+		float deltaY = y - coordinates.getPositionY();
 
 		if (deltaX * deltaX + deltaY * deltaY <= rangesq)
 			return true;
@@ -117,8 +115,8 @@ class QuadTreeEntry extends Observable implements Coordinate {
 		float x = obj.getPositionX();
 		float y = obj.getPositionY();
 
-		float deltaX = x - positionX;
-		float deltaY = y - positionY;
+		float deltaX = x - coordinates.getPositionX();
+		float deltaY = y - coordinates.getPositionY();
 
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	}
@@ -145,41 +143,41 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	}
 
 	public float getPositionX() {
-		return Coordinate.getPositionX();
+		return coordinates.getPositionX();
 	}
 
 	public float getPositionZ() {
-		return Coordinate.getPositionZ();
+		return coordinates.getPositionZ();
 	}
 
 	public float getPositionY() {
-		return Coordinate.getPositionY();
+		return coordinates.getPositionY();
 	}
 
 	public float getPreviousPositionX() {
-		return Coordinate.getPreviousPositionX();
+		return coordinates.getPreviousPositionX();
 	}
 
 	public float getPreviousPositionZ() {
-		return Coordinate.getPreviousPositionZ();
+		return coordinates.getPreviousPositionZ();
 	}
 
 	public float getPreviousPositionY() {
-		return Coordinate.getPreviousPositionY();
+		return coordinates.getPreviousPositionY();
 	}
 
 	@local
 	@dereferenced
 	public Vector3 getPosition() {
-		return Coordinate.getPosition();
+		return coordinates.getPosition();
 	}
 
 	public void setPosition(float x, float z, float y) {
-		Coordinate.setPosition(x, z, y);
+		coordinates.setPosition(x, z, y);
 	}
 
 	public void initializePosition(float x, float z, float y) {
-		Coordinate.initializePosition(x, z, y);
+		coordinates.initializePosition(x, z, y);
 	}
 
 	public abstract int compareTo(QuadTreeEntry obj) {
@@ -192,7 +190,7 @@ class QuadTreeEntry extends Observable implements Coordinate {
 	}
 
 	public boolean isInQuadTree() {
-		return node.get() != null;
+		return node != null;
 	}
 
 	public int inRangeObjectCount() {
@@ -201,7 +199,7 @@ class QuadTreeEntry extends Observable implements Coordinate {
 
 	@local
 	public QuadTreeNode getNode() {
-		return node.get();
+		return node;
 	}
 	
 	public abstract unsigned long getObjectID() {

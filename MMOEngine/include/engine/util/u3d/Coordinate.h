@@ -12,7 +12,7 @@ namespace engine {
   namespace util {
   	namespace u3d {
 
-	class Coordinate {
+	class Coordinate : public virtual Object {
 	protected:
 		float positionX, positionZ, positionY;
 
@@ -23,7 +23,7 @@ namespace engine {
 
 		}
 
-		Coordinate(const Coordinate& ct) {
+		Coordinate(const Coordinate& ct) : Object() {
 			positionX = ct.positionX;
 			positionY = ct.positionY;
 			positionZ = ct.positionZ;

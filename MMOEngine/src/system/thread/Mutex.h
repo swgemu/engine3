@@ -33,7 +33,7 @@ namespace sys {
 		void lock(Mutex* m);
 		void lock(Lockable* lockable);
 
-		inline bool tryLock();
+		bool tryLock();
 
 		void unlock(bool doLock = true);
 

@@ -58,6 +58,8 @@ namespace engine {
 			return ownerTransaction;
 		}
 
+		bool isCurrentVersion(Object* obj);
+
 		bool hasObject(Object* obj) const {
 			return object == obj;
 		}
@@ -119,6 +121,13 @@ namespace engine {
 
 	template<class O> void TransactionalObjectHeader<O>::discardObject(Transaction* transaction) {
 		ownerTransaction.compareAndSet(transaction, NULL);
+	}
+
+	template<class O> bool TransactionalObjectHeader<O>::isCurrentVersion(Object* obj) {
+		if (ownerTransaction != NULL && ownerTransaction != Transaction::currentTransaction())
+			return false;
+
+		return object == obj;
 	}
 
   } // namespace stm

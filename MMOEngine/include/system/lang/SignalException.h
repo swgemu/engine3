@@ -33,19 +33,6 @@ public:
 	}
 };
 
-class SegmentationFault : public Exception {
-public:
-	SegmentationFault() : Exception() {
-		System::out << "Segmentation Fault at\n";
-		printStackTrace();
-		exit(1);
-	}
-
-	static int GetSignalNumber() {
-		return SIGSEGV;
-	}
-};
-
 class AbortedException : public Exception {
 public:
 	AbortedException() : Exception() {

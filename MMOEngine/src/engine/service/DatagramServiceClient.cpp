@@ -14,6 +14,8 @@ DatagramServiceClient::DatagramServiceClient()
 		: ServiceClient() {
 	socket = new UDPSocket();
 
+	serviceHandler = NULL;
+
 	doRun = true;
 }
 
@@ -21,11 +23,14 @@ DatagramServiceClient::DatagramServiceClient(const String& host, int port)
 		: ServiceClient(host, port) {
 	socket = new UDPSocket();
 
+	serviceHandler = NULL;
+
 	doRun = true;
 }
 
 DatagramServiceClient::DatagramServiceClient(Socket* sock, SocketAddress& addr) 
 		: ServiceClient(sock, addr) {
+	serviceHandler = NULL;
 }
 
 DatagramServiceClient::~DatagramServiceClient() {
@@ -41,6 +46,8 @@ public:
 	ClientMessageReceiverTask(DatagramServiceClient* cli, Packet* packet) {
 		client = cli;
 
+		Logger::console.info("message received");
+
 		message = packet->clone();
 	}
 
@@ -50,17 +57,23 @@ public:
 	}
 
 	void run() {
-		client->handleMessage(message);
+		if (client->isAvailable())
+			client->handleMessage(message);
 	}
 };
 
 void DatagramServiceClient::recieveMessages() {
 	Packet packet;
 
+	Logger::console.info("recieving messages");
+
 	while (doRun) {
 		try	{
 			if (!read(&packet))
 				continue;
+
+			if (!isAvailable())
+				return;
 
 			Reference<Task*> receiverTask = new ClientMessageReceiverTask(this, &packet);
 			receiverTask->execute();

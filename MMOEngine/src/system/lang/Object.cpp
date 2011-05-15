@@ -2,11 +2,26 @@
 Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
+
+#include "ref/Reference.h"
 #include "ref/WeakReference.h"
 
-#include "../thread/Locker.h"
+#include "system/thread/Locker.h"
+
+#include "MemoryManager.h"
 
 #include "Object.h"
+
+void Object::release() {
+	if (_references.get() == 0)
+		assert(0 && "Object already delted");
+
+	if (decreaseCount()) {
+		if (notifyDestroy()) {
+			MemoryManager::getInstance()->reclaim(this);
+		}
+	}
+}
 
 void Object::acquireWeak(WeakReferenceBase* ref) {
 	Locker locker(&referenceMutex);

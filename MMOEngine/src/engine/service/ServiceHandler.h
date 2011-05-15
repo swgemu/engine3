@@ -13,7 +13,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace service {
 
-	class ServiceHandler {
+	class ServiceHandler : public Object {
 	public:
 		virtual ~ServiceHandler() {
 		}

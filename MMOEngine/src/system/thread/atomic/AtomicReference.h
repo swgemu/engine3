@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "AtomicInteger.h"
 #include "AtomicLong.h"
 
+#include "system/lang/ref/Reference.h"
+
 namespace sys {
   namespace thread {
 	namespace atomic {

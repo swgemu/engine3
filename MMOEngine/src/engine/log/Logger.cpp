@@ -14,7 +14,7 @@ Logger Logger::console("Console");
 Logger::Logger() {
 	logFile = NULL;
 
-	doLog = true;
+	logLevel = LOG;
 	doGlobalLog = true;
 }
 
@@ -23,7 +23,7 @@ Logger::Logger(const char *s) {
 
 	name = s;
 
-	doLog = true;
+	logLevel = LOG;
 	doGlobalLog = true;
 }
 
@@ -32,7 +32,7 @@ Logger::Logger(const String& s) {
 
 	name = s;
 
-	doLog = true;
+	logLevel = LOG;
 	doGlobalLog = true;
 }
 
@@ -88,12 +88,14 @@ void Logger::closeFileLogger() {
 }
 
 void Logger::info(const char *msg, bool forcedLog) {
-	if (doLog || forcedLog) {
+	if (logLevel >=  INFO || forcedLog) {
 		printTime(false);
+
 		System::out << " [" << name << "] " << msg << "\n";
 	}
 
-	log(msg);
+	if (logLevel + 1 >= INFO || forcedLog)
+		log(msg);
 }
 
 void Logger::info(const String& msg, bool forcedLog) {
@@ -106,7 +108,7 @@ void Logger::info(const StringBuffer& msg, bool forcedLog) {
 }
 
 void Logger::log(const char *msg) {
-	if (doLog && logFile != NULL) {
+	if (logLevel > LOG && logFile != NULL) {
 		String time;
 		getTime(time);
 
@@ -149,11 +151,14 @@ void Logger::error(const StringBuffer& msg) {
 }
 
 void Logger::debug(const char* msg) {
-	printTime(false);
+	if (logLevel >= DEBUG) {
+		printTime(true);
 
-	System::out << " [" << name << "] DEBUG - " << msg << "\n";
+		System::out << " [" << name << "] DEBUG - " << msg << "\n";
+	}
 
-	log(msg);
+	if (logLevel + 1 >= DEBUG)
+		log(msg);
 }
 
 void Logger::debug(const String& msg) {

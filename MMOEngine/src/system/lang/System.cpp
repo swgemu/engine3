@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "System.h"
 
-ThreadLocal<MTRand> System::mtrand;
+ThreadLocal<MTRand*> System::mtrand;
 
 PrintStream System::out;
 

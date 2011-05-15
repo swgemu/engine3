@@ -20,6 +20,7 @@ noinst_LIBRARIES = libengine3.a
 libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
+			system/lang/MemoryManager.cpp \
 			system/lang/Exception.cpp \
 			system/lang/Object.cpp \
 			system/lang/String.cpp \

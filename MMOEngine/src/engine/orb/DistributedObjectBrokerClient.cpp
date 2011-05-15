@@ -12,7 +12,7 @@ DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBr
 	orb = broker;
 
 	/*info("client \'" + host + "\' connected", true);*/
-	info("client connected", true);
+	info("client connected");
 }
 
 DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBroker* broker, const String& host) 
@@ -21,7 +21,7 @@ DistributedObjectBrokerClient::DistributedObjectBrokerClient(DistributedObjectBr
 
 	try {
 		connect();
-		info("connected to server \'" + host + "\'", true);
+		info("connected to server \'" + host + "\'");
 	} catch (SocketException& e) {
 		error("unable to connect to \'" + host + "\'");
 		error(e.getMessage());
@@ -39,7 +39,7 @@ void DistributedObjectBrokerClient::run() {
 }
 
 bool DistributedObjectBrokerClient::send(Packet* pack) {
-	//info("SEND " + pack->toString(), true);
+	//info("SEND " + pack->toString());
 	StreamServiceClient::send(pack);
 	
 	delete pack;

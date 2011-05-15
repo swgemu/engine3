@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "system/lang/SignalException.h"
+
 #include "TaskManagerImpl.h"
 
 #include "engine/stm/TransactionalMemoryManager.h"
@@ -16,6 +18,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 TaskManager* Core::taskManager;
 ObjectBroker* Core::objectBroker;
+
+SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 
 Core::Core() {
 	initializeContext();

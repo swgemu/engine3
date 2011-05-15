@@ -102,5 +102,5 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 	msg << "[DistributedObjectDirectory] marked " << objectsToUpdate.size() << " objects to update and "
 			<< objectsToDelete.size() << " for deletion";
 
-	Logger::console.info(msg.toString(), true);
+	Logger::console.info(msg.toString());
 }

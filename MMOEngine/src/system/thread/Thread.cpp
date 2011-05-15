@@ -19,7 +19,7 @@ AtomicInteger Thread::threadCounter;
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
 
-ThreadLocal<Thread> Thread::currentThread;
+ThreadLocal<Thread*> Thread::currentThread;
 
 void Thread::initializeThread(Thread* thread) {
 	currentThread.set(thread);

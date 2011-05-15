@@ -16,23 +16,31 @@ public:
 	}
 };
 
-class TransactionalMemoryManagerStatisticsTask : public Task {
+class TransactionalMemoryManagerStatisticsTask : public Thread {
 public:
 	void run() {
-		TransactionalMemoryManager::instance()->printStatistics();
+		Thread::sleep(1000);
+
+		while (true) {
+			TransactionalMemoryManager::instance()->printStatistics();
+
+			Thread::sleep(1000);
+		}
 	}
 };
 
 //Vector<bool> commitedTrans;
-bool initializationTransactionStarted;
+AtomicBoolean initializationTransactionStarted;
 
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
+	setInstance(this);
+
 	objectManager = (TransactionalObjectManager*) Core::getObjectBroker();
 
 	socketManager = new TransactionalSocketManager();
 
-	Task* task = new TransactionalMemoryManagerStatisticsTask();
-	task->schedulePeriodic(1000, 1000);
+	Thread* task = new TransactionalMemoryManagerStatisticsTask();
+	task->start();
 
 	/*for (int i = 0; i < 101000; ++i)
 		commitedTrans.add(false);*/
@@ -85,7 +93,7 @@ void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
 	assert(current == NULL || current == transaction);
 
 	if (transaction->getIdentifier() != 1) {
-		while (!initializationTransactionStarted) {
+		while (!initializationTransactionStarted.get()) {
 			Thread::sleep(1000);
 		}
 	}
@@ -106,7 +114,7 @@ void TransactionalMemoryManager::commitTransaction() {
 	commitedTransactions.increment();
 
 	if (transaction->getIdentifier() == 1)
-		initializationTransactionStarted = true;
+		initializationTransactionStarted.compareAndSet(false, true);
 }
 
 void TransactionalMemoryManager::abortTransaction() {
@@ -115,21 +123,44 @@ void TransactionalMemoryManager::abortTransaction() {
 	abortedTransactions.increment();
 }
 
+void TransactionalMemoryManager::reclaim(Object* object) {
+	Vector<Object*>* objects = reclamationList.get();
+	if (objects == NULL) {
+		objects = new Vector<Object*>();
+
+		reclamationList.set(objects);
+	}
+
+	objects->add(object);
+
+	if (objects->size() > 5000 && !isReclaiming.get()) {
+		isReclaiming.set(true);
+
+		while (objects->size() > 5000) {
+			Object* obj = objects->remove(0);
+
+			MemoryManager::reclaim(obj);
+		}
+
+		isReclaiming.set(false);
+	}
+}
+
 void TransactionalMemoryManager::printStatistics() {
-	if (startedTransactions.get() <= 1)
+	if (startedTransactions.get() == 0)
 		return;
 
 	TaskManager* taskManager = Core::getTaskManager();
 
 	StringBuffer str;
-	str << "transactions(started " << String::valueOf(startedTransactions.get() - 1) << ", "
-			<< "commited " << String::valueOf(commitedTransactions.get() - 1) << ", "
+	str << "transactions(started " << startedTransactions.get() << ", "
+			<< "commited " << commitedTransactions.get() << ", "
 			<< "aborted " << abortedTransactions.get() << ") - tasks ("
 			<< "exectuing " << taskManager->getExecutingTaskSize() << ", "
 			<< "scheduled " << taskManager->getScheduledTaskSize() << ")";
 
 
-	info(str);
+	info(str, true);
 
 	startedTransactions.set(0);
 	commitedTransactions.set(0);

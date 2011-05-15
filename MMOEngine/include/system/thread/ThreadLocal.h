@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define THREADLOCAL_H_
 
 #include "system/platform.h"
+#include "system/lang/types.h"
 
 #include <pthread.h>
 
@@ -25,22 +26,22 @@ namespace sys {
 
 		virtual ~ThreadLocal();
 
-		T* get();
+		T get();
 
 		void remove();
 
-		void set(const T* value);
+		void set(const T& value);
 
 	protected:
 		void createKey();
 
 		void deleteKey();
 
-		virtual T* initValue() {
-			return NULL;
+		virtual T initValue() {
+			return TypeInfo<T>::nullValue();
 		}
 
-		T* getValue();
+		T getValue();
 	};
 
 	template<class T> ThreadLocal<T>::ThreadLocal() {
@@ -51,10 +52,10 @@ namespace sys {
 		deleteKey();
 	}
 
-	template<class T> T* ThreadLocal<T>::get() {
-		T* value = getValue();
+	template<class T> T ThreadLocal<T>::get() {
+		T value = getValue();
 
-		if (value == NULL) {
+		if (value == TypeInfo<T>::nullValue()) {
 			value = initValue();
 
 			set(value);
@@ -67,9 +68,9 @@ namespace sys {
 		set(NULL);
 	}
 
-	template <class T> void ThreadLocal<T>::set(const T* value) {
+	template <class T> void ThreadLocal<T>::set(const T& value) {
 	#ifdef PLATFORM_UNIX
-		pthread_setspecific(dataKey, value);
+		pthread_setspecific(dataKey, (void*) value);
 	#endif
 	}
 
@@ -87,9 +88,9 @@ namespace sys {
 	#endif
 	}
 
-	template<class T> T* ThreadLocal<T>::getValue() {
+	template<class T> T ThreadLocal<T>::getValue() {
 	#ifdef PLATFORM_UNIX
-		return (T*) pthread_getspecific(dataKey);
+		return (T) pthread_getspecific(dataKey);
 	#else
 		return NULL;
 	#endif

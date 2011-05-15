@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "StreamServiceThread.h"
 
 StreamServiceThread::StreamServiceThread(const String& s) : ServiceMessageHandlerThread(s) {
-	setLogging(false);
+	setInfoLogLevel();
 }
 
 StreamServiceThread::~StreamServiceThread() {
@@ -41,7 +41,7 @@ void StreamServiceThread::start(int p, int mconn) {
 
 	StringBuffer msg;
 	msg << "started on port " << port;
-	info(msg, true); 
+	info(msg);
 }
 
 void StreamServiceThread::stop() {
@@ -50,7 +50,7 @@ void StreamServiceThread::stop() {
 
 		ServiceThread::stop();
 		
-		info("stopped", true);
+		info("stopped");
 	}
 }
 

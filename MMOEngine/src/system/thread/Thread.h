@@ -37,7 +37,7 @@ namespace sys {
 
 		static pthread_once_t initThread;
 
-		static ThreadLocal<Thread> currentThread;
+		static ThreadLocal<Thread*> currentThread;
 
 	public:
 		//! allocates a new Thread

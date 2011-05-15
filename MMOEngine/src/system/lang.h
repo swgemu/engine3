@@ -12,6 +12,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "lang/Object.h"
 
+#include "lang/MemoryManager.h"
+
 #include "lang/ref/Reference.h"
 #include "lang/ref/WeakReference.h"
 
@@ -70,6 +72,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "thread/Mutex.h"
 #include "thread/ReadWriteLock.h"
 #include "thread/Condition.h"
+#include "thread/atomic/AtomicBoolean.h"
 #include "thread/atomic/AtomicInteger.h"
 #include "thread/atomic/AtomicLong.h"
 #include "thread/atomic/AtomicReference.h"

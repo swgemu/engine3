@@ -20,10 +20,16 @@ namespace engine {
 
 		static Time starttime;
 
-		bool doLog, doGlobalLog;
+		int logLevel;
+
+		bool doGlobalLog;
 
 	public:
 		static Logger console;
+
+		static const  int LOG = 0;
+		static const int INFO = 1;
+		static const int DEBUG = 2;
 
 	public:
 		Logger();
@@ -35,10 +41,11 @@ namespace engine {
 		static void setGlobalFileLogger(const char* file);
 		static void setGlobalFileLogger(const String& file);
 
+		static void closeGlobalFileLogger();
+
 		void setFileLogger(const char* file);
 		void setFileLogger(const String& file);
 
-		static void closeGlobalFileLogger();
 		void closeFileLogger();
 
 		void info(const char *msg, bool forcedLog = false);
@@ -68,7 +75,22 @@ namespace engine {
 
 		// setters
 		inline void setLogging(bool doLog) {
-			Logger::doLog = doLog;
+			if (doLog)
+				logLevel = DEBUG;
+			else
+				logLevel = LOG;
+		}
+
+		inline void setLogLevel(int level) {
+			logLevel = level;
+		}
+
+		inline void setInfoLogLevel() {
+			logLevel = INFO;
+		}
+
+		inline void setDebugLogLevel() {
+			logLevel = DEBUG;
 		}
 
 		inline void setGlobalLogging(bool doLog) {

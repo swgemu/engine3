@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTreeEntry.h"
 
-QuadTreeEntryImplementation::QuadTreeEntryImplementation(QuadTreeNode* n) : Coordinate() {
+QuadTreeEntryImplementation::QuadTreeEntryImplementation(QuadTreeNode* n) {
 	node = n;
 	bounding = false;
 
@@ -21,25 +21,25 @@ void QuadTreeEntryImplementation::setNode(QuadTreeNode* n) {
 }
 
 bool QuadTreeEntryImplementation::isInSWArea(QuadTreeNode* node) {
-	return positionX >= node->minX && positionX < node->dividerX &&
-			positionY >= node->minY && positionY < node->dividerY;
+	return coordinates.getPositionX() >= node->minX && coordinates.getPositionX() < node->dividerX &&
+			coordinates.getPositionY() >= node->minY && coordinates.getPositionY() < node->dividerY;
 }
 
 
 bool QuadTreeEntryImplementation::isInSEArea(QuadTreeNode* node) {
-	return positionX >= node->dividerX && positionX < node->maxX &&
-			positionY >= node->minY && positionY < node->dividerY;
+	return coordinates.getPositionX() >= node->dividerX && coordinates.getPositionX() < node->maxX &&
+			coordinates.getPositionY() >= node->minY && coordinates.getPositionY() < node->dividerY;
 }
 
 
 bool QuadTreeEntryImplementation::isInNWArea(QuadTreeNode* node) {
-	return positionX >= node->minX && positionX < node->dividerX &&
-			positionY >= node->dividerY && positionY < node->maxY;
+	return coordinates.getPositionX() >= node->minX && coordinates.getPositionX() < node->dividerX &&
+			coordinates.getPositionY() >= node->dividerY && coordinates.getPositionY() < node->maxY;
 }
 
 
 bool QuadTreeEntryImplementation::isInArea(QuadTreeNode* node) {
-	return (positionX + radius > node->dividerX && positionX - radius < node->dividerX) ||
-			(positionY + radius > node->dividerY && positionY - radius < node->dividerY);
+	return (coordinates.getPositionX() + radius > node->dividerX && coordinates.getPositionX() - radius < node->dividerX) ||
+			(coordinates.getPositionY() + radius > node->dividerY && coordinates.getPositionY() - radius < node->dividerY);
 }
 

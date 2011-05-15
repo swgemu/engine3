@@ -36,14 +36,14 @@ Transaction::Transaction(int id) : Logger() {
 
 	tid = id;
 
-	setLogging(false);
-	setGlobalLogging(false);
+	setInfoLogLevel();
+	setGlobalLogging(true);
 }
 
 Transaction::~Transaction() {
 	reset();
 
-	info("deleted");
+	debug("deleted");
 }
 
 bool Transaction::start() {
@@ -52,7 +52,7 @@ bool Transaction::start() {
 
 bool Transaction::start(Task* task) {
 	if (!setState(INITIAL, UNDECIDED)) {
-		info("failed to start transaction (state " + String::valueOf(status) + ")");
+		debug("failed to start transaction (state " + String::valueOf(status) + ")");
 
 		return false;
 	}
@@ -65,7 +65,7 @@ bool Transaction::start(Task* task) {
 
 	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
 
-	info("starting transaction");
+	debug("starting transaction");
 
 	TransactionalMemoryManager::instance()->startTransaction(this);
 
@@ -89,7 +89,7 @@ bool Transaction::start(Task* task) {
 }
 
 bool Transaction::commit() {
-	info("commiting..");
+	debug("commiting..");
 
 	uint64 startTime = System::getMikroTime();
 
@@ -104,9 +104,9 @@ bool Transaction::commit() {
 	commitTime += System::getMikroTime() - startTime;
 
 	if (commited) {
-		info("commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
+		debug("commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
-				+readOnlyObjectsCount + " / " + readWriteObjectsCount +")");
+				+ readOnlyObjectsCount + " / " + readWriteObjectsCount +")");
 
 		doHelpTransactions();
 
@@ -117,7 +117,14 @@ bool Transaction::commit() {
 		if (helperTransaction.compareAndSet(NULL, this)) {
 			Thread::yield();
 
-			info("helping self");
+			debug("helping self");
+
+			if (commitAttempts > 20) {
+				//raise(SIGINT);
+				error("too many commit attempts");
+
+				return true;
+			}
 
 			if (!start())
 				return false;
@@ -133,27 +140,27 @@ bool Transaction::commit() {
 
 bool Transaction::doCommit() {
 	if (!isUndecided()) {
-		info("transaction not in UNDECIDED state on commit");
+		debug("transaction not in UNDECIDED state on commit");
 		return false;
 	}
 
 	if (!acquireReadWriteObjects()) {
-		info("failed to acquire read write objects");
+		debug("failed to acquire read write objects");
 		return false;
 	}
 
 	if (!setState(UNDECIDED, READ_CHECKING)) {
-		info("status change UNDECIED -> READ CHECKING failed");
+		debug("status change UNDECIED -> READ CHECKING failed");
 		return false;
 	}
 
 	if (!validateReadOnlyObjects()) {
-		info("failed to validate read only objects");
+		debug("failed to validate read only objects");
 		return false;
 	}
 
 	if (!setState(READ_CHECKING, COMMITTED)) {
-		info("status change READ CHECKING -> COMMITED failed");
+		debug("status change READ CHECKING -> COMMITED failed");
 		return false;
 	}
 
@@ -179,9 +186,9 @@ void Transaction::abort() {
 	setState(currentStatus, ABORTED);
 
 	if (status == ABORTED)
-		info("aborting");
+		debug("aborting");
 	else
-		info("aborting failed");
+		debug("aborting failed");
 }
 
 void Transaction::doAbort() {
@@ -195,7 +202,9 @@ void Transaction::doAbort() {
 		command->undo();
 	}
 
-	info("aborted");
+	debug("aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
+			+ String::valueOf(commitAttempts) + " tries, R/W objects "
+			+ readOnlyObjects.size() + " / " + readWriteObjects.size() +")");
 
 	++commitAttempts;
 
@@ -213,7 +222,7 @@ void Transaction::doHelpTransactions() {
 			Thread::yield();
 		}
 
-		info("helping transaction " + helpedTransaction->getLoggingName());
+		debug("helping transaction " + helpedTransaction->getLoggingName());
 
 		if (!helpedTransaction->start())
 			continue;
@@ -223,7 +232,7 @@ void Transaction::doHelpTransactions() {
 }
 
 void Transaction::reset() {
-	info("reset");
+	debug("reset");
 
 	openedObjets.removeAll();
 
@@ -247,20 +256,20 @@ void Transaction::reset() {
 }
 
 bool Transaction::acquireReadWriteObjects() {
-	info("acquiring read/write objects");
+	debug("acquiring read/write objects");
 
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			info("object has changed on acquiring RW objects");
+			debug("object has changed on acquiring RW objects");
 			return false;
 		}
 
 		while (!handle->acquireHeader(this)) {
 			Transaction* competingTransaction = handle->getCompetingTransaction();
 			if (competingTransaction == NULL) {
-				info("conflict with already released transaction");
+				debug("conflict with already released transaction");
 				return false;
 			}
 
@@ -288,13 +297,13 @@ bool Transaction::acquireReadWriteObjects() {
 		}
 	}*/
 
-	info("finished acquiring read/write objects");
+	debug("finished acquiring read/write objects");
 
 	return true;
 }
 
 void Transaction::releaseReadWriteObjects() {
-	info("releasing read/write objects");
+	debug("releasing read/write objects");
 
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
@@ -302,17 +311,17 @@ void Transaction::releaseReadWriteObjects() {
 		handle->releaseHeader();
 	}
 
-	info("finished releasing read/write objects");
+	debug("finished releasing read/write objects");
 }
 
 bool Transaction::validateReadOnlyObjects() {
-	info("validating read only objects");
+	debug("validating read only objects");
 
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			info("object has changed on validating RO objects");
+			debug("object has changed on validating RO objects");
 			return false;
 		}
 
@@ -324,7 +333,7 @@ bool Transaction::validateReadOnlyObjects() {
 		}
 	}
 
-	info("finished validating read only objects");
+	debug("finished validating read only objects");
 
 	return true;
 }
@@ -339,13 +348,13 @@ void Transaction::discardReadWriteObjects() {
 
 bool Transaction::resolveConflict(Transaction* transaction) {
 	if (transaction->compareTo(this) < 0) {
-		info("aborting conflicting transction " + transaction->getLoggingName());
+		debug("aborting conflicting transction " + transaction->getLoggingName());
 
 		helpTransaction(transaction);
 
 		return transaction->isAborted();
 	} else {
-		info("aborting self due to conflict");
+		debug("aborting self due to conflict");
 
 		//transaction->helpTransaction(this);
 
@@ -360,7 +369,7 @@ void Transaction::helpTransaction(Transaction* transaction) {
 		if (!transaction->setHelperTransaction((this)))
 			return;
 
-		info("adding helped transaction " + transaction->getLoggingName());
+		debug("adding helped transaction " + transaction->getLoggingName());
 
 		helpedTransactions.add(transaction);
 	}

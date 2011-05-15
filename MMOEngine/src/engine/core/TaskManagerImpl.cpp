@@ -16,7 +16,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager") {
 	shuttingDown = false;
 
-	setLogging(true);
+	setInfoLogLevel();
 }
 
 TaskManagerImpl::~TaskManagerImpl() {
@@ -46,7 +46,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount) {
 
 	StringBuffer msg;
 	msg << "initialized";
-	info(msg);
+	debug(msg);
 }
 
 void TaskManagerImpl::start() {
@@ -64,7 +64,7 @@ void TaskManagerImpl::start() {
 
 	StringBuffer msg;
 	msg << "started";
-	info(msg);
+	debug(msg);
 }
 
 void TaskManagerImpl::shutdown() {
@@ -96,7 +96,7 @@ void TaskManagerImpl::shutdown() {
 		delete worker;
 	}
 
-	info("stopped");
+	debug("stopped");
 }
 
 Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
@@ -197,7 +197,8 @@ void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
 	}
 
 	TaskScheduler* scheduler = getTaskScheduler();
-	assert (scheduler != NULL);
+	if (scheduler == NULL)
+		return;
 
 	locker.release();
 
@@ -260,11 +261,11 @@ void TaskManagerImpl::printInfo() {
 
 	StringBuffer msg;
 	msg << "executing tasks - " << getExecutingTaskSize();
-	info(msg, true);
+	info(msg);
 
 	StringBuffer msg2;
 	msg2 << "scheduled tasks - " << getScheduledTaskSize();
-	info(msg2, true);
+	info(msg2);
 
 	unlock();
 }

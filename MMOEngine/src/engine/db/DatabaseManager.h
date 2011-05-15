@@ -107,7 +107,7 @@ namespace engine {
 		VectorMap<uint16, LocalDatabase*> databases;
 		VectorMap<String, uint16> nameDirectory;
 
-		ThreadLocal<CurrentTransaction> localTransaction;
+		ThreadLocal<CurrentTransaction*> localTransaction;
 
 		LocalDatabase* databaseDirectory;
 

@@ -69,6 +69,7 @@ namespace engine {
 		float dividerX, dividerY;
 
 	public:
+		QuadTreeNode();
 		QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadTreeNode *parent);
 
 		~QuadTreeNode();
