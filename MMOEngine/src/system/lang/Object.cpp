@@ -85,3 +85,11 @@ void Object::printReferenceHolders() {
 	}
 }
 #endif
+
+String Object::toString() {
+	char buf[20];
+
+	sprintf(buf, "%p", this);
+
+	return String(buf);
+}

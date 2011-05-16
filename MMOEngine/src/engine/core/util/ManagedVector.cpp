@@ -20,11 +20,10 @@ ManagedVector::~ManagedVector() {
 DistributedObjectServant* ManagedVector::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
 
 void ManagedVector::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
+	setObject(dynamic_cast<ManagedVectorImplementation*>(servant));
 }
 
 /*
@@ -55,6 +54,7 @@ void ManagedVectorImplementation::_initializeImplementation() {
 
 void ManagedVectorImplementation::_setStub(DistributedObjectStub* stub) {
 	_this = (ManagedVector*) stub;
+	DistributedObjectServant::_setStub(stub);
 }
 
 DistributedObjectStub* ManagedVectorImplementation::_getStub() {
@@ -65,32 +65,30 @@ ManagedVectorImplementation::operator const ManagedVector*() {
 	return _this;
 }
 
+Object* ManagedVectorImplementation::clone() {
+	return dynamic_cast<Object*>(new ManagedVectorImplementation(*this));
+}
+
+
 void ManagedVectorImplementation::lock(bool doLock) {
-	_this->lock(doLock);
 }
 
 void ManagedVectorImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
 }
 
 void ManagedVectorImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
 }
 
 void ManagedVectorImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
 }
 
 void ManagedVectorImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
 }
 
 void ManagedVectorImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
 }
 
 void ManagedVectorImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
 }
 
 void ManagedVectorImplementation::_serializationHelperMethod() {

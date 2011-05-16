@@ -17,3 +17,7 @@ DistributedObjectServant::~DistributedObjectServant() {
 void DistributedObjectServant::setDeployingName(const String& name) {
 	_stub->_setName(name);
 }
+
+String DistributedObjectServant::toString() {
+	return _stub->_getName();
+}

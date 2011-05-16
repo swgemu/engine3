@@ -63,7 +63,7 @@ namespace sys {
 			return value;
 		}
 
-		bool toString(String& str) {
+		/*bool toString(String& str) {
 			// structure key=value
 			String stringKey, stringValue;
 
@@ -94,7 +94,7 @@ namespace sys {
 				return false;
 
 			return true;
-		}
+		}*/
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			TypeInfo<K>::toBinaryStream(&key, stream);

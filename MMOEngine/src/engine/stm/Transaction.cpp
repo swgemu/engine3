@@ -119,13 +119,6 @@ bool Transaction::commit() {
 
 			debug("helping self");
 
-			if (commitAttempts > 20) {
-				//raise(SIGINT);
-				error("too many commit attempts");
-
-				return true;
-			}
-
 			if (!start())
 				return false;
 
@@ -262,7 +255,7 @@ bool Transaction::acquireReadWriteObjects() {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			debug("object has changed on acquiring RW objects");
+			debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
 			return false;
 		}
 

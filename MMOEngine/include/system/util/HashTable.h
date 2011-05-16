@@ -81,8 +81,8 @@ namespace sys {
 
 	    void removeAll();
 
-	    bool toString(String& str);
-	    bool parseFromString(const String& str, int version = 0);
+	    /*bool toString(String& str);
+	    bool parseFromString(const String& str, int version = 0);*/
 
 	    bool toBinaryStream(ObjectOutputStream* stream);
 	    bool parseFromBinaryStream(ObjectInputStream* stream);
@@ -305,7 +305,7 @@ namespace sys {
 		count = 0;
 	}
 
-	template<class K, class V> bool HashTable<K,V>::toString(String& str) {
+	/*template<class K, class V> bool HashTable<K,V>::toString(String& str) {
 		StringBuffer buffer;
 		buffer << "{" << HashTable<K, V>::size() << ",";
 		HashTableIterator<K, V> iterator(this);
@@ -363,7 +363,7 @@ namespace sys {
 		}
 
 		return true;
-	}
+	}*/
 
 	template<class K, class V>  bool HashTable<K,V>::toBinaryStream(ObjectOutputStream* stream) {
 		HashTableIterator<K, V> iterator(this);

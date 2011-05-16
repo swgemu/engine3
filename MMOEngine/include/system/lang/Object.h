@@ -121,6 +121,8 @@ namespace sys {
 
 		void releaseWeak(WeakReferenceBase* ref);
 
+		virtual String toString();
+
 	#ifdef TRACE_REFERENCES
 		void addHolder(void* obj);
 

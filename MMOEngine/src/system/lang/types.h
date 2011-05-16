@@ -74,16 +74,17 @@ public:
 		return val.hashCode();
 	}
 
-	static bool toString(T* address, sys::lang::String& value) {
+	/*static bool toString(T* address, sys::lang::String& value) {
 		return address->toString(value);
-	}
+	}*/
+
 	static bool toBinaryStream(T* address, ObjectOutputStream* stream) {
 		return address->toBinaryStream(stream);
 	}
 
-	static bool parseFromString(T* address, const sys::lang::String& value, int version = 0) {
+	/*static bool parseFromString(T* address, const sys::lang::String& value, int version = 0) {
 		return address->parseFromString(value, version);
-	}
+	}*/
 
 	static bool parseFromBinaryStream(T* address, ObjectInputStream* stream) {
 		return address->parseFromBinaryStream(stream);

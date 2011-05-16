@@ -28,12 +28,16 @@ namespace engine {
 
 		void setDeployingName(const String& name);
 
-		virtual void _setStub(DistributedObjectStub* stub) = 0;
+		virtual void _setStub(DistributedObjectStub* stub) {
+			_stub = stub;
+		}
 
 		virtual void _serializationHelperMethod() = 0;
 
 		virtual DistributedObjectStub* _getStub() = 0;
 		
+		String toString();
+
 		// setters
 		inline void _setClassHelper(DistributedObjectClassHelper* helper) {
 			_classHelper = helper;
