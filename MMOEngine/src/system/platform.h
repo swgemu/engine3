@@ -121,7 +121,7 @@ namespace sys {
 	#define CONNECTION_LIMIT 20
 	#endif
 
-	#define WITH_STM
+	//#define WITH_STM
 
 	namespace lang {
 	} // namespace net

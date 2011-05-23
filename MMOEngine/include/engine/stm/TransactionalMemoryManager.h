@@ -42,6 +42,10 @@ namespace engine {
 	public:
 		static void commitPureTransaction();
 
+		static void closeThread() {
+			instance()->reclaimAll();
+		}
+
 		void printStatistics();
 
 		TransactionalObjectManager* getObjectManager() {
@@ -66,6 +70,10 @@ namespace engine {
 		void abortTransaction();
 
 		void reclaim(Object* object);
+
+		void reclaimAll();
+
+		Vector<Object*>* getReclamationList();
 
 		friend class SingletonWrapper<TransactionalMemoryManager>;
 		friend class Transaction;

@@ -71,8 +71,6 @@ public:
 protected:
 	virtual ~FacadeImplementation();
 
-	Object* clone();
-
 	void finalize();
 
 	void _initializeImplementation();
@@ -98,7 +96,6 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Facade;
-	friend class TransactionalObjectHandle<FacadeImplementation*>;
 };
 
 class FacadeAdapter : public ManagedObjectAdapter {

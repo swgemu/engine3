@@ -60,6 +60,8 @@ TransactionalMemoryManager::~TransactionalMemoryManager() {
 	}
 
 	printf("\n");*/
+
+	setInstance(NULL);
 }
 
 void TransactionalMemoryManager::commitPureTransaction() {
@@ -124,12 +126,7 @@ void TransactionalMemoryManager::abortTransaction() {
 }
 
 void TransactionalMemoryManager::reclaim(Object* object) {
-	Vector<Object*>* objects = reclamationList.get();
-	if (objects == NULL) {
-		objects = new Vector<Object*>();
-
-		reclamationList.set(objects);
-	}
+	Vector<Object*>* objects = getReclamationList();
 
 	objects->add(object);
 
@@ -145,6 +142,31 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 		isReclaiming.set(false);
 	}
 }
+
+void TransactionalMemoryManager::reclaimAll() {
+	Vector<Object*>* objects = getReclamationList();
+
+	isReclaiming.set(true);
+
+	while (!objects->isEmpty()) {
+		Object* obj = objects->remove(0);
+
+		MemoryManager::reclaim(obj);
+	}
+
+	isReclaiming.set(false);
+}
+
+ Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
+	Vector<Object*>* objects = reclamationList.get();
+	if (objects == NULL) {
+		objects = new Vector<Object*>();
+
+		reclamationList.set(objects);
+	}
+
+	return objects;
+ }
 
 void TransactionalMemoryManager::printStatistics() {
 	if (startedTransactions.get() == 0)
