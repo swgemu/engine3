@@ -14,8 +14,8 @@ enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOC
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
-	_impl = _implementation;
-	_impl->_setStub(this);
+	ManagedObject::_setImplementation(_implementation);
+	_implementation->_setStub(this);
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
@@ -308,11 +308,10 @@ void ManagedObject::setPersistent(int level) {
 DistributedObjectServant* ManagedObject::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
 
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
+	setObject(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
 
 /*
@@ -349,6 +348,11 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
+
+Object* ManagedObjectImplementation::clone() {
+	return dynamic_cast<Object*>(new ManagedObjectImplementation(*this));
+}
+
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");

@@ -41,6 +41,8 @@ namespace engine {
 
 		O getForUpdate();
 
+		bool isCurrentVersion(Object* obj);
+
 	protected:
 		TransactionalObjectHandle<O>* createReadOnlyHandle();
 
@@ -57,8 +59,6 @@ namespace engine {
 		Transaction* getTransaction() const {
 			return ownerTransaction;
 		}
-
-		bool isCurrentVersion(Object* obj);
 
 		bool hasObject(Object* obj) const {
 			return object == obj;

@@ -136,7 +136,8 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 		while (objects->size() > 5000) {
 			Object* obj = objects->remove(0);
 
-			MemoryManager::reclaim(obj);
+			if (object->getReferenceCount() == 0)
+				MemoryManager::reclaim(obj);
 		}
 
 		isReclaiming.set(false);

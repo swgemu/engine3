@@ -236,6 +236,8 @@ public:
 protected:
 	virtual ~QuadTreeEntryImplementation();
 
+	Object* clone();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -261,6 +263,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class QuadTreeEntry;
+	friend class TransactionalObjectHandle<QuadTreeEntryImplementation*>;
 };
 
 class QuadTreeEntryAdapter : public ObservableAdapter {

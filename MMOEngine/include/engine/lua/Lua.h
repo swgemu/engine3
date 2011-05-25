@@ -23,7 +23,7 @@ namespace engine {
   	class LuaFunction;
   	class LuaObject;
 
-	class Lua : public Logger {
+	class Lua : public Logger, public Object {
 	protected:
 		lua_State* L;
 
