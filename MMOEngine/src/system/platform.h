@@ -109,7 +109,7 @@ namespace sys {
 	#define SMALL_NUM  0.00000001
 
 	//#define LOG_LOCKS
-	#define TRACE_LOCKS
+	//#define TRACE_LOCKS
 
 	//#define TRACE_REFERENCING
 	#define LINE_TRACING
@@ -121,7 +121,7 @@ namespace sys {
 	#define CONNECTION_LIMIT 20
 	#endif
 
-	#define WITH_STM
+	//#define WITH_STM
 
 	namespace lang {
 	} // namespace net

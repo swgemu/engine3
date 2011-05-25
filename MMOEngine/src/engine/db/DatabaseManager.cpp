@@ -298,7 +298,11 @@ engine::db::berkley::Transaction* DatabaseManager::startTransaction() {
 int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transaction) {
 	int commitRet;
 
-	if ((commitRet = transaction->commitNoSync()) != 0) {
+	/*if ((commitRet = transaction->commitNoSync()) != 0) {
+		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
+	}*/
+
+	if ((commitRet = transaction->commitSync()) != 0) {
 		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
 	}
 
@@ -384,7 +388,8 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 	else {
 		int commitRet = 0;
 
-		if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
+		//if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
+		if ((commitRet = berkeleyTransaction->commitSync()) != 0) {
 			error("error commiting berkeley transaction " + String::valueOf(db_strerror(commitRet)));
 		}
 	}

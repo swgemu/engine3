@@ -86,8 +86,6 @@ public:
 protected:
 	virtual ~ObserverImplementation();
 
-	Object* clone();
-
 	void finalize();
 
 	void _initializeImplementation();
@@ -113,7 +111,6 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Observer;
-	friend class TransactionalObjectHandle<ObserverImplementation*>;
 };
 
 class ObserverAdapter : public ManagedObjectAdapter {

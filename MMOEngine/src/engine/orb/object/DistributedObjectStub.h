@@ -84,7 +84,7 @@ namespace engine {
 		}
 	};
 
-	class DummyConstructorParameter : public Singleton<DummyConstructorParameter> {
+	class DummyConstructorParameter : public Singleton<DummyConstructorParameter>, public Object {
 		friend class SingletonWrapper<DummyConstructorParameter>;
 	};
 

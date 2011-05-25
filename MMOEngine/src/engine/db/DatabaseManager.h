@@ -100,7 +100,7 @@ namespace engine {
 
 	};
 
-	class DatabaseManager : public Logger, public Mutex {
+	class DatabaseManager : public Logger, public Mutex, public Object {
 	protected:
 		engine::db::berkley::Environment* databaseEnvironment;
 
