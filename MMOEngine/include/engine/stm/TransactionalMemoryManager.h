@@ -37,13 +37,12 @@ namespace engine {
 		AtomicInteger abortedTransactions;
 
 		ThreadLocal<Vector<Object*>* > reclamationList;
-		ThreadLocal<bool> isReclaiming;
 
 	public:
 		static void commitPureTransaction();
 
 		static void closeThread() {
-			instance()->reclaimAll();
+			instance()->reclaimObjects();
 		}
 
 		void printStatistics();
@@ -71,7 +70,7 @@ namespace engine {
 
 		void reclaim(Object* object);
 
-		void reclaimAll();
+		void reclaimObjects(int objectsToSpare = 0);
 
 		Vector<Object*>* getReclamationList();
 

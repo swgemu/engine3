@@ -11,19 +11,19 @@
 
 // Imported class dependencies
 
-#include "system/io/ObjectOutputStream.h"
-
-#include "system/io/ObjectInputStream.h"
-
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
 #include "engine/core/ManagedObject.h"
 
-#include "engine/util/ObserverEventMap.h"
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
 
 #include "engine/util/Observable.h"
 
 #include "engine/util/Observer.h"
+
+#include "engine/util/ObserverEventMap.h"
+
+#include "system/io/ObjectInputStream.h"
+
+#include "system/io/ObjectOutputStream.h"
 
 /*
  *	ObserverStub

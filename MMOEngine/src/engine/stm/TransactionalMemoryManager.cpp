@@ -113,6 +113,8 @@ void TransactionalMemoryManager::commitTransaction() {
 
 	currentTransaction.set(NULL);
 
+	reclaimObjects(5000);
+
 	commitedTransactions.increment();
 
 	if (transaction->getIdentifier() == 1)
@@ -129,33 +131,17 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 	Vector<Object*>* objects = getReclamationList();
 
 	objects->add(object);
-
-	if (objects->size() > 5000 && !isReclaiming.get()) {
-		isReclaiming.set(true);
-
-		while (objects->size() > 5000) {
-			Object* obj = objects->remove(0);
-
-			if (object->getReferenceCount() == 0)
-				MemoryManager::reclaim(obj);
-		}
-
-		isReclaiming.set(false);
-	}
 }
 
-void TransactionalMemoryManager::reclaimAll() {
+void TransactionalMemoryManager::reclaimObjects(int objectsToSpare) {
 	Vector<Object*>* objects = getReclamationList();
 
-	isReclaiming.set(true);
-
-	while (!objects->isEmpty()) {
+	while (objects->size() > objectsToSpare) {
 		Object* obj = objects->remove(0);
 
-		MemoryManager::reclaim(obj);
+		if (obj->getReferenceCount() == 0)
+			MemoryManager::reclaim(obj);
 	}
-
-	isReclaiming.set(false);
 }
 
  Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
