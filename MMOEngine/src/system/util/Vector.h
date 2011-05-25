@@ -42,6 +42,8 @@ namespace sys {
 
        void addAll(const Vector<E>& vector);
 
+       bool contains(const E& element);
+
        void insertElementAt(const E& element, int index);
 
        E& get(int index) const;
@@ -161,6 +163,15 @@ namespace sys {
 
 		   add(element);
 	   }
+   }
+
+   template<class E> bool Vector<E>::contains(const E& element) {
+	   for (int i= 0; i < size(); ++i) {
+		   if (element == get(i))
+			   return true;
+	   }
+
+	   return false;
    }
 
    template<class E> void Vector<E>::insertElementAt(const E& element, int index) {

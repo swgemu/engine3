@@ -130,7 +130,8 @@ void TransactionalMemoryManager::abortTransaction() {
 void TransactionalMemoryManager::reclaim(Object* object) {
 	Vector<Object*>* objects = getReclamationList();
 
-	objects->add(object);
+	if (!objects->contains(object))
+		objects->add(object);
 }
 
 void TransactionalMemoryManager::reclaimObjects(int objectsToSpare) {
