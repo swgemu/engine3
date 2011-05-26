@@ -60,6 +60,30 @@ namespace engine {
 			updatePreviousPosition();
 		}
 
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			stream->writeFloat(positionX);
+			stream->writeFloat(positionZ);
+			stream->writeFloat(positionY);
+
+			stream->writeFloat(previousPositionX);
+			stream->writeFloat(previousPositionZ);
+			stream->writeFloat(previousPositionY);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			positionX = stream->readFloat();
+			positionZ = stream->readFloat();
+			positionY = stream->readFloat();
+
+			previousPositionX = stream->readFloat();
+			previousPositionZ = stream->readFloat();
+			previousPositionY = stream->readFloat();
+
+			return true;
+		}
+
 		void randomizePosition(float radius) {
 			updatePreviousPosition();
 
