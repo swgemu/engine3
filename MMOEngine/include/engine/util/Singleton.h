@@ -7,12 +7,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define SINGLETON_H_
 
 #include "system/thread/ReadWriteLock.h"
+#include "system/lang/ref/Reference.h"
 
 namespace engine {
 	namespace util {
 
 	template<class O> class SingletonWrapper {
-		O* inst;
+		Reference<O*> inst;
 		pthread_rwlock_t rwlock;
 		bool finalized ;
 
@@ -72,7 +73,7 @@ namespace engine {
 			return getWrapper()->instance();
 		}
 
-		static void finalize() {
+		static void finalizeInstance() {
 			getWrapper()->finalize();
 		}
 

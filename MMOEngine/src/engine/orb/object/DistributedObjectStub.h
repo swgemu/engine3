@@ -15,7 +15,7 @@ namespace engine {
 
 	class DistributedObjectStub : public DistributedObject {
 	protected:
-		DistributedObjectServant* _impl;
+		Reference<DistributedObjectServant*> _impl;
 
 		bool deployed;
 

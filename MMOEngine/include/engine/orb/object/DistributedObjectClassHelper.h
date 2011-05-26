@@ -15,7 +15,7 @@ namespace engine {
 
 	class DistributedObjectStub;
 	
-	class DistributedObjectClassHelper {
+	class DistributedObjectClassHelper : public Object {
 	protected:
 		String className;
 		
