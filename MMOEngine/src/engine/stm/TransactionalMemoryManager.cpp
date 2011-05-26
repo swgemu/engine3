@@ -128,10 +128,14 @@ void TransactionalMemoryManager::abortTransaction() {
 }
 
 void TransactionalMemoryManager::reclaim(Object* object) {
+	if (object->_isGettingDestroyed())
+		return;
+
 	Vector<Object*>* objects = getReclamationList();
 
-	if (!objects->contains(object))
-		objects->add(object);
+	objects->add(object);
+
+	object->_setDestroying(true);
 }
 
 void TransactionalMemoryManager::reclaimObjects(int objectsToSpare) {
@@ -142,6 +146,8 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare) {
 
 		if (obj->getReferenceCount() == 0)
 			MemoryManager::reclaim(obj);
+		else
+			obj->_setDestroying(false);;
 	}
 }
 
