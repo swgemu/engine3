@@ -70,7 +70,7 @@ namespace engine {
 
 		void reclaim(Object* object);
 
-		void reclaimObjects(int objectsToSpare = 0);
+		void reclaimObjects(int objectsToSpare = 0, int maxObjectsToReclaim = 0);
 
 		Vector<Object*>* getReclamationList();
 
