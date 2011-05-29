@@ -35,10 +35,10 @@ namespace sys {
 
 			}
 
-			virtual void writeObject(String& str);
+			//virtual void writeObject(String& str);
 			virtual void writeObject(ObjectOutputStream* stream);
 
-			virtual void readObject(const String& str);
+			//virtual void readObject(const String& str);
 			virtual void readObject(ObjectInputStream* stream);
 
 			void addSerializableVariable(const char* name, uint8* variable, int version = 0);
@@ -61,7 +61,7 @@ namespace sys {
 			void addSerializableVariable(const char* name, Variable* variable, int version = 0);
 			Variable* getSerializableVariable(const char* name);
 
-			bool toString(String& str) {
+			/*bool toString(String& str) {
 				writeObject(str);
 
 				return true;
@@ -71,7 +71,7 @@ namespace sys {
 				readObject(str);
 
 				return true;
-			}
+			}*/
 
 			bool toBinaryStream(ObjectOutputStream* stream) {
 				writeObject(stream);
@@ -218,13 +218,13 @@ namespace sys {
 				return (int) type;
 			}
 
-			bool toString(String& str) {
+			/*bool toString(String& str) {
 				return false;
 			}
 
 			bool parseFromString(const String& str, int version = 0) {
 				return false;
-			}
+			}*/
 
 			bool toBinaryStream(ObjectOutputStream* stream) {
 				return false;

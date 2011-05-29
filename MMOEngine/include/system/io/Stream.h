@@ -6,16 +6,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef STREAM_H_
 #define STREAM_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../util/Vector.h"
+#include "system/util/ArrayList.h"
 
 #include "StreamIndexOutOfBoundsException.h"
 
 namespace sys {
   namespace io {
 
-	class Stream : public Vector<char> {
+	class Stream : public ArrayList<char> {
 	protected:
 		char *end, *offset;
 		

@@ -6,9 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef STREAMINDEXOUTOFBOUNDSEXCEPTION_H_
 #define STREAMINDEXOUTOFBOUNDSEXCEPTION_H_
 
-#include "../lang/Exception.h"
+#include "system/lang/Exception.h"
 
-#include  "../lang/StringBuffer.h"
+#include "system/lang/StringBuffer.h"
 
 namespace sys {
   namespace io {

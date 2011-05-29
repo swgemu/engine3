@@ -2,11 +2,11 @@
 
 #include "StringBuffer.h"
 
-StringBuffer::StringBuffer() : Vector<char>() {
+StringBuffer::StringBuffer() : ArrayList<char>() {
 	streamFlags = SF_none;
 }
 
-StringBuffer::StringBuffer(const String& str) : Vector<char>(str.length()) {
+StringBuffer::StringBuffer(const String& str) : ArrayList<char>(str.length()) {
 	streamFlags = SF_none;
 
 	append(str);
@@ -108,11 +108,11 @@ StringBuffer& StringBuffer::append(const String& str) {
 }
 
 void StringBuffer::deleteRange(int start, int end) {
-	Vector<char>::removeRange(start, end);
+	ArrayList<char>::removeRange(start, end);
 }
 
 void StringBuffer::deleteAll() {
-	Vector<char>::removeAll();
+	ArrayList<char>::removeAll();
 }
 
 int StringBuffer::indexOf(char ch) const  {

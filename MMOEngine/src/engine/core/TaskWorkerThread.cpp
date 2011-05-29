@@ -12,7 +12,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Task.h"
 
 TaskWorkerThread::TaskWorkerThread(const String& s) : ServiceThread(s) {
-	setLogging(false);
+	setInfoLogLevel();
+	setGlobalLogging(true);
 }
 
 TaskWorkerThread::~TaskWorkerThread() {
@@ -21,7 +22,7 @@ TaskWorkerThread::~TaskWorkerThread() {
 void TaskWorkerThread::start(TaskManager* manager) {
 	taskManager = manager;
 
-	info("started");
+	debug("started");
 
 	ServiceThread::start(false);
 }
@@ -33,7 +34,7 @@ void TaskWorkerThread::run() {
 		blockMutex.lock();
 
 		try {
-			//info("executing task", true);
+			debug("executing task");
 
 			task->execute();
 		} catch (Exception& e) {

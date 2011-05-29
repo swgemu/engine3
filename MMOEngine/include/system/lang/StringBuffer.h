@@ -1,11 +1,11 @@
 #ifndef STRINGBUFFER_H_
 #define STRINGBUFFER_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include "String.h"
 
-#include "../util/Vector.h"
+#include "system/util/ArrayList.h"
 
 namespace sys {
   namespace lang {
@@ -23,7 +23,7 @@ namespace sys {
   	const StreamFlags uppercase = SF_uppercase;
   	const StreamFlags endl = SF_endl;
 
-	class StringBuffer : private Vector<char> {
+	class StringBuffer : private ArrayList<char> {
 		StreamFlags streamFlags;
 
 	public:
@@ -84,7 +84,7 @@ namespace sys {
 		}
 
 		inline int length() {
-			return Vector<char>::size();
+			return ArrayList<char>::size();
 		}
 
 		StringBuffer& operator<< (char ch);

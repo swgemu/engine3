@@ -14,15 +14,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/thread/Mutex.h"
 
-#include "system/util/Vector.h"
+#include "system/util/ArrayList.h"
 
 #ifdef TRACE_REFERENCES
 #include "ref/Reference.h"
 
 #include "system/util/VectorMap.h"
 #endif
-
-#include "system/util/VectorMap.h"
 
 namespace sys {
 	namespace io {
@@ -39,9 +37,11 @@ namespace sys {
 	using namespace sys::io;
 
 	class Object : public ReferenceCounter, public Variable {
+	#ifndef WITH_STM
 		Mutex referenceMutex;
+	#endif
 
-		Vector<WeakReferenceBase*> weakReferences;
+		ArrayList<WeakReferenceBase*> weakReferences;
 
 		bool _destroying;
 

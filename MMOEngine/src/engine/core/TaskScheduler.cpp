@@ -24,6 +24,9 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 
 	tasks.setLoggingName("TaskQueue");
 	tasks.setMutexName("TaskQueueLock");
+
+	setInfoLogLevel();
+	setGlobalLogging(true);
 }
 
 TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
@@ -36,7 +39,8 @@ TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
 	tasks.setLoggingName(s + "TaskQueue");
 	tasks.setMutexName(s + "TaskQueueLock");
 
-	setLogging(false);
+	setInfoLogLevel();
+	setGlobalLogging(true);
 }
 
 TaskScheduler::~TaskScheduler() {
@@ -62,7 +66,7 @@ void TaskScheduler::run() {
 			DO_TIMELIMIT;
 		#endif
 
-			//info("executing scheduled task", true);
+			debug("executing scheduled task");
 
 			task->execute();
 		} catch (Exception& e) {

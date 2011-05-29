@@ -1,18 +1,18 @@
 #include "Stream.h"
 
-Stream::Stream() : Vector<char>() {
+Stream::Stream() : ArrayList<char>() {
 	end = offset = elementData;
 }
 
-Stream::Stream(int initsize) : Vector<char>(initsize) {
+Stream::Stream(int initsize) : ArrayList<char>(initsize) {
 	end = offset = elementData;
 }
 
-Stream::Stream(int initsize, int capincr) : Vector<char>(initsize, capincr) {
+Stream::Stream(int initsize, int capincr) : ArrayList<char>(initsize, capincr) {
 	end = offset = elementData;
 }
 
-Stream::Stream(char *buf, int len) : Vector<char>(len) {
+Stream::Stream(char *buf, int len) : ArrayList<char>(len) {
 	offset = elementData;
 	end = elementData + len;
 
@@ -50,7 +50,7 @@ void Stream::copy(Stream* stream, int startoffs) {
 
 void Stream::setSize(int len, bool copyContent) {
 	char* oldElementData = elementData;
-	Vector<char>::setSize(len, copyContent);
+	ArrayList<char>::setSize(len, copyContent);
 	
 	if (oldElementData != elementData)
 		offset = (offset - oldElementData) + elementData;
@@ -61,7 +61,7 @@ void Stream::setSize(int len, bool copyContent) {
 void Stream::extendSize(int len, bool copyContent) {
 	if ((offset += len) > end) {
 		char* oldElementData = elementData;
-		Vector<char>::setSize(offset - elementData);
+		ArrayList<char>::setSize(offset - elementData);
 
 		if (oldElementData != elementData)
 			offset = (offset - oldElementData) + elementData;
@@ -81,7 +81,7 @@ void Stream::shiftOffset(int offs) {
 }
 
 void Stream::clear() {
-	Vector<char>::setSize(0);
+	ArrayList<char>::setSize(0);
 	 
 	end = offset = elementData;
 }
@@ -101,9 +101,9 @@ void Stream::removeLastBytes(int len) {
 void Stream::removeRange(int fromIndex, int toIndex) {
 	char* oldElementData = elementData;
 
-	Vector<char>::removeRange(fromIndex, toIndex);
+	ArrayList<char>::removeRange(fromIndex, toIndex);
 
-	end = elementData + Vector<char>::size();
+	end = elementData + ArrayList<char>::size();
 
 	if (oldElementData != elementData || offset > end)
 		offset = (offset - oldElementData) + elementData;
@@ -151,13 +151,13 @@ void Stream::insertStream(Stream* stream, int len, int offs) {
 	char* oldElementData = elementData;
 
 	for (int i = 0; i < stream->size(); ++i) {
-		Vector<char>::insertElementAt(stream->getBuffer()[i], offs + i);
+		ArrayList<char>::insertElementAt(stream->getBuffer()[i], offs + i);
 	}
 
 	if (oldElementData != elementData)
 		offset = (offset - oldElementData) + elementData;
 
-	end = elementData + Vector<char>::size();
+	end = elementData + ArrayList<char>::size();
 }
 
 void Stream::readStream(char *buf, int len) {

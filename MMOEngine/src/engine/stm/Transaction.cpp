@@ -36,7 +36,7 @@ Transaction::Transaction(int id) : Logger() {
 
 	tid = id;
 
-	setLogging(false);
+	setInfoLogLevel();
 	setGlobalLogging(true);
 }
 

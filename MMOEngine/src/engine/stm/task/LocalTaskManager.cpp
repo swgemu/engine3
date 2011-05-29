@@ -93,9 +93,9 @@ bool LocalTaskManager::isTaskCancelled(Task* task) {
 void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
 	merging = true;
 
-	/*manager->info("executing " + String::valueOf(executedTasks.size()) +
+	manager->debug("executing " + String::valueOf(executedTasks.size()) +
 			", adding " + String::valueOf(scheduledTasks.size()) +
-			", canceling " + String::valueOf(cancelledTasks.size()) +" tasks");*/
+			", canceling " + String::valueOf(cancelledTasks.size()) +" tasks");
 
 	manager->executeTasks(executedTasks);
 

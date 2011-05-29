@@ -47,8 +47,8 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 
 	initializationTransactionStarted = false;
 
-	setLogging(false);
-	setGlobalLogging(false);
+	setInfoLogLevel();
+	setGlobalLogging(true);
 }
 
 TransactionalMemoryManager::~TransactionalMemoryManager() {
@@ -109,11 +109,11 @@ void TransactionalMemoryManager::commitTransaction() {
 	Transaction* transaction = currentTransaction.get();
 	//commitedTrans.set(transaction->getIdentifier(), true);
 
-	info("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
+	debug("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
 
 	currentTransaction.set(NULL);
 
-	reclaimObjects(5000, 1000);
+	reclaimObjects(5000, 5000);
 
 	commitedTransactions.increment();
 
@@ -143,6 +143,8 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 
 	int objectsReclaimed = 0;
 
+	uint64 startTime = System::getMikroTime();
+
 	while (objects->size() > objectsToSpare) {
 		Object* obj = objects->remove(0);
 
@@ -150,10 +152,13 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 			MemoryManager::reclaim(obj);
 
 			if (++objectsReclaimed == maxObjectsToReclaim)
-				return;
+				break;
 		} else
-			obj->_setDestroying(false);;
+			obj->_setDestroying(false);
 	}
+
+	debug(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
+			+ String::valueOf(System::getMikroTime() - startTime) + " ms");
 }
 
  Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
@@ -181,7 +186,7 @@ void TransactionalMemoryManager::printStatistics() {
 			<< "scheduled " << taskManager->getScheduledTaskSize() << ")";
 
 
-	info(str, true);
+	info(str);
 
 	startedTransactions.set(0);
 	commitedTransactions.set(0);

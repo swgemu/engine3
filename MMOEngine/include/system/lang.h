@@ -55,6 +55,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "io/FileNotFoundException.h"
 
 #include "util/LinkedList.h"
+#include "util/ArrayList.h"
 #include "util/Vector.h"
 #include "util/SortedVector.h"
 #include "util/ArrayQueue.h"

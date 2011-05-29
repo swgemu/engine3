@@ -23,7 +23,7 @@ Serializable::Serializable() : Object() {
 	addSerializableVariable("_className", &_className);
 }
 
-void Serializable::writeObject(String& str) {
+/*void Serializable::writeObject(String& str) {
 	StringBuffer buffer;
 
 	buffer << "{" << "size=" << _variables.size();
@@ -59,7 +59,7 @@ void Serializable::writeObject(String& str) {
 	buffer << "}";
 
 	buffer.toString(str);
-}
+}*/
 
 void Serializable::writeObject(ObjectOutputStream* stream) {
 	int size = _variables.size();
@@ -321,7 +321,7 @@ void Serializable::readObject(ObjectInputStream* stream) {
 	}
 }
 
-void Serializable::readObject(const String& str) {
+/*void Serializable::readObject(const String& str) {
 	String data;
 	try {
 
@@ -384,7 +384,7 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 		deSerializeAtomicType(variable, type, varData);
 	}
 
-}
+}*/
 
 void Serializable::addSerializableVariable(const char* name, Variable* variable, int version) {
 	if (variable == NULL)

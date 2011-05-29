@@ -60,6 +60,37 @@ namespace engine {
 			return pack;
 		}
 	
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			int size = Packet::size();
+
+			Integer::toBinaryStream(size, stream);
+
+			for (int i = 0; i < size; ++i) {
+			   char* obj = &Packet::get(i);
+
+			   TypeInfo<char>::toBinaryStream(obj, stream);
+			}
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			Packet::removeAll();
+
+			int size;
+
+			Integer::parseFromBinaryStream(size, stream);
+
+			for (int i = 0; i < size; ++i) {
+			   char object;
+
+			   if (TypeInfo<char>::parseFromBinaryStream(&object, stream))
+				   add(object);
+			}
+
+			return true;
+		}
+
 		// setters and getters
 		inline void setClient(ServiceClient* c) {
 			client = c;
@@ -77,13 +108,6 @@ namespace engine {
 			return client;
 		}
 
-		bool toBinaryStream(ObjectOutputStream* stream) {
-			return Vector<char>::toBinaryStream(stream);
-		}
-
-		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			return Vector<char>::parseFromBinaryStream(stream);
-		}
 	};
 
   } // namespace service
