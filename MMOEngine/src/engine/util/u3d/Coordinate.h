@@ -41,6 +41,21 @@ namespace engine {
 			updatePreviousPosition();
 		}
 
+		Coordinate& operator=(const Coordinate& ct) {
+			if (this == &ct)
+				return *this;
+
+			positionX = ct.positionX;
+			positionY = ct.positionY;
+			positionZ = ct.positionZ;
+
+			previousPositionX = ct.previousPositionX;
+			previousPositionY = ct.previousPositionY;
+			previousPositionZ = ct.previousPositionZ;
+
+			return *this;
+		}
+
 		virtual ~Coordinate() {
 		}
 
