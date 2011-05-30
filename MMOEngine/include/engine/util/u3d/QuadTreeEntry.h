@@ -139,7 +139,7 @@ class QuadTreeEntryImplementation : public ObservableImplementation {
 protected:
 	Coordinate coordinates;
 
-	TransactionalReference<QuadTreeNode*> node;
+	Reference<QuadTreeNode* > node;
 
 	bool bounding;
 

@@ -24,8 +24,8 @@ class QuadTreeEntry extends Observable {
 	@dereferenced
 	protected Coordinate coordinates;
 	
-	//transient protected QuadTreeNode node;
-	transient protected TransactionalReference<QuadTreeNode> node;
+	@transactional
+	transient protected QuadTreeNode node;
 	
 	protected boolean bounding;
 
