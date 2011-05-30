@@ -113,7 +113,7 @@ void TransactionalMemoryManager::commitTransaction() {
 
 	currentTransaction.set(NULL);
 
-	reclaimObjects(5000, 5000);
+	reclaimObjects(1000, 1000);
 
 	commitedTransactions.increment();
 

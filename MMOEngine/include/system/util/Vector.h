@@ -20,7 +20,7 @@ namespace sys {
        Vector(int initsize, int incr);
        Vector(const Vector<E>& vector);
 
-       //Vector<E>& operator=(const Vector<E>& vector);
+       Vector<E>& operator=(const Vector<E>& vector);
 
        virtual ~Vector();
 
@@ -46,14 +46,14 @@ namespace sys {
    template<class E> Vector<E>::Vector(const Vector<E>& vector) : ArrayList<E>(vector), Object() {
    }
 
-   /*template<class E> Vector<E>& Vector<E>::operator=(const Vector<E>& vector) {
+   template<class E> Vector<E>& Vector<E>::operator=(const Vector<E>& vector) {
 	   if (this == &vector)
 		   return *this;
 
-	   vector.clone(*this);
+	   ArrayList<E>::operator=(vector);
 
 	   return *this;
-   }*/
+   }
 
    template<class E> Vector<E>::~Vector() {
    }
