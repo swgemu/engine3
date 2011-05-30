@@ -158,7 +158,7 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 	}
 
 	debug(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
-			+ String::valueOf(System::getMikroTime() - startTime) + " ms");
+			+ String::valueOf(System::getMikroTime() - startTime) + " Us");
 }
 
  Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
