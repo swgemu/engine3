@@ -120,6 +120,7 @@ libengine3_a_SOURCES = \
 			engine/db/ObjectDatabaseManager.cpp \
 			engine/db/LocalDatabase.cpp \
 			engine/db/mysql/MySqlDatabase.cpp \
+			engine/db/mysql/MysqlDatabaseManager.cpp \
 			engine/db/berkley/BerkeleyDatabase.cpp \
 			engine/db/berkley/Transaction.cpp \
 			engine/db/berkley/DatabaseEntry.cpp \

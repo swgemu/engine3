@@ -60,6 +60,10 @@ public:
 
 	}
 
+	virtual void rollback() {
+
+	}
+
 	virtual void autocommit(bool doCommit) {
 
 	}

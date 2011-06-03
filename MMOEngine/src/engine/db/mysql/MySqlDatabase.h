@@ -14,9 +14,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <mysql.h>
 #endif
 
-#include "../../log/Logger.h"
+#include "engine/log/Logger.h"
 
-#include "../Database.h"
+#include "engine/db/Database.h"
+
 #include "Statement.h"
 #include "ResultSet.h"
 
@@ -48,6 +49,8 @@ namespace engine {
 
 		void commit();
 
+		void rollback();
+
 		void autocommit(bool doCommit);
 
 		void close();
@@ -56,6 +59,15 @@ namespace engine {
 	    void error(const char* query);
 
 		static void finalizeLibrary();
+
+		int compareTo(MySqlDatabase* database) {
+			if (this < database)
+				return 1;
+			else if (this > database)
+				return -1;
+			else
+				return 0;
+		}
 
 	};
 

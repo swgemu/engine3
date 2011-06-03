@@ -61,6 +61,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "util/ArrayQueue.h"
 #include "util/PriorityQueue.h"
 #include "util/VectorMap.h"
+#include "util/VectorSet.h"
 #include "util/HashTable.h"
 #include "util/HashSet.h"
 #include "util/BinarySearchTree.h"

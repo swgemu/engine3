@@ -142,6 +142,7 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/db/ObjectDatabaseManager.$(OBJEXT) \
 	engine/db/LocalDatabase.$(OBJEXT) \
 	engine/db/mysql/MySqlDatabase.$(OBJEXT) \
+	engine/db/mysql/MysqlDatabaseManager.$(OBJEXT) \
 	engine/db/berkley/BerkeleyDatabase.$(OBJEXT) \
 	engine/db/berkley/Transaction.$(OBJEXT) \
 	engine/db/berkley/DatabaseEntry.$(OBJEXT) \
@@ -385,6 +386,7 @@ libengine3_a_SOURCES = \
 			engine/db/ObjectDatabaseManager.cpp \
 			engine/db/LocalDatabase.cpp \
 			engine/db/mysql/MySqlDatabase.cpp \
+			engine/db/mysql/MysqlDatabaseManager.cpp \
 			engine/db/berkley/BerkeleyDatabase.cpp \
 			engine/db/berkley/Transaction.cpp \
 			engine/db/berkley/DatabaseEntry.cpp \
@@ -806,6 +808,9 @@ engine/db/mysql/$(DEPDIR)/$(am__dirstamp):
 engine/db/mysql/MySqlDatabase.$(OBJEXT):  \
 	engine/db/mysql/$(am__dirstamp) \
 	engine/db/mysql/$(DEPDIR)/$(am__dirstamp)
+engine/db/mysql/MysqlDatabaseManager.$(OBJEXT):  \
+	engine/db/mysql/$(am__dirstamp) \
+	engine/db/mysql/$(DEPDIR)/$(am__dirstamp)
 engine/db/berkley/$(am__dirstamp):
 	@$(MKDIR_P) engine/db/berkley
 	@: > engine/db/berkley/$(am__dirstamp)
@@ -875,6 +880,7 @@ mostlyclean-compile:
 	-rm -f engine/db/berkley/Environment.$(OBJEXT)
 	-rm -f engine/db/berkley/Transaction.$(OBJEXT)
 	-rm -f engine/db/mysql/MySqlDatabase.$(OBJEXT)
+	-rm -f engine/db/mysql/MysqlDatabaseManager.$(OBJEXT)
 	-rm -f engine/log/Logger.$(OBJEXT)
 	-rm -f engine/lua/Lua.$(OBJEXT)
 	-rm -f engine/lua/LuaFunction.$(OBJEXT)
@@ -988,6 +994,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/Environment.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/Transaction.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/db/mysql/$(DEPDIR)/MySqlDatabase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/mysql/$(DEPDIR)/MysqlDatabaseManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/log/$(DEPDIR)/Logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/Lua.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/LuaFunction.Po@am__quote@

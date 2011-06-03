@@ -61,19 +61,18 @@ bool Transaction::start(Task* task) {
 
 	Transaction::task = task;
 
-	String threadName = Thread::getCurrentThread()->getName();
+	helperTransaction = NULL;
 
+	String threadName = Thread::getCurrentThread()->getName();
 	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
 
-	debug("starting transaction");
-
 	TransactionalMemoryManager::instance()->startTransaction(this);
-
-	helperTransaction = NULL;
 
 	uint64 startTime = System::getMikroTime();
 
 	try {
+		debug("starting transaction");
+
 		task->run();
 	} catch (TransactionAbortedException& e) {
 		abort();

@@ -100,6 +100,7 @@ MMOEngine/include/engine/db/berkley/Transaction.h -text
 MMOEngine/include/engine/db/berkley/TransactionConfig.h -text
 MMOEngine/include/engine/db/mysql/BinaryData.h -text
 MMOEngine/include/engine/db/mysql/MySqlDatabase.h -text
+MMOEngine/include/engine/db/mysql/MysqlDatabaseManager.h -text
 MMOEngine/include/engine/db/mysql/ResultSet.h -text
 MMOEngine/include/engine/db/mysql/Row.h -text
 MMOEngine/include/engine/db/mysql/Statement.h -text
@@ -374,6 +375,7 @@ MMOEngine/include/system/util/SortedVector.h -text
 MMOEngine/include/system/util/Timer.h -text
 MMOEngine/include/system/util/Vector.h -text
 MMOEngine/include/system/util/VectorMap.h -text
+MMOEngine/include/system/util/VectorSet.h -text
 MMOEngine/install-sh -text
 MMOEngine/lib/idlc.jar -text
 MMOEngine/lib/unix/libengine3.a -text
@@ -444,6 +446,8 @@ MMOEngine/src/engine/db/berkley/Transaction.h -text
 MMOEngine/src/engine/db/berkley/TransactionConfig.h -text
 MMOEngine/src/engine/db/mysql/MySqlDatabase.cpp -text
 MMOEngine/src/engine/db/mysql/MySqlDatabase.h -text
+MMOEngine/src/engine/db/mysql/MysqlDatabaseManager.cpp -text
+MMOEngine/src/engine/db/mysql/MysqlDatabaseManager.h -text
 MMOEngine/src/engine/db/mysql/ResultSet.h -text
 MMOEngine/src/engine/db/mysql/Row.h -text
 MMOEngine/src/engine/db/mysql/Statement.h -text
@@ -761,3 +765,4 @@ MMOEngine/src/system/util/SortedVector.h -text
 MMOEngine/src/system/util/Timer.h -text
 MMOEngine/src/system/util/Vector.h -text
 MMOEngine/src/system/util/VectorMap.h -text
+MMOEngine/src/system/util/VectorSet.h -text

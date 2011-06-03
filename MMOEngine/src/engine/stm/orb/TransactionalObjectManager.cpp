@@ -4,6 +4,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "engine/db/ObjectDatabaseManager.h"
+#include "engine/db/mysql/MysqlDatabaseManager.h"
 
 #include "TransactionalObjectManager.h"
 
@@ -21,6 +22,8 @@ void TransactionalObjectManager::execute() {
 	manager->commitObjectChanges();
 
 	ObjectDatabaseManager::instance()->commitLocalTransaction();
+
+	MysqlDatabaseManager::instance()->commitModifiedDatabases();
 }
 
 void TransactionalObjectManager::undo() {
@@ -29,6 +32,8 @@ void TransactionalObjectManager::undo() {
 	manager->clearObjectChanges();
 
 	ObjectDatabaseManager::instance()->abortLocalTransaction();
+
+	MysqlDatabaseManager::instance()->rollbackModifiedDatabases();
 }
 
 void TransactionalObjectManager::registerClass(const String& name, DistributedObjectClassHelper* helper) {

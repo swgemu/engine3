@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "MysqlDatabaseManager.h"
+
 #include "MySqlDatabase.h"
 
 using namespace engine::db::mysql;
@@ -40,6 +42,10 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 	StringBuffer msg;
 	msg << "connected to " << host;
 	info(msg);
+
+#ifdef WITH_STM
+	autocommit(false);
+#endif
 }
 
 void MySqlDatabase::executeStatement(const char* statement) {
@@ -57,6 +63,8 @@ void MySqlDatabase::executeStatement(const char* statement) {
 		} else
 			info(String("Warning mysql lock wait timeout on statement: ") + statement);
 	}
+
+	MysqlDatabaseManager::instance()->addModifiedDatabase(this);
 }
 
 void MySqlDatabase::executeStatement(const String& statement) {
@@ -93,6 +101,8 @@ engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 		}
 	}
 
+	MysqlDatabaseManager::instance()->addModifiedDatabase(this);
+
 	ResultSet* res = new ResultSet(&mysql, result);
 
 	return res;
@@ -110,6 +120,12 @@ void MySqlDatabase::commit() {
 	Locker locker(this);
 
 	mysql_commit(&mysql);
+}
+
+void MySqlDatabase::rollback() {
+	Locker locker(this);
+
+	mysql_rollback(&mysql);
 }
 
 void MySqlDatabase::autocommit(bool doCommit) {
