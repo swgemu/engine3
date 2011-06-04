@@ -50,9 +50,9 @@ class ManagedObject {
 	@nativeStub 
 	public native void lock(ManagedObject obj);
 
-	/*@local
+	@local
 	@nativeStub 
-	public native void lock(Lockable obj);*/
+	public native void lock(Lockable obj);
 
 	@nativeStub 
 	public native void rlock(boolean doLock = true);

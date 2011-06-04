@@ -59,6 +59,15 @@ void ManagedObject::wlock(ManagedObject* obj) {
 #endif
 }
 
+void ManagedObject::lock(Lockable* obj) {
+#ifndef WITH_STM
+	DistributedObjectStub::lock(obj);
+
+	if (_getImplementation() == NULL)
+		_lock(obj);
+#endif
+}
+
 void ManagedObject::unlock(bool doLock) {
 #ifndef WITH_STM
 	if (getPersistenceLevel() == 3) // change to 3
@@ -108,9 +117,9 @@ void ManagedObjectImplementation::lock(bool doLock) {
 	_this->wlock(doLock);
 }
 
-/*void ManagedObjectImplementation::lock(Lockable* obj) {
+void ManagedObjectImplementation::lock(Lockable* obj) {
 	_this->wlock(obj);
-}*/
+}
 
 void ManagedObjectImplementation::lock(ManagedObject* obj) {
 	_this->wlock(obj);

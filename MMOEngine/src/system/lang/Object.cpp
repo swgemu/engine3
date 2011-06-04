@@ -26,15 +26,16 @@ void Object::release() {
 void Object::acquireWeak(WeakReferenceBase* ref) {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
-#endif
 
 	weakReferences.add(ref);
+#endif
+
+
 }
 
 void Object::releaseWeak(WeakReferenceBase* ref) {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
-#endif
 
 	for (int i = 0; i < weakReferences.size(); ++i) {
 		WeakReferenceBase* reference = weakReferences.get(i);
@@ -45,19 +46,23 @@ void Object::releaseWeak(WeakReferenceBase* ref) {
 			break;
 		}
 	}
+#endif
+
+
 }
 
 void Object::destroy() {
-#ifndef WITH_STM
-	Locker locker(&referenceMutex);
-#endif
-
 	_destroying = true;
 
+#ifndef WITH_STM
+	Locker locker(&referenceMutex);
+
 	while (!weakReferences.isEmpty()) {
-		WeakReferenceBase* ref = weakReferences.remove(0);
-		ref->clearObject();
-	}
+			WeakReferenceBase* ref = weakReferences.remove(0);
+			ref->clearObject();
+		}
+#endif
+
 
 #ifndef WITH_STM
 	locker.release();

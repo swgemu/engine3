@@ -26,6 +26,10 @@ namespace sys {
 			pthread_rwlock_init(&rwlock, NULL);
 		}
 
+		ReadWriteLock(const ReadWriteLock& s) : Lockable() {
+			pthread_rwlock_init(&rwlock, NULL);
+		}
+
 		virtual ~ReadWriteLock() {
 			pthread_rwlock_destroy(&rwlock);
 		}

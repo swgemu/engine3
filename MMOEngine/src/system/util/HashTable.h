@@ -67,6 +67,8 @@ namespace sys {
 		HashTable(int initialCapacity);
 	    HashTable(int initialCapacity, float loadFactor);
 
+	    HashTable(const HashTable<K, V>& table);
+
 		virtual ~HashTable();
 
 	    V& put(const K& key, const V& value);
@@ -74,6 +76,10 @@ namespace sys {
 	    V& get(const K& key);
 
 	    bool containsKey(const K& key);
+
+	    void copyFrom(HashTable<K, V>* htable);
+
+	    HashTable<K, V>& operator=(const HashTable<K, V>& htable);
 
 	    HashTableIterator<K, V> iterator();
 
@@ -151,6 +157,36 @@ namespace sys {
 
 	template<class K, class V> HashTable<K,V>::HashTable() : Variable() {
 		init(11, 0.75f);
+	}
+
+	template<class K, class V> HashTable<K,V>::HashTable(const HashTable<K,V>& htable) : Variable() {
+		init(11, 0.75f);
+
+		copyFrom(const_cast<HashTable<K,V>* >(&htable));
+	}
+
+	template<class K, class V> HashTable<K,V>& HashTable<K,V>::operator=(const HashTable<K,V>& htable) {
+		if (this == &htable)
+			return *this;
+
+		copyFrom(const_cast<HashTable<K,V>* >(&htable));
+
+		return *this;
+	}
+
+	template<class K, class V> void HashTable<K,V>::copyFrom(HashTable<K,V>* htable) {
+		nullValue = htable->nullValue;
+
+		HashTableIterator<K, V> iterator(htable);
+
+		while (iterator.hasNext()) {
+			K key;
+			V value;
+
+			iterator.getNextKeyAndValue(key, value);
+
+			put(key, value);
+		}
 	}
 
 	template<class K, class V> HashTable<K,V>::~HashTable() {

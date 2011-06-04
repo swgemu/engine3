@@ -66,6 +66,15 @@ void ManagedObject::_lock(ManagedObject* obj) {
 		_implementation->lock(obj);
 }
 
+void ManagedObject::_lock(Lockable* obj) {
+	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+
+	} else
+		_implementation->lock(obj);
+}
+
 void ManagedObject::_rlock(bool doLock) {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {

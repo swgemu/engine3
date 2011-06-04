@@ -47,7 +47,7 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 
 	initializationTransactionStarted = false;
 
-	setInfoLogLevel();
+	setLogging(false);
 	setGlobalLogging(true);
 }
 
@@ -87,18 +87,27 @@ Transaction* TransactionalMemoryManager::getTransaction() {
 void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
 	Transaction* current = currentTransaction.get();
 
+/*	while (current != NULL) {
+		current = currentTransaction.get();
+
+		Thread::sleep(10);
+	}*/
+
 	/*while (commitedTrans.size() < transaction->getIdentifier())
 		commitedTrans.add(false);*/
 
 	//commitedTrans.add(transaction->getIdentifier(), false);
 
-	assert(current == NULL || current == transaction);
-
 	if (transaction->getIdentifier() != 1) {
 		while (!initializationTransactionStarted.get()) {
 			Thread::sleep(1000);
+
+			current = currentTransaction.get();
 		}
 	}
+
+
+	assert(current == NULL || current == transaction);
 
 	currentTransaction.set(transaction);
 
@@ -111,14 +120,14 @@ void TransactionalMemoryManager::commitTransaction() {
 
 	debug("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
 
-	currentTransaction.set(NULL);
-
 	reclaimObjects(1000, 1000);
 
 	commitedTransactions.increment();
 
 	if (transaction->getIdentifier() == 1)
 		initializationTransactionStarted.compareAndSet(false, true);
+
+	currentTransaction.set(NULL);
 }
 
 void TransactionalMemoryManager::abortTransaction() {
