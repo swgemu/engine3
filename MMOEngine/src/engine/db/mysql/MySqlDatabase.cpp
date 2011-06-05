@@ -64,7 +64,9 @@ void MySqlDatabase::executeStatement(const char* statement) {
 			info(String("Warning mysql lock wait timeout on statement: ") + statement);
 	}
 
+#ifdef WITH_STM
 	MysqlDatabaseManager::instance()->addModifiedDatabase(this);
+#endif
 }
 
 void MySqlDatabase::executeStatement(const String& statement) {
@@ -101,7 +103,9 @@ engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 		}
 	}
 
+#ifdef WITH_STM
 	MysqlDatabaseManager::instance()->addModifiedDatabase(this);
+#endif
 
 	ResultSet* res = new ResultSet(&mysql, result);
 
