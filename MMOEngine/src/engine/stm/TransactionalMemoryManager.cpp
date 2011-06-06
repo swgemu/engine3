@@ -35,6 +35,8 @@ AtomicBoolean initializationTransactionStarted;
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
 	setInstance(this);
 
+	taskManager = (TransactionalTaskManager*) Core::getTaskManager();
+
 	objectManager = (TransactionalObjectManager*) Core::getObjectBroker();
 
 	socketManager = new TransactionalSocketManager();
@@ -47,7 +49,7 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 
 	initializationTransactionStarted = false;
 
-	setLogging(false);
+	setInfoLogLevel();
 	setGlobalLogging(true);
 }
 
@@ -136,6 +138,10 @@ void TransactionalMemoryManager::abortTransaction() {
 	abortedTransactions.increment();
 }
 
+void TransactionalMemoryManager::retryTransaction() {
+	retryConflicts.increment();
+}
+
 void TransactionalMemoryManager::reclaim(Object* object) {
 	if (object->_isGettingDestroyed())
 		return;
@@ -190,6 +196,7 @@ void TransactionalMemoryManager::printStatistics() {
 	StringBuffer str;
 	str << "transactions(started " << startedTransactions.get() << ", "
 			<< "commited " << commitedTransactions.get() << ", "
+			<< "retried " << retryConflicts.get() << ", "
 			<< "aborted " << abortedTransactions.get() << ") - tasks ("
 			<< "exectuing " << taskManager->getExecutingTaskSize() << ", "
 			<< "scheduled " << taskManager->getScheduledTaskSize() << ")";
@@ -200,4 +207,5 @@ void TransactionalMemoryManager::printStatistics() {
 	startedTransactions.set(0);
 	commitedTransactions.set(0);
 	abortedTransactions.set(0);
+	retryConflicts.set(0);
 }

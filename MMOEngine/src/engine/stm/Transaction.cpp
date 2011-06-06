@@ -108,8 +108,6 @@ bool Transaction::commit() {
 				+ readOnlyObjectsCount + " / " + readWriteObjectsCount +")");
 
 		doHelpTransactions();
-
-		//delete this;
 	} else {
 		doAbort();
 
@@ -118,10 +116,7 @@ bool Transaction::commit() {
 
 			debug("helping self");
 
-			if (!start())
-				return false;
-
-			return commit();
+			commited = doRetry();
 		}
 	}
 
@@ -198,11 +193,25 @@ void Transaction::doAbort() {
 			+ String::valueOf(commitAttempts) + " tries, R/W objects "
 			+ readOnlyObjects.size() + " / " + readWriteObjects.size() +")");
 
+	if (commitAttempts > 1)
+		TransactionalMemoryManager::instance()->retryTransaction();
+
 	++commitAttempts;
 
 	reset();
 
 	TransactionalMemoryManager::instance()->abortTransaction();
+}
+
+bool Transaction::doRetry() {
+	TransactionalMemoryManager::instance()->getTaskManager()->executeTask(task);
+
+	return false;
+
+	/*if (!start())
+		return false;
+
+	return commit();*/
 }
 
 void Transaction::doHelpTransactions() {
@@ -216,10 +225,7 @@ void Transaction::doHelpTransactions() {
 
 		debug("helping transaction " + helpedTransaction->getLoggingName());
 
-		if (!helpedTransaction->start())
-			continue;
-
-		helpedTransaction->commit();
+		helpedTransaction->doRetry();
 	}
 }
 

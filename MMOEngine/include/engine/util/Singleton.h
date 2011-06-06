@@ -47,8 +47,8 @@ namespace engine {
 		void finalize() {
 			pthread_rwlock_wrlock(&rwlock);//;rwlock.wlock();
 
-			if (inst != NULL)
-				delete inst;
+			/*if (inst != NULL)
+				delete inst;*/
 
 			finalized = true;
 

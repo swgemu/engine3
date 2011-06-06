@@ -84,6 +84,13 @@ bool Mutex::tryLock() {
 	return pthread_mutex_trylock(&mutex) == 0;
 }
 
+bool Mutex::tryLock(uint64 millis) {
+	Time timeout;
+	timeout.addMiliTime(millis);
+
+	return pthread_mutex_timedlock(&mutex, timeout.getTimeSpec()) == 0;
+}
+
 void Mutex::unlock(bool doLock) {
 	if (!doLock)
 		return;

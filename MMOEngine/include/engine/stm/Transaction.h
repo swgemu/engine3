@@ -160,6 +160,8 @@ namespace engine {
 
 		void doAbort();
 
+		bool doRetry();
+
 		void doHelpTransactions();
 
 		bool setState(int newstate);

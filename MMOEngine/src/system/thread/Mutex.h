@@ -34,6 +34,7 @@ namespace sys {
 		void lock(Lockable* lockable);
 
 		bool tryLock();
+		bool tryLock(uint64 time);
 
 		void unlock(bool doLock = true);
 
