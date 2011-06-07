@@ -24,7 +24,7 @@ public:
 		while (true) {
 			TransactionalMemoryManager::instance()->printStatistics();
 
-			Thread::sleep(1000);
+			Thread::sleep(100000);
 		}
 	}
 };

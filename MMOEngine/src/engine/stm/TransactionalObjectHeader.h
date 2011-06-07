@@ -41,6 +41,10 @@ namespace engine {
 
 		O getForUpdate();
 
+		O getForDirty() {
+			return dynamic_cast<O>(object.get());
+		}
+
 		bool isCurrentVersion(Object* obj);
 
 	protected:
