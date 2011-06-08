@@ -29,6 +29,12 @@ namespace engine {
   } // namespace service
 } // namespace engine
 
+namespace engine {
+ namespace stm {
+   class TransactionalBaseClientManager;
+ }
+}
+
 #include "events/BasePacketChekupEvent.h"
 
 namespace engine {
@@ -123,7 +129,7 @@ namespace engine {
 
 		void reportStats(bool doLog = false);
 
-	private:
+	protected:
 		void close();
 
 		void bufferMultiPacket(BasePacket* pack);
@@ -146,6 +152,10 @@ namespace engine {
 			clientDisconnected = true;
 		}
 
+		inline void setNullBufferedPacket() {
+			bufferedPacket = NULL;
+		}
+
 		// getters
 		inline String& getAddress() {
 			return ip;
@@ -162,6 +172,12 @@ namespace engine {
 		inline int getResentPacketCount() {
 			return resentPackets;
 		}
+
+		inline BaseMultiPacket* getRawBufferedPacket() {
+			return bufferedPacket;
+		}
+
+		friend class engine::stm::TransactionalBaseClientManager;
 
 	};
 

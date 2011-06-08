@@ -25,13 +25,16 @@ Transaction::Transaction(int id) : Logger() {
 
 	task = NULL;
 
-	Command* command = (TransactionalTaskManager*) Core::getTaskManager();
+	Command* command = TransactionalMemoryManager::instance()->getBaseClientManager();
+	commands.add(command);
+
+	command = TransactionalMemoryManager::instance()->getSocketManager();
 	commands.add(command);
 
 	command = TransactionalMemoryManager::instance()->getObjectManager();
 	commands.add(command);
 
-	command = TransactionalMemoryManager::instance()->getSocketManager();
+	command = (TransactionalTaskManager*) Core::getTaskManager();
 	commands.add(command);
 
 	tid = id;

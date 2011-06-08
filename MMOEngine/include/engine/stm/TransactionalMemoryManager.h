@@ -15,6 +15,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/stm/orb/TransactionalObjectManager.h"
 
 #include "engine/stm/service/TransactionalSocketManager.h"
+#include "engine/stm/service/TransactionalBaseClientManager.h"
 
 #include "Transaction.h"
 
@@ -31,6 +32,8 @@ namespace engine {
 		TransactionalObjectManager* objectManager;
 
 		TransactionalSocketManager* socketManager;
+
+		TransactionalBaseClientManager* baseClientManager;
 
 		ThreadLocal<Transaction*> currentTransaction;
 
@@ -62,6 +65,10 @@ namespace engine {
 
 		TransactionalSocketManager* getSocketManager() {
 			return socketManager;
+		}
+
+		inline TransactionalBaseClientManager* getBaseClientManager() {
+			return baseClientManager;
 		}
 
 	protected:

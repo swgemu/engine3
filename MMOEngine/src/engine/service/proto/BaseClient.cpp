@@ -23,6 +23,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/platform.h"
 
+#include "engine/stm/TransactionalMemoryManager.h"
+
 BaseClient::BaseClient() : DatagramServiceClient(),
 		BaseProtocol(), Mutex("Client") {
 	bufferedPacket = NULL;
@@ -176,6 +178,7 @@ void BaseClient::close() {
 }
 
 void BaseClient::send(Packet* pack, bool doLock) {
+	//setDebugLogLevel();
 	lock(doLock);
 
 	try {
@@ -200,6 +203,12 @@ void BaseClient::send(Packet* pack, bool doLock) {
 }
 
 void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
+#ifdef WITH_STM
+	TransactionalMemoryManager::instance()->getBaseClientManager()->sendPacket(pack, this);
+
+	return;
+#endif
+
 	lock(doLock);
 
 	if (!isAvailable()) {
@@ -318,6 +327,8 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 }
 
 void BaseClient::run() {
+	//info("run event", true);
+
 	lock();
 
 	try {
@@ -960,7 +971,7 @@ void BaseClient::notifyReceivedSeed(uint32 seed) {
 }
 
 void BaseClient::disconnect(const String& msg, bool doLock) {
-	Logger::error(msg);
+	error(msg);
 
 	setError();
 	disconnect(doLock);

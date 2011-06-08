@@ -23,7 +23,8 @@ void TransactionalSocketManager::sendMessage(Message* message) {
 void TransactionalSocketManager::execute() {
 	MessageQueue* queue = getLocalMessageQueue();
 
-	info("sending " + String::valueOf(queue->size()) + " messages");
+	/*if (queue->size() > 0)
+		info("sending " + String::valueOf(queue->size()) + " messages");*/
 
 	for (int i = 0; i < queue->size(); ++i) {
 		Message* message = queue->get(i);
@@ -32,6 +33,8 @@ void TransactionalSocketManager::execute() {
 
 		Socket* socket = client->getSocket();
 		if (socket != NULL) {
+				//info("SEND(RAW) - " + message->toStringData(), true);
+
 				SocketAddress& addr = client->getAddress();
 
 				socket->sendTo(message, &addr);

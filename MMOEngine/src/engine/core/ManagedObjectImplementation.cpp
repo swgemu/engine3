@@ -106,7 +106,13 @@ bool ManagedObject::notifyDestroy() {
 }
 
 void ManagedObject::writeObject(ObjectOutputStream* stream) {
-	Reference<ManagedObjectImplementation*> _implementation = (ManagedObjectImplementation*) getForDirty();
+	Reference<ManagedObjectImplementation*> _implementation;
+#ifdef WITH_STM
+	_implementation = (ManagedObjectImplementation*) getForDirty();
+#else
+	_implementation = (ManagedObjectImplementation*) _getImplementation();
+#endif
+
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 	} else
@@ -114,7 +120,14 @@ void ManagedObject::writeObject(ObjectOutputStream* stream) {
 }
 
 unsigned int ManagedObject::getLastCRCSave() {
-	Reference<ManagedObjectImplementation*> _implementation = (ManagedObjectImplementation*) getForDirty();
+	Reference<ManagedObjectImplementation*> _implementation;
+
+#ifdef WITH_STM
+	_implementation = (ManagedObjectImplementation*) getForDirty();
+#else
+	_implementation = (ManagedObjectImplementation*) _getImplementation();
+#endif
+
 	if (_implementation == NULL) {
 		throw ObjectNotDeployedException(this);
 	} else
@@ -122,7 +135,14 @@ unsigned int ManagedObject::getLastCRCSave() {
 }
 
 void ManagedObject::setLastCRCSave(unsigned int crc) {
-	Reference<ManagedObjectImplementation*> _implementation = (ManagedObjectImplementation*) getForDirty();
+	Reference<ManagedObjectImplementation*> _implementation;
+
+#ifdef WITH_STM
+	_implementation = (ManagedObjectImplementation*) getForDirty();
+#else
+	_implementation = (ManagedObjectImplementation*) _getImplementation();
+#endif
+
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 	} else

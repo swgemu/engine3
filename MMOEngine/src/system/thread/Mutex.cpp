@@ -84,12 +84,14 @@ bool Mutex::tryLock() {
 	return pthread_mutex_trylock(&mutex) == 0;
 }
 
+#ifndef PLATFORM_MAC
 bool Mutex::tryLock(uint64 millis) {
 	Time timeout;
 	timeout.addMiliTime(millis);
 
 	return pthread_mutex_timedlock(&mutex, timeout.getTimeSpec()) == 0;
 }
+#endif
 
 void Mutex::unlock(bool doLock) {
 	if (!doLock)

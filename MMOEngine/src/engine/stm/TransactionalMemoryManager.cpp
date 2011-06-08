@@ -41,6 +41,8 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 
 	socketManager = new TransactionalSocketManager();
 
+	baseClientManager = new TransactionalBaseClientManager();
+
 	Thread* task = new TransactionalMemoryManagerStatisticsTask();
 	task->start();
 
