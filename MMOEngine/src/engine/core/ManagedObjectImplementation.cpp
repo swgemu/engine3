@@ -105,6 +105,31 @@ bool ManagedObject::notifyDestroy() {
 		return broker->destroyObject(this);
 }
 
+void ManagedObject::writeObject(ObjectOutputStream* stream) {
+	Reference<ManagedObjectImplementation*> _implementation = (ManagedObjectImplementation*) getForDirty();
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+	} else
+		_implementation->writeObject(stream);
+}
+
+unsigned int ManagedObject::getLastCRCSave() {
+	Reference<ManagedObjectImplementation*> _implementation = (ManagedObjectImplementation*) getForDirty();
+	if (_implementation == NULL) {
+		throw ObjectNotDeployedException(this);
+	} else
+		return _implementation->getLastCRCSave();
+}
+
+void ManagedObject::setLastCRCSave(unsigned int crc) {
+	Reference<ManagedObjectImplementation*> _implementation = (ManagedObjectImplementation*) getForDirty();
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+	} else
+		_implementation->setLastCRCSave(crc);
+}
+
+
 
 bool ManagedObjectImplementation::notifyDestroy() {
 	return _this->notifyDestroy();

@@ -74,6 +74,8 @@ namespace engine {
 
 		void setObject(O obj) {
 			object = dynamic_cast<Object*>(obj);
+
+			assert(object != NULL);
 		}
 
 		friend class Transaction;

@@ -80,6 +80,7 @@ class ManagedObject {
 	}*/
 	
 	@local
+	@nativeStub
 	@noImplementationDeclaration
 	public native void writeObject(ObjectOutputStream stream);
 	
@@ -115,10 +116,12 @@ class ManagedObject {
 		updateToDatabaseTask = null;
 	}
 	
+	@nativeStub
 	public unsigned int getLastCRCSave() {
 		return lastCRCSave;
 	}
 	
+	@nativeStub
 	public void setLastCRCSave(unsigned int crc) {
 		lastCRCSave = crc;
 	}
