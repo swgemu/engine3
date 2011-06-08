@@ -93,6 +93,7 @@ libengine3_a_SOURCES = \
 			engine/stm/orb/TransactionalObjectManager.cpp \
 			engine/stm/orb/LocalObjectManager.cpp \
 			engine/stm/service/TransactionalSocketManager.cpp \
+			engine/stm/service/TransactionalBaseClientManager.cpp \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
