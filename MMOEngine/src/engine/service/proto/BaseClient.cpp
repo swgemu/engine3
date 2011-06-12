@@ -934,7 +934,7 @@ bool BaseClient::connect() {
 
 		if (crcSeed == 0) {
 			Time timeout;
-			timeout.addMiliTime(3000);
+			timeout.addMiliTime(15000);
 
 			debug("waiting for connection established");
 

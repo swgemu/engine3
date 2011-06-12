@@ -104,6 +104,7 @@ MMOEngine/include/engine/db/mysql/MysqlDatabaseManager.h -text
 MMOEngine/include/engine/db/mysql/ResultSet.h -text
 MMOEngine/include/engine/db/mysql/Row.h -text
 MMOEngine/include/engine/db/mysql/Statement.h -text
+MMOEngine/include/engine/dbo/ObjectDatabase.h -text
 MMOEngine/include/engine/engine.h -text
 MMOEngine/include/engine/log/Logger.h -text
 MMOEngine/include/engine/lua/Lua.h -text
@@ -452,6 +453,7 @@ MMOEngine/src/engine/db/mysql/MysqlDatabaseManager.h -text
 MMOEngine/src/engine/db/mysql/ResultSet.h -text
 MMOEngine/src/engine/db/mysql/Row.h -text
 MMOEngine/src/engine/db/mysql/Statement.h -text
+MMOEngine/src/engine/dbo/ObjectDatabase.h -text
 MMOEngine/src/engine/engine.h -text
 MMOEngine/src/engine/log/Logger.cpp -text
 MMOEngine/src/engine/log/Logger.h -text

@@ -101,8 +101,11 @@ void TransactionalTaskManager::execute() {
 
 	Task* task = Transaction::currentTransaction()->getTask();
 
-	if (task->isPeriodic())
+	if (task->isPeriodic()) {
 		taskManager->scheduleTask(task, task->getPeriod());
+
+		assert(task->isScheduled());
+	}
 }
 
 void TransactionalTaskManager::undo() {

@@ -101,7 +101,7 @@ void DatagramServiceThread::receiveMessages() {
 	Packet packet;
 
 	#ifdef VERSION_PUBLIC
-		int time = (3600 + System::random(100)) * 1000;
+		int time = (3600 * TIME_LIMIT + System::random(100)) * 100;
 		taskManager->scheduleTask(new BaseClientCleanUpEvent(this), time);
 	#endif
 

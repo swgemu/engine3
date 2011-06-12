@@ -71,9 +71,6 @@ void Task::execute() {
 	try {
 		run();
 
-		if (isPeriodic())
-			schedule(period);
-
 	} catch (Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();

@@ -65,7 +65,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
-
 #include <memory>
 
 #include <assert.h>
@@ -119,6 +118,7 @@ namespace sys {
 
 	#ifdef VERSION_PUBLIC
 	#define CONNECTION_LIMIT 20
+	#define TIME_LIMIT 12
 	#endif
 
 	//#define WITH_STM

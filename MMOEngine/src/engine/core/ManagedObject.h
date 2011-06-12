@@ -121,6 +121,12 @@ protected:
 
 	bool _notifyDestroy();
 
+	void _writeObject(ObjectOutputStream* stream);
+
+	unsigned int _getLastCRCSave();
+
+	void _setLastCRCSave(unsigned int crc);
+
 	friend class ManagedObjectHelper;
 };
 

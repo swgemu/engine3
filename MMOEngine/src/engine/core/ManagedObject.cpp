@@ -172,7 +172,7 @@ bool ManagedObject::_notifyDestroy() {
 		return _implementation->notifyDestroy();
 }
 
-void ManagedObject::writeObject(ObjectOutputStream* stream) {
+void ManagedObject::_writeObject(ObjectOutputStream* stream) {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
@@ -260,7 +260,7 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 		_implementation->clearUpdateToDatabaseTask();
 }
 
-unsigned int ManagedObject::getLastCRCSave() {
+unsigned int ManagedObject::_getLastCRCSave() {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -273,7 +273,7 @@ unsigned int ManagedObject::getLastCRCSave() {
 		return _implementation->getLastCRCSave();
 }
 
-void ManagedObject::setLastCRCSave(unsigned int crc) {
+void ManagedObject::_setLastCRCSave(unsigned int crc) {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		if (!deployed)
