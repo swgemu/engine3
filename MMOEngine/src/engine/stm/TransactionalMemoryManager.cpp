@@ -123,8 +123,10 @@ void TransactionalMemoryManager::commitTransaction() {
 	//commitedTrans.set(transaction->getIdentifier(), true);
 
 	debug("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
+	Vector<Object*>* objects = getReclamationList();
+	debug("Reclamation list size:" + String::valueOf(objects->size()));
 
-	reclaimObjects(1000, 1000);
+	reclaimObjects(500, 20000);
 
 	commitedTransactions.increment();
 

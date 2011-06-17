@@ -83,7 +83,7 @@ void TransactionalBaseClientManager::execute() {
 
 	}
 
-	queue->removeAll();
+	queue->removeAll(1000, 100);
 }
 
 void TransactionalBaseClientManager::undo() {
@@ -95,5 +95,5 @@ void TransactionalBaseClientManager::undo() {
 		delete message;
 	}
 
-	queue->removeAll();
+	queue->removeAll(1000, 100);
 }
