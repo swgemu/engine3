@@ -81,6 +81,8 @@ namespace engine {
 
 		TransactionalObjectHeaderMap localObjectCache;
 
+		Vector<Object*> reclaimedObjects;
+
 		Reference<Task*> task;
 
 		AtomicReference<Transaction> helperTransaction;
@@ -191,7 +193,12 @@ namespace engine {
 
 		void deleteObject(Object* object);
 
+		Vector<Object*>& getDeletedObjects() {
+			return reclaimedObjects;
+		}
+
 		friend class TaskManager;
+		friend class TransactionalMemoryManager;
 		friend class TransactionalObjectManager;
 		template<class O> friend class TransactionalObjectHeader;
 		template<class O> friend class TransactionalReference;

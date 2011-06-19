@@ -169,6 +169,8 @@ namespace sys {
 		if (this == &htable)
 			return *this;
 
+		removeAll();
+
 		copyFrom(const_cast<HashTable<K,V>* >(&htable));
 
 		return *this;

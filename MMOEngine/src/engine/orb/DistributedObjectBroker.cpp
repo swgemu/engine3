@@ -208,7 +208,7 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 	if (obj->getReferenceCount() > 0)
 		return false;
 
-	obj->_setDestroying(true);
+	obj->_setDestroying();
 
 	obj->undeploy();
 

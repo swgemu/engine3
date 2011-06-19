@@ -389,6 +389,10 @@ Transaction* Transaction::currentTransaction() {
 	return TransactionalMemoryManager::instance()->getTransaction();
 }
 
+void Transaction::deleteObject(Object* object) {
+	reclaimedObjects.add(object);
+}
+
 String Transaction::toString() {
 	return "Transaction [" + Thread::getCurrentThread()->getName() + "] commited in " + Long::toString(commitTime) + " usec with "
 			+ String::valueOf(commitAttempts) + " attempts";

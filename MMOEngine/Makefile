@@ -38,7 +38,7 @@ rebuild: clean configure-debug compile install-headers
 	#done
 
 config:
-	autoreconf --force
+	autoreconf --force --install --verbose
 	#done
 
 configure-release32:

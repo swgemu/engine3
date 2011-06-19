@@ -104,7 +104,7 @@ void TransactionalTaskManager::execute() {
 	if (task->isPeriodic()) {
 		taskManager->scheduleTask(task, task->getPeriod());
 
-		assert(task->isScheduled());
+		//assert(task->isScheduled());
 	}
 }
 

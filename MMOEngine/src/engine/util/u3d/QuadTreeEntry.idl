@@ -220,6 +220,9 @@ class QuadTreeEntry extends Observable {
 	public void setBounding() {
 		bounding = true;
 	}
+	public void setRadius(float rad) {
+		radius = rad;
+	}
 	
 	public void clearBounding() {
 		bounding = false;

@@ -111,6 +111,8 @@ public:
 
 	void setBounding();
 
+	void setRadius(float rad);
+
 	void clearBounding();
 
 	DistributedObjectServant* _getImplementation();
@@ -224,6 +226,8 @@ public:
 
 	void setBounding();
 
+	void setRadius(float rad);
+
 	void clearBounding();
 
 	QuadTreeEntry* _this;
@@ -326,6 +330,8 @@ public:
 	bool isBounding();
 
 	void setBounding();
+
+	void setRadius(float rad);
 
 	void clearBounding();
 

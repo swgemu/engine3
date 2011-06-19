@@ -8,7 +8,7 @@
  *	QuadTreeEntryStub
  */
 
-enum {RPC_NOTIFYADDEDTOCLOSEOBJECTS__ = 6,RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__,RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_,RPC_GETINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_INRANGEOBJECTCOUNT__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_CLEARBOUNDING__};
+enum {RPC_NOTIFYADDEDTOCLOSEOBJECTS__ = 6,RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__,RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_,RPC_GETINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_INRANGEOBJECTCOUNT__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_SETRADIUS__FLOAT_,RPC_CLEARBOUNDING__};
 
 QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParameter::instance()) {
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
@@ -485,6 +485,20 @@ void QuadTreeEntry::setBounding() {
 		_implementation->setBounding();
 }
 
+void QuadTreeEntry::setRadius(float rad) {
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETRADIUS__FLOAT_);
+		method.addFloatParameter(rad);
+
+		method.executeWithVoidReturn();
+	} else
+		_implementation->setRadius(rad);
+}
+
 void QuadTreeEntry::clearBounding() {
 	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
 	if (_implementation == NULL) {
@@ -857,6 +871,11 @@ void QuadTreeEntryImplementation::setBounding() {
 	bounding = true;
 }
 
+void QuadTreeEntryImplementation::setRadius(float rad) {
+	// engine/util/u3d/QuadTreeEntry.idl():  		radius = rad;
+	radius = rad;
+}
+
 void QuadTreeEntryImplementation::clearBounding() {
 	// engine/util/u3d/QuadTreeEntry.idl():  		bounding = false;
 	bounding = false;
@@ -959,6 +978,9 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		break;
 	case RPC_SETBOUNDING__:
 		setBounding();
+		break;
+	case RPC_SETRADIUS__FLOAT_:
+		setRadius(inv->getFloatParameter());
 		break;
 	case RPC_CLEARBOUNDING__:
 		clearBounding();
@@ -1084,6 +1106,10 @@ bool QuadTreeEntryAdapter::isBounding() {
 
 void QuadTreeEntryAdapter::setBounding() {
 	((QuadTreeEntryImplementation*) impl)->setBounding();
+}
+
+void QuadTreeEntryAdapter::setRadius(float rad) {
+	((QuadTreeEntryImplementation*) impl)->setRadius(rad);
 }
 
 void QuadTreeEntryAdapter::clearBounding() {

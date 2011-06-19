@@ -126,7 +126,7 @@ void TransactionalMemoryManager::commitTransaction() {
 	Vector<Object*>* objects = getReclamationList();
 	debug("Reclamation list size:" + String::valueOf(objects->size()));
 
-	reclaimObjects(500, 20000);
+	reclaimObjects();
 
 	commitedTransactions.increment();
 
@@ -147,14 +147,11 @@ void TransactionalMemoryManager::retryTransaction() {
 }
 
 void TransactionalMemoryManager::reclaim(Object* object) {
-	if (object->_isGettingDestroyed())
+	if (!object->_setDestroying())
 		return;
 
-	Vector<Object*>* objects = getReclamationList();
-
-	objects->add(object);
-
-	object->_setDestroying(true);
+	Reference<Transaction*> transaction = Transaction::currentTransaction();
+	transaction->deleteObject(object);
 }
 
 void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjectsToReclaim) {
@@ -173,11 +170,23 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 			if (++objectsReclaimed == maxObjectsToReclaim)
 				break;
 		} else
-			obj->_setDestroying(false);
+			obj->_clearDestroying();
 	}
 
-	debug(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
-			+ String::valueOf(System::getMikroTime() - startTime) + " Us");
+	info(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
+			+ String::valueOf(System::getMikroTime() - startTime) + " Us, "
+			+ String::valueOf(objects->size()) + " remained in queue");
+
+	Reference<Transaction*> transaction = Transaction::currentTransaction();
+	Vector<Object*>& objectsForNextCommit = transaction->getDeletedObjects();
+
+	for (int i = 0; i < objectsForNextCommit.size(); ++i) {
+		Object* obj = objectsForNextCommit.get(i);
+
+		objects->add(obj);
+	}
+
+	objectsForNextCommit.removeAll();
 }
 
  Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
