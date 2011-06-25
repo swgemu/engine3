@@ -76,7 +76,7 @@ public:
 
 	int compareTo(Observer* obj);
 
-	Observer* _this;
+	WeakReference<Observer*> _this;
 
 	operator const Observer*();
 
@@ -85,6 +85,8 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~ObserverImplementation();
+
+	Object* clone();
 
 	void finalize();
 
@@ -111,6 +113,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Observer;
+	friend class TransactionalObjectHandle<ObserverImplementation*>;
 };
 
 class ObserverAdapter : public ManagedObjectAdapter {

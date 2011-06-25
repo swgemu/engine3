@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "DistributedObjectStub.h"
 
 DistributedObjectStub::DistributedObjectStub() : DistributedObject() {
-	_setImplementation(NULL);
+	//_setImplementation(NULL);
 		
 	deployed = false;
 
@@ -85,21 +85,30 @@ void DistributedObjectStub::deploy(const String& name, uint64 nid) {
 }
 
 bool DistributedObjectStub::undeploy() {
+	if (destroyed)
+		assert(0 && "destroying again a destroyed object");
+
 	if (deployed) {
-		ObjectBroker* broker = Core::getObjectBroker();
+		/*ObjectBroker* broker = Core::getObjectBroker();
 
 		if (broker != NULL)
-			broker->undeploy(_name);
+			broker->undeploy(_name);*/
+
+		//this is called when the object is deleted from RAM (MemoryManager deletes it)
+		//so object broker is long gone as command
+		DistributedObjectBroker::instance()->undeploy(_name);
 
 		deployed = false; 
 	} else {
-		if (_getImplementation() == NULL)
-			throw ObjectNotLocalException(this);
+		//if (_getImplementation() == NULL)
+			//throw ObjectNotLocalException(this);
 		
 		//ObjectBroker::instance()->info("deleting undeployed implementation");
 		
-		//delete _getImplementation();
-		_setImplementation(NULL);
+#ifndef WITH_STM
+		delete _getImplementation();
+#endif
+		//_setImplementation(NULL);
 	}
 	
 	destroyed = true;

@@ -24,6 +24,8 @@ namespace engine {
 
 		virtual ~TransactionalObjectHandle();
 
+		void upgradeToWrite();
+
 		bool acquireHeader(Transaction* transaction);
 
 		void releaseHeader();
@@ -77,6 +79,10 @@ namespace engine {
 		object = NULL;
 
 		//assert(objectCopy == NULL);
+	}
+
+	template<class O> void TransactionalObjectHandle<O>::upgradeToWrite() {
+		objectCopy = object->clone();
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {

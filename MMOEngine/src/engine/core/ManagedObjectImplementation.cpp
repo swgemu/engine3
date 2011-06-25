@@ -152,7 +152,8 @@ void ManagedObject::setLastCRCSave(unsigned int crc) {
 
 
 bool ManagedObjectImplementation::notifyDestroy() {
-	return _this->notifyDestroy();
+	//return _this->notifyDestroy();
+	return true;
 }
 
 void ManagedObjectImplementation::updateForWrite() {

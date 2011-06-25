@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TransactionalObjectManager.h"
 
+#include "engine/core/ManagedObject.h"
+
 TransactionalObjectManager::TransactionalObjectManager() : Command() {
 	objectBroker = DistributedObjectBroker::instance();
 }
@@ -34,6 +36,32 @@ void TransactionalObjectManager::undo() {
 	ObjectDatabaseManager::instance()->abortLocalTransaction();
 
 	MysqlDatabaseManager::instance()->rollbackModifiedDatabases();
+}
+
+ObjectsToSaveMap* TransactionalObjectManager::getModifiedObjectsToSave() {
+	Locker locker(&saveMutex);
+
+	ObjectsToSaveMap* copy = new ObjectsToSaveMap(implementationCopiesToSave);
+	implementationCopiesToSave.removeAll();
+
+	return copy;
+}
+
+void TransactionalObjectManager::addObjectsToSave(const Vector<Reference<Object*> >& objects) {
+
+	return;
+
+	Locker locker(&saveMutex);
+
+	for (int i = 0; i < objects.size(); ++i) {
+		ManagedObjectImplementation* impl = dynamic_cast<ManagedObjectImplementation*>(objects.get(i).get());
+
+		//Di
+
+		if (impl != NULL && (impl->_this != NULL)) {
+			implementationCopiesToSave.put(impl->_this.get(), impl);
+		}
+	}
 }
 
 void TransactionalObjectManager::registerClass(const String& name, DistributedObjectClassHelper* helper) {

@@ -29,6 +29,7 @@ namespace sys {
 		}
 
 		virtual void reclaim(Object* object);
+		virtual void create(Object* object);
 	};
 
   } // namespace lang

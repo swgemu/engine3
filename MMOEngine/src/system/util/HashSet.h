@@ -13,20 +13,22 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace util {
 
-	template<class E> class HashSet : public HashTable<E, Object*> {
-		Object* PRESENT;
+    template<class E> class HashSetIterator;
+
+	template<class E> class HashSet : public HashTable<E, uint8> {
+		uint8 PRESENT;
 		
 	public:
-		HashSet() : HashTable<E, Object*>() {
-			PRESENT = new Object();
+		HashSet() : HashTable<E, uint8>() {
+			PRESENT = 0;
 		}
 
-		HashSet(int initcap) : HashTable<E, Object*>(initcap) {
-			PRESENT = new Object();
+		HashSet(int initcap) : HashTable<E, uint8>(initcap) {
+			PRESENT = 0;//new Object();
 		}
 		
 		virtual ~HashSet() {
-			delete PRESENT;
+			//delete PRESENT;
 		}
 		
 		void add(const E& obj) {
@@ -37,12 +39,20 @@ namespace sys {
 			return containsKey(obj);
 		}
 		
+		HashSetIterator<E> iterator() {
+			return HashSetIterator<E>(this);
+		}
+
 	};
 
-	/*template<class E> class HashSetIterator : public class HashTableIterator<E, Object*> {
-		HashSetIterator(HashSet<E, Object*>* set)  :  HashTableIterator<E, Object*>(set) {
+	template<class E> class HashSetIterator : public HashTableIterator<E, uint8> {
+	public:
+		HashSetIterator(const HashSetIterator& i)  :  HashTableIterator<E, uint8>(i) {
 		}
-	};*/
+
+		HashSetIterator(HashSet<E>* set)  :  HashTableIterator<E, uint8>(set) {
+		}
+	};
 
   } // namespace util
 } // namespace sys

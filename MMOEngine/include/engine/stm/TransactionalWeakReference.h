@@ -1,35 +1,35 @@
 /*
-Copyright (C) 2007 <SWGEmu>. All rights reserved.
-Distribution of this file for usage outside of Core3 is prohibited.
-*/
+ * TransactionalWeakReference.h
+ *
+ *  Created on: Jun 17, 2011
+ *      Author: theanswer
+ */
 
-#ifndef ENGINE_STM_TRANSACTIONALWEAKREFERENCE_H_
-#define ENGINE_STM_TRANSACTIONALWEAKREFERENCE_H_
+#ifndef TRANSACTIONALWEAKREFERENCE_H_
+#define TRANSACTIONALWEAKREFERENCE_H_
 
 #include "Transaction.h"
 
 namespace engine {
   namespace stm {
 
-   //template <class O> class TransactionalObjectHeader;
-
-  	template<class O> class TransactionalReference {
+  	template<class O> class TransactionalWeakReference {
 		TransactionalObjectHeader<O>* header;
 
 	public:
-		TransactionalReference() {
+		TransactionalWeakReference() {
 			header = NULL;
 		}
 
-		TransactionalReference(O object) {
+		TransactionalWeakReference(O object) {
 			setObject(object);
 		}
 
-		TransactionalReference(const TransactionalReference& ref) {
+		TransactionalWeakReference(const TransactionalWeakReference& ref) {
 			header = ref.header;
 		}
 
-		TransactionalReference& operator=(const TransactionalReference& ref) {
+		TransactionalWeakReference& operator=(const TransactionalWeakReference& ref) {
 			if (this == &ref)
 				return *this;
 
@@ -87,7 +87,7 @@ namespace engine {
 			if (object == NULL)
 				return NULL;
 
-			return Transaction::currentTransaction()->getStrongHeader(object);
+			return Transaction::currentTransaction()->getWeakHeader(object);
 		}
 
 		void setObject(O object) {
@@ -99,4 +99,4 @@ namespace engine {
   } // namespace stm
 } // namespace engine
 
-#endif /* ENGINE_STM_TRANSACTIONALREFERENCE_H_ */
+#endif /* TRANSACTIONALWEAKREFERENCE_H_ */

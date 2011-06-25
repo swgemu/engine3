@@ -4,6 +4,23 @@
 
 #include "QuadTreeEntry.h"
 
+
+// Imported class dependencies
+
+#include "engine/core/ManagedObject.h"
+
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
+
+#include "engine/util/Observer.h"
+
+#include "engine/util/ObserverEventMap.h"
+
+#include "system/io/ObjectInputStream.h"
+
+#include "system/io/ObjectOutputStream.h"
+
+#include "system/thread/Lockable.h"
+
 /*
  *	QuadTreeEntryStub
  */
@@ -12,8 +29,8 @@ enum {RPC_NOTIFYADDEDTOCLOSEOBJECTS__ = 6,RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__,RP
 
 QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParameter::instance()) {
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
-	_impl = _implementation;
-	_impl->_setStub(this);
+	ManagedObject::_setImplementation(_implementation);
+	_implementation->_setStub(this);
 }
 
 QuadTreeEntry::QuadTreeEntry(DummyConstructorParameter* param) : Observable(param) {
@@ -134,7 +151,7 @@ bool QuadTreeEntry::containsInRangeObject(QuadTreeEntry* obj) {
 }
 
 bool QuadTreeEntry::isInRange(QuadTreeEntry* obj, float range) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();//(QuadTreeEntryImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -149,7 +166,7 @@ bool QuadTreeEntry::isInRange(QuadTreeEntry* obj, float range) {
 }
 
 bool QuadTreeEntry::isInRange(float x, float y, float range) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();//(QuadTreeEntryImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -179,7 +196,7 @@ float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) {
 }
 
 bool QuadTreeEntry::isInSWArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -188,7 +205,7 @@ bool QuadTreeEntry::isInSWArea(QuadTreeNode* node) {
 }
 
 bool QuadTreeEntry::isInSEArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -197,7 +214,7 @@ bool QuadTreeEntry::isInSEArea(QuadTreeNode* node) {
 }
 
 bool QuadTreeEntry::isInNWArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -206,7 +223,7 @@ bool QuadTreeEntry::isInNWArea(QuadTreeNode* node) {
 }
 
 bool QuadTreeEntry::isInArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -257,7 +274,7 @@ void QuadTreeEntry::notifyDissapear(QuadTreeEntry* obj) {
 }
 
 float QuadTreeEntry::getPositionX() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();//;(QuadTreeEntryImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -283,7 +300,7 @@ float QuadTreeEntry::getPositionZ() {
 }
 
 float QuadTreeEntry::getPositionY() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();//(QuadTreeEntryImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -296,7 +313,7 @@ float QuadTreeEntry::getPositionY() {
 }
 
 float QuadTreeEntry::getPreviousPositionX() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -322,7 +339,7 @@ float QuadTreeEntry::getPreviousPositionZ() {
 }
 
 float QuadTreeEntry::getPreviousPositionY() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) get();
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -415,7 +432,7 @@ int QuadTreeEntry::inRangeObjectCount() {
 		return _implementation->inRangeObjectCount();
 }
 
-QuadTreeNode* QuadTreeEntry::getNode() {
+TransactionalReference<QuadTreeNode*> QuadTreeEntry::getNode() {
 	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
@@ -515,11 +532,10 @@ void QuadTreeEntry::clearBounding() {
 DistributedObjectServant* QuadTreeEntry::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(getForUpdate());}
 
 void QuadTreeEntry::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
+	setObject(dynamic_cast<QuadTreeEntryImplementation*>(servant));
 }
 
 /*
@@ -541,7 +557,8 @@ void QuadTreeEntryImplementation::finalize() {
 void QuadTreeEntryImplementation::_initializeImplementation() {
 	_setClassHelper(QuadTreeEntryHelper::instance());
 
-	_serializationHelperMethod();
+	_this = NULL;
+
 	_serializationHelperMethod();
 }
 
@@ -558,32 +575,30 @@ QuadTreeEntryImplementation::operator const QuadTreeEntry*() {
 	return _this;
 }
 
+Object* QuadTreeEntryImplementation::clone() {
+	return dynamic_cast<Object*>(new QuadTreeEntryImplementation(*this));
+}
+
+
 void QuadTreeEntryImplementation::lock(bool doLock) {
-	_this->lock(doLock);
 }
 
 void QuadTreeEntryImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
 }
 
 void QuadTreeEntryImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
 }
 
 void QuadTreeEntryImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
 }
 
 void QuadTreeEntryImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
 }
 
 void QuadTreeEntryImplementation::_serializationHelperMethod() {
@@ -846,7 +861,7 @@ int QuadTreeEntryImplementation::inRangeObjectCount() {
 	return (&closeobjects)->size();
 }
 
-QuadTreeNode* QuadTreeEntryImplementation::getNode() {
+TransactionalReference<QuadTreeNode*> QuadTreeEntryImplementation::getNode() {
 	// engine/util/u3d/QuadTreeEntry.idl():  		return node;
 	return node;
 }

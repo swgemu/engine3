@@ -50,7 +50,8 @@ namespace sys {
 		}
 
 		Time(const Time& time) : Variable() {
-			ts = time.ts;
+			//ts = time.ts;
+			memcpy(&ts, &time.ts, sizeof(timespec));
 		}
 
 		bool toString(String& str) {
@@ -134,7 +135,8 @@ namespace sys {
 			if (this == &t)
 				return *this;
 
-			ts = t.ts;
+			//ts = t.ts;
+			memcpy(&ts, &t.ts, sizeof(timespec));
 
 			return *this;
 		}

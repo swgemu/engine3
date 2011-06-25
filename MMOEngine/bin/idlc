@@ -1,1 +1,1 @@
-java -cp /usr/local/engine3/lib/idlc.jar org.sr.idlc.compiler.Compiler $@
+java -cp /mnt/ssd/workspacSTM/MMOEngine/bin/idlc.jar org.sr.idlc.compiler.Compiler $@

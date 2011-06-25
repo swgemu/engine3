@@ -3,13 +3,15 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#ifndef ENGINE_STM_TRANSACTIONALREFERENCE_H_
-#define ENGINE_STM_TRANSACTIONALREFERENCE_H_
+#ifndef ENGINE_STM_TRANSACTIONALWEAKREFERENCE_H_
+#define ENGINE_STM_TRANSACTIONALWEAKREFERENCE_H_
 
 #include "Transaction.h"
 
 namespace engine {
   namespace stm {
+
+   //template <class O> class TransactionalObjectHeader;
 
   	template<class O> class TransactionalReference {
 		TransactionalObjectHeader<O>* header;
@@ -85,7 +87,7 @@ namespace engine {
 			if (object == NULL)
 				return NULL;
 
-			return Transaction::currentTransaction()->getHeader(object);
+			return Transaction::currentTransaction()->getStrongHeader(object);
 		}
 
 		void setObject(O object) {

@@ -14,7 +14,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Transaction.h"
 
+
 using namespace engine::stm;
+
+ReadWriteLock Transaction::blockLock;
 
 Transaction::Transaction(int id) : Logger() {
 	status = INITIAL;
@@ -25,13 +28,9 @@ Transaction::Transaction(int id) : Logger() {
 
 	task = NULL;
 
-	Command* command = TransactionalMemoryManager::instance()->getBaseClientManager();
-	commands.add(command);
+	helperTransaction = NULL;
 
-	command = TransactionalMemoryManager::instance()->getSocketManager();
-	commands.add(command);
-
-	command = TransactionalMemoryManager::instance()->getObjectManager();
+	Command* command = TransactionalMemoryManager::instance()->getObjectManager();
 	commands.add(command);
 
 	command = (TransactionalTaskManager*) Core::getTaskManager();
@@ -55,7 +54,7 @@ bool Transaction::start() {
 
 bool Transaction::start(Task* task) {
 	if (!setState(INITIAL, UNDECIDED)) {
-		debug("failed to start transaction (state " + String::valueOf(status) + ")");
+		error("failed to start transaction (state " + String::valueOf(status) + ") per:" + String::valueOf(task->getPeriod()));
 
 		return false;
 	}
@@ -64,7 +63,7 @@ bool Transaction::start(Task* task) {
 
 	Transaction::task = task;
 
-	helperTransaction = NULL;
+	//helperTransaction = NULL;
 
 	String threadName = Thread::getCurrentThread()->getName();
 	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
@@ -79,13 +78,18 @@ bool Transaction::start(Task* task) {
 		task->run();
 	} catch (TransactionAbortedException& e) {
 		abort();
+		TransactionalMemoryManager::instance()->increaseFailedByExceptions();
 	} catch (Exception& e) {
 		e.printStackTrace();
+
+		TransactionalMemoryManager::instance()->increaseFailedByExceptions();
 
 		abort();
 	}
 
 	runTime += System::getMikroTime() - startTime;
+
+	blockLock.rlock();
 
 	return true;
 }
@@ -106,9 +110,15 @@ bool Transaction::commit() {
 	commitTime += System::getMikroTime() - startTime;
 
 	if (commited) {
-		debug("commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
+		String msg = "ran and commited in " + String::valueOf((commitTime + runTime) / 1000) + "ms Task: " + String(TypeInfo<Task>::getClassName(task)) + " commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
-				+ readOnlyObjectsCount + " / " + readWriteObjectsCount +")");
+				+ readOnlyObjectsCount + " / " + readWriteObjectsCount +")";
+
+		/*if (commitTime + runTime > 50000)
+			warning(msg);
+		else*/
+			debug(msg);
+
 
 		doHelpTransactions();
 	} else {
@@ -119,11 +129,15 @@ bool Transaction::commit() {
 
 			debug("helping self");
 
-			commited = doRetry();
+			commited = doRetry(this);
 		}
 	}
 
+	//TransactionalMemoryManager::instance()->setCurrentTransaction(NULL);
+
 	Thread::yield();
+
+	blockLock.runlock();
 
 	return commited;
 }
@@ -154,13 +168,33 @@ bool Transaction::doCommit() {
 		return false;
 	}
 
+
 	for (int i = 0; i < commands.size(); ++i) {
 		Command* command = commands.get(i);
 
-		command->execute();
+		try {
+			command->execute();
+		} catch (TransactionAbortedException& e) {
+			return false;
+		} catch (Exception& e) {
+			e.printStackTrace();
+		}
 	}
 
 	releaseReadWriteObjects();
+
+	//outside releaseRWO for perfs to not block transactions since this ops are async
+	try {
+		Command* command = TransactionalMemoryManager::instance()->getBaseClientManager();
+		command->execute();
+
+		command = TransactionalMemoryManager::instance()->getSocketManager();
+		command->execute();
+	} catch (TransactionAbortedException& e) {
+		error("TransactionAbortedException after releasingRWObjects");
+	} catch (Exception& e) {
+		e.printStackTrace();
+	}
 
 	TransactionalMemoryManager::instance()->commitTransaction();
 
@@ -182,6 +216,8 @@ void Transaction::abort() {
 }
 
 void Transaction::doAbort() {
+	Time startTime;
+
 	status = ABORTED;
 
 	discardReadWriteObjects();
@@ -191,6 +227,13 @@ void Transaction::doAbort() {
 
 		command->undo();
 	}
+
+
+	Command* command = TransactionalMemoryManager::instance()->getBaseClientManager();
+	command->undo();
+
+	command = TransactionalMemoryManager::instance()->getSocketManager();
+	command->undo();
 
 	debug("aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
 			+ String::valueOf(commitAttempts) + " tries, R/W objects "
@@ -204,12 +247,36 @@ void Transaction::doAbort() {
 	reset();
 
 	TransactionalMemoryManager::instance()->abortTransaction();
+
+	/*int64 mili = startTime.miliDifference();
+
+	if (mili > 30) {
+		String msg = "aborted in " + String::valueOf(mili) + "ms Task: " + String(TypeInfo<Task>::getClassName(task)) + " aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, ";
+
+		warning(msg);
+	}*/
 }
 
-bool Transaction::doRetry() {
-	TransactionalMemoryManager::instance()->getTaskManager()->executeTask(task);
+bool Transaction::doRetry(Transaction* helper) {
+	//TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->executeTask(task);
 
-	return false;
+	while (!isCommited()) {
+		Thread::yield();
+
+		if (start()) {
+
+			commit();
+		}
+	}
+
+	/*if () {
+		while (!isCommited())
+		setHelperTransaction(helper);
+
+		return commit();
+	}*/
+
+	return true;
 
 	/*if (!start())
 		return false;
@@ -226,10 +293,17 @@ void Transaction::doHelpTransactions() {
 			Thread::yield();
 		}
 
+		/*if (i > 1000)
+			warning("too much waiting? " + String::valueOf(i));*/
+
 		debug("helping transaction " + helpedTransaction->getLoggingName());
 
-		helpedTransaction->doRetry();
+		helpedTransaction->doRetry(this);
 	}
+
+//	TransactionalMemoryManager::instance()->setCurrentTransaction(this);
+
+	helpedTransactions.removeAll();
 }
 
 void Transaction::reset() {
@@ -239,19 +313,29 @@ void Transaction::reset() {
 
 	localObjectCache.removeAll();
 
+	/*SortedVector<uint64> deleted;
+	deleted.setNoDuplicateInsertPlan();*/
+
 	for (int i = 0; i < readOnlyObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
-		delete handle;
+
+		//if (deleted.put((uint64)handle) != -1)
+			delete handle;
 	}
 
 	readOnlyObjects.removeAll();
 
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
-		delete handle;
+
+		//if (deleted.put((uint64)handle) != -1)
+			delete handle;
+
 	}
 
 	readWriteObjects.removeAll();
+
+	helpedTransactions.removeAll();
 
 	status = INITIAL;
 }
@@ -270,14 +354,29 @@ bool Transaction::acquireReadWriteObjects() {
 		while (!handle->acquireHeader(this)) {
 			Transaction* competingTransaction = handle->getCompetingTransaction();
 			if (competingTransaction == NULL) {
-				debug("conflict with already released transaction");
-				return false;
+				/*debug("conflict with already released transaction");
+				return false;*/
+				Thread::yield();
+				continue;
 			}
 
-			if (!resolveConflict(competingTransaction))
+			if (competingTransaction->compareTo(this) < 0)
+				resolveConflict(competingTransaction);
+			else
 				return false;
 
+
+			/*if (!resolveConflict(competingTransaction)) {
+				debug("could not resolve conflict");
+				return false;
+			}*/
+
 			Thread::yield();
+		}
+
+		if (handle->hasObjectChanged()) {
+			debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
+			return false;
 		}
 	}
 
@@ -306,11 +405,21 @@ bool Transaction::acquireReadWriteObjects() {
 void Transaction::releaseReadWriteObjects() {
 	debug("releasing read/write objects");
 
+	//Vector<Reference<Object*> > objects(100, 100);
+
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
+		/*Object* objectCopy = handle->getObjectLocalCopy();
+
+		if (objectCopy != NULL) {
+			objects.add(objectCopy);
+		}*/
+
 		handle->releaseHeader();
 	}
+
+	//TransactionalMemoryManager::instance()->getObjectManager()->addObjectsToSave(objects);
 
 	debug("finished releasing read/write objects");
 }

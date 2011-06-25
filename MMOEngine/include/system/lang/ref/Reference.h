@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define REFERENCE_H_
 
 #include "../Object.h"
+#include "../Long.h"
 
 namespace sys {
   namespace lang {
@@ -48,6 +49,10 @@ namespace sys {
 			updateObject(ref.object);
 
 			return *this;
+		}
+
+		int hashCode() const {
+			return UnsignedLong::hashCode((uint64)object);
 		}
 
 		O operator=(O obj) {

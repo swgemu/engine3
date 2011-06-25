@@ -19,7 +19,7 @@ namespace engine {
 	protected:
 		DistributedObjectClassHelper* _classHelper;
 		
-		Reference<DistributedObjectStub*> _stub;
+		WeakReference<DistributedObjectStub*> _stub;
 		
 	public:
 		DistributedObjectServant();

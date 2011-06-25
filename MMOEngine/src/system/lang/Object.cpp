@@ -11,6 +11,49 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "MemoryManager.h"
 
 #include "Object.h"
+#include "system/util/SortedVector.h"
+#include "system/util/HashSet.h"
+#include "engine/stm/TransactionalReference.h"
+#include "engine/stm/TransactionalObjectHeader.h"
+
+Object::Object() : ReferenceCounter(), Variable() {
+	_destroying = false;
+
+	weakReferences = NULL;
+
+	//MemoryManager::getInstance()->create(this);
+
+#ifdef TRACE_REFERENCES
+	referenceHolders.setNullValue(NULL);
+#endif
+}
+
+Object::Object(const Object& obj) : ReferenceCounter(), Variable() {
+	_destroying = false;
+
+	weakReferences = NULL;
+
+	//MemoryManager::getInstance()->create(this);
+
+#ifdef TRACE_REFERENCES
+	referenceHolders.setNullValue(NULL);
+#endif
+}
+
+Object::~Object() {
+#ifdef TRACE_REFERENCES
+	for (int i = 0; i < referenceHolders.size(); ++i)
+		delete referenceHolders.get(i);
+#endif
+
+	if (_references.get() > 0)
+		assert(0 && "Deleting object with reference > 0");
+
+	delete weakReferences;
+	weakReferences = NULL;
+
+	finalize();
+}
 
 void Object::release() {
 	if (_references.get() == 0)
@@ -19,54 +62,89 @@ void Object::release() {
 	if (decreaseCount()) {
 		if (notifyDestroy()) {
 			MemoryManager::getInstance()->reclaim(this);
+			//destroy();
 		}
 	}
 }
 
 void Object::acquireWeak(WeakReferenceBase* ref) {
-#ifndef WITH_STM
+//#ifndef WITH_STM
 	Locker locker(&referenceMutex);
 
-	weakReferences.add(ref);
-#endif
+	if (weakReferences == NULL)
+		weakReferences = new HashSet<WeakReferenceBase*>();
 
+	weakReferences->add(ref);
+/*#else
+	if (weakReferences == NULL) {
+		weakReferences = new TransactionalReference<Vector<WeakReferenceBase*>*>(new Vector<WeakReferenceBase*>());
+	}
+
+	(*weakReferences).getForUpdate()->add(ref);
+#endif*/
 
 }
 
 void Object::releaseWeak(WeakReferenceBase* ref) {
-#ifndef WITH_STM
+//#ifndef WITH_STM
 	Locker locker(&referenceMutex);
+//#endif
 
-	for (int i = 0; i < weakReferences.size(); ++i) {
-		WeakReferenceBase* reference = weakReferences.get(i);
+	if (weakReferences == NULL)
+		return;
+
+//#ifndef WITH_STM
+	//Vector<WeakReferenceBase*>* vector = weakReferences;
+//#else
+	//Vector<WeakReferenceBase*>* vector = (*weakReferences).getForUpdate();
+//#endif
+	/*for (int i = 0; i < vector->size(); ++i) {
+		WeakReferenceBase* reference = vector->get(i);
 
 		if (reference == ref) {
-			weakReferences.remove(i);
+			vector->remove(i);
 
 			break;
 		}
-	}
-#endif
+	}*/
 
-
+	weakReferences->remove(ref);
 }
 
 void Object::destroy() {
 	_destroying = true;
 
-#ifndef WITH_STM
+//#ifndef WITH_STM
 	Locker locker(&referenceMutex);
+//#endif
 
-	while (!weakReferences.isEmpty()) {
-			WeakReferenceBase* ref = weakReferences.remove(0);
+	if (weakReferences != NULL) {
+		/*Vector<WeakReferenceBase*>* vector = weakReferences;
+
+		for (int i = 0; i < vector->size(); ++i) {
+			WeakReferenceBase* ref = vector->get(i);
 			ref->clearObject();
 		}
-#endif
+
+		delete weakReferences;
+		weakReferences = NULL;*/
+
+		HashSetIterator<WeakReferenceBase*> iterator = weakReferences->iterator();
+
+		while (iterator.hasNext())
+			iterator.getNextKey()->clearObject();
+
+		delete weakReferences;
+		weakReferences = NULL;
+	}
 
 
-#ifndef WITH_STM
+//#ifndef WITH_STM
 	locker.release();
-#endif
+//#endif
+
+	if (_references.get() > 0)
+		assert(0 && "Deleting object with reference > 0");
 
 	delete this;
 }

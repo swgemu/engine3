@@ -50,7 +50,7 @@ class QuadTreeNode: public Object {
 	SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> > objects;
 
 #ifdef WITH_STM
-	TransactionalReference<QuadTreeNode*> parentNode;
+	TransactionalWeakReference<QuadTreeNode*> parentNode;
 	TransactionalReference<QuadTreeNode*> nwNode;
 	TransactionalReference<QuadTreeNode*> neNode;
 	TransactionalReference<QuadTreeNode*> swNode;

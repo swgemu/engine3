@@ -61,7 +61,7 @@ public:
 
 	virtual int clearSession();
 
-	Facade* _this;
+	WeakReference<Facade*> _this;
 
 	operator const Facade*();
 
@@ -70,6 +70,8 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~FacadeImplementation();
+
+	Object* clone();
 
 	void finalize();
 
@@ -96,6 +98,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Facade;
+	friend class TransactionalObjectHandle<FacadeImplementation*>;
 };
 
 class FacadeAdapter : public ManagedObjectAdapter {

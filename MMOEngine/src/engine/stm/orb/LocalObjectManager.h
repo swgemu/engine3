@@ -22,12 +22,12 @@ namespace engine {
   		DistributedObjectBroker* objectBroker;
   		DOBObjectManager* objectManager;
 
-  		HashTable<uint64, DistributedObjectStub*> localObjectDirectory;
+  		HashTable<uint64, Reference<DistributedObjectStub*> > localObjectDirectory;
 
-  		HashTable<String, DistributedObjectStub*> localNamingDirectory;
+  		HashTable<String, Reference<DistributedObjectStub*> > localNamingDirectory;
 
-  		SortedVector<DistributedObjectStub*> undeployedObjects;
-  		SortedVector<DistributedObjectStub*> destroyedObjects;
+  		SortedVector<Reference<DistributedObjectStub*> > undeployedObjects;
+  		SortedVector<Reference<DistributedObjectStub*> > destroyedObjects;
 
   	public:
   		LocalObjectManager();

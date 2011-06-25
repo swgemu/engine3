@@ -12,3 +12,8 @@ AtomicReference<MemoryManager> MemoryManager::inst;
 void MemoryManager::reclaim(Object* object) {
 	object->destroy();
 }
+
+void MemoryManager::create(Object* object) {
+
+}
+

@@ -198,7 +198,8 @@ class QuadTreeEntry extends Observable {
 	}
 
 	@local
-	public QuadTreeNode getNode() {
+	@dereferenced
+	public TransactionalReference<QuadTreeNode> getNode() {
 		return node;
 	}
 	

@@ -21,6 +21,8 @@ namespace engine {
   namespace stm {
 
 	template<class O> class TransactionalObjectHeader;
+	template<class O> class TransactionalStrongObjectHeader;
+	template<class O> class TransactionalWeakObjectHeader;
 
 	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<Object*>*> {
 	public:
@@ -40,11 +42,11 @@ namespace engine {
 	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandle<Object*>*> {
 	public:
 		template<class O> void add(TransactionalObjectHandle<O>* handle) {
-			SortedVector<TransactionalObjectHandle<Object*>*>::add((TransactionalObjectHandle<Object*>*) handle);
+			SortedVector<TransactionalObjectHandle<Object*>*>::put((TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> bool removeElement(TransactionalObjectHandle<O>* handle) {
-			return SortedVector<TransactionalObjectHandle<Object*>*>::removeElement((TransactionalObjectHandle<Object*>*) handle);
+			return SortedVector<TransactionalObjectHandle<Object*>*>::drop((TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> bool contains(TransactionalObjectHandle<O>* handle) {
@@ -104,6 +106,9 @@ namespace engine {
 		static const int COMMITTED = 4;
 
 	public:
+		static ReadWriteLock blockLock;
+
+	public:
 		Transaction(int id);
 
 		virtual ~Transaction();
@@ -156,13 +161,14 @@ namespace engine {
 
 		template<class O> O getOpenedObject(TransactionalObjectHeader<O>* header);
 
-		template<class O> TransactionalObjectHeader<O>* getHeader(O object);
+		template<class O> TransactionalObjectHeader<O>* getStrongHeader(O object);
+		template<class O> TransactionalObjectHeader<O>* getWeakHeader(O object);
 
 		bool doCommit();
 
 		void doAbort();
 
-		bool doRetry();
+		bool doRetry(Transaction* helper);
 
 		void doHelpTransactions();
 
@@ -193,8 +199,8 @@ namespace engine {
 
 		void deleteObject(Object* object);
 
-		Vector<Object*>& getDeletedObjects() {
-			return reclaimedObjects;
+		Vector<Object*>* getDeletedObjects() {
+			return &reclaimedObjects;
 		}
 
 		friend class TaskManager;
@@ -202,13 +208,24 @@ namespace engine {
 		friend class TransactionalObjectManager;
 		template<class O> friend class TransactionalObjectHeader;
 		template<class O> friend class TransactionalReference;
+		template<class O> friend class TransactionalWeakReference;
 	};
 
-	template<class O> TransactionalObjectHeader<O>* Transaction::getHeader(O object) {
+	template<class O> TransactionalObjectHeader<O>* Transaction::getStrongHeader(O object) {
 		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
 
 		if (header == NULL) {
-			return new TransactionalObjectHeader<O>(object);
+			return new TransactionalStrongObjectHeader<O>(object);
+		}
+
+		return header;
+	}
+
+	template<class O> TransactionalObjectHeader<O>* Transaction::getWeakHeader(O object) {
+		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
+
+		if (header == NULL) {
+			return new TransactionalWeakObjectHeader<O>(object);
 		}
 
 		return header;
@@ -229,6 +246,10 @@ namespace engine {
 
 		O object = dynamic_cast<O>(handle->getObject());
 
+		if (handle->getObjectLocalCopy() != NULL) {
+			object = dynamic_cast<O>(handle->getObjectLocalCopy());
+		}
+
 		assert(object != NULL);
 		return object;
 	}
@@ -242,6 +263,7 @@ namespace engine {
 			handle = header->createWriteHandle();
 
 			localObjectCache.put(handle->getObjectLocalCopy(), header);
+			localObjectCache.put(handle->getObject(), header);
 
 			openedObjets.put<O>(header, handle);
 
@@ -250,6 +272,9 @@ namespace engine {
 			readOnlyObjects.removeElement<O>(handle);
 
 			readWriteObjects.add<O>(handle);
+			handle->upgradeToWrite();
+
+			localObjectCache.put(handle->getObjectLocalCopy(), header);
 		}
 
 		O localCopy = dynamic_cast<O>(handle->getObjectLocalCopy());

@@ -24,7 +24,7 @@ public:
 		while (true) {
 			TransactionalMemoryManager::instance()->printStatistics();
 
-			Thread::sleep(10000);
+			Thread::sleep(1000);
 		}
 	}
 };
@@ -51,6 +51,8 @@ TransactionalMemoryManager::TransactionalMemoryManager() : Logger("Transactional
 
 	initializationTransactionStarted = false;
 
+	reclaiming = false;
+
 	setInfoLogLevel();
 	setGlobalLogging(true);
 }
@@ -75,21 +77,34 @@ void TransactionalMemoryManager::commitPureTransaction() {
 }
 
 Transaction* TransactionalMemoryManager::getTransaction() {
-	Transaction* transaction = currentTransaction.get();
+	Reference<Transaction*>* transaction = currentTransaction.get();
 
 	if (transaction == NULL) {
-		transaction = new Transaction(transactionID.increment());
-
-		//transaction->info("created");
-
+		//transaction = new Transaction(transactionID.increment());
+		transaction = new Reference<Transaction*>();
 		currentTransaction.set(transaction);
 	}
 
-	return transaction;
+	if (*transaction == NULL) {
+		*transaction = new Transaction(transactionID.increment());
+
+		//transaction->info("created");
+	}
+
+	return *transaction;
+}
+
+void TransactionalMemoryManager::setCurrentTransaction(Transaction* transaction) {
+	Reference<Transaction*>* trans = currentTransaction.get();
+
+	*trans = transaction;
+	//currentTransaction.set(transaction);
 }
 
 void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
-	Transaction* current = currentTransaction.get();
+	//blockLock.rlock();
+
+	Reference<Transaction*>* current = currentTransaction.get();
 
 /*	while (current != NULL) {
 		current = currentTransaction.get();
@@ -106,38 +121,49 @@ void TransactionalMemoryManager::startTransaction(Transaction* transaction) {
 		while (!initializationTransactionStarted.get()) {
 			Thread::sleep(1000);
 
-			current = currentTransaction.get();
+			*current = *currentTransaction.get();
 		}
 	}
 
 
-	assert(current == NULL || current == transaction);
+	assert(*current == NULL || *current == transaction);
 
-	currentTransaction.set(transaction);
+	//currentTransaction.set(transaction);
+	*current = transaction;
 
 	startedTransactions.increment();
 }
 
 void TransactionalMemoryManager::commitTransaction() {
-	Transaction* transaction = currentTransaction.get();
+	Reference<Transaction*>* transaction = currentTransaction.get();
 	//commitedTrans.set(transaction->getIdentifier(), true);
 
 	debug("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
 	Vector<Object*>* objects = getReclamationList();
 	debug("Reclamation list size:" + String::valueOf(objects->size()));
 
-	reclaimObjects();
+	reclaimObjects(0, 0);
 
 	commitedTransactions.increment();
 
-	if (transaction->getIdentifier() == 1)
+	if ((*transaction)->getIdentifier() == 1)
 		initializationTransactionStarted.compareAndSet(false, true);
 
-	currentTransaction.set(NULL);
+	//currentTransaction.set(NULL);
+	*transaction = NULL;
+
+	//blockLock.runlock();
 }
 
 void TransactionalMemoryManager::abortTransaction() {
-	currentTransaction.set(NULL);
+//	blockLock.runlock();
+
+	Reference<Transaction*>* transaction = currentTransaction.get();
+
+	reclaimObjects(0, 0);
+
+	//currentTransaction.set(NULL);
+	*transaction = NULL;
 
 	abortedTransactions.increment();
 }
@@ -150,47 +176,110 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 	if (!object->_setDestroying())
 		return;
 
+	/*Transaction* trans = dynamic_cast<Transaction*>(object);
+
+	if (trans != NULL)  {
+		trans->destroy();
+		return;
+	}*/
+
 	Reference<Transaction*> transaction = Transaction::currentTransaction();
 	transaction->deleteObject(object);
 }
 
+void TransactionalMemoryManager::create(Object* object) {
+	Locker locker(&deletedMutex);
+
+	int find = deleted.find((uint64)object);
+
+	if (find != -1) {
+		delete deleted.get(find);
+		deleted.remove(find);
+	}
+
+}
+
 void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjectsToReclaim) {
+	reclaiming = true;
+
 	Vector<Object*>* objects = getReclamationList();
 
 	int objectsReclaimed = 0;
 
 	uint64 startTime = System::getMikroTime();
 
-	while (objects->size() > objectsToSpare) {
-		Object* obj = objects->remove(0);
+	//Locker locker(&deletedMutex);
+
+	/*if (deleted.contains((uint64)object)) {
+		error("Object already on deleted list");
+		DeletedTrace trace;
+		trace.print();
+
+		error("previously reclaimed here");
+		deleted.get((uint64)object)->print();
+	} else
+		deleted.put((uint64)object, new DeletedTrace());*/
+
+	//while (objects->size() > objectsToSpare) {
+	for (int i = 0; i < objects->size(); ++i) {
+		Object* obj = objects->get(i);
 
 		if (obj->getReferenceCount() == 0) {
 			MemoryManager::reclaim(obj);
 
+			/*if (deleted.contains((uint64)obj)) {
+				error("Object already on deleted list");
+				DeletedTrace trace;
+				trace.setTid(currentTransaction.get()->getIdentifier());
+				trace.print();
+
+				error("previously reclaimed here");
+				deleted.get((uint64)obj)->print();
+			} else {
+				DeletedTrace* trace = new DeletedTrace();
+				trace->setTid(currentTransaction.get()->getIdentifier());
+				deleted.put((uint64)obj, trace);
+			}*/
+
 			if (++objectsReclaimed == maxObjectsToReclaim)
 				break;
-		} else
+		} else {
 			obj->_clearDestroying();
+
+			//deleted.drop((uint64)obj);
+		}
 	}
 
-	info(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
+
+
+	debug(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
 			+ String::valueOf(System::getMikroTime() - startTime) + " Us, "
 			+ String::valueOf(objects->size()) + " remained in queue");
 
 	Reference<Transaction*> transaction = Transaction::currentTransaction();
-	Vector<Object*>& objectsForNextCommit = transaction->getDeletedObjects();
+	Vector<Object*>* objectsForNextCommit = transaction->getDeletedObjects();
 
-	for (int i = 0; i < objectsForNextCommit.size(); ++i) {
-		Object* obj = objectsForNextCommit.get(i);
+	if (objectsForNextCommit->size() > 0) {
+		objects->removeAll(objectsForNextCommit->size(), 100);
+
+		objects->addAll(*objectsForNextCommit);
+
+		/*for (int i = 0; i < objectsForNextCommit->size(); ++i) {
+		Object* obj = objectsForNextCommit->get(i);
 
 		objects->add(obj);
-	}
+	}*/
+	} else
+		objects->removeAll(100, 100);
 
-	objectsForNextCommit.removeAll();
+	objectsForNextCommit->removeAll();
+
+	reclaiming = false;
 }
 
- Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
+Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
 	Vector<Object*>* objects = reclamationList.get();
+
 	if (objects == NULL) {
 		objects = new Vector<Object*>();
 
@@ -212,7 +301,8 @@ void TransactionalMemoryManager::printStatistics() {
 			<< "retried " << retryConflicts.get() << ", "
 			<< "aborted " << abortedTransactions.get() << ") - tasks ("
 			<< "exectuing " << taskManager->getExecutingTaskSize() << ", "
-			<< "scheduled " << taskManager->getScheduledTaskSize() << ")";
+			<< "scheduled " << taskManager->getScheduledTaskSize() << ") "
+			<< "aborted due exceptions " << failedToExceptions;
 
 
 	info(str);
@@ -221,4 +311,5 @@ void TransactionalMemoryManager::printStatistics() {
 	commitedTransactions.set(0);
 	abortedTransactions.set(0);
 	retryConflicts.set(0);
+	failedToExceptions.set(0);
 }

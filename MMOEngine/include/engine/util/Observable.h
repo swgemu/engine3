@@ -76,7 +76,7 @@ public:
 
 	int getObserverCount(unsigned int eventType);
 
-	Observable* _this;
+	WeakReference<Observable*> _this;
 
 	operator const Observable*();
 
@@ -85,6 +85,8 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~ObservableImplementation();
+
+	Object* clone();
 
 	void finalize();
 
@@ -111,6 +113,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Observable;
+	friend class TransactionalObjectHandle<ObservableImplementation*>;
 };
 
 class ObservableAdapter : public ManagedObjectAdapter {

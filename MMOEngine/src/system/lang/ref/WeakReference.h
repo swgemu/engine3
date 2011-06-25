@@ -18,6 +18,15 @@ namespace sys {
 	   virtual ~WeakReferenceBase() {
 
 	   }
+
+	   int compareTo(WeakReferenceBase* base) {
+		   if (this < base)
+			   return 1;
+		   else if (this > base)
+			   return -1;
+		   else return 0;
+	   }
+
    protected:
 	   virtual void clearObject() = 0;
 

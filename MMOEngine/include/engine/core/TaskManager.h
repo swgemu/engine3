@@ -33,6 +33,8 @@ namespace engine {
 
 		}
 
+		virtual bool getNextExecutionTime(Task* task, Time& nextExecutionTime) = 0;
+
 		virtual void executeTask(Task* task) = 0;
 
 		virtual bool isTaskScheduled(Task* task) = 0;

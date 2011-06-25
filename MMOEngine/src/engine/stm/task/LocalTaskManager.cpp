@@ -7,6 +7,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 LocalTaskManager::LocalTaskManager() {
 	merging = false;
+
+	/*executedTasks.setNoDuplicateInsertPlan();
+	scheduledTasks.setNoDuplicateInsertPlan();
+	cancelledTasks.setNoDuplicateInsertPlan();*/
+
+	lastTaskAction.setAllowOverwriteInsertPlan();
+	lastTaskAction.setNullValue(NULL);
 }
 
 void LocalTaskManager::initialize() {
@@ -18,13 +25,62 @@ void LocalTaskManager::start() {
 void LocalTaskManager::shutdown() {
 }
 
-void LocalTaskManager::executeTask(Task* task) {
+/*void LocalTaskManager::executeTask(Task* task) {
 	if (executedTasks.put(task) != -1) {
 		task->acquire();
 	}
+}*/
+
+void LocalTaskManager::executeTask(Task* task) {
+	/*int find = lastTaskAction.find(task);
+
+	if (find != -1) {
+		TaskAction* action = lastTaskAction.elementAt(find).getValue();
+
+		if (action->getType() != action->EXECUTE) {
+			task->acquire();
+			executedTasks.add(task);
+		}
+	} else {
+		task->acquire();
+		executedTasks.add(task);
+	}
+
+	lastTaskAction.put(task, new TaskAction(TaskAction::EXECUTE, task, task->getNextExecutionTime()));*/
+
+	executedTasks.add(task);
+	task->acquire();
+
+	/*if (executedTasks.put(task) != -1) {
+		task->acquire();
+	}*/
+
+}
+
+bool LocalTaskManager::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
+	TaskAction* action = lastTaskAction.get(task);
+
+	if (action == NULL)
+		return false;
+
+	nextExecutionTime = action->getNextExecutionTime();
+
+	return true;
 }
 
 void LocalTaskManager::scheduleTask(Task* task, uint64 delay) {
+	if (task->isScheduled())
+		throw IllegalArgumentException("task already scheduled");
+
+	Time nextTime;
+
+	if (delay != 0)
+		nextTime.addMiliTime(delay);
+
+	lastTaskAction.put(task, new TaskAction(TaskAction::SCHEDULE, task, nextTime));
+}
+
+/*void LocalTaskManager::scheduleTask(Task* task, uint64 delay) {
 	if (task->isScheduled())
 		throw IllegalArgumentException("task already scheduled");
 
@@ -38,9 +94,11 @@ void LocalTaskManager::scheduleTask(Task* task, uint64 delay) {
 		task->setScheduleTrace();
 	#endif
 	}
-}
 
-void LocalTaskManager::scheduleTask(Task* task, Time& time) {
+	cancelledTasks.removeElement(task);
+}*/
+
+/*void LocalTaskManager::scheduleTask(Task* task, Time& time) {
 	if (task->isScheduled())
 		throw IllegalArgumentException("task already scheduled");
 
@@ -53,21 +111,44 @@ void LocalTaskManager::scheduleTask(Task* task, Time& time) {
 		task->setScheduleTrace();
 	#endif
 	}
+
+	cancelledTasks.removeElement(task);
+}*/
+
+void LocalTaskManager::scheduleTask(Task* task, Time& time) {
+	if (task->isScheduled())
+		throw IllegalArgumentException("task already scheduled");
+
+	lastTaskAction.put(task, new TaskAction(TaskAction::SCHEDULE, task, time));
 }
 
-void LocalTaskManager::rescheduleTask(Task* task, uint64 delay) {
+/*void LocalTaskManager::rescheduleTask(Task* task, uint64 delay) {
 	cancelTask(task);
 
 	scheduleTask(task, delay);
+}*/
+
+void LocalTaskManager::rescheduleTask(Task* task, uint64 delay) {
+	Time nextTime;
+
+	if (delay != 0)
+		nextTime.addMiliTime(delay);
+
+	lastTaskAction.put(task, new TaskAction(TaskAction::RESCHEDULE, task, nextTime));
 }
 
 void LocalTaskManager::rescheduleTask(Task* task, Time& time) {
+	lastTaskAction.put(task, new TaskAction(TaskAction::RESCHEDULE, task, time));
+}
+
+
+/*void LocalTaskManager::rescheduleTask(Task* task, Time& time) {
 	cancelTask(task);
 
 	scheduleTask(task, time);
-}
+}*/
 
-bool LocalTaskManager::cancelTask(Task* task) {
+/*bool LocalTaskManager::cancelTask(Task* task) {
 	if (!task->isScheduled())
 		return false;
 
@@ -76,6 +157,30 @@ bool LocalTaskManager::cancelTask(Task* task) {
 	}
 
 	return cancelledTasks.put(task) != -1;
+}*/
+
+bool LocalTaskManager::cancelTask(Task* task) {
+	if (!task->isScheduled())
+		return false;
+
+	/*if (scheduledTasks.removeElement(task)) {
+		task->release();
+	}
+
+	return cancelledTasks.put(task) != -1;*/
+
+	//if
+
+	TaskAction* action = lastTaskAction.get(task);
+
+	if (action != NULL) {
+		if (action->getType() == TaskAction::CANCEL)
+			return false;
+	}
+
+	lastTaskAction.put(task, new TaskAction(TaskAction::CANCEL, task, task->getNextExecutionTime()));
+
+	return true;
 }
 
 Task* LocalTaskManager::getTask() {
@@ -83,21 +188,77 @@ Task* LocalTaskManager::getTask() {
 }
 
 bool LocalTaskManager::isTaskScheduled(Task* task) {
-	return scheduledTasks.contains(task);
+	//return scheduledTasks.contains(task);
+
+	TaskAction* action = lastTaskAction.get(task);
+
+	if (action == NULL)
+		return false;
+
+	if (action->getType() == TaskAction::SCHEDULE ||
+			action->getType() == TaskAction::RESCHEDULE)
+		return true;
+
+	return false;
 }
 
 bool LocalTaskManager::isTaskCancelled(Task* task) {
-	return cancelledTasks.contains(task);
+	//return cancelledTasks.contains(task);
+
+	TaskAction* action = lastTaskAction.get(task);
+
+	if (action == NULL)
+		return false;
+
+	if (action->getType() == TaskAction::CANCEL)
+		return true;
+
+	return false;
 }
 
 void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
 	merging = true;
 
-	manager->debug("executing " + String::valueOf(executedTasks.size()) +
+	/*manager->debug("executing " + String::valueOf(executedTasks.size()) +
 			", adding " + String::valueOf(scheduledTasks.size()) +
-			", canceling " + String::valueOf(cancelledTasks.size()) +" tasks");
+			", canceling " + String::valueOf(cancelledTasks.size()) +" tasks");*/
 
 	manager->executeTasks(executedTasks);
+
+	executedTasks.removeAll();
+
+	try {
+		for (int i = 0; i < lastTaskAction.size(); ++i) {
+			Task* task = lastTaskAction.elementAt(i).getKey();
+			TaskAction* action = lastTaskAction.elementAt(i).getValue();
+
+			switch (action->getType()) {
+			case TaskAction::EXECUTE:
+				//manager->executeTask(task);
+				break;
+			case TaskAction::SCHEDULE: {
+				try {
+					manager->scheduleTask(task, action->getNextExecutionTime());
+				} catch (IllegalArgumentException& e) {
+					//manager->error(e.getMessage() + " for " + task->toStringData());
+
+					manager->rescheduleTask(task, action->getNextExecutionTime());
+				}
+				break;
+			} case TaskAction::RESCHEDULE:
+				manager->rescheduleTask(task, action->getNextExecutionTime());
+				break;
+			case TaskAction::CANCEL:
+				manager->cancelTask(task);
+				break;
+
+			}
+		}
+	} catch (Exception& e) {
+		Logger::console.error(e.getMessage());
+	}
+
+	/*manager->executeTasks(executedTasks);
 
 	for (int i = 0; i < cancelledTasks.size(); ++i) {
 		Task* task = cancelledTasks.get(i);
@@ -107,12 +268,12 @@ void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
 
 	cancelledTasks.removeAll();
 
-	Vector<Task*> tasks = scheduledTasks;
+	//Vector<Reference<Task*> > tasks = scheduledTasks;
 
-	scheduledTasks.removeAll();
+	//scheduledTasks.removeAll();
 
-	for (int i = 0; i < tasks.size(); ++i) {
-		Task* task = tasks.get(i);
+	for (int i = 0; i < scheduledTasks.size(); ++i) {
+		Task* task = scheduledTasks.get(i);
 
 		try {
 			manager->scheduleTask(task, task->getNextExecutionTime());
@@ -123,27 +284,42 @@ void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
 		}
 
 		task->release();
-	}
+	}*/
 
 	flushTasks();
 
 	merging = false;
 }
 
+void LocalTaskManager::undoTasks() {
+	for (int i = 0; i < executedTasks.size(); ++i)
+		executedTasks.get(i)->release();
+
+	/*for (int i = 0; i < scheduledTasks.size(); ++i)
+		scheduledTasks.get(i)->release();*/
+
+
+	flushTasks();
+}
+
 void LocalTaskManager::flushTasks() {
 	executedTasks.removeAll();
 
-	scheduledTasks.removeAll();
-	cancelledTasks.removeAll();
+	lastTaskAction.removeAll();
+
+	/*scheduledTasks.removeAll();
+	cancelledTasks.removeAll();*/
 }
 
 void LocalTaskManager::printInfo() {
 }
 
 int LocalTaskManager::getScheduledTaskSize() {
-	return scheduledTasks.size();
+	//return scheduledTasks.size();
+	return 0;
 }
 
 int LocalTaskManager::getExecutingTaskSize() {
-	return executedTasks.size();
+	//return executedTasks.size();
+	return 0;
 }

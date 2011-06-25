@@ -44,7 +44,7 @@ public:
 	ManagedServiceImplementation();
 	ManagedServiceImplementation(DummyConstructorParameter* param);
 
-	ManagedService* _this;
+	WeakReference<ManagedService*> _this;
 
 	operator const ManagedService*();
 
@@ -53,6 +53,8 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~ManagedServiceImplementation();
+
+	Object* clone();
 
 	void finalize();
 
@@ -79,6 +81,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedService;
+	friend class TransactionalObjectHandle<ManagedServiceImplementation*>;
 };
 
 class ManagedServiceAdapter : public ManagedObjectAdapter {

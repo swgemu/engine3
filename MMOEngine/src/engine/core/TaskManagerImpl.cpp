@@ -156,8 +156,22 @@ void TaskManagerImpl::executeTask(Task* task) {
 	tasks.push(task);
 }
 
+void TaskManagerImpl::executeTaskFront(Task* task) {
+	tasks.pushFront(task);
+}
+
+void TaskManagerImpl::executeTaskRandom(Task* task) {
+	tasks.pushRandom(task);
+}
+
 void TaskManagerImpl::executeTasks(const Vector<Task*>& taskList) {
 	tasks.pushAll(taskList);
+}
+
+bool TaskManagerImpl::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
+	nextExecutionTime = task->getNextExecutionTime();
+
+	return true;
 }
 
 bool TaskManagerImpl::isTaskScheduled(Task* task) {

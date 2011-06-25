@@ -211,6 +211,8 @@ MMOEngine/include/engine/stm/TransactionalObject.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/include/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/include/engine/stm/TransactionalReference.h -text
+MMOEngine/include/engine/stm/TransactionalWeakObjectHeader.h -text
+MMOEngine/include/engine/stm/TransactionalWeakReference.h -text
 MMOEngine/include/engine/stm/mm/HazardPointer.h -text
 MMOEngine/include/engine/stm/orb/LocalObjectManager.h -text
 MMOEngine/include/engine/stm/orb/TransactionalObjectManager.h -text
@@ -580,6 +582,7 @@ MMOEngine/src/engine/stm/TransactionalMemoryManager.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/src/engine/stm/TransactionalReference.h -text
+MMOEngine/src/engine/stm/TransactionalWeakReference.h -text
 MMOEngine/src/engine/stm/mm/HazardPointer.h -text
 MMOEngine/src/engine/stm/orb/LocalObjectManager.cpp -text
 MMOEngine/src/engine/stm/orb/LocalObjectManager.h -text

@@ -263,7 +263,7 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 			sendSequenced(pack);
 
 		if (!reentrantTask->isScheduled())
-			reentrantTask->schedule(10);
+			reentrantTask->scheduleNonTransactionally(10);
 	}
 }
 
@@ -294,7 +294,7 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		sendBuffer.add(pack);
 
 		if (!reentrantTask->isScheduled())
-			reentrantTask->schedule(10);
+			reentrantTask->scheduleNonTransactionally(10);
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {

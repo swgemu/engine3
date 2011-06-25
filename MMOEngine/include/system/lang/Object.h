@@ -28,7 +28,22 @@ namespace sys {
 		class ObjectOutputStream;
 		class ObjectInputStream;
 	}
+
+	namespace util {
+		template<class O> class SortedVector;
+		template<class E> class HashSet;
+	}
 }
+
+#ifdef WITH_STM
+
+namespace engine {
+  namespace stm {
+  template<class O> class TransactionalReference;
+  }
+}
+
+#endif
 
 namespace sys {
   namespace lang {
@@ -36,13 +51,21 @@ namespace sys {
     class String;
 
 	using namespace sys::io;
+	using namespace sys::util;
+	using namespace engine::stm;
 
 	class Object : public ReferenceCounter, public Variable {
-	#ifndef WITH_STM
+//	#ifndef WITH_STM
 		Mutex referenceMutex;
-	#endif
+//	#endif
 
-		ArrayList<WeakReferenceBase*> weakReferences;
+		//ArrayList<WeakReferenceBase*> weakReferences;
+
+//#ifndef WITH_STM
+		HashSet<WeakReferenceBase*>* weakReferences;
+/*#else
+		TransactionalReference<Vector<WeakReferenceBase*>*>* weakReferences;
+#endif*/
 
 		AtomicBoolean _destroying;
 
@@ -51,29 +74,11 @@ namespace sys {
 	#endif
 
 	public:
-		Object() : ReferenceCounter(), Variable() {
-			_destroying = false;
+		Object();
 
-		#ifdef TRACE_REFERENCES
-			referenceHolders.setNullValue(NULL);
-		#endif
-		}
+		Object(const Object& obj);
 
-		Object(const Object& obj) : ReferenceCounter(), Variable() {
-			_destroying = false;
-
-		#ifdef TRACE_REFERENCES
-			referenceHolders.setNullValue(NULL);
-		#endif
-		}
-
-		virtual ~Object() {
-		#ifdef TRACE_REFERENCES
-			for (int i = 0; i < referenceHolders.size(); ++i)
-				delete referenceHolders.get(i);
-		#endif
-			finalize();
-		}
+		virtual ~Object();
 
 		virtual Object* clone() {
 			assert(0 && "clone method not declared");

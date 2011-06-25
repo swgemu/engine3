@@ -17,7 +17,7 @@ namespace engine {
 	class DistributedObjectDirectory {
     	HashTable<uint64, DistributedObjectAdapter*> objectMap;
 
-    	ObjectContainer<uint64, DistributedObject*>* helperObjectMap;
+    	HashTable<uint64, Reference<DistributedObject*> >* helperObjectMap;
     	//HashTable<uint64, Reference<DistributedObject*> >* helperObjectMap;
 	
 	public:

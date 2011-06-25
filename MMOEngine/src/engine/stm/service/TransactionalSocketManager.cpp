@@ -15,7 +15,7 @@ void TransactionalSocketManager::sendMessage(Message* message) {
 
 	//info("queuing message");
 
-	message->acquire();
+	//message->acquire();
 
 	queue->push(message);
 }
@@ -40,7 +40,9 @@ void TransactionalSocketManager::execute() {
 				socket->sendTo(message, &addr);
 		}
 
-		message->release();
+		//message->release();
+
+		delete message;
 	}
 
 	queue->removeAll();

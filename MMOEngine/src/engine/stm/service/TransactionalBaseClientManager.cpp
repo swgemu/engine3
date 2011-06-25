@@ -20,9 +20,16 @@ void TransactionalBaseClientManager::sendPacket(BasePacket* packet, BaseClient* 
 	//BaseClient* baseClient = packet->getClient()
 	packet->setClient(baseClient);
 
-	Vector<BasePacket*>* packetBuffer = getLocalBufferedPackets();
+	//VectorMap<BaseClient*, Vector<BasePacket*>*>* packetBuffer = getLocalBufferedPackets();
 
-	packetBuffer->add(packet);
+	Vector<BasePacket*>* buffer =  getLocalBufferedPackets();//packetBuffer->get(baseClient);
+
+	/*if (buffer == NULL) {
+		buffer = new Vector<BasePacket*>();
+		packetBuffer->put(baseClient, buffer);
+	}*/
+
+	buffer->add(packet);
 }
 
 Vector<BasePacket*>* TransactionalBaseClientManager::getLocalBufferedPackets() {
@@ -30,8 +37,10 @@ Vector<BasePacket*>* TransactionalBaseClientManager::getLocalBufferedPackets() {
 
 	if (queue == NULL) {
 		queue = new Vector<BasePacket*>();
+		//queue->setNoDuplicateInsertPlan();
 
 		//info("message queue created");
+		//queue->setNullValue(NULL);
 
 		bufferedPackets.set(queue);
 	}
@@ -40,13 +49,16 @@ Vector<BasePacket*>* TransactionalBaseClientManager::getLocalBufferedPackets() {
 }
 
 void TransactionalBaseClientManager::execute() {
-	Vector<BasePacket*>* queue = getLocalBufferedPackets();
+	//VectorMap<BaseClient*, Vector<BasePacket*>*>* queue = getLocalBufferedPackets();
+	Vector<BasePacket*>* packetQueue = getLocalBufferedPackets();
 
 	/*if (queue->size() > 0)
 		info("sending " + String::valueOf(queue->size()) + " messages", true);*/
 
-	for (int i = 0; i < queue->size(); ++i) {
-		BasePacket* pack = queue->get(i);
+	for (int j = 0; j < packetQueue->size(); ++j) {
+		//BasePacket* pack = queue->get(i);
+		BasePacket* pack = packetQueue->get(j);
+
 		BaseClient* baseClient = dynamic_cast<BaseClient*>(pack->getClient());
 
 		pack->setClient(NULL);
@@ -80,20 +92,19 @@ void TransactionalBaseClientManager::execute() {
 			error("HUI CATCH (...)");
 			baseClient->disconnect("unreported exception on sendPacket()", false);
 		}
-
 	}
 
-	queue->removeAll(1000, 100);
+	packetQueue->removeAll(1000, 100);
 }
 
 void TransactionalBaseClientManager::undo() {
-	Vector<BasePacket*>* queue = getLocalBufferedPackets();
+	Vector<BasePacket*>* packetQueue = getLocalBufferedPackets();
 
-	for (int i = 0; i < queue->size(); ++i) {
-		Message* message = queue->get(i);
+	for (int j = 0; j < packetQueue->size(); ++j) {
+		Message* message = packetQueue->get(j);
 
 		delete message;
 	}
 
-	queue->removeAll(1000, 100);
+	packetQueue->removeAll(1000, 100);
 }

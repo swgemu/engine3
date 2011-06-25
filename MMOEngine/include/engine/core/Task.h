@@ -9,6 +9,7 @@ namespace engine {
 
   namespace stm {
   	  class LocalTaskManager;
+  	  class TransactionalTaskManager;
   }
 
   namespace core {
@@ -16,6 +17,7 @@ namespace engine {
 	class TaskManager;
 	class TaskScheduler;
 	class TimedTaskQueue;
+	class TaskManagerImpl;
 
 	class Task : public PriorityQueueEntry, public Runnable, public virtual Object {
 	protected:
@@ -45,14 +47,18 @@ namespace engine {
 		bool isScheduled();
 
 		bool cancel();
+		bool cancelNonTransactionally();
 
 		void schedule(uint64 delay = 0);
 		void schedule(Time& time);
+
+		void scheduleNonTransactionally(uint64 delay = 0);
 
 		void schedulePeriodic(uint64 delay, uint64 period);
 		void schedulePeriodic(Time& time, uint64 period);
 
 		void reschedule(uint64 delay = 0);
+		void rescheduleNonTransactionally(uint64 delay = 0);
 		void reschedule(Time& time);
 
 		int compareTo(PriorityQueueEntry* node) {
@@ -92,14 +98,15 @@ namespace engine {
 				nextExecutionTime.addMiliTime(mtime);
 		}
 
+		inline Time& getNextExecutionTime() {
+			return nextExecutionTime;
+		}
+
 	public:
 		inline TaskScheduler* getTaskScheduler() {
 			return taskScheduler;
 		}
 
-		inline Time& getNextExecutionTime() {
-			return nextExecutionTime;
-		}
 
 		inline int getPriroty() {
 			return priority;
@@ -148,6 +155,8 @@ namespace engine {
 
 		friend class TimedTaskQueue;
 		friend class engine::stm::LocalTaskManager;
+		friend class engine::stm::TransactionalTaskManager;
+		friend class engine::core::TaskManagerImpl;
 	};
 
   } // namespace core

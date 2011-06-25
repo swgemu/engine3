@@ -18,10 +18,28 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
+  class ObjectsToSaveMap : public HashTable<Reference<DistributedObject*>, Reference<DistributedObjectServant*> > {
+	 /* int hash(const Reference<DistributedObject*>& key) {
+		  return UnsignedLong::hashCode((uint64)key.get());
+	  }*/
+
+  public:
+	  ObjectsToSaveMap() {
+
+	  }
+
+	  ObjectsToSaveMap(const ObjectsToSaveMap& o) : HashTable<Reference<DistributedObject*>, Reference<DistributedObjectServant*> >(o) {
+
+	  }
+  };
+
   	class TransactionalObjectManager : public ObjectBroker, public Command {
   		DistributedObjectBroker* objectBroker;
 
   		ThreadLocal<LocalObjectManager*> localObjectManager;
+
+  		ObjectsToSaveMap implementationCopiesToSave;
+  		Mutex saveMutex;
 
   	public:
   		TransactionalObjectManager();
@@ -44,6 +62,10 @@ namespace engine {
 		DistributedObject* lookUp(uint64 objid);
 
 		bool destroyObject(DistributedObjectStub* obj);
+
+		void addObjectsToSave(const Vector<Reference<Object*> >& objects);
+
+		ObjectsToSaveMap* getModifiedObjectsToSave();
 
   	protected:
 		LocalObjectManager* getLocalObjectManager();

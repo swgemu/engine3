@@ -22,8 +22,8 @@ namespace engine {
 
   		ThreadLocal<LocalTaskManager*>  localTaskManager;
 
-		static const int WORKER_THREADS = 4;
-		static const int SCHEDULER_THREADS = 2;
+		static const int WORKER_THREADS = 10;
+		static const int SCHEDULER_THREADS = 5;
 
   	  public:
   		void initialize();
@@ -40,11 +40,20 @@ namespace engine {
   		void rescheduleTask(Task* task, uint64 delay);
   		void rescheduleTask(Task* task, Time& time);
 
+  		Vector<Locker*>* blockTaskManager();
+  		void unblockTaskManager(Vector<Locker*>* lockers);
+
   		bool cancelTask(Task* task);
 
   		Task* getTask();
 
+  		inline TaskManagerImpl* getTaskManagerImpl() {
+  			return taskManager;
+  		}
+
   		bool isTaskScheduled(Task* task);
+
+  		bool getNextExecutionTime(Task* task, Time& nextExecutionTime);
 
   		void flushTasks();
 

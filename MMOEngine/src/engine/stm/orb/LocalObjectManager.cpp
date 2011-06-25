@@ -21,7 +21,7 @@ LocalObjectManager::LocalObjectManager() : Logger("LocalObjectManager"),
 }
 
 void LocalObjectManager::commitObjectChanges() {
-	HashTableIterator<uint64,DistributedObjectStub*> iterator = localObjectDirectory.iterator();
+	HashTableIterator<uint64, Reference<DistributedObjectStub*> > iterator = localObjectDirectory.iterator();
 
 	while (iterator.hasNext()) {
 		DistributedObjectStub* object = iterator.next();

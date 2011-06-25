@@ -21,6 +21,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Float.h"
 #include "Double.h"
 
+#include "system/platform.h"
+
 /*template<> unsigned int TypeInfoAtomicPointer<const char*>::hashCode(const char*& val) {
 	return String(val).hashCode();
 }*/
@@ -73,8 +75,8 @@ template<> unsigned int TypeInfoAtomicBase<double>::hashCode(const double& val) 
 	return Double::hashCode(val);
 }
 
-/*template<> unsigned int TypeInfoAtomicBase<void*>::hashCode(const void* val) {
-#ifdef PLATFORM64
+/*template<> unsigned int TypeInfoAtomicPointer<void*>::hashCode(const void*& val) {
+#ifdef PLATFORM_64
 	return UnsignedLong::hashCode((uint64) val);
 #else
 	return UnsignedInteger::hashCode((uint32) val);

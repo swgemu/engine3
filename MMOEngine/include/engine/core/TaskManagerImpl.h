@@ -56,6 +56,10 @@ namespace engine {
 		void executeTask(Task* task);
 		void executeTasks(const Vector<Task*>& tasks);
 
+		void executeTaskFront(Task* task);
+		void executeTaskRandom(Task* task);
+		bool getNextExecutionTime(Task* task, Time& nextExecutionTime);
+
 		bool isTaskScheduled(Task* task);
 
 		void scheduleTask(Task* task, uint64 delay = 0);

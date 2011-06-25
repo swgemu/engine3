@@ -99,7 +99,7 @@ public:
 
 	int inRangeObjectCount();
 
-	QuadTreeNode* getNode();
+	TransactionalReference<QuadTreeNode*> getNode();
 
 	unsigned long long getObjectID();
 
@@ -141,7 +141,7 @@ class QuadTreeEntryImplementation : public ObservableImplementation {
 protected:
 	Coordinate coordinates;
 
-	Reference<QuadTreeNode* > node;
+	TransactionalReference<QuadTreeNode* > node;
 
 	bool bounding;
 
@@ -214,7 +214,7 @@ public:
 
 	int inRangeObjectCount();
 
-	QuadTreeNode* getNode();
+	TransactionalReference<QuadTreeNode*> getNode();
 
 	virtual unsigned long long getObjectID();
 
@@ -230,7 +230,7 @@ public:
 
 	void clearBounding();
 
-	QuadTreeEntry* _this;
+	WeakReference<QuadTreeEntry*> _this;
 
 	operator const QuadTreeEntry*();
 
@@ -239,6 +239,8 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~QuadTreeEntryImplementation();
+
+	Object* clone();
 
 	void finalize();
 
@@ -265,6 +267,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class QuadTreeEntry;
+	friend class TransactionalObjectHandle<QuadTreeEntryImplementation*>;
 };
 
 class QuadTreeEntryAdapter : public ObservableAdapter {

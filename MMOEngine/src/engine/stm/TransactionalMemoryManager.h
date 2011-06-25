@@ -22,9 +22,32 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TransactionalObjectHeader.h"
 
 #include "TransactionalReference.h"
+#include "TransactionalWeakReference.h"
 
 namespace engine {
   namespace stm {
+
+  class DeletedTrace {
+	  StackTrace stackTrace;
+	  Thread* thread;
+	  int tid;
+  public:
+	  DeletedTrace() {
+		  thread = Thread::getCurrentThread();
+		  tid = 0;
+	  }
+
+	  void print() {
+		  System::out << "TID:" << tid << " Thread: " << hex << thread << endl;
+		  stackTrace.print();
+	  }
+
+	  void setTid(int tid) {
+		  this->tid = tid;
+	  }
+
+
+  };
 
 	class TransactionalMemoryManager : public Singleton<TransactionalMemoryManager>, public MemoryManager, public Logger {
 		TransactionalTaskManager* taskManager;
@@ -35,7 +58,7 @@ namespace engine {
 
 		TransactionalBaseClientManager* baseClientManager;
 
-		ThreadLocal<Transaction*> currentTransaction;
+		ThreadLocal<Reference<Transaction*>* > currentTransaction;
 
 		AtomicInteger transactionID;
 
@@ -43,8 +66,20 @@ namespace engine {
 		AtomicInteger commitedTransactions;
 		AtomicInteger abortedTransactions;
 		AtomicInteger retryConflicts;
+		AtomicInteger failedOnAcquireRW;
+		AtomicInteger failedToResolveConflict;
+		AtomicInteger failedToResolveConflictReleasedTransaction;
+		AtomicInteger failedToNotUNDECIDED;
+		AtomicInteger failedToExceptions;
+
+
+		bool reclaiming;
 
 		ThreadLocal<Vector<Object*>* > reclamationList;
+
+		VectorMap<uint64, DeletedTrace*> deleted;
+		Mutex deletedMutex;
+		ReadWriteLock blockLock;
 
 	public:
 		static void commitPureTransaction();
@@ -71,6 +106,18 @@ namespace engine {
 			return baseClientManager;
 		}
 
+		inline void blockTransactions() {
+			Transaction::blockLock.wlock();
+		}
+
+		inline void increaseFailedByExceptions() {
+			failedToExceptions.increment();
+		}
+
+		inline void unblockTransactions() {
+			Transaction::blockLock.unlock();
+		}
+
 	protected:
 		TransactionalMemoryManager();
 
@@ -87,6 +134,10 @@ namespace engine {
 		void retryTransaction();
 
 		void reclaim(Object* object);
+
+		void create(Object* object);
+
+		void setCurrentTransaction(Transaction* transaction);
 
 		void reclaimObjects(int objectsToSpare = 0, int maxObjectsToReclaim = 0);
 

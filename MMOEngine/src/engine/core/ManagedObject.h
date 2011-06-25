@@ -38,7 +38,7 @@ using namespace engine::core;
 namespace engine {
 namespace core {
 
-class ManagedObject : public DistributedObjectStub {
+class ManagedObject : public DistributedObjectStub, public TransactionalStrongObjectHeader<class ManagedObjectImplementation*> {
 public:
 	ManagedObject();
 
@@ -194,7 +194,7 @@ protected:
 public:
 	void setPersistent(int level);
 
-	ManagedObject* _this;
+	WeakReference<ManagedObject*> _this;
 
 	operator const ManagedObject*();
 
@@ -203,6 +203,8 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~ManagedObjectImplementation();
+
+	Object* clone();
 
 	void finalize();
 
@@ -215,6 +217,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedObject;
+	friend class TransactionalObjectHandle<ManagedObjectImplementation*>;
 };
 
 class ManagedObjectAdapter : public DistributedObjectAdapter {

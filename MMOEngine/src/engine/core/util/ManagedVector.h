@@ -15,7 +15,7 @@ namespace engine {
 namespace core {
 namespace util {
 
-class ManagedVector : public DistributedObjectStub {
+class ManagedVector : public DistributedObjectStub, public TransactionalStrongObjectHeader<class ManagedVectorImplementation*> {
 public:
 	DistributedObjectServant* _getImplementation();
 
@@ -35,7 +35,7 @@ public:
 	ManagedVectorImplementation();
 	ManagedVectorImplementation(DummyConstructorParameter* param);
 
-	ManagedVector* _this;
+	WeakReference<ManagedVector*> _this;
 
 	operator const ManagedVector*();
 
@@ -44,6 +44,8 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~ManagedVectorImplementation();
+
+	Object* clone();
 
 	void finalize();
 
@@ -70,6 +72,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedVector;
+	friend class TransactionalObjectHandle<ManagedVectorImplementation*>;
 };
 
 class ManagedVectorAdapter : public DistributedObjectAdapter {

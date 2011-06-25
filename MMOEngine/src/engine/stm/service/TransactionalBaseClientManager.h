@@ -27,6 +27,7 @@ namespace engine {
   namespace stm {
 
   	class TransactionalBaseClientManager : public Command, public Logger {
+  		//ThreadLocal<VectorMap<BaseClient*, Vector<BasePacket*>*>* > bufferedPackets;
   		ThreadLocal<Vector<BasePacket*>* > bufferedPackets;
 
   	public:

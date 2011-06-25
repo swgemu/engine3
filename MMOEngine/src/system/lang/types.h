@@ -1,6 +1,15 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
+#include "system/platform.h"
+
+#if GCC_VERSION >= 40100
+#include <typeinfo>
+#include <cxxabi.h>
+#endif
+
+#include "String.h"
+
 namespace sys {
 	namespace io {
 		class ObjectOutputStream;
@@ -72,6 +81,24 @@ public:
 
 	static unsigned int hashCode(const T& val) {
 		return val.hashCode();
+	}
+
+	static String getClassName(const T* val, bool withNamespace = false) {
+#if GCC_VERSION >= 40100
+		const char* name = typeid(*val).name();
+		int stat;
+		char* demangled = abi::__cxa_demangle(name, 0, 0, &stat);
+
+		if (stat == 0) {
+			String ret(demangled);
+
+			free(demangled);
+
+			return ret;
+		}
+
+#endif
+		return "";
 	}
 
 	/*static bool toString(T* address, sys::lang::String& value) {
@@ -186,6 +213,14 @@ public:
 
 	static int compare(T* val1, T* val2) {
 		return val1->compareTo(val2);
+	}
+
+	static unsigned int hashCode(const T* val) {
+#ifdef PLATFORM_64
+	return (unsigned int) ((uint64)val ^ ((uint64)val >> 32));
+#else
+	return (unsigned int) val;
+#endif
 	}
 
 	static T* nullValue() {

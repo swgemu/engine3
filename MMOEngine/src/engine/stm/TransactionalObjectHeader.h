@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
-*/
+ */
 
 #ifndef ENGINE_STM_TRANSACTIONALOBJECTHEADER_H_
 #define ENGINE_STM_TRANSACTIONALOBJECTHEADER_H_
@@ -20,32 +20,25 @@ namespace engine {
 	template<class O> class TransactionalObjectHandle;
 
 	template<class O> class TransactionalObjectHeader {
-		Reference<Object*> object;
-
+	protected:
 		AtomicReference<Transaction> ownerTransaction;
 
 	public:
 		TransactionalObjectHeader() {
-			object = NULL;
-
 			ownerTransaction = NULL;
 		}
 
-		TransactionalObjectHeader(O obj) {
-			setObject(obj);
+		virtual ~TransactionalObjectHeader() {
 
-			ownerTransaction = NULL;
 		}
 
 		O get();
 
 		O getForUpdate();
 
-		O getForDirty() {
-			return dynamic_cast<O>(object.get());
-		}
+		virtual O getForDirty() = 0;
 
-		bool isCurrentVersion(Object* obj);
+		virtual bool isCurrentVersion(Object* obj) = 0;
 
 	protected:
 		TransactionalObjectHandle<O>* createReadOnlyHandle();
@@ -54,32 +47,102 @@ namespace engine {
 
 		bool acquireObject(Transaction* transaction);
 
-		void releaseObject(TransactionalObjectHandle<O>* handle);
+		virtual void releaseObject(TransactionalObjectHandle<O>* handle) = 0;
 
 		void discardObject(Transaction* transaction);
 
-		Object* getObject();
+		virtual Object* getObject() = 0;
 
 		Transaction* getTransaction() const {
 			return ownerTransaction;
 		}
 
-		bool hasObject(Object* obj) const {
-			return object == obj;
+		virtual bool hasObject(Object* obj) const = 0;
+
+		virtual bool isNull() = 0;
+
+		virtual void setObject(O obj) = 0;
+
+		friend class Transaction;
+		friend class TransactionalObjectHandle<O>;
+	};
+
+	template<class O> class TransactionalWeakObjectHeader : public TransactionalObjectHeader<O> {
+			WeakReference<Object*> object;
+
+	public:
+			TransactionalWeakObjectHeader() : TransactionalObjectHeader<O>() {
+				object = NULL;
+			}
+
+			TransactionalWeakObjectHeader(O obj) : TransactionalObjectHeader<O>() {
+				setObject(obj);
+			}
+
+			bool isCurrentVersion(Object* obj);
+
+			O getForDirty() {
+				return dynamic_cast<O>(object.get());
+			}
+
+	protected:
+			void setObject(O obj) {
+				object = dynamic_cast<Object*>(obj);
+
+				assert(object != NULL);
+			}
+
+			bool isNull() {
+				return object == NULL;
+			}
+
+			bool hasObject(Object* obj) const {
+				return object == obj;
+			}
+
+			void releaseObject(TransactionalObjectHandle<O>* handle);
+
+			Object* getObject();
+
+	};
+
+	template<class O> class TransactionalStrongObjectHeader : public TransactionalObjectHeader<O> {
+		Reference<Object*> object;
+
+	public:
+		TransactionalStrongObjectHeader() : TransactionalObjectHeader<O>() {
+			object = NULL;
 		}
 
-		bool isNull() {
-			return object == NULL;
+		TransactionalStrongObjectHeader(O obj) : TransactionalObjectHeader<O>() {
+			setObject(obj);
 		}
 
+		bool isCurrentVersion(Object* obj);
+
+		O getForDirty() {
+			return dynamic_cast<O>(object.get());
+		}
+
+	protected:
 		void setObject(O obj) {
 			object = dynamic_cast<Object*>(obj);
 
 			assert(object != NULL);
 		}
 
-		friend class Transaction;
-		friend class TransactionalObjectHandle<O>;
+		bool isNull() {
+			return object == NULL;
+		}
+
+		bool hasObject(Object* obj) const {
+			return object == obj;
+		}
+
+		void releaseObject(TransactionalObjectHandle<O>* handle);
+
+		Object* getObject();
+
 	};
 
 	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createReadOnlyHandle() {
@@ -94,11 +157,29 @@ namespace engine {
 		return handle;
 	}
 
-	template<class O> Object* TransactionalObjectHeader<O>::getObject() {
-		if (ownerTransaction != NULL)
-			throw TransactionAbortedException();
+	template<class O> Object* TransactionalStrongObjectHeader<O>::getObject() {
+		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
+
+		if (transaction != NULL) {
+			if (!transaction->isCommited())
+				return object;
+			else
+				throw TransactionAbortedException();
 			//return ownerTransaction->getOpenedObject(this);
-		 else
+		} else
+			return object;
+	}
+
+	template<class O> Object* TransactionalWeakObjectHeader<O>::getObject() {
+		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
+
+		if (transaction != NULL) {
+			if (!transaction->isCommited())
+				return object;
+			else
+				throw TransactionAbortedException();
+			//return ownerTransaction->getOpenedObject(this);
+		} else
 			return object;
 	}
 
@@ -117,20 +198,35 @@ namespace engine {
 		return ownerTransaction.compareAndSet(NULL, transaction);
 	}
 
-	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
+	template<class O> void TransactionalStrongObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
 		object = handle->getObjectLocalCopy();
 
 		//ownerTransaction->release();
 
-		ownerTransaction = NULL;
+		TransactionalObjectHeader<O>::ownerTransaction = NULL;
+	}
+
+	template<class O> void TransactionalWeakObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
+		object = handle->getObjectLocalCopy();
+
+		//ownerTransaction->release();
+
+		TransactionalObjectHeader<O>::ownerTransaction = NULL;
 	}
 
 	template<class O> void TransactionalObjectHeader<O>::discardObject(Transaction* transaction) {
 		ownerTransaction.compareAndSet(transaction, NULL);
 	}
 
-	template<class O> bool TransactionalObjectHeader<O>::isCurrentVersion(Object* obj) {
-		if (ownerTransaction != NULL && ownerTransaction != Transaction::currentTransaction())
+	template<class O> bool TransactionalStrongObjectHeader<O>::isCurrentVersion(Object* obj) {
+		if (TransactionalObjectHeader<O>::ownerTransaction != NULL && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
+			return false;
+
+		return object == obj;
+	}
+
+	template<class O> bool TransactionalWeakObjectHeader<O>::isCurrentVersion(Object* obj) {
+		if (TransactionalObjectHeader<O>::ownerTransaction != NULL && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
 			return false;
 
 		return object == obj;

@@ -30,6 +30,8 @@ namespace sys {
 
        bool parseFromBinaryStream(ObjectInputStream* stream);
 
+       Object* clone();
+
        static int getObjectData(const String& str, String& obj);
 
    };
@@ -91,6 +93,10 @@ namespace sys {
 	   }
 
 	   return true;
+   }
+
+   template<class E> Object* Vector<E>::clone() {
+	   return new Vector<E>(*this);
    }
 
    template<class E> int Vector<E>::getObjectData(const String& str, String& obj) {

@@ -37,6 +37,14 @@ void TransactionalTaskManager::scheduleTask(Task* task, uint64 delay) {
 	manager->scheduleTask(task, delay);
 }
 
+Vector<Locker*>* TransactionalTaskManager::blockTaskManager() {
+	return taskManager->blockTaskManager();
+}
+
+void TransactionalTaskManager::unblockTaskManager(Vector<Locker*>* lockers) {
+	taskManager->unblockTaskManager(lockers);
+}
+
 void TransactionalTaskManager::scheduleTask(Task* task, Time& time) {
 	LocalTaskManager* manager = getLocalTaskManager();
 
@@ -78,6 +86,19 @@ bool TransactionalTaskManager::isTaskScheduled(Task* task) {
 		return taskManager->isTaskScheduled(task);
 }
 
+bool TransactionalTaskManager::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
+	LocalTaskManager* manager = getLocalTaskManager();
+
+	//if (manager->......................................)
+	bool res = manager->getNextExecutionTime(task, nextExecutionTime);
+
+	if (!res) {
+		nextExecutionTime = task->getNextExecutionTime();
+	}
+
+	return true;
+}
+
 void TransactionalTaskManager::flushTasks() {
 	taskManager->flushTasks();
 }
@@ -111,7 +132,7 @@ void TransactionalTaskManager::execute() {
 void TransactionalTaskManager::undo() {
 	LocalTaskManager* localTaskManager = getLocalTaskManager();
 
-	localTaskManager->flushTasks();
+	localTaskManager->undoTasks();
 }
 
 LocalTaskManager* TransactionalTaskManager::getLocalTaskManager() {

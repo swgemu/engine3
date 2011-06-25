@@ -22,6 +22,56 @@ TaskQueue::~TaskQueue() {
 	delete condMutex;
 }
 
+void TaskQueue::pushRandom(Task* task) {
+	condMutex->lock();
+
+	if (blocked) {
+		condMutex->unlock();
+		return;
+	}
+
+	int size = Vector<Task*>::size();
+
+	int position = size > 0 ? System::random(size - 1) : 0;
+
+	if (Vector<Task*>::add(position, task))
+		task->acquire();
+
+#ifdef TRACE_TASKS
+	StringBuffer s;
+	s << size() << " tasks in queue";
+	info(s);
+#endif
+
+	//if (waitingForTask)
+	signal(condMutex);
+
+	condMutex->unlock();
+}
+
+void TaskQueue::pushFront(Task* task) {
+	condMutex->lock();
+
+	if (blocked) {
+		condMutex->unlock();
+		return;
+	}
+
+	if (Vector<Task*>::add(0, task))
+		task->acquire();
+
+#ifdef TRACE_TASKS
+	StringBuffer s;
+	s << size() << " tasks in queue";
+	info(s);
+#endif
+
+	//if (waitingForTask)
+	signal(condMutex);
+
+	condMutex->unlock();
+}
+
 void TaskQueue::push(Task* task) {
 	condMutex->lock();
 
@@ -61,7 +111,9 @@ void TaskQueue::pushAll(const Vector<Task*>& tasks) {
 		info(s);
 	#endif
 
-	//if (waitingForTask)
+	if (tasks.size() > 1)
+		broadcast(condMutex);
+	else
 		signal(condMutex);
 
 	condMutex->unlock();

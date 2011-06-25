@@ -91,8 +91,25 @@ bool Task::cancel() {
 	return taskManager->cancelTask(this);
 }
 
+bool Task::cancelNonTransactionally() {
+#ifdef WITH_STM
+	return TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->cancelTask(this);
+#else
+	return cancel();
+#endif
+}
+
 void Task::schedule(uint64 delay) {
 	taskManager->scheduleTask(this, delay);
+}
+
+void Task::scheduleNonTransactionally(uint64 delay) {
+#ifdef WITH_STM
+	TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->scheduleTask(this, delay);
+#else
+	schedule(delay);
+#endif
+
 }
 
 void Task::schedule(Time& time) {
@@ -113,6 +130,14 @@ void Task::schedulePeriodic(Time& time, uint64 period) {
 
 void Task::reschedule(uint64 delay) {
 	taskManager->rescheduleTask(this, delay);
+}
+
+void Task::rescheduleNonTransactionally(uint64 delay) {
+#ifdef WITH_STM
+	TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->rescheduleTask(this, delay);
+#else
+	reschedule(delay);
+#endif
 }
 
 void Task::reschedule(Time& time) {
