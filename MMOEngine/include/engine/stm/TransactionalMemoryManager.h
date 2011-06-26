@@ -114,6 +114,10 @@ namespace engine {
 			failedToExceptions.increment();
 		}
 
+		inline void increaseFailedByObjectChanged() {
+			failedOnAcquireRW.increment();
+		}
+
 		inline void unblockTransactions() {
 			Transaction::blockLock.unlock();
 		}

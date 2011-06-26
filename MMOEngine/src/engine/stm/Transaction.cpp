@@ -142,6 +142,48 @@ bool Transaction::commit() {
 	return commited;
 }
 
+void Transaction::resolveAbortedHandles() {
+	for (int i = 0; i < readWriteObjects.size(); ++i) {
+		Reference<TransactionalObjectHandle<Object*>*> handle = readWriteObjects.get(i);
+
+		Reference<TransactionalObjectHandle<Object*>*> last = handle->getLastHandle();
+
+		Reference<TransactionalObjectHandle<Object*>*> lastRef = last;
+
+		/*if (last != NULL)
+			last->setPrevious(NULL);*/
+
+		while (last != NULL) {
+			Transaction* transaction = last->getTransaction();
+
+			if (transaction != this && transaction != NULL) {
+				transaction->abort();
+
+				if (transaction->isAborted()) {
+					if (transaction->setHelperTransaction(this)) {
+						//warning("adding helped transaction god help us");
+
+						helpedTransactions.put(transaction);
+					}
+				}
+			}
+
+			last->setTransaction(NULL);
+
+			lastRef = last;
+
+			last = last->getPrevious();
+
+			lastRef->setPrevious(NULL);
+		}
+
+		//while (last->getPrevious())
+
+		//iterate conflicting transactions
+
+	}
+}
+
 bool Transaction::doCommit() {
 	if (!isUndecided()) {
 		debug("transaction not in UNDECIDED state on commit");
@@ -168,6 +210,7 @@ bool Transaction::doCommit() {
 		return false;
 	}
 
+	resolveAbortedHandles();
 
 	for (int i = 0; i < commands.size(); ++i) {
 		Command* command = commands.get(i);
@@ -175,7 +218,8 @@ bool Transaction::doCommit() {
 		try {
 			command->execute();
 		} catch (TransactionAbortedException& e) {
-			return false;
+			//return false;
+			error("TransactionAbortedException while executing commands isnt allowed");
 		} catch (Exception& e) {
 			e.printStackTrace();
 		}
@@ -228,7 +272,6 @@ void Transaction::doAbort() {
 		command->undo();
 	}
 
-
 	Command* command = TransactionalMemoryManager::instance()->getBaseClientManager();
 	command->undo();
 
@@ -244,6 +287,8 @@ void Transaction::doAbort() {
 
 	++commitAttempts;
 
+	TransactionalMemoryManager::instance()->reclaimObjects(0, 0);
+
 	reset();
 
 	TransactionalMemoryManager::instance()->abortTransaction();
@@ -258,10 +303,14 @@ void Transaction::doAbort() {
 }
 
 bool Transaction::doRetry(Transaction* helper) {
-	//TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->executeTask(task);
+	//TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->executeTaskRandom(task);
+
+	while (!isInitial()) {
+		Thread::yield();
+	}
 
 	while (!isCommited()) {
-		Thread::yield();
+		TransactionalMemoryManager::instance()->setCurrentTransaction(this);
 
 		if (start()) {
 
@@ -313,25 +362,19 @@ void Transaction::reset() {
 
 	localObjectCache.removeAll();
 
-	/*SortedVector<uint64> deleted;
-	deleted.setNoDuplicateInsertPlan();*/
-
-	for (int i = 0; i < readOnlyObjects.size(); ++i) {
+	/*for (int i = 0; i < readOnlyObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
-		//if (deleted.put((uint64)handle) != -1)
-			delete handle;
-	}
+		delete handle;
+	}*/
 
 	readOnlyObjects.removeAll();
 
-	for (int i = 0; i < readWriteObjects.size(); ++i) {
+	/*for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
-		//if (deleted.put((uint64)handle) != -1)
-			delete handle;
-
-	}
+		delete handle;
+	}*/
 
 	readWriteObjects.removeAll();
 
@@ -348,6 +391,8 @@ bool Transaction::acquireReadWriteObjects() {
 
 		if (handle->hasObjectChanged()) {
 			debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
+
+			TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
 			return false;
 		}
 
@@ -360,10 +405,20 @@ bool Transaction::acquireReadWriteObjects() {
 				continue;
 			}
 
-			if (competingTransaction->compareTo(this) < 0)
+			/*if (competingTransaction->compareTo(this) > 0)
 				resolveConflict(competingTransaction);
 			else
-				return false;
+				return false;*/
+
+			if (!competingTransaction->isCommited()) {
+				competingTransaction->abort();
+
+				if (competingTransaction->isAborted()) {
+					if (competingTransaction->setHelperTransaction(this)) {
+						helpedTransactions.put(competingTransaction);
+					}
+				}
+			}
 
 
 			/*if (!resolveConflict(competingTransaction)) {
@@ -372,10 +427,14 @@ bool Transaction::acquireReadWriteObjects() {
 			}*/
 
 			Thread::yield();
+
+			if (!isUndecided())
+				return false;
 		}
 
 		if (handle->hasObjectChanged()) {
 			debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
+			TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
 			return false;
 		}
 	}
@@ -416,6 +475,7 @@ void Transaction::releaseReadWriteObjects() {
 			objects.add(objectCopy);
 		}*/
 
+		handle->setTransaction(NULL);
 		handle->releaseHeader();
 	}
 
@@ -481,14 +541,21 @@ void Transaction::helpTransaction(Transaction* transaction) {
 
 		debug("adding helped transaction " + transaction->getLoggingName());
 
-		helpedTransactions.add(transaction);
+		helpedTransactions.put(transaction);
 	}
 }
 
 int Transaction::compareTo(Transaction* transaction) {
-	if (transaction > this)
+	/*if (transaction > this)
 		return 1;
 	else if (transaction < this)
+		return -1;
+	else
+		return 0;*/
+
+	if (transaction->tid > tid) {
+		return 1;
+	} else if (transaction->tid < tid)
 		return -1;
 	else
 		return 0;

@@ -22,7 +22,7 @@ namespace sys {
 		AtomicInteger reference;
 	#endif
 
-		Reference<V*> objectReference;
+		//Reference<V*> objectReference;
 
 	public:
 		AtomicReference() {

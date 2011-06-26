@@ -39,18 +39,18 @@ namespace engine {
 		}
 	};
 
-	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandle<Object*>*> {
+	class TransactionalObjectHandleVector : public SortedVector<Reference<TransactionalObjectHandle<Object*>*> > {
 	public:
 		template<class O> void add(TransactionalObjectHandle<O>* handle) {
-			SortedVector<TransactionalObjectHandle<Object*>*>::put((TransactionalObjectHandle<Object*>*) handle);
+			SortedVector<Reference<TransactionalObjectHandle<Object*>*> >::put((TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> bool removeElement(TransactionalObjectHandle<O>* handle) {
-			return SortedVector<TransactionalObjectHandle<Object*>*>::drop((TransactionalObjectHandle<Object*>*) handle);
+			return SortedVector<Reference<TransactionalObjectHandle<Object*>*> >::drop((TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> bool contains(TransactionalObjectHandle<O>* handle) {
-			return SortedVector<TransactionalObjectHandle<Object*>*>::contains((TransactionalObjectHandle<Object*>*) handle);
+			return SortedVector<Reference<TransactionalObjectHandle<Object*>*> >::contains((TransactionalObjectHandle<Object*>*) handle);
 		}
 	};
 
@@ -89,7 +89,7 @@ namespace engine {
 
 		AtomicReference<Transaction> helperTransaction;
 
-		Vector<Reference<Transaction*> > helpedTransactions;
+		SortedVector<Reference<Transaction*> > helpedTransactions;
 		//Vector<Transaction*> helpedTransactions;
 
 		Vector<Command*> commands;
@@ -168,6 +168,8 @@ namespace engine {
 
 		void doAbort();
 
+		void resolveAbortedHandles();
+
 		bool doRetry(Transaction* helper);
 
 		void doHelpTransactions();
@@ -232,10 +234,10 @@ namespace engine {
 	}
 
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {
-		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
+		Reference<TransactionalObjectHandle<O>*> handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
-			handle = header->createReadOnlyHandle();
+			handle = header->createReadOnlyHandle(this);
 
 			localObjectCache.put(handle->getObject(), header);
 
@@ -257,10 +259,10 @@ namespace engine {
 	template<class O> O Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
 		//info("opening opbject");
 
-		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
+		Reference<TransactionalObjectHandle<O>*> handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
-			handle = header->createWriteHandle();
+			handle = header->createWriteHandle(this);
 
 			localObjectCache.put(handle->getObjectLocalCopy(), header);
 			localObjectCache.put(handle->getObject(), header);
@@ -268,7 +270,7 @@ namespace engine {
 			openedObjets.put<O>(header, handle);
 
 			readWriteObjects.add<O>(handle);
-		} else if (readOnlyObjects.contains(handle)) {
+		} else if (readOnlyObjects.contains(handle.get())) {
 			readOnlyObjects.removeElement<O>(handle);
 
 			readWriteObjects.add<O>(handle);

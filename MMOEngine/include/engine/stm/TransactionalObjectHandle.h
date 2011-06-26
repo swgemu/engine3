@@ -13,14 +13,19 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHeader;
 
-	template<class O> class TransactionalObjectHandle {
+	template<class O> class TransactionalObjectHandle : public Object {
 		TransactionalObjectHeader<O>* header;
 
 		Reference<Object*> object;
 		Reference<Object*> objectCopy;
 
+		Reference<TransactionalObjectHandle<O>* > next;
+
+		Reference<Transaction*> transaction;
+
 	public:
-		TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr, bool forWrite);
+		TransactionalObjectHandle();
+		void initialize(TransactionalObjectHeader<O>* hdr, bool forWrite, Transaction* trans);
 
 		virtual ~TransactionalObjectHandle();
 
@@ -32,10 +37,18 @@ namespace engine {
 
 		void discardHeader(Transaction* transaction);
 
+		void setPrevious(TransactionalObjectHandle<O>* n);
+
 		Transaction* getCompetingTransaction();
 
 		TransactionalObjectHeader<O>* getObjectHeader() {
 			return header;
+		}
+
+		Reference<TransactionalObjectHandle<Object*>*> getLastHandle() {
+			Reference<TransactionalObjectHandle<Object*>*> ref = (TransactionalObjectHandle<Object*>*) header->getLastHandle().get();
+
+			return ref;
 		}
 
 		bool hasObjectChanged();
@@ -57,21 +70,47 @@ namespace engine {
 		Object* getObjectLocalCopy() {
 			return objectCopy;
 		}
+
+		Transaction* getTransaction() {
+			return transaction;
+		}
+
+		inline void setTransaction(Transaction* trans) {
+			transaction = trans;
+		}
+
+		TransactionalObjectHandle<Object*>* getPrevious() {
+			return (TransactionalObjectHandle<Object*>*) next;
+		}
 	};
 
-	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle(TransactionalObjectHeader<O>* hdr, bool forWrite) {
+	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle() {
+		header = NULL;
+		transaction = NULL;
+
+		object = NULL;
+
+		objectCopy = NULL;
+	}
+
+	template<class O> void TransactionalObjectHandle<O>::initialize(TransactionalObjectHeader<O>* hdr, bool forWrite, Transaction* trans) {
 		header = hdr;
 
-		object = header->getObject();
+		transaction = trans;
+
 
 		if (forWrite) {
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
+			object = header->getObjectForWrite(this);
 
 			objectCopy = object->clone();
 
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
-		} else
+		} else {
+			object = header->getObjectForRead(this);
+
 			objectCopy = NULL;
+		}
 	}
 
 	template<class O> TransactionalObjectHandle<O>::~TransactionalObjectHandle() {
@@ -111,6 +150,10 @@ namespace engine {
 
 	template<class O> bool TransactionalObjectHandle<O>::hasObjectContentChanged() {
 		return memcmp(object, objectCopy, sizeof(O)) != 0;
+	}
+
+	template<class O> void TransactionalObjectHandle<O>::setPrevious(TransactionalObjectHandle<O>* n) {
+		next = n;
 	}
 
   } // namespace stm

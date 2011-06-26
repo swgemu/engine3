@@ -160,7 +160,7 @@ void TransactionalMemoryManager::abortTransaction() {
 
 	Reference<Transaction*>* transaction = currentTransaction.get();
 
-	reclaimObjects(0, 0);
+	//reclaimObjects(0, 0);
 
 	//currentTransaction.set(NULL);
 	*transaction = NULL;
@@ -302,7 +302,8 @@ void TransactionalMemoryManager::printStatistics() {
 			<< "aborted " << abortedTransactions.get() << ") - tasks ("
 			<< "exectuing " << taskManager->getExecutingTaskSize() << ", "
 			<< "scheduled " << taskManager->getScheduledTaskSize() << ") "
-			<< "aborted due exceptions " << failedToExceptions;
+			<< "aborted due exceptions " << failedToExceptions << ", "
+			<< "due to object changed " << failedOnAcquireRW;
 
 
 	info(str);
@@ -312,4 +313,5 @@ void TransactionalMemoryManager::printStatistics() {
 	abortedTransactions.set(0);
 	retryConflicts.set(0);
 	failedToExceptions.set(0);
+	failedOnAcquireRW.set(0);
 }
