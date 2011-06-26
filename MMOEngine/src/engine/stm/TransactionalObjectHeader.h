@@ -203,31 +203,31 @@ namespace engine {
 	template<class O> Object* TransactionalStrongObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
 			Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
-			if (transaction != NULL) {
-				/*if (!transaction->isCommited())
+			/*if (transaction != NULL) {
+				if (!transaction->isCommited())
 						return object;
-					else*/
+					else
 				throw TransactionAbortedException();
 				//return ownerTransaction->getOpenedObject(this);
-			} else {
-				add(handle);
-				return object;
-			}
-		}
+			} else {*/
+			add(handle);
+			return object;
+			//}
+	}
 
 	template<class O> Object* TransactionalWeakObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
-		if (transaction != NULL) {
-			/*if (!transaction->isCommited())
-					return object;
-				else*/
-			throw TransactionAbortedException();
-			//return ownerTransaction->getOpenedObject(this);
-		} else {
-			add(handle);
-			return object;
-		}
+		/*if (transaction != NULL) {
+						if (!transaction->isCommited())
+								return object;
+							else
+						throw TransactionAbortedException();
+						//return ownerTransaction->getOpenedObject(this);
+					} else {*/
+		add(handle);
+		return object;
+		//
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::get() {
