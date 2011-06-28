@@ -64,7 +64,11 @@ void Task::execute() {
 	} catch (Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
+	} catch (TransactionAbortedException& e) {
+		Logger::console.error("in TASK");
 	}
+
+
 #else
 	ObjectDatabaseManager::instance()->startLocalTransaction();
 

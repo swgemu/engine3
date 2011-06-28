@@ -87,7 +87,7 @@ namespace engine {
 
 		Reference<Task*> task;
 
-		AtomicReference<Transaction> helperTransaction;
+		AtomicReference<Transaction*> helperTransaction;
 
 		SortedVector<Reference<Transaction*> > helpedTransactions;
 		//Vector<Transaction*> helpedTransactions;

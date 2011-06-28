@@ -9,6 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../Variable.h"
 
 #include "../../thread/ReadWriteLock.h"
+#include "system/thread/atomic/AtomicReference.h"
 
 namespace sys {
   namespace lang {
@@ -35,7 +36,7 @@ namespace sys {
 
 	template<class O> class WeakReference : public Variable, public WeakReferenceBase {
 	protected:
-		O object;
+		AtomicReference<O> object;
 		ReadWriteLock rwlock;
 
 	public:
@@ -111,13 +112,31 @@ namespace sys {
 		}
 
 	protected:
+
 		inline void updateObject(O obj) {
-			if (obj == object)
+			if (obj == object.get())
 				return;
 
-			releaseObject();
+			//This needs to be an atomic operation, 2 threads updating/reading this messes shit up
+			//Thread A reading while thread B updating, thread A reads NULL cause it releases and then acquires
+			/*releaseObject();
 
-			setObject(obj);
+						setObject(obj);*/
+
+			if (obj != NULL)
+				obj->acquireWeak(this);
+
+			while (true) {
+				O oldobj = object.get();
+
+				if (object.compareAndSet(oldobj, obj)) {
+					if (oldobj != NULL)
+						oldobj->releaseWeak(this);
+
+					return;
+				}
+			}
+
 		}
 
 		inline void setObject(O obj) {

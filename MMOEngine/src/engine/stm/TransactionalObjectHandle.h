@@ -79,6 +79,11 @@ namespace engine {
 			transaction = trans;
 		}
 
+		inline void resetObjects() {
+			object = NULL;
+			objectCopy = NULL;
+		}
+
 		TransactionalObjectHandle<Object*>* getPrevious() {
 			return (TransactionalObjectHandle<Object*>*) next;
 		}

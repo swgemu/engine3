@@ -6,6 +6,7 @@
 
 SignalTranslator<AbortedException> g_objAbortedExceptionTranslator;
 SignalTranslator<FloatingPointException> _objFloatingPOintExceptionTranslator;
+//SignalTranslator<FloatingPointException> _objFloatingPOintExceptionTranslator;
 
 Exception::Exception() {
 }

@@ -30,6 +30,8 @@ Transaction::Transaction(int id) : Logger() {
 
 	helperTransaction = NULL;
 
+	openedObjets.setNullValue(NULL);
+
 	Command* command = TransactionalMemoryManager::instance()->getObjectManager();
 	commands.add(command);
 
@@ -362,11 +364,15 @@ void Transaction::reset() {
 
 	localObjectCache.removeAll();
 
-	/*for (int i = 0; i < readOnlyObjects.size(); ++i) {
+	for (int i = 0; i < readOnlyObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
 
-		delete handle;
-	}*/
+		//delete handle;
+
+		handle->setTransaction(NULL);
+
+		handle->resetObjects();
+	}
 
 	readOnlyObjects.removeAll();
 
@@ -477,6 +483,8 @@ void Transaction::releaseReadWriteObjects() {
 
 		handle->setTransaction(NULL);
 		handle->releaseHeader();
+
+		handle->resetObjects();
 	}
 
 	//TransactionalMemoryManager::instance()->getObjectManager()->addObjectsToSave(objects);

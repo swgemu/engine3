@@ -86,6 +86,8 @@ public:
 protected:
 	virtual ~ObservableImplementation();
 
+	Object* clone();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -111,6 +113,7 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Observable;
+	friend class TransactionalObjectHandle<ObservableImplementation*>;
 };
 
 class ObservableAdapter : public ManagedObjectAdapter {

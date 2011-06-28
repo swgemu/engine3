@@ -21,9 +21,9 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHeader {
 	protected:
-		AtomicReference<Transaction> ownerTransaction;
+		AtomicReference<Transaction*> ownerTransaction;
 
-		AtomicReference<TransactionalObjectHandle<O> > last;
+		AtomicReference<TransactionalObjectHandle<O>* > last;
 
 	public:
 		TransactionalObjectHeader() {
