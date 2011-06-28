@@ -237,10 +237,12 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 	}
 
 #ifndef WITH_STM
+	obj->_setImplementation(NULL);
+
 	if (servant != NULL) {
 		debug("deleting servant \'" + name + "\'");
 
-		delete servant;
+		//delete servant;
 	}
 #else
 	/*if (obj != NULL)
