@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "AtomicInteger.h"
 #include "AtomicLong.h"
 
-#include "system/lang/ref/Reference.h"
+//#include "system/lang/ref/Reference.h"
 
 namespace sys {
   namespace thread {
@@ -28,11 +28,11 @@ namespace sys {
 		AtomicReference() {
 		}
 
-		AtomicReference(V* ref) {
+		AtomicReference(V ref) {
 			reference.set(toReferenceValue(ref));
 		}
 
-		bool compareAndSet(V* oldref, V* newref) {
+		bool compareAndSet(V oldref, V newref) {
 			if (reference.compareAndSet(toReferenceValue(oldref), toReferenceValue(newref))) {
 				//objectReference = newref;
 
@@ -41,37 +41,37 @@ namespace sys {
 				return false;
 		}
 
-		V* get() const {
-			return (V*) reference.get();
+		V get() const {
+			return (V) reference.get();
 		}
 
-		void set(V* ref) {
+		void set(V ref) {
 			reference.set(toReferenceValue(ref));
 
 			//objectReference = ref;
 		}
 
-		V* operator=(V* ref) {
+		V operator=(V ref) {
 			set(ref);
 
 			return ref;
 		}
 
-		operator V*() const {
+		operator V() const {
 			return get();
 		}
 
-		V* operator->() const {
+		V operator->() const {
 			return get();
 		}
 
 	protected:
 	#ifdef PLATFORM_64
-		uint64 toReferenceValue(V* ref) {
+		uint64 toReferenceValue(V ref) {
 			return (uint64) ref;
 		}
 	#else
-		uint32 toReferenceValue(V* ref) {
+		uint32 toReferenceValue(V ref) {
 			return (uint32) ref;
 		}
 	#endif

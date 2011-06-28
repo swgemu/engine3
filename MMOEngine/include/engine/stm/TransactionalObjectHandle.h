@@ -13,7 +13,37 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHeader;
 
-	template<class O> class TransactionalObjectHandle : public Object {
+	class TransactionalObjectHandleBase : public Object {
+	public:
+		virtual void releaseHeader() = 0;
+
+		virtual void discardHeader(Transaction* transaction) = 0;
+
+		virtual void resetObjects() = 0;
+
+		virtual Transaction* getTransaction() = 0;
+
+		virtual void setTransaction(Transaction* trans) = 0;
+
+		virtual Reference<TransactionalObjectHandleBase*> getLastHandle() = 0;
+
+		virtual TransactionalObjectHandleBase* getPrevious() = 0;
+
+		virtual void setPrevious(TransactionalObjectHandleBase* n) = 0;
+
+		virtual bool hasObjectChanged() = 0;
+		virtual bool hasObjectContentChanged() = 0;
+
+		virtual bool acquireHeader(Transaction* transaction) = 0;
+
+		virtual Transaction* getCompetingTransaction() = 0;
+
+		virtual Object* getObject() = 0;
+
+		virtual Object* getObjectLocalCopy() = 0;
+	};
+
+	template<class O> class TransactionalObjectHandle : public TransactionalObjectHandleBase {
 		TransactionalObjectHeader<O>* header;
 
 		Reference<Object*> object;
@@ -37,7 +67,7 @@ namespace engine {
 
 		void discardHeader(Transaction* transaction);
 
-		void setPrevious(TransactionalObjectHandle<O>* n);
+		void setPrevious(TransactionalObjectHandleBase* n);
 
 		Transaction* getCompetingTransaction();
 
@@ -45,8 +75,8 @@ namespace engine {
 			return header;
 		}
 
-		Reference<TransactionalObjectHandle<Object*>*> getLastHandle() {
-			Reference<TransactionalObjectHandle<Object*>*> ref = (TransactionalObjectHandle<Object*>*) header->getLastHandle().get();
+		Reference<TransactionalObjectHandleBase*> getLastHandle() {
+			Reference<TransactionalObjectHandleBase*> ref = header->getLastHandle().get();
 
 			return ref;
 		}
@@ -63,6 +93,11 @@ namespace engine {
 				return -1;
 		}
 
+		void resetObjects() {
+			object = NULL;
+			objectCopy = NULL;
+		}
+
 		Object* getObject() {
 			return object;
 		}
@@ -75,12 +110,12 @@ namespace engine {
 			return transaction;
 		}
 
-		inline void setTransaction(Transaction* trans) {
+		void setTransaction(Transaction* trans) {
 			transaction = trans;
 		}
 
-		TransactionalObjectHandle<Object*>* getPrevious() {
-			return (TransactionalObjectHandle<Object*>*) next;
+		TransactionalObjectHandleBase* getPrevious() {
+			return /*(TransactionalObjectHandle<Object*>*)*/ next.get();
 		}
 	};
 
@@ -132,12 +167,14 @@ namespace engine {
 		header->releaseObject(this);
 
 		objectCopy = NULL;
+		object = NULL;
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
 		header->discardObject(transaction);
 
 		objectCopy = NULL;
+		object = NULL;
 	}
 
 	template<class O> Transaction* TransactionalObjectHandle<O>::getCompetingTransaction() {
@@ -152,8 +189,8 @@ namespace engine {
 		return memcmp(object, objectCopy, sizeof(O)) != 0;
 	}
 
-	template<class O> void TransactionalObjectHandle<O>::setPrevious(TransactionalObjectHandle<O>* n) {
-		next = n;
+	template<class O> void TransactionalObjectHandle<O>::setPrevious(TransactionalObjectHandleBase* n) {
+		next = (TransactionalObjectHandle<O>*)n;
 	}
 
   } // namespace stm

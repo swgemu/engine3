@@ -54,8 +54,6 @@ public:
 protected:
 	virtual ~ManagedServiceImplementation();
 
-	Object* clone();
-
 	void finalize();
 
 	void _initializeImplementation();
@@ -81,7 +79,6 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedService;
-	friend class TransactionalObjectHandle<ManagedServiceImplementation*>;
 };
 
 class ManagedServiceAdapter : public ManagedObjectAdapter {

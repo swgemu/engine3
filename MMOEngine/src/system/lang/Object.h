@@ -35,15 +35,6 @@ namespace sys {
 	}
 }
 
-#ifdef WITH_STM
-
-namespace engine {
-  namespace stm {
-  template<class O> class TransactionalReference;
-  }
-}
-
-#endif
 
 namespace sys {
   namespace lang {
@@ -52,7 +43,6 @@ namespace sys {
 
 	using namespace sys::io;
 	using namespace sys::util;
-	using namespace engine::stm;
 
 	class Object : public ReferenceCounter, public Variable {
 //	#ifndef WITH_STM

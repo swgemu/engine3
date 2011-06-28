@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Logger.h"
 
-AtomicReference<FileWriter> Logger::globalLogFile = NULL;
+AtomicReference<FileWriter*> Logger::globalLogFile = NULL;
 
 Time Logger::starttime;
 

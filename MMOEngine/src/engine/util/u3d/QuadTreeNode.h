@@ -29,9 +29,9 @@
 
 #include "system/lang.h"
 
-#ifdef WITH_STM
+//#ifdef WITH_STM
 #include "engine/stm/TransactionalReference.h"
-#endif
+//#endif
 
 /**
  * A quad tree is a 2D data structure that keeps lots of objects nicely
@@ -49,19 +49,19 @@ class QuadTreeEntry;
 class QuadTreeNode: public Object {
 	SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> > objects;
 
-#ifdef WITH_STM
+//#ifdef WITH_STM
 	TransactionalWeakReference<QuadTreeNode*> parentNode;
 	TransactionalReference<QuadTreeNode*> nwNode;
 	TransactionalReference<QuadTreeNode*> neNode;
 	TransactionalReference<QuadTreeNode*> swNode;
 	TransactionalReference<QuadTreeNode*> seNode;
-#else
-	Reference<QuadTreeNode*> parentNode;
+//#else
+/*	Reference<QuadTreeNode*> parentNode;
 	Reference<QuadTreeNode*> nwNode;
 	Reference<QuadTreeNode*> neNode;
 	Reference<QuadTreeNode*> swNode;
-	Reference<QuadTreeNode*> seNode;
-#endif
+	Reference<QuadTreeNode*> seNode;*/
+//#endif
 
 	float minX, minY;
 	float maxX, maxY;

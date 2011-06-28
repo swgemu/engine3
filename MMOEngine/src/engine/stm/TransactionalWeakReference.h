@@ -13,6 +13,43 @@
 namespace engine {
   namespace stm {
 
+#ifndef WITH_STM
+  template<class O> class TransactionalWeakReference : public WeakReference<O> {
+public:
+	  TransactionalWeakReference() : WeakReference<O>() {
+
+	  }
+
+	  TransactionalWeakReference(const TransactionalWeakReference& ref) : WeakReference<O>(ref) {
+
+	  }
+
+	  TransactionalWeakReference(const WeakReference<O>& ref) : WeakReference<O>(ref) {
+
+	  }
+
+	  TransactionalWeakReference(O obj) : WeakReference<O>(obj) {
+
+	  }
+
+	  TransactionalWeakReference& operator=(const TransactionalWeakReference& ref) {
+		  WeakReference<O>::operator=(ref);
+
+		  return *this;
+	  }
+
+	  TransactionalWeakReference& operator=(const Reference<O> ref) {
+		  WeakReference<O>::operator=(ref);
+
+		  return *this;
+	  }
+
+	  O operator=(O obj) {
+		  return WeakReference<O>::operator=(obj);
+	  }
+  };
+#else
+
   	template<class O> class TransactionalWeakReference {
 		TransactionalObjectHeader<O>* header;
 
@@ -95,6 +132,7 @@ namespace engine {
 		}
 	};
 
+#endif
 
   } // namespace stm
 } // namespace engine

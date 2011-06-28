@@ -8,13 +8,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../Object.h"
 #include "../Long.h"
+#include "system/thread/atomic/AtomicReference.h"
 
 namespace sys {
   namespace lang {
 
 	template<class O> class Reference : public Variable {
 	protected:
-		O object;
+		AtomicReference<O> object;
 
 	public:
 		Reference() : Variable() {
@@ -22,7 +23,7 @@ namespace sys {
 		}
 
 		Reference(const Reference& ref) : Variable() {
-			initializeObject(ref.object);
+			initializeObject(ref.object.get());
 		}
 
 		Reference(O obj) : Variable() {
@@ -46,39 +47,39 @@ namespace sys {
 			if (this == &ref)
 				return *this;
 
-			updateObject(ref.object);
+			updateObject(ref.object.get());
 
 			return *this;
 		}
 
 		int hashCode() const {
-			return UnsignedLong::hashCode((uint64)object);
+			return UnsignedLong::hashCode((uint64)object.get());
 		}
 
 		O operator=(O obj) {
 			updateObject(obj);
 
-			return object;
+			return object.get();
 		}
 
 		bool operator==(O obj) {
-			return object == obj;
+			return object.get() == obj;
 		}
 
 		bool operator!=(O obj) {
-			return object != obj;
+			return object.get() != obj;
 		}
 
 		O operator->() const {
-			return object;
+			return object.get();
 		}
 
 		operator O() const {
-			return object;
+			return object.get();
 		}
 
 		inline O get() const {
-			return object;
+			return object.get();
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
@@ -91,12 +92,29 @@ namespace sys {
 
 	protected:
 		inline void updateObject(O obj) {
-			if (obj == object)
+			if (obj == object.get())
 				return;
 
-			releaseObject();
+			//This needs to be an atomic operation, 2 threads updating/reading this messes shit up
+			//Thread A reading while thread B updating, thread A reads NULL cause it releases and then acquires
+			/*releaseObject();
 
-			setObject(obj);
+			setObject(obj);*/
+
+			if (obj != NULL)
+				obj->acquire();
+
+			while (true) {
+				O oldobj = object.get();
+
+				if (object.compareAndSet(oldobj, obj)) {
+					if (oldobj != NULL)
+						oldobj->release();
+
+					return;
+				}
+			}
+
 		}
 
 		inline void setObject(O obj) {

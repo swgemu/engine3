@@ -13,6 +13,43 @@ namespace engine {
 
    //template <class O> class TransactionalObjectHeader;
 
+#ifndef WITH_STM
+  template<class O> class TransactionalReference : public Reference<O> {
+  public:
+	  TransactionalReference() : Reference<O>() {
+
+  	  }
+
+	  TransactionalReference(const TransactionalReference& ref) : Reference<O>(ref) {
+
+  	  }
+
+	  TransactionalReference(const Reference<O>& ref) : Reference<O>(ref) {
+
+  	  }
+
+	  TransactionalReference(O obj) : Reference<O>(obj) {
+
+  	  }
+
+	  TransactionalReference& operator=(const TransactionalReference& ref) {
+		  Reference<O>::operator=(ref);
+
+		  return *this;
+	  }
+
+	  TransactionalReference& operator=(const Reference<O> ref) {
+		  Reference<O>::operator=(ref);
+
+		  return *this;
+	  }
+
+	  O operator=(O obj) {
+		  return Reference<O>::operator=(obj);
+	  }
+  };
+#else
+
   	template<class O> class TransactionalReference {
 		TransactionalObjectHeader<O>* header;
 
@@ -84,6 +121,7 @@ namespace engine {
 
 	protected:
 		TransactionalObjectHeader<O>* getHeader(O object) {
+			assert(object != NULL);
 			if (object == NULL)
 				return NULL;
 
@@ -94,6 +132,8 @@ namespace engine {
 			header = getHeader(object);
 		}
 	};
+
+#endif
 
 
   } // namespace stm

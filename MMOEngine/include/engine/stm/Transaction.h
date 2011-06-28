@@ -24,18 +24,17 @@ namespace engine {
 	template<class O> class TransactionalStrongObjectHeader;
 	template<class O> class TransactionalWeakObjectHeader;
 
-	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<Object*>*> {
+	class TransactionalObjectMap : public HashTable<uint64, Reference<TransactionalObjectHandleBase*> > {
 	public:
-		TransactionalObjectMap() : HashTable<uint64, TransactionalObjectHandle<Object*>*>(1000) {
+		TransactionalObjectMap() : HashTable<uint64, Reference<TransactionalObjectHandleBase*> >(1000) {
 		}
 
 		template<class O> TransactionalObjectHandle<O>* put(TransactionalObjectHeader<O>* header, TransactionalObjectHandle<O>* handle) {
-			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<Object*>*>::put((uint64) header,
-				(TransactionalObjectHandle<Object*>*) handle);
+			return (TransactionalObjectHandle<O>*) HashTable<uint64,Reference<TransactionalObjectHandleBase*> >::put((uint64) header, Reference<TransactionalObjectHandleBase*>(handle)).get();
 		}
 
 		template<class O> TransactionalObjectHandle<O>* get(TransactionalObjectHeader<O>* header) {
-			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<Object*>*>::get((uint64) header);
+			return (TransactionalObjectHandle<O>*) HashTable<uint64, Reference<TransactionalObjectHandleBase*> >::get((uint64) header).get();
 		}
 	};
 
@@ -87,7 +86,7 @@ namespace engine {
 
 		Reference<Task*> task;
 
-		AtomicReference<Transaction> helperTransaction;
+		AtomicReference<Transaction*> helperTransaction;
 
 		SortedVector<Reference<Transaction*> > helpedTransactions;
 		//Vector<Transaction*> helpedTransactions;
@@ -98,6 +97,8 @@ namespace engine {
 		uint64 runTime;
 
 		int commitAttempts;
+
+		bool selfHelp;
 
 		static const int INITIAL = 0;
 		static const int UNDECIDED = 1;
@@ -116,9 +117,9 @@ namespace engine {
 		bool start();
 		bool start(Task* task);
 
-		bool commit();
+		bool commit(bool autoSelfHelp = true);
 
-		void abort();
+		void abort(bool autoSelfHelp = true);
 
 		int compareTo(Transaction* transaction);
 

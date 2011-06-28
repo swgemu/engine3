@@ -51,11 +51,11 @@ namespace engine {
   	namespace u3d {
 
 	class QuadTree : public Object {
-	#ifdef WITH_STM
+	//#ifdef WITH_STM
 		TransactionalReference<QuadTreeNode*> root;
-	#else
+	/*#else
 		Reference<QuadTreeNode*> root;
-	#endif
+	#endif*/
 
 		static bool logTree;
 

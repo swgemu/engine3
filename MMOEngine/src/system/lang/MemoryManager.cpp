@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MemoryManager.h"
 
-AtomicReference<MemoryManager> MemoryManager::inst;
+AtomicReference<MemoryManager*> MemoryManager::inst;
 
 void MemoryManager::reclaim(Object* object) {
 	object->destroy();

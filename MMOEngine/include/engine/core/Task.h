@@ -23,7 +23,7 @@ namespace engine {
 	protected:
 		class TaskManager* taskManager;
 
-		AtomicReference<TaskScheduler> taskScheduler;
+		AtomicReference<TaskScheduler*> taskScheduler;
 
 		Time nextExecutionTime;
 

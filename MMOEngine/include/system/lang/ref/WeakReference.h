@@ -73,8 +73,10 @@ namespace sys {
 			return *this;
 		}
 
-		void operator=(O obj) {
+		O operator=(O obj) {
 			updateObject(obj);
+
+			return object;
 		}
 
 		O operator->() const {

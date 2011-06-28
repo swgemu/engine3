@@ -14,7 +14,7 @@ namespace sys {
   namespace lang {
 
 	class MemoryManager : public Object {
-		static AtomicReference<MemoryManager> inst;
+		static AtomicReference<MemoryManager*> inst;
 
 	public:
 		static MemoryManager* getInstance() {
