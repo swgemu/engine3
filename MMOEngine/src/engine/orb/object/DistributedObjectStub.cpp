@@ -106,7 +106,7 @@ bool DistributedObjectStub::undeploy() {
 		//ObjectBroker::instance()->info("deleting undeployed implementation");
 		
 #ifndef WITH_STM
-		delete _getImplementation();
+		_setImplementation(NULL);
 #endif
 		//_setImplementation(NULL);
 	}
