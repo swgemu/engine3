@@ -121,7 +121,7 @@ namespace engine {
 
 	protected:
 		TransactionalObjectHeader<O>* getHeader(O object) {
-			assert(object != NULL);
+			//assert(object != NULL);
 			if (object == NULL)
 				return NULL;
 
