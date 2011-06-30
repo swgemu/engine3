@@ -49,6 +49,14 @@ namespace engine {
 
 		virtual bool isCurrentVersion(Object* obj) = 0;
 
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			return false;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			return false;
+		}
+
 	protected:
 		Reference<TransactionalObjectHandle<O>*> createReadOnlyHandle(Transaction* transaction);
 		Reference<TransactionalObjectHandle<O>*> createWriteHandle(Transaction* transaction);
