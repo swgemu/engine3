@@ -198,8 +198,10 @@ void Logger::getTime(String& times, bool getFull) {
 
 	str << "(" << (elapsed / 1000) << " s)";
 
-	if (getFull)
-		str << " " << Thread::getCurrentThread()->getName() << " -";
+	Thread* currentThread = Thread::getCurrentThread();
+
+	if (currentThread != NULL && getFull)
+		str << " " << currentThread->getName() << " -";
 
 	times = str.toString();
 }
@@ -215,8 +217,10 @@ void Logger::printTime(bool getFull) {
 
 	System::out << "(" << (elapsed / 1000) << " s)";
 
-	if (getFull)
-		System::out << " " << Thread::getCurrentThread()->getName() << " -";
+	Thread* currentThread = Thread::getCurrentThread();
+
+	if (currentThread != NULL && getFull)
+		str << " " << currentThread->getName() << " -";
 }
 
 uint64 Logger::getElapsedTime() {
