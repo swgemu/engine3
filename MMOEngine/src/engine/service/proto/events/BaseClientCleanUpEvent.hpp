@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef BASECLIENTCLEANUPEVENT_HPP_
 #define BASECLIENTCLEANUPEVENT_HPP_
 
-#include "../../../../system/platform.h"
+#include "system/platform.h"
 
 #ifdef VERSION_PUBLIC
 

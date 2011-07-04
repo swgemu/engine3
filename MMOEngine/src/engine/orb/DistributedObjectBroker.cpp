@@ -16,6 +16,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "DOBObjectManager.h"
 #include "DOBObjectManagerImplementation.h"
 
+#include "engine/service/proto/events/BaseClientNetStatusRequestEvent.h"
+#include "engine/service/proto/events/BaseClientNetStatusCheckupEvent.h"
+#include "engine/service/proto/events/BaseClientEvent.h"
+
 DistributedObjectBroker::DistributedObjectBroker()
 		: StreamServiceThread("DistributedObjectBroker") {
 	phandler = NULL;

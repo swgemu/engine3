@@ -33,19 +33,19 @@ namespace sys {
 		}
 
 		uint64 increment() {
-			#if GCC_VERSION >= 40100 && defined(PLATFORM_64)
+			#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
 				return __sync_add_and_fetch(&value, 1);
 			#elif defined(PLATFORM_MAC)
 				return OSAtomicIncrement64((volatile int64_t*) &value);
 			#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
 				return ++(value);
 			#else
-				return InterlockedIncrement64((long*) &value);
+				return InterlockedIncrement64((volatile LONGLONG *) &value);
 			#endif
 		}
 
 		uint64 decrement() {
-			#if GCC_VERSION >= 40100 && defined(PLATFORM_64)
+			#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
 				return __sync_sub_and_fetch(&value, 1);
 			#elif defined(PLATFORM_MAC)
 				return OSAtomicDecrement64((volatile int64_t*) &value);
@@ -58,7 +58,7 @@ namespace sys {
 		}
 
 		bool compareAndSet(uint64 oldval, uint64 newval) {
-		#if GCC_VERSION >= 40100 && defined(PLATFORM_64)
+		#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
 			return __sync_bool_compare_and_swap (&value, oldval, newval);
 		#elif defined(PLATFORM_MAC)
 			return OSAtomicCompareAndSwap64(oldvalue, newvalue, (volatile int64_t*) &value);
@@ -71,7 +71,7 @@ namespace sys {
 			      return false;
 			  }
 		#else
-			InterlockedCompareExchange64(&value, newval, oldval);
+			InterlockedCompareExchange64((volatile LONGLONG *)&value, newval, oldval);
 
 			return value == newval;
 		#endif

@@ -20,6 +20,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ThreadLocal.h"
 
+namespace engine {
+	namespace core {
+		class Core;
+	}
+}
+
 namespace sys {
   namespace thread {
 
@@ -44,9 +50,7 @@ namespace sys {
 		Thread();
 		virtual ~Thread();
 
-	#ifndef PLATFORM_WIN
 		static pid_t getProcessID();
-	#endif
 
 		//! causes this thread to begin execution
 		void start();
@@ -89,7 +93,7 @@ namespace sys {
 		//! Initializes main thread local key
 		static void initializeThread(Thread* thread);
 
-		friend class Core;
+		friend class engine::core::Core;
 	};
 
   } // namespace thread

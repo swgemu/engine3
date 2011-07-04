@@ -13,6 +13,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <sched.h>
 #endif
 
+#ifdef PLATFORM_WIN
+#include <process.h>
+#endif
+
 #include <mysql.h>
 
 AtomicInteger Thread::threadCounter;
@@ -42,11 +46,15 @@ void* Thread::executeThread(void* th) {
 	return NULL;
 }
 
-#ifndef PLATFORM_WIN
+//#ifndef PLATFORM_WIN
 pid_t Thread::getProcessID() {
+#ifdef PLATFORM_WIN
+	return _getpid();
+#else
 	return getpid();
-}
 #endif
+}
+//#endif
 
 Thread::Thread() {
 	pthread_attr_init(&attributes);
@@ -109,14 +117,18 @@ void Thread::sleep(uint64 millis, uint64 nanos) {
 		nanosleep(&tm, &trem);
 	#else
 		//TODO find appropriate method for win32
+		assert(0 && "Method not supported in windows");
+		Sleep(millis);
 	#endif
 }
 
 void Thread::yield() {
-#ifndef PLATFORM_MAC
-	pthread_yield();
-#else
+#ifdef PLATFORM_WIN
+	SwitchToThread();
+#elif defined(PLATFORM_MAC)
 	sched_yield();
+#else
+	pthread_yield();
 #endif
 }
 

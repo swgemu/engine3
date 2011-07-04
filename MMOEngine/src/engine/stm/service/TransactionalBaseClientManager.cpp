@@ -5,11 +5,16 @@
  *      Author: victor
  */
 
-#include "engine/engine.h"
-#include "TransactionalBaseClientManager.h"
+#include "system/platform.h"
 
 #include "engine/service/proto/BasePacket.h"
 #include "engine/service/proto/BaseClient.h"
+#include "engine/service/proto/events/BaseClientNetStatusRequestEvent.h"
+#include "engine/service/proto/events/BaseClientNetStatusCheckupEvent.h"
+#include "engine/service/proto/events/BaseClientEvent.h"
+
+#include "TransactionalBaseClientManager.h"
+
 
 TransactionalBaseClientManager::TransactionalBaseClientManager() : Logger("TransactionalBaseClientManager") {
 	setLogging(false);

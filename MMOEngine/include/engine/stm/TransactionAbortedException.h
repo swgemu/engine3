@@ -9,18 +9,11 @@ namespace engine {
   namespace stm {
 
 	class TransactionAbortedException {
-		bool retryTransaction;
 	public:
-		TransactionAbortedException(bool restart = true) {
-			retryTransaction = restart;
-
+		TransactionAbortedException() {
 			Transaction* currentTransaction = Transaction::currentTransaction();
 
 			currentTransaction->abort();
-		}
-
-		inline bool getRetryTransaction() {
-			return retryTransaction;
 		}
 	};
 

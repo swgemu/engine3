@@ -278,12 +278,14 @@ bool UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
 bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint32 len = stream->readInt();
 
-	unsigned short uni[len];
+	unsigned short* uni = new unsigned short[len];
 
 	stream->readStream((char*)uni, len * 2);
 
 	clear();
 	append(uni, len);
+
+	delete [] uni;
 
 	return true;
 }

@@ -5,6 +5,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Math.h"
 
+double Math::PI = M_PI;
+double Math::DEG2RAD = M_PI / 180.0f;
+double Math::RAD2DEG = 180.0f / M_PI;
+double Math::E = 2.71828182845904523536;
+
 float Math::sqrt(float number) { // from Q3 fix for 64 bit
 	/*long i;
 	float x, y;

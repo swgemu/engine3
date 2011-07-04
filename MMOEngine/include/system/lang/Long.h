@@ -109,7 +109,11 @@ namespace sys {
 		  static void toString(String& str, int64 val) {
 			  char buf[32];
 
+#ifdef PLATFORM_WIN
+			  snprintf(buf, 32, "%I64d", val);
+#else
 			  snprintf(buf, 32, "%lld", val);
+#endif
 
 			  str = buf;
 		  }
@@ -125,7 +129,12 @@ namespace sys {
 		  static void toString(String& str, uint64 val) {
 			  char buf[32];
 
+#ifdef PLATFORM_WIN
+			  snprintf(buf, 32, "%I64u", val);
+#else
 			  snprintf(buf, 32, "%llu", val);
+#endif
+
 
 			  str = buf;
 		  }

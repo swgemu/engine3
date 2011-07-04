@@ -318,7 +318,12 @@ String String::hexvalueOf(int val) {
 String String::hexvalueOf(int64 val) {
 	char buf[32];
 
+#ifdef PLATFORM_WIN
+	snprintf(buf, 32, "%I64x", val);
+#else
 	snprintf(buf, 32, "%llx", val);
+#endif
+
 
 
 	return String(buf);
@@ -522,11 +527,13 @@ bool String::toBinaryStream(ObjectOutputStream* stream) {
 
 bool String::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint16 len = stream->readShort();
-	char ascii[len + 1];
+	char* ascii = new char[len + 1];
 	stream->readStream(ascii, (int) len);
 	ascii[len] = 0;
 
 	*this = String(ascii);
+
+	delete [] ascii;
 
 	return true;
 }

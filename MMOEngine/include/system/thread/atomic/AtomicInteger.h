@@ -38,7 +38,7 @@ namespace sys {
 		}
 
 		uint32 increment() {
-			#if GCC_VERSION >= 40100
+			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 				return __sync_add_and_fetch(&value, 1);
 			#elif defined(PLATFORM_MAC)
 				return OSAtomicIncrement32((volatile int32_t*) &value);
@@ -60,7 +60,7 @@ namespace sys {
 		}
 
 		uint32 decrement() {
-			#if GCC_VERSION >= 40100
+			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 				return __sync_sub_and_fetch(&value, 1);
 			#elif defined(PLATFORM_MAC)
 				return OSAtomicDecrement32((volatile int32_t*) &value);
@@ -82,7 +82,7 @@ namespace sys {
 		}
 
 		bool compareAndSet(uint32 oldval, uint32 newval) {
-		#if GCC_VERSION >= 40100
+		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 			return __sync_bool_compare_and_swap(&value, oldval, newval);
 		#elif defined(PLATFORM_MAC)
 			return OSAtomicCompareAndSwapLong(oldvalue, newvalue, (volatile int32_t*) &value);
@@ -95,7 +95,7 @@ namespace sys {
 			      return false;
 			  }
 		#else
-			InterlockedCompareExchange(&value, newval, oldval);
+			InterlockedCompareExchange((volatile LONG*)&value, newval, oldval);
 
 			return value == newval;
 		#endif

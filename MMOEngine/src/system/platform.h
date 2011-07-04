@@ -34,7 +34,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 								+ __GNUC_MINOR__ * 100 \
 								+ __GNUC_PATCHLEVEL__)
 
-#ifdef PLATFORM_WIN
+#ifdef _MSC_VER
 #pragma warning (disable : 4018)
 #pragma warning (disable : 4800)
 #pragma warning (disable : 4244)
@@ -42,6 +42,18 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #pragma warning (disable : 4996)
 #pragma warning (disable : 4800)
 #pragma warning (disable : 4548)
+#pragma warning (disable : 4355)
+#pragma warning (disable : 4180)
+
+#undef snprintf
+#define snprintf _snprintf
+
+#define _USE_MATH_DEFINES
+
+#ifdef _WIN64
+#undef PLATFORM_32
+#define PLATFORM_64
+#endif
 
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -55,6 +67,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <sys/time.h>
 #include <sys/types.h>
 #else
+#include <winsock2.h>
 #include <windows.h>
 #endif
 
@@ -80,6 +93,12 @@ extern "C" int isnan (double);
 extern "C" int isinf (double);
 #endif
 
+#ifdef PLATFORM_WIN
+#include <float.h>
+#define isnan(X) _isnan(X)
+#define isinf(X) std::isinf(X)
+#endif
+
 namespace sys {
 	typedef unsigned long long uint64;
 	typedef unsigned int uint32;
@@ -91,7 +110,9 @@ namespace sys {
 	typedef signed short int16;
 	typedef signed char int8;
 
+#ifndef __MINGW32__
 	typedef uint8 byte;
+#endif
 
 #ifdef PLATFORM64
 	typedef uint64 pointer;
@@ -121,7 +142,7 @@ namespace sys {
 	#define TIME_LIMIT 12
 	#endif
 
-	#define WITH_STM
+	//#define WITH_STM
 
 	namespace lang {
 	} // namespace net

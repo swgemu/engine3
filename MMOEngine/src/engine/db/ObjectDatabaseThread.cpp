@@ -5,7 +5,7 @@
  *      Author: oru
  */
 
-#include "ObjectDatabaseThread.h"
+//#include "ObjectDatabaseThread.h"
 #include "ObjectDatabaseManager.h"
 
 using namespace engine::db;

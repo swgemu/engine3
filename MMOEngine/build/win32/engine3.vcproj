@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="engine3"
 	ProjectGUID="{AEC3783C-5612-426C-B3BF-BBC9E7413F8C}"
 	RootNamespace="engine3"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -109,12 +110,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include\lua;..\..\include\mysql;..\..\include\zlib;..\..\include\w32pthread"
+				AdditionalIncludeDirectories="..\..\src;..\..\include\lua;..\..\include\mysql;..\..\external\zlib\include;&quot;..\..\external\pthreads-w32\include&quot;;&quot;..\..\external\db-5.0.32\build_windows&quot;;&quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\include&quot;;..\..\external\lua"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -145,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="install.bat d:\Programming\Projects\renessaince\RenessainceDemo\Code\external"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -170,7 +171,39 @@
 					Name="lang"
 					>
 					<File
+						RelativePath="..\..\src\system\lang\ArrayIndexOutOfBoundsException.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\system\lang\ArrayIndexOutOfBoundsException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\BaseTypeVariable.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Bool.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Byte.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Character.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\DivisionByZeroException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Double.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Exception.cpp"
 						>
 					</File>
 					<File
@@ -178,7 +211,51 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\system\lang\Float.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\IllegalArgumentException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\IllegalStateException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Integer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Integer.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\system\lang\Long.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Math.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Math.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\MemoryManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\MemoryManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\NumberFormatException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Object.cpp"
 						>
 					</File>
 					<File
@@ -186,7 +263,23 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\system\lang\OutOfMemoryError.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Runnable.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Short.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\system\lang\SignalException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\StackTrace.cpp"
 						>
 					</File>
 					<File
@@ -202,6 +295,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\system\lang\StringBuffer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\StringBuffer.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\system\lang\System.cpp"
 						>
 					</File>
@@ -214,19 +315,75 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\system\lang\unicode.cpp"
+						RelativePath="..\..\src\system\lang\types.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\system\lang\unicode.h"
+						RelativePath="..\..\src\system\lang\types.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\src\system\lang\UnicodeString.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\UnicodeString.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\lang\Variable.h"
+						>
+					</File>
+					<Filter
+						Name="ref"
+						>
+						<File
+							RelativePath="..\..\src\system\lang\ref\Reference.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\system\lang\ref\ReferenceCounter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\system\lang\ref\WeakReference.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="mersenne"
+						>
+						<File
+							RelativePath="..\..\src\system\lang\mersenne\MersenneTwister.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\system\lang\mersenne\MersenneTwister.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="thread"
 					>
 					<File
 						RelativePath="..\..\src\system\thread\Condition.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\thread\Lockable.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\thread\Lockable.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\thread\Locker.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\thread\Mutex.cpp"
 						>
 					</File>
 					<File
@@ -242,15 +399,127 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\system\thread\Thread.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\system\thread\Thread.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\src\system\thread\ThreadLocal.h"
+						>
+					</File>
+					<Filter
+						Name="atomic"
+						>
+						<File
+							RelativePath="..\..\src\system\thread\atomic\AtomicBoolean.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\system\thread\atomic\AtomicInteger.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\system\thread\atomic\AtomicLong.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\system\thread\atomic\AtomicReference.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="io"
 					>
 					<File
+						RelativePath="..\..\src\system\io\BufferedReader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\BufferedReader.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\File.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\system\io\File.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\FileInputStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\FileNotFoundException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\FileOutputStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\FileReader.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\FileWriter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\InputStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\IOException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\ObjectInputStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\ObjectOutputStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\OutputStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\PrintStream.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\PrintStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\Reader.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\Serializable.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\Serializable.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\Stream.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\Stream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\StreamIndexOutOfBoundsException.h"
 						>
 					</File>
 					<File
@@ -261,16 +530,28 @@
 						RelativePath="..\..\src\system\io\StringTokenizer.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\src\system\io\UnicodeTokenizer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\UnicodeTokenizer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\io\Writer.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="util"
 					>
 					<File
-						RelativePath="..\..\src\system\util\AdvancedBinaryHeap.cpp"
+						RelativePath="..\..\src\system\util\ArrayList.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\system\util\AdvancedBinaryHeap.h"
+						RelativePath="..\..\src\system\util\ArrayQueue.h"
 						>
 					</File>
 					<File
@@ -298,7 +579,19 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\system\util\PriorityQueue.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\util\PriorityQueue.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\system\util\SortedVector.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\util\Timer.h"
 						>
 					</File>
 					<File
@@ -309,10 +602,34 @@
 						RelativePath="..\..\src\system\util\VectorMap.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\src\system\util\VectorSet.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="net"
 					>
+					<File
+						RelativePath="..\..\src\system\net\InetAddress.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\net\InetAddress.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\net\NetworkInterface.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\net\NetworkInterface.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\system\net\Packet.cpp"
+						>
+					</File>
 					<File
 						RelativePath="..\..\src\system\net\Packet.h"
 						>
@@ -379,34 +696,22 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="sched"
-					>
-					<File
-						RelativePath="..\..\src\engine\sched\Event.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\engine\sched\EventQueue.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\engine\sched\EventQueue.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\engine\sched\ScheduleManager.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\engine\sched\ScheduleManager.h"
-						>
-					</File>
-				</Filter>
-				<Filter
 					Name="service"
 					>
 					<File
+						RelativePath="..\..\src\engine\service\DatagramServiceClient.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\engine\service\DatagramServiceClient.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\service\DatagramServiceClientProxy.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\service\DatagramServiceClientProxy.h"
 						>
 					</File>
 					<File
@@ -430,6 +735,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\engine\service\ServiceClient.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\engine\service\ServiceClient.h"
 						>
 					</File>
@@ -442,6 +751,18 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\engine\service\ServiceFilter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\service\ServiceHandler.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\service\ServiceMessageHandlerThread.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\engine\service\ServiceMessageHandlerThread.h"
 						>
 					</File>
@@ -450,11 +771,23 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\engine\service\ServiceThread.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\engine\service\ServiceThread.h"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\engine\service\StandaloneMessage.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\service\StreamServiceClient.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\service\StreamServiceClient.h"
 						>
 					</File>
 					<File
@@ -493,11 +826,27 @@
 							>
 						</File>
 						<File
+							RelativePath="..\..\src\engine\service\proto\BaseFragmentedPacket.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\..\src\engine\service\proto\BaseFragmentedPacket.h"
 							>
 						</File>
 						<File
+							RelativePath="..\..\src\engine\service\proto\BaseMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\service\proto\BaseMultiPacket.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\..\src\engine\service\proto\BaseMultiPacket.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\service\proto\BasePacket.cpp"
 							>
 						</File>
 						<File
@@ -522,6 +871,10 @@
 						</File>
 						<File
 							RelativePath="..\..\src\engine\service\proto\PacketHandler.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\service\proto\StandaloneBaseMessage.h"
 							>
 						</File>
 						<Filter
@@ -584,7 +937,19 @@
 								>
 							</File>
 							<File
+								RelativePath="..\..\src\engine\service\proto\events\BaseClientCleanUpEvent.hpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\src\engine\service\proto\events\BaseClientEvent.h"
+								>
+							</File>
+							<File
 								RelativePath="..\..\src\engine\service\proto\events\BaseClientNetStatusCheckupEvent.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\src\engine\service\proto\events\BaseClientNetStatusRequestEvent.h"
 								>
 							</File>
 							<File
@@ -593,6 +958,850 @@
 							</File>
 							<File
 								RelativePath="..\..\src\engine\service\proto\events\BasePacketChekupEvent.h"
+								>
+							</File>
+						</Filter>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="core"
+					>
+					<File
+						RelativePath="..\..\src\engine\core\Core.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\Core.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ManagedObject.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ManagedObject.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ManagedObjectImplementation.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ManagedReference.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ManagedService.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ManagedService.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ManagedWeakReference.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ObjectUpdateToDatabaseTask.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\ObjectUpdateToDatabaseTask.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\Task.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\Task.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskManagerImpl.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskManagerImpl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskPriorityQueue.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskQueue.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskQueue.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskScheduler.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskScheduler.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskWorkerThread.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TaskWorkerThread.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TimedTaskQueue.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\core\TimedTaskQueue.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="db"
+					>
+					<File
+						RelativePath="..\..\src\engine\db\BinaryData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\BinaryData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\Database.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\DatabaseException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\DatabaseManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\DatabaseManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\LocalDatabase.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\LocalDatabase.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\ObjectDatabase.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\ObjectDatabase.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\ObjectDatabaseManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\ObjectDatabaseManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\db\ResultSet.h"
+						>
+					</File>
+					<Filter
+						Name="mysql"
+						>
+						<File
+							RelativePath="..\..\src\engine\db\mysql\MySqlDatabase.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\mysql\MySqlDatabase.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\mysql\MysqlDatabaseManager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\mysql\MysqlDatabaseManager.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\mysql\ResultSet.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\mysql\Row.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\mysql\Statement.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="berkley"
+						>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\BerkeleyDatabase.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\BerkeleyDatabase.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\CheckpointConfig.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\Cursor.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\Cursor.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\CursorConfig.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\DatabaseConfig.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\DatabaseEntry.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\DatabaseEntry.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\Environment.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\Environment.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\EnvironmentConfig.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\Transaction.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\Transaction.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\db\berkley\TransactionConfig.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="dbo"
+					>
+					<File
+						RelativePath="..\..\src\engine\dbo\ObjectDatabase.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="lua"
+					>
+					<File
+						RelativePath="..\..\src\engine\lua\Lua.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\lua\Lua.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\lua\LuaFunction.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\lua\LuaFunction.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\lua\LuaObject.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\lua\LuaObject.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\lua\Luna.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\lua\Lunar.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="orb"
+					>
+					<File
+						RelativePath="..\..\src\engine\orb\DistributedObjectBroker.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DistributedObjectBroker.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DistributedObjectBrokerClient.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DistributedObjectBrokerClient.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DistributedObjectDirectory.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DistributedObjectDirectory.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DOBObjectManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DOBObjectManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DOBObjectManagerImplementation.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DOBObjectManagerImplementation.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DOBPacketHandler.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\DOBPacketHandler.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\NamingDirectoryService.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\NamingDirectoryService.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\NamingDirectoryServiceImpl.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\NamingDirectoryServiceImpl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\orb\ObjectBroker.h"
+						>
+					</File>
+					<Filter
+						Name="object"
+						>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedMethod.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedMethod.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObject.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObject.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObjectAdapter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObjectClassHelper.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObjectClassHelperMap.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObjectServant.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObjectServant.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObjectStub.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\DistributedObjectStub.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\ObjectNotDeployedException.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\object\ObjectNotLocalException.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="packets"
+						>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\AddObjectMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\DeployObjectMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\DeployObjectResponseMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\GetNextFreeObjectIDMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\GetNextFreeObjectIDResponseMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\InvokeMethodMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\LoadPersistentObjectMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\LookUpObjectMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\LookUpObjectResponseMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\MethodReturnMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\UpdatePersistentObjectMessage.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\orb\packets\UpdatePersistentObjectResponseMessage.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="stm"
+					>
+					<File
+						RelativePath="..\..\src\engine\stm\Transaction.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\Transaction.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\TransactionAbortedException.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\TransactionalMemoryManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\TransactionalMemoryManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\TransactionalObjectHandle.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\TransactionalObjectHeader.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\TransactionalReference.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\stm\TransactionalWeakReference.h"
+						>
+					</File>
+					<Filter
+						Name="mm"
+						>
+						<File
+							RelativePath="..\..\src\engine\stm\mm\HazardPointer.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="orb"
+						>
+						<File
+							RelativePath="..\..\src\engine\stm\orb\LocalObjectManager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\orb\LocalObjectManager.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\orb\TransactionalObjectManager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\orb\TransactionalObjectManager.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="service"
+						>
+						<File
+							RelativePath="..\..\src\engine\stm\service\TransactionalBaseClientManager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\service\TransactionalBaseClientManager.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\service\TransactionalSocketManager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\service\TransactionalSocketManager.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="task"
+						>
+						<File
+							RelativePath="..\..\src\engine\stm\task\LocalTaskManager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\task\LocalTaskManager.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\task\TransactionalTaskManager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\stm\task\TransactionalTaskManager.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="util"
+					>
+					<File
+						RelativePath="..\..\src\engine\util\Command.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\Facade.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\Facade.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\ObjectContainer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\ObjectFactory.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\Observable.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\Observable.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\Observer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\Observer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\ObserverEventMap.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\ObserverEventMap.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\ObserverImplementation.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\ResourcePool.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\engine\util\Singleton.h"
+						>
+					</File>
+					<Filter
+						Name="u3d"
+						>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\AABB.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\AABBNode.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\AABBTree.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\AABBTree.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\AStarAlgorithm.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Coordinate.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Funnel.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Funnel.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Matrix3.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Matrix4.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Matrix4.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\QuadTree.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\QuadTree.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\QuadTreeEntry.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\QuadTreeEntry.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\QuadTreeEntryImplementation.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\QuadTreeNode.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Quaternion.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Ray.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Segment.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Segment.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Sphere.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Sphere.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Triangle.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Triangle.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\TriangleNode.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\TriangulationAStarAlgorithm.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\TriangulationAStarAlgorithm.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Vector3.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\u3d\Vector4.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="iffstream"
+						>
+						<File
+							RelativePath="..\..\src\engine\util\iffstream\exceptions.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\iffstream\IffStream.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\engine\util\iffstream\IffStream.h"
+							>
+						</File>
+						<Filter
+							Name="chunks"
+							>
+							<File
+								RelativePath="..\..\src\engine\util\iffstream\chunks\Chunk.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\src\engine\util\iffstream\chunks\Chunk.h"
+								>
+							</File>
+							<Filter
+								Name="data"
+								>
+								<File
+									RelativePath="..\..\src\engine\util\iffstream\chunks\data\Data.h"
+									>
+								</File>
+							</Filter>
+							<Filter
+								Name="form"
+								>
+								<File
+									RelativePath="..\..\src\engine\util\iffstream\chunks\form\Form.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\src\engine\util\iffstream\chunks\form\Form.h"
+									>
+								</File>
+							</Filter>
+						</Filter>
+						<Filter
+							Name="exceptions"
+							>
+							<File
+								RelativePath="..\..\src\engine\util\iffstream\exceptions\IffStreamException.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\src\engine\util\iffstream\exceptions\InvalidChunkTypeException.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\src\engine\util\iffstream\exceptions\InvalidFileTypeException.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\src\engine\util\iffstream\exceptions\NoChunksException.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\src\engine\util\iffstream\exceptions\NoOpenedChunkException.h"
 								>
 							</File>
 						</Filter>

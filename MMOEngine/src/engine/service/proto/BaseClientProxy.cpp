@@ -7,6 +7,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BaseClientProxy.h"
 
+#include "events/BaseClientNetStatusCheckupEvent.h"
+#include "events/BaseClientCleanupEvent.h"
+#include "events/BaseClientNetStatusRequestEvent.h"
+#include "events/BaseClientEvent.h"
+
 BaseClientProxy::BaseClientProxy() : BaseClient() {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);

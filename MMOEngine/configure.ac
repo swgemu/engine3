@@ -12,8 +12,8 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 
 # checking for library dependencies.
-AC_CHECK_HEADER(lua.h, [], [AC_MSG_ERROR([*** lua.h is required, install lua header files])])	 AC_CHECK_HEADER([mysql/mysql.h], [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])
-AC_CHECK_HEADER(mysql/mysql.h, [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])	 AC_CHECK_HEADER([mysql/mysql.h], [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])
+#AC_CHECK_HEADER(lua.h, [], [AC_MSG_ERROR([*** lua.h is required, install lua header files])])	 AC_CHECK_HEADER([mysql/mysql.h], [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])
+#AC_CHECK_HEADER(mysql/mysql.h, [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])	 AC_CHECK_HEADER([mysql/mysql.h], [], [AC_MSG_ERROR([*** mysql.h is required, install mysql header files])])
 
 case "$host_cpu-$host_os" in
     *freebsd*)
@@ -33,6 +33,12 @@ case "$host_cpu-$host_os" in
       SYSTEM_LIBS="-lpthread -lwsock32"
       USER_INCLUDES_PATH="/usr/local/include"
       USER_LIBS_PATH="/usr/local/lib"
+      ;;
+    *mingw*)
+      SYSTEM_INCLUDES=""
+      SYSTEM_LIBS="-lpthread-win32 -lwsock32"
+      USER_INCLUDES_PATH="/local/include"
+      USER_LIBS_PATH="/local/lib"
       ;;
     *686*linux*)
       SYSTEM_INCLUDES="" 

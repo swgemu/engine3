@@ -50,11 +50,11 @@ namespace engine {
 		virtual bool isCurrentVersion(Object* obj) = 0;
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			return get()->toBinaryStream(stream);
+			return false;
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			return getForUpdate()->parseFromBinaryStream(stream);
+			return false;
 		}
 
 	protected:
@@ -172,7 +172,6 @@ namespace engine {
 	}
 
 	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createWriteHandle(Transaction* transaction) {
-		//assert(object != NULL);
 		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
 		handle->initialize(this, true, transaction);
 
@@ -210,36 +209,33 @@ namespace engine {
 		}
 
 	template<class O> Object* TransactionalStrongObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
-		add(handle);
+			Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
-		assert(object != NULL);
-
-		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
-
-		if (transaction != NULL) {
-			//if (transaction->isCommited())
-				throw TransactionAbortedException(false);
-			//return ownerTransaction->getOpenedObject(this);
-		}
-
-		return object;
+			/*if (transaction != NULL) {
+				if (!transaction->isCommited())
+						return object;
+					else
+				throw TransactionAbortedException();
+				//return ownerTransaction->getOpenedObject(this);
+			} else {*/
+			add(handle);
+			return object;
+			//}
 	}
 
-
 	template<class O> Object* TransactionalWeakObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
-		add(handle);
-
-		assert(object != NULL);
-
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
-		if (transaction != NULL) {
-			//if (transaction->isCommited())
-			throw TransactionAbortedException(false);
-			//return ownerTransaction->getOpenedObject(this);
-		}
-
+		/*if (transaction != NULL) {
+						if (!transaction->isCommited())
+								return object;
+							else
+						throw TransactionAbortedException();
+						//return ownerTransaction->getOpenedObject(this);
+					} else {*/
+		add(handle);
 		return object;
+		//
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::get() {
@@ -260,8 +256,6 @@ namespace engine {
 	template<class O> void TransactionalStrongObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
 		object = handle->getObjectLocalCopy();
 
-		assert(object != NULL);
-
 		//TransactionalObjectHeader<O>::last = NULL;
 
 		//ownerTransaction->release();
@@ -271,8 +265,6 @@ namespace engine {
 
 	template<class O> void TransactionalWeakObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
 		object = handle->getObjectLocalCopy();
-
-		assert(object != NULL);
 
 		//ownerTransaction->release();
 

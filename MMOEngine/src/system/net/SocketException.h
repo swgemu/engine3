@@ -6,10 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SOCKETEXCEPTION_H_
 #define SOCKETEXCEPTION_H_
 
+#include "../platform.h"
+
 #ifndef PLATFORM_WIN
 #include <errno.h>
 #else
 #include <winsock2.h>
+#include <windows.h>
 #endif
 
 #include "../lang/Exception.h"

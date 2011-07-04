@@ -35,7 +35,7 @@ namespace engine {
 		/**
 		 * Construct a DatabaseEntry with a given byte array
 		 */
-		DatabaseEntry(byte* data, int size);
+		DatabaseEntry(uint8* data, int size);
 
 		/**
 		 * Constructs a DatabaseEntry with a given byte array, offset and size

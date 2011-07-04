@@ -8,15 +8,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <math.h>
 
+#include "system/platform.h"
+
 namespace sys {
   namespace lang {
 
 	class Math {
 	public:
-		static const double PI = M_PI;
-		static const double DEG2RAD = M_PI / 180.0f;
-		static const double RAD2DEG = 180.0f / M_PI;
-		static const double E = 2.71828182845904523536;
+		static double PI;
+		static double DEG2RAD;
+		static double RAD2DEG;
+		static double E;
 
 		static float sqrt(float number);
 
@@ -25,7 +27,7 @@ namespace sys {
 		//static float fabs(float f);
 
 		static float getPrecision(float num, int digits) {
-			float power = pow(10, digits);
+			float power = pow((float)10, digits);
 			return float(floor(num * power + .05f) / power);
 		}
 

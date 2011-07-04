@@ -38,7 +38,7 @@ namespace sys {
 		}
 
 		bool compareAndSet(bool oldval, bool newval) {
-		#if GCC_VERSION >= 40100
+		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 			return __sync_bool_compare_and_swap(&value, (uint32) oldval, (uint32) newval);
 		#elif defined(PLATFORM_MAC)
 			return OSAtomicCompareAndSwapLong((uint32) oldvalue, (uint32) newvalue, (volatile int32_t*) &value);
@@ -51,7 +51,7 @@ namespace sys {
 			      return false;
 			  }
 		#else
-			InterlockedCompareExchange(&value, (uint32) newval, (uint32) oldval);
+			InterlockedCompareExchange((volatile LONG*)&value, (uint32) newval, (uint32) oldval);
 
 			return value == (uint32) newval;
 		#endif

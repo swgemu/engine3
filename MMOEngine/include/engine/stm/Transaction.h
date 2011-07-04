@@ -24,17 +24,18 @@ namespace engine {
 	template<class O> class TransactionalStrongObjectHeader;
 	template<class O> class TransactionalWeakObjectHeader;
 
-	class TransactionalObjectMap : public HashTable<uint64, Reference<TransactionalObjectHandleBase*> > {
+	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<Object*>*> {
 	public:
-		TransactionalObjectMap() : HashTable<uint64, Reference<TransactionalObjectHandleBase*> >(1000) {
+		TransactionalObjectMap() : HashTable<uint64, TransactionalObjectHandle<Object*>*>(1000) {
 		}
 
 		template<class O> TransactionalObjectHandle<O>* put(TransactionalObjectHeader<O>* header, TransactionalObjectHandle<O>* handle) {
-			return (TransactionalObjectHandle<O>*) HashTable<uint64,Reference<TransactionalObjectHandleBase*> >::put((uint64) header, Reference<TransactionalObjectHandleBase*>(handle)).get();
+			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<Object*>*>::put((uint64) header,
+				(TransactionalObjectHandle<Object*>*) handle);
 		}
 
 		template<class O> TransactionalObjectHandle<O>* get(TransactionalObjectHeader<O>* header) {
-			return (TransactionalObjectHandle<O>*) HashTable<uint64, Reference<TransactionalObjectHandleBase*> >::get((uint64) header).get();
+			return (TransactionalObjectHandle<O>*) HashTable<uint64, TransactionalObjectHandle<Object*>*>::get((uint64) header);
 		}
 	};
 
@@ -98,8 +99,6 @@ namespace engine {
 
 		int commitAttempts;
 
-		bool selfHelp;
-
 		static const int INITIAL = 0;
 		static const int UNDECIDED = 1;
 		static const int READ_CHECKING = 2;
@@ -117,9 +116,9 @@ namespace engine {
 		bool start();
 		bool start(Task* task);
 
-		bool commit(bool autoSelfHelp = true);
+		bool commit();
 
-		void abort(bool autoSelfHelp = true);
+		void abort();
 
 		int compareTo(Transaction* transaction);
 

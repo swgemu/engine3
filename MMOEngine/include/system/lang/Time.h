@@ -31,11 +31,11 @@ namespace sys {
 		struct timespec ts;
 
 	#ifdef PLATFORM_WIN
-		#define TIMESPEC_TO_FILETIME_OFFSET (((LONGLONG)27111902 << 32) + (LONGLONG)3577643008)
+		#define TIMESPEC_TO_FILETIME_OFFSET (((LONGLONG)27111902u << 32) + (LONGLONG)3577643008u)
 
 		static void filetime_to_timespec(const FILETIME *ft, struct timespec *ts) {
-			ts->tv_sec = (int)((*(LONGLONG *)ft - TIMESPEC_TO_FILETIME_OFFSET) / 10000000);
-			ts->tv_nsec = (int)((*(LONGLONG *)ft - TIMESPEC_TO_FILETIME_OFFSET - ((LONGLONG)ts->tv_sec * (LONGLONG)10000000)) * 100);
+			ts->tv_sec = (int)((*(LONGLONG *)ft - TIMESPEC_TO_FILETIME_OFFSET) / 10000000u);
+			ts->tv_nsec = (int)((*(LONGLONG *)ft - TIMESPEC_TO_FILETIME_OFFSET - ((LONGLONG)ts->tv_sec * (LONGLONG)10000000u)) * 100);
 		}
 	#endif
 
@@ -195,6 +195,7 @@ namespace sys {
 
 				return time;
 			#else
+				assert(0 && "Method not supported in windows");
 				return 0;
 			#endif
 		}

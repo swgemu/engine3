@@ -83,15 +83,28 @@ namespace sys {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			return object->toBinaryStream(stream);
+			//return object->toBinaryStream(stream);
+			return false;
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			return object->parseFromBinaryStream(stream);
+			//return object->parseFromBinaryStream(stream);
+			return false;
 		}
 
 	protected:
-		inline void updateObject(O obj) {
+		inline void updateObject(O obj);
+
+		inline void setObject(O obj);
+
+		inline void initializeObject(O obj);
+
+		inline void acquireObject();
+
+		inline void releaseObject();
+	};
+
+	template<class O> void Reference<O>::updateObject(O obj) {
 			if (obj == object.get())
 				return;
 
@@ -117,20 +130,20 @@ namespace sys {
 
 		}
 
-		inline void setObject(O obj) {
+		template<class O> void Reference<O>::setObject(O obj) {
 			if (obj == object)
 				return;
 
 			initializeObject(obj);
 		}
 
-		inline void initializeObject(O obj) {
+		template<class O> void Reference<O>::initializeObject(O obj) {
 			object = obj;
 
 			acquireObject();
 		}
 
-		inline void acquireObject() {
+		template<class O> void Reference<O>::acquireObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
 				object->addHolder(this);
@@ -139,7 +152,7 @@ namespace sys {
 			}
 		}
 
-		inline void releaseObject() {
+		template<class O> void Reference<O>::releaseObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
 				object->removeHolder(this);
@@ -148,7 +161,6 @@ namespace sys {
 				object = NULL;
 			}
 		}
-	};
 
   } // namespace lang
 } // namespace sys

@@ -33,7 +33,7 @@ namespace engine {
 		 //IffStream(const String& filename);
 		 ~IffStream();
 
-		 bool parseChunks(sys::byte* data, int size, const String& filename);
+		 bool parseChunks(sys::uint8* data, int size, const String& filename);
 
 		 template <class K> void registerChunk(uint32 key) {
 			 chunkFactory.registerObject<K>(key);

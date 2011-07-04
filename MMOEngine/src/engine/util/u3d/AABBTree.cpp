@@ -172,7 +172,6 @@ AABBNode::~AABBNode() {
 
 int AABBNode::intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result) {
 	float intersectionDistance;
-	Triangle* triangle;
 
 	if (mBox.intersects(ray, 0.f, maxDistance)) {
 		if (mChildren[0]) {

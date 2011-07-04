@@ -32,7 +32,7 @@ IffStream::~IffStream() {
 	file = NULL;*/
 }
 
-bool IffStream::parseChunks(sys::byte* data, int size, const String& filename) {
+bool IffStream::parseChunks(sys::uint8* data, int size, const String& filename) {
 	fileName = filename;
 
 	setLoggingName("IffStream " + fileName);

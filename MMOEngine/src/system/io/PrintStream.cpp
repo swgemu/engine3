@@ -32,17 +32,31 @@ void PrintStream::print(long val) {
 }
 
 void PrintStream::print(int64 val) {
+#ifndef PLATFORM_WIN
 	if (doHex())
 		printf("%lldx", val);
 	else
 		printf("%lld", val);
+#else
+	if (doHex())
+		printf("%I64dx", val);
+	else
+		printf("%I64d", val);
+#endif
 }
 
 void PrintStream::print(uint64 val) {
+#ifndef PLATFORM_WIN
 	if (doHex())
 		printf("%llux", val);
 	else
 		printf("%llu", val);
+#else
+	if (doHex())
+		printf("%I64ux", val);
+	else
+		printf("%I64u", val);
+#endif
 }
 
 void PrintStream::print(float val) {
@@ -87,17 +101,31 @@ void PrintStream::println(long val) {
 }
 
 void PrintStream::println(int64 val) {
+#ifndef PLATFORM_WIN
 	if (doHex())
 		printf("%lldh", val);
 	else
 		printf("%lld", val);
+#else
+	if (doHex())
+		printf("%I64dh", val);
+	else
+		printf("%I64d", val);
+#endif
 }
 
 void PrintStream::println(uint64 val) {
+#ifndef PLATFORM_WIN
 	if (doHex())
 		printf("%lluh\n", val);
 	else
 		printf("%llu\n", val);
+#else
+	if (doHex())
+		printf("%I64uh\n", val);
+	else
+		printf("%I64u\n", val);
+#endif
 }
 
 void PrintStream::println(float val) {

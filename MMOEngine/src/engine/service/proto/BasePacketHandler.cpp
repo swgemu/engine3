@@ -14,6 +14,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "packets/AcknowledgeMessage.h"
 #include "packets/AcknowledgeOkMessage.h"
 
+#include "events/BaseClientNetStatusCheckupEvent.h"
+#include "events/BaseClientCleanupEvent.h"
+#include "events/BaseClientNetStatusRequestEvent.h"
+#include "events/BaseClientEvent.h"
+
 #ifdef VERSION_PUBLIC
 #include "events/BaseClientCleanUpEvent.hpp"
 #endif

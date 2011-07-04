@@ -1,5 +1,5 @@
 #include "MersenneTwister.h"
-
+/*
 inline MTRand::MTRand(const MTRand::uint32& oneSeed) {
 	seed(oneSeed);
 }
@@ -32,3 +32,4 @@ inline MTRand::uint32 MTRand::randInt(const MTRand::uint32& n) {
 	return i;
 }
 
+*/

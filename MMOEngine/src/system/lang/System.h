@@ -61,6 +61,10 @@ namespace sys {
 		static inline uint64 getMiliTime() {
 			return uint64(((float) clock() / (float) CLOCKS_PER_SEC) * 1000.f);
 		}
+
+		static inline uint64 getMikroTime() {
+			return uint64(((double) clock() / (double) CLOCKS_PER_SEC) * 1000000.f);
+		}
 	#endif
 
 		static uint32 random(unsigned int bucket = 0xFFFFFFFF);

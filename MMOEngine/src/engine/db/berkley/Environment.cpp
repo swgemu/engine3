@@ -28,9 +28,11 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
 	//System::out << "trying to set " << threadCount << " thread count" << endl;
 
+	databaseEnvironment->mutex_set_max(databaseEnvironment, 75000);
 	databaseEnvironment->set_lk_max_locks(databaseEnvironment, 75000);
 	databaseEnvironment->set_lk_max_lockers(databaseEnvironment, 75000);
 	databaseEnvironment->set_lk_max_objects(databaseEnvironment, 75000);
+
 	databaseEnvironment->set_cachesize(databaseEnvironment, 0, 26214400, 0);
 	databaseEnvironment->set_lg_bsize(databaseEnvironment, 26214400);
 

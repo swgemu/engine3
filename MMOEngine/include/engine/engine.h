@@ -58,7 +58,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "stm/TransactionalMemoryManager.h"
 
-#ifndef PLATFORM_WIN
 #include "db/Database.h"
 #include "db/ObjectDatabase.h"
 #include "db/ObjectDatabaseManager.h"
@@ -67,7 +66,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "db/berkley/BerkeleyDatabase.h"
 
 #include "lua/Lua.h"
-#endif
 
 #include "util/u3d/QuadTree.h"
 #include "util/u3d/Quaternion.h"

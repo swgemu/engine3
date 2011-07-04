@@ -15,7 +15,7 @@ DatabaseEntry::DatabaseEntry() {
 	databaseEntry.flags |= DB_DBT_MALLOC;
 }
 
-DatabaseEntry::DatabaseEntry(byte* data, int size) {
+DatabaseEntry::DatabaseEntry(uint8* data, int size) {
 	memset(&databaseEntry, 0, sizeof(DBT));
 
 	databaseEntry.size = size;
