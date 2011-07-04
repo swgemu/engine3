@@ -6,6 +6,7 @@ MMOEngine/.project -text
 MMOEngine/.settings/org.eclipse.cdt.core.prefs -text
 MMOEngine/.settings/org.eclipse.ltk.core.refactoring.prefs -text
 MMOEngine/AUTHORS -text
+MMOEngine/CMakeLists.txt -text
 MMOEngine/COPYING -text
 MMOEngine/ChangeLog -text
 MMOEngine/INSTALL -text
@@ -410,6 +411,7 @@ MMOEngine/lib/idlc.jar -text
 MMOEngine/lib/unix/libengine3.a -text
 MMOEngine/lib/win32/engine3.lib -text
 MMOEngine/lib/win32/engine3d.lib -text
+MMOEngine/src/CMakeLists.txt -text
 MMOEngine/src/Makefile.am -text
 MMOEngine/src/Makefile.in -text
 MMOEngine/src/engine/core/Core.cpp -text
