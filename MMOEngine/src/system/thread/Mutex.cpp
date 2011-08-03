@@ -57,6 +57,8 @@ void Mutex::lock(Mutex* m) {
 			m->unlock();
 			m->lock();
 		#endif
+
+		Thread::yield();
 	}
 
 	lockAcquired(m);
@@ -75,6 +77,8 @@ void Mutex::lock(Lockable* lockable) {
 	while (pthread_mutex_trylock(&mutex)) {
 		lockable->unlock();
 		lockable->lock();
+
+		Thread::yield();
 	}
 
 	lockAcquired(lockable);

@@ -61,8 +61,11 @@ void Object::release() {
 
 	if (decreaseCount()) {
 		if (notifyDestroy()) {
+#ifdef WITH_STM
 			MemoryManager::getInstance()->reclaim(this);
-			//destroy();
+#else
+			destroy();
+#endif
 		}
 	}
 }

@@ -10,6 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../../thread/ReadWriteLock.h"
 #include "system/thread/atomic/AtomicReference.h"
+#include "../Object.h"
 
 namespace sys {
   namespace lang {
@@ -93,7 +94,7 @@ namespace sys {
 
 			O copy = object;
 
-			if (object != NULL && object->_isGettingDestroyed()) {
+			if (object != NULL && ((Object*)object.get())->_isGettingDestroyed()) {
 				rwlock.unlock();
 				return NULL;
 			}
@@ -104,11 +105,11 @@ namespace sys {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			return object->toBinaryStream(stream);
+			return false;
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			return object->parseFromBinaryStream(stream);
+			return false;
 		}
 
 	protected:
@@ -124,14 +125,14 @@ namespace sys {
 						setObject(obj);*/
 
 			if (obj != NULL)
-				obj->acquire();
+				((Object*)obj)->acquireWeak(this);
 
 			while (true) {
 				O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL)
-						oldobj->release();
+						((Object*)oldobj)->releaseWeak(this);
 
 					return;
 				}
@@ -154,13 +155,13 @@ namespace sys {
 
 		inline void acquireObject() {
 			if (object != NULL) {
-				object->acquireWeak(this);
+				((Object*)object.get())->acquireWeak(this);
 			}
 		}
 
-		inline void releaseObject() {
+		void releaseObject() {
 			if (object != NULL) {
-				object->releaseWeak(this);
+				((Object*)object.get())->releaseWeak(this);
 				clearObject();
 			}
 		}

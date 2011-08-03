@@ -87,6 +87,7 @@ void DatabaseManager::loadDatabases() {
 	if (loaded)
 		return;
 
+	try {
 	openEnvironment();
 
 	databaseDirectory = new LocalDatabase(this, "databases.db");
@@ -152,6 +153,11 @@ void DatabaseManager::loadDatabases() {
 	info(msg);
 
 	loaded = true;
+	} catch (Exception& e) {
+		error(e.getMessage());
+		
+		assert(0 && "Database exception loading databases");
+	}
 
 	checkpoint();
 }

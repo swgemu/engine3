@@ -290,7 +290,7 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		return;
 
 	try {
-		pack->setTimeout(checkupEvent->getCheckupTime());
+		pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 		sendBuffer.add(pack);
 
 		if (!reentrantTask->isScheduled())
@@ -340,8 +340,8 @@ void BaseClient::run() {
 			}
 
 			if (sequenceBuffer.isEmpty()) {
-				checkupEvent->update(pack);
-				pack->setTimeout(checkupEvent->getCheckupTime());
+				((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
+				pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 				if (!checkupEvent->isScheduled())
 					checkupEvent->schedule(pack->getTimeout());
@@ -414,7 +414,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 		pack = sendBuffer.remove(0);
 	} else if (bufferedPacket != NULL) {
 		pack = bufferedPacket->getPacket();
-		pack->setTimeout(checkupEvent->getCheckupTime());
+		pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 		bufferedPacket = NULL;
 	} else
@@ -568,8 +568,8 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 		if (seq > (uint32) acknowledgedServerSequence) {
 			resendPackets();
 
-			checkupEvent->increaseCheckupTime(100);
-			checkupEvent->update(pack);
+			((BasePacketChekupEvent*)(checkupEvent.get()))->increaseCheckupTime(100);
+			((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
 
 			#ifdef TRACE_CLIENTS
 				StringBuffer msg;
@@ -605,7 +605,7 @@ void BaseClient::resendPackets() {
 		if (packet->getTimeout().isFuture())
 			break;
 
-		packet->setTimeout(checkupEvent->getCheckupTime());
+		packet->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 		if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
@@ -639,7 +639,7 @@ void BaseClient::resendPackets(int seq) {
 		if (packet->getTimeout().isFuture())
 			continue;
 
-		packet->setTimeout(checkupEvent->getCheckupTime());
+		packet->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 		if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
@@ -683,7 +683,7 @@ void BaseClient::setPacketCheckupTime(uint32 time) {
 			debug(msg);
 		#endif
 
-		checkupEvent->setCheckupTime(time);
+		((BasePacketChekupEvent*)(checkupEvent.get()))->setCheckupTime(time);
 	} catch (...) {
 		disconnect("unreported exception on setPacketCheckupTime()", false);
 	}
@@ -741,7 +741,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 		flushSendBuffer(realseq);
 		acknowledgedServerSequence = realseq;
 
-		checkupEvent->decreaseCheckupTime(1);
+		((BasePacketChekupEvent*)(checkupEvent.get()))->decreaseCheckupTime(1);
 
 		if (!sequenceBuffer.isEmpty()) {
 			#ifdef TRACE_CLIENTS
@@ -752,8 +752,8 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 
 			BasePacket* pack = sequenceBuffer.get(0);
 
-			checkupEvent->update(pack);
-			pack->setTimeout(checkupEvent->getCheckupTime());
+			((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
+			pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 			if (!checkupEvent->isScheduled())
 				checkupEvent->schedule(pack->getTimeout());

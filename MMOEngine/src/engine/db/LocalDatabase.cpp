@@ -228,8 +228,11 @@ void LocalDatabaseIterator::resetIterator() {
 
 bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data) {
 	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
+		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
+			/*this->key.setData(NULL, 0);
+			this->data.setData(NULL, 0);*/
 			return false;
+		}
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 		data->writeStream((char*)this->data.getData(), this->data.getSize());
@@ -246,8 +249,11 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 
 bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data) {
 	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
+		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
+			/*this->key.setData(NULL, 0);
+			this->data.setData(NULL, 0);*/
 			return false;
+		}
 
 		data->writeStream((char*)this->data.getData(), this->data.getSize());
 
@@ -265,8 +271,11 @@ bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data) {
 
 bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key) {
 	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0)
+		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
+			/*this->key.setData(NULL, 0);
+			this->data.setData(NULL, 0);*/
 			return false;
+		}
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 

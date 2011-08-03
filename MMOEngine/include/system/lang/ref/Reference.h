@@ -93,18 +93,7 @@ namespace sys {
 		}
 
 	protected:
-		inline void updateObject(O obj);
-
-		inline void setObject(O obj);
-
-		inline void initializeObject(O obj);
-
-		inline void acquireObject();
-
-		inline void releaseObject();
-	};
-
-	template<class O> void Reference<O>::updateObject(O obj) {
+		inline void updateObject(O obj) {
 			if (obj == object.get())
 				return;
 
@@ -115,14 +104,14 @@ namespace sys {
 			setObject(obj);*/
 
 			if (obj != NULL)
-				obj->acquire();
+				((Object*)obj)->acquire();
 
 			while (true) {
 				O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL)
-						oldobj->release();
+						((Object*)oldobj)->release();
 
 					return;
 				}
@@ -130,37 +119,40 @@ namespace sys {
 
 		}
 
-		template<class O> void Reference<O>::setObject(O obj) {
+		inline void setObject(O obj) {
 			if (obj == object)
 				return;
 
 			initializeObject(obj);
 		}
 
-		template<class O> void Reference<O>::initializeObject(O obj) {
+		inline void initializeObject(O obj) {
 			object = obj;
 
 			acquireObject();
 		}
 
-		template<class O> void Reference<O>::acquireObject() {
+		inline void acquireObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
 				object->addHolder(this);
 			#endif
-				object->acquire();
+				((Object*)object.get())->acquire();
 			}
 		}
 
-		template<class O> void Reference<O>::releaseObject() {
+		void releaseObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
 				object->removeHolder(this);
 			#endif
-				object->release();
+				((Object*)object.get())->release();
 				object = NULL;
 			}
 		}
+	};
+
+	
 
   } // namespace lang
 } // namespace sys

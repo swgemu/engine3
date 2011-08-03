@@ -26,6 +26,9 @@ namespace engine {
 
 		Mutex blockMutex;
 
+	protected:
+		void prepareTask(Task* task);
+
 	public:
 		TaskScheduler();
 		TaskScheduler(const String& s);

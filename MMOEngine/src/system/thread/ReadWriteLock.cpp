@@ -97,6 +97,8 @@ void ReadWriteLock::wlock(Mutex* lock) {
       		lock->unlock();
 	      	lock->lock();
 	 	#endif
+
+		Thread::yield();
 	}
 
 	lockAcquired(lock, "w");
@@ -129,7 +131,8 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
        		lock->unlock();
        		lock->wlock();
        	#endif
-		}
+			Thread::yield();
+	}
 
 	lockAcquired(lock, "w");
 }
@@ -140,6 +143,8 @@ void ReadWriteLock::lock(Lockable* lockable) {
     while (pthread_rwlock_trywrlock(&rwlock)) {
   		lockable->unlock();
       	lockable->lock();
+
+		Thread::yield();
 	}
 
 	lockAcquired(lockable, "w");

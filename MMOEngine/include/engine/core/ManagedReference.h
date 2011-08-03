@@ -58,63 +58,15 @@ namespace engine {
 			return Reference<O>::object;
 		}
 
-		int compareTo(const ManagedReference& ref) const {
-			if (Reference<O>::object->_getObjectID() < ref.Reference<O>::object->_getObjectID())
-				return 1;
-			else if (Reference<O>::object->_getObjectID() > ref.Reference<O>::object->_getObjectID())
-				return -1;
-			else
-				return 0;
-		}
+		int compareTo(const ManagedReference& ref) const;
 
-		bool toString(String& str) {
-			if (Reference<O>::get() != NULL)
-				str = String::valueOf((Reference<O>::get())->_getObjectID());
-			else
-				str = String::valueOf(0);
+		bool toString(String& str);
 
-			return true;
-		}
+		bool parseFromString(const String& str, int version = 0);
 
-		bool parseFromString(const String& str, int version = 0) {
-			O obj = dynamic_cast<O>(Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)));
+		bool toBinaryStream(ObjectOutputStream* stream);
 
-			if (obj == NULL) {
-				updateObject(NULL);
-				return false;
-			}
-
-			updateObject(obj);
-
-			return true;
-		}
-
-		bool toBinaryStream(ObjectOutputStream* stream) {
-			O object = Reference<O>::get();
-
-			if (object != NULL)
-				stream->writeLong(object->_getObjectID());
-			else
-				stream->writeLong(0);
-
-			return true;
-		}
-
-		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			uint64 oid = stream->readLong();
-
-			O obj = dynamic_cast<O>(Core::getObjectBroker()->lookUp(oid));
-
-
-			if (obj == NULL) {
-				updateObject(NULL);
-				return false;
-			}
-
-			updateObject(obj);
-
-			return true;
-		}
+		bool parseFromBinaryStream(ObjectInputStream* stream);
 
 	protected:
 		void updateObject(O obj) {
@@ -139,6 +91,64 @@ namespace engine {
 		}
 
 };
+
+	template<class O> int ManagedReference<O>::compareTo(const ManagedReference& ref) const {
+		if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() < ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
+			return 1;
+		else if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() > ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
+			return -1;
+		else
+			return 0;
+	}
+
+	template<class O> bool ManagedReference<O>::toString(String& str) {
+		if (Reference<O>::get() != NULL)
+			str = String::valueOf(((DistributedObject*)Reference<O>::get())->_getObjectID());
+		else
+			str = String::valueOf(0);
+
+		return true;
+	}
+
+	template<class O> bool ManagedReference<O>::parseFromString(const String& str, int version) {
+		O obj = dynamic_cast<O>(Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)));
+
+		if (obj == NULL) {
+			updateObject(NULL);
+			return false;
+		}
+
+		updateObject(obj);
+
+		return true;
+	}
+
+	template<class O> bool ManagedReference<O>::toBinaryStream(ObjectOutputStream* stream) {
+		O object = Reference<O>::get();
+
+		if (object != NULL)
+			stream->writeLong(((DistributedObject*)object)->_getObjectID());
+		else
+			stream->writeLong(0);
+
+		return true;
+	}
+
+	template<class O> bool ManagedReference<O>::parseFromBinaryStream(ObjectInputStream* stream) {
+		uint64 oid = stream->readLong();
+
+		O obj = (O)(Core::getObjectBroker()->lookUp(oid));
+
+
+		if (obj == NULL) {
+			updateObject(NULL);
+			return false;
+		}
+
+		updateObject((O)obj);
+
+		return true;
+	}
 
   } // namespace core
 } // namespace engine

@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define OBJECT_H_
 
 #include "system/lang/ref/ReferenceCounter.h"
-#include "system/lang/ref/WeakReference.h"
+//#include "system/lang/ref/WeakReference.h"
 
 #include "system/thread/Mutex.h"
 
@@ -40,6 +40,8 @@ namespace sys {
   namespace lang {
 
     class String;
+    class WeakReferenceBase;
+    template<class O> class WeakReference;
 
 	using namespace sys::io;
 	using namespace sys::util;

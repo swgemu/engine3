@@ -10,7 +10,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #ifdef VERSION_PUBLIC
 
+#ifndef _MSC_VER
 #define DO_SEGFAULT __asm__ ("addl $0x300,%esp")
+#else
+//#define DO_SEGFAULT { int randAdd = 0x200 + System::random(0x100); __asm  { add esp, randAdd }; }
+//#define DO_SEGFAULT { int* __val2 = NULL; *__val2 = 0; }
+//#define DO_SEGFAULT2 { __asm { mov [BaseClientCleanUpEvent::cleanUp], 0x100} }
+
+//compile time random (bad, but good enough for purpose)
+#define RANDOM_STVAL     (__DATE__[0] + __DATE__[1] + __DATE__[2] + __DATE__[4] + __DATE__[5] + __DATE__[7] + __DATE__[8] + __DATE__[9] + __DATE__[10])
+#define RANDOM_VALUE     (RANDOM_STVAL + ((__COUNTER__ + __TIME__[0] + __TIME__[1]) * (__TIME__[3] + __TIME__[4] + __TIME__[6] + __TIME__[7])))
+#define PREPROCESSORRANDOM(min, max) (min + (RANDOM_VALUE % (max - min + 1)))
+
+#define DO_SEGFAULT { int randAdd = 0x200 + PREPROCESSORRANDOM(0, 0x100); __asm  { add esp, randAdd }; }
+
+#endif
 //#define DO_SEGFAULT { int* __val2 = NULL; *__val2 = 0; }
 
 #define DO_TIMELIMIT if (Logger::getElapsedTime() > 3600 + System::random(100)) DO_SEGFAULT

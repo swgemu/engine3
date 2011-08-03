@@ -6,6 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/core/Core.h"
 
 #include "TransactionalMemoryManager.h"
+#include "Transaction.h"
 
 using namespace engine::stm;
 
@@ -188,14 +189,14 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 }
 
 void TransactionalMemoryManager::create(Object* object) {
-	Locker locker(&deletedMutex);
+	/*Locker locker(&deletedMutex);
 
 	int find = deleted.find((uint64)object);
 
 	if (find != -1) {
 		delete deleted.get(find);
 		deleted.remove(find);
-	}
+	}*/
 
 }
 

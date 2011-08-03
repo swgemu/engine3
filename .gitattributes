@@ -458,7 +458,6 @@ MMOEngine/src/engine/db/ObjectDatabase.cpp -text
 MMOEngine/src/engine/db/ObjectDatabase.h -text
 MMOEngine/src/engine/db/ObjectDatabaseManager.cpp -text
 MMOEngine/src/engine/db/ObjectDatabaseManager.h -text
-MMOEngine/src/engine/db/ObjectDatabaseThread.cpp -text
 MMOEngine/src/engine/db/ResultSet.h -text
 MMOEngine/src/engine/db/berkley/BerkeleyDatabase.cpp -text
 MMOEngine/src/engine/db/berkley/BerkeleyDatabase.h -text

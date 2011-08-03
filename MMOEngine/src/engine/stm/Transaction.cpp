@@ -14,7 +14,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Transaction.h"
 
-
 using namespace engine::stm;
 
 ReadWriteLock Transaction::blockLock;
@@ -112,7 +111,7 @@ bool Transaction::commit() {
 	commitTime += System::getMikroTime() - startTime;
 
 	if (commited) {
-		String msg = "ran and commited in " + String::valueOf((commitTime + runTime) / 1000) + "ms Task: " + String(TypeInfo<Task>::getClassName(task)) + " commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
+		String msg = "ran and commited in " + String::valueOf((commitTime + runTime) / 1000) + "ms Task: " + String(TypeInfo<Object>::getClassName(task)) + " commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
 				+ readOnlyObjectsCount + " / " + readWriteObjectsCount +")";
 

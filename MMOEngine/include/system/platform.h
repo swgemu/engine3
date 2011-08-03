@@ -50,6 +50,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #define _USE_MATH_DEFINES
 
+#define round(x) floor(x + 0.5)
+
 #ifdef _WIN64
 #undef PLATFORM_32
 #define PLATFORM_64
@@ -96,7 +98,7 @@ extern "C" int isinf (double);
 #ifdef PLATFORM_WIN
 #include <float.h>
 #define isnan(X) _isnan(X)
-#define isinf(X) std::isinf(X)
+#define isinf(x) (!_finite(x) && !_isnan(x))
 #endif
 
 namespace sys {

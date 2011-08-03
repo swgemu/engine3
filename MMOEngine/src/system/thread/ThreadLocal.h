@@ -17,9 +17,7 @@ namespace sys {
  namespace thread {
 
 	template<class T> class ThreadLocal {
-	#ifdef PLATFORM_UNIX
 		pthread_key_t dataKey;
-	#endif
 
 	public:
 		ThreadLocal();
@@ -64,36 +62,26 @@ namespace sys {
 		return value;
 	}
 
-	template<class T> void ThreadLocal<T>:: remove() {
+	template<class T> void ThreadLocal<T>::remove() {
 		set(NULL);
 	}
 
 	template <class T> void ThreadLocal<T>::set(const T& value) {
-	#ifdef PLATFORM_UNIX
 		pthread_setspecific(dataKey, (void*) value);
-	#endif
 	}
 
 	template<class T> void ThreadLocal<T>::createKey() {
-	#ifdef PLATFORM_UNIX
 		if (pthread_key_create(&dataKey, NULL) != 0) {
 			raise(SIGSEGV);
 		}
-	#endif
 	}
 
 	template<class T> void ThreadLocal<T>::deleteKey() {
-	#ifdef PLATFORM_UNIX
 		pthread_key_delete(dataKey);
-	#endif
 	}
 
 	template<class T> T ThreadLocal<T>::getValue() {
-	#ifdef PLATFORM_UNIX
 		return (T) pthread_getspecific(dataKey);
-	#else
-		return NULL;
-	#endif
 	}
  }
 }

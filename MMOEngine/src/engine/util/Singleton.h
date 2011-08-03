@@ -7,52 +7,59 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define SINGLETON_H_
 
 #include "system/thread/ReadWriteLock.h"
-#include "system/lang/ref/Reference.h"
+#include "system/thread/atomic/AtomicReference.h"
 
 namespace engine {
 	namespace util {
 
 	template<class O> class SingletonWrapper {
-		Reference<O*> inst;
-		pthread_rwlock_t rwlock;
-		bool finalized ;
+		AtomicReference<O*> inst;
+		//pthread_rwlock_t* rwlock;
+		bool finalized;
 
 	public:
 		SingletonWrapper() {
 			inst = NULL;
 			finalized = false;
-			pthread_rwlock_init(&rwlock, NULL);
+			/*rwlock = (pthread_rwlock_t*) malloc(sizeof(pthread_rwlock_t));
+			pthread_rwlock_init(rwlock, NULL);*/
 		}
 
 		~SingletonWrapper() {
 			finalize();
+
+			//free(rwlock);
+			//rwlock = NULL;
 		}
 
 		O* instance() {
 			if (inst == NULL && !finalized) {
-				int res = pthread_rwlock_wrlock(&rwlock);//;rwlock.wlock();
+				/*int res = pthread_rwlock_wrlock(rwlock);//;rwlock.wlock();
 
 				if (res != 0)
-					System::out << "unlock failed on RWLock Singleton (" << res << ")\n";
+					System::out << "unlock failed on RWLock Singleton (" << res << ")\n";*/
 
-				if (inst == NULL && !finalized)
-					inst = new O();
+				//if (inst == NULL && !finalized)
+					O* in = new O();
 
-				pthread_rwlock_unlock(&rwlock);
+					if (!inst.compareAndSet(NULL, in))
+						delete in;
+
+				//pthread_rwlock_unlock(rwlock);
 			}
 
 			return inst;
 		}
 
 		void finalize() {
-			pthread_rwlock_wrlock(&rwlock);//;rwlock.wlock();
+			//pthread_rwlock_wrlock(rwlock);//;rwlock.wlock();
 
 			/*if (inst != NULL)
 				delete inst;*/
 
 			finalized = true;
 
-			pthread_rwlock_unlock(&rwlock);
+			//pthread_rwlock_unlock(rwlock);
 
 			inst = NULL;
 		}

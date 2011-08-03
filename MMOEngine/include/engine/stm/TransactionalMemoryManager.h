@@ -27,28 +27,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
-  class DeletedTrace {
-	  StackTrace stackTrace;
-	  Thread* thread;
-	  int tid;
-  public:
-	  DeletedTrace() {
-		  thread = Thread::getCurrentThread();
-		  tid = 0;
-	  }
-
-	  void print() {
-		  System::out << "TID:" << tid << " Thread: " << hex << thread << endl;
-		  stackTrace.print();
-	  }
-
-	  void setTid(int tid) {
-		  this->tid = tid;
-	  }
-
-
-  };
-
 	class TransactionalMemoryManager : public Singleton<TransactionalMemoryManager>, public MemoryManager, public Logger {
 		TransactionalTaskManager* taskManager;
 
@@ -71,15 +49,11 @@ namespace engine {
 		AtomicInteger failedToResolveConflictReleasedTransaction;
 		AtomicInteger failedToNotUNDECIDED;
 		AtomicInteger failedToExceptions;
-		AtomicInteger deletedTransactions;
-
 
 		bool reclaiming;
 
 		ThreadLocal<Vector<Object*>* > reclamationList;
 
-		VectorMap<uint64, DeletedTrace*> deleted;
-		Mutex deletedMutex;
 		ReadWriteLock blockLock;
 
 	public:
@@ -117,10 +91,6 @@ namespace engine {
 
 		inline void increaseFailedByObjectChanged() {
 			failedOnAcquireRW.increment();
-		}
-
-		inline void increaseDeletedTransactions() {
-			deletedTransactions.increment();
 		}
 
 		inline void unblockTransactions() {

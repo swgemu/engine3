@@ -64,11 +64,14 @@ namespace engine {
 		int compareTo(PriorityQueueEntry* node) {
 			Task* task = (Task*) node;
 
+			if (task == this)
+				return 0;
+
 			int cmp = nextExecutionTime.compareTo(task->nextExecutionTime);
 			if (cmp == 0) {
-				if (this == task)
+			/*	if (this == task)
 					return 0;
-				else if (this < task)
+				else */if (this < task)
 					return 1;
 				else
 					return -1;

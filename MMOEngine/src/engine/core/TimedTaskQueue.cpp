@@ -3,6 +3,7 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include <pthread.h>
 #include <errno.h>
 
 #include "TimedTaskQueue.h"
@@ -158,7 +159,11 @@ Task* TimedTaskQueue::get() {
 			info(s2);
 		#endif
 
+#ifdef _MSC_VER
+		if (res != 0 && res != ETIMEDOUT && res != 10060) {
+#else
 		if (res != 0 && res != ETIMEDOUT) {
+#endif
 			StringBuffer msg;
 
 			if (res == 22)
@@ -187,7 +192,7 @@ Task* TimedTaskQueue::get() {
 	assert(task->clearTaskScheduler());
 
 	if (!blocked && task->getNextExecutionTime().isFuture()) {
-		int64 difference = -(uint64) task->getNextExecutionTime().miliDifference();
+		int64 difference = - task->getNextExecutionTime().miliDifference();
 
 		if (difference > 10) {
 			StringBuffer msg;
