@@ -10,7 +10,7 @@
 
 enum {};
 
-ManagedVector::ManagedVector(DummyConstructorParameter* param) {
+ManagedVector::ManagedVector(DummyConstructorParameter* param) : ManagedObject(param) {
 }
 
 ManagedVector::~ManagedVector() {
@@ -31,13 +31,14 @@ void ManagedVector::_setImplementation(DistributedObjectServant* servant) {
  *	ManagedVectorImplementation
  */
 
-ManagedVectorImplementation::ManagedVectorImplementation() {
+ManagedVectorImplementation::ManagedVectorImplementation() : ManagedObjectImplementation() {
 	_initializeImplementation();
 }
 
-ManagedVectorImplementation::ManagedVectorImplementation(DummyConstructorParameter* param) {
+ManagedVectorImplementation::ManagedVectorImplementation(DummyConstructorParameter* param) : ManagedObjectImplementation(param) {
 	_initializeImplementation();
 }
+
 
 ManagedVectorImplementation::~ManagedVectorImplementation() {
 }
@@ -56,7 +57,7 @@ void ManagedVectorImplementation::_initializeImplementation() {
 
 void ManagedVectorImplementation::_setStub(DistributedObjectStub* stub) {
 	_this = (ManagedVector*) stub;
-	DistributedObjectServant::_setStub(stub);
+	ManagedObjectImplementation::_setStub(stub);
 }
 
 DistributedObjectStub* ManagedVectorImplementation::_getStub() {
@@ -96,6 +97,8 @@ void ManagedVectorImplementation::runlock(bool doLock) {
 }
 
 void ManagedVectorImplementation::_serializationHelperMethod() {
+	ManagedObjectImplementation::_serializationHelperMethod();
+
 	_setClassName("ManagedVector");
 
 }
@@ -120,10 +123,8 @@ void ManagedVectorImplementation::readObject(ObjectInputStream* stream) {
 }
 
 bool ManagedVectorImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (_name == "_className") {
-		TypeInfo<String>::parseFromBinaryStream(&_className, stream);
+	if (ManagedObjectImplementation::readObjectMember(stream, _name))
 		return true;
-	}
 
 
 	return false;
@@ -141,21 +142,14 @@ int ManagedVectorImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	int _offset;
 	uint16 _totalSize;
 
-	_name = "_className";
-	_name.toBinaryStream(stream);
-	_offset = stream->getOffset();
-	stream->writeShort(0);
-	TypeInfo<String>::toBinaryStream(&_className, stream);
-	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
-	stream->writeShort(_offset, _totalSize);
-	return 1;
+	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
 }
 
 /*
  *	ManagedVectorAdapter
  */
 
-ManagedVectorAdapter::ManagedVectorAdapter(ManagedVectorImplementation* obj) : DistributedObjectAdapter((DistributedObjectServant*) obj) {
+ManagedVectorAdapter::ManagedVectorAdapter(ManagedVectorImplementation* obj) : ManagedObjectAdapter(obj) {
 }
 
 Packet* ManagedVectorAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {

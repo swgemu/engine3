@@ -11,11 +11,13 @@
 
 #include "engine/core/ManagedWeakReference.h"
 
+#include "engine/core/ManagedObject.h"
+
 namespace engine {
 namespace core {
 namespace util {
 
-class ManagedVector : public DistributedObjectStub {
+class ManagedVector : public ManagedObject {
 public:
 	DistributedObjectServant* _getImplementation();
 
@@ -29,7 +31,17 @@ protected:
 	friend class ManagedVectorHelper;
 };
 
-class ManagedVectorImplementation : public DistributedObjectServant {
+} // namespace util
+} // namespace core
+} // namespace engine
+
+using namespace engine::core::util;
+
+namespace engine {
+namespace core {
+namespace util {
+
+class ManagedVectorImplementation : public ManagedObjectImplementation {
 
 public:
 	ManagedVectorImplementation();
@@ -72,7 +84,7 @@ protected:
 	friend class ManagedVector;
 };
 
-class ManagedVectorAdapter : public DistributedObjectAdapter {
+class ManagedVectorAdapter : public ManagedObjectAdapter {
 public:
 	ManagedVectorAdapter(ManagedVectorImplementation* impl);
 

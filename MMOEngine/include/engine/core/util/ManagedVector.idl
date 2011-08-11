@@ -5,5 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 package engine.core.util;
 
-class ManagedVector {
+import engine.core.ManagedObject;
+
+class ManagedVector extends ManagedObject {
 }

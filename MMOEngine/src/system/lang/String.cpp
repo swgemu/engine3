@@ -163,12 +163,33 @@ int String::compareTo(const String& str) const {
 	return compareTo(str.value);
 }
 
+bool String::contains(const char* str) const {
+	return indexOf(str) != -1;
+}
+
+bool String::contains(const String& str) const {
+	return indexOf(str) != -1;
+}
+
 int String::indexOf(char ch) const  {
 	return indexOf(ch, 0);
 }
 
 int String::indexOf(char ch, int fromIndex) const {
 	char* position = strchr(value + fromIndex, ch);
+
+	if (position != NULL)
+		return position - value;
+	else
+		return -1;
+}
+
+int String::indexOf(const char* str) const {
+	return indexOf(str, 0);
+}
+
+int String::indexOf(const char* str, int fromIndex) const {
+	char* position = strstr(value + fromIndex, str);
 
 	if (position != NULL)
 		return position - value;
@@ -202,6 +223,19 @@ int String::lastIndexOf(char ch, int fromIndex) const {
 		return -1;
 }
 
+int String::lastIndexOf(const char* str) const {
+	return lastIndexOf(str, 0);
+}
+
+int String::lastIndexOf(const char* str, int fromIndex) const {
+	char* position = strrstr(value + fromIndex, count - fromIndex, str, strlen(str));
+
+	if (position != NULL)
+		return position - value;
+	else
+		return -1;
+}
+
 int String::lastIndexOf(const String& str) const {
 	return lastIndexOf(str, 0);
 }
@@ -213,6 +247,22 @@ int String::lastIndexOf(const String& str, int fromIndex) const {
 		return position - value;
 	else
 		return -1;
+}
+
+bool String::beginsWith(const char* str) const {
+	return indexOf(str) == 0;
+}
+
+bool String::beginsWith(const String& str) const {
+	return indexOf(str) == 0;
+}
+
+bool String::endsWith(const char* str) const {
+	return lastIndexOf(str) == count - (int) strlen(str) - 1;
+}
+
+bool String::endsWith(const String& str) const {
+	return lastIndexOf(str) == count - str.count - 1;
 }
 
 uint32 String::hashCode() const {
