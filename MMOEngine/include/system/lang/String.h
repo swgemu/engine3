@@ -33,18 +33,31 @@ namespace sys {
 		String concat(const char* str, int len) const;
 		String concat(const String& str) const;
 
+		bool contains(const char* str) const ;
+		bool contains(const String& str) const ;
+
 		int compareTo(const char* str) const;
 		int compareTo(const String& str) const;
 
 		int indexOf(char ch) const ;
 		int indexOf(char ch, int fromIndex) const ;
+		int indexOf(const char* str) const ;
+		int indexOf(const char* str, int fromIndex) const ;
 		int indexOf(const String& str) const ;
 		int indexOf(const String& str, int fromIndex) const ;
 
 		int lastIndexOf(char ch) const ;
 		int lastIndexOf(char ch, int fromIndex) const ;
+		int lastIndexOf(const char* str) const ;
+		int lastIndexOf(const char* str, int fromIndex) const ;
 		int lastIndexOf(const String& str) const ;
 		int lastIndexOf(const String& str, int fromIndex) const ;
+
+		bool beginsWith(const char* str) const ;
+		bool beginsWith(const String& str) const ;
+
+		bool endsWith(const char* str) const ;
+		bool endsWith(const String& str) const ;
 
 		uint32 hashCode() const;
 
@@ -71,7 +84,6 @@ namespace sys {
 
 		String trim() const;
 		String escapeString() const ;
-
 
 		String& operator= (const char* str);
 		String& operator= (const String& str);

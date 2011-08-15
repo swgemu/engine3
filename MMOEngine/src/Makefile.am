@@ -20,7 +20,6 @@ noinst_LIBRARIES = libengine3.a
 libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
-			system/lang/MemoryManager.cpp \
 			system/lang/Exception.cpp \
 			system/lang/Object.cpp \
 			system/lang/String.cpp \
@@ -31,6 +30,9 @@ libengine3_a_SOURCES = \
 			system/lang/types.cpp \
 			system/lang/Integer.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
+			system/mm/MemoryManager.cpp \
+			system/mm/Heap.cpp \
+			system/mm/DLAllocator.cpp \
 			system/thread/Thread.cpp \
 			system/thread/Lockable.cpp \
 			system/thread/Mutex.cpp \

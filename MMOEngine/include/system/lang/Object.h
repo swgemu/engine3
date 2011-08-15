@@ -24,6 +24,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #endif
 
 namespace sys {
+	namespace mm {
+		class MemoryManager;
+	}
+
 	namespace io {
 		class ObjectOutputStream;
 		class ObjectInputStream;
@@ -138,7 +142,7 @@ namespace sys {
 	protected:
 		virtual void destroy();
 
-		friend class MemoryManager;
+		friend class sys::mm::MemoryManager;
 		friend class WeakReference<Object*>;
 	};
 

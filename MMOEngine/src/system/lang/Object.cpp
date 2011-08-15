@@ -7,10 +7,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ref/WeakReference.h"
 
 #include "system/thread/Locker.h"
-
-#include "MemoryManager.h"
+#include "system/mm/MemoryManager.h"
 
 #include "Object.h"
+
 #include "system/util/SortedVector.h"
 #include "system/util/HashSet.h"
 #include "engine/stm/TransactionalReference.h"

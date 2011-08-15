@@ -51,7 +51,6 @@ libengine3_a_AR = $(AR) $(ARFLAGS)
 libengine3_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
-	system/lang/MemoryManager.$(OBJEXT) \
 	system/lang/Exception.$(OBJEXT) system/lang/Object.$(OBJEXT) \
 	system/lang/String.$(OBJEXT) \
 	system/lang/StringBuffer.$(OBJEXT) \
@@ -59,7 +58,8 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	system/lang/StackTrace.$(OBJEXT) system/lang/types.$(OBJEXT) \
 	system/lang/Integer.$(OBJEXT) \
 	system/lang/ArrayIndexOutOfBoundsException.$(OBJEXT) \
-	system/thread/Thread.$(OBJEXT) \
+	system/mm/MemoryManager.$(OBJEXT) system/mm/Heap.$(OBJEXT) \
+	system/mm/DLAllocator.$(OBJEXT) system/thread/Thread.$(OBJEXT) \
 	system/thread/Lockable.$(OBJEXT) system/thread/Mutex.$(OBJEXT) \
 	system/thread/ReadWriteLock.$(OBJEXT) \
 	system/net/Socket.$(OBJEXT) system/net/SocketAddress.$(OBJEXT) \
@@ -306,7 +306,6 @@ noinst_LIBRARIES = libengine3.a
 libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
-			system/lang/MemoryManager.cpp \
 			system/lang/Exception.cpp \
 			system/lang/Object.cpp \
 			system/lang/String.cpp \
@@ -317,6 +316,9 @@ libengine3_a_SOURCES = \
 			system/lang/types.cpp \
 			system/lang/Integer.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
+			system/mm/MemoryManager.cpp \
+			system/mm/Heap.cpp \
+			system/mm/DLAllocator.cpp \
 			system/thread/Thread.cpp \
 			system/thread/Lockable.cpp \
 			system/thread/Mutex.cpp \
@@ -462,8 +464,6 @@ system/lang/$(DEPDIR)/$(am__dirstamp):
 	@: > system/lang/$(DEPDIR)/$(am__dirstamp)
 system/lang/System.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/MemoryManager.$(OBJEXT): system/lang/$(am__dirstamp) \
-	system/lang/$(DEPDIR)/$(am__dirstamp)
 system/lang/Exception.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
 system/lang/Object.$(OBJEXT): system/lang/$(am__dirstamp) \
@@ -485,6 +485,18 @@ system/lang/Integer.$(OBJEXT): system/lang/$(am__dirstamp) \
 system/lang/ArrayIndexOutOfBoundsException.$(OBJEXT):  \
 	system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
+system/mm/$(am__dirstamp):
+	@$(MKDIR_P) system/mm
+	@: > system/mm/$(am__dirstamp)
+system/mm/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) system/mm/$(DEPDIR)
+	@: > system/mm/$(DEPDIR)/$(am__dirstamp)
+system/mm/MemoryManager.$(OBJEXT): system/mm/$(am__dirstamp) \
+	system/mm/$(DEPDIR)/$(am__dirstamp)
+system/mm/Heap.$(OBJEXT): system/mm/$(am__dirstamp) \
+	system/mm/$(DEPDIR)/$(am__dirstamp)
+system/mm/DLAllocator.$(OBJEXT): system/mm/$(am__dirstamp) \
+	system/mm/$(DEPDIR)/$(am__dirstamp)
 system/thread/$(am__dirstamp):
 	@$(MKDIR_P) system/thread
 	@: > system/thread/$(am__dirstamp)
@@ -975,7 +987,6 @@ mostlyclean-compile:
 	-rm -f system/lang/Exception.$(OBJEXT)
 	-rm -f system/lang/Integer.$(OBJEXT)
 	-rm -f system/lang/Math.$(OBJEXT)
-	-rm -f system/lang/MemoryManager.$(OBJEXT)
 	-rm -f system/lang/Object.$(OBJEXT)
 	-rm -f system/lang/StackTrace.$(OBJEXT)
 	-rm -f system/lang/String.$(OBJEXT)
@@ -983,6 +994,9 @@ mostlyclean-compile:
 	-rm -f system/lang/System.$(OBJEXT)
 	-rm -f system/lang/UnicodeString.$(OBJEXT)
 	-rm -f system/lang/types.$(OBJEXT)
+	-rm -f system/mm/DLAllocator.$(OBJEXT)
+	-rm -f system/mm/Heap.$(OBJEXT)
+	-rm -f system/mm/MemoryManager.$(OBJEXT)
 	-rm -f system/net/InetAddress.$(OBJEXT)
 	-rm -f system/net/NetworkInterface.$(OBJEXT)
 	-rm -f system/net/Packet.$(OBJEXT)
@@ -1090,7 +1104,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Exception.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Integer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Math.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/MemoryManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/StackTrace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/String.Po@am__quote@
@@ -1098,6 +1111,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/UnicodeString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/types.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/DLAllocator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/Heap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MemoryManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/InetAddress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/NetworkInterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/Packet.Po@am__quote@
@@ -1280,6 +1296,8 @@ distclean-generic:
 	-rm -f system/io/$(am__dirstamp)
 	-rm -f system/lang/$(DEPDIR)/$(am__dirstamp)
 	-rm -f system/lang/$(am__dirstamp)
+	-rm -f system/mm/$(DEPDIR)/$(am__dirstamp)
+	-rm -f system/mm/$(am__dirstamp)
 	-rm -f system/net/$(DEPDIR)/$(am__dirstamp)
 	-rm -f system/net/$(am__dirstamp)
 	-rm -f system/thread/$(DEPDIR)/$(am__dirstamp)
@@ -1296,7 +1314,7 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1330,7 +1348,7 @@ install-ps: install-ps-am
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

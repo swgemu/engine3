@@ -6,12 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef MEMORYMANAGER_H_
 #define MEMORYMANAGER_H_
 
-#include "Object.h"
+#include "system/lang/Object.h"
 
 #include "system/thread/atomic/AtomicReference.h"
 
 namespace sys {
-  namespace lang {
+  namespace mm {
 
 	class MemoryManager : public Object {
 		static AtomicReference<MemoryManager*> inst;
@@ -30,11 +30,15 @@ namespace sys {
 
 		virtual void reclaim(Object* object);
 		virtual void create(Object* object);
+
+		static bool protectForRead(void* mem, size_t size);
+		static bool protectForWrite(void* mem, size_t size);
+		static bool unprotect(void* mem, size_t size);
 	};
 
-  } // namespace lang
+  } // namespace mm
 } // namespace sys
 
-using namespace sys::lang;
+using namespace sys::mm;
 
 #endif /*MEMORYMANAGER_H_*/

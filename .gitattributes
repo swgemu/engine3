@@ -364,6 +364,10 @@ MMOEngine/include/system/lang/types/String.h -text
 MMOEngine/include/system/lang/types/UnicodeString.h -text
 MMOEngine/include/system/lang/types/Variable.h -text
 MMOEngine/include/system/lang/unicode.h -text
+MMOEngine/include/system/mm/DLAllocator.h -text
+MMOEngine/include/system/mm/Heap.h -text
+MMOEngine/include/system/mm/MemoryManager.h -text
+MMOEngine/include/system/mm/dlmalloc.h -text
 MMOEngine/include/system/net/InetAddress.h -text
 MMOEngine/include/system/net/NetworkInterface.h -text
 MMOEngine/include/system/net/Packet.h -text
@@ -727,8 +731,6 @@ MMOEngine/src/system/lang/Integer.h -text
 MMOEngine/src/system/lang/Long.h -text
 MMOEngine/src/system/lang/Math.cpp -text
 MMOEngine/src/system/lang/Math.h -text
-MMOEngine/src/system/lang/MemoryManager.cpp -text
-MMOEngine/src/system/lang/MemoryManager.h -text
 MMOEngine/src/system/lang/NumberFormatException.h -text
 MMOEngine/src/system/lang/Object.cpp -text
 MMOEngine/src/system/lang/Object.h -text
@@ -755,6 +757,13 @@ MMOEngine/src/system/lang/ref/ReferenceCounter.h -text
 MMOEngine/src/system/lang/ref/WeakReference.h -text
 MMOEngine/src/system/lang/types.cpp -text
 MMOEngine/src/system/lang/types.h -text
+MMOEngine/src/system/mm/DLAllocator.cpp -text
+MMOEngine/src/system/mm/DLAllocator.h -text
+MMOEngine/src/system/mm/Heap.cpp -text
+MMOEngine/src/system/mm/Heap.h -text
+MMOEngine/src/system/mm/MemoryManager.cpp -text
+MMOEngine/src/system/mm/MemoryManager.h -text
+MMOEngine/src/system/mm/dlmalloc.h -text
 MMOEngine/src/system/net/InetAddress.cpp -text
 MMOEngine/src/system/net/InetAddress.h -text
 MMOEngine/src/system/net/NetworkInterface.cpp -text
