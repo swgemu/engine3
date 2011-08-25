@@ -379,7 +379,10 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 					error(msg.toString());
 				}
 			}
+
+			Thread::yield();
 		}
+
 
 		++iteration;
 	} while (ret == DB_LOCK_DEADLOCK && iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES);

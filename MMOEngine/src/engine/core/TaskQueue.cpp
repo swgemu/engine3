@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskQueue.h"
 #include "Task.h"
 
-TaskQueue::TaskQueue() : Vector<Task*>(200, 100), Condition(), Logger("TaskQueue") {
+TaskQueue::TaskQueue() : Condition(), Logger("TaskQueue") {
 	blocked = false;
 	//waitingForTask = false;
 
@@ -30,12 +30,13 @@ void TaskQueue::pushRandom(Task* task) {
 		return;
 	}
 
-	int size = Vector<Task*>::size();
+	int size = LinkedList<Task*>::size();
 
 	int position = size > 0 ? System::random(size - 1) : 0;
 
-	if (Vector<Task*>::add(position, task))
-		task->acquire();
+	LinkedList<Task*>::add(position, task);
+
+	task->acquire();
 
 #ifdef TRACE_TASKS
 	StringBuffer s;
@@ -57,8 +58,9 @@ void TaskQueue::pushFront(Task* task) {
 		return;
 	}
 
-	if (Vector<Task*>::add(0, task))
-		task->acquire();
+	LinkedList<Task*>::add(0, task);
+
+	task->acquire();
 
 #ifdef TRACE_TASKS
 	StringBuffer s;
@@ -80,8 +82,9 @@ void TaskQueue::push(Task* task) {
 		return;
 	}
 
-	if (Vector<Task*>::add(task))
-		task->acquire();
+	LinkedList<Task*>::add(task);
+
+	task->acquire();
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;
@@ -90,9 +93,11 @@ void TaskQueue::push(Task* task) {
 	#endif
 
 	//if (waitingForTask)
-		signal(condMutex);
+		broadcast(condMutex);
 
 	condMutex->unlock();
+
+	Thread::yield();
 }
 
 void TaskQueue::pushAll(const Vector<Task*>& tasks) {
@@ -103,7 +108,10 @@ void TaskQueue::pushAll(const Vector<Task*>& tasks) {
 		return;
 	}
 
-	Vector<Task*>::addAll(tasks);
+	for (int i = 0; i < tasks.size(); ++i) {
+		LinkedList<Task*>::add(tasks.get(i));
+	}
+	//Vector<Task*>::addAll(tasks);
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;

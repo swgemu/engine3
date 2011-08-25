@@ -35,6 +35,7 @@ namespace sys {
 		LinkedList();
 		
 		void add(O& obj);
+		void add(int index, O& obj);
 		
 		O& get(int index);
 		
@@ -67,6 +68,35 @@ namespace sys {
 		++count;
 	}
 	
+	template<class O> void LinkedList<O>::add(int index, O& obj) {
+		if (count < index + 1 || index < 0)
+			throw ArrayIndexOutOfBoundsException(index);
+
+		ListEntry<O>* newEntry = new ListEntry<O>(obj, NULL);
+
+		//if (count =)
+
+		ListEntry<O>* e = &head;
+
+		for (int i = 0; i < index; ++i)
+			e = e->next;
+
+		ListEntry<O>* o = e->next; //obj at index
+
+		if (o != NULL) {
+			newEntry->next = o;
+		} else {
+			current = newEntry;
+		}
+
+		e->next = newEntry;
+
+		/*O obj = o->obj;
+		delete o;*/
+
+		++count;
+	}
+
 	template<class O> O& LinkedList<O>::get(int index) {
 		if (count < index + 1 || index < 0) 
 			throw ArrayIndexOutOfBoundsException(index);

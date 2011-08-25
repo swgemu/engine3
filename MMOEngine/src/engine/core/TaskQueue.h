@@ -17,7 +17,7 @@ namespace engine {
 
 	class Task;
 
-	class TaskQueue : public Vector<Task*>, public Condition, public Logger {
+	class TaskQueue : public LinkedList<Task*>, public Condition, public Logger {
 		Mutex* condMutex;
 
 		bool blocked;
