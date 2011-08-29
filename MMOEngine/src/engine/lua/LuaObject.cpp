@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "LuaObject.h"
 
-void LuaObject::setField(const String& key, uint32 value) {
+void LuaObject::setField(const String& key, uint64 value) {
 	lua_pushstring(L, key.toCharArray());
 	lua_pushnumber(L, (double)value);
 	lua_settable(L, -3);

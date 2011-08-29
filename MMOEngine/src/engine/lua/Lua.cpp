@@ -441,7 +441,7 @@ void Lua::setGlobalInt(const String& name, const int value) {
 	lua_setglobal(L, name.toCharArray());
 }
 
-void Lua::setGlobalLong(const String& name, const long value) {
+void Lua::setGlobalLong(const String& name, const uint64 value) {
 	lua_pushnumber(L, value);
 	lua_setglobal(L, name.toCharArray());
 }

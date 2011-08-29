@@ -81,7 +81,7 @@ void Serializable::writeObject(ObjectOutputStream* stream) {
 		stream->writeShort(0);
 
 		if (type == 0) {
-			((Variable*)variable)->toBinaryStream(stream);
+			(static_cast<Variable*>(variable))->toBinaryStream(stream);
 		} else {
 			serializeAtomicType(variable, type, stream);
 		}
@@ -309,7 +309,7 @@ void Serializable::readObject(ObjectInputStream* stream) {
 			int type = varName.getType();
 
 			if (type == 0)
-				((Variable*)variable)->parseFromBinaryStream(stream);
+				(static_cast<Variable*>(variable))->parseFromBinaryStream(stream);
 			else {
 				deSerializeAtomicType(variable, type, stream);
 			}
@@ -543,7 +543,7 @@ Variable* Serializable::getSerializableVariable(const char* name) {
 	void* variable = entry->getValue();
 
 	if (varName.getType() == 0)
-		return (Variable*)variable;
+		return static_cast<Variable*>(variable);
 	else
 		return NULL;
 }
