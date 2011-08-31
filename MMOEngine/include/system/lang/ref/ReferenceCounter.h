@@ -19,13 +19,15 @@ namespace sys {
 
 	class ReferenceCounter {
 	protected:
-		AtomicInteger _references;
+		AtomicInteger* _references;
 
 	public:
 		ReferenceCounter() {
+			_references = new AtomicInteger();
 		}
 
 		ReferenceCounter(const ReferenceCounter& counter) {
+			_references = new AtomicInteger();
 			//_references = counter._references; //this is wrong!
 		}
 
@@ -34,23 +36,25 @@ namespace sys {
 				StackTrace::printStackTrace();
 				assert(0 && "reference count was not zero on delete");
 			}
+
+			delete _references;
 		}
 
 	protected:
 		inline void increaseCount() {
-			_references.increment();
+			_references->increment();
 		}
 
 		inline bool decreaseCount() {
 			/*if (getReferenceCount() < 1)
 				assert(0 && "reference count getting under zero");*/
 
-			return _references.decrement() == 0;
+			return _references->decrement() == 0;
 		}
 
 	public:
 		inline uint32 getReferenceCount() {
-			return _references;
+			return _references->get();
 		}
 
 	};

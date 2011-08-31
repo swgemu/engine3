@@ -8,7 +8,8 @@ AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
 endif
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I/usr/local/BerkeleyDB.5.0/include -I$src/ -I$(USER_INCLUDES_PATH)
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua \
+	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) -I../../../external/ptmalloc3
 
 LIBS =  $(SYSTEM_LIBS) \
 		-L/usr/local/BerkeleyDB.5.0/lib \
@@ -32,7 +33,7 @@ libengine3_a_SOURCES = \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/mm/MemoryManager.cpp \
 			system/mm/Heap.cpp \
-			system/mm/DLAllocator.cpp \
+			system/mm/PTAllocator.cpp \
 			system/thread/Thread.cpp \
 			system/thread/Lockable.cpp \
 			system/thread/Mutex.cpp \
@@ -90,6 +91,7 @@ libengine3_a_SOURCES = \
 			engine/orb/object/DistributedMethod.cpp \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
+			engine/stm/mm/KernelCall.cpp \
 			engine/stm/task/TransactionalTaskManager.cpp \
 			engine/stm/task/LocalTaskManager.cpp \
 			engine/stm/orb/TransactionalObjectManager.cpp \

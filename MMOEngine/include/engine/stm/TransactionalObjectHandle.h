@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ENGINE_STM_TRANSACTIONALOBJECTHANDLE_H_
 #define ENGINE_STM_TRANSACTIONALOBJECTHANDLE_H_
 
+#include "mm/KernelCall.h"
+
 namespace engine {
   namespace stm {
 
@@ -105,6 +107,8 @@ namespace engine {
 
 
 		if (forWrite) {
+			//KernelCall kernelCall;
+
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 			object = header->getObjectForWrite(this);
 

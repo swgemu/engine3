@@ -46,7 +46,7 @@ Object::~Object() {
 		delete referenceHolders.get(i);
 #endif
 
-	if (_references.get() > 0)
+	if (getReferenceCount() > 0)
 		assert(0 && "Deleting object with reference > 0");
 
 	delete weakReferences;
@@ -56,7 +56,7 @@ Object::~Object() {
 }
 
 void Object::release() {
-	if (_references.get() == 0)
+	if (getReferenceCount() == 0)
 		assert(0 && "Object already delted");
 
 	if (decreaseCount()) {
@@ -146,9 +146,13 @@ void Object::destroy() {
 	locker.release();
 //#endif
 
-	if (_references.get() > 0)
+	if (getReferenceCount() > 0)
 		assert(0 && "Deleting object with reference > 0");
 
+	free();
+}
+
+void Object::free() {
 	delete this;
 }
 

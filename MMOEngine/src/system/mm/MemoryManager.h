@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/thread/atomic/AtomicReference.h"
 
+#include "system/mm/Heap.h"
+
 namespace sys {
   namespace mm {
 

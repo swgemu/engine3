@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "system/mm/MemoryManager.h"
+
 #include "engine/util/Singleton.h"
 
 #include "engine/stm/task/TransactionalTaskManager.h"
@@ -18,8 +20,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/stm/service/TransactionalBaseClientManager.h"
 
 #include "Transaction.h"
-
-#include "TransactionalObjectHeader.h"
 
 #include "TransactionalReference.h"
 #include "TransactionalWeakReference.h"
@@ -50,6 +50,9 @@ namespace engine {
 		AtomicInteger failedToNotUNDECIDED;
 		AtomicInteger failedToExceptions;
 
+		Heap objectHeap;
+		Mutex heapLock;
+
 		bool reclaiming;
 
 		ThreadLocal<Vector<Object*>* > reclamationList;
@@ -62,6 +65,9 @@ namespace engine {
 		static void closeThread() {
 			instance()->reclaimObjects();
 		}
+
+		Object* create(size_t size);
+		void destroy(Object* object);
 
 		void printStatistics();
 
@@ -97,6 +103,9 @@ namespace engine {
 			Transaction::blockLock.unlock();
 		}
 
+		void setKernelMode();
+		void setUserMode();
+
 	protected:
 		TransactionalMemoryManager();
 
@@ -114,8 +123,6 @@ namespace engine {
 
 		void reclaim(Object* object);
 
-		void create(Object* object);
-
 		void setCurrentTransaction(Transaction* transaction);
 
 		void reclaimObjects(int objectsToSpare = 0, int maxObjectsToReclaim = 0);
@@ -128,5 +135,7 @@ namespace engine {
 
   } // namespace stm
 } // namespace engine
+
+#include "TransactionalObjectHeader.h"
 
 #endif /* ENGINE_STM_TRANSACTIONALMEMORYMANAGER_H_ */

@@ -82,6 +82,10 @@ namespace sys {
 			return NULL;
 		}
 
+		virtual Object* clone(void* object) {
+			return clone();
+		}
+
 		virtual int compareTo(Object* object) {
 			if (this == object)
 				return 0;
@@ -141,6 +145,8 @@ namespace sys {
 
 	protected:
 		virtual void destroy();
+
+		virtual void free();
 
 		friend class sys::mm::MemoryManager;
 		friend class WeakReference<Object*>;

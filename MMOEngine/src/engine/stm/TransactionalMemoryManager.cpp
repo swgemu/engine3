@@ -36,6 +36,9 @@ AtomicBoolean initializationTransactionStarted;
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
 	setInstance(this);
 
+	objectHeap.create(100000000);
+	objectHeap.protect();
+
 	taskManager = (TransactionalTaskManager*) Core::getTaskManager();
 
 	objectManager = (TransactionalObjectManager*) Core::getObjectBroker();
@@ -188,7 +191,8 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 	transaction->deleteObject(object);
 }
 
-void TransactionalMemoryManager::create(Object* object) {
+Object* TransactionalMemoryManager::create(size_t size) {
+	return (Object*) objectHeap.allocate(size);
 	/*Locker locker(&deletedMutex);
 
 	int find = deleted.find((uint64)object);
@@ -197,6 +201,14 @@ void TransactionalMemoryManager::create(Object* object) {
 		delete deleted.get(find);
 		deleted.remove(find);
 	}*/
+}
+
+void TransactionalMemoryManager::destroy(Object* object) {
+	if (objectHeap.contains(object)) {
+		//object->~Object();
+		objectHeap.free(object);
+	} else
+		delete object;
 
 }
 
@@ -222,6 +234,8 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 		deleted.put((uint64)object, new DeletedTrace());*/
 
 	//while (objects->size() > objectsToSpare) {
+	KernelCall kernelCall;
+
 	for (int i = 0; i < objects->size(); ++i) {
 		Object* obj = objects->get(i);
 
@@ -288,7 +302,19 @@ Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
 	}
 
 	return objects;
- }
+}
+
+void TransactionalMemoryManager::setKernelMode() {
+	heapLock.lock();
+
+	objectHeap.unprotect();
+}
+
+void TransactionalMemoryManager::setUserMode() {
+	objectHeap.protect();
+
+	heapLock.unlock();
+}
 
 void TransactionalMemoryManager::printStatistics() {
 	if (startedTransactions.get() == 0)

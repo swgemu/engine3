@@ -6,24 +6,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HEAP_H_
 #define HEAP_H_
 
-#include "DLAllocator.h"
+#include "PTAllocator.h"
 
 namespace sys {
   namespace mm {
 
 	class Heap {
 		void* heapBase;
-
 		size_t heapSize;
 
-		DLAllocator* allocator;
+		PTAllocator* allocator;
 
 	public:
-		Heap(size_t size);
+		Heap();
 
 		~Heap();
 
-		void initialize();
+		void create(size_t size);
 
 		void protect();
 
@@ -31,7 +30,11 @@ namespace sys {
 
 		void* allocate(size_t size);
 
+		void* reallocate(void* mem, size_t size);
+
 		void free(void* mem);
+
+		bool contains(void* mem);
 	};
 
 } // namespace mm
