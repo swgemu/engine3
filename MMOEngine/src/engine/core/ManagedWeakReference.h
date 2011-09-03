@@ -183,7 +183,7 @@ namespace engine {
 	}
 
 	template<class O> void ManagedWeakReference<O>::clearObject() {
-		rwlock.wlock();
+		WeakReference<O>::rwlock.wlock();
 
 		DistributedObject* obj = static_cast<DistributedObject*>(WeakReference<O>::object.get());
 
@@ -194,7 +194,7 @@ namespace engine {
 
 		WeakReference<O>::object = NULL;
 
-		rwlock.unlock();
+		WeakReference<O>::rwlock.unlock();
 	}
 
   } // namespace core
