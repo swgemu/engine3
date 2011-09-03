@@ -123,6 +123,22 @@ void DistributedMethod::executeWithUnicodeReturn(UnicodeString& value) {
 	resp.parseUnicode(8, value);
 }
 
+short DistributedMethod::executeWithSignedShortReturn() {
+	Packet resp;
+
+	execute(&resp);
+
+	return resp.parseSignedShort(8);
+}
+
+unsigned short DistributedMethod::executeWithUnsignedShortReturn() {
+	Packet resp;
+
+	execute(&resp);
+
+	return resp.parseShort(8);
+}
+
 DistributedObject* DistributedMethod::executeWithObjectReturn() {
 	Packet resp;
 

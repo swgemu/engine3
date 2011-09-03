@@ -45,6 +45,9 @@ namespace engine {
 
 		float executeWithFloatReturn();
 
+		short executeWithSignedShortReturn();
+		unsigned short executeWithUnsignedShortReturn();
+
 		void executeWithAsciiReturn(String& value);
 		void executeWithUnicodeReturn(UnicodeString& value);
 
