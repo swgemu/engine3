@@ -172,6 +172,10 @@ namespace sys {
 			return readSignedShort();
 		}
 
+		inline int16 parseSignedShort(int offs) {
+			return readSignedShort(offs);
+		}
+
 		inline uint16 parseShort(int offs) {
 			return readShort(offs);
 		}

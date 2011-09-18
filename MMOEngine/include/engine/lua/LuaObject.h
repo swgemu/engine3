@@ -38,7 +38,7 @@ namespace lua {
 		uint64 getLongField(const String& key);
 		LuaObject getObjectField(const String& key);
 
-		void setField(const String& key, sys::uint32 value);
+		void setField(const String& key, sys::uint64 value);
 		void setField(const String& key, const String& value);
 
 		String getStringAt(int idx);

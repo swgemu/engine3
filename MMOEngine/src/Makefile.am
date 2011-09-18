@@ -9,7 +9,8 @@ endif
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua \
-	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) -I../../../external/ptmalloc3
+	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) -I../../../external/ptmalloc3 \
+	    	-I../../../external/multimmap
 
 LIBS =  $(SYSTEM_LIBS) \
 		-L/usr/local/BerkeleyDB.5.0/lib \
@@ -33,6 +34,7 @@ libengine3_a_SOURCES = \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/mm/MemoryManager.cpp \
 			system/mm/Heap.cpp \
+			system/mm/ProtectedHeap.cpp \
 			system/mm/PTAllocator.cpp \
 			system/thread/Thread.cpp \
 			system/thread/Lockable.cpp \

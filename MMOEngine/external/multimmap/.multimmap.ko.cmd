@@ -1,0 +1,1 @@
+cmd_/home/oru/workspace/MMOEngine/external/multimmap/multimmap.ko := ld -r -m elf_x86_64  --build-id -o /home/oru/workspace/MMOEngine/external/multimmap/multimmap.ko /home/oru/workspace/MMOEngine/external/multimmap/multimmap.o /home/oru/workspace/MMOEngine/external/multimmap/multimmap.mod.o

@@ -94,7 +94,7 @@ namespace sys {
 
 			O copy = object;
 
-			if (object != NULL && ((Object*)object.get())->_isGettingDestroyed()) {
+			if (object != NULL && (static_cast<Object*>(object.get()))->_isGettingDestroyed()) {
 				rwlock.unlock();
 				return NULL;
 			}
@@ -125,14 +125,14 @@ namespace sys {
 						setObject(obj);*/
 
 			if (obj != NULL)
-				((Object*)obj)->acquireWeak(this);
+				(static_cast<Object*>(obj))->acquireWeak(this);
 
 			while (true) {
 				O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL)
-						((Object*)oldobj)->releaseWeak(this);
+						(static_cast<Object*>(oldobj))->releaseWeak(this);
 
 					return;
 				}
@@ -155,15 +155,20 @@ namespace sys {
 
 		inline void acquireObject() {
 			if (object != NULL) {
-				((Object*)object.get())->acquireWeak(this);
+				(static_cast<Object*>(object.get()))->acquireWeak(this);
 			}
 		}
 
 		void releaseObject() {
+			rwlock.wlock();
+
 			if (object != NULL) {
-				((Object*)object.get())->releaseWeak(this);
-				clearObject();
+				(static_cast<Object*>(object.get()))->releaseWeak(this);
+
+				object = NULL;
 			}
+
+			rwlock.unlock();
 		}
 
 		void clearObject() {

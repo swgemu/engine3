@@ -29,9 +29,10 @@ namespace engine {
 
 	protected:
 			void setObject(O obj) {
-				if (object == NULL)
-					object = dynamic_cast<Object*>(obj)->clone();
-				else
+				if (object == NULL) {
+					object = obj;
+					TransactionalObjectHeader<O>::createObject();
+				} else
 					object = dynamic_cast<Object*>(obj)->clone(NULL);
 
 				assert(object != NULL);

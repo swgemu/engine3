@@ -84,6 +84,14 @@ namespace sys {
 			return *(uint16*)(elementOffset);
 		}
 
+		inline int16 readSignedShort(int offs) {
+			char* elementOffset = elementData + offs;
+			if (elementOffset + 2 > end)
+				throw StreamIndexOutOfBoundsException(this, offs + 2);
+
+			return *(int16*)(elementOffset);
+		}
+
 		inline int16 readSignedShort() {
 			shiftOffset(2);
 

@@ -104,14 +104,14 @@ namespace sys {
 			setObject(obj);*/
 
 			if (obj != NULL)
-				((Object*)obj)->acquire();
+				(static_cast<Object*>(obj))->acquire();
 
 			while (true) {
 				O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL)
-						((Object*)oldobj)->release();
+						(static_cast<Object*>(oldobj))->release();
 
 					return;
 				}
@@ -137,7 +137,7 @@ namespace sys {
 			#ifdef TRACE_REFERENCES
 				object->addHolder(this);
 			#endif
-				((Object*)object.get())->acquire();
+				(static_cast<Object*>(object.get()))->acquire();
 			}
 		}
 
@@ -146,7 +146,7 @@ namespace sys {
 			#ifdef TRACE_REFERENCES
 				object->removeHolder(this);
 			#endif
-				((Object*)object.get())->release();
+				(static_cast<Object*>(object.get()))->release();
 				object = NULL;
 			}
 		}

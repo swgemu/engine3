@@ -155,6 +155,8 @@ namespace engine {
 		}
 
 	protected:
+		template<class O> void createObject(TransactionalObjectHeader<O>* header);
+
 		template<class O> O openObject(TransactionalObjectHeader<O>* header);
 
 		template<class O> O openObjectForWrite(TransactionalObjectHeader<O>* header);
@@ -231,6 +233,17 @@ namespace engine {
 		}
 
 		return header;
+	}
+
+	template<class O> void Transaction::createObject(TransactionalObjectHeader<O>* header) {
+		Reference<TransactionalObjectHandle<O>*> handle = header->createWriteHandle(this);
+
+		localObjectCache.put(handle->getObjectLocalCopy(), header);
+		localObjectCache.put(handle->getObject(), header);
+
+		openedObjets.put<O>(header, handle);
+
+		readWriteObjects.add<O>(handle);
 	}
 
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {

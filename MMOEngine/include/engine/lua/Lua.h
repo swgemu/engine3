@@ -71,7 +71,7 @@ namespace engine {
 		// setters
 		void setGlobalString(const String& name, const String& value);
 		void setGlobalInt(const String& name, const int value);
-		void setGlobalLong(const String& name, const long value);
+		void setGlobalLong(const String& name, const uint64 value);
 		void setGlobalShort(const String& name, const short value);
 		void setGlobalByte(const String& name, const char value);
 		void setGlobalFloat(const String& name, const float value);

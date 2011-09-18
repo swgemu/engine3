@@ -67,6 +67,8 @@ namespace engine {
 
 		void discardObject(Transaction* transaction);
 
+		void createObject();
+
 		virtual Object* getObjectForRead(TransactionalObjectHandle<O>* handle) = 0;
 		virtual Object* getObjectForWrite(TransactionalObjectHandle<O>* handle) = 0;
 
@@ -96,6 +98,10 @@ namespace engine {
 		handle->initialize(this, true, transaction);
 
 		return handle;
+	}
+
+	template<class O> void TransactionalObjectHeader<O>::createObject() {
+		Transaction::currentTransaction()->createObject<O>(this);
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::get() {

@@ -36,7 +36,7 @@ AtomicBoolean initializationTransactionStarted;
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
 	setInstance(this);
 
-	objectHeap.create(100000000);
+	objectHeap.create(512*1024*1024);
 	objectHeap.protect();
 
 	taskManager = (TransactionalTaskManager*) Core::getTaskManager();

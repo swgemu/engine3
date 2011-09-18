@@ -12,8 +12,13 @@ namespace sys {
   namespace mm {
 
 	class Heap {
+	protected:
 		void* heapBase;
 		size_t heapSize;
+		int flags;
+		off_t offset;
+
+		static int deviceFD;
 
 		PTAllocator* allocator;
 
@@ -24,17 +29,15 @@ namespace sys {
 
 		void create(size_t size);
 
-		void protect();
-
-		void unprotect();
-
 		void* allocate(size_t size);
-
 		void* reallocate(void* mem, size_t size);
-
 		void free(void* mem);
 
 		bool contains(void* mem);
+
+	protected:
+		void openDevice(unsigned deviceNumber);
+
 	};
 
 } // namespace mm

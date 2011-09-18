@@ -12,7 +12,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace lang {
 
-	class String : public virtual Variable {
+	class String : public Variable {
 	protected:
 		char* value;
 

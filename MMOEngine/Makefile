@@ -18,6 +18,8 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 IDL_DIRECTIVES =
 	
 all: 
+	#cd build/unix && cmake ../.. && make
+	#cp build/unix/src/libengine3.so lib/unix
 
 build: compile install-headers
 	#done
@@ -38,7 +40,7 @@ rebuild: clean configure-debug compile install-headers
 	#done
 
 config:
-	autoreconf --force --install --verbose
+	autoreconf --force --install
 	#done
 
 configure-release32:
@@ -61,6 +63,12 @@ recompile-idlc:
 compile-engine:
 	cd build/unix && make
 
+modules:
+	cd external/multimmap && make -C /usr/src/linux-headers-2.6.26-2-amd64 M=`pwd` modules
+	cp external/multimmap/multimmap.ko bin/
+	rmmod multimmap
+	insmod bin/multimmap.ko
+	
 clean: recompile-idlc
 	cd build/unix && make clean
 	#done

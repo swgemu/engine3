@@ -50,7 +50,7 @@ namespace engine {
 		AtomicInteger failedToNotUNDECIDED;
 		AtomicInteger failedToExceptions;
 
-		Heap objectHeap;
+		ProtectedHeap objectHeap;
 		Mutex heapLock;
 
 		bool reclaiming;
