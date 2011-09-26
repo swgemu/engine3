@@ -127,6 +127,9 @@ namespace sys {
 	}
 
 	template<class E> int SortedVector<E>::find(const E& o) const {
+		if (ArrayList<E>::size() == 0)
+			return -1;
+
 	    int l = 0, r = Vector<E>::elementCount - 1;
 	    int m = 0, cmp = 0;
 

@@ -197,6 +197,9 @@ namespace sys {
 	}
 
 	template<class K, class V> V& VectorMap<K, V>::get(const K& key) {
+		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
+			return nullValue;
+
 	 	VectorMapEntry<K, V> e(key);
 
 	 	int pos = SortedVector<VectorMapEntry<K, V> >::find(e);
@@ -208,12 +211,18 @@ namespace sys {
 	}
 
 	template<class K, class V> int VectorMap<K, V>::find(const K& key) {
+		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
+			return -1;
+
 		VectorMapEntry<K, V> e(key);
 
 	 	return SortedVector<VectorMapEntry<K, V> >::find(e);
 	}
 
 	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) {
+		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
+			return false;
+
 		VectorMapEntry<K, V> e(key);
 
 	 	int idx = SortedVector<VectorMapEntry<K, V> >::find(e);
