@@ -30,7 +30,7 @@ INC_FLAGS  = -Isysdeps/generic
 T_FLAGS   = -DUSE_MALLOC=1 -DTEST=1
 
 # Flags for the compilation of malloc.c
-M_FLAGS   = -DTHREAD_STATS=1 #-DMALLOC_DEBUG=1 -DDEBUG=1
+M_FLAGS   = -DTHREAD_STATS=1 -DUSE_STARTER=2 #-DMALLOC_DEBUG=1 -DDEBUG=1
 
 # Thread flags.
 # See the platform-specific targets below.

@@ -51,7 +51,7 @@ namespace engine {
 #else
 
   	template<class O> class TransactionalReference {
-		TransactionalObjectHeader<O>* header;
+		Reference<TransactionalObjectHeader<O>*> header;
 
 	public:
 		TransactionalReference() {
@@ -64,6 +64,10 @@ namespace engine {
 
 		TransactionalReference(const TransactionalReference& ref) {
 			header = ref.header;
+		}
+
+		~TransactionalReference() {
+			header = NULL;
 		}
 
 		TransactionalReference& operator=(const TransactionalReference& ref) {

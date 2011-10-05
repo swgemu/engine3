@@ -76,7 +76,11 @@ public:
 	~QuadTreeNode();
 
 	Object* clone() {
-		return new QuadTreeNode(*this);
+		return ObjectCloner<QuadTreeNode>::clone(this);
+	}
+
+	Object* clone(void* object) {
+		return TransactionalObjectCloner<QuadTreeNode>::clone(this);
 	}
 
 	// Add a object to this node

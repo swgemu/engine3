@@ -108,7 +108,7 @@ bool ManagedObject::notifyDestroy() {
 void ManagedObject::writeObject(ObjectOutputStream* stream) {
 	Reference<ManagedObjectImplementation*> _implementation;
 #ifdef WITH_STM
-	_implementation = (ManagedObjectImplementation*) getForDirty();
+	_implementation = header->getForDirty();
 #else
 	_implementation = (ManagedObjectImplementation*) _getImplementation();
 #endif
@@ -123,7 +123,7 @@ unsigned int ManagedObject::getLastCRCSave() {
 	Reference<ManagedObjectImplementation*> _implementation;
 
 #ifdef WITH_STM
-	_implementation = (ManagedObjectImplementation*) getForDirty();
+	_implementation = header->getForDirty();
 #else
 	_implementation = (ManagedObjectImplementation*) _getImplementation();
 #endif
@@ -138,7 +138,7 @@ void ManagedObject::setLastCRCSave(unsigned int crc) {
 	Reference<ManagedObjectImplementation*> _implementation;
 
 #ifdef WITH_STM
-	_implementation = (ManagedObjectImplementation*) getForDirty();
+	_implementation = header->getForDirty();
 #else
 	_implementation = (ManagedObjectImplementation*) _getImplementation();
 #endif

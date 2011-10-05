@@ -6,12 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PTALLOCATOR_H_
 #define PTALLOCATOR_H_
 
-#include "system/platform.h"
+#include "Allocator.h"
 
 namespace sys {
   namespace mm {
 
-	class PTAllocator {
+	class PTAllocator : public Allocator {
 		void* dlBase;
 		size_t dlSize;
 
@@ -31,9 +31,11 @@ namespace sys {
 		void* reallocate(void* mem, size_t newsize);
 
 		void free(void* mem);
+
+		void printStatistics();
 	};
 
-} // namespace mm
+  } // namespace mm
 } // namespace sys
 
 using namespace sys::mm;

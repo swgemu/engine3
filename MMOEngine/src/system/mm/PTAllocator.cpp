@@ -3,9 +3,12 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "AllocationTracker.h"
+
 #include "PTAllocator.h"
 
 #ifdef WITH_STM
+#define USE_STARTER 0
 #define MSPACES 1
 #define USE_DL_PREFIX 1
 
@@ -17,6 +20,8 @@ PTAllocator::PTAllocator(void* base, size_t size) {
 
 	dlBase = base;
 	dlSize = size;
+
+	new AllocationTracker(NULL);
 
 	initialize();
 }
@@ -38,9 +43,21 @@ void PTAllocator::destroy() {
 #endif
 }
 
+#include "system/lang/Time.h"
+
+Time nextPrint;
+
 void* PTAllocator::allocate(size_t size) {
 #ifdef WITH_STM
-	return mspace_malloc((mspace) dlMspace, size);
+	void* mem = mspace_malloc((mspace) dlMspace, size);
+	//printf("allocated %p\n", mem);
+
+	if (nextPrint.isPast()) {
+		printStatistics();
+		nextPrint.addMiliTime(10000);
+	}
+
+	return mem;
 #else
 	return malloc(size);
 #endif
@@ -48,7 +65,11 @@ void* PTAllocator::allocate(size_t size) {
 
 void* PTAllocator::reallocate(void* mem, size_t newsize) {
 #ifdef WITH_STM
-	return mspace_realloc((mspace) dlMspace, mem, newsize);
+	void* mem2 = mspace_realloc((mspace) dlMspace, mem, newsize);
+
+	//printf("reallocated %p to %p\n", mem, mem2);
+
+	return mem2;
 #else
 	return realloc(mem, newsize);
 #endif
@@ -57,7 +78,13 @@ void* PTAllocator::reallocate(void* mem, size_t newsize) {
 void PTAllocator::free(void* mem) {
 #ifdef WITH_STM
 	mspace_free((mspace) dlMspace, mem);
+
+	//printf("freeing %p\n", mem);
 #else
 	free(mem);
 #endif
+}
+
+void PTAllocator::printStatistics() {
+	mspace_malloc_stats((mspace) dlMspace);
 }

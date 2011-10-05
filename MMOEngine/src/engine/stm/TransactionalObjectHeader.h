@@ -19,7 +19,7 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHandle;
 
-	template<class O> class TransactionalObjectHeader {
+	template<class O> class TransactionalObjectHeader : public Object {
 	protected:
 		AtomicReference<Transaction*> ownerTransaction;
 
@@ -47,7 +47,7 @@ namespace engine {
 
 		virtual O getForDirty() = 0;
 
-		virtual bool isCurrentVersion(Object* obj) = 0;
+		virtual bool isCurrentVersion(O obj) = 0;
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			return false;
@@ -58,6 +58,7 @@ namespace engine {
 		}
 
 	protected:
+		Reference<TransactionalObjectHandle<O>*> createCreationHandle(Transaction* transaction);
 		Reference<TransactionalObjectHandle<O>*> createReadOnlyHandle(Transaction* transaction);
 		Reference<TransactionalObjectHandle<O>*> createWriteHandle(Transaction* transaction);
 
@@ -69,14 +70,14 @@ namespace engine {
 
 		void createObject();
 
-		virtual Object* getObjectForRead(TransactionalObjectHandle<O>* handle) = 0;
-		virtual Object* getObjectForWrite(TransactionalObjectHandle<O>* handle) = 0;
+		virtual O getObjectForRead(TransactionalObjectHandle<O>* handle) = 0;
+		virtual O getObjectForWrite(TransactionalObjectHandle<O>* handle) = 0;
 
 		Transaction* getTransaction() const {
 			return ownerTransaction;
 		}
 
-		virtual bool hasObject(Object* obj) const = 0;
+		virtual bool hasObject(O obj) const = 0;
 
 		virtual bool isNull() = 0;
 
@@ -86,16 +87,23 @@ namespace engine {
 		friend class TransactionalObjectHandle<O>;
 	};
 
+	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createCreationHandle(Transaction* transaction) {
+		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
+		handle->initialize(this, TransactionalObjectHandle<O>::CREATE, transaction);
+
+		return handle;
+	}
+
 	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createReadOnlyHandle(Transaction* transaction) {
 		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
-		handle->initialize(this, false, transaction);
+		handle->initialize(this, TransactionalObjectHandle<O>::READ, transaction);
 
 		return handle;
 	}
 
 	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createWriteHandle(Transaction* transaction) {
 		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
-		handle->initialize(this, true, transaction);
+		handle->initialize(this, TransactionalObjectHandle<O>::WRITE, transaction);
 
 		return handle;
 	}

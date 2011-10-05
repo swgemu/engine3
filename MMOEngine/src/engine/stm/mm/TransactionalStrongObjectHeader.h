@@ -8,9 +8,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace engine {
   namespace stm {
+    namespace mm {
 
 	template<class O> class TransactionalStrongObjectHeader : public TransactionalObjectHeader<O> {
-		Reference<Object*> object;
+		Reference<O> object;
 
 	public:
 		TransactionalStrongObjectHeader() : TransactionalObjectHeader<O>() {
@@ -21,7 +22,7 @@ namespace engine {
 			setObject(obj);
 		}
 
-		bool isCurrentVersion(Object* obj);
+		bool isCurrentVersion(O obj);
 
 		O getForDirty() {
 			return dynamic_cast<O>(object.get());
@@ -29,11 +30,12 @@ namespace engine {
 
 	protected:
 		void setObject(O obj) {
-			if (object == NULL) {
-				object = obj;
-				TransactionalObjectHeader<O>::createObject();
-			} else
-				object = dynamic_cast<Object*>(obj)->clone(NULL);
+			assert(object == NULL );
+
+			object = obj;
+			TransactionalObjectHeader<O>::createObject();
+
+			//object = dynamic_cast<O>(obj->clone(NULL));
 
 			assert(object != NULL);
 		}
@@ -42,18 +44,19 @@ namespace engine {
 			return object == NULL;
 		}
 
-		bool hasObject(Object* obj) const {
-			return object == obj;
+		bool hasObject(O obj) const {
+			bool wtf = (object == obj);
+			return wtf;
 		}
 
 		void releaseObject(TransactionalObjectHandle<O>* handle);
 
-		Object* getObjectForRead(TransactionalObjectHandle<O>* handle);
-		Object* getObjectForWrite(TransactionalObjectHandle<O>* handle);
+		O getObjectForRead(TransactionalObjectHandle<O>* handle);
+		O getObjectForWrite(TransactionalObjectHandle<O>* handle);
 
 	};
 
-	template<class O> Object* TransactionalStrongObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
+	template<class O> O TransactionalStrongObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
 		if (transaction != NULL) {
@@ -68,7 +71,7 @@ namespace engine {
 		}
 	}
 
-	template<class O> Object* TransactionalStrongObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
+	template<class O> O TransactionalStrongObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
 		/*if (transaction != NULL) {
@@ -87,7 +90,7 @@ namespace engine {
 	}
 
 	template<class O> void TransactionalStrongObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
-		object = handle->getObjectLocalCopy()->clone(NULL);
+		object = dynamic_cast<O>(handle->getObjectLocalCopy()->clone(NULL));
 
 		//TransactionalObjectHeader<O>::last = NULL;
 
@@ -96,14 +99,17 @@ namespace engine {
 		TransactionalObjectHeader<O>::ownerTransaction = NULL;
 	}
 
-	template<class O> bool TransactionalStrongObjectHeader<O>::isCurrentVersion(Object* obj) {
+	template<class O> bool TransactionalStrongObjectHeader<O>::isCurrentVersion(O obj) {
 		if (TransactionalObjectHeader<O>::ownerTransaction != NULL && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
 			return false;
 
 		return object == obj;
 	}
 
+    } // namespace mm
   } // namespace stm
 } // namespace engine
+
+using namespace engine::stm::mm;
 
 #endif /* ENGINE_STM_TRANSACTIONALSTRONGOBJECTHEADER_H_ */

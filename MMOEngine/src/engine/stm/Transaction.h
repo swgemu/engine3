@@ -21,8 +21,11 @@ namespace engine {
   namespace stm {
 
 	template<class O> class TransactionalObjectHeader;
-	template<class O> class TransactionalStrongObjectHeader;
-	template<class O> class TransactionalWeakObjectHeader;
+
+	namespace mm {
+		template<class O> class TransactionalStrongObjectHeader;
+		template<class O> class TransactionalWeakObjectHeader;
+	}
 
 	class TransactionalObjectMap : public HashTable<uint64, TransactionalObjectHandle<Object*>*> {
 	public:
@@ -219,7 +222,7 @@ namespace engine {
 		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
 
 		if (header == NULL) {
-			return new TransactionalStrongObjectHeader<O>(object);
+			return new engine::stm::mm::TransactionalStrongObjectHeader<O>(object);
 		}
 
 		return header;
@@ -229,14 +232,14 @@ namespace engine {
 		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
 
 		if (header == NULL) {
-			return new TransactionalWeakObjectHeader<O>(object);
+			return new engine::stm::mm::TransactionalWeakObjectHeader<O>(object);
 		}
 
 		return header;
 	}
 
 	template<class O> void Transaction::createObject(TransactionalObjectHeader<O>* header) {
-		Reference<TransactionalObjectHandle<O>*> handle = header->createWriteHandle(this);
+		Reference<TransactionalObjectHandle<O>*> handle = header->createCreationHandle(this);
 
 		localObjectCache.put(handle->getObjectLocalCopy(), header);
 		localObjectCache.put(handle->getObject(), header);

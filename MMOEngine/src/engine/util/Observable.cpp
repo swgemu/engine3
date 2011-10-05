@@ -19,6 +19,7 @@ Observable::~Observable() {
 }
 
 
+
 void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
 	ObservableImplementation* _implementation = (ObservableImplementation*) _getImplementation();
 	if (_implementation == NULL) {

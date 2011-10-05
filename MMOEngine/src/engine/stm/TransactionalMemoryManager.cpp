@@ -180,6 +180,12 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 	if (!object->_setDestroying())
 		return;
 
+	StackTrace trace;
+	String traceStr;
+	trace.getStackTrace(traceStr);
+
+	//debug("object " + object->toString() + " was reclaimed at\n" + traceStr);
+
 	/*Transaction* trans = dynamic_cast<Transaction*>(object);
 
 	if (trans != NULL)  {
@@ -206,6 +212,8 @@ Object* TransactionalMemoryManager::create(size_t size) {
 void TransactionalMemoryManager::destroy(Object* object) {
 	if (objectHeap.contains(object)) {
 		//object->~Object();
+		debug("object " + object->toString() + " was destroyed");
+
 		objectHeap.free(object);
 	} else
 		delete object;

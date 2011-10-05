@@ -66,6 +66,7 @@ namespace engine {
 		~QuadTree();
 
 		Object* clone();
+		Object* clone(void* object);
 
 		/**
 		 * Clear all the objects from the quadtree and set it to have

@@ -118,7 +118,7 @@ namespace engine {
 
 	template<class O> bool ManagedWeakReference<O>::toString(String& str) {
 		if (WeakReference<O>::get() != NULL)
-			str = String::valueOf(((DistributedObject*)WeakReference<O>::get())->_getObjectID());
+			str = String::valueOf((static_cast<DistributedObject*>(WeakReference<O>::get())->_getObjectID()));
 		else if (unloadedObjectID != 0)
 			str = String::valueOf(unloadedObjectID);
 		else
@@ -152,7 +152,7 @@ namespace engine {
 		O object = WeakReference<O>::get();
 
 		if (object != NULL)
-			stream->writeLong(((DistributedObject*)object)->_getObjectID());
+			stream->writeLong((static_cast<DistributedObject*>(object))->_getObjectID());
 		else if (unloadedObjectID != 0)
 			stream->writeLong(unloadedObjectID);
 		else
@@ -172,9 +172,9 @@ namespace engine {
 			return false;
 		}
 
-		O castedObject = (O)(obj);
+		O castedObject = dynamic_cast<O>(obj);
 
-		WeakReference<O>::updateObject((O)castedObject);
+		WeakReference<O>::updateObject(castedObject);
 
 		if (castedObject == NULL)
 			return false;

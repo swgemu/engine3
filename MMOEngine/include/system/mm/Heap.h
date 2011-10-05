@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HEAP_H_
 #define HEAP_H_
 
-#include "PTAllocator.h"
+#include "Allocator.h"
 
 namespace sys {
   namespace mm {
@@ -20,7 +20,7 @@ namespace sys {
 
 		static int deviceFD;
 
-		PTAllocator* allocator;
+		Allocator* allocator;
 
 	public:
 		Heap();

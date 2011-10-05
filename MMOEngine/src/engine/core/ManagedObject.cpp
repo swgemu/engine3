@@ -25,6 +25,7 @@ ManagedObject::~ManagedObject() {
 }
 
 
+
 void ManagedObject::_updateForWrite() {
 	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
 	if (_implementation == NULL) {

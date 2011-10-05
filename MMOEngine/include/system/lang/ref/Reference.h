@@ -6,8 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef REFERENCE_H_
 #define REFERENCE_H_
 
-#include "../Object.h"
-#include "../Long.h"
+#include "system/lang/Object.h"
+
+#include "system/lang/Long.h"
+
 #include "system/thread/atomic/AtomicReference.h"
 
 namespace sys {
@@ -103,15 +105,17 @@ namespace sys {
 
 			setObject(obj);*/
 
-			if (obj != NULL)
-				(static_cast<Object*>(obj))->acquire();
+			if (obj != NULL) {
+				(dynamic_cast<Object*>(obj))->acquire();
+			}
 
 			while (true) {
 				O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
-					if (oldobj != NULL)
-						(static_cast<Object*>(oldobj))->release();
+					if (oldobj != NULL) {
+						(dynamic_cast<Object*>(oldobj))->release();
+					}
 
 					return;
 				}

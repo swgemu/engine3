@@ -4,8 +4,8 @@
 
 #include "SignalException.h"
 
-//SignalTranslator<AbortedException> g_objAbortedExceptionTranslator;
-//SignalTranslator<FloatingPointException> _objFloatingPOintExceptionTranslator;
+SignalTranslator<AbortedException> g_objAbortedExceptionTranslator;
+SignalTranslator<FloatingPointException> _objFloatingPOintExceptionTranslator;
 
 Exception::Exception() {
 }

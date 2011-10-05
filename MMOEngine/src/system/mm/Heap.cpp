@@ -7,6 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MemoryManager.h"
 
+#include "DLAllocator.h"
+
 #include "Heap.h"
 
 #include <fcntl.h>
@@ -24,8 +26,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/thread/Mutex.h"
 #include "system/thread/Locker.h"
-
-Mutex mutex;
 
 int Heap::deviceFD = -1;
 
@@ -72,7 +72,7 @@ void Heap::create(size_t size) {
 	//printf("heap created at %p on dev %u\n", heapBase, deviceFD);
 
 	if (offset != 0)
-		allocator = new PTAllocator(heapBase, heapSize);
+		allocator = new DLAllocator(heapBase, heapSize);
 }
 
 Time lastPrintTime;

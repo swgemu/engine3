@@ -58,9 +58,10 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	system/lang/StackTrace.$(OBJEXT) system/lang/types.$(OBJEXT) \
 	system/lang/Integer.$(OBJEXT) \
 	system/lang/ArrayIndexOutOfBoundsException.$(OBJEXT) \
-	system/mm/MemoryManager.$(OBJEXT) system/mm/Heap.$(OBJEXT) \
+	system/mm/MemoryManager.$(OBJEXT) \
+	system/mm/AllocationHook.$(OBJEXT) system/mm/Heap.$(OBJEXT) \
 	system/mm/ProtectedHeap.$(OBJEXT) \
-	system/mm/PTAllocator.$(OBJEXT) system/thread/Thread.$(OBJEXT) \
+	system/mm/DLAllocator.$(OBJEXT) system/thread/Thread.$(OBJEXT) \
 	system/thread/Lockable.$(OBJEXT) system/thread/Mutex.$(OBJEXT) \
 	system/thread/ReadWriteLock.$(OBJEXT) \
 	system/net/Socket.$(OBJEXT) system/net/SocketAddress.$(OBJEXT) \
@@ -303,7 +304,8 @@ top_srcdir = @top_srcdir@
 @DEBUG_TRUE@AM_CXXFLAGS = -ggdb -Wall -Wextra -Wno-unused
 INCLUDES = $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua \
-	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) -I../../../external/ptmalloc3 \
+	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) \
+	    	-I../../../external/dlmalloc \
 	    	-I../../../external/multimmap
 
 noinst_LIBRARIES = libengine3.a
@@ -321,9 +323,10 @@ libengine3_a_SOURCES = \
 			system/lang/Integer.cpp \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/mm/MemoryManager.cpp \
+			system/mm/AllocationHook.cpp \
 			system/mm/Heap.cpp \
 			system/mm/ProtectedHeap.cpp \
-			system/mm/PTAllocator.cpp \
+			system/mm/DLAllocator.cpp \
 			system/thread/Thread.cpp \
 			system/thread/Lockable.cpp \
 			system/thread/Mutex.cpp \
@@ -499,11 +502,13 @@ system/mm/$(DEPDIR)/$(am__dirstamp):
 	@: > system/mm/$(DEPDIR)/$(am__dirstamp)
 system/mm/MemoryManager.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
+system/mm/AllocationHook.$(OBJEXT): system/mm/$(am__dirstamp) \
+	system/mm/$(DEPDIR)/$(am__dirstamp)
 system/mm/Heap.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
 system/mm/ProtectedHeap.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/PTAllocator.$(OBJEXT): system/mm/$(am__dirstamp) \
+system/mm/DLAllocator.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
 system/thread/$(am__dirstamp):
 	@$(MKDIR_P) system/thread
@@ -1011,9 +1016,10 @@ mostlyclean-compile:
 	-rm -f system/lang/System.$(OBJEXT)
 	-rm -f system/lang/UnicodeString.$(OBJEXT)
 	-rm -f system/lang/types.$(OBJEXT)
+	-rm -f system/mm/AllocationHook.$(OBJEXT)
+	-rm -f system/mm/DLAllocator.$(OBJEXT)
 	-rm -f system/mm/Heap.$(OBJEXT)
 	-rm -f system/mm/MemoryManager.$(OBJEXT)
-	-rm -f system/mm/PTAllocator.$(OBJEXT)
 	-rm -f system/mm/ProtectedHeap.$(OBJEXT)
 	-rm -f system/net/InetAddress.$(OBJEXT)
 	-rm -f system/net/NetworkInterface.$(OBJEXT)
@@ -1130,9 +1136,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/UnicodeString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/types.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationHook.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/DLAllocator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/Heap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MemoryManager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/PTAllocator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/ProtectedHeap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/InetAddress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/NetworkInterface.Po@am__quote@

@@ -23,6 +23,7 @@ QuadTreeEntry::~QuadTreeEntry() {
 }
 
 
+
 void QuadTreeEntry::notifyAddedToCloseObjects() {
 	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
 	if (_implementation == NULL) {

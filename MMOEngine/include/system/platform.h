@@ -75,6 +75,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <time.h>
 
+#include <cstddef>
 #include <cctype>
 #include <cstring>
 #include <cstdlib>

@@ -71,6 +71,7 @@ MMOEngine/external/db-5.0.32/build_windows/db_config.h -text
 MMOEngine/external/db-5.0.32/build_windows/db_cxx.h -text
 MMOEngine/external/db-5.0.32/build_windows/db_int.h -text
 MMOEngine/external/db-5.0.32/build_windows/dbstl_common.h -text
+MMOEngine/external/dlmalloc/dlmalloc.h -text
 MMOEngine/external/hoard/Makefile -text
 MMOEngine/external/hoard/NOTES.Windows -text
 MMOEngine/external/hoard/VERSION.h -text
@@ -219,6 +220,7 @@ MMOEngine/external/hoard/ignoreinvalidfree.h -text
 MMOEngine/external/hoard/libhoard-64.def -text
 MMOEngine/external/hoard/libhoard.cpp -text
 MMOEngine/external/hoard/libhoard.def -text
+MMOEngine/external/hoard/libhoard.so -text
 MMOEngine/external/hoard/lockmallocheap.h -text
 MMOEngine/external/hoard/macwrapper.cpp -text
 MMOEngine/external/hoard/manageonesuperblock.h -text
@@ -260,6 +262,7 @@ MMOEngine/external/ptmalloc3/COPYRIGHT -text
 MMOEngine/external/ptmalloc3/ChangeLog -text
 MMOEngine/external/ptmalloc3/Makefile -text
 MMOEngine/external/ptmalloc3/README -text
+MMOEngine/external/ptmalloc3/libptmalloc3.a -text
 MMOEngine/external/ptmalloc3/lran2.h -text
 MMOEngine/external/ptmalloc3/malloc-2.8.3.h -text
 MMOEngine/external/ptmalloc3/malloc-private.h -text
@@ -279,7 +282,6 @@ MMOEngine/external/ptmalloc3/t-test1 -text
 MMOEngine/external/ptmalloc3/t-test1.c -text
 MMOEngine/external/ptmalloc3/t-test2 -text
 MMOEngine/external/ptmalloc3/t-test2.c -text
-MMOEngine/external/ptmalloc3/tst-independent-alloc -text
 MMOEngine/external/ptmalloc3/tst-independent-alloc.c -text
 MMOEngine/external/zlib/include/zconf.h -text
 MMOEngine/external/zlib/include/zlib.h -text
@@ -443,6 +445,7 @@ MMOEngine/include/engine/stm/TransactionalWeakObjectHeader.h -text
 MMOEngine/include/engine/stm/TransactionalWeakReference.h -text
 MMOEngine/include/engine/stm/mm/HazardPointer.h -text
 MMOEngine/include/engine/stm/mm/KernelCall.h -text
+MMOEngine/include/engine/stm/mm/TransactionalObjectCloner.h -text
 MMOEngine/include/engine/stm/mm/TransactionalStrongObjectHeader.h -text
 MMOEngine/include/engine/stm/mm/TransactionalWeakObjectHeader.h -text
 MMOEngine/include/engine/stm/mm/multimmap/multimmap.h -text
@@ -572,9 +575,13 @@ MMOEngine/include/system/lang/types/String.h -text
 MMOEngine/include/system/lang/types/UnicodeString.h -text
 MMOEngine/include/system/lang/types/Variable.h -text
 MMOEngine/include/system/lang/unicode.h -text
+MMOEngine/include/system/mm/AllocationHook.h -text
+MMOEngine/include/system/mm/AllocationTracker.h -text
+MMOEngine/include/system/mm/Allocator.h -text
 MMOEngine/include/system/mm/DLAllocator.h -text
 MMOEngine/include/system/mm/Heap.h -text
 MMOEngine/include/system/mm/MemoryManager.h -text
+MMOEngine/include/system/mm/ObjectCloner.h -text
 MMOEngine/include/system/mm/PTAllocator.h -text
 MMOEngine/include/system/mm/ProtectedHeap.h -text
 MMOEngine/include/system/mm/dlmalloc.h -text
@@ -625,6 +632,7 @@ MMOEngine/include/system/util/VectorMap.h -text
 MMOEngine/include/system/util/VectorSet.h -text
 MMOEngine/install-sh -text
 MMOEngine/lib/idlc.jar -text
+MMOEngine/lib/libengine3.a -text
 MMOEngine/lib/unix/libengine3.a -text
 MMOEngine/lib/win32/engine3.lib -text
 MMOEngine/lib/win32/engine3d.lib -text
@@ -825,6 +833,7 @@ MMOEngine/src/engine/stm/TransactionalWeakReference.h -text
 MMOEngine/src/engine/stm/mm/HazardPointer.h -text
 MMOEngine/src/engine/stm/mm/KernelCall.cpp -text
 MMOEngine/src/engine/stm/mm/KernelCall.h -text
+MMOEngine/src/engine/stm/mm/TransactionalObjectCloner.h -text
 MMOEngine/src/engine/stm/mm/TransactionalStrongObjectHeader.h -text
 MMOEngine/src/engine/stm/mm/TransactionalWeakObjectHeader.h -text
 MMOEngine/src/engine/stm/orb/LocalObjectManager.cpp -text
@@ -972,17 +981,21 @@ MMOEngine/src/system/lang/ref/ReferenceCounter.h -text
 MMOEngine/src/system/lang/ref/WeakReference.h -text
 MMOEngine/src/system/lang/types.cpp -text
 MMOEngine/src/system/lang/types.h -text
+MMOEngine/src/system/mm/AllocationHook.cpp -text
+MMOEngine/src/system/mm/AllocationHook.h -text
+MMOEngine/src/system/mm/AllocationTracker.h -text
+MMOEngine/src/system/mm/Allocator.h -text
 MMOEngine/src/system/mm/DLAllocator.cpp -text
 MMOEngine/src/system/mm/DLAllocator.h -text
 MMOEngine/src/system/mm/Heap.cpp -text
 MMOEngine/src/system/mm/Heap.h -text
 MMOEngine/src/system/mm/MemoryManager.cpp -text
 MMOEngine/src/system/mm/MemoryManager.h -text
+MMOEngine/src/system/mm/ObjectCloner.h -text
 MMOEngine/src/system/mm/PTAllocator.cpp -text
 MMOEngine/src/system/mm/PTAllocator.h -text
 MMOEngine/src/system/mm/ProtectedHeap.cpp -text
 MMOEngine/src/system/mm/ProtectedHeap.h -text
-MMOEngine/src/system/mm/dlmalloc.h -text
 MMOEngine/src/system/net/InetAddress.cpp -text
 MMOEngine/src/system/net/InetAddress.h -text
 MMOEngine/src/system/net/NetworkInterface.cpp -text

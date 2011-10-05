@@ -17,6 +17,7 @@ ManagedService::~ManagedService() {
 }
 
 
+
 DistributedObjectServant* ManagedService::_getImplementation() {
 
 	_updated = true;

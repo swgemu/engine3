@@ -8,9 +8,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace engine {
   namespace stm {
+    namespace mm {
 
 	template<class O> class TransactionalWeakObjectHeader : public TransactionalObjectHeader<O> {
-			WeakReference<Object*> object;
+			WeakReference<O> object;
 
 	public:
 			TransactionalWeakObjectHeader() : TransactionalObjectHeader<O>() {
@@ -21,7 +22,7 @@ namespace engine {
 				setObject(obj);
 			}
 
-			bool isCurrentVersion(Object* obj);
+			bool isCurrentVersion(O obj);
 
 			O getForDirty() {
 				return dynamic_cast<O>(object.get());
@@ -33,7 +34,7 @@ namespace engine {
 					object = obj;
 					TransactionalObjectHeader<O>::createObject();
 				} else
-					object = dynamic_cast<Object*>(obj)->clone(NULL);
+					object = dynamic_cast<O>(obj->clone(NULL));
 
 				assert(object != NULL);
 			}
@@ -42,17 +43,17 @@ namespace engine {
 				return object == NULL;
 			}
 
-			bool hasObject(Object* obj) const {
+			bool hasObject(O obj) const {
 				return object == obj;
 			}
 
 			void releaseObject(TransactionalObjectHandle<O>* handle);
 
-			Object* getObjectForRead(TransactionalObjectHandle<O>* handle);
-			Object* getObjectForWrite(TransactionalObjectHandle<O>* handle);
+			O getObjectForRead(TransactionalObjectHandle<O>* handle);
+			O getObjectForWrite(TransactionalObjectHandle<O>* handle);
 	};
 
-	template<class O> Object* TransactionalWeakObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
+	template<class O> O TransactionalWeakObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
 		if (transaction != NULL) {
@@ -68,7 +69,7 @@ namespace engine {
 		}
 	}
 
-	template<class O> Object* TransactionalWeakObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
+	template<class O> O TransactionalWeakObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
 		/*if (transaction != NULL) {
@@ -87,7 +88,7 @@ namespace engine {
 	}
 
 	template<class O> void TransactionalWeakObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
-		object = handle->getObjectLocalCopy()->clone(NULL);
+		object = dynamic_cast<O>(handle->getObjectLocalCopy()->clone(NULL));
 
 		//ownerTransaction->release();
 
@@ -96,13 +97,14 @@ namespace engine {
 		TransactionalObjectHeader<O>::ownerTransaction = NULL;
 	}
 
-	template<class O> bool TransactionalWeakObjectHeader<O>::isCurrentVersion(Object* obj) {
+	template<class O> bool TransactionalWeakObjectHeader<O>::isCurrentVersion(O obj) {
 		if (TransactionalObjectHeader<O>::ownerTransaction != NULL && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
 			return false;
 
 		return object == obj;
 	}
 
+    } // namespace mm
   } // namespace stm
 } // namespace engine
 

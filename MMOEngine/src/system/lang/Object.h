@@ -63,11 +63,13 @@ namespace sys {
 		TransactionalReference<Vector<WeakReferenceBase*>*>* weakReferences;
 #endif*/
 
-		AtomicBoolean _destroying;
+		AtomicBoolean*  _destroying;
 
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 	#endif
+
+		//class StackTrace* deletedByTrace;
 
 	public:
 		Object();
@@ -101,11 +103,11 @@ namespace sys {
 		}
 
 		bool _setDestroying() {
-			return _destroying.compareAndSet(false, true);
+			return _destroying->compareAndSet(false, true);
 		}
 
 		void _clearDestroying() {
-			_destroying.set(false);
+			_destroying->set(false);
 		}
 
 		void finalize() {
@@ -120,7 +122,7 @@ namespace sys {
 		}
 
 		inline bool _isGettingDestroyed() const {
-			return _destroying.get();
+			return _destroying->get();
 		}
 
 		inline void acquire() {

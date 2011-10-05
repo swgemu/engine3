@@ -138,4 +138,6 @@ namespace engine {
 
 #include "TransactionalObjectHeader.h"
 
+#include "engine/stm/mm/TransactionalObjectCloner.h"
+
 #endif /* ENGINE_STM_TRANSACTIONALMEMORYMANAGER_H_ */

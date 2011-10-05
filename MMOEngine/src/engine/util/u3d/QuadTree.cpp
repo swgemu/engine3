@@ -180,7 +180,11 @@ QuadTree::~QuadTree() {
 }
 
 Object* QuadTree::clone() {
-	return dynamic_cast<Object*>(new QuadTree(*this));
+	return ObjectCloner<QuadTree>::clone(this);
+}
+
+Object* QuadTree::clone(void* mem) {
+	return TransactionalObjectCloner<QuadTree>::clone(this);
 }
 
 void QuadTree::setSize(float minx, float miny, float maxx, float maxy) {

@@ -13,11 +13,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/util/SortedVector.h"
 #include "system/util/HashSet.h"
+
 #include "engine/stm/TransactionalReference.h"
 #include "engine/stm/TransactionalObjectHeader.h"
 
+#include "StackTrace.h"
+
 Object::Object() : ReferenceCounter(), Variable() {
-	_destroying = false;
+	_destroying = new AtomicBoolean(false);
+
+	//deletedByTrace = NULL;
 
 	weakReferences = NULL;
 
@@ -29,7 +34,9 @@ Object::Object() : ReferenceCounter(), Variable() {
 }
 
 Object::Object(const Object& obj) : ReferenceCounter(), Variable() {
-	_destroying = false;
+	_destroying = new AtomicBoolean(false);
+
+	//deletedByTrace = NULL;
 
 	weakReferences = NULL;
 
@@ -52,7 +59,11 @@ Object::~Object() {
 	delete weakReferences;
 	weakReferences = NULL;
 
+	delete _destroying;
+
 	finalize();
+
+	//deletedByTrace = new StackTrace();
 }
 
 void Object::release() {
@@ -115,7 +126,7 @@ void Object::releaseWeak(WeakReferenceBase* ref) {
 }
 
 void Object::destroy() {
-	_destroying = true;
+	_destroying->set(true);
 
 //#ifndef WITH_STM
 	Locker locker(&referenceMutex);

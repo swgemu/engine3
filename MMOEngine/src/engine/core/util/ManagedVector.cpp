@@ -17,6 +17,7 @@ ManagedVector::~ManagedVector() {
 }
 
 
+
 DistributedObjectServant* ManagedVector::_getImplementation() {
 
 	_updated = true;

@@ -397,7 +397,7 @@ bool Transaction::acquireReadWriteObjects() {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
 		if (handle->hasObjectChanged()) {
-			debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
+			/////debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
 
 			TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
 			return false;
@@ -440,7 +440,7 @@ bool Transaction::acquireReadWriteObjects() {
 		}
 
 		if (handle->hasObjectChanged()) {
-			debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
+			//debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
 			TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
 			return false;
 		}

@@ -19,7 +19,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 TaskManager* Core::taskManager;
 ObjectBroker* Core::objectBroker;
 
-//SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
+SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 
 Core::Core() {
 	initializeContext();

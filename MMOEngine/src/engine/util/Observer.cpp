@@ -21,6 +21,7 @@ Observer::~Observer() {
 }
 
 
+
 int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
 	ObserverImplementation* _implementation = (ObserverImplementation*) _getImplementation();
 	if (_implementation == NULL) {

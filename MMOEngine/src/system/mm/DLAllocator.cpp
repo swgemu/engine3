@@ -3,13 +3,23 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "AllocationTracker.h"
+
 #include "DLAllocator.h"
 
 #define USE_DL_PREFIX 1
-//#define USE_LOCKS 1
+#define USE_LOCKS 1
 #define MSPACES 1
 //#define HAVE_MMAP 0
 #include "dlmalloc.h"
+
+AllocationTracker tracker(NULL);
+
+void initializeTracker() {
+	tracker.install();
+}
+
+//void (*__malloc_initialize_hook)(void) = initializeTracker;
 
 DLAllocator::DLAllocator(void* base, size_t size) {
 	dlMspace = NULL;

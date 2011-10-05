@@ -23,6 +23,7 @@ Facade::~Facade() {
 }
 
 
+
 int Facade::initializeSession() {
 	FacadeImplementation* _implementation = (FacadeImplementation*) _getImplementation();
 	if (_implementation == NULL) {
