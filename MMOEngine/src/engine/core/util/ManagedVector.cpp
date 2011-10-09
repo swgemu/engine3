@@ -57,7 +57,7 @@ void ManagedVectorImplementation::_initializeImplementation() {
 }
 
 void ManagedVectorImplementation::_setStub(DistributedObjectStub* stub) {
-	_this = (ManagedVector*) stub;
+	_this = static_cast<ManagedVector*>(stub);
 	ManagedObjectImplementation::_setStub(stub);
 }
 
@@ -189,7 +189,7 @@ DistributedObjectServant* ManagedVectorHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ManagedVectorHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ManagedVectorAdapter((ManagedVectorImplementation*) obj->_getImplementation());
+	DistributedObjectAdapter* adapter = new ManagedVectorAdapter(static_cast<ManagedVectorImplementation*>(obj->_getImplementation()));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

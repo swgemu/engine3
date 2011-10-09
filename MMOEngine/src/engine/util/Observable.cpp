@@ -21,7 +21,7 @@ Observable::~Observable() {
 
 
 void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
-	ObservableImplementation* _implementation = (ObservableImplementation*) _getImplementation();
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -37,7 +37,7 @@ void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, lo
 }
 
 void Observable::registerObserver(unsigned int eventType, Observer* observer) {
-	ObservableImplementation* _implementation = (ObservableImplementation*) _getImplementation();
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -52,7 +52,7 @@ void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 }
 
 void Observable::dropObserver(unsigned int eventType, Observer* observer) {
-	ObservableImplementation* _implementation = (ObservableImplementation*) _getImplementation();
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -67,7 +67,7 @@ void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 }
 
 int Observable::getObserverCount(unsigned int eventType) {
-	ObservableImplementation* _implementation = (ObservableImplementation*) _getImplementation();
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -119,7 +119,7 @@ void ObservableImplementation::_initializeImplementation() {
 }
 
 void ObservableImplementation::_setStub(DistributedObjectStub* stub) {
-	_this = (Observable*) stub;
+	_this = static_cast<Observable*>(stub);
 	ManagedObjectImplementation::_setStub(stub);
 }
 
@@ -253,13 +253,13 @@ Packet* ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	case RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_:
-		notifyObservers(inv->getUnsignedIntParameter(), (ManagedObject*) inv->getObjectParameter(), inv->getSignedLongParameter());
+		notifyObservers(inv->getUnsignedIntParameter(), static_cast<ManagedObject*>(inv->getObjectParameter()), inv->getSignedLongParameter());
 		break;
 	case RPC_REGISTEROBSERVER__INT_OBSERVER_:
-		registerObserver(inv->getUnsignedIntParameter(), (Observer*) inv->getObjectParameter());
+		registerObserver(inv->getUnsignedIntParameter(), static_cast<Observer*>(inv->getObjectParameter()));
 		break;
 	case RPC_DROPOBSERVER__INT_OBSERVER_:
-		dropObserver(inv->getUnsignedIntParameter(), (Observer*) inv->getObjectParameter());
+		dropObserver(inv->getUnsignedIntParameter(), static_cast<Observer*>(inv->getObjectParameter()));
 		break;
 	case RPC_GETOBSERVERCOUNT__INT_:
 		resp->insertSignedInt(getObserverCount(inv->getUnsignedIntParameter()));
@@ -272,19 +272,19 @@ Packet* ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 }
 
 void ObservableAdapter::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
-	((ObservableImplementation*) impl)->notifyObservers(eventType, arg1, arg2);
+	(static_cast<ObservableImplementation*>(impl))->notifyObservers(eventType, arg1, arg2);
 }
 
 void ObservableAdapter::registerObserver(unsigned int eventType, Observer* observer) {
-	((ObservableImplementation*) impl)->registerObserver(eventType, observer);
+	(static_cast<ObservableImplementation*>(impl))->registerObserver(eventType, observer);
 }
 
 void ObservableAdapter::dropObserver(unsigned int eventType, Observer* observer) {
-	((ObservableImplementation*) impl)->dropObserver(eventType, observer);
+	(static_cast<ObservableImplementation*>(impl))->dropObserver(eventType, observer);
 }
 
 int ObservableAdapter::getObserverCount(unsigned int eventType) {
-	return ((ObservableImplementation*) impl)->getObserverCount(eventType);
+	return (static_cast<ObservableImplementation*>(impl))->getObserverCount(eventType);
 }
 
 /*
@@ -312,7 +312,7 @@ DistributedObjectServant* ObservableHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ObservableHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ObservableAdapter((ObservableImplementation*) obj->_getImplementation());
+	DistributedObjectAdapter* adapter = new ObservableAdapter(static_cast<ObservableImplementation*>(obj->_getImplementation()));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

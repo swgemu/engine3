@@ -81,7 +81,7 @@ void PTAllocator::free(void* mem) {
 
 	//printf("freeing %p\n", mem);
 #else
-	free(mem);
+	::free(mem);
 #endif
 }
 

@@ -11,12 +11,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Heap.h"
 
+
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <limits.h>
 
+#ifdef PLATFORM_LINUX
 #include <multimmap.h>
+#endif
 
 #include <errno.h>
 
@@ -30,11 +33,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 int Heap::deviceFD = -1;
 
 Heap::Heap() {
+#ifdef PLATFORM_LINUX
 	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE);
 	heapSize = -1;
 	flags = MAP_PRIVATE;
 	offset = 0;
 
+#endif
 	openDevice(0);
 }
 
@@ -47,6 +52,7 @@ Heap::~Heap() {
 extern int __data_start, _end;
 
 void Heap::create(size_t size) {
+#ifdef PLATFORM_LINUX
 	heapSize = size;
 
 	heapBase = mmap(heapBase, heapSize, PROT_READ | PROT_WRITE, flags, deviceFD, offset);
@@ -73,6 +79,7 @@ void Heap::create(size_t size) {
 
 	if (offset != 0)
 		allocator = new DLAllocator(heapBase, heapSize);
+#endif
 }
 
 Time lastPrintTime;

@@ -25,7 +25,7 @@ Facade::~Facade() {
 
 
 int Facade::initializeSession() {
-	FacadeImplementation* _implementation = (FacadeImplementation*) _getImplementation();
+	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -38,7 +38,7 @@ int Facade::initializeSession() {
 }
 
 int Facade::cancelSession() {
-	FacadeImplementation* _implementation = (FacadeImplementation*) _getImplementation();
+	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -51,7 +51,7 @@ int Facade::cancelSession() {
 }
 
 int Facade::clearSession() {
-	FacadeImplementation* _implementation = (FacadeImplementation*) _getImplementation();
+	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -98,7 +98,7 @@ void FacadeImplementation::_initializeImplementation() {
 }
 
 void FacadeImplementation::_setStub(DistributedObjectStub* stub) {
-	_this = (Facade*) stub;
+	_this = static_cast<Facade*>(stub);
 	ManagedObjectImplementation::_setStub(stub);
 }
 
@@ -236,15 +236,15 @@ Packet* FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 }
 
 int FacadeAdapter::initializeSession() {
-	return ((FacadeImplementation*) impl)->initializeSession();
+	return (static_cast<FacadeImplementation*>(impl))->initializeSession();
 }
 
 int FacadeAdapter::cancelSession() {
-	return ((FacadeImplementation*) impl)->cancelSession();
+	return (static_cast<FacadeImplementation*>(impl))->cancelSession();
 }
 
 int FacadeAdapter::clearSession() {
-	return ((FacadeImplementation*) impl)->clearSession();
+	return (static_cast<FacadeImplementation*>(impl))->clearSession();
 }
 
 /*
@@ -272,7 +272,7 @@ DistributedObjectServant* FacadeHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* FacadeHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new FacadeAdapter((FacadeImplementation*) obj->_getImplementation());
+	DistributedObjectAdapter* adapter = new FacadeAdapter(static_cast<FacadeImplementation*>(obj->_getImplementation()));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

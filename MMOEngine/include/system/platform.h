@@ -131,6 +131,12 @@ namespace sys {
 	#define MAX_FLOAT 3.4028235E38
 	#define SMALL_NUM  0.00000001
 
+	#ifdef DEFAULT_DYNAMIC_CAST
+	#define cast dynamic_cast
+	#else
+	#define cast static_cast
+	#endif
+
 	//#define LOG_LOCKS
 	//#define TRACE_LOCKS
 

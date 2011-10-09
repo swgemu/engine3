@@ -23,7 +23,7 @@ Observer::~Observer() {
 
 
 int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
-	ObserverImplementation* _implementation = (ObserverImplementation*) _getImplementation();
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -40,7 +40,7 @@ int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable
 }
 
 unsigned long long Observer::getObjectID() {
-	ObserverImplementation* _implementation = (ObserverImplementation*) _getImplementation();
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -53,7 +53,7 @@ unsigned long long Observer::getObjectID() {
 }
 
 int Observer::compareTo(Observer* obj) {
-	ObserverImplementation* _implementation = (ObserverImplementation*) _getImplementation();
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -105,7 +105,7 @@ void ObserverImplementation::_initializeImplementation() {
 }
 
 void ObserverImplementation::_setStub(DistributedObjectStub* stub) {
-	_this = (Observer*) stub;
+	_this = static_cast<Observer*>(stub);
 	ManagedObjectImplementation::_setStub(stub);
 }
 
@@ -224,13 +224,13 @@ Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	case RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_:
-		resp->insertSignedInt(notifyObserverEvent(inv->getUnsignedIntParameter(), (Observable*) inv->getObjectParameter(), (ManagedObject*) inv->getObjectParameter(), inv->getSignedLongParameter()));
+		resp->insertSignedInt(notifyObserverEvent(inv->getUnsignedIntParameter(), static_cast<Observable*>(inv->getObjectParameter()), static_cast<ManagedObject*>(inv->getObjectParameter()), inv->getSignedLongParameter()));
 		break;
 	case RPC_GETOBJECTID__:
 		resp->insertLong(getObjectID());
 		break;
 	case RPC_COMPARETO__OBSERVER_:
-		resp->insertSignedInt(compareTo((Observer*) inv->getObjectParameter()));
+		resp->insertSignedInt(compareTo(static_cast<Observer*>(inv->getObjectParameter())));
 		break;
 	default:
 		return NULL;
@@ -240,15 +240,15 @@ Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 }
 
 int ObserverAdapter::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
-	return ((ObserverImplementation*) impl)->notifyObserverEvent(eventType, observable, arg1, arg2);
+	return (static_cast<ObserverImplementation*>(impl))->notifyObserverEvent(eventType, observable, arg1, arg2);
 }
 
 unsigned long long ObserverAdapter::getObjectID() {
-	return ((ObserverImplementation*) impl)->getObjectID();
+	return (static_cast<ObserverImplementation*>(impl))->getObjectID();
 }
 
 int ObserverAdapter::compareTo(Observer* obj) {
-	return ((ObserverImplementation*) impl)->compareTo(obj);
+	return (static_cast<ObserverImplementation*>(impl))->compareTo(obj);
 }
 
 /*
@@ -276,7 +276,7 @@ DistributedObjectServant* ObserverHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ObserverHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ObserverAdapter((ObserverImplementation*) obj->_getImplementation());
+	DistributedObjectAdapter* adapter = new ObserverAdapter(static_cast<ObserverImplementation*>(obj->_getImplementation()));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

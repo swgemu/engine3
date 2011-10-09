@@ -27,7 +27,7 @@ ManagedObject::~ManagedObject() {
 
 
 void ManagedObject::_updateForWrite() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -40,7 +40,7 @@ void ManagedObject::_updateForWrite() {
 }
 
 void ManagedObject::_lock(bool doLock) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -54,7 +54,7 @@ void ManagedObject::_lock(bool doLock) {
 }
 
 void ManagedObject::_lock(ManagedObject* obj) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -68,7 +68,7 @@ void ManagedObject::_lock(ManagedObject* obj) {
 }
 
 void ManagedObject::_lock(Lockable* obj) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -77,7 +77,7 @@ void ManagedObject::_lock(Lockable* obj) {
 }
 
 void ManagedObject::_rlock(bool doLock) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -91,7 +91,7 @@ void ManagedObject::_rlock(bool doLock) {
 }
 
 void ManagedObject::_wlock(bool doLock) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -105,7 +105,7 @@ void ManagedObject::_wlock(bool doLock) {
 }
 
 void ManagedObject::_wlock(ManagedObject* obj) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -119,7 +119,7 @@ void ManagedObject::_wlock(ManagedObject* obj) {
 }
 
 void ManagedObject::_unlock(bool doLock) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -133,7 +133,7 @@ void ManagedObject::_unlock(bool doLock) {
 }
 
 void ManagedObject::_runlock(bool doLock) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -147,7 +147,7 @@ void ManagedObject::_runlock(bool doLock) {
 }
 
 void ManagedObject::_setLockName(const String& name) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -161,7 +161,7 @@ void ManagedObject::_setLockName(const String& name) {
 }
 
 bool ManagedObject::_notifyDestroy() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -174,7 +174,7 @@ bool ManagedObject::_notifyDestroy() {
 }
 
 void ManagedObject::_writeObject(ObjectOutputStream* stream) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -183,7 +183,7 @@ void ManagedObject::_writeObject(ObjectOutputStream* stream) {
 }
 
 void ManagedObject::readObject(ObjectInputStream* stream) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -192,7 +192,7 @@ void ManagedObject::readObject(ObjectInputStream* stream) {
 }
 
 bool ManagedObject::toBinaryStream(ObjectOutputStream* stream) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -201,7 +201,7 @@ bool ManagedObject::toBinaryStream(ObjectOutputStream* stream) {
 }
 
 bool ManagedObject::parseFromBinaryStream(ObjectInputStream* stream) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -210,7 +210,7 @@ bool ManagedObject::parseFromBinaryStream(ObjectInputStream* stream) {
 }
 
 void ManagedObject::initializeTransientMembers() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -223,7 +223,7 @@ void ManagedObject::initializeTransientMembers() {
 }
 
 void ManagedObject::updateToDatabase() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -236,7 +236,7 @@ void ManagedObject::updateToDatabase() {
 }
 
 void ManagedObject::queueUpdateToDatabaseTask() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -249,7 +249,7 @@ void ManagedObject::queueUpdateToDatabaseTask() {
 }
 
 void ManagedObject::clearUpdateToDatabaseTask() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -262,7 +262,7 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 }
 
 unsigned int ManagedObject::_getLastCRCSave() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -275,7 +275,7 @@ unsigned int ManagedObject::_getLastCRCSave() {
 }
 
 void ManagedObject::_setLastCRCSave(unsigned int crc) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -289,7 +289,7 @@ void ManagedObject::_setLastCRCSave(unsigned int crc) {
 }
 
 bool ManagedObject::isPersistent() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -298,7 +298,7 @@ bool ManagedObject::isPersistent() {
 }
 
 int ManagedObject::getPersistenceLevel() {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -307,7 +307,7 @@ int ManagedObject::getPersistenceLevel() {
 }
 
 void ManagedObject::setPersistent(int level) {
-	ManagedObjectImplementation* _implementation = (ManagedObjectImplementation*) _getImplementation();
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -349,7 +349,7 @@ void ManagedObjectImplementation::_initializeImplementation() {
 }
 
 void ManagedObjectImplementation::_setStub(DistributedObjectStub* stub) {
-	_this = (ManagedObject*) stub;
+	_this = static_cast<ManagedObject*>(stub);
 	DistributedObjectServant::_setStub(stub);
 }
 
@@ -488,7 +488,7 @@ void ManagedObjectImplementation::_setClassName(const String& name) {
  *	ManagedObjectAdapter
  */
 
-ManagedObjectAdapter::ManagedObjectAdapter(ManagedObjectImplementation* obj) : DistributedObjectAdapter((DistributedObjectServant*) obj) {
+ManagedObjectAdapter::ManagedObjectAdapter(ManagedObjectImplementation* obj) : DistributedObjectAdapter(static_cast<DistributedObjectServant*>(obj)) {
 }
 
 Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -502,7 +502,7 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		lock(inv->getBooleanParameter());
 		break;
 	case RPC_LOCK__MANAGEDOBJECT_:
-		lock((ManagedObject*) inv->getObjectParameter());
+		lock(static_cast<ManagedObject*>(inv->getObjectParameter()));
 		break;
 	case RPC_RLOCK__BOOL_:
 		rlock(inv->getBooleanParameter());
@@ -511,7 +511,7 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		wlock(inv->getBooleanParameter());
 		break;
 	case RPC_WLOCK__MANAGEDOBJECT_:
-		wlock((ManagedObject*) inv->getObjectParameter());
+		wlock(static_cast<ManagedObject*>(inv->getObjectParameter()));
 		break;
 	case RPC_UNLOCK__BOOL_:
 		unlock(inv->getBooleanParameter());
@@ -551,67 +551,67 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 }
 
 void ManagedObjectAdapter::updateForWrite() {
-	((ManagedObjectImplementation*) impl)->updateForWrite();
+	(static_cast<ManagedObjectImplementation*>(impl))->updateForWrite();
 }
 
 void ManagedObjectAdapter::lock(bool doLock) {
-	((ManagedObjectImplementation*) impl)->lock(doLock);
+	(static_cast<ManagedObjectImplementation*>(impl))->lock(doLock);
 }
 
 void ManagedObjectAdapter::lock(ManagedObject* obj) {
-	((ManagedObjectImplementation*) impl)->lock(obj);
+	(static_cast<ManagedObjectImplementation*>(impl))->lock(obj);
 }
 
 void ManagedObjectAdapter::rlock(bool doLock) {
-	((ManagedObjectImplementation*) impl)->rlock(doLock);
+	(static_cast<ManagedObjectImplementation*>(impl))->rlock(doLock);
 }
 
 void ManagedObjectAdapter::wlock(bool doLock) {
-	((ManagedObjectImplementation*) impl)->wlock(doLock);
+	(static_cast<ManagedObjectImplementation*>(impl))->wlock(doLock);
 }
 
 void ManagedObjectAdapter::wlock(ManagedObject* obj) {
-	((ManagedObjectImplementation*) impl)->wlock(obj);
+	(static_cast<ManagedObjectImplementation*>(impl))->wlock(obj);
 }
 
 void ManagedObjectAdapter::unlock(bool doLock) {
-	((ManagedObjectImplementation*) impl)->unlock(doLock);
+	(static_cast<ManagedObjectImplementation*>(impl))->unlock(doLock);
 }
 
 void ManagedObjectAdapter::runlock(bool doLock) {
-	((ManagedObjectImplementation*) impl)->runlock(doLock);
+	(static_cast<ManagedObjectImplementation*>(impl))->runlock(doLock);
 }
 
 void ManagedObjectAdapter::setLockName(const String& name) {
-	((ManagedObjectImplementation*) impl)->setLockName(name);
+	(static_cast<ManagedObjectImplementation*>(impl))->setLockName(name);
 }
 
 bool ManagedObjectAdapter::notifyDestroy() {
-	return ((ManagedObjectImplementation*) impl)->notifyDestroy();
+	return (static_cast<ManagedObjectImplementation*>(impl))->notifyDestroy();
 }
 
 void ManagedObjectAdapter::initializeTransientMembers() {
-	((ManagedObjectImplementation*) impl)->initializeTransientMembers();
+	(static_cast<ManagedObjectImplementation*>(impl))->initializeTransientMembers();
 }
 
 void ManagedObjectAdapter::updateToDatabase() {
-	((ManagedObjectImplementation*) impl)->updateToDatabase();
+	(static_cast<ManagedObjectImplementation*>(impl))->updateToDatabase();
 }
 
 void ManagedObjectAdapter::queueUpdateToDatabaseTask() {
-	((ManagedObjectImplementation*) impl)->queueUpdateToDatabaseTask();
+	(static_cast<ManagedObjectImplementation*>(impl))->queueUpdateToDatabaseTask();
 }
 
 void ManagedObjectAdapter::clearUpdateToDatabaseTask() {
-	((ManagedObjectImplementation*) impl)->clearUpdateToDatabaseTask();
+	(static_cast<ManagedObjectImplementation*>(impl))->clearUpdateToDatabaseTask();
 }
 
 unsigned int ManagedObjectAdapter::getLastCRCSave() {
-	return ((ManagedObjectImplementation*) impl)->getLastCRCSave();
+	return (static_cast<ManagedObjectImplementation*>(impl))->getLastCRCSave();
 }
 
 void ManagedObjectAdapter::setLastCRCSave(unsigned int crc) {
-	((ManagedObjectImplementation*) impl)->setLastCRCSave(crc);
+	(static_cast<ManagedObjectImplementation*>(impl))->setLastCRCSave(crc);
 }
 
 /*
@@ -639,7 +639,7 @@ DistributedObjectServant* ManagedObjectHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ManagedObjectHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ManagedObjectAdapter((ManagedObjectImplementation*) obj->_getImplementation());
+	DistributedObjectAdapter* adapter = new ManagedObjectAdapter(static_cast<ManagedObjectImplementation*>(obj->_getImplementation()));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

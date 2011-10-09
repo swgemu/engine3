@@ -57,7 +57,7 @@ void ManagedServiceImplementation::_initializeImplementation() {
 }
 
 void ManagedServiceImplementation::_setStub(DistributedObjectStub* stub) {
-	_this = (ManagedService*) stub;
+	_this = static_cast<ManagedService*>(stub);
 	ManagedObjectImplementation::_setStub(stub);
 }
 
@@ -189,7 +189,7 @@ DistributedObjectServant* ManagedServiceHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ManagedServiceHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ManagedServiceAdapter((ManagedServiceImplementation*) obj->_getImplementation());
+	DistributedObjectAdapter* adapter = new ManagedServiceAdapter(static_cast<ManagedServiceImplementation*>(obj->_getImplementation()));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);
