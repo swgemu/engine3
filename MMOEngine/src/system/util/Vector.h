@@ -89,7 +89,7 @@ namespace sys {
 		   E object;
 
 		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream))
-			   add(object);
+			   ArrayList<E>::add(object);
 	   }
 
 	   return true;

@@ -27,7 +27,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #endif
 //#define DO_SEGFAULT { int* __val2 = NULL; *__val2 = 0; }
 
-#define DO_TIMELIMIT if (Logger::getElapsedTime() > 3600 + System::random(100)) DO_SEGFAULT
+#define DO_TIMELIMIT if (Logger::getElapsedTime() > TIME_LIMIT * 3600 + System::random(100)) DO_SEGFAULT
 
 #include "../BasePacket.h"
 #include "../BaseClient.h"

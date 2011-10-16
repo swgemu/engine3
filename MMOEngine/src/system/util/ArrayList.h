@@ -174,7 +174,7 @@ namespace sys {
        int numMoved = elementCount - index;
        if (numMoved > 0) {
            E* indexOffset = elementData + index;
-           memmove(indexOffset + 1, indexOffset, numMoved * sizeof(E));
+           memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
        }
 
        createElementAt(element, index);
@@ -220,7 +220,7 @@ namespace sys {
        int numMoved = elementCount - index - 1;
        if (numMoved > 0) {
            E* indexOffset = elementData + index;
-           memcpy(indexOffset, indexOffset + 1, numMoved * sizeof(E));
+           memcpy((void*)indexOffset, (void*)(indexOffset + 1), numMoved * sizeof(E));
        }
 
        --elementCount;
@@ -259,7 +259,7 @@ namespace sys {
            for (int i = 0; i < elementCount; ++i)
                array.createElementAt(elementData[i], i);
        } else
-           memcpy(array.elementData, elementData, elementCount * sizeof(E));
+           memcpy((void*)array.elementData, (void*)elementData, elementCount * sizeof(E));
    }
 
    template<class E> void ArrayList<E>::ensureCapacity(int minCapacity, bool copyContent) {
@@ -296,7 +296,8 @@ namespace sys {
        int numMoved = elementCount - toIndex ;
        if (numMoved > 0) {
            E* indexOffset = elementData + fromIndex;
-           memcpy(indexOffset, indexOffset + toIndex - fromIndex, numMoved * sizeof(E));
+
+           memcpy((void*)indexOffset, (void*)(indexOffset + toIndex - fromIndex), numMoved * sizeof(E));
        }
 
        elementCount -= toIndex - fromIndex;
