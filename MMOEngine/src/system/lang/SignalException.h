@@ -22,8 +22,8 @@ private:
 			signal(SignalExceptionClass::GetSignalNumber(), SignalHandler);
 		}
 
-		static void SignalHandler(int) {
-			throw SignalExceptionClass();
+		static void SignalHandler(int cause) {
+			throw SignalExceptionClass(cause);
 		}
 	};
 
@@ -35,11 +35,11 @@ public:
 
 class AbortedException : public Exception {
 public:
-	AbortedException() : Exception() {
-		System::out << "Exception aborted at\n";
+	AbortedException(int cause) : Exception() {
+		System::out << "Exception aborted with cause " << cause << " at\n";
 		printStackTrace();
 
-		exit(1);
+		abort();
 	}
 
 	static int GetSignalNumber() {
@@ -49,7 +49,7 @@ public:
 
 class FloatingPointException : public Exception {
 public:
-	FloatingPointException() :Exception() {
+	FloatingPointException(int) :Exception() {
 		printStackTrace();
 	}
 

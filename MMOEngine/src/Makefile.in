@@ -59,7 +59,8 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	system/lang/Integer.$(OBJEXT) \
 	system/lang/ArrayIndexOutOfBoundsException.$(OBJEXT) \
 	system/mm/MemoryManager.$(OBJEXT) \
-	system/mm/AllocationHook.$(OBJEXT) system/mm/Heap.$(OBJEXT) \
+	system/mm/AllocationHook.$(OBJEXT) \
+	system/mm/AllocationTracker.$(OBJEXT) system/mm/Heap.$(OBJEXT) \
 	system/mm/ProtectedHeap.$(OBJEXT) \
 	system/mm/DLAllocator.$(OBJEXT) system/thread/Thread.$(OBJEXT) \
 	system/thread/Lockable.$(OBJEXT) system/thread/Mutex.$(OBJEXT) \
@@ -324,6 +325,7 @@ libengine3_a_SOURCES = \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/mm/MemoryManager.cpp \
 			system/mm/AllocationHook.cpp \
+			system/mm/AllocationTracker.cpp \
 			system/mm/Heap.cpp \
 			system/mm/ProtectedHeap.cpp \
 			system/mm/DLAllocator.cpp \
@@ -503,6 +505,8 @@ system/mm/$(DEPDIR)/$(am__dirstamp):
 system/mm/MemoryManager.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
 system/mm/AllocationHook.$(OBJEXT): system/mm/$(am__dirstamp) \
+	system/mm/$(DEPDIR)/$(am__dirstamp)
+system/mm/AllocationTracker.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
 system/mm/Heap.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
@@ -1017,6 +1021,7 @@ mostlyclean-compile:
 	-rm -f system/lang/UnicodeString.$(OBJEXT)
 	-rm -f system/lang/types.$(OBJEXT)
 	-rm -f system/mm/AllocationHook.$(OBJEXT)
+	-rm -f system/mm/AllocationTracker.$(OBJEXT)
 	-rm -f system/mm/DLAllocator.$(OBJEXT)
 	-rm -f system/mm/Heap.$(OBJEXT)
 	-rm -f system/mm/MemoryManager.$(OBJEXT)
@@ -1137,6 +1142,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/UnicodeString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationHook.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationTracker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/DLAllocator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/Heap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MemoryManager.Po@am__quote@

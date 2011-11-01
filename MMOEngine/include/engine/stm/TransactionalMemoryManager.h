@@ -63,7 +63,7 @@ namespace engine {
 		static void commitPureTransaction();
 
 		static void closeThread() {
-			instance()->reclaimObjects();
+			instance()->reclaimObjects(5000, 0);
 		}
 
 		Object* create(size_t size);

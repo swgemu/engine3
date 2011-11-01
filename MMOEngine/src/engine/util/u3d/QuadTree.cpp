@@ -238,7 +238,8 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 			return false;
 		}
 
-		bool res = _update(obj->getNode(), obj);
+		TransactionalReference<QuadTreeNode*> node = obj->getNode();
+		bool res = _update(node, obj);
 
 		if (QuadTree::doLog())
 			System::out << hex << "object [" << obj->getObjectID() <<  "] finished updating\n";
@@ -331,7 +332,7 @@ void QuadTree::removeAll() {
  * Every Node can have data and children. Every data must be completely
  * contained inside the Node, so boundary sphere is checked.
  */
-void QuadTree::_insert(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry *obj) {
+void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
     /*
      * Logic:
      *
@@ -465,7 +466,7 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry
 /* The difference to the Insert is that it starts at the current node
  * and tries to find the right place to be now that the position changed.
  */
-bool QuadTree::_update(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry *obj) {
+bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
     // Whew, still in the same square. Lucky bastards we are.
     //System::out << "(" << obj->positionX << "," << obj->positionY << ")\n";
 
@@ -496,7 +497,7 @@ bool QuadTree::_update(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry
     return cur.get() != NULL;
 }
 
-void QuadTree::_inRange(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry *obj, float range) {
+void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range) {
  	float rangesq = range * range;
 
 	float x = obj->getPositionX();
@@ -551,7 +552,7 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*> node, QuadTreeEntr
 	}
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<QuadTreeEntry*>& objects) {
+int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry*>& objects) {
 	int count = 0;
 
 	for (int i = 0; i < node.get()->objects.size(); i++) {

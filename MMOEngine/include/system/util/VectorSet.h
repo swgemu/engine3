@@ -22,7 +22,7 @@ namespace sys {
 		}
 
 		void add(const E& obj) {
-			put(obj, obj);
+			VectorMap<E, E>::put(obj, obj);
 		}
 
 	};

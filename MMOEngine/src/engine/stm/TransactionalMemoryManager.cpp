@@ -36,7 +36,7 @@ AtomicBoolean initializationTransactionStarted;
 TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
 	setInstance(this);
 
-	objectHeap.create(512*1024*1024);
+	objectHeap.create(2024UL * 1024UL * 1024UL);
 	objectHeap.protect();
 
 	taskManager = (TransactionalTaskManager*) Core::getTaskManager();
@@ -146,7 +146,7 @@ void TransactionalMemoryManager::commitTransaction() {
 	Vector<Object*>* objects = getReclamationList();
 	debug("Reclamation list size:" + String::valueOf(objects->size()));
 
-	reclaimObjects(0, 0);
+	reclaimObjects(5000, 0);
 
 	commitedTransactions.increment();
 
@@ -199,6 +199,7 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 
 Object* TransactionalMemoryManager::create(size_t size) {
 	return (Object*) objectHeap.allocate(size);
+
 	/*Locker locker(&deletedMutex);
 
 	int find = deleted.find((uint64)object);
@@ -210,14 +211,13 @@ Object* TransactionalMemoryManager::create(size_t size) {
 }
 
 void TransactionalMemoryManager::destroy(Object* object) {
-	if (objectHeap.contains(object)) {
-		//object->~Object();
-		debug("object " + object->toString() + " was destroyed");
+	/*if (objectHeap.contains(object)) {
+		object->~Object();
+		//debug("object " + object->toString() + " was destroyed");
 
 		objectHeap.free(object);
 	} else
-		delete object;
-
+		delete object;*/
 }
 
 void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjectsToReclaim) {
@@ -272,8 +272,6 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 			//deleted.drop((uint64)obj);
 		}
 	}
-
-
 
 	debug(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
 			+ String::valueOf(System::getMikroTime() - startTime) + " Us, "

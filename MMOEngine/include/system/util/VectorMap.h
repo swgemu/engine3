@@ -149,14 +149,14 @@ namespace sys {
 			: SortedVector<VectorMapEntry<K, V> >() {
 		setNullValue(TypeInfo<V>::nullValue());
 
-		setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
+		SortedVector<VectorMapEntry<K, V> >::setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
 	}
 
 	template<class K, class V> VectorMap<K, V>::VectorMap(int initsize, int incr)
 			: SortedVector<VectorMapEntry<K, V> >(initsize, incr) {
 		setNullValue(TypeInfo<V>::nullValue());
 
-		setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
+		SortedVector<VectorMapEntry<K, V> >::setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
 	}
 
 	template<class K, class V> VectorMap<K, V>::VectorMap(const VectorMap<K, V>& vector)

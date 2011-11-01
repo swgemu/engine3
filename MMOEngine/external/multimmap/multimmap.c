@@ -1914,9 +1914,9 @@ static int multimmap_mmap(struct file* filp, struct vm_area_struct* vma)
 
 static void multimmap_vma_open(struct vm_area_struct* vma)
 {
-    printk("multimmap_vma_open: vma=%p, pgoff=%lx, pid=%d\n", 
+    printk("WARNING: multimmap_vma_open: vma=%p, pgoff=%lx, pid=%d called\n",
            vma, vma->vm_pgoff, current->pid);
-    BUG();
+    //BUG();
 }
 
 static struct page* multimmap_vma_nopage(struct vm_area_struct* vma, 

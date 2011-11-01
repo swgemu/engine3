@@ -5,8 +5,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ProtectedHeap.h"
 
+#include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+
+#include <errno.h>
 
 #ifdef PLATFORM_LINUX
 #include <multimmap.h>
@@ -16,13 +19,36 @@ void initializeKernelStatics(int deviceFD);
 
 ProtectedHeap::ProtectedHeap() {
 #ifdef PLATFORM_LINUX
-	heapBase = reinterpret_cast<void*>(2 * MULTIMMAP_HEAP_SIZE);
-	flags = MAP_SHARED;
+	openDevice(0);
+
+	//heapBase = reinterpret_cast<void*>(2 * MULTIMMAP_HEAP_SIZE);
+	setShared();
+
 	offset = MULTIMMAP_KERNEL_HEAP_OFFSET;
 #endif
 	protectionLevel = 1;
 
 	//linitializeKernelStatics(deviceFD);
+}
+
+void ProtectedHeap::openDevice(unsigned deviceNumber) {
+    if (deviceFD < 0) {
+        char path[256];
+        snprintf(path, sizeof(path), "/dev/multimmap%u", deviceNumber);
+
+        //deviceFD = __real_open(path, O_RDWR);
+        deviceFD = open(path, O_RDWR);
+
+        if (deviceFD < 0) {
+        	char str[100];
+            sprintf(str, "[Multimmap] cannot open device file '%s' - %s\n", path, strerror(errno));
+
+            abort();
+        }
+
+        printf("[Multimmap] device %s created on fd %u\n", path, deviceFD);
+    }
+
 }
 
 void ProtectedHeap::protect() {

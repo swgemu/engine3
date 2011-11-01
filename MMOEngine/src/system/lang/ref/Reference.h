@@ -73,7 +73,10 @@ namespace sys {
 		}
 
 		O operator->() const {
-			return object.get();
+			O obj = object.get();
+
+			assert(obj != NULL);
+			return obj;
 		}
 
 		operator O() const {

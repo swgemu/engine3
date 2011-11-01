@@ -108,6 +108,8 @@ void Logger::info(const StringBuffer& msg, bool forcedLog) {
 }
 
 void Logger::log(const char *msg) {
+	Locker locker(&writeLock);
+
 	if (logLevel > LOG && logFile != NULL) {
 		String time;
 		getTime(time);

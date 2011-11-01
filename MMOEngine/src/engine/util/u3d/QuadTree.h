@@ -68,6 +68,10 @@ namespace engine {
 		Object* clone();
 		Object* clone(void* object);
 
+		void free() {
+			TransactionalMemoryManager::instance()->destroy(this);
+		}
+
 		/**
 		 * Clear all the objects from the quadtree and set it to have
 		 * given size.
@@ -127,11 +131,11 @@ namespace engine {
 		bool update(QuadTreeEntry *obj);
 
 	private:
-		void _insert(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry *obj);
-		bool _update(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry *obj);
+		void _insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj);
+		bool _update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj);
 
-		void _inRange(TransactionalReference<QuadTreeNode*> node, QuadTreeEntry *obj, float range);
-		int _inRange(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
+		void _inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
+		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
 
 	public:
 		static void setLogging(bool doLog) {

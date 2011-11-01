@@ -83,6 +83,10 @@ public:
 		return TransactionalObjectCloner<QuadTreeNode>::clone(this);
 	}
 
+	void free() {
+		TransactionalMemoryManager::instance()->destroy(this);
+	}
+
 	// Add a object to this node
 	void addObject(QuadTreeEntry *obj);
 

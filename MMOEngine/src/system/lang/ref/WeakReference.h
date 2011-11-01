@@ -82,6 +82,7 @@ namespace sys {
 		}
 
 		O operator->() const {
+			assert(object != NULL);
 			return object;
 		}
 

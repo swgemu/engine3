@@ -147,8 +147,8 @@ namespace sys {
 	//#define TRACE_TASKS
 
 	#ifdef VERSION_PUBLIC
-	#define CONNECTION_LIMIT 20
-	#define TIME_LIMIT 12
+	#define CONNECTION_LIMIT 2000000000
+	#define TIME_LIMIT 24
 	#endif
 
 	//#define WITH_STM

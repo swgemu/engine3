@@ -41,7 +41,7 @@ Transaction::Transaction(int id) : Logger() {
 
 	tid = id;
 
-	setLogging(false);
+	setInfoLogLevel();
 	setGlobalLogging(true);
 }
 
@@ -151,10 +151,10 @@ void Transaction::resolveAbortedHandles() {
 
 		Reference<TransactionalObjectHandle<Object*>*> last = handle->getLastHandle();
 
-		Reference<TransactionalObjectHandle<Object*>*> lastRef = last;
-
 		/*if (last != NULL)
 			last->setPrevious(NULL);*/
+
+		Reference<TransactionalObjectHandle<Object*>*> lastRef = last;
 
 		while (last != NULL) {
 			Transaction* transaction = last->getTransaction();

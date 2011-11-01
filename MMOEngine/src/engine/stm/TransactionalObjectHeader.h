@@ -32,7 +32,6 @@ namespace engine {
 		}
 
 		virtual ~TransactionalObjectHeader() {
-
 		}
 
 		O get();
@@ -47,7 +46,7 @@ namespace engine {
 
 		virtual O getForDirty() = 0;
 
-		virtual bool isCurrentVersion(O obj) = 0;
+		virtual bool isCurrentVersion(Object* obj) = 0;
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			return false;
@@ -77,9 +76,7 @@ namespace engine {
 			return ownerTransaction;
 		}
 
-		virtual bool hasObject(O obj) const = 0;
-
-		virtual bool isNull() = 0;
+		virtual bool hasObject(Object* obj) const = 0;
 
 		virtual void setObject(O obj) = 0;
 

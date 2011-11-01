@@ -48,10 +48,10 @@ namespace engine {
 
 	class SegmentationFault : public Exception {
 	public:
-		SegmentationFault() : Exception() {
-			System::out << "Segmentation Fault at\n";
+		SegmentationFault(int cause) : Exception() {
+			System::out << "Segmentation Fault caused by " << cause << " at\n";
 			printStackTrace();
-			exit(1);
+			exit(cause);
 		}
 
 		static int GetSignalNumber() {

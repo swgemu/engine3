@@ -3,6 +3,8 @@
  Distribution of this file for usage outside of Core3 is prohibited.
  */
 
+#include <pthread.h>
+
 #include "AllocationHook.h"
 
 extern "C" void (*__free_hook)(void *__ptr, const void *);
@@ -15,16 +17,24 @@ void *(*__saved_realloc_hook)(void *__ptr, size_t __size, const void *) = 0;
 
 AllocationHook* instance = NULL;
 
+pthread_mutex_t mutex;
+
 AllocationHook::AllocationHook() {
+	pthread_mutex_init(&mutex, NULL);
+
 	//install();
 }
 
 AllocationHook::~AllocationHook() {
 	//uninstall();
+
+	pthread_mutex_destroy(&mutex);
 }
 
 void AllocationHook::install() {
 	assert(instance == NULL);
+
+	instance = this;
 
 	__saved_malloc_hook = __malloc_hook;
 	__saved_free_hook = __free_hook;
@@ -34,7 +44,7 @@ void AllocationHook::install() {
 	__free_hook = freeHook;
 	__realloc_hook = reallocHook;
 
-	instance = this;
+	//printf("hook installed %p\n", __malloc_hook);
 }
 
 void AllocationHook::uninstall() {
@@ -43,6 +53,8 @@ void AllocationHook::uninstall() {
 	__realloc_hook = __saved_realloc_hook;
 
 	instance = NULL;
+
+	//printf("hook uninstalled %p\n", __saved_malloc_hook);
 }
 
 void* AllocationHook::unHookedAllocate(size_t size) {
@@ -55,6 +67,7 @@ void* AllocationHook::unHookedAllocate(size_t size) {
 	install();
 
 	return ptr;
+
 }
 
 void* AllocationHook::unHookedReallocate(void* mem, size_t newsize) {
@@ -72,27 +85,66 @@ void* AllocationHook::unHookedReallocate(void* mem, size_t newsize) {
 void AllocationHook::unHookedFree(void* mem) {
 	uninstall();
 
-	free(mem);
-
 	//printf("freed %p\n", mem);
+
+	free(mem);
 
 	install();
 }
 
 void* AllocationHook::mallocHook(size_t size, const void* allocator) {
-	assert(instance != NULL);
+	void* mem = NULL;
 
-	return instance->onAllocate(size, allocator);
+	try {
+		pthread_mutex_lock(&mutex);
+
+		assert(instance != NULL);
+
+		mem = instance->onAllocate(size, allocator);
+		//mem = instance->unHookedAllocate(size);
+
+		pthread_mutex_unlock(&mutex);
+	} catch (...) {
+		pthread_mutex_unlock(&mutex);
+	}
+
+	return mem;
 }
 
 void AllocationHook::freeHook(void* ptr, const void* allocator) {
-	assert(instance != NULL);
+	try {
+		pthread_mutex_lock(&mutex);
 
-	instance->onFree(ptr, allocator);
+		assert(instance != NULL);
+
+		instance->onFree(ptr, allocator);
+		//instance->unHookedFree(ptr);
+
+		pthread_mutex_unlock(&mutex);
+	} catch (...) {
+		pthread_mutex_unlock(&mutex);
+	}
 }
 
 void* AllocationHook::reallocHook(void* ptr, size_t size, const void* allocator) {
-	assert(instance != NULL);
+	void* mem = NULL;
 
-	return instance->onReallocate(ptr, size, allocator);
+	try {
+		pthread_mutex_lock(&mutex);
+
+		assert(instance != NULL);
+
+		mem = instance->onReallocate(ptr, size, allocator);
+		/*mem = instance->onAllocate(size, allocator);
+		memcpy(mem, ptr, size);*/
+
+		//instance->onFree(ptr, allocator);
+		//mem = instance->unHookedReallocate(ptr, size);
+
+		pthread_mutex_unlock(&mutex);
+	} catch (...) {
+		pthread_mutex_unlock(&mutex);
+	}
+
+	return mem;
 }

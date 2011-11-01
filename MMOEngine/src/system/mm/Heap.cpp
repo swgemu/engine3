@@ -11,9 +11,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Heap.h"
 
-
-#include <fcntl.h>
-#include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <limits.h>
 
@@ -30,17 +27,35 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/thread/Mutex.h"
 #include "system/thread/Locker.h"
 
-int Heap::deviceFD = -1;
+AtomicInteger Heap::heapCount;
 
 Heap::Heap() {
 #ifdef PLATFORM_LINUX
-	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE);
+	int count = heapCount.increment();
+
+	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
+
 	heapSize = -1;
-	flags = MAP_PRIVATE;
 	offset = 0;
 
+	deviceFD = -1;
+
+	setPrivate();
 #endif
-	openDevice(0);
+}
+
+Heap::Heap(int fd) {
+#ifdef PLATFORM_LINUX
+	int count = heapCount.increment();
+
+	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
+	heapSize = -1;
+	offset = 0;
+
+	deviceFD = fd;
+
+	setPrivate();
+#endif
 }
 
 Heap::~Heap() {
@@ -57,7 +72,7 @@ void Heap::create(size_t size) {
 
 	heapBase = mmap(heapBase, heapSize, PROT_READ | PROT_WRITE, flags, deviceFD, offset);
 	if (heapBase == reinterpret_cast<void*>(-1)) {
-		printf("mmap failed on dev %u with size %u (%s)\n", deviceFD, (unsigned int) heapSize, strerror(errno));
+		printf("mmap failed on dev %i with size %lu (%s)\n", deviceFD, heapSize, strerror(errno));
 
 		abort();
 	}
@@ -75,9 +90,9 @@ void Heap::create(size_t size) {
 	    }
 	}*/
 
-	//printf("heap created at %p on dev %u\n", heapBase, deviceFD);
+	printf("[Heap] created at %p-%p on fd %i\n", heapBase, (void*)((uintptr_t) heapBase + heapSize), deviceFD);
 
-	if (offset != 0)
+	//if (offset != 0)
 		allocator = new DLAllocator(heapBase, heapSize);
 #endif
 }
@@ -85,52 +100,20 @@ void Heap::create(size_t size) {
 Time lastPrintTime;
 uint64 sum = 0;
 
-/*void Heap::protect() {
-	Time start;
-
-	MemoryManager::protectForRead(heapBase, heapSize);
-
-	Time end;
-
-	sum += end.getNanoTime() - start.getNanoTime();
-
-	if (lastPrintTime.miliDifference() > 1000) {
-		printf("spent %llu time at mprotect\n", sum / 1000 / 1000);
-		lastPrintTime.updateToCurrentTime();
-
-		sum = 0;
-	}
-
-	//printf("protected %p, %p\n", heapBase, (void*) ((ptrdiff_t) heapBase + heapSize));
-	//printf("mprotect time %llu\n", end.getNanoTime() - start.getNanoTime());
-}
-
-void Heap::unprotect() {
-	Time start;
-
-	MemoryManager::unprotect(heapBase, heapSize);
-
-	Time end;
-
-	sum += end.getNanoTime() - start.getNanoTime();
-
-	//printf("unprotected %p, %p\n", heapBase, (void*) ((ptrdiff_t) heapBase + heapSize));
-	//printf("mprotect time %llu\n", end.getNanoTime() - start.getNanoTime());
-}*/
-
 void* Heap::allocate(size_t size) {
-	//return malloc(size);
 	return allocator->allocate(size);
 }
 
 void* Heap::reallocate(void* mem, size_t size) {
-	//return realloc(mem, size);
 	return allocator->reallocate(mem, size);
 }
 
 void Heap::free(void* mem) {
-	//free(mem);
 	allocator->free(mem);
+}
+
+size_t Heap::sizeOf(void* mem) {
+	return allocator->sizeOf(mem);
 }
 
 bool Heap::contains(void* mem) {
@@ -139,23 +122,14 @@ bool Heap::contains(void* mem) {
 	return relativeAddress > 0  && relativeAddress <= (ptrdiff_t) heapSize;
 }
 
-void Heap::openDevice(unsigned deviceNumber) {
-    if (deviceFD < 0) {
-        char path[256];
-        snprintf(path, sizeof(path), "/dev/multimmap%u", deviceNumber);
+void Heap::setShared() {
+	flags = MAP_SHARED;
+}
 
-        //deviceFD = __real_open(path, O_RDWR);
-        deviceFD = open(path, O_RDWR);
+void Heap::setPrivate() {
+	flags = MAP_PRIVATE;
+}
 
-        if (deviceFD < 0) {
-        	char str[100];
-            sprintf(str, "Cannot open device file '%s'\n", path);
-            perror(str);
-
-            abort();
-        }
-
-        //printf("[multimmap device created on %u\n", deviceFD);
-    }
-
+void Heap::setAnonymous() {
+	flags |= MAP_ANONYMOUS;
 }

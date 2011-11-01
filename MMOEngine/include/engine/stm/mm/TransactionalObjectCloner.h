@@ -12,7 +12,15 @@ namespace engine {
 	template <class O> class TransactionalObjectCloner {
 	public:
 		static Object* clone(O* object) {
-			return dynamic_cast<Object*>(new (TransactionalMemoryManager::instance()->create(sizeof(O))) O(*object));
+			void* allocatedAddress = TransactionalMemoryManager::instance()->create(sizeof(O));
+			assert(allocatedAddress != NULL);
+
+			O* clonedObject = new (allocatedAddress) O(*object);
+
+			Object* downcastedObject = dynamic_cast<Object*>(clonedObject);
+			assert(downcastedObject != NULL);
+
+			return downcastedObject;
 		}
 	};
 

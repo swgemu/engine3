@@ -33,6 +33,8 @@ namespace sys {
 		void* reallocate(void* mem, size_t newsize);
 
 		void free(void* mem);
+
+		size_t sizeOf(void* mem);
 	};
 
 } // namespace mm

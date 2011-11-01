@@ -18,10 +18,10 @@ namespace engine {
 	template<class O> class TransactionalObjectHandle : public Object {
 		TransactionalObjectHeader<O>* header;
 
-		Reference<O> object;
-		O objectCopy;
+		Reference<Object*> object;
+		Reference<Object*> objectCopy;
 
-		Reference<TransactionalObjectHandle<O>* > next;
+		Reference<TransactionalObjectHandle<O>*> next;
 
 		Reference<Transaction*> transaction;
 
@@ -67,11 +67,11 @@ namespace engine {
 				return -1;
 		}
 
-		O getObject() {
+		Object* getObject() {
 			return object;
 		}
 
-		O getObjectLocalCopy() {
+		Object* getObjectLocalCopy() {
 			return objectCopy;
 		}
 
@@ -81,6 +81,7 @@ namespace engine {
 
 		inline void setTransaction(Transaction* trans) {
 			transaction = trans;
+			assert((uintptr_t) trans > 0x1000 || trans == NULL);
 		}
 
 		inline void resetObjects() {
@@ -109,6 +110,7 @@ namespace engine {
 	template<class O> void TransactionalObjectHandle<O>::initialize(TransactionalObjectHeader<O>* hdr, int accessType, Transaction* trans) {
 		header = hdr;
 
+		assert((uintptr_t) trans > 0x1000);
 		transaction = trans;
 
 		if (accessType == WRITE) {
@@ -116,6 +118,8 @@ namespace engine {
 
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 			object = header->getObjectForWrite(this);
+
+			assert(object != NULL);
 
 			objectCopy = dynamic_cast<O>(object->clone());
 
@@ -133,13 +137,16 @@ namespace engine {
 
 	template<class O> TransactionalObjectHandle<O>::~TransactionalObjectHandle() {
 		header = NULL;
-		object = NULL;
 
-		//assert(objectCopy == NULL);
+		object = NULL;
+		objectCopy = NULL;
+
+		/*printf("TransactionHandle %p deleted at\n", this);
+		StackTrace::printStackTrace();*/
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::upgradeToWrite() {
-		objectCopy = dynamic_cast<O>(object->clone());
+		objectCopy = object->clone();
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {

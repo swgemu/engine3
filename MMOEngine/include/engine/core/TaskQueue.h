@@ -36,6 +36,8 @@ namespace engine {
 		Task* pop();
 
 		void flush();
+
+		int size();
 	};
 
   } // namespace service

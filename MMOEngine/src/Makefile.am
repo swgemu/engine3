@@ -35,6 +35,7 @@ libengine3_a_SOURCES = \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/mm/MemoryManager.cpp \
 			system/mm/AllocationHook.cpp \
+			system/mm/AllocationTracker.cpp \
 			system/mm/Heap.cpp \
 			system/mm/ProtectedHeap.cpp \
 			system/mm/DLAllocator.cpp \

@@ -1,0 +1,3 @@
+sudo insmod multimmap.ko
+sleep 1s
+sudo chmod 666 /dev/multimmap0

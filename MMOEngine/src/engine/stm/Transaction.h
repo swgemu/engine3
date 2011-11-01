@@ -64,7 +64,7 @@ namespace engine {
 
 		template<class O> TransactionalObjectHeader<O>* put(Object* object, TransactionalObjectHeader<O>* header) {
 			return (TransactionalObjectHeader<O>*) HashTable<uint64, TransactionalObjectHeader<Object*>*>::put((uint64) object,
-				(TransactionalObjectHeader<Object*>*) header);
+				dynamic_cast<TransactionalObjectHeader<Object*>*>(header));
 		}
 
 		template<class O> TransactionalObjectHeader<O>* get(O object) {

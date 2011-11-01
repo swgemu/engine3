@@ -19,6 +19,7 @@ MMOEngine/aclocal.m4 -text
 MMOEngine/bin/idlc -text
 MMOEngine/bin/idlc.bat -text
 MMOEngine/bin/idlc.jar -text
+MMOEngine/bin/multimmap -text
 MMOEngine/bin/multimmap.ko -text
 MMOEngine/build/unix/CMakeCache.txt -text
 MMOEngine/build/unix/Makefile -text
@@ -626,6 +627,7 @@ MMOEngine/include/system/util/SerializableSortedVector.h -text
 MMOEngine/include/system/util/SerializableVector.h -text
 MMOEngine/include/system/util/SerializableVectorMap.h -text
 MMOEngine/include/system/util/SortedVector.h -text
+MMOEngine/include/system/util/StaticMap.h -text
 MMOEngine/include/system/util/Timer.h -text
 MMOEngine/include/system/util/Vector.h -text
 MMOEngine/include/system/util/VectorMap.h -text
@@ -983,6 +985,7 @@ MMOEngine/src/system/lang/types.cpp -text
 MMOEngine/src/system/lang/types.h -text
 MMOEngine/src/system/mm/AllocationHook.cpp -text
 MMOEngine/src/system/mm/AllocationHook.h -text
+MMOEngine/src/system/mm/AllocationTracker.cpp -text
 MMOEngine/src/system/mm/AllocationTracker.h -text
 MMOEngine/src/system/mm/Allocator.h -text
 MMOEngine/src/system/mm/DLAllocator.cpp -text
@@ -1039,6 +1042,7 @@ MMOEngine/src/system/util/LinkedList.h -text
 MMOEngine/src/system/util/PriorityQueue.cpp -text
 MMOEngine/src/system/util/PriorityQueue.h -text
 MMOEngine/src/system/util/SortedVector.h -text
+MMOEngine/src/system/util/StaticMap.h -text
 MMOEngine/src/system/util/Timer.h -text
 MMOEngine/src/system/util/Vector.h -text
 MMOEngine/src/system/util/VectorMap.h -text

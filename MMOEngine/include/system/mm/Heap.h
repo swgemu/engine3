@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HEAP_H_
 #define HEAP_H_
 
+#include "system/thread/atomic/AtomicInteger.h"
+
 #include "Allocator.h"
 
 namespace sys {
@@ -18,12 +20,15 @@ namespace sys {
 		int flags;
 		off_t offset;
 
-		static int deviceFD;
+		int deviceFD;
 
 		Allocator* allocator;
 
+		static AtomicInteger heapCount;
+
 	public:
 		Heap();
+		Heap(int fd);
 
 		~Heap();
 
@@ -33,12 +38,15 @@ namespace sys {
 		void* reallocate(void* mem, size_t size);
 		void free(void* mem);
 
+		size_t sizeOf(void* mem);
+
 		bool contains(void* mem);
 
-	protected:
-		void openDevice(unsigned deviceNumber);
+		void setShared();
+		void setPrivate();
 
-	};
+		void setAnonymous();
+};
 
 } // namespace mm
 } // namespace sys

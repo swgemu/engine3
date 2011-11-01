@@ -25,6 +25,10 @@ namespace sys {
 			pthread_mutex_init(&mutex, NULL);
 		}
 
+		Mutex(const Mutex& m) : Lockable() {
+			pthread_mutex_init(&mutex, NULL);
+		}
+
 		virtual ~Mutex() {
 			pthread_mutex_destroy(&mutex);
 		}

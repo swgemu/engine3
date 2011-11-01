@@ -5,6 +5,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <sys/mman.h>
 
+#include <errno.h>
+
 #include "MemoryManager.h"
 
 AtomicReference<MemoryManager*> MemoryManager::inst;
@@ -19,7 +21,9 @@ void MemoryManager::create(Object* object) {
 
 bool MemoryManager::protectForRead(void* mem, size_t size) {
 	if (mprotect(mem, size, PROT_READ)) {
-		perror("Couldn't mprotect");
+		printf("couldn't mprotect %p (%u): %s\n", mem, (unsigned int) size, strerror(errno));
+
+		abort();
 
 		return false;
 	}

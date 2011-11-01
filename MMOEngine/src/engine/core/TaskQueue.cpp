@@ -169,3 +169,13 @@ void TaskQueue::flush() {
 
 	condMutex->unlock();
 }
+
+int TaskQueue::size() {
+	condMutex->lock();
+
+	int size = LinkedList<Task*>::size();
+
+	condMutex->unlock();
+
+	return size;
+}

@@ -11,39 +11,35 @@ namespace engine {
     namespace mm {
 
 	template<class O> class TransactionalWeakObjectHeader : public TransactionalObjectHeader<O> {
-			WeakReference<O> object;
+			WeakReference<Object*> object;
 
 	public:
-			TransactionalWeakObjectHeader() : TransactionalObjectHeader<O>() {
-				object = NULL;
-			}
-
 			TransactionalWeakObjectHeader(O obj) : TransactionalObjectHeader<O>() {
 				setObject(obj);
 			}
 
-			bool isCurrentVersion(O obj);
+			bool isCurrentVersion(Object* obj);
 
 			O getForDirty() {
-				return dynamic_cast<O>(object.get());
+				return getObject();
 			}
 
 	protected:
+			O getObject() {
+				return dynamic_cast<O>(object.get());
+			}
+
 			void setObject(O obj) {
-				if (object == NULL) {
-					object = obj;
-					TransactionalObjectHeader<O>::createObject();
-				} else
-					object = dynamic_cast<O>(obj->clone(NULL));
+				assert(obj != NULL);
+				assert(object == NULL);
+
+				object = obj;
+				TransactionalObjectHeader<O>::createObject();
 
 				assert(object != NULL);
 			}
 
-			bool isNull() {
-				return object == NULL;
-			}
-
-			bool hasObject(O obj) const {
+			bool hasObject(Object* obj) const {
 				return object == obj;
 			}
 
@@ -58,14 +54,14 @@ namespace engine {
 
 		if (transaction != NULL) {
 			if (!transaction->isCommited())
-				return object;
+				return getObject();
 			else
 				throw TransactionAbortedException();
 
 			//return ownerTransaction->getOpenedObject(this);
 		} else {
 			//add(handle);
-			return object;
+			return getObject();
 		}
 	}
 
@@ -82,13 +78,13 @@ namespace engine {
 		} else {*/
 
 		add(handle);
-		return object;
+		return getObject();
 
 		//
 	}
 
 	template<class O> void TransactionalWeakObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
-		object = dynamic_cast<O>(handle->getObjectLocalCopy()->clone(NULL));
+		object = handle->getObjectLocalCopy()->clone(NULL);
 
 		//ownerTransaction->release();
 
@@ -97,7 +93,7 @@ namespace engine {
 		TransactionalObjectHeader<O>::ownerTransaction = NULL;
 	}
 
-	template<class O> bool TransactionalWeakObjectHeader<O>::isCurrentVersion(O obj) {
+	template<class O> bool TransactionalWeakObjectHeader<O>::isCurrentVersion(Object* obj) {
 		if (TransactionalObjectHeader<O>::ownerTransaction != NULL && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
 			return false;
 

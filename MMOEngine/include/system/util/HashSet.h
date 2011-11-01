@@ -32,11 +32,11 @@ namespace sys {
 		}
 		
 		void add(const E& obj) {
-			put(obj, PRESENT);
+			HashTable<E, uint8>::put(obj, PRESENT);
 		}
 		
 		bool contains(const E& obj) {
-			return containsKey(obj);
+			return HashTable<E, uint8>::containsKey(obj);
 		}
 		
 		HashSetIterator<E> iterator() {

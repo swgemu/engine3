@@ -11,42 +11,36 @@ namespace engine {
     namespace mm {
 
 	template<class O> class TransactionalStrongObjectHeader : public TransactionalObjectHeader<O> {
-		Reference<O> object;
+		Reference<Object*> object;
 
 	public:
-		TransactionalStrongObjectHeader() : TransactionalObjectHeader<O>() {
-			object = NULL;
-		}
-
 		TransactionalStrongObjectHeader(O obj) : TransactionalObjectHeader<O>() {
 			setObject(obj);
 		}
 
-		bool isCurrentVersion(O obj);
+		bool isCurrentVersion(Object* obj);
 
 		O getForDirty() {
-			return dynamic_cast<O>(object.get());
+			return getObject();
 		}
 
 	protected:
+		O getObject() {
+			return dynamic_cast<O>(object.get());
+		}
+
 		void setObject(O obj) {
-			assert(object == NULL );
+			assert(obj != NULL);
+			assert(object == NULL);
 
 			object = obj;
 			TransactionalObjectHeader<O>::createObject();
 
-			//object = dynamic_cast<O>(obj->clone(NULL));
-
 			assert(object != NULL);
 		}
 
-		bool isNull() {
-			return object == NULL;
-		}
-
-		bool hasObject(O obj) const {
-			bool wtf = (object == obj);
-			return wtf;
+		bool hasObject(Object* obj) const {
+			return object == obj;
 		}
 
 		void releaseObject(TransactionalObjectHandle<O>* handle);
@@ -59,15 +53,18 @@ namespace engine {
 	template<class O> O TransactionalStrongObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
+		assert(object != NULL);
+
 		if (transaction != NULL) {
 			if (!transaction->isCommited())
-				return object;
+				return getObject();
 			else
-			throw TransactionAbortedException();
+				throw TransactionAbortedException();
+
 			//return ownerTransaction->getOpenedObject(this);
 		} else {
 			//add(handle);
-			return object;
+			return getObject();
 		}
 	}
 
@@ -84,13 +81,16 @@ namespace engine {
 		 } else {*/
 
 		add(handle);
-		return object;
 
+		assert(object != NULL);
+		return getObject();
 		//}
 	}
 
 	template<class O> void TransactionalStrongObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
-		object = dynamic_cast<O>(handle->getObjectLocalCopy()->clone(NULL));
+		object = handle->getObjectLocalCopy()->clone(NULL);
+
+		assert(object != NULL);
 
 		//TransactionalObjectHeader<O>::last = NULL;
 
@@ -99,7 +99,7 @@ namespace engine {
 		TransactionalObjectHeader<O>::ownerTransaction = NULL;
 	}
 
-	template<class O> bool TransactionalStrongObjectHeader<O>::isCurrentVersion(O obj) {
+	template<class O> bool TransactionalStrongObjectHeader<O>::isCurrentVersion(Object* obj) {
 		if (TransactionalObjectHeader<O>::ownerTransaction != NULL && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
 			return false;
 
