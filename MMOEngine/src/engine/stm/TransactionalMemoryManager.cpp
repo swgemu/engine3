@@ -33,11 +33,13 @@ public:
 //Vector<bool> commitedTrans;
 AtomicBoolean initializationTransactionStarted;
 
-TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager") {
+TransactionalMemoryManager::TransactionalMemoryManager() : heapLock(true), Logger("TransactionalMemoryManager") {
 	setInstance(this);
 
+#ifndef PLATFORM_MAC
 	objectHeap.create(2024UL * 1024UL * 1024UL);
 	objectHeap.protect();
+#endif
 
 	taskManager = (TransactionalTaskManager*) Core::getTaskManager();
 
@@ -198,7 +200,11 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 }
 
 Object* TransactionalMemoryManager::create(size_t size) {
+#ifndef PLATFORM_MAC
 	return (Object*) objectHeap.allocate(size);
+#else
+	return (Object*) ::malloc(size);
+#endif
 
 	/*Locker locker(&deletedMutex);
 
@@ -211,7 +217,7 @@ Object* TransactionalMemoryManager::create(size_t size) {
 }
 
 void TransactionalMemoryManager::destroy(Object* object) {
-	/*if (objectHeap.contains(object)) {
+/*	if (objectHeap.contains(object)) {
 		object->~Object();
 		//debug("object " + object->toString() + " was destroyed");
 
@@ -221,6 +227,8 @@ void TransactionalMemoryManager::destroy(Object* object) {
 }
 
 void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjectsToReclaim) {
+	KernelCall kernel;
+	
 	reclaiming = true;
 
 	Vector<Object*>* objects = getReclamationList();
@@ -248,7 +256,12 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 		Object* obj = objects->get(i);
 
 		if (obj->getReferenceCount() == 0) {
-			MemoryManager::reclaim(obj);
+			//MemoryManager::reclaim(obj);
+			/*obj->destroy(false);
+			obj->~Object();
+			objectHeap.free(obj);*/
+			destroy(obj);
+			
 
 			/*if (deleted.contains((uint64)obj)) {
 				error("Object already on deleted list");
@@ -311,15 +324,19 @@ Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
 }
 
 void TransactionalMemoryManager::setKernelMode() {
+#ifndef PLATFORM_MAC
 	heapLock.lock();
 
 	objectHeap.unprotect();
+#endif
 }
 
 void TransactionalMemoryManager::setUserMode() {
+#ifndef PLATFORM_MAC
 	objectHeap.protect();
 
 	heapLock.unlock();
+#endif
 }
 
 void TransactionalMemoryManager::printStatistics() {

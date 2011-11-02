@@ -200,6 +200,8 @@ void QuadTree::insert(QuadTreeEntry *obj) {
 		raise(SIGSEGV);
 	}*/
 
+	assert(obj->getParent() == NULL);
+
 	try {
 		if (QuadTree::doLog()) {
 			System::out << hex << "object [" << obj->getObjectID() <<  "] inserting\n";
@@ -225,6 +227,8 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 		StackTrace::printStackTrace();
 		raise(SIGSEGV);
 	}*/
+
+	assert(obj->getParent() == NULL);
 
 	try {
 		if (QuadTree::doLog()) {
@@ -260,7 +264,42 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 		raise(SIGSEGV);
 	}*/
 
+	assert(obj->getParent() == NULL);
+
+	SortedVector<ManagedReference<QuadTreeEntry*> >* closeObjects = obj->getCloseObjects();
+
+	float rangesq = range * range;
+
+	float x = obj->getPositionX();
+	float y = obj->getPositionY();
+
+	float oldx = obj->getPreviousPositionX();
+	float oldy = obj->getPreviousPositionY();
+
 	try {
+		for (int i = 0; i < closeObjects->size(); i++) {
+			QuadTreeEntry* o = closeObjects->get(i);
+
+			if (o->getParent() != NULL)
+				o = o->getRootParent();
+
+			if (o != obj) {
+				float deltaX = x - o->getPositionX();
+				float deltaY = y - o->getPositionY();
+
+				if (deltaX * deltaX + deltaY * deltaY > rangesq) {
+					float oldDeltaX = oldx - o->getPositionX();
+					float oldDeltaY = oldy - o->getPositionY();
+
+					if (oldDeltaX * oldDeltaX + oldDeltaY * oldDeltaY <= rangesq) {
+						obj->removeInRangeObject(o);
+						o->removeInRangeObject(obj);
+					}
+				}
+			}
+		}
+
+
 		_inRange(root, obj, range);
 
 		if (QuadTree::doLog()) {

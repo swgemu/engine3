@@ -139,7 +139,7 @@ namespace engine {
 		DatabaseManager();
 		~DatabaseManager();
 
-		void loadDatabases();
+		void loadDatabases(bool truncateDatabases = false);
 		void closeDatabases();
 
 		/**

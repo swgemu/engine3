@@ -151,7 +151,7 @@ namespace sys {
 	#define TIME_LIMIT 24
 	#endif
 
-	//#define WITH_STM
+	#define WITH_STM
 
 	namespace lang {
 	} // namespace net

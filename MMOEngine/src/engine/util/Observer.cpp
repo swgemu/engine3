@@ -8,6 +8,25 @@
 
 #include "engine/util/Observable.h"
 
+
+// Imported class dependencies
+
+#include "engine/core/ManagedObject.h"
+
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
+
+#include "engine/util/Observable.h"
+
+#include "engine/util/Observer.h"
+
+#include "engine/util/ObserverEventMap.h"
+
+#include "system/io/ObjectInputStream.h"
+
+#include "system/io/ObjectOutputStream.h"
+
+#include "system/thread/Lockable.h"
+
 /*
  *	ObserverStub
  */
@@ -20,6 +39,11 @@ Observer::Observer(DummyConstructorParameter* param) : ManagedObject(param) {
 Observer::~Observer() {
 }
 
+
+bool Observer::_isCurrentVersion(ManagedObjectImplementation* servant) {
+
+	return header->isCurrentVersion(servant);
+}
 
 
 int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
@@ -69,11 +93,10 @@ int Observer::compareTo(Observer* obj) {
 DistributedObjectServant* Observer::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
 void Observer::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
+	header = new TransactionalStrongObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
 
 /*
@@ -117,32 +140,40 @@ ObserverImplementation::operator const Observer*() {
 	return _this;
 }
 
+Object* ObserverImplementation::clone() {
+	return ObjectCloner<ObserverImplementation>::clone(this);
+}
+
+
+Object* ObserverImplementation::clone(void* object) {
+	return TransactionalObjectCloner<ObserverImplementation>::clone(this);
+}
+
+
+void ObserverImplementation::free() {
+	TransactionalMemoryManager::instance()->destroy(this);
+}
+
+
 void ObserverImplementation::lock(bool doLock) {
-	_this->lock(doLock);
 }
 
 void ObserverImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
 }
 
 void ObserverImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
 }
 
 void ObserverImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
 }
 
 void ObserverImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
 }
 
 void ObserverImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
 }
 
 void ObserverImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
 }
 
 void ObserverImplementation::_serializationHelperMethod() {

@@ -56,8 +56,33 @@ Object::~Object() {
 	if (getReferenceCount() > 0)
 		assert(0 && "Deleting object with reference > 0");
 
-	delete weakReferences;
-	weakReferences = NULL;
+//#ifndef WITH_STM
+	Locker locker(&referenceMutex);
+//#endif
+
+	if (weakReferences != NULL) {
+		/*Vector<WeakReferenceBase*>* vector = weakReferences;
+
+		for (int i = 0; i < vector->size(); ++i) {
+			WeakReferenceBase* ref = vector->get(i);
+			ref->clearObject();
+		}
+
+		delete weakReferences;
+		weakReferences = NULL;*/
+
+		HashSetIterator<WeakReferenceBase*> iterator = weakReferences->iterator();
+
+		while (iterator.hasNext())
+			iterator.getNextKey()->clearObject();
+
+		delete weakReferences;
+		weakReferences = NULL;
+	}		
+		
+
+//	delete weakReferences;
+//	weakReferences = NULL;
 
 	delete _destroying;
 
@@ -83,6 +108,9 @@ void Object::release() {
 
 void Object::acquireWeak(WeakReferenceBase* ref) {
 //#ifndef WITH_STM
+#ifdef WITH_STM
+	KernelCall kern;
+#endif
 	Locker locker(&referenceMutex);
 
 	if (weakReferences == NULL)
@@ -100,6 +128,9 @@ void Object::acquireWeak(WeakReferenceBase* ref) {
 }
 
 void Object::releaseWeak(WeakReferenceBase* ref) {
+#ifdef WITH_STM
+	KernelCall call;
+#endif
 //#ifndef WITH_STM
 	Locker locker(&referenceMutex);
 //#endif

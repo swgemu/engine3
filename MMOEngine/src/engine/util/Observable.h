@@ -44,6 +44,8 @@ public:
 
 	void _setImplementation(DistributedObjectServant* servant);
 
+	bool _isCurrentVersion(ManagedObjectImplementation* servant);
+
 protected:
 	Observable(DummyConstructorParameter* param);
 
@@ -86,6 +88,10 @@ public:
 protected:
 	virtual ~ObservableImplementation();
 
+	Object* clone();
+	Object* clone(void* object);
+	void free();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -111,6 +117,9 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Observable;
+	friend class TransactionalObjectHandle<ObservableImplementation*>;
+	friend class TransactionalWeakObjectHeader<ObservableImplementation*>;
+	friend class TransactionalStrongObjectHeader<ObservableImplementation*>;
 };
 
 class ObservableAdapter : public ManagedObjectAdapter {

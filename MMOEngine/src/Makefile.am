@@ -2,13 +2,16 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 if DEBUG
-AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused
+AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual
 else
-AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -DVERSION_PUBLIC
+AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wunused-parameter -DVERSION_PUBLIC
 endif
 
+#CXX = clang++
+#CC = clang
+
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua \
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I/usr/include/mysql -I/usr/include/lua5.1 \
 	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) \
 	    	-I../../../external/dlmalloc \
 	    	-I../../../external/multimmap

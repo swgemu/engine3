@@ -156,7 +156,7 @@ String String::concat(const String& str) const {
 }
 
 int String::compareTo(const char* str) const {
-	return strcmp(value, str) * -1;
+	return strcmp(str, value);
 }
 
 int String::compareTo(const String& str) const {

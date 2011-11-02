@@ -14,8 +14,8 @@ enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOC
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
-	_impl = _implementation;
-	_impl->_setStub(this);
+	ManagedObject::_setImplementation(_implementation);
+	_implementation->_setStub(this);
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
@@ -24,6 +24,11 @@ ManagedObject::ManagedObject(DummyConstructorParameter* param) {
 ManagedObject::~ManagedObject() {
 }
 
+
+bool ManagedObject::_isCurrentVersion(ManagedObjectImplementation* servant) {
+
+	return header->isCurrentVersion(servant);
+}
 
 
 void ManagedObject::_updateForWrite() {
@@ -318,11 +323,10 @@ void ManagedObject::setPersistent(int level) {
 DistributedObjectServant* ManagedObject::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
+	header = new TransactionalStrongObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
 
 /*
@@ -360,6 +364,21 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
+
+Object* ManagedObjectImplementation::clone() {
+	return ObjectCloner<ManagedObjectImplementation>::clone(this);
+}
+
+
+Object* ManagedObjectImplementation::clone(void* object) {
+	return TransactionalObjectCloner<ManagedObjectImplementation>::clone(this);
+}
+
+
+void ManagedObjectImplementation::free() {
+	TransactionalMemoryManager::instance()->destroy(this);
+}
+
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");

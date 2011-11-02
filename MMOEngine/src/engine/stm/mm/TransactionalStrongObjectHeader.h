@@ -80,7 +80,7 @@ namespace engine {
 		 	 //return ownerTransaction->getOpenedObject(this);
 		 } else {*/
 
-		add(handle);
+		this->add(handle);
 
 		assert(object != NULL);
 		return getObject();

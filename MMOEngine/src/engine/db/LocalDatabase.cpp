@@ -52,6 +52,22 @@ int LocalDatabase::sync() {
 	return 0;
 }
 
+int LocalDatabase::truncate() {
+	try {
+		objectsDatabase->truncate(NULL, false);
+
+		info("database truncated");
+
+	} catch (Exception &e) {
+		error("Error truncating database (" + databaseFileName + "):");
+		error(e.getMessage());
+	} catch (...) {
+		error("unreported exception caught while trying to truncate berkeley DB ");
+	}
+
+	return 0;
+}
+
 void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 	try {
 

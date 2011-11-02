@@ -39,10 +39,6 @@ class QuadTreeEntry : public Observable {
 public:
 	QuadTreeEntry(QuadTreeNode* n = NULL);
 
-	void notifyAddedToCloseObjects();
-
-	void notifyRemovedFromCloseObjects();
-
 	void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate = true);
 
 	QuadTreeEntry* getInRangeObject(int index);
@@ -60,6 +56,12 @@ public:
 	bool isInRange(float x, float y, float range);
 
 	float getDistanceTo(QuadTreeEntry* obj);
+
+	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
+
+	QuadTreeEntry* getParent();
+
+	QuadTreeEntry* getRootParent();
 
 	bool isInSWArea(QuadTreeNode* node);
 
@@ -115,9 +117,13 @@ public:
 
 	void clearBounding();
 
+	void setParent(QuadTreeEntry* par);
+
 	DistributedObjectServant* _getImplementation();
 
 	void _setImplementation(DistributedObjectServant* servant);
+
+	bool _isCurrentVersion(ManagedObjectImplementation* servant);
 
 protected:
 	QuadTreeEntry(DummyConstructorParameter* param);
@@ -141,9 +147,11 @@ class QuadTreeEntryImplementation : public ObservableImplementation {
 protected:
 	Coordinate coordinates;
 
-	Reference<QuadTreeNode* > node;
+	TransactionalReference<QuadTreeNode* > node;
 
 	bool bounding;
+
+	ManagedWeakReference<QuadTreeEntry* > parent;
 
 	SortedVector<ManagedReference<QuadTreeEntry* > > closeobjects;
 
@@ -153,10 +161,6 @@ public:
 	QuadTreeEntryImplementation(QuadTreeNode* n = NULL);
 
 	QuadTreeEntryImplementation(DummyConstructorParameter* param);
-
-	virtual void notifyAddedToCloseObjects();
-
-	virtual void notifyRemovedFromCloseObjects();
 
 	void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate = true);
 
@@ -175,6 +179,12 @@ public:
 	bool isInRange(float x, float y, float range);
 
 	float getDistanceTo(QuadTreeEntry* obj);
+
+	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
+
+	QuadTreeEntry* getParent();
+
+	QuadTreeEntry* getRootParent();
 
 	bool isInSWArea(QuadTreeNode* node);
 
@@ -230,6 +240,8 @@ public:
 
 	void clearBounding();
 
+	void setParent(QuadTreeEntry* par);
+
 	WeakReference<QuadTreeEntry*> _this;
 
 	operator const QuadTreeEntry*();
@@ -239,6 +251,10 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 protected:
 	virtual ~QuadTreeEntryImplementation();
+
+	Object* clone();
+	Object* clone(void* object);
+	void free();
 
 	void finalize();
 
@@ -265,6 +281,9 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class QuadTreeEntry;
+	friend class TransactionalObjectHandle<QuadTreeEntryImplementation*>;
+	friend class TransactionalWeakObjectHeader<QuadTreeEntryImplementation*>;
+	friend class TransactionalStrongObjectHeader<QuadTreeEntryImplementation*>;
 };
 
 class QuadTreeEntryAdapter : public ObservableAdapter {
@@ -272,10 +291,6 @@ public:
 	QuadTreeEntryAdapter(QuadTreeEntryImplementation* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
-
-	void notifyAddedToCloseObjects();
-
-	void notifyRemovedFromCloseObjects();
 
 	void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate);
 
@@ -294,6 +309,10 @@ public:
 	bool isInRange(float x, float y, float range);
 
 	float getDistanceTo(QuadTreeEntry* obj);
+
+	QuadTreeEntry* getParent();
+
+	QuadTreeEntry* getRootParent();
 
 	void notifyInsert(QuadTreeEntry* obj);
 
@@ -334,6 +353,8 @@ public:
 	void setRadius(float rad);
 
 	void clearBounding();
+
+	void setParent(QuadTreeEntry* par);
 
 };
 

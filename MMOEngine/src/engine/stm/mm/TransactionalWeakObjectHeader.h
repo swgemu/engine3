@@ -77,7 +77,7 @@ namespace engine {
 			//return ownerTransaction->getOpenedObject(this);
 		} else {*/
 
-		add(handle);
+		this->add(handle);
 		return getObject();
 
 		//

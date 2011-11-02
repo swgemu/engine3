@@ -7,9 +7,11 @@
 
 #include "AllocationHook.h"
 
+#ifndef PLATFORM_MAC
 extern "C" void (*__free_hook)(void *__ptr, const void *);
 extern "C" void *(*__malloc_hook)(size_t __size, const void *);
 extern "C" void *(*__realloc_hook)(void *__ptr, size_t __size, const void *);
+#endif
 
 void (*__saved_free_hook)(void *__ptr, const void *) = 0;
 void *(*__saved_malloc_hook)(size_t __size, const void *) = 0;
@@ -36,21 +38,27 @@ void AllocationHook::install() {
 
 	instance = this;
 
+#ifndef PLATFORM_MAC
 	__saved_malloc_hook = __malloc_hook;
 	__saved_free_hook = __free_hook;
 	__saved_realloc_hook = __realloc_hook;
+
 
 	__malloc_hook = mallocHook;
 	__free_hook = freeHook;
 	__realloc_hook = reallocHook;
 
+#endif
+
 	//printf("hook installed %p\n", __malloc_hook);
 }
 
 void AllocationHook::uninstall() {
+#ifndef PLATFORM_MAC
 	__malloc_hook = __saved_malloc_hook;
 	__free_hook = __saved_free_hook;
 	__realloc_hook = __saved_realloc_hook;
+#endif
 
 	instance = NULL;
 

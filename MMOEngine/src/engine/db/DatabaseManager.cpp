@@ -83,79 +83,89 @@ void DatabaseManager::openEnvironment() {
 	}
 }
 
-void DatabaseManager::loadDatabases() {
+void DatabaseManager::loadDatabases(bool truncateDatabases) {
 	if (loaded)
 		return;
 
 	try {
-	openEnvironment();
+		openEnvironment();
 
-	databaseDirectory = new LocalDatabase(this, "databases.db");
+		databaseDirectory = new LocalDatabase(this, "databases.db");
 
-	LocalDatabaseIterator iterator(databaseDirectory);
+		LocalDatabaseIterator iterator(databaseDirectory);
 
-	uint64 tableKey;
-	ObjectInputStream tableName(20, 20);
-	ObjectInputStream inputKey(8, 8);
+		uint64 tableKey;
+		ObjectInputStream tableName(20, 20);
+		ObjectInputStream inputKey(8, 8);
 
-	while (iterator.getNextKeyAndValue(&inputKey, &tableName)) {
-		tableKey = inputKey.readLong();
+		while (iterator.getNextKeyAndValue(&inputKey, &tableName)) {
+			tableKey = inputKey.readLong();
 
-		if (tableKey == LASTOBJECTIDKEY) {
+			if (tableKey == LASTOBJECTIDKEY) {
+				tableName.reset();
+				inputKey.reset();
+				continue;
+			}
+
+			if (tableKey == VERSIONKEY) {
+				currentVersion = tableKey;
+
+				tableName.reset();
+				inputKey.reset();
+				continue;
+			}
+
+			String dbName;
+			dbName.parseFromBinaryStream(&tableName);
+
+			uint32 tableType = (uint32)(tableKey >> 32);
+			uint32 tableID = (uint32)((tableKey << 32) >> 32);
+
+			LocalDatabase* db = NULL;
+
+			StringBuffer msg;
+
+			if (tableType == LOCALDATABASE) {
+				db = new LocalDatabase(this, String(dbName + ".db"));
+
+				if (truncateDatabases)
+					msg << "truncating local database: ";
+				else
+					msg << "loading local database: ";
+			} else {
+				db = new ObjectDatabase(this, String(dbName + ".db"));
+
+				if (truncateDatabases)
+					msg << "truncating local database: ";
+				else
+					msg << "loading object database: ";
+			}
+
+			msg << dbName << " with id 0x" << hex << (uint16)tableID;
+			info(msg);
+
+			if (truncateDatabases) {
+				db->truncate();
+			}
+
+			databases.put((uint16)tableID, db);
+			nameDirectory.put(dbName, tableID);
+
+			if (tableID > lastTableID)
+				lastTableID = tableID;
+
 			tableName.reset();
 			inputKey.reset();
-			continue;
 		}
-
-		if (tableKey == VERSIONKEY) {
-			currentVersion = tableKey;
-
-			tableName.reset();
-			inputKey.reset();
-			continue;
-		}
-
-		String dbName;
-		dbName.parseFromBinaryStream(&tableName);
-
-		uint32 tableType = (uint32)(tableKey >> 32);
-		uint32 tableID = (uint32)((tableKey << 32) >> 32);
-
-		LocalDatabase* db = NULL;
 
 		StringBuffer msg;
-
-		if (tableType == LOCALDATABASE) {
-			db = new LocalDatabase(this, String(dbName + ".db"));
-
-			msg << "loading local database: ";
-		} else {
-			db = new ObjectDatabase(this, String(dbName + ".db"));
-
-			msg << "loading object database: ";
-		}
-
-		msg << dbName << " with id 0x" << hex << (uint16)tableID;
+		msg << "loaded database version: " << currentVersion;
 		info(msg);
 
-		databases.put((uint16)tableID, db);
-		nameDirectory.put(dbName, tableID);
-
-		if (tableID > lastTableID)
-			lastTableID = tableID;
-
-		tableName.reset();
-		inputKey.reset();
-	}
-
-	StringBuffer msg;
-	msg << "loaded database version: " << currentVersion;
-	info(msg);
-
-	loaded = true;
+		loaded = true;
 	} catch (Exception& e) {
 		error(e.getMessage());
-		
+
 		assert(0 && "Database exception loading databases");
 	}
 

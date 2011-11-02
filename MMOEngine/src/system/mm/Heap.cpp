@@ -30,10 +30,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 AtomicInteger Heap::heapCount;
 
 Heap::Heap() {
-#ifdef PLATFORM_LINUX
 	int count = heapCount.increment();
 
+#ifdef PLATFORM_LINUX
 	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
+#else
+	heapBase = reinterpret_cast<void*>(512*512*512*4096UL * count);
+#endif
 
 	heapSize = -1;
 	offset = 0;
@@ -41,21 +44,23 @@ Heap::Heap() {
 	deviceFD = -1;
 
 	setPrivate();
-#endif
 }
 
 Heap::Heap(int fd) {
-#ifdef PLATFORM_LINUX
 	int count = heapCount.increment();
 
+#ifdef PLATFORM_LINUX
 	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
+#else
+	heapBase = reinterpret_cast<void*>(512*512*512*4096UL * count);
+#endif
+
 	heapSize = -1;
 	offset = 0;
 
 	deviceFD = fd;
 
 	setPrivate();
-#endif
 }
 
 Heap::~Heap() {
@@ -67,7 +72,6 @@ Heap::~Heap() {
 extern int __data_start, _end;
 
 void Heap::create(size_t size) {
-#ifdef PLATFORM_LINUX
 	heapSize = size;
 
 	heapBase = mmap(heapBase, heapSize, PROT_READ | PROT_WRITE, flags, deviceFD, offset);
@@ -94,7 +98,6 @@ void Heap::create(size_t size) {
 
 	//if (offset != 0)
 		allocator = new DLAllocator(heapBase, heapSize);
-#endif
 }
 
 Time lastPrintTime;
@@ -131,5 +134,9 @@ void Heap::setPrivate() {
 }
 
 void Heap::setAnonymous() {
+#ifdef PLATFORM_MAC
+	flags |= MAP_ANON;
+#else
 	flags |= MAP_ANONYMOUS;
+#endif
 }

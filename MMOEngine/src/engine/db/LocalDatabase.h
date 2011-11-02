@@ -52,6 +52,8 @@ namespace engine {
 
 	 int sync();
 
+	 int truncate();
+
 	 virtual bool isObjectDatabase() {
 		 return false;
 	 }

@@ -4,16 +4,35 @@
 
 #include "QuadTreeEntry.h"
 
+
+// Imported class dependencies
+
+#include "engine/core/ManagedObject.h"
+
+#include "engine/core/ObjectUpdateToDatabaseTask.h"
+
+#include "engine/util/Observable.h"
+
+#include "engine/util/Observer.h"
+
+#include "engine/util/ObserverEventMap.h"
+
+#include "system/io/ObjectInputStream.h"
+
+#include "system/io/ObjectOutputStream.h"
+
+#include "system/thread/Lockable.h"
+
 /*
  *	QuadTreeEntryStub
  */
 
-enum {RPC_NOTIFYADDEDTOCLOSEOBJECTS__ = 6,RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__,RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_,RPC_GETINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_INRANGEOBJECTCOUNT__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_SETRADIUS__FLOAT_,RPC_CLEARBOUNDING__};
+enum {RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_ = 6,RPC_GETINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_GETPARENT__,RPC_GETROOTPARENT__,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_INRANGEOBJECTCOUNT__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_SETRADIUS__FLOAT_,RPC_CLEARBOUNDING__,RPC_SETPARENT__QUADTREEENTRY_};
 
 QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParameter::instance()) {
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
-	_impl = _implementation;
-	_impl->_setStub(this);
+	ManagedObject::_setImplementation(_implementation);
+	_implementation->_setStub(this);
 }
 
 QuadTreeEntry::QuadTreeEntry(DummyConstructorParameter* param) : Observable(param) {
@@ -23,35 +42,14 @@ QuadTreeEntry::~QuadTreeEntry() {
 }
 
 
+bool QuadTreeEntry::_isCurrentVersion(ManagedObjectImplementation* servant) {
 
-void QuadTreeEntry::notifyAddedToCloseObjects() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
-	if (_implementation == NULL) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, RPC_NOTIFYADDEDTOCLOSEOBJECTS__);
-
-		method.executeWithVoidReturn();
-	} else
-		_implementation->notifyAddedToCloseObjects();
+	return header->isCurrentVersion(servant);
 }
 
-void QuadTreeEntry::notifyRemovedFromCloseObjects() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
-	if (_implementation == NULL) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__);
-
-		method.executeWithVoidReturn();
-	} else
-		_implementation->notifyRemovedFromCloseObjects();
-}
 
 void QuadTreeEntry::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -66,7 +64,7 @@ void QuadTreeEntry::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
 }
 
 QuadTreeEntry* QuadTreeEntry::getInRangeObject(int index) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -74,13 +72,13 @@ QuadTreeEntry* QuadTreeEntry::getInRangeObject(int index) {
 		DistributedMethod method(this, RPC_GETINRANGEOBJECT__INT_);
 		method.addSignedIntParameter(index);
 
-		return (QuadTreeEntry*) method.executeWithObjectReturn();
+		return static_cast<QuadTreeEntry*>(method.executeWithObjectReturn());
 	} else
 		return _implementation->getInRangeObject(index);
 }
 
 void QuadTreeEntry::removeInRangeObject(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -94,7 +92,7 @@ void QuadTreeEntry::removeInRangeObject(QuadTreeEntry* obj) {
 }
 
 void QuadTreeEntry::removeInRangeObject(int index) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -108,7 +106,7 @@ void QuadTreeEntry::removeInRangeObject(int index) {
 }
 
 void QuadTreeEntry::removeInRangeObjects() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -121,7 +119,7 @@ void QuadTreeEntry::removeInRangeObjects() {
 }
 
 bool QuadTreeEntry::containsInRangeObject(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -135,7 +133,7 @@ bool QuadTreeEntry::containsInRangeObject(QuadTreeEntry* obj) {
 }
 
 bool QuadTreeEntry::isInRange(QuadTreeEntry* obj, float range) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -150,7 +148,7 @@ bool QuadTreeEntry::isInRange(QuadTreeEntry* obj, float range) {
 }
 
 bool QuadTreeEntry::isInRange(float x, float y, float range) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -166,7 +164,7 @@ bool QuadTreeEntry::isInRange(float x, float y, float range) {
 }
 
 float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -179,8 +177,43 @@ float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) {
 		return _implementation->getDistanceTo(obj);
 }
 
+SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntry::getCloseObjects() {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+
+	} else
+		return _implementation->getCloseObjects();
+}
+
+QuadTreeEntry* QuadTreeEntry::getParent() {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETPARENT__);
+
+		return static_cast<QuadTreeEntry*>(method.executeWithObjectReturn());
+	} else
+		return _implementation->getParent();
+}
+
+QuadTreeEntry* QuadTreeEntry::getRootParent() {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETROOTPARENT__);
+
+		return static_cast<QuadTreeEntry*>(method.executeWithObjectReturn());
+	} else
+		return _implementation->getRootParent();
+}
+
 bool QuadTreeEntry::isInSWArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -189,7 +222,7 @@ bool QuadTreeEntry::isInSWArea(QuadTreeNode* node) {
 }
 
 bool QuadTreeEntry::isInSEArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -198,7 +231,7 @@ bool QuadTreeEntry::isInSEArea(QuadTreeNode* node) {
 }
 
 bool QuadTreeEntry::isInNWArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -207,7 +240,7 @@ bool QuadTreeEntry::isInNWArea(QuadTreeNode* node) {
 }
 
 bool QuadTreeEntry::isInArea(QuadTreeNode* node) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -216,7 +249,7 @@ bool QuadTreeEntry::isInArea(QuadTreeNode* node) {
 }
 
 void QuadTreeEntry::notifyInsert(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -230,7 +263,7 @@ void QuadTreeEntry::notifyInsert(QuadTreeEntry* obj) {
 }
 
 void QuadTreeEntry::notifyPositionUpdate(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -244,7 +277,7 @@ void QuadTreeEntry::notifyPositionUpdate(QuadTreeEntry* obj) {
 }
 
 void QuadTreeEntry::notifyDissapear(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -258,7 +291,7 @@ void QuadTreeEntry::notifyDissapear(QuadTreeEntry* obj) {
 }
 
 float QuadTreeEntry::getPositionX() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -271,7 +304,7 @@ float QuadTreeEntry::getPositionX() {
 }
 
 float QuadTreeEntry::getPositionZ() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -284,7 +317,7 @@ float QuadTreeEntry::getPositionZ() {
 }
 
 float QuadTreeEntry::getPositionY() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -297,7 +330,7 @@ float QuadTreeEntry::getPositionY() {
 }
 
 float QuadTreeEntry::getPreviousPositionX() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -310,7 +343,7 @@ float QuadTreeEntry::getPreviousPositionX() {
 }
 
 float QuadTreeEntry::getPreviousPositionZ() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -323,7 +356,7 @@ float QuadTreeEntry::getPreviousPositionZ() {
 }
 
 float QuadTreeEntry::getPreviousPositionY() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -336,7 +369,7 @@ float QuadTreeEntry::getPreviousPositionY() {
 }
 
 Vector3 QuadTreeEntry::getPosition() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -345,7 +378,7 @@ Vector3 QuadTreeEntry::getPosition() {
 }
 
 void QuadTreeEntry::setPosition(float x, float z, float y) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -361,7 +394,7 @@ void QuadTreeEntry::setPosition(float x, float z, float y) {
 }
 
 void QuadTreeEntry::initializePosition(float x, float z, float y) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -377,7 +410,7 @@ void QuadTreeEntry::initializePosition(float x, float z, float y) {
 }
 
 int QuadTreeEntry::compareTo(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -391,7 +424,7 @@ int QuadTreeEntry::compareTo(QuadTreeEntry* obj) {
 }
 
 bool QuadTreeEntry::isInQuadTree() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -404,7 +437,7 @@ bool QuadTreeEntry::isInQuadTree() {
 }
 
 int QuadTreeEntry::inRangeObjectCount() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -417,7 +450,7 @@ int QuadTreeEntry::inRangeObjectCount() {
 }
 
 TransactionalReference<QuadTreeNode*> QuadTreeEntry::getNode() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -426,7 +459,7 @@ TransactionalReference<QuadTreeNode*> QuadTreeEntry::getNode() {
 }
 
 unsigned long long QuadTreeEntry::getObjectID() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -439,7 +472,7 @@ unsigned long long QuadTreeEntry::getObjectID() {
 }
 
 float QuadTreeEntry::getRadius() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -452,7 +485,7 @@ float QuadTreeEntry::getRadius() {
 }
 
 bool QuadTreeEntry::isBounding() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -465,7 +498,7 @@ bool QuadTreeEntry::isBounding() {
 }
 
 void QuadTreeEntry::setNode(QuadTreeNode* n) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -474,7 +507,7 @@ void QuadTreeEntry::setNode(QuadTreeNode* n) {
 }
 
 void QuadTreeEntry::setBounding() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -487,7 +520,7 @@ void QuadTreeEntry::setBounding() {
 }
 
 void QuadTreeEntry::setRadius(float rad) {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -501,7 +534,7 @@ void QuadTreeEntry::setRadius(float rad) {
 }
 
 void QuadTreeEntry::clearBounding() {
-	QuadTreeEntryImplementation* _implementation = (QuadTreeEntryImplementation*) _getImplementation();
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -513,14 +546,27 @@ void QuadTreeEntry::clearBounding() {
 		_implementation->clearBounding();
 }
 
+void QuadTreeEntry::setParent(QuadTreeEntry* par) {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETPARENT__QUADTREEENTRY_);
+		method.addObjectParameter(par);
+
+		method.executeWithVoidReturn();
+	} else
+		_implementation->setParent(par);
+}
+
 DistributedObjectServant* QuadTreeEntry::_getImplementation() {
 
 	_updated = true;
-	return _impl;
-}
+	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
 void QuadTreeEntry::_setImplementation(DistributedObjectServant* servant) {
-	_impl = servant;
+	header = new TransactionalStrongObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
 
 /*
@@ -548,7 +594,7 @@ void QuadTreeEntryImplementation::_initializeImplementation() {
 }
 
 void QuadTreeEntryImplementation::_setStub(DistributedObjectStub* stub) {
-	_this = (QuadTreeEntry*) stub;
+	_this = static_cast<QuadTreeEntry*>(stub);
 	ObservableImplementation::_setStub(stub);
 }
 
@@ -560,32 +606,40 @@ QuadTreeEntryImplementation::operator const QuadTreeEntry*() {
 	return _this;
 }
 
+Object* QuadTreeEntryImplementation::clone() {
+	return ObjectCloner<QuadTreeEntryImplementation>::clone(this);
+}
+
+
+Object* QuadTreeEntryImplementation::clone(void* object) {
+	return TransactionalObjectCloner<QuadTreeEntryImplementation>::clone(this);
+}
+
+
+void QuadTreeEntryImplementation::free() {
+	TransactionalMemoryManager::instance()->destroy(this);
+}
+
+
 void QuadTreeEntryImplementation::lock(bool doLock) {
-	_this->lock(doLock);
 }
 
 void QuadTreeEntryImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
 }
 
 void QuadTreeEntryImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
 }
 
 void QuadTreeEntryImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
 }
 
 void QuadTreeEntryImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
 }
 
 void QuadTreeEntryImplementation::_serializationHelperMethod() {
@@ -628,6 +682,11 @@ bool QuadTreeEntryImplementation::readObjectMember(ObjectInputStream* stream, co
 		return true;
 	}
 
+	if (_name == "parent") {
+		TypeInfo<ManagedWeakReference<QuadTreeEntry* > >::parseFromBinaryStream(&parent, stream);
+		return true;
+	}
+
 	if (_name == "radius") {
 		TypeInfo<float >::parseFromBinaryStream(&radius, stream);
 		return true;
@@ -664,6 +723,14 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
+	_name = "parent";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<ManagedWeakReference<QuadTreeEntry* > >::toBinaryStream(&parent, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
 	_name = "radius";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
@@ -673,13 +740,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 3 + ObservableImplementation::writeObjectMembers(stream);
-}
-
-void QuadTreeEntryImplementation::notifyAddedToCloseObjects() {
-}
-
-void QuadTreeEntryImplementation::notifyRemovedFromCloseObjects() {
+	return 4 + ObservableImplementation::writeObjectMembers(stream);
 }
 
 void QuadTreeEntryImplementation::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
@@ -687,8 +748,6 @@ void QuadTreeEntryImplementation::addInRangeObject(QuadTreeEntry* obj, bool doNo
 	if ((&closeobjects)->put(obj) != -1){
 	// engine/util/u3d/QuadTreeEntry.idl():  			notifyInsert(obj);
 	notifyInsert(obj);
-	// engine/util/u3d/QuadTreeEntry.idl():  			obj.notifyAddedToCloseObjects();
-	obj->notifyAddedToCloseObjects();
 }
 
 	else 	// engine/util/u3d/QuadTreeEntry.idl():  	}
@@ -708,27 +767,15 @@ void QuadTreeEntryImplementation::removeInRangeObject(QuadTreeEntry* obj) {
 	if ((&closeobjects)->drop(obj)){
 	// engine/util/u3d/QuadTreeEntry.idl():  			notifyDissapear(obj);
 	notifyDissapear(obj);
-	// engine/util/u3d/QuadTreeEntry.idl():  			obj.notifyRemovedFromCloseObjects();
-	obj->notifyRemovedFromCloseObjects();
 }
 }
 
 void QuadTreeEntryImplementation::removeInRangeObject(int index) {
-	// engine/util/u3d/QuadTreeEntry.idl():  		QuadTreeEntry entry = closeobjects.remove(index);
-	QuadTreeEntry* entry = (&closeobjects)->remove(index);
-	// engine/util/u3d/QuadTreeEntry.idl():  		entry.notifyRemovedFromCloseObjects();
-	entry->notifyRemovedFromCloseObjects();
+	// engine/util/u3d/QuadTreeEntry.idl():  		closeobjects.remove(index);
+	(&closeobjects)->remove(index);
 }
 
 void QuadTreeEntryImplementation::removeInRangeObjects() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		}
-	for (	// engine/util/u3d/QuadTreeEntry.idl():  		for (int i = 0;
-	int i = 0;
-	i < (&closeobjects)->size();
- ++i) {
-	// engine/util/u3d/QuadTreeEntry.idl():  			closeobjects.get(i).notifyRemovedFromCloseObjects();
-	(&closeobjects)->get(i)->notifyRemovedFromCloseObjects();
-}
 	// engine/util/u3d/QuadTreeEntry.idl():  		closeobjects.removeAll();
 	(&closeobjects)->removeAll();
 }
@@ -769,6 +816,16 @@ float QuadTreeEntryImplementation::getDistanceTo(QuadTreeEntry* obj) {
 	float deltaY = y - (&coordinates)->getPositionY();
 	// engine/util/u3d/QuadTreeEntry.idl():  		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	return Math::sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntryImplementation::getCloseObjects() {
+	// engine/util/u3d/QuadTreeEntry.idl():  		return closeobjects;
+	return (&closeobjects);
+}
+
+QuadTreeEntry* QuadTreeEntryImplementation::getParent() {
+	// engine/util/u3d/QuadTreeEntry.idl():  		return parent;
+	return parent;
 }
 
 void QuadTreeEntryImplementation::notifyInsert(QuadTreeEntry* obj) {
@@ -883,6 +940,11 @@ void QuadTreeEntryImplementation::clearBounding() {
 	bounding = false;
 }
 
+void QuadTreeEntryImplementation::setParent(QuadTreeEntry* par) {
+	// engine/util/u3d/QuadTreeEntry.idl():  		parent = par;
+	parent = par;
+}
+
 /*
  *	QuadTreeEntryAdapter
  */
@@ -894,20 +956,14 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	Packet* resp = new MethodReturnMessage(0);
 
 	switch (methid) {
-	case RPC_NOTIFYADDEDTOCLOSEOBJECTS__:
-		notifyAddedToCloseObjects();
-		break;
-	case RPC_NOTIFYREMOVEDFROMCLOSEOBJECTS__:
-		notifyRemovedFromCloseObjects();
-		break;
 	case RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_:
-		addInRangeObject((QuadTreeEntry*) inv->getObjectParameter(), inv->getBooleanParameter());
+		addInRangeObject(static_cast<QuadTreeEntry*>(inv->getObjectParameter()), inv->getBooleanParameter());
 		break;
 	case RPC_GETINRANGEOBJECT__INT_:
 		resp->insertLong(getInRangeObject(inv->getSignedIntParameter())->_getObjectID());
 		break;
 	case RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_:
-		removeInRangeObject((QuadTreeEntry*) inv->getObjectParameter());
+		removeInRangeObject(static_cast<QuadTreeEntry*>(inv->getObjectParameter()));
 		break;
 	case RPC_REMOVEINRANGEOBJECT__INT_:
 		removeInRangeObject(inv->getSignedIntParameter());
@@ -916,25 +972,31 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		removeInRangeObjects();
 		break;
 	case RPC_CONTAINSINRANGEOBJECT__QUADTREEENTRY_:
-		resp->insertBoolean(containsInRangeObject((QuadTreeEntry*) inv->getObjectParameter()));
+		resp->insertBoolean(containsInRangeObject(static_cast<QuadTreeEntry*>(inv->getObjectParameter())));
 		break;
 	case RPC_ISINRANGE__QUADTREEENTRY_FLOAT_:
-		resp->insertBoolean(isInRange((QuadTreeEntry*) inv->getObjectParameter(), inv->getFloatParameter()));
+		resp->insertBoolean(isInRange(static_cast<QuadTreeEntry*>(inv->getObjectParameter()), inv->getFloatParameter()));
 		break;
 	case RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_:
 		resp->insertBoolean(isInRange(inv->getFloatParameter(), inv->getFloatParameter(), inv->getFloatParameter()));
 		break;
 	case RPC_GETDISTANCETO__QUADTREEENTRY_:
-		resp->insertFloat(getDistanceTo((QuadTreeEntry*) inv->getObjectParameter()));
+		resp->insertFloat(getDistanceTo(static_cast<QuadTreeEntry*>(inv->getObjectParameter())));
+		break;
+	case RPC_GETPARENT__:
+		resp->insertLong(getParent()->_getObjectID());
+		break;
+	case RPC_GETROOTPARENT__:
+		resp->insertLong(getRootParent()->_getObjectID());
 		break;
 	case RPC_NOTIFYINSERT__QUADTREEENTRY_:
-		notifyInsert((QuadTreeEntry*) inv->getObjectParameter());
+		notifyInsert(static_cast<QuadTreeEntry*>(inv->getObjectParameter()));
 		break;
 	case RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_:
-		notifyPositionUpdate((QuadTreeEntry*) inv->getObjectParameter());
+		notifyPositionUpdate(static_cast<QuadTreeEntry*>(inv->getObjectParameter()));
 		break;
 	case RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_:
-		notifyDissapear((QuadTreeEntry*) inv->getObjectParameter());
+		notifyDissapear(static_cast<QuadTreeEntry*>(inv->getObjectParameter()));
 		break;
 	case RPC_GETPOSITIONX__:
 		resp->insertFloat(getPositionX());
@@ -961,7 +1023,7 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		initializePosition(inv->getFloatParameter(), inv->getFloatParameter(), inv->getFloatParameter());
 		break;
 	case RPC_COMPARETO__QUADTREEENTRY_:
-		resp->insertSignedInt(compareTo((QuadTreeEntry*) inv->getObjectParameter()));
+		resp->insertSignedInt(compareTo(static_cast<QuadTreeEntry*>(inv->getObjectParameter())));
 		break;
 	case RPC_ISINQUADTREE__:
 		resp->insertBoolean(isInQuadTree());
@@ -987,6 +1049,9 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	case RPC_CLEARBOUNDING__:
 		clearBounding();
 		break;
+	case RPC_SETPARENT__QUADTREEENTRY_:
+		setParent(static_cast<QuadTreeEntry*>(inv->getObjectParameter()));
+		break;
 	default:
 		return NULL;
 	}
@@ -994,128 +1059,132 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	return resp;
 }
 
-void QuadTreeEntryAdapter::notifyAddedToCloseObjects() {
-	((QuadTreeEntryImplementation*) impl)->notifyAddedToCloseObjects();
-}
-
-void QuadTreeEntryAdapter::notifyRemovedFromCloseObjects() {
-	((QuadTreeEntryImplementation*) impl)->notifyRemovedFromCloseObjects();
-}
-
 void QuadTreeEntryAdapter::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
-	((QuadTreeEntryImplementation*) impl)->addInRangeObject(obj, doNotifyUpdate);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->addInRangeObject(obj, doNotifyUpdate);
 }
 
 QuadTreeEntry* QuadTreeEntryAdapter::getInRangeObject(int index) {
-	return ((QuadTreeEntryImplementation*) impl)->getInRangeObject(index);
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getInRangeObject(index);
 }
 
 void QuadTreeEntryAdapter::removeInRangeObject(QuadTreeEntry* obj) {
-	((QuadTreeEntryImplementation*) impl)->removeInRangeObject(obj);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->removeInRangeObject(obj);
 }
 
 void QuadTreeEntryAdapter::removeInRangeObject(int index) {
-	((QuadTreeEntryImplementation*) impl)->removeInRangeObject(index);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->removeInRangeObject(index);
 }
 
 void QuadTreeEntryAdapter::removeInRangeObjects() {
-	((QuadTreeEntryImplementation*) impl)->removeInRangeObjects();
+	(static_cast<QuadTreeEntryImplementation*>(impl))->removeInRangeObjects();
 }
 
 bool QuadTreeEntryAdapter::containsInRangeObject(QuadTreeEntry* obj) {
-	return ((QuadTreeEntryImplementation*) impl)->containsInRangeObject(obj);
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->containsInRangeObject(obj);
 }
 
 bool QuadTreeEntryAdapter::isInRange(QuadTreeEntry* obj, float range) {
-	return ((QuadTreeEntryImplementation*) impl)->isInRange(obj, range);
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->isInRange(obj, range);
 }
 
 bool QuadTreeEntryAdapter::isInRange(float x, float y, float range) {
-	return ((QuadTreeEntryImplementation*) impl)->isInRange(x, y, range);
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->isInRange(x, y, range);
 }
 
 float QuadTreeEntryAdapter::getDistanceTo(QuadTreeEntry* obj) {
-	return ((QuadTreeEntryImplementation*) impl)->getDistanceTo(obj);
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getDistanceTo(obj);
+}
+
+QuadTreeEntry* QuadTreeEntryAdapter::getParent() {
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getParent();
+}
+
+QuadTreeEntry* QuadTreeEntryAdapter::getRootParent() {
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getRootParent();
 }
 
 void QuadTreeEntryAdapter::notifyInsert(QuadTreeEntry* obj) {
-	((QuadTreeEntryImplementation*) impl)->notifyInsert(obj);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->notifyInsert(obj);
 }
 
 void QuadTreeEntryAdapter::notifyPositionUpdate(QuadTreeEntry* obj) {
-	((QuadTreeEntryImplementation*) impl)->notifyPositionUpdate(obj);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->notifyPositionUpdate(obj);
 }
 
 void QuadTreeEntryAdapter::notifyDissapear(QuadTreeEntry* obj) {
-	((QuadTreeEntryImplementation*) impl)->notifyDissapear(obj);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->notifyDissapear(obj);
 }
 
 float QuadTreeEntryAdapter::getPositionX() {
-	return ((QuadTreeEntryImplementation*) impl)->getPositionX();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPositionX();
 }
 
 float QuadTreeEntryAdapter::getPositionZ() {
-	return ((QuadTreeEntryImplementation*) impl)->getPositionZ();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPositionZ();
 }
 
 float QuadTreeEntryAdapter::getPositionY() {
-	return ((QuadTreeEntryImplementation*) impl)->getPositionY();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPositionY();
 }
 
 float QuadTreeEntryAdapter::getPreviousPositionX() {
-	return ((QuadTreeEntryImplementation*) impl)->getPreviousPositionX();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPreviousPositionX();
 }
 
 float QuadTreeEntryAdapter::getPreviousPositionZ() {
-	return ((QuadTreeEntryImplementation*) impl)->getPreviousPositionZ();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPreviousPositionZ();
 }
 
 float QuadTreeEntryAdapter::getPreviousPositionY() {
-	return ((QuadTreeEntryImplementation*) impl)->getPreviousPositionY();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPreviousPositionY();
 }
 
 void QuadTreeEntryAdapter::setPosition(float x, float z, float y) {
-	((QuadTreeEntryImplementation*) impl)->setPosition(x, z, y);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->setPosition(x, z, y);
 }
 
 void QuadTreeEntryAdapter::initializePosition(float x, float z, float y) {
-	((QuadTreeEntryImplementation*) impl)->initializePosition(x, z, y);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->initializePosition(x, z, y);
 }
 
 int QuadTreeEntryAdapter::compareTo(QuadTreeEntry* obj) {
-	return ((QuadTreeEntryImplementation*) impl)->compareTo(obj);
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->compareTo(obj);
 }
 
 bool QuadTreeEntryAdapter::isInQuadTree() {
-	return ((QuadTreeEntryImplementation*) impl)->isInQuadTree();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->isInQuadTree();
 }
 
 int QuadTreeEntryAdapter::inRangeObjectCount() {
-	return ((QuadTreeEntryImplementation*) impl)->inRangeObjectCount();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->inRangeObjectCount();
 }
 
 unsigned long long QuadTreeEntryAdapter::getObjectID() {
-	return ((QuadTreeEntryImplementation*) impl)->getObjectID();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getObjectID();
 }
 
 float QuadTreeEntryAdapter::getRadius() {
-	return ((QuadTreeEntryImplementation*) impl)->getRadius();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->getRadius();
 }
 
 bool QuadTreeEntryAdapter::isBounding() {
-	return ((QuadTreeEntryImplementation*) impl)->isBounding();
+	return (static_cast<QuadTreeEntryImplementation*>(impl))->isBounding();
 }
 
 void QuadTreeEntryAdapter::setBounding() {
-	((QuadTreeEntryImplementation*) impl)->setBounding();
+	(static_cast<QuadTreeEntryImplementation*>(impl))->setBounding();
 }
 
 void QuadTreeEntryAdapter::setRadius(float rad) {
-	((QuadTreeEntryImplementation*) impl)->setRadius(rad);
+	(static_cast<QuadTreeEntryImplementation*>(impl))->setRadius(rad);
 }
 
 void QuadTreeEntryAdapter::clearBounding() {
-	((QuadTreeEntryImplementation*) impl)->clearBounding();
+	(static_cast<QuadTreeEntryImplementation*>(impl))->clearBounding();
+}
+
+void QuadTreeEntryAdapter::setParent(QuadTreeEntry* par) {
+	(static_cast<QuadTreeEntryImplementation*>(impl))->setParent(par);
 }
 
 /*
@@ -1143,7 +1212,7 @@ DistributedObjectServant* QuadTreeEntryHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* QuadTreeEntryHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new QuadTreeEntryAdapter((QuadTreeEntryImplementation*) obj->_getImplementation());
+	DistributedObjectAdapter* adapter = new QuadTreeEntryAdapter(static_cast<QuadTreeEntryImplementation*>(obj->_getImplementation()));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

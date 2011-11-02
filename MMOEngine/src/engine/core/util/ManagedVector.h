@@ -23,6 +23,8 @@ public:
 
 	void _setImplementation(DistributedObjectServant* servant);
 
+	bool _isCurrentVersion(ManagedObjectImplementation* servant);
+
 protected:
 	ManagedVector(DummyConstructorParameter* param);
 
@@ -57,6 +59,10 @@ public:
 protected:
 	virtual ~ManagedVectorImplementation();
 
+	Object* clone();
+	Object* clone(void* object);
+	void free();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -82,6 +88,9 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedVector;
+	friend class TransactionalObjectHandle<ManagedVectorImplementation*>;
+	friend class TransactionalWeakObjectHeader<ManagedVectorImplementation*>;
+	friend class TransactionalStrongObjectHeader<ManagedVectorImplementation*>;
 };
 
 class ManagedVectorAdapter : public ManagedObjectAdapter {
