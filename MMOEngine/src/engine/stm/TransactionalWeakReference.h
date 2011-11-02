@@ -12,6 +12,8 @@
 
 namespace engine {
   namespace stm {
+  
+  template<class O> class TransactionalReference;
 
 #ifndef WITH_STM
   template<class O> class TransactionalWeakReference : public WeakReference<O> {
@@ -118,6 +120,8 @@ public:
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			return getForUpdate()->parseFromBinaryStream(stream);
 		}
+		
+		template<class A> friend class TransactionalReference;
 
 	protected:
 		TransactionalObjectHeader<O>* getHeader(O object) {

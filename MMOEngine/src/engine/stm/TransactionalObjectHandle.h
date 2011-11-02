@@ -122,6 +122,10 @@ namespace engine {
 			assert(object != NULL);
 
 			objectCopy = dynamic_cast<O>(object->clone());
+			
+			ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;
+			
+			assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
 
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 		} else if (accessType == READ){
@@ -132,6 +136,10 @@ namespace engine {
 			object = header->getObjectForWrite(this);
 
 			objectCopy = object;
+			
+			ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;
+			
+			assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
 		}
 	}
 
@@ -146,7 +154,15 @@ namespace engine {
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::upgradeToWrite() {
-		objectCopy = object->clone();
+	        objectCopy = object->clone();
+/*	        
+	        assert(object != NULL);
+	        
+		objectCopy = dynamic_cast<O>(object->clone());
+		
+		ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;
+		
+		assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));*/
 	}
 
 	template<class O> bool TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {

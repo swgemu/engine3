@@ -298,6 +298,11 @@ namespace engine {
 		O localCopy = dynamic_cast<O>(handle->getObjectLocalCopy());
 
 		assert(localCopy != NULL);
+		
+		ptrdiff_t rel = (ptrdiff_t)localCopy - (ptrdiff_t)0x8000000000;
+		
+		assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
+		
 		return localCopy;
 	}
 

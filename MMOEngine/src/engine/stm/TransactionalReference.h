@@ -7,11 +7,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define ENGINE_STM_TRANSACTIONALWEAKREFERENCE_H_
 
 #include "Transaction.h"
+#include "TransactionalWeakReference.h"
 
 namespace engine {
   namespace stm {
 
    //template <class O> class TransactionalObjectHeader;
+   //   template<class O> class TransactionalWeakReference;
 
 #ifndef WITH_STM
   template<class O> class TransactionalReference : public Reference<O> {
@@ -65,6 +67,10 @@ namespace engine {
 		TransactionalReference(const TransactionalReference& ref) {
 			header = ref.header;
 		}
+		
+		TransactionalReference(const TransactionalWeakReference<O>& ref) {
+		        header = ref.header;
+		}
 
 		~TransactionalReference() {
 			header = NULL;
@@ -77,6 +83,12 @@ namespace engine {
 			header = ref.header;
 
 			return *this;
+		}
+		
+		TransactionalReference& operator=(const TransactionalWeakReference<O>& ref) {
+		        header = ref.header;
+		        
+		        return *this;
 		}
 
 		O operator=(O obj) {
@@ -94,7 +106,15 @@ namespace engine {
 		}
 
 		O operator->() {
-			return getForUpdate();
+		        O point = getForUpdate();
+		        
+		        ptrdiff_t rel = (ptrdiff_t)point - (ptrdiff_t)0x8000000000;
+		        
+		        assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
+		        
+//		        assert(!((uint64)point & 0x8000000000));
+		        
+			return point;
 		}
 
 		operator O() {

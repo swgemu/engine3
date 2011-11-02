@@ -58,7 +58,7 @@ namespace sys {
 
 	class Object : public ReferenceCounter, public Variable {
 //	#ifndef WITH_STM
-		Mutex referenceMutex;
+		Mutex* referenceMutex;
 //	#endif
 
 		//ArrayList<WeakReferenceBase*> weakReferences;

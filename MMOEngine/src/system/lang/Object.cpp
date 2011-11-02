@@ -21,6 +21,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 Object::Object() : ReferenceCounter(), Variable() {
 	_destroying = new AtomicBoolean(false);
+	referenceMutex = new Mutex();
 
 	//deletedByTrace = NULL;
 
@@ -35,6 +36,7 @@ Object::Object() : ReferenceCounter(), Variable() {
 
 Object::Object(const Object& obj) : ReferenceCounter(), Variable() {
 	_destroying = new AtomicBoolean(false);
+	referenceMutex = new Mutex();
 
 	//deletedByTrace = NULL;
 
@@ -57,7 +59,7 @@ Object::~Object() {
 		assert(0 && "Deleting object with reference > 0");
 
 //#ifndef WITH_STM
-	Locker locker(&referenceMutex);
+	Locker locker(referenceMutex);
 //#endif
 
 	if (weakReferences != NULL) {
@@ -79,7 +81,11 @@ Object::~Object() {
 		delete weakReferences;
 		weakReferences = NULL;
 	}		
+	
+	locker.release();
 		
+	delete referenceMutex;
+	referenceMutex = NULL;
 
 //	delete weakReferences;
 //	weakReferences = NULL;
@@ -108,10 +114,7 @@ void Object::release() {
 
 void Object::acquireWeak(WeakReferenceBase* ref) {
 //#ifndef WITH_STM
-#ifdef WITH_STM
-	KernelCall kern;
-#endif
-	Locker locker(&referenceMutex);
+	Locker locker(referenceMutex);
 
 	if (weakReferences == NULL)
 		weakReferences = new HashSet<WeakReferenceBase*>();
@@ -128,11 +131,8 @@ void Object::acquireWeak(WeakReferenceBase* ref) {
 }
 
 void Object::releaseWeak(WeakReferenceBase* ref) {
-#ifdef WITH_STM
-	KernelCall call;
-#endif
 //#ifndef WITH_STM
-	Locker locker(&referenceMutex);
+	Locker locker(referenceMutex);
 //#endif
 
 	if (weakReferences == NULL)
@@ -160,7 +160,7 @@ void Object::destroy() {
 	_destroying->set(true);
 
 //#ifndef WITH_STM
-	Locker locker(&referenceMutex);
+	Locker locker(referenceMutex);
 //#endif
 
 	if (weakReferences != NULL) {

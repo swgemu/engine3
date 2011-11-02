@@ -518,7 +518,7 @@ bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
     //data->IncRef ();
 
     // Go upwards til the object is inside the square.
-    TransactionalReference<QuadTreeNode*> cur = node.get()->parentNode.get();
+    TransactionalReference<QuadTreeNode*> cur = node.get()->parentNode;
     while (cur.get() != NULL && !cur.get()->testInside(obj))
         cur = cur.get()->parentNode;
 
