@@ -151,8 +151,6 @@ protected:
 
 	bool bounding;
 
-	ManagedWeakReference<QuadTreeEntry* > parent;
-
 	SortedVector<ManagedReference<QuadTreeEntry* > > closeobjects;
 
 	float radius;
@@ -182,7 +180,7 @@ public:
 
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
-	QuadTreeEntry* getParent();
+	virtual QuadTreeEntry* getParent();
 
 	QuadTreeEntry* getRootParent();
 
@@ -240,7 +238,7 @@ public:
 
 	void clearBounding();
 
-	void setParent(QuadTreeEntry* par);
+	virtual void setParent(QuadTreeEntry* par);
 
 	WeakReference<QuadTreeEntry*> _this;
 

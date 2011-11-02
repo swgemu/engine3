@@ -682,11 +682,6 @@ bool QuadTreeEntryImplementation::readObjectMember(ObjectInputStream* stream, co
 		return true;
 	}
 
-	if (_name == "parent") {
-		TypeInfo<ManagedWeakReference<QuadTreeEntry* > >::parseFromBinaryStream(&parent, stream);
-		return true;
-	}
-
 	if (_name == "radius") {
 		TypeInfo<float >::parseFromBinaryStream(&radius, stream);
 		return true;
@@ -723,14 +718,6 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
-	_name = "parent";
-	_name.toBinaryStream(stream);
-	_offset = stream->getOffset();
-	stream->writeShort(0);
-	TypeInfo<ManagedWeakReference<QuadTreeEntry* > >::toBinaryStream(&parent, stream);
-	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
-	stream->writeShort(_offset, _totalSize);
-
 	_name = "radius";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
@@ -740,7 +727,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 4 + ObservableImplementation::writeObjectMembers(stream);
+	return 3 + ObservableImplementation::writeObjectMembers(stream);
 }
 
 void QuadTreeEntryImplementation::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
@@ -824,8 +811,8 @@ SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntryImplementation::g
 }
 
 QuadTreeEntry* QuadTreeEntryImplementation::getParent() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return parent;
-	return parent;
+	// engine/util/u3d/QuadTreeEntry.idl():  		return null;
+	return NULL;
 }
 
 void QuadTreeEntryImplementation::notifyInsert(QuadTreeEntry* obj) {
@@ -941,8 +928,6 @@ void QuadTreeEntryImplementation::clearBounding() {
 }
 
 void QuadTreeEntryImplementation::setParent(QuadTreeEntry* par) {
-	// engine/util/u3d/QuadTreeEntry.idl():  		parent = par;
-	parent = par;
 }
 
 /*

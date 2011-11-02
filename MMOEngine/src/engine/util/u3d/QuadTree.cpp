@@ -200,7 +200,7 @@ void QuadTree::insert(QuadTreeEntry *obj) {
 		raise(SIGSEGV);
 	}*/
 
-	assert(obj->getParent() == NULL);
+	//assert(obj->getParent() == NULL);
 
 	try {
 		if (QuadTree::doLog()) {
@@ -228,7 +228,7 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 		raise(SIGSEGV);
 	}*/
 
-	assert(obj->getParent() == NULL);
+	//assert(obj->getParent() == NULL);
 
 	try {
 		if (QuadTree::doLog()) {
@@ -264,7 +264,7 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 		raise(SIGSEGV);
 	}*/
 
-	assert(obj->getParent() == NULL);
+	/*assert(obj->getParent() == NULL);
 
 	SortedVector<ManagedReference<QuadTreeEntry*> >* closeObjects = obj->getCloseObjects();
 
@@ -297,9 +297,10 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 					}
 				}
 			}
-		}
+		}*/
 
 
+	try {
 		_inRange(root, obj, range);
 
 		if (QuadTree::doLog()) {
