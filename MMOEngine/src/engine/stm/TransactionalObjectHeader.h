@@ -49,7 +49,7 @@ namespace engine {
 		}
 
 		O getForDirty() {
-			return object;
+			return dynamic_cast<O>(object.get());
 		}
 
 		bool isCurrentVersion(Object* obj);
@@ -201,7 +201,7 @@ namespace engine {
 			//return ownerTransaction->getOpenedObject(this);
 		} else {
 			//add(handle);
-			return dynamic_cast<O>(object.get);
+			return dynamic_cast<O>(object.get());
 		}
 	}
 
