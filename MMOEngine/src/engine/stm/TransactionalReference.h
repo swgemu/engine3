@@ -30,6 +30,10 @@ namespace engine {
 
   	  }
 
+	  TransactionalReference(const TransactionalWeakReference<O>& ref) : Reference<O>(ref) {
+
+	  }
+
 	  TransactionalReference(O obj) : Reference<O>(obj) {
 
   	  }
@@ -41,6 +45,12 @@ namespace engine {
 	  }
 
 	  TransactionalReference& operator=(const Reference<O> ref) {
+		  Reference<O>::operator=(ref);
+
+		  return *this;
+	  }
+
+	  TransactionalReference& operator=(const TransactionalWeakReference<O>& ref) {
 		  Reference<O>::operator=(ref);
 
 		  return *this;
