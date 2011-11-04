@@ -194,14 +194,14 @@ namespace engine {
 
 		if (transaction != NULL) {
 			if (!transaction->isCommited())
-				return object;
+				return dynamic_cast<O>(object.get());
 			else
 				throw TransactionAbortedException();
 
 			//return ownerTransaction->getOpenedObject(this);
 		} else {
 			//add(handle);
-			return object;
+			return dynamic_cast<O>(object.get);
 		}
 	}
 
@@ -219,8 +219,12 @@ namespace engine {
 
 		this->add(handle);
 
-		assert(object != NULL);
-		return object;
+		asser(object != NULL);
+
+		O objectToReturn = dynamic_cast<O>(object.get());
+
+		assert(objectToReturn != NULL);
+		return objectToReturn;
 		//}
 	}
 
