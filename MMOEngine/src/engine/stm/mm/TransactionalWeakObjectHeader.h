@@ -11,7 +11,8 @@ namespace engine {
     namespace mm {
 
 	template<class O> class TransactionalWeakObjectHeader : public TransactionalObjectHeader<O> {
-			WeakReference<Object*> object;
+			//WeakReference<Object*> object;
+			Reference<Object*> object;
 
 	public:
 			TransactionalWeakObjectHeader(O obj) : TransactionalObjectHeader<O>() {

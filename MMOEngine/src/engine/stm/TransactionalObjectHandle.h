@@ -130,10 +130,14 @@ namespace engine {
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 		} else if (accessType == READ){
 			object = header->getObjectForRead(this);
+			
+			assert(object != NULL);
 
 			objectCopy = NULL;
 		} else {
 			object = header->getObjectForWrite(this);
+			
+			assert(object != NULL);
 
 			objectCopy = object;
 			

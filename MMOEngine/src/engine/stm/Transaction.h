@@ -250,7 +250,7 @@ namespace engine {
 	}
 
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {
-		Reference<TransactionalObjectHandle<O>*> handle = openedObjets.get<O>(header);
+		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
 			handle = header->createReadOnlyHandle(this);
