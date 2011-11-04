@@ -159,7 +159,7 @@ namespace engine {
 			if (object == NULL)
 				return NULL;
 
-			return Transaction::currentTransaction()->getStrongHeader(object);
+			return Transaction::currentTransaction()->getHeader(object);
 		}
 
 		void setObject(O object) {

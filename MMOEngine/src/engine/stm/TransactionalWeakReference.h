@@ -128,7 +128,7 @@ public:
 			if (object == NULL)
 				return NULL;
 
-			return Transaction::currentTransaction()->getWeakHeader(object);
+			return Transaction::currentTransaction()->getHeader(object);
 		}
 
 		void setObject(O object) {

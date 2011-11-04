@@ -836,8 +836,6 @@ MMOEngine/src/engine/stm/mm/HazardPointer.h -text
 MMOEngine/src/engine/stm/mm/KernelCall.cpp -text
 MMOEngine/src/engine/stm/mm/KernelCall.h -text
 MMOEngine/src/engine/stm/mm/TransactionalObjectCloner.h -text
-MMOEngine/src/engine/stm/mm/TransactionalStrongObjectHeader.h -text
-MMOEngine/src/engine/stm/mm/TransactionalWeakObjectHeader.h -text
 MMOEngine/src/engine/stm/orb/LocalObjectManager.cpp -text
 MMOEngine/src/engine/stm/orb/LocalObjectManager.h -text
 MMOEngine/src/engine/stm/orb/TransactionalObjectManager.cpp -text

@@ -166,8 +166,7 @@ namespace engine {
 
 		template<class O> O getOpenedObject(TransactionalObjectHeader<O>* header);
 
-		template<class O> TransactionalObjectHeader<O>* getStrongHeader(O object);
-		template<class O> TransactionalObjectHeader<O>* getWeakHeader(O object);
+		template<class O> TransactionalObjectHeader<O>* getHeader(O object);
 
 		bool doCommit();
 
@@ -218,21 +217,11 @@ namespace engine {
 		template<class O> friend class TransactionalWeakReference;
 	};
 
-	template<class O> TransactionalObjectHeader<O>* Transaction::getStrongHeader(O object) {
+	template<class O> TransactionalObjectHeader<O>* Transaction::getHeader(O object) {
 		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
 
 		if (header == NULL) {
-			return new engine::stm::mm::TransactionalStrongObjectHeader<O>(object);
-		}
-
-		return header;
-	}
-
-	template<class O> TransactionalObjectHeader<O>* Transaction::getWeakHeader(O object) {
-		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
-
-		if (header == NULL) {
-			return new engine::stm::mm::TransactionalWeakObjectHeader<O>(object);
+			return new engine::stm::TransactionalObjectHeader<O>(object);
 		}
 
 		return header;
