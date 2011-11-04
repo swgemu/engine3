@@ -280,8 +280,7 @@ protected:
 
 	friend class QuadTreeEntry;
 	friend class TransactionalObjectHandle<QuadTreeEntryImplementation*>;
-	friend class TransactionalWeakObjectHeader<QuadTreeEntryImplementation*>;
-	friend class TransactionalStrongObjectHeader<QuadTreeEntryImplementation*>;
+	friend class TransactionalObjectHeader<QuadTreeEntryImplementation*>;
 };
 
 class QuadTreeEntryAdapter : public ObservableAdapter {

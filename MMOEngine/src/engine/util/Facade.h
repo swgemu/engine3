@@ -103,8 +103,7 @@ protected:
 
 	friend class Facade;
 	friend class TransactionalObjectHandle<FacadeImplementation*>;
-	friend class TransactionalWeakObjectHeader<FacadeImplementation*>;
-	friend class TransactionalStrongObjectHeader<FacadeImplementation*>;
+	friend class TransactionalObjectHeader<FacadeImplementation*>;
 };
 
 class FacadeAdapter : public ManagedObjectAdapter {

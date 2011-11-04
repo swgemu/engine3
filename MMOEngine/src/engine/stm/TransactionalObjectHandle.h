@@ -158,6 +158,8 @@ namespace engine {
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::upgradeToWrite() {
+	        header->add(this);
+	        
 	        objectCopy = object->clone();
 /*	        
 	        assert(object != NULL);

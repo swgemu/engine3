@@ -40,7 +40,7 @@ namespace core {
 
 class ManagedObject : public DistributedObjectStub {
 protected:
-	Reference<TransactionalStrongObjectHeader<class ManagedObjectImplementation*>* > header;
+	Reference<TransactionalObjectHeader<class ManagedObjectImplementation*>* > header;
 public:
 	ManagedObject();
 
@@ -224,8 +224,7 @@ protected:
 
 	friend class ManagedObject;
 	friend class TransactionalObjectHandle<ManagedObjectImplementation*>;
-	friend class TransactionalWeakObjectHeader<ManagedObjectImplementation*>;
-	friend class TransactionalStrongObjectHeader<ManagedObjectImplementation*>;
+	friend class TransactionalObjectHeader<ManagedObjectImplementation*>;
 };
 
 class ManagedObjectAdapter : public DistributedObjectAdapter {

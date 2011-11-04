@@ -86,8 +86,7 @@ protected:
 
 	friend class ManagedService;
 	friend class TransactionalObjectHandle<ManagedServiceImplementation*>;
-	friend class TransactionalWeakObjectHeader<ManagedServiceImplementation*>;
-	friend class TransactionalStrongObjectHeader<ManagedServiceImplementation*>;
+	friend class TransactionalObjectHeader<ManagedServiceImplementation*>;
 };
 
 class ManagedServiceAdapter : public ManagedObjectAdapter {

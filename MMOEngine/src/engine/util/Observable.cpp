@@ -104,7 +104,7 @@ DistributedObjectServant* Observable::_getImplementation() {
 	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
 void Observable::_setImplementation(DistributedObjectServant* servant) {
-	header = new TransactionalStrongObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
+	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
 
 /*

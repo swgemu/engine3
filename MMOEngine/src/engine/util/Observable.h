@@ -118,8 +118,7 @@ protected:
 
 	friend class Observable;
 	friend class TransactionalObjectHandle<ObservableImplementation*>;
-	friend class TransactionalWeakObjectHeader<ObservableImplementation*>;
-	friend class TransactionalStrongObjectHeader<ObservableImplementation*>;
+	friend class TransactionalObjectHeader<ObservableImplementation*>;
 };
 
 class ObservableAdapter : public ManagedObjectAdapter {

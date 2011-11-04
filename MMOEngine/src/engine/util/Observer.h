@@ -118,8 +118,7 @@ protected:
 
 	friend class Observer;
 	friend class TransactionalObjectHandle<ObserverImplementation*>;
-	friend class TransactionalWeakObjectHeader<ObserverImplementation*>;
-	friend class TransactionalStrongObjectHeader<ObserverImplementation*>;
+	friend class TransactionalObjectHeader<ObserverImplementation*>;
 };
 
 class ObserverAdapter : public ManagedObjectAdapter {

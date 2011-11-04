@@ -566,7 +566,7 @@ DistributedObjectServant* QuadTreeEntry::_getImplementation() {
 	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
 void QuadTreeEntry::_setImplementation(DistributedObjectServant* servant) {
-	header = new TransactionalStrongObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
+	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
 
 /*

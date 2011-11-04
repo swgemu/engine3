@@ -89,8 +89,7 @@ protected:
 
 	friend class ManagedVector;
 	friend class TransactionalObjectHandle<ManagedVectorImplementation*>;
-	friend class TransactionalWeakObjectHeader<ManagedVectorImplementation*>;
-	friend class TransactionalStrongObjectHeader<ManagedVectorImplementation*>;
+	friend class TransactionalObjectHeader<ManagedVectorImplementation*>;
 };
 
 class ManagedVectorAdapter : public ManagedObjectAdapter {
