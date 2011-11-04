@@ -33,10 +33,10 @@ public:
 //Vector<bool> commitedTrans;
 AtomicBoolean initializationTransactionStarted;
 
-TransactionalMemoryManager::TransactionalMemoryManager() : heapLock(true), Logger("TransactionalMemoryManager") {
+TransactionalMemoryManager::TransactionalMemoryManager() : Logger("TransactionalMemoryManager"), heapLock(true) {
 	setInstance(this);
 
-#ifndef PLATFORM_MAC
+#ifdef MEMORY_PROTECTION
 	objectHeap.create(2024UL * 1024UL * 1024UL);
 	objectHeap.protect();
 #endif
@@ -200,7 +200,7 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 }
 
 Object* TransactionalMemoryManager::create(size_t size) {
-#ifndef PLATFORM_MAC
+#ifdef MEMORY_PROTECTION
 	return (Object*) objectHeap.allocate(size);
 #else
 	return (Object*) ::malloc(size);
@@ -324,7 +324,7 @@ Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
 }
 
 void TransactionalMemoryManager::setKernelMode() {
-#ifndef PLATFORM_MAC
+#ifdef MEMORY_PROTECTION
 	heapLock.lock();
 
 	objectHeap.unprotect();
@@ -332,7 +332,7 @@ void TransactionalMemoryManager::setKernelMode() {
 }
 
 void TransactionalMemoryManager::setUserMode() {
-#ifndef PLATFORM_MAC
+#ifdef MEMORY_PROTECTION
 	objectHeap.protect();
 
 	heapLock.unlock();

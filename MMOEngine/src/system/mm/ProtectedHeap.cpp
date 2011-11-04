@@ -18,7 +18,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 void initializeKernelStatics(int deviceFD);
 
 ProtectedHeap::ProtectedHeap() {
-#ifdef PLATFORM_LINUX
+#ifdef MEMORY_PROTECTION
 	openDevice(0);
 
 	//heapBase = reinterpret_cast<void*>(2 * MULTIMMAP_HEAP_SIZE);
@@ -69,7 +69,7 @@ void ProtectedHeap::unprotect() {
 
 void initializeKernelStatics(int deviceFD)
 {
-#ifdef PLATFORM_LINUX
+#ifdef MEMORY_PROTECTION
     multimmap_statics_info statics_info;
 
     statics_info.start = 0;
@@ -85,7 +85,7 @@ void initializeKernelStatics(int deviceFD)
 
 void ProtectedHeap::setKernelMemoryProtection(unsigned desiredKEL)
 {
-#ifdef PLATFORM_LINUX
+#ifdef MEMORY_PROTECTION
     struct multimmap_kernel_memory_info memory_info = {
         (unsigned long long) heapBase,
         0,

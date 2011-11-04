@@ -152,6 +152,7 @@ namespace sys {
 	#endif
 
 	#define WITH_STM
+	#define MEMORY_PROTECTION
 
 	namespace lang {
 	} // namespace net

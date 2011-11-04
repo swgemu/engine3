@@ -14,7 +14,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <sys/mman.h>
 #include <limits.h>
 
-#ifdef PLATFORM_LINUX
+#ifdef MEMORY_PROTECTION
 #include <multimmap.h>
 #endif
 
@@ -32,7 +32,7 @@ AtomicInteger Heap::heapCount;
 Heap::Heap() {
 	int count = heapCount.increment();
 
-#ifdef PLATFORM_LINUX
+#ifdef MEMORY_PROTECTION
 	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
 #else
 	heapBase = reinterpret_cast<void*>(512*512*512*4096UL * count);
@@ -49,7 +49,7 @@ Heap::Heap() {
 Heap::Heap(int fd) {
 	int count = heapCount.increment();
 
-#ifdef PLATFORM_LINUX
+#ifdef MEMORY_PROTECTION
 	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
 #else
 	heapBase = reinterpret_cast<void*>(512*512*512*4096UL * count);

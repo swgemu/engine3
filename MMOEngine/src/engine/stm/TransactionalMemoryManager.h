@@ -50,7 +50,7 @@ namespace engine {
 		AtomicInteger failedToNotUNDECIDED;
 		AtomicInteger failedToExceptions;
 
-#ifndef PLATFORM_MAC
+#ifdef	MEMORY_PROTECTION
 		ProtectedHeap objectHeap;
 #endif
 		Mutex heapLock;
