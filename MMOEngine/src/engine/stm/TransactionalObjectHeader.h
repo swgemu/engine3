@@ -219,7 +219,7 @@ namespace engine {
 
 		this->add(handle);
 
-		asser(object != NULL);
+		assert(object != NULL);
 
 		O objectToReturn = dynamic_cast<O>(object.get());
 
