@@ -26,6 +26,7 @@ __attribute__((section("__versions"))) = {
 	{ 0x803cddff, "cdev_init" },
 	{ 0x29537c9e, "alloc_chrdev_region" },
 	{ 0xd8e484f0, "register_chrdev_region" },
+	{ 0x932da67e, "kill_proc" },
 	{ 0x1eca1260, "find_vma" },
 	{ 0x3302b500, "copy_from_user" },
 	{ 0x93afa72e, "vm_get_page_prot" },

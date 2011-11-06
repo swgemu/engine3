@@ -64,10 +64,10 @@ compile-engine:
 	cd build/unix && make
 
 modules:
-	cd external/multimmap && make -C /usr/src/linux-headers-2.6.26-2-amd64 M=`pwd` modules
+	cd external/multimmap && make -C /usr/src/linux-headers-`uname -r` M=`pwd` modules
 	cp external/multimmap/multimmap.ko bin/
-	rmmod multimmap
-	insmod bin/multimmap.ko
+	#rmmod multimmap
+	#insmod bin/multimmap.ko
 	
 clean: recompile-idlc
 	cd build/unix && make clean

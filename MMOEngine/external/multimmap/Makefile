@@ -1,6 +1,5 @@
 obj-m:=multimmap.o
-#KDIR := /lib/modules/$(shell uname -r)/build
-KDIR := /usr/src/linux-headers-2.6.26-2-amd64
+KDIR := /usr/src/linux-headers-$(shell uname -r)
 PWD := $(shell pwd)
 
 all:

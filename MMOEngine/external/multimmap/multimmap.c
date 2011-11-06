@@ -11,6 +11,8 @@
 #include <linux/hugetlb.h>
 #include <linux/mman.h>
 #include <linux/swap.h>
+#include <linux/signal.h>
+#include <linux/sched.h>
 #include <linux/version.h>
 
 #include <asm/tlb.h>
@@ -1914,9 +1916,12 @@ static int multimmap_mmap(struct file* filp, struct vm_area_struct* vma)
 
 static void multimmap_vma_open(struct vm_area_struct* vma)
 {
-    printk("WARNING: multimmap_vma_open: vma=%p, pgoff=%lx, pid=%d called\n",
+	printk("WARNING: multimmap_vma_open: vma=%p, pgoff=%lx, pid=%d called\n",
            vma, vma->vm_pgoff, current->pid);
     //BUG();
+
+    //send_signal(SIGSEGV, &info, p, 1);
+    kill_proc(current->pid, SIGSEGV, 1);
 }
 
 static struct page* multimmap_vma_nopage(struct vm_area_struct* vma, 
