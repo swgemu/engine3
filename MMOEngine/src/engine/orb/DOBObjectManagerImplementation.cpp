@@ -8,7 +8,7 @@
 #include "DOBObjectManagerImplementation.h"
 
 DistributedObjectAdapter* DOBObjectManagerImplementation::addObject(DistributedObjectStub* object) {
-	DistributedObjectServant* servant = object->_getImplementation();
+	DistributedObjectServant* servant = object->getServant();
 
 	if (servant == NULL) {
 		// object not local we add it to remote DOB <-> hosts map

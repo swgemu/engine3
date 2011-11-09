@@ -102,6 +102,13 @@ extern "C" int isinf (double);
 #define isinf(x) (!_finite(x) && !_isnan(x))
 #endif
 
+//#define WMB() __asm__ __volatile__ ("" ::: "memory");
+#define WMB() __sync_synchronize()
+
+#ifdef __clang__
+#define CLANG_COMPILER
+#endif
+
 namespace sys {
 	typedef unsigned long long uint64;
 	typedef unsigned int uint32;

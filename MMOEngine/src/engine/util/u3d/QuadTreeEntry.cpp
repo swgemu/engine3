@@ -682,6 +682,11 @@ bool QuadTreeEntryImplementation::readObjectMember(ObjectInputStream* stream, co
 		return true;
 	}
 
+	if (_name == "parent") {
+		TypeInfo<ManagedWeakReference<QuadTreeEntry* > >::parseFromBinaryStream(&parent, stream);
+		return true;
+	}
+
 	if (_name == "radius") {
 		TypeInfo<float >::parseFromBinaryStream(&radius, stream);
 		return true;
@@ -718,6 +723,14 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
+	_name = "parent";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<ManagedWeakReference<QuadTreeEntry* > >::toBinaryStream(&parent, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
+
 	_name = "radius";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
@@ -727,7 +740,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 3 + ObservableImplementation::writeObjectMembers(stream);
+	return 4 + ObservableImplementation::writeObjectMembers(stream);
 }
 
 void QuadTreeEntryImplementation::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
@@ -811,8 +824,8 @@ SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntryImplementation::g
 }
 
 QuadTreeEntry* QuadTreeEntryImplementation::getParent() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return null;
-	return NULL;
+	// engine/util/u3d/QuadTreeEntry.idl():  		return parent;
+	return parent;
 }
 
 void QuadTreeEntryImplementation::notifyInsert(QuadTreeEntry* obj) {
@@ -928,13 +941,15 @@ void QuadTreeEntryImplementation::clearBounding() {
 }
 
 void QuadTreeEntryImplementation::setParent(QuadTreeEntry* par) {
+	// engine/util/u3d/QuadTreeEntry.idl():  		parent = par;
+	parent = par;
 }
 
 /*
  *	QuadTreeEntryAdapter
  */
 
-QuadTreeEntryAdapter::QuadTreeEntryAdapter(QuadTreeEntryImplementation* obj) : ObservableAdapter(obj) {
+QuadTreeEntryAdapter::QuadTreeEntryAdapter(QuadTreeEntry* obj) : ObservableAdapter(obj) {
 }
 
 Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -1045,131 +1060,131 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 }
 
 void QuadTreeEntryAdapter::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->addInRangeObject(obj, doNotifyUpdate);
+	(static_cast<QuadTreeEntry*>(stub))->addInRangeObject(obj, doNotifyUpdate);
 }
 
 QuadTreeEntry* QuadTreeEntryAdapter::getInRangeObject(int index) {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getInRangeObject(index);
+	return (static_cast<QuadTreeEntry*>(stub))->getInRangeObject(index);
 }
 
 void QuadTreeEntryAdapter::removeInRangeObject(QuadTreeEntry* obj) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->removeInRangeObject(obj);
+	(static_cast<QuadTreeEntry*>(stub))->removeInRangeObject(obj);
 }
 
 void QuadTreeEntryAdapter::removeInRangeObject(int index) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->removeInRangeObject(index);
+	(static_cast<QuadTreeEntry*>(stub))->removeInRangeObject(index);
 }
 
 void QuadTreeEntryAdapter::removeInRangeObjects() {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->removeInRangeObjects();
+	(static_cast<QuadTreeEntry*>(stub))->removeInRangeObjects();
 }
 
 bool QuadTreeEntryAdapter::containsInRangeObject(QuadTreeEntry* obj) {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->containsInRangeObject(obj);
+	return (static_cast<QuadTreeEntry*>(stub))->containsInRangeObject(obj);
 }
 
 bool QuadTreeEntryAdapter::isInRange(QuadTreeEntry* obj, float range) {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->isInRange(obj, range);
+	return (static_cast<QuadTreeEntry*>(stub))->isInRange(obj, range);
 }
 
 bool QuadTreeEntryAdapter::isInRange(float x, float y, float range) {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->isInRange(x, y, range);
+	return (static_cast<QuadTreeEntry*>(stub))->isInRange(x, y, range);
 }
 
 float QuadTreeEntryAdapter::getDistanceTo(QuadTreeEntry* obj) {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getDistanceTo(obj);
+	return (static_cast<QuadTreeEntry*>(stub))->getDistanceTo(obj);
 }
 
 QuadTreeEntry* QuadTreeEntryAdapter::getParent() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getParent();
+	return (static_cast<QuadTreeEntry*>(stub))->getParent();
 }
 
 QuadTreeEntry* QuadTreeEntryAdapter::getRootParent() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getRootParent();
+	return (static_cast<QuadTreeEntry*>(stub))->getRootParent();
 }
 
 void QuadTreeEntryAdapter::notifyInsert(QuadTreeEntry* obj) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->notifyInsert(obj);
+	(static_cast<QuadTreeEntry*>(stub))->notifyInsert(obj);
 }
 
 void QuadTreeEntryAdapter::notifyPositionUpdate(QuadTreeEntry* obj) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->notifyPositionUpdate(obj);
+	(static_cast<QuadTreeEntry*>(stub))->notifyPositionUpdate(obj);
 }
 
 void QuadTreeEntryAdapter::notifyDissapear(QuadTreeEntry* obj) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->notifyDissapear(obj);
+	(static_cast<QuadTreeEntry*>(stub))->notifyDissapear(obj);
 }
 
 float QuadTreeEntryAdapter::getPositionX() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPositionX();
+	return (static_cast<QuadTreeEntry*>(stub))->getPositionX();
 }
 
 float QuadTreeEntryAdapter::getPositionZ() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPositionZ();
+	return (static_cast<QuadTreeEntry*>(stub))->getPositionZ();
 }
 
 float QuadTreeEntryAdapter::getPositionY() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPositionY();
+	return (static_cast<QuadTreeEntry*>(stub))->getPositionY();
 }
 
 float QuadTreeEntryAdapter::getPreviousPositionX() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPreviousPositionX();
+	return (static_cast<QuadTreeEntry*>(stub))->getPreviousPositionX();
 }
 
 float QuadTreeEntryAdapter::getPreviousPositionZ() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPreviousPositionZ();
+	return (static_cast<QuadTreeEntry*>(stub))->getPreviousPositionZ();
 }
 
 float QuadTreeEntryAdapter::getPreviousPositionY() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getPreviousPositionY();
+	return (static_cast<QuadTreeEntry*>(stub))->getPreviousPositionY();
 }
 
 void QuadTreeEntryAdapter::setPosition(float x, float z, float y) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->setPosition(x, z, y);
+	(static_cast<QuadTreeEntry*>(stub))->setPosition(x, z, y);
 }
 
 void QuadTreeEntryAdapter::initializePosition(float x, float z, float y) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->initializePosition(x, z, y);
+	(static_cast<QuadTreeEntry*>(stub))->initializePosition(x, z, y);
 }
 
 int QuadTreeEntryAdapter::compareTo(QuadTreeEntry* obj) {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->compareTo(obj);
+	return (static_cast<QuadTreeEntry*>(stub))->compareTo(obj);
 }
 
 bool QuadTreeEntryAdapter::isInQuadTree() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->isInQuadTree();
+	return (static_cast<QuadTreeEntry*>(stub))->isInQuadTree();
 }
 
 int QuadTreeEntryAdapter::inRangeObjectCount() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->inRangeObjectCount();
+	return (static_cast<QuadTreeEntry*>(stub))->inRangeObjectCount();
 }
 
 unsigned long long QuadTreeEntryAdapter::getObjectID() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getObjectID();
+	return (static_cast<QuadTreeEntry*>(stub))->getObjectID();
 }
 
 float QuadTreeEntryAdapter::getRadius() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->getRadius();
+	return (static_cast<QuadTreeEntry*>(stub))->getRadius();
 }
 
 bool QuadTreeEntryAdapter::isBounding() {
-	return (static_cast<QuadTreeEntryImplementation*>(impl))->isBounding();
+	return (static_cast<QuadTreeEntry*>(stub))->isBounding();
 }
 
 void QuadTreeEntryAdapter::setBounding() {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->setBounding();
+	(static_cast<QuadTreeEntry*>(stub))->setBounding();
 }
 
 void QuadTreeEntryAdapter::setRadius(float rad) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->setRadius(rad);
+	(static_cast<QuadTreeEntry*>(stub))->setRadius(rad);
 }
 
 void QuadTreeEntryAdapter::clearBounding() {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->clearBounding();
+	(static_cast<QuadTreeEntry*>(stub))->clearBounding();
 }
 
 void QuadTreeEntryAdapter::setParent(QuadTreeEntry* par) {
-	(static_cast<QuadTreeEntryImplementation*>(impl))->setParent(par);
+	(static_cast<QuadTreeEntry*>(stub))->setParent(par);
 }
 
 /*
@@ -1197,7 +1212,7 @@ DistributedObjectServant* QuadTreeEntryHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* QuadTreeEntryHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new QuadTreeEntryAdapter(static_cast<QuadTreeEntryImplementation*>(obj->_getImplementation()));
+	DistributedObjectAdapter* adapter = new QuadTreeEntryAdapter(static_cast<QuadTreeEntry*>(obj));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

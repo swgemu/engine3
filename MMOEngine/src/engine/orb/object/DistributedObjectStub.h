@@ -82,6 +82,10 @@ namespace engine {
 		inline DistributedObjectClassHelper* _getClassHelper() {
 			return _classHelper;
 		}
+
+		virtual DistributedObjectServant* getServant() {
+			return _impl;
+		}
 	};
 
 	class DummyConstructorParameter : public Singleton<DummyConstructorParameter>, public Object {

@@ -20,16 +20,21 @@ using namespace engine::stm;
 
 ReadWriteLock Transaction::blockLock;
 
-Transaction::Transaction(int id) : Logger() {
+AtomicInteger HandleCounter::createdHandles;
+AtomicInteger HandleCounter::deletedHandles;
+
+Transaction::Transaction(uint64 id) : Logger() {
 	status = INITIAL;
 
 	commitTime = 0;
 	runTime = 0;
-	commitAttempts = 1;
 
 	task = NULL;
 
-	helperTransaction = NULL;
+	/*currentWriteObjectAcquiring = -1;
+	currentReadObjectAcquiring = -1;
+	currentReadOnlyHandleCleaning = -1;
+	currentReadWriteObjectCleanup = -1;*/
 
 	openedObjets.setNullValue(NULL);
 
@@ -39,6 +44,12 @@ Transaction::Transaction(int id) : Logger() {
 	command = (TransactionalTaskManager*) Core::getTaskManager();
 	commands.add(command);
 
+	command = TransactionalMemoryManager::instance()->getBaseClientManager();
+	commands.add(command);
+
+	command = TransactionalMemoryManager::instance()->getSocketManager();
+	commands.add(command);
+
 	tid = id;
 
 	setInfoLogLevel();
@@ -46,9 +57,12 @@ Transaction::Transaction(int id) : Logger() {
 }
 
 Transaction::~Transaction() {
-	reset();
-
 	debug("deleted");
+
+	readWriteObjects.removeAll();
+	readOnlyObjects.removeAll();
+
+	TransactionalMemoryManager::instance()->increaseDeletedTransactions();
 }
 
 bool Transaction::start() {
@@ -56,45 +70,46 @@ bool Transaction::start() {
 }
 
 bool Transaction::start(Task* task) {
-	if (!setState(INITIAL, UNDECIDED)) {
-		error("failed to start transaction (state " + String::valueOf(status) + ") per:" + String::valueOf(task->getPeriod()));
-
-		return false;
-	}
-
-	assert(task != NULL && "task was NULL");
+	assert(setState(INITIAL, UNDECIDED));
+	assert(task != NULL);
 
 	Transaction::task = task;
+
+	bool successFullStart = true;
 
 	//helperTransaction = NULL;
 
 	String threadName = Thread::getCurrentThread()->getName();
 	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
 
-	TransactionalMemoryManager::instance()->startTransaction(this);
-
 	uint64 startTime = System::getMikroTime();
+
+	assert(isUndecided());
 
 	try {
 		debug("starting transaction");
 
 		task->run();
 	} catch (TransactionAbortedException& e) {
-		abort();
+		successFullStart = false;
+
+		status = ABORTED;
+
 		TransactionalMemoryManager::instance()->increaseFailedByExceptions();
+
+		error("ebati v rot");
 	} catch (Exception& e) {
+		error("exception running a task " + e.getMessage());
 		e.printStackTrace();
-
-		TransactionalMemoryManager::instance()->increaseFailedByExceptions();
-
-		abort();
 	}
+
+	task = NULL;
 
 	runTime += System::getMikroTime() - startTime;
 
 	blockLock.rlock();
 
-	return true;
+	return successFullStart;
 }
 
 bool Transaction::commit() {
@@ -105,38 +120,21 @@ bool Transaction::commit() {
 	int readOnlyObjectsCount = readOnlyObjects.size();
 	int readWriteObjectsCount = readWriteObjects.size();
 
-	bool commited = false;
-
-	//if (tid == 1 || commitAttempts > 0)
-		commited = doCommit();
-
-	commitTime += System::getMikroTime() - startTime;
+	bool commited = doCommit();
 
 	if (commited) {
-		String msg = "ran and commited in " + String::valueOf((commitTime + runTime) / 1000) + "ms Task: " + String(TypeInfo<Object>::getClassName(task)) + " commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
+		finishCommit();
+
+		commitTime += System::getMikroTime() - startTime;
+
+		/*String msg = "ran and commited in " +
+		  String::valueOf((commitTime + runTime) / 1000) + "ms Task: " + String(TypeInfo<Object>::getClassName(task)) +
+		  " commited (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
 				+ String::valueOf(commitAttempts) + " tries, R/W objects "
-				+ readOnlyObjectsCount + " / " + readWriteObjectsCount +")";
-
-		/*if (commitTime + runTime > 50000)
-			warning(msg);
-		else*/
-			debug(msg);
-
-
-		doHelpTransactions();
+				+ readOnlyObjectsCount + " / " + readWriteObjectsCount +")";*/
 	} else {
 		doAbort();
-
-		if (helperTransaction.compareAndSet(NULL, this)) {
-			Thread::yield();
-
-			debug("helping self");
-
-			commited = doRetry(this);
-		}
 	}
-
-	//TransactionalMemoryManager::instance()->setCurrentTransaction(NULL);
 
 	Thread::yield();
 
@@ -145,14 +143,31 @@ bool Transaction::commit() {
 	return commited;
 }
 
+void Transaction::finishCommit() {
+	for (int i = 0; i < commands.size(); ++i) {
+		Command* command = commands.get(i);
+
+		try {
+			command->execute();
+		} catch (TransactionAbortedException& e) {
+			//return false;
+			error("TransactionAbortedException while executing commands isnt allowed");
+		} catch (Exception& e) {
+			e.printStackTrace();
+		}
+	}
+
+	TransactionalMemoryManager::instance()->commitTransaction();
+
+	openedObjets.removeAll();
+	localObjectCache.removeAll();
+}
+
 void Transaction::resolveAbortedHandles() {
-	for (int i = 0; i < readWriteObjects.size(); ++i) {
+/*	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		Reference<TransactionalObjectHandle<Object*>*> handle = readWriteObjects.get(i);
 
 		Reference<TransactionalObjectHandle<Object*>*> last = handle->getLastHandle();
-
-		/*if (last != NULL)
-			last->setPrevious(NULL);*/
 
 		Reference<TransactionalObjectHandle<Object*>*> lastRef = last;
 
@@ -184,90 +199,147 @@ void Transaction::resolveAbortedHandles() {
 
 		//iterate conflicting transactions
 
-	}
+	}*/
 }
 
+void Transaction::cleanReadOnlyHandles() {
+	//for (int i = 0; i <)
+	//int i;
+	//while ((i = currentReadOnlyHandleCleaning.increment()) < readOnlyObjects.size()) {
+	/*for (int i = 0; i < readOnlyObjects.size(); ++i) {
+		Reference<TransactionalObjectHandle<Object*>* > handle = readOnlyObjects.get(i);
+
+		handle->setTransaction(NULL);
+	}*/
+}
+
+bool Transaction::tryFinishCommit(int desiredStatus) {
+	int oldStatus = status;
+	int newStatus;
+
+	//we push final status
+	while (oldStatus <= READ_CHECKING) {
+		newStatus = status.compareAndSetReturnOld(oldStatus, desiredStatus);
+
+		if (oldStatus == newStatus)
+			break;
+
+		oldStatus = newStatus;
+
+		Thread::yield();
+	}
+
+	WMB();
+
+	int finalStatus = status;
+
+	//CLEANUP
+	if (finalStatus == COMMITTED) {
+		releaseReadWriteObjects();
+	} else {
+		discardReadWriteObjects();
+	}
+
+	cleanReadOnlyHandles();
+
+	return finalStatus == COMMITTED;
+}
+
+//Warning! This is called by several threads concurrently!
 bool Transaction::doCommit() {
-	if (!isUndecided()) {
-		debug("transaction not in UNDECIDED state on commit");
-		return false;
-	}
+	int desiredStatus = ABORTED;
 
-	if (!acquireReadWriteObjects()) {
-		debug("failed to acquire read write objects");
-		return false;
-	}
+	if (status == UNDECIDED && readWriteObjects.size() > 0) {
+		WMB();
 
-	if (!setState(UNDECIDED, READ_CHECKING)) {
-		debug("status change UNDECIED -> READ CHECKING failed");
-		return false;
-	}
+		//while ((i = currentWriteObjectAcquiring.increment()) < readWriteObjects.size()) { //<- slower than normal?
+		for (int i = 0; i < readWriteObjects.size(); ++i) {
+			Reference<TransactionalObjectHandle<Object*>* > handle = readWriteObjects.get(i);
+			Reference<Transaction*> competingTransaction = NULL;
 
-	if (!validateReadOnlyObjects()) {
-		debug("failed to validate read only objects");
-		return false;
-	}
+			while (true) {
+				competingTransaction = handle->acquireHeader(this);
 
-	if (!setState(READ_CHECKING, COMMITTED)) {
-		debug("status change READ CHECKING -> COMMITED failed");
-		return false;
-	}
+				if (competingTransaction == this || competingTransaction == NULL) { // we acquired the transaction
+					break;
+				} else {
+					if (competingTransaction != NULL) {
+						if (competingTransaction->isCommited()) {
+							TransactionalMemoryManager::instance()->increaseFailedByCompetingCommited();
 
-	resolveAbortedHandles();
+							return tryFinishCommit(desiredStatus); // we failed
+						} else
+							competingTransaction->doCommit();
+					}
+				}
 
-	for (int i = 0; i < commands.size(); ++i) {
-		Command* command = commands.get(i);
+				Thread::yield();
+			}
 
-		try {
-			command->execute();
-		} catch (TransactionAbortedException& e) {
-			//return false;
-			error("TransactionAbortedException while executing commands isnt allowed");
-		} catch (Exception& e) {
-			e.printStackTrace();
+			if (handle->hasObjectChanged()) {
+				//we fail because a previous/faster transaction commited before we did
+				TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
+
+				return tryFinishCommit(desiredStatus); // we failed
+			}
 		}
 	}
 
-	releaseReadWriteObjects();
+	if (validateReadOnlyObjects())
+		desiredStatus = COMMITTED;
 
-	//outside releaseRWO for perfs to not block transactions since this ops are async
-	try {
-		Command* command = TransactionalMemoryManager::instance()->getBaseClientManager();
-		command->execute();
-
-		command = TransactionalMemoryManager::instance()->getSocketManager();
-		command->execute();
-	} catch (TransactionAbortedException& e) {
-		error("TransactionAbortedException after releasingRWObjects");
-	} catch (Exception& e) {
-		e.printStackTrace();
-	}
-
-	TransactionalMemoryManager::instance()->commitTransaction();
-
-	return true;
+	return tryFinishCommit(desiredStatus);
 }
 
-void Transaction::abort() {
-	int currentStatus = status;
+bool Transaction::validateReadOnlyObjects() {
+	if (status <= READ_CHECKING && readOnlyObjects.size() > 0) {
+		setState(UNDECIDED, READ_CHECKING);
 
-	if (currentStatus == COMMITTED || currentStatus == INITIAL)
-		return;
+		WMB();
 
-	setState(currentStatus, ABORTED);
+		//while ((i = currentReadObjectAcquiring.increment()) < readOnlyObjects.size()) {
+		for (int i = 0; i < readOnlyObjects.size(); ++i) {
+			Reference<TransactionalObjectHandle<Object*>* > handle = readOnlyObjects.get(i);
 
-	if (status == ABORTED)
-		debug("aborting");
-	else
-		debug("aborting failed");
+			if (handle->hasObjectChanged()) {
+				TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
+				return false;
+			}
+
+			Reference<Transaction*> competingTransaction = handle->getCompetingTransaction();
+
+			if (competingTransaction != NULL) {
+				while (competingTransaction->isReadChecking()) {
+					if (tid < competingTransaction->tid) { // we fail the other one
+						competingTransaction->setState(READ_CHECKING, ABORTED);
+					} else { // we help
+						competingTransaction->doCommit();
+					}
+				}
+
+				if (competingTransaction->isCommited()) {
+					if (!handle->isCopyEqualToObject()) { // this transaction will commit or already commited a new version we fail
+						TransactionalMemoryManager::instance()->increaseFailedByCompetingCommited();
+
+						return false;
+					}
+				}
+
+				if (handle->hasObjectChanged()) {
+					TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
 }
 
 void Transaction::doAbort() {
 	Time startTime;
 
-	status = ABORTED;
-
-	discardReadWriteObjects();
+	assert(isAborted());
 
 	for (int i = 0; i < commands.size(); ++i) {
 		Command* command = commands.get(i);
@@ -275,219 +347,32 @@ void Transaction::doAbort() {
 		command->undo();
 	}
 
-	Command* command = TransactionalMemoryManager::instance()->getBaseClientManager();
-	command->undo();
-
-	command = TransactionalMemoryManager::instance()->getSocketManager();
-	command->undo();
-
-	debug("aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, "
-			+ String::valueOf(commitAttempts) + " tries, R/W objects "
+	debug("aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, tries, R/W objects "
 			+ readOnlyObjects.size() + " / " + readWriteObjects.size() +")");
 
-	if (commitAttempts > 1)
-		TransactionalMemoryManager::instance()->retryTransaction();
-
-	++commitAttempts;
-
 	TransactionalMemoryManager::instance()->reclaimObjects(0, 0);
-
-	reset();
-
-	TransactionalMemoryManager::instance()->abortTransaction();
-
-	/*int64 mili = startTime.miliDifference();
-
-	if (mili > 30) {
-		String msg = "aborted in " + String::valueOf(mili) + "ms Task: " + String(TypeInfo<Task>::getClassName(task)) + " aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, ";
-
-		warning(msg);
-	}*/
-}
-
-bool Transaction::doRetry(Transaction* helper) {
-	//TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->executeTaskRandom(task);
-
-	while (!isInitial()) {
-		Thread::yield();
-	}
-
-	while (!isCommited()) {
-		TransactionalMemoryManager::instance()->setCurrentTransaction(this);
-
-		if (start()) {
-
-			commit();
-		}
-	}
-
-	/*if () {
-		while (!isCommited())
-		setHelperTransaction(helper);
-
-		return commit();
-	}*/
-
-	return true;
-
-	/*if (!start())
-		return false;
-
-	return commit();*/
-}
-
-void Transaction::doHelpTransactions() {
-	for (int i = 0; i < helpedTransactions.size(); ++i) {
-		//Transaction* helpedTransaction = helpedTransactions.get(i);
-		Reference<Transaction*> helpedTransaction = helpedTransactions.get(i);
-
-		while (!helpedTransaction->isInitial() && !helpedTransaction->isCommited()) {
-			Thread::yield();
-		}
-
-		/*if (i > 1000)
-			warning("too much waiting? " + String::valueOf(i));*/
-
-		debug("helping transaction " + helpedTransaction->getLoggingName());
-
-		helpedTransaction->doRetry(this);
-	}
-
-//	TransactionalMemoryManager::instance()->setCurrentTransaction(this);
-
-	helpedTransactions.removeAll();
-}
-
-void Transaction::reset() {
-	debug("reset");
 
 	openedObjets.removeAll();
 
 	localObjectCache.removeAll();
 
-	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
+	//We cant clear RW o RO vectors because other threads might be still trying to help us!
 
-		//delete handle;
-
-		handle->setTransaction(NULL);
-
-		handle->resetObjects();
-	}
-
-	readOnlyObjects.removeAll();
-
-	/*for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
-
-		delete handle;
-	}*/
-
-	readWriteObjects.removeAll();
-
-	helpedTransactions.removeAll();
-
-	status = INITIAL;
-}
-
-bool Transaction::acquireReadWriteObjects() {
-	debug("acquiring read/write objects");
-
-	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
-
-		if (handle->hasObjectChanged()) {
-			/////debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
-
-			TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
-			return false;
-		}
-
-		while (!handle->acquireHeader(this)) {
-			Transaction* competingTransaction = handle->getCompetingTransaction();
-			if (competingTransaction == NULL) {
-				/*debug("conflict with already released transaction");
-				return false;*/
-				Thread::yield();
-				continue;
-			}
-
-			/*if (competingTransaction->compareTo(this) > 0)
-				resolveConflict(competingTransaction);
-			else
-				return false;*/
-
-			if (!competingTransaction->isCommited()) {
-				competingTransaction->abort();
-
-				if (competingTransaction->isAborted()) {
-					if (competingTransaction->setHelperTransaction(this)) {
-						helpedTransactions.put(competingTransaction);
-					}
-				}
-			}
-
-
-			/*if (!resolveConflict(competingTransaction)) {
-				debug("could not resolve conflict");
-				return false;
-			}*/
-
-			Thread::yield();
-
-			if (!isUndecided())
-				return false;
-		}
-
-		if (handle->hasObjectChanged()) {
-			//debug("object '" + handle->getObjectLocalCopy()->toString() + "' has changed on acquiring RW objects");
-			TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
-			return false;
-		}
-	}
-
-	/*for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
-
-		if (handle->hasObjectContentChanged()) {
-			readOnlyObjects.remove(i--);
-			readWriteObjects.add(handle);
-
-			if (!handle->acquireHeader(this)) {
-				Transaction* competingTransaction = handle->getCompetingTransaction();
-
-				if (!resolveConflict(competingTransaction)) {
-					return false;
-				}
-			}
-		}
-	}*/
-
-	debug("finished acquiring read/write objects");
-
-	return true;
+	TransactionalMemoryManager::instance()->abortTransaction();
 }
 
 void Transaction::releaseReadWriteObjects() {
 	debug("releasing read/write objects");
 
-	//Vector<Reference<Object*> > objects(100, 100);
+	//Warning! This can be called by several threads concurrently
 
 	KernelCall kernelCall;
 
+	//while ((i = currentReadWriteObjectCleanup.increment()) < readWriteObjects.size()) {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
-		/*Object* objectCopy = handle->getObjectLocalCopy();
-
-		if (objectCopy != NULL) {
-			objects.add(objectCopy);
-		}*/
-
-		handle->setTransaction(NULL);
 		handle->releaseHeader();
-
-		handle->resetObjects();
 	}
 
 	//TransactionalMemoryManager::instance()->getObjectManager()->addObjectsToSave(objects);
@@ -495,31 +380,8 @@ void Transaction::releaseReadWriteObjects() {
 	debug("finished releasing read/write objects");
 }
 
-bool Transaction::validateReadOnlyObjects() {
-	debug("validating read only objects");
-
-	for (int i = 0; i < readOnlyObjects.size(); ++i) {
-		TransactionalObjectHandle<Object*>* handle = readOnlyObjects.get(i);
-
-		if (handle->hasObjectChanged()) {
-			debug("object has changed on validating RO objects");
-			return false;
-		}
-
-		Transaction* competitorTransaction = handle->getCompetingTransaction();
-
-		if (competitorTransaction != NULL && competitorTransaction->isReadChecking()) {
-			if (!resolveConflict(competitorTransaction))
-				return false;
-		}
-	}
-
-	debug("finished validating read only objects");
-
-	return true;
-}
-
 void Transaction::discardReadWriteObjects() {
+	//while ((i = currentReadWriteObjectCleanup.increment()) < readWriteObjects.size()) {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
 		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
 
@@ -527,43 +389,7 @@ void Transaction::discardReadWriteObjects() {
 	}
 }
 
-bool Transaction::resolveConflict(Transaction* transaction) {
-	if (transaction->compareTo(this) < 0) {
-		debug("aborting conflicting transction " + transaction->getLoggingName());
-
-		helpTransaction(transaction);
-
-		return transaction->isAborted();
-	} else {
-		debug("aborting self due to conflict");
-
-		//transaction->helpTransaction(this);
-
-		return false;
-	}
-}
-
-void Transaction::helpTransaction(Transaction* transaction) {
-	transaction->abort();
-
-	if (transaction->isAborted()) {
-		if (!transaction->setHelperTransaction((this)))
-			return;
-
-		debug("adding helped transaction " + transaction->getLoggingName());
-
-		helpedTransactions.put(transaction);
-	}
-}
-
 int Transaction::compareTo(Transaction* transaction) {
-	/*if (transaction > this)
-		return 1;
-	else if (transaction < this)
-		return -1;
-	else
-		return 0;*/
-
 	if (transaction->tid > tid) {
 		return 1;
 	} else if (transaction->tid < tid)
@@ -581,8 +407,7 @@ void Transaction::deleteObject(Object* object) {
 }
 
 String Transaction::toString() {
-	return "Transaction [" + Thread::getCurrentThread()->getName() + "] commited in " + Long::toString(commitTime) + " usec with "
-			+ String::valueOf(commitAttempts) + " attempts";
+	return "Transaction [" + Thread::getCurrentThread()->getName() + "] commited in " + Long::toString(commitTime) + " usec";
 }
 
 bool Transaction::setState(int newstate) {

@@ -81,27 +81,39 @@ namespace sys {
 			#endif
 		}
 
-		bool compareAndSet(uint32 oldval, uint32 newval) {
+		static bool compareAndSet(volatile uint32* val, uint32 oldval, uint32 newval) {
 		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
-			return __sync_bool_compare_and_swap(&value, oldval, newval);
+			return __sync_bool_compare_and_swap(val, oldval, newval);
 		#elif defined(PLATFORM_MAC)
-			return OSAtomicCompareAndSwapLong(oldvalue, newvalue, (volatile int32_t*) &value);
+			return OSAtomicCompareAndSwapLong(oldvalue, newvalue, (volatile int32_t*) val);
 		#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
 			//TODO: find appropriate method
-			 if ( value == oldval ) {
-				 value = newval;
+			 if ( *val == oldval ) {
+				 *val = newval;
 			      return true;
 			  } else {
 			      return false;
 			  }
 		#else
-			InterlockedCompareExchange((volatile LONG*)&value, newval, oldval);
+			InterlockedCompareExchange((volatile LONG*)val, newval, oldval);
 
 			return value == newval;
 		#endif
 		}
 
-		uint32 get() const {
+		uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) {
+			return __sync_val_compare_and_swap(&value, oldval, newval);
+		}
+
+		bool compareAndSet(uint32 oldval, uint32 newval) {
+			WMB();
+
+			return compareAndSet(&value, oldval, newval);
+		}
+
+		inline uint32 get() const {
+			WMB();
+
 			return value;
 		}
 
@@ -113,7 +125,15 @@ namespace sys {
 			return value = val;
 		}
 
-		operator uint32() const {
+		inline bool operator== (const int val) const {
+			WMB();
+
+			return (uint32)val == value;
+		}
+
+		inline operator uint32() const {
+			WMB();
+
 			return value;
 		}
 

@@ -91,6 +91,7 @@ Object::~Object() {
 //	weakReferences = NULL;
 
 	delete _destroying;
+	_destroying = NULL;
 
 	finalize();
 

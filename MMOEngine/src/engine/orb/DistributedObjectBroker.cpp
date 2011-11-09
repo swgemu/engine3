@@ -116,9 +116,10 @@ void DistributedObjectBroker::registerClass(const String& name, DistributedObjec
 }
 
 void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
-	DistributedObjectServant* servant = obj->_getImplementation();
+
+	/*DistributedObjectServant* servant = obj->_getImplementation();
 	if (servant == NULL)
-		throw ObjectNotLocalException(obj);
+		throw ObjectNotLocalException(obj);*/
 
 	try {
 		uint64 objectid = obj->_getObjectID();
@@ -149,9 +150,9 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 }
 
 void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
-	DistributedObjectServant* servant = obj->_getImplementation();
+	/*DistributedObjectServant* servant = obj->_getImplementation();
 	if (servant == NULL)
-		throw ObjectNotLocalException(obj);
+		throw ObjectNotLocalException(obj);*/
 
 	try {
 		Locker locker(objectManager);
@@ -222,7 +223,9 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 	Locker locker(objectManager);//Locker locker(this);
 
-	DistributedObjectServant* servant = NULL;
+#ifndef WITH_STM
+	//DistributedObjectServant* servant = NULL;
+#endif
 
 	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryInterface->unbind(name);
 
@@ -232,7 +235,9 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 		DistributedObjectAdapter* adapter = objectManager->removeObject(obj->_getObjectID());
 
 		if (adapter != NULL) {
-			servant = adapter->getImplementation();
+#ifndef WITH_STM
+			//servant = adapter->_getImplementation();
+#endif
 
 			delete adapter;
 		}
@@ -243,11 +248,11 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 #ifndef WITH_STM
 	obj->_setImplementation(NULL);
 
-	if (servant != NULL) {
+	/*if (servant != NULL) {
 		debug("deleting servant \'" + name + "\'");
 
-		//delete servant;
-	}
+		delete servant;
+	}*/
 #else
 	/*if (obj != NULL)
 		obj->_setImplementation(NULL);*/

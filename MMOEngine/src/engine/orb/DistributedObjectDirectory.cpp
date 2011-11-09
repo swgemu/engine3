@@ -82,7 +82,7 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 		DistributedObjectAdapter* adapter = iterator.getNextValue();
 
 		DistributedObject* dobObject = adapter->getStub();
-		DistributedObjectServant* dobServant = adapter->getImplementation();
+		//DistributedObjectServant* dobServant = adapter->getImplementation();
 
 		if (dobObject->getReferenceCount() == 1)
 			objectsToDeleteFromRAM.add(dobObject);
@@ -94,7 +94,7 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 
 		if (dobObject->_isMarkedForDeletion()) {
 			objectsToDelete.add(dobObject);
-		} else if (dobObject->_isUpdated() && ((ManagedObjectImplementation*)dobServant)->isPersistent()) {
+		} else if (dobObject->_isUpdated() && managedObject->isPersistent()) {
 			objectsToUpdate.add(dobObject);
 		}
 	}

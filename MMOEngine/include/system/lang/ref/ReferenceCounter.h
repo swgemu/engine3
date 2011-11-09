@@ -38,6 +38,7 @@ namespace sys {
 			}
 
 			delete _references;
+			_references = (AtomicInteger*)(uint64)-1;
 		}
 
 	protected:

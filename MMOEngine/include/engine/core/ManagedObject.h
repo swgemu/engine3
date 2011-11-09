@@ -39,6 +39,8 @@ namespace engine {
 namespace core {
 
 class ManagedObject : public DistributedObjectStub {
+protected:
+	Reference<TransactionalObjectHeader<class ManagedObjectImplementation*>* > header;
 public:
 	ManagedObject();
 
@@ -72,6 +74,8 @@ public:
 
 	bool parseFromBinaryStream(ObjectInputStream* stream);
 
+	DistributedObjectServant* getServant();
+
 	void initializeTransientMembers();
 
 	void updateToDatabase();
@@ -91,8 +95,11 @@ public:
 	void setPersistent(int level);
 
 	DistributedObjectServant* _getImplementation();
+	DistributedObjectServant* _getDirtyImplementation();
 
 	void _setImplementation(DistributedObjectServant* servant);
+
+	bool _isCurrentVersion(ManagedObjectImplementation* servant);
 
 protected:
 	ManagedObject(DummyConstructorParameter* param);
@@ -123,9 +130,7 @@ protected:
 
 	void _writeObject(ObjectOutputStream* stream);
 
-	unsigned int _getLastCRCSave();
-
-	void _setLastCRCSave(unsigned int crc);
+	DistributedObjectServant* _getServant();
 
 	friend class ManagedObjectHelper;
 };
@@ -172,6 +177,8 @@ public:
 
 	bool parseFromBinaryStream(ObjectInputStream* stream);
 
+	DistributedObjectServant* getServant();
+
 	virtual void initializeTransientMembers();
 
 	void updateToDatabase();
@@ -204,6 +211,10 @@ public:
 protected:
 	virtual ~ManagedObjectImplementation();
 
+	Object* clone();
+	Object* clone(void* object);
+	void free();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -215,11 +226,13 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedObject;
+	friend class TransactionalObjectHandle<ManagedObjectImplementation*>;
+	friend class TransactionalObjectHeader<ManagedObjectImplementation*>;
 };
 
 class ManagedObjectAdapter : public DistributedObjectAdapter {
 public:
-	ManagedObjectAdapter(ManagedObjectImplementation* impl);
+	ManagedObjectAdapter(ManagedObject* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
 
@@ -254,6 +267,10 @@ public:
 	unsigned int getLastCRCSave();
 
 	void setLastCRCSave(unsigned int crc);
+
+	bool isPersistent();
+
+	int getPersistenceLevel();
 
 protected:
 	String _param0_setLockName__String_;

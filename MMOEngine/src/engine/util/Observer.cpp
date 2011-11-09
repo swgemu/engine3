@@ -247,7 +247,7 @@ int ObserverImplementation::compareTo(Observer* obj) {
  *	ObserverAdapter
  */
 
-ObserverAdapter::ObserverAdapter(ObserverImplementation* obj) : ManagedObjectAdapter(obj) {
+ObserverAdapter::ObserverAdapter(Observer* obj) : ManagedObjectAdapter(obj) {
 }
 
 Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -271,15 +271,15 @@ Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 }
 
 int ObserverAdapter::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
-	return (static_cast<ObserverImplementation*>(impl))->notifyObserverEvent(eventType, observable, arg1, arg2);
+	return (static_cast<Observer*>(stub))->notifyObserverEvent(eventType, observable, arg1, arg2);
 }
 
 unsigned long long ObserverAdapter::getObjectID() {
-	return (static_cast<ObserverImplementation*>(impl))->getObjectID();
+	return (static_cast<Observer*>(stub))->getObjectID();
 }
 
 int ObserverAdapter::compareTo(Observer* obj) {
-	return (static_cast<ObserverImplementation*>(impl))->compareTo(obj);
+	return (static_cast<Observer*>(stub))->compareTo(obj);
 }
 
 /*
@@ -307,7 +307,7 @@ DistributedObjectServant* ObserverHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ObserverHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ObserverAdapter(static_cast<ObserverImplementation*>(obj->_getImplementation()));
+	DistributedObjectAdapter* adapter = new ObserverAdapter(static_cast<Observer*>(obj));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

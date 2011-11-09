@@ -97,10 +97,38 @@ namespace sys {
 			return false;
 		}
 
+		O compareAndSetReturnOld(O oldval, O newval) {
+			O oldRef = object.compareAndSetReturnOld(oldval, newval);
+
+			if (oldval == oldRef) { //success
+				if (newval != NULL)
+					newval->acquire();
+
+				if (oldval != NULL)
+					oldval->release();
+			}
+
+			return oldRef;
+		}
+
+		bool compareAndSet(O oldval, O newval) {
+			bool success = object.compareAndSet(oldval, newval);
+
+			if (success) {
+				if (newval != NULL)
+					newval->acquire();
+
+				if (oldval != NULL)
+					oldval->release();
+			}
+
+			return success;
+		}
+
 	protected:
 		inline void updateObject(O obj) {
-			if (obj == object.get())
-				return;
+			/*if (obj == object.get())
+				return;*/
 
 			//This needs to be an atomic operation, 2 threads updating/reading this messes shit up
 			//Thread A reading while thread B updating, thread A reads NULL cause it releases and then acquires
@@ -113,7 +141,7 @@ namespace sys {
 			}
 
 			while (true) {
-				O oldobj = object.get();
+				/*O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL) {
@@ -121,7 +149,20 @@ namespace sys {
 					}
 
 					return;
+				}*/
+
+				O oldobj = object.get();
+
+				O oldRef = object.compareAndSetReturnOld(oldobj, obj);
+
+				if (oldRef == oldobj) { //success
+					if (oldRef != NULL)
+						oldRef->release();
+
+					break;
 				}
+
+				Thread::yield();
 			}
 
 		}

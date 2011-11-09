@@ -23,6 +23,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/util/VectorMap.h"
 #endif
 
+namespace engine {
+        namespace stm {
+                class TransactionalMemoryManager;
+        }
+}
+
 namespace sys {
 	namespace mm {
 		class MemoryManager;
@@ -52,7 +58,7 @@ namespace sys {
 
 	class Object : public ReferenceCounter, public Variable {
 //	#ifndef WITH_STM
-		Mutex referenceMutex;
+		Mutex* referenceMutex;
 //	#endif
 
 		//ArrayList<WeakReferenceBase*> weakReferences;
@@ -152,6 +158,7 @@ namespace sys {
 
 		friend class sys::mm::MemoryManager;
 		friend class WeakReference<Object*>;
+		friend class engine::stm::TransactionalMemoryManager;
 	};
 
   } // namespace lang

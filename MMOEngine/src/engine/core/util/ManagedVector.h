@@ -94,7 +94,7 @@ protected:
 
 class ManagedVectorAdapter : public ManagedObjectAdapter {
 public:
-	ManagedVectorAdapter(ManagedVectorImplementation* impl);
+	ManagedVectorAdapter(ManagedVector* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
 

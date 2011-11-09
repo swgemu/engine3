@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
-*/
+ */
 
 #ifndef ENGINE_STM_TRANSACTIONALWEAKREFERENCE_H_
 #define ENGINE_STM_TRANSACTIONALWEAKREFERENCE_H_
@@ -10,59 +10,59 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TransactionalWeakReference.h"
 
 namespace engine {
-  namespace stm {
+namespace stm {
 
-   //template <class O> class TransactionalObjectHeader;
-   //   template<class O> class TransactionalWeakReference;
+//template <class O> class TransactionalObjectHeader;
+//   template<class O> class TransactionalWeakReference;
 
 #ifndef WITH_STM
-  template<class O> class TransactionalReference : public Reference<O> {
-  public:
-	  TransactionalReference() : Reference<O>() {
+template<class O> class TransactionalReference : public Reference<O> {
+public:
+	TransactionalReference() : Reference<O>() {
 
-  	  }
+	}
 
-	  TransactionalReference(const TransactionalReference& ref) : Reference<O>(ref) {
+	TransactionalReference(const TransactionalReference& ref) : Reference<O>(ref) {
 
-  	  }
+	}
 
-	  TransactionalReference(const Reference<O>& ref) : Reference<O>(ref) {
+	TransactionalReference(const Reference<O>& ref) : Reference<O>(ref) {
 
-  	  }
+	}
 
-	  TransactionalReference(const TransactionalWeakReference<O>& ref) : Reference<O>(ref) {
+	TransactionalReference(const TransactionalWeakReference<O>& ref) : Reference<O>(ref) {
 
-	  }
+	}
 
-	  TransactionalReference(O obj) : Reference<O>(obj) {
+	TransactionalReference(O obj) : Reference<O>(obj) {
 
-  	  }
+	}
 
-	  TransactionalReference& operator=(const TransactionalReference& ref) {
-		  Reference<O>::operator=(ref);
+	TransactionalReference& operator=(const TransactionalReference& ref) {
+		Reference<O>::operator=(ref);
 
-		  return *this;
-	  }
+		return *this;
+	}
 
-	  TransactionalReference& operator=(const Reference<O> ref) {
-		  Reference<O>::operator=(ref);
+	TransactionalReference& operator=(const Reference<O> ref) {
+		Reference<O>::operator=(ref);
 
-		  return *this;
-	  }
+		return *this;
+	}
 
-	  TransactionalReference& operator=(const TransactionalWeakReference<O>& ref) {
-		  Reference<O>::operator=(ref);
+	TransactionalReference& operator=(const TransactionalWeakReference<O>& ref) {
+		Reference<O>::operator=(ref);
 
-		  return *this;
-	  }
+		return *this;
+	}
 
-	  O operator=(O obj) {
-		  return Reference<O>::operator=(obj);
-	  }
-  };
+	O operator=(O obj) {
+		return Reference<O>::operator=(obj);
+	}
+};
 #else
 
-  	template<class O> class TransactionalReference {
+	template<class O> class TransactionalReference {
 		Reference<TransactionalObjectHeader<O>*> header;
 
 	public:
@@ -77,9 +77,9 @@ namespace engine {
 		TransactionalReference(const TransactionalReference& ref) {
 			header = ref.header;
 		}
-		
+
 		TransactionalReference(const TransactionalWeakReference<O>& ref) {
-		        header = ref.header;
+			header = ref.header;
 		}
 
 		~TransactionalReference() {
@@ -94,11 +94,11 @@ namespace engine {
 
 			return *this;
 		}
-		
+
 		TransactionalReference& operator=(const TransactionalWeakReference<O>& ref) {
-		        header = ref.header;
-		        
-		        return *this;
+			header = ref.header;
+
+			return *this;
 		}
 
 		O operator=(O obj) {
@@ -116,14 +116,14 @@ namespace engine {
 		}
 
 		O operator->() {
-		        O point = getForUpdate();
-		        
-		        ptrdiff_t rel = (ptrdiff_t)point - (ptrdiff_t)0x8000000000;
-		        
-		        assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
-		        
-//		        assert(!((uint64)point & 0x8000000000));
-		        
+			O point = getForUpdate();
+
+			ptrdiff_t rel = (ptrdiff_t)point - (ptrdiff_t)0x8000000000;
+
+			assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
+
+			//		        assert(!((uint64)point & 0x8000000000));
+
 			return point;
 		}
 
@@ -145,8 +145,15 @@ namespace engine {
 				return NULL;
 		}
 
+		O getForDirty() {
+			if (header != NULL)
+				return header->getForDirty();
+			else
+				return NULL;
+		}
+
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			return get()->toBinaryStream(stream);
+			return getForDirty()->toBinaryStream(stream);
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
@@ -170,7 +177,7 @@ namespace engine {
 #endif
 
 
-  } // namespace stm
+} // namespace stm
 } // namespace engine
 
 #endif /* ENGINE_STM_TRANSACTIONALREFERENCE_H_ */

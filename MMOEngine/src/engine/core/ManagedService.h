@@ -91,7 +91,7 @@ protected:
 
 class ManagedServiceAdapter : public ManagedObjectAdapter {
 public:
-	ManagedServiceAdapter(ManagedServiceImplementation* impl);
+	ManagedServiceAdapter(ManagedService* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
 

@@ -119,37 +119,17 @@ void ManagedObject::writeObject(ObjectOutputStream* stream) {
 		_implementation->writeObject(stream);
 }
 
-unsigned int ManagedObject::getLastCRCSave() {
-	Reference<ManagedObjectImplementation*> _implementation;
-
+DistributedObjectServant* ManagedObject::getServant() {
 #ifdef WITH_STM
-	_implementation = header->getForDirty();
+	return header->getForDirty();
 #else
-	_implementation = (ManagedObjectImplementation*) _getImplementation();
+	return _getImplementation();
 #endif
-
-	if (_implementation == NULL) {
-		throw ObjectNotDeployedException(this);
-	} else
-		return _implementation->getLastCRCSave();
 }
 
-void ManagedObject::setLastCRCSave(unsigned int crc) {
-	Reference<ManagedObjectImplementation*> _implementation;
-
-#ifdef WITH_STM
-	_implementation = header->getForDirty();
-#else
-	_implementation = (ManagedObjectImplementation*) _getImplementation();
-#endif
-
-	if (_implementation == NULL) {
-		throw ObjectNotLocalException(this);
-	} else
-		_implementation->setLastCRCSave(crc);
+DistributedObjectServant* ManagedObjectImplementation::getServant() {
+	return this;
 }
-
-
 
 bool ManagedObjectImplementation::notifyDestroy() {
 	//return _this->notifyDestroy();

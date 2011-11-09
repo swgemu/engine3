@@ -8,7 +8,7 @@
 #include "../DatabaseException.h"
 
 #include "Environment.h"
-#include "Transaction.h"
+#include "BTransaction.h"
 #include "BerkeleyDatabase.h"
 
 using namespace engine::db::berkley;

@@ -151,6 +151,8 @@ protected:
 
 	bool bounding;
 
+	ManagedWeakReference<QuadTreeEntry* > parent;
+
 	SortedVector<ManagedReference<QuadTreeEntry* > > closeobjects;
 
 	float radius;
@@ -285,7 +287,7 @@ protected:
 
 class QuadTreeEntryAdapter : public ObservableAdapter {
 public:
-	QuadTreeEntryAdapter(QuadTreeEntryImplementation* impl);
+	QuadTreeEntryAdapter(QuadTreeEntry* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
 

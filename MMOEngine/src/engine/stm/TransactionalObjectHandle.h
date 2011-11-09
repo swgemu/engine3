@@ -15,27 +15,32 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHeader;
 
+	class HandleCounter {
+	public:
+		static AtomicInteger createdHandles;
+		static AtomicInteger deletedHandles;
+	};
+
 	template<class O> class TransactionalObjectHandle : public Object {
 		TransactionalObjectHeader<O>* header;
 
 		Reference<Object*> object;
 		Reference<Object*> objectCopy;
 
-		Reference<TransactionalObjectHandle<O>*> next;
-
-		Reference<Transaction*> transaction;
+		//Reference<TransactionalObjectHandle<O>*> next;
 
 	public:
 		TransactionalObjectHandle();
 
 		enum {CREATE, READ, WRITE};
+
 		void initialize(TransactionalObjectHeader<O>* hdr, int accessType, Transaction* trans);
 
 		virtual ~TransactionalObjectHandle();
 
 		void upgradeToWrite();
 
-		bool acquireHeader(Transaction* transaction);
+		Transaction* acquireHeader(Transaction* transaction);
 
 		void releaseHeader();
 
@@ -58,6 +63,10 @@ namespace engine {
 		bool hasObjectChanged();
 		bool hasObjectContentChanged();
 
+		bool isCopyEqualToObject() {
+			return objectCopy == object;
+		}
+
 		int compareTo(TransactionalObjectHandle* handle) {
 			if ((TransactionalObjectHandle*) this == handle)
 				return 0;
@@ -67,6 +76,10 @@ namespace engine {
 				return -1;
 		}
 
+		int compareToHeaders(TransactionalObjectHandle<O>* handle);
+
+		uint64 getHeaderID();
+
 		Object* getObject() {
 			return object;
 		}
@@ -75,43 +88,29 @@ namespace engine {
 			return objectCopy;
 		}
 
-		Transaction* getTransaction() {
-			return transaction;
-		}
-
-		inline void setTransaction(Transaction* trans) {
-			transaction = trans;
-			assert((uintptr_t) trans > 0x1000 || trans == NULL);
-		}
-
 		inline void resetObjects() {
 			object = NULL;
 
-			if (objectCopy != NULL) {
-				delete objectCopy;
-				objectCopy = NULL;
-			}
-		}
-
-		TransactionalObjectHandle<Object*>* getPrevious() {
-			return (TransactionalObjectHandle<Object*>*) next;
+			objectCopy = NULL;
 		}
 	};
 
 	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle() {
 		header = NULL;
-		transaction = NULL;
+		//transaction = NULL;
 
 		object = NULL;
 
 		objectCopy = NULL;
+
+//		HandleCounter::createdHandles.increment();
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::initialize(TransactionalObjectHeader<O>* hdr, int accessType, Transaction* trans) {
 		header = hdr;
 
 		assert((uintptr_t) trans > 0x1000);
-		transaction = trans;
+		//transaction = trans;
 
 		if (accessType == WRITE) {
 			//KernelCall kernelCall;
@@ -153,15 +152,17 @@ namespace engine {
 		object = NULL;
 		objectCopy = NULL;
 
+	//	HandleCounter::deletedHandles.increment();
+
 		/*printf("TransactionHandle %p deleted at\n", this);
 		StackTrace::printStackTrace();*/
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::upgradeToWrite() {
-	        header->add(this);
-	        
-	        objectCopy = object->clone();
-/*	        
+		header->add(this);
+
+		objectCopy = object->clone();
+		/*
 	        assert(object != NULL);
 	        
 		objectCopy = dynamic_cast<O>(object->clone());
@@ -171,20 +172,27 @@ namespace engine {
 		assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));*/
 	}
 
-	template<class O> bool TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {
+	template<class O> Transaction* TransactionalObjectHandle<O>::acquireHeader(Transaction* transaction) {
 		return header->acquireObject(transaction);
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::releaseHeader() {
-		header->releaseObject(this);
+		Reference<Object*> obj = objectCopy.get();
 
-		objectCopy = NULL;
+		if (obj != NULL && objectCopy.compareAndSet(obj, NULL)) { // this is to avoid several threads releasing it*/
+			header->releaseObject(this, obj);
+
+			resetObjects();
+		}
+
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
 		header->discardObject(transaction);
 
-		objectCopy = NULL;
+		resetObjects();
+
+		//this->transaction = NULL; <---------- this is wrong its the param
 	}
 
 	template<class O> Transaction* TransactionalObjectHandle<O>::getCompetingTransaction() {
@@ -199,8 +207,26 @@ namespace engine {
 		return memcmp(object, objectCopy, sizeof(O)) != 0;
 	}
 
-	template<class O> void TransactionalObjectHandle<O>::setPrevious(TransactionalObjectHandle<O>* n) {
+	/*template<class O> void TransactionalObjectHandle<O>::setPrevious(TransactionalObjectHandle<O>* n) {
 		next = n;
+	}*/
+
+	template<class O> uint64 TransactionalObjectHandle<O>::getHeaderID() {
+		return header->getHeaderID();
+	}
+
+
+	template<class O> int TransactionalObjectHandle<O>::compareToHeaders(TransactionalObjectHandle<O>* handle) {
+		//printf("blia\n");
+
+		uint64 headerID = handle->getHeaderID();
+
+		if (header->getHeaderID() == headerID)
+			return 0;
+		else if (header->getHeaderID() < headerID)
+			return 1;
+		else
+			return -1;
 	}
 
   } // namespace stm

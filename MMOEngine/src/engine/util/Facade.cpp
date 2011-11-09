@@ -237,7 +237,7 @@ int FacadeImplementation::clearSession() {
  *	FacadeAdapter
  */
 
-FacadeAdapter::FacadeAdapter(FacadeImplementation* obj) : ManagedObjectAdapter(obj) {
+FacadeAdapter::FacadeAdapter(Facade* obj) : ManagedObjectAdapter(obj) {
 }
 
 Packet* FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -261,15 +261,15 @@ Packet* FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 }
 
 int FacadeAdapter::initializeSession() {
-	return (static_cast<FacadeImplementation*>(impl))->initializeSession();
+	return (static_cast<Facade*>(stub))->initializeSession();
 }
 
 int FacadeAdapter::cancelSession() {
-	return (static_cast<FacadeImplementation*>(impl))->cancelSession();
+	return (static_cast<Facade*>(stub))->cancelSession();
 }
 
 int FacadeAdapter::clearSession() {
-	return (static_cast<FacadeImplementation*>(impl))->clearSession();
+	return (static_cast<Facade*>(stub))->clearSession();
 }
 
 /*
@@ -297,7 +297,7 @@ DistributedObjectServant* FacadeHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* FacadeHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new FacadeAdapter(static_cast<FacadeImplementation*>(obj->_getImplementation()));
+	DistributedObjectAdapter* adapter = new FacadeAdapter(static_cast<Facade*>(obj));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

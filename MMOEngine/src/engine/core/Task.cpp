@@ -53,14 +53,32 @@ void Task::initialize() {
 
 void Task::execute() {
 #ifdef WITH_STM
-	Reference<engine::stm::Transaction*> transaction = engine::stm::Transaction::currentTransaction();
-	//engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
+
+	//Logger::console.info("executing " + TypeInfo<Task>::getClassName(this), true);
 
 	try {
-		if (!transaction->start(this))
-			return;
+		int commitAttempts = 0;
 
-		transaction->commit();
+		Reference<engine::stm::Transaction*> transaction;
+
+		while (true) {
+			transaction = TransactionalMemoryManager::instance()->startTransaction();
+			//engine::stm::Transaction* transaction = engine::stm::Transaction::currentTransaction();
+
+			++commitAttempts;
+
+			if (transaction->start(this)) {
+				if (transaction->commit())
+					break;
+			}
+
+			if (commitAttempts > 1)
+				TransactionalMemoryManager::instance()->retryTransaction();
+		}
+
+		/*if (transaction->getReferenceCount() > 1)
+			Logger::console.info("refs left of transaction " + String::valueOf(transaction->getReferenceCount()), true);*/
+
 	} catch (Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();

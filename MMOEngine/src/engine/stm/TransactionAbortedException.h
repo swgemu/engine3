@@ -13,7 +13,7 @@ namespace engine {
 		TransactionAbortedException() {
 			Transaction* currentTransaction = Transaction::currentTransaction();
 
-			currentTransaction->abort();
+			currentTransaction->setState(Transaction::ABORTED);
 		}
 	};
 

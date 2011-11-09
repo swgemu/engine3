@@ -106,6 +106,9 @@ class ManagedObject {
 		initializeTransientMembers();
 	}*/
 	
+	@local
+	@nativeStub
+	public native DistributedObjectServant getServant();
 	
 	public abstract native void initializeTransientMembers();
 	
@@ -116,22 +119,22 @@ class ManagedObject {
 		updateToDatabaseTask = null;
 	}
 	
-	@nativeStub
+	@dirty
 	public unsigned int getLastCRCSave() {
 		return lastCRCSave;
 	}
 	
-	@nativeStub
+	@dirty
 	public void setLastCRCSave(unsigned int crc) {
 		lastCRCSave = crc;
 	}
 	
-	@local
+	@dirty
 	public boolean isPersistent() {
 		return persistenceLevel != 0;
 	}
 	
-	@local
+	@dirty
 	public int getPersistenceLevel() {
 		return persistenceLevel;
 	}

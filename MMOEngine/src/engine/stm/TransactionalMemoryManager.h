@@ -38,17 +38,23 @@ namespace engine {
 
 		ThreadLocal<Reference<Transaction*>* > currentTransaction;
 
-		AtomicInteger transactionID;
+		AtomicLong transactionID;
 
 		AtomicInteger startedTransactions;
 		AtomicInteger commitedTransactions;
+		AtomicInteger totalCommitedTransactions;
 		AtomicInteger abortedTransactions;
 		AtomicInteger retryConflicts;
+		AtomicInteger deletedTransactions;
 		AtomicInteger failedOnAcquireRW;
 		AtomicInteger failedToResolveConflict;
 		AtomicInteger failedToResolveConflictReleasedTransaction;
 		AtomicInteger failedToNotUNDECIDED;
 		AtomicInteger failedToExceptions;
+		AtomicInteger failedCompetingCommited;
+
+		/*AtomicInteger createdHandles;
+		AtomicInteger deletedHandles;*/
 
 #ifdef	MEMORY_PROTECTION
 		ProtectedHeap objectHeap;
@@ -62,7 +68,7 @@ namespace engine {
 		ReadWriteLock blockLock;
 
 	public:
-		static void commitPureTransaction();
+		static void commitPureTransaction(Transaction* transaction);
 
 		static void closeThread() {
 			instance()->reclaimObjects(5000, 0);
@@ -70,6 +76,8 @@ namespace engine {
 
 		Object* create(size_t size);
 		void destroy(Object* object);
+
+		Transaction* startTransaction();
 
 		void printStatistics();
 
@@ -97,13 +105,27 @@ namespace engine {
 			failedToExceptions.increment();
 		}
 
+		/*inline void increaseCreatedHandles() {
+			createdHandles.increment();
+		}
+
+		inline void increaseDeletedHandles() {
+			deletedHandles.increment();
+		}*/
+
 		inline void increaseFailedByObjectChanged() {
 			failedOnAcquireRW.increment();
+		}
+
+		inline void increaseFailedByCompetingCommited() {
+			failedCompetingCommited.increment();
 		}
 
 		inline void unblockTransactions() {
 			Transaction::blockLock.unlock();
 		}
+
+		void retryTransaction();
 
 		void setKernelMode();
 		void setUserMode();
@@ -115,19 +137,19 @@ namespace engine {
 
 		Transaction* getTransaction();
 
-		void startTransaction(Transaction* transaction);
-
 		void commitTransaction();
 
 		void abortTransaction();
 
-		void retryTransaction();
+		void setCurrentTransaction(Transaction* transaction);
 
 		void reclaim(Object* object);
 
-		void setCurrentTransaction(Transaction* transaction);
-
 		void reclaimObjects(int objectsToSpare = 0, int maxObjectsToReclaim = 0);
+
+		void increaseDeletedTransactions() {
+			deletedTransactions.increment();
+		}
 
 		Vector<Object*>* getReclamationList();
 

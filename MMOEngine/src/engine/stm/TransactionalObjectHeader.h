@@ -14,6 +14,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Transaction.h"
 
+//#define STMLINKELISTDHELP
+
 namespace engine {
   namespace stm {
 
@@ -21,21 +23,40 @@ namespace engine {
 
 	template<class O> class TransactionalObjectHeader : public Object {
 	protected:
-		AtomicReference<Transaction*> ownerTransaction;
+		Reference<Transaction*> ownerTransaction;
 
-		AtomicReference<TransactionalObjectHandle<O>* > last;
+		//AtomicReference<TransactionalObjectHandle<O>* > last;
 
 		Reference<Object*> object;
+
+		uint64 headerID;
+
+		static AtomicLong globalHeaderCounter;
 
 	public:
 		TransactionalObjectHeader(O obj) {
 			setObject(obj);
 
 			ownerTransaction = NULL;
-			last = NULL;
+			//last = NULL;
+
+			headerID = globalHeaderCounter.increment();
 		}
 
 		virtual ~TransactionalObjectHeader() {
+		}
+
+		int compareTo(TransactionalObjectHeader* header) {
+			if (headerID == header->headerID)
+				return 0;
+			else if (headerID < header->headerID)
+				return -1;
+			else
+				return 1;
+		}
+
+		uint64 getHeaderID() {
+			return headerID;
 		}
 
 		O get();
@@ -67,9 +88,9 @@ namespace engine {
 		Reference<TransactionalObjectHandle<O>*> createReadOnlyHandle(Transaction* transaction);
 		Reference<TransactionalObjectHandle<O>*> createWriteHandle(Transaction* transaction);
 
-		bool acquireObject(Transaction* transaction);
+		Transaction* acquireObject(Transaction* transaction);
 
-		void releaseObject(TransactionalObjectHandle<O>* handle);
+		void releaseObject(TransactionalObjectHandle<O>* handle, Object* objectCopy);
 
 		void discardObject(Transaction* transaction);
 
@@ -99,6 +120,9 @@ namespace engine {
 		friend class Transaction;
 		friend class TransactionalObjectHandle<O>;
 	};
+
+	template<class O>
+	AtomicLong TransactionalObjectHeader<O>::globalHeaderCounter;
 
 	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createCreationHandle(Transaction* transaction) {
 		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
@@ -133,18 +157,22 @@ namespace engine {
 		return Transaction::currentTransaction()->openObjectForWrite<O>(this);
 	}
 
-	template<class O> bool TransactionalObjectHeader<O>::acquireObject(Transaction* transaction) {
+	template<class O> Transaction* TransactionalObjectHeader<O>::acquireObject(Transaction* transaction) {
 		/*System::out.println("[" + Thread::getCurrentThread()->getName() +"] acquiring (" + String::valueOf((uint64) ownerTransaction.get()) +
 				", " + String::valueOf((uint64) transaction) + ")" );*/
 
-		return ownerTransaction.compareAndSet(NULL, transaction);
+		//Reference<Transaction*> str
+		return ownerTransaction.compareAndSetReturnOld(NULL, transaction);
 	}
 
 	template<class O> void TransactionalObjectHeader<O>::discardObject(Transaction* transaction) {
+		/*if (!ownerTransaction.compareAndSet(transaction, NULL))
+			assert(0 && "hui");*/
 		ownerTransaction.compareAndSet(transaction, NULL);
 	}
 
 	template <class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::add(TransactionalObjectHandle<O>* handle) {
+#ifdef STMLINKELISTDHELP
 		if (handle != NULL)
 			handle->acquire();
 
@@ -166,6 +194,9 @@ namespace engine {
 
 			Thread::yield();
 		}
+#else
+		return NULL;
+#endif
 	}
 
 	template<class O> bool TransactionalObjectHeader<O>::isCurrentVersion(Object* obj) {
@@ -175,20 +206,21 @@ namespace engine {
 		return object == obj;
 	}
 
-	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle) {
-		object = handle->getObjectLocalCopy()->clone(NULL);
+	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle, Object* objectCopy) {
+		//if (objectCopy != NULL) {
+
+		assert(ownerTransaction != NULL);
+
+		object = objectCopy;
 
 		assert(object != NULL);
 
-		//TransactionalObjectHeader<O>::last = NULL;
-
-		//ownerTransaction->release();
-
 		TransactionalObjectHeader<O>::ownerTransaction = NULL;
+		//s}
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
-		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
+		/*Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
 		assert(object != NULL);
 
@@ -202,13 +234,15 @@ namespace engine {
 		} else {
 			//add(handle);
 			return dynamic_cast<O>(object.get());
-		}
+		}*/
+
+		return dynamic_cast<O>(object.get());
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
-		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
+		/*Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
-		/*if (transaction != NULL) {
+		if (transaction != NULL) {
 			 	 if (!transaction->isCommited())
 			 	 	 return object;
 			 	 else

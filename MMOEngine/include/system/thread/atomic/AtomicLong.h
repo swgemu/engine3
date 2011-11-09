@@ -78,6 +78,8 @@ namespace sys {
 		}
 
 		uint64 get() const {
+			WMB();
+
 			return value;
 		}
 
@@ -86,7 +88,15 @@ namespace sys {
 		}
 
 		operator uint64() const {
+			WMB();
+
 			return value;
+		}
+
+		bool operator== (const uint64 val) const {
+			WMB();
+
+			return val == value;
 		}
 	};
 

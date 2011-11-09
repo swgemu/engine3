@@ -10,7 +10,7 @@
  *	ManagedObjectStub
  */
 
-enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,};
+enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
@@ -214,6 +214,15 @@ bool ManagedObject::parseFromBinaryStream(ObjectInputStream* stream) {
 		return _implementation->parseFromBinaryStream(stream);
 }
 
+DistributedObjectServant* ManagedObject::_getServant() {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+
+	} else
+		return _implementation->getServant();
+}
+
 void ManagedObject::initializeTransientMembers() {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
@@ -266,8 +275,8 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 		_implementation->clearUpdateToDatabaseTask();
 }
 
-unsigned int ManagedObject::_getLastCRCSave() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+unsigned int ManagedObject::getLastCRCSave() {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -279,8 +288,8 @@ unsigned int ManagedObject::_getLastCRCSave() {
 		return _implementation->getLastCRCSave();
 }
 
-void ManagedObject::_setLastCRCSave(unsigned int crc) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+void ManagedObject::setLastCRCSave(unsigned int crc) {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -294,19 +303,27 @@ void ManagedObject::_setLastCRCSave(unsigned int crc) {
 }
 
 bool ManagedObject::isPersistent() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
 	if (_implementation == NULL) {
-		throw ObjectNotLocalException(this);
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
 
+		DistributedMethod method(this, RPC_ISPERSISTENT__);
+
+		return method.executeWithBooleanReturn();
 	} else
 		return _implementation->isPersistent();
 }
 
 int ManagedObject::getPersistenceLevel() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
 	if (_implementation == NULL) {
-		throw ObjectNotLocalException(this);
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
 
+		DistributedMethod method(this, RPC_GETPERSISTENCELEVEL__);
+
+		return method.executeWithSignedIntReturn();
 	} else
 		return _implementation->getPersistenceLevel();
 }
@@ -324,6 +341,9 @@ DistributedObjectServant* ManagedObject::_getImplementation() {
 
 	_updated = true;
 	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
+
+DistributedObjectServant* ManagedObject::_getDirtyImplementation() {
+	return dynamic_cast<DistributedObjectServant*>(header->getForDirty());}
 
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
 	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
@@ -507,7 +527,7 @@ void ManagedObjectImplementation::_setClassName(const String& name) {
  *	ManagedObjectAdapter
  */
 
-ManagedObjectAdapter::ManagedObjectAdapter(ManagedObjectImplementation* obj) : DistributedObjectAdapter(static_cast<DistributedObjectServant*>(obj)) {
+ManagedObjectAdapter::ManagedObjectAdapter(ManagedObject* obj) : DistributedObjectAdapter(static_cast<DistributedObjectStub*>(obj)) {
 }
 
 Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -562,6 +582,12 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	case RPC_SETLASTCRCSAVE__INT_:
 		setLastCRCSave(inv->getUnsignedIntParameter());
 		break;
+	case RPC_ISPERSISTENT__:
+		resp->insertBoolean(isPersistent());
+		break;
+	case RPC_GETPERSISTENCELEVEL__:
+		resp->insertSignedInt(getPersistenceLevel());
+		break;
 	default:
 		return NULL;
 	}
@@ -570,67 +596,75 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 }
 
 void ManagedObjectAdapter::updateForWrite() {
-	(static_cast<ManagedObjectImplementation*>(impl))->updateForWrite();
+	(static_cast<ManagedObject*>(stub))->updateForWrite();
 }
 
 void ManagedObjectAdapter::lock(bool doLock) {
-	(static_cast<ManagedObjectImplementation*>(impl))->lock(doLock);
+	(static_cast<ManagedObject*>(stub))->lock(doLock);
 }
 
 void ManagedObjectAdapter::lock(ManagedObject* obj) {
-	(static_cast<ManagedObjectImplementation*>(impl))->lock(obj);
+	(static_cast<ManagedObject*>(stub))->lock(obj);
 }
 
 void ManagedObjectAdapter::rlock(bool doLock) {
-	(static_cast<ManagedObjectImplementation*>(impl))->rlock(doLock);
+	(static_cast<ManagedObject*>(stub))->rlock(doLock);
 }
 
 void ManagedObjectAdapter::wlock(bool doLock) {
-	(static_cast<ManagedObjectImplementation*>(impl))->wlock(doLock);
+	(static_cast<ManagedObject*>(stub))->wlock(doLock);
 }
 
 void ManagedObjectAdapter::wlock(ManagedObject* obj) {
-	(static_cast<ManagedObjectImplementation*>(impl))->wlock(obj);
+	(static_cast<ManagedObject*>(stub))->wlock(obj);
 }
 
 void ManagedObjectAdapter::unlock(bool doLock) {
-	(static_cast<ManagedObjectImplementation*>(impl))->unlock(doLock);
+	(static_cast<ManagedObject*>(stub))->unlock(doLock);
 }
 
 void ManagedObjectAdapter::runlock(bool doLock) {
-	(static_cast<ManagedObjectImplementation*>(impl))->runlock(doLock);
+	(static_cast<ManagedObject*>(stub))->runlock(doLock);
 }
 
 void ManagedObjectAdapter::setLockName(const String& name) {
-	(static_cast<ManagedObjectImplementation*>(impl))->setLockName(name);
+	(static_cast<ManagedObject*>(stub))->setLockName(name);
 }
 
 bool ManagedObjectAdapter::notifyDestroy() {
-	return (static_cast<ManagedObjectImplementation*>(impl))->notifyDestroy();
+	return (static_cast<ManagedObject*>(stub))->notifyDestroy();
 }
 
 void ManagedObjectAdapter::initializeTransientMembers() {
-	(static_cast<ManagedObjectImplementation*>(impl))->initializeTransientMembers();
+	(static_cast<ManagedObject*>(stub))->initializeTransientMembers();
 }
 
 void ManagedObjectAdapter::updateToDatabase() {
-	(static_cast<ManagedObjectImplementation*>(impl))->updateToDatabase();
+	(static_cast<ManagedObject*>(stub))->updateToDatabase();
 }
 
 void ManagedObjectAdapter::queueUpdateToDatabaseTask() {
-	(static_cast<ManagedObjectImplementation*>(impl))->queueUpdateToDatabaseTask();
+	(static_cast<ManagedObject*>(stub))->queueUpdateToDatabaseTask();
 }
 
 void ManagedObjectAdapter::clearUpdateToDatabaseTask() {
-	(static_cast<ManagedObjectImplementation*>(impl))->clearUpdateToDatabaseTask();
+	(static_cast<ManagedObject*>(stub))->clearUpdateToDatabaseTask();
 }
 
 unsigned int ManagedObjectAdapter::getLastCRCSave() {
-	return (static_cast<ManagedObjectImplementation*>(impl))->getLastCRCSave();
+	return (static_cast<ManagedObject*>(stub))->getLastCRCSave();
 }
 
 void ManagedObjectAdapter::setLastCRCSave(unsigned int crc) {
-	(static_cast<ManagedObjectImplementation*>(impl))->setLastCRCSave(crc);
+	(static_cast<ManagedObject*>(stub))->setLastCRCSave(crc);
+}
+
+bool ManagedObjectAdapter::isPersistent() {
+	return (static_cast<ManagedObject*>(stub))->isPersistent();
+}
+
+int ManagedObjectAdapter::getPersistenceLevel() {
+	return (static_cast<ManagedObject*>(stub))->getPersistenceLevel();
 }
 
 /*
@@ -658,7 +692,7 @@ DistributedObjectServant* ManagedObjectHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ManagedObjectHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ManagedObjectAdapter(static_cast<ManagedObjectImplementation*>(obj->_getImplementation()));
+	DistributedObjectAdapter* adapter = new ManagedObjectAdapter(static_cast<ManagedObject*>(obj));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

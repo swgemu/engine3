@@ -123,7 +123,7 @@ protected:
 
 class ObservableAdapter : public ManagedObjectAdapter {
 public:
-	ObservableAdapter(ObservableImplementation* impl);
+	ObservableAdapter(Observable* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
 

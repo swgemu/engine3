@@ -57,7 +57,9 @@ namespace sys {
 		#endif
 		}
 
-		bool get() const {
+		inline bool get() const {
+			WMB();
+
 			return (bool) value;
 		}
 
@@ -69,7 +71,15 @@ namespace sys {
 			return (bool) (value = (uint32) val);
 		}
 
+		inline bool operator== (const bool val) const {
+			WMB();
+
+			return val == (bool)value;
+		}
+
 		operator bool() const {
+			WMB();
+
 			return (bool) value;
 		}
 

@@ -6,8 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ATOMICREFERENCE_H_
 #define ATOMICREFERENCE_H_
 
-#include "AtomicInteger.h"
-#include "AtomicLong.h"
+#include "system/platform.h"
 
 //#include "system/lang/ref/Reference.h"
 
@@ -16,39 +15,74 @@ namespace sys {
 	namespace atomic {
 
 	 template<class V> class AtomicReference {
-	#ifdef PLATFORM_64
-		AtomicLong reference;
-	#else
-		AtomicInteger reference;
-	#endif
-
-		//Reference<V*> objectReference;
+		 volatile V value;
 
 	public:
 		AtomicReference() {
+			value = NULL;
 		}
 
 		AtomicReference(V ref) {
-			reference.set(toReferenceValue(ref));
+			set(ref);
 		}
 
-		bool compareAndSet(V oldref, V newref) {
-			if (reference.compareAndSet(toReferenceValue(oldref), toReferenceValue(newref))) {
-				//objectReference = newref;
+		V compareAndSetReturnOld(volatile void* oldval, void* newval) {
+#ifdef CLANG_COMPILER
+#ifdef PLATFORM_64
+//			void* blia = value;
 
+			volatile long long* addy = (volatile long long*) &value;
+
+			return (V) __sync_val_compare_and_swap (addy, (uint64)oldval, (uint64)newval);
+#else
+			volatile int* addy = (volatile int*) &value;
+
+			return (V) __sync_val_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
+#endif
+#else
+			return __sync_val_compare_and_swap(&value, oldval, newval);
+#endif
+		}
+
+		bool compareAndSet(volatile void* oldval, void* newval) {
+#ifdef CLANG_COMPILER
+#ifdef PLATFORM_64
+//			void* blia = value;
+
+			volatile long long* addy = (volatile long long*) &value;
+
+			return __sync_bool_compare_and_swap (addy, (uint64)oldval, (uint64)newval);
+#else
+			volatile int* addy = (volatile int*) &value;
+
+			return __sync_bool_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
+#endif
+#elif GCC_VERSION >= 40100 || defined(__MINGW32__)
+			return __sync_bool_compare_and_swap (&value, oldval, newval);
+#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
+			//TODO: find appropriate method
+			if ( value == oldval ) {
+				value = newval;
 				return true;
-			} else
+			} else {
 				return false;
+			}
+#else
+			InterlockedCompareExchangePointer((volatile PVOID *)&value, newval, oldval);
+
+			return value == newval;
+#endif
 		}
 
 		V get() const {
-			return (V) reference.get();
+			WMB();
+
+			return (V) value;
 		}
 
-		void set(V ref) {
-			reference.set(toReferenceValue(ref));
-
-			//objectReference = ref;
+		void set(V val) {
+			//while (!compareAndSet(value, val)) ;
+			value = val;
 		}
 
 		V operator=(V ref) {
@@ -65,16 +99,11 @@ namespace sys {
 			return get();
 		}
 
-	protected:
-	#ifdef PLATFORM_64
-		uint64 toReferenceValue(V ref) {
-			return (uint64) ref;
+		bool operator== (const V val) const {
+			WMB();
+
+			return val == value;
 		}
-	#else
-		uint32 toReferenceValue(V ref) {
-			return (uint32) ref;
-		}
-	#endif
 
 	};
 

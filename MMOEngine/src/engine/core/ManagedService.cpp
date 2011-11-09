@@ -173,7 +173,7 @@ int ManagedServiceImplementation::writeObjectMembers(ObjectOutputStream* stream)
  *	ManagedServiceAdapter
  */
 
-ManagedServiceAdapter::ManagedServiceAdapter(ManagedServiceImplementation* obj) : ManagedObjectAdapter(obj) {
+ManagedServiceAdapter::ManagedServiceAdapter(ManagedService* obj) : ManagedObjectAdapter(obj) {
 }
 
 Packet* ManagedServiceAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -212,7 +212,7 @@ DistributedObjectServant* ManagedServiceHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ManagedServiceHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ManagedServiceAdapter(static_cast<ManagedServiceImplementation*>(obj->_getImplementation()));
+	DistributedObjectAdapter* adapter = new ManagedServiceAdapter(static_cast<ManagedService*>(obj));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

@@ -22,6 +22,8 @@ public:
 
 	void _setImplementation(DistributedObjectServant* servant);
 
+	bool _isCurrentVersion(ManagedObjectImplementation* servant);
+
 protected:
 	ManagedService(DummyConstructorParameter* param);
 
@@ -54,6 +56,10 @@ public:
 protected:
 	virtual ~ManagedServiceImplementation();
 
+	Object* clone();
+	Object* clone(void* object);
+	void free();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -79,11 +85,13 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedService;
+	friend class TransactionalObjectHandle<ManagedServiceImplementation*>;
+	friend class TransactionalObjectHeader<ManagedServiceImplementation*>;
 };
 
 class ManagedServiceAdapter : public ManagedObjectAdapter {
 public:
-	ManagedServiceAdapter(ManagedServiceImplementation* impl);
+	ManagedServiceAdapter(ManagedService* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
 

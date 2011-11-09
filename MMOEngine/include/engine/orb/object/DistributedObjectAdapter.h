@@ -17,13 +17,14 @@ namespace engine {
 	
 	class DistributedObjectAdapter {
 	protected:
-		DistributedObjectServant* impl;
-		
+		//DistributedObjectServant* impl;
+
 		DistributedObjectStub* stub;
+
 		
 	public:
-		DistributedObjectAdapter(DistributedObjectServant* obj) {
-			impl = obj;
+		DistributedObjectAdapter(DistributedObjectStub* obj) {
+			//impl = obj;
 			stub = NULL;
 		}
 		
@@ -36,9 +37,9 @@ namespace engine {
 			stub = stb;
 		}
 		
-		inline DistributedObjectServant* getImplementation() {
+		/*inline DistributedObjectServant* getImplementation() {
 			return impl;
-		}
+		}*/
 	
 		inline DistributedObjectStub* getStub() {
 			return stub;

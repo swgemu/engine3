@@ -12,6 +12,8 @@
 
 namespace engine {
   namespace stm {
+  
+  template<class O> class TransactionalReference;
 
 #ifndef WITH_STM
   template<class O> class TransactionalWeakReference : public WeakReference<O> {
@@ -51,7 +53,7 @@ public:
 #else
 
   	template<class O> class TransactionalWeakReference {
-		TransactionalObjectHeader<O>* header;
+		Reference<TransactionalObjectHeader<O>*> header;
 
 	public:
 		TransactionalWeakReference() {
@@ -118,13 +120,15 @@ public:
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			return getForUpdate()->parseFromBinaryStream(stream);
 		}
+		
+		template<class A> friend class TransactionalReference;
 
 	protected:
 		TransactionalObjectHeader<O>* getHeader(O object) {
 			if (object == NULL)
 				return NULL;
 
-			return Transaction::currentTransaction()->getWeakHeader(object);
+			return Transaction::currentTransaction()->getHeader(object);
 		}
 
 		void setObject(O object) {

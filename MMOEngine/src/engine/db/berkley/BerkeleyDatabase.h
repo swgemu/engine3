@@ -13,7 +13,7 @@
 #include "../Database.h"
 
 #include "DatabaseConfig.h"
-#include "Transaction.h"
+#include "BTransaction.h"
 #include "DatabaseEntry.h"
 #include "Cursor.h"
 

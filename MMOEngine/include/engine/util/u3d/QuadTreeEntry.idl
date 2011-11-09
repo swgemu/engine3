@@ -28,6 +28,9 @@ class QuadTreeEntry extends Observable {
 	transient protected QuadTreeNode node;
 	
 	protected boolean bounding;
+	
+	@weakReference
+	protected QuadTreeEntry parent;
 
 	@dereferenced
 	transient protected SortedVector<QuadTreeEntry> closeobjects;
@@ -36,18 +39,11 @@ class QuadTreeEntry extends Observable {
 
 	public native QuadTreeEntry(QuadTreeNode n = null);
 	
-	public abstract void notifyAddedToCloseObjects() {
-	}
-
-	public abstract void notifyRemovedFromCloseObjects() {
-	}
-
 	public void addInRangeObject(QuadTreeEntry obj, boolean doNotifyUpdate = true) {
 		//System::out << "adding in range object:" << obj << "\n";
 
 		if (closeobjects.put(obj) != -1) {
 			notifyInsert(obj);
-			obj.notifyAddedToCloseObjects();
 		} else if (doNotifyUpdate) {
 			notifyPositionUpdate(obj);
 		}
@@ -62,7 +58,6 @@ class QuadTreeEntry extends Observable {
 
 		if (closeobjects.drop(obj)) {
 			notifyDissapear(obj);
-			obj.notifyRemovedFromCloseObjects();
 		}
 		/*else {
 			QuadTreeEntry* obj2 = NULL;
@@ -76,17 +71,15 @@ class QuadTreeEntry extends Observable {
 	public void removeInRangeObject(int index) {
 		//System::out << "droping in range object with index:" << index << "\n";
 
-		QuadTreeEntry entry = closeobjects.remove(index);
-		
-		entry.notifyRemovedFromCloseObjects();
+		closeobjects.remove(index);		
 	}
 
 	public void removeInRangeObjects() {
 		//System::out << "droping  all in range objects\n";
 
-		for (int i = 0; i < closeobjects.size(); ++i) {
+		/*for (int i = 0; i < closeobjects.size(); ++i) {
 			closeobjects.get(i).notifyRemovedFromCloseObjects();
-		}
+		}*/
 
 		closeobjects.removeAll();
 	}
@@ -120,6 +113,17 @@ class QuadTreeEntry extends Observable {
 
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	}
+	
+	@local
+	public SortedVector<QuadTreeEntry> getCloseObjects() {
+		return closeobjects;
+	}
+	
+	public abstract QuadTreeEntry getParent() {
+		return parent;
+	}
+	
+	public native QuadTreeEntry getRootParent();
 
 	@local
 	public native boolean isInSWArea(QuadTreeNode node);
@@ -221,11 +225,16 @@ class QuadTreeEntry extends Observable {
 	public void setBounding() {
 		bounding = true;
 	}
+	
 	public void setRadius(float rad) {
 		radius = rad;
 	}
 	
 	public void clearBounding() {
 		bounding = false;
+	}
+	
+	public abstract void setParent(QuadTreeEntry par) {
+		parent = par;
 	}
 }

@@ -173,7 +173,7 @@ int ManagedVectorImplementation::writeObjectMembers(ObjectOutputStream* stream) 
  *	ManagedVectorAdapter
  */
 
-ManagedVectorAdapter::ManagedVectorAdapter(ManagedVectorImplementation* obj) : ManagedObjectAdapter(obj) {
+ManagedVectorAdapter::ManagedVectorAdapter(ManagedVector* obj) : ManagedObjectAdapter(obj) {
 }
 
 Packet* ManagedVectorAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -212,7 +212,7 @@ DistributedObjectServant* ManagedVectorHelper::instantiateServant() {
 }
 
 DistributedObjectAdapter* ManagedVectorHelper::createAdapter(DistributedObjectStub* obj) {
-	DistributedObjectAdapter* adapter = new ManagedVectorAdapter(static_cast<ManagedVectorImplementation*>(obj->_getImplementation()));
+	DistributedObjectAdapter* adapter = new ManagedVectorAdapter(static_cast<ManagedVector*>(obj));
 
 	obj->_setClassName(className);
 	obj->_setClassHelper(this);

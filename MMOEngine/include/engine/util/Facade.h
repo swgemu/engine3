@@ -32,6 +32,8 @@ public:
 
 	void _setImplementation(DistributedObjectServant* servant);
 
+	bool _isCurrentVersion(ManagedObjectImplementation* servant);
+
 protected:
 	Facade(DummyConstructorParameter* param);
 
@@ -71,6 +73,10 @@ public:
 protected:
 	virtual ~FacadeImplementation();
 
+	Object* clone();
+	Object* clone(void* object);
+	void free();
+
 	void finalize();
 
 	void _initializeImplementation();
@@ -96,11 +102,13 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class Facade;
+	friend class TransactionalObjectHandle<FacadeImplementation*>;
+	friend class TransactionalObjectHeader<FacadeImplementation*>;
 };
 
 class FacadeAdapter : public ManagedObjectAdapter {
 public:
-	FacadeAdapter(FacadeImplementation* impl);
+	FacadeAdapter(Facade* impl);
 
 	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
 
