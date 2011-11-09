@@ -135,7 +135,7 @@ libengine3_a_SOURCES = \
 			engine/db/mysql/MySqlDatabase.cpp \
 			engine/db/mysql/MysqlDatabaseManager.cpp \
 			engine/db/berkley/BerkeleyDatabase.cpp \
-			engine/db/berkley/Transaction.cpp \
+			engine/db/berkley/BTransaction.cpp \
 			engine/db/berkley/DatabaseEntry.cpp \
 			engine/db/berkley/Environment.cpp \
 			engine/db/berkley/Cursor.cpp \
