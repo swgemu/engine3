@@ -41,8 +41,8 @@
 # which carries forward this exception.
 
 AM_CXXFLAGS=-ggdb -Wall -Wextra -Wno-unused -Wno-sign-compare -Wno-overloaded-virtual -Wno-unused-parameter
-CC = clang
-CXX = clang++
+#CC = clang
+#CXX = clang++
 
 ENGINE3_PATH=../../../..
 

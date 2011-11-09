@@ -65,5 +65,6 @@ AC_SUBST(SYSTEM_LIBS)
 
 AC_SUBST(USER_INCLUDES_PATH)
 AC_SUBST(USER_LIBS_PATH)
+AC_CONFIG_SUBDIRS([src/testsuite3])
 
-AC_OUTPUT(Makefile src/Makefile)
+AC_OUTPUT([Makefile src/Makefile])

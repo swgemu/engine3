@@ -207,9 +207,8 @@ void TransactionalMemoryManager::destroy(Object* object) {
 
 		objectHeap.free(object);
 	} else
-#else
-		delete object;
 #endif
+		delete object;
 }
 
 void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjectsToReclaim) {
