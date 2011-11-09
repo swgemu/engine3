@@ -118,11 +118,13 @@ public:
 		O operator->() {
 			O point = getForUpdate();
 
+#ifdef MEMORY_PROTECTION
 			ptrdiff_t rel = (ptrdiff_t)point - (ptrdiff_t)0x8000000000;
 
 			assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
 
 			//		        assert(!((uint64)point & 0x8000000000));
+#endif
 
 			return point;
 		}

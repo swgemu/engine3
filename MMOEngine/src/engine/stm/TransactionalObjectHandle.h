@@ -121,10 +121,12 @@ namespace engine {
 			assert(object != NULL);
 
 			objectCopy = dynamic_cast<O>(object->clone());
-			
+
+#ifdef MEMORY_PROTECTION
 			ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;
 			
 			assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
+#endif
 
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object) + " finished");
 		} else if (accessType == READ){
@@ -140,9 +142,11 @@ namespace engine {
 
 			objectCopy = object;
 			
+#ifdef MEMORY_PROTECTION
 			ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;
 			
 			assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
+#endif
 		}
 	}
 

@@ -275,9 +275,11 @@ namespace engine {
 
 		assert(localCopy != NULL);
 		
+#ifdef MEMORY_PROTECTION
 		ptrdiff_t rel = (ptrdiff_t)localCopy - (ptrdiff_t)0x8000000000;
 		
 		assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
+#endif
 		
 		return localCopy;
 	}
