@@ -108,6 +108,9 @@ void Logger::info(const StringBuffer& msg, bool forcedLog) {
 }
 
 void Logger::log(const char *msg) {
+	if (logFile == NULL && globalLogFile == NULL)
+		return;
+
 	Locker locker(&writeLock);
 
 	if (logLevel > LOG && logFile != NULL) {
