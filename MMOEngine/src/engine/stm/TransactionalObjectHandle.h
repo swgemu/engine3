@@ -26,13 +26,15 @@ namespace engine {
 
 		Reference<Object*> object;
 		Reference<Object*> objectCopy;
+		
+		int currentType;
 
 		//Reference<TransactionalObjectHandle<O>*> next;
 
 	public:
 		TransactionalObjectHandle();
 
-		enum {CREATE, READ, WRITE};
+		enum {CREATE, READ, WRITE, WRITE_AFTER_READ};
 
 		void initialize(TransactionalObjectHeader<O>* hdr, int accessType, Transaction* trans);
 
@@ -102,6 +104,8 @@ namespace engine {
 		object = NULL;
 
 		objectCopy = NULL;
+		
+		currentType = 0;
 
 //		HandleCounter::createdHandles.increment();
 	}
@@ -111,6 +115,8 @@ namespace engine {
 
 		assert((uintptr_t) trans > 0x1000);
 		//transaction = trans;
+		
+		currentType = accessType;
 
 		if (accessType == WRITE) {
 			//KernelCall kernelCall;
@@ -166,6 +172,10 @@ namespace engine {
 		header->add(this);
 
 		objectCopy = object->clone();
+		
+		assert(objectCopy != NULL);
+		
+		currentType = WRITE_AFTER_READ;
 		/*
 	        assert(object != NULL);
 	        

@@ -211,7 +211,7 @@ namespace engine {
 
 		assert(ownerTransaction != NULL);
 
-		object = objectCopy;
+		object = objectCopy->clone(NULL);
 
 		assert(object != NULL);
 
