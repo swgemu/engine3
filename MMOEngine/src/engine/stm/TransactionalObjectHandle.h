@@ -225,7 +225,7 @@ namespace engine {
 	template<class O> void TransactionalObjectHandle<O>::releaseHeader() {
 		Reference<Object*> obj = objectCopy.get();
 
-		if (obj != NULL && objectCopy.compareAndSet(obj, NULL)) { // this is to avoid several threads releasing it*/
+		if (obj != NULL && objectCopy.compareAndSet(obj.get(), NULL)) { // this is to avoid several threads releasing it*/
 			header->releaseObject(this, obj);
 
 			resetObjects();

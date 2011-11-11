@@ -124,7 +124,22 @@ void testQTSTM() {
 
 	//TransactionalMemoryManager::commitPureTransaction();
 
-	Thread::sleep(10000);
+	int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
+	int executedTasks = Core::getTaskManager()->getExecutingTaskSize();
+
+	printf("waiting to finsih...");
+
+	while (scheduledTasks != 0 || executedTasks != 0) {
+		scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
+		executedTasks = Core::getTaskManager()->getExecutingTaskSize();
+		Thread::sleep(1000);
+
+		printf(".");
+	}
+
+	printf("\n");
+
+	TransactionalMemoryManager::instance()->printStatistics();
 
 	exit(0);
 

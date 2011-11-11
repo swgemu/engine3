@@ -29,8 +29,6 @@ namespace sys {
 		V compareAndSetReturnOld(volatile void* oldval, void* newval) {
 #ifdef CLANG_COMPILER
 #ifdef PLATFORM_64
-//			void* blia = value;
-
 			volatile long long* addy = (volatile long long*) &value;
 
 			return (V) __sync_val_compare_and_swap (addy, (uint64)oldval, (uint64)newval);

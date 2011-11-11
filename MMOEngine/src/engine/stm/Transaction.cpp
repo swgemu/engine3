@@ -95,13 +95,13 @@ bool Transaction::start(Task* task) {
 
 		task->run();
 	} catch (TransactionAbortedException& e) {
-		successFullStart = false;
+		//successFullStart = false;
 
 		status = ABORTED;
 
 		TransactionalMemoryManager::instance()->increaseFailedByExceptions();
 
-		doAbort();
+		//doAbort();
 
 		//error("ebati v rot");
 	} catch (Exception& e) {

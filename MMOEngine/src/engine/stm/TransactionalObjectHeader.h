@@ -220,7 +220,7 @@ namespace engine {
 
 		assert(object != NULL);
 
-		TransactionalObjectHeader<O>::ownerTransaction = NULL;
+		ownerTransaction = NULL;
 		//s}
 	}
 

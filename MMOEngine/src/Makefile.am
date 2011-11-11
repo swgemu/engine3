@@ -2,7 +2,7 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 if DEBUG
-AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual
+AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -fasan
 else
 AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wunused-parameter -DVERSION_PUBLIC
 endif
@@ -10,8 +10,8 @@ endif
 #CC = /Users/victor/Documents/addresssanitizer/asan/asan_clang_Darwin/bin/clang
 #CXX = /Users/victor/Documents/addresssanitizer/asan/asan_clang_Darwin/bin/clang++
 
-#CC = clang
-#CXX = clang++
+CC = clang
+CXX = clang++
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
 	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua \
