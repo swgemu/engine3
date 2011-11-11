@@ -210,17 +210,24 @@ namespace engine {
 	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle, Object* objectCopy) {
 		//if (objectCopy != NULL) {
 
-		assert(ownerTransaction != NULL);
+		//if (owner)
 
+		//assert(ownerTransaction != NULL);
+
+		Reference<Transaction*> oldTrans = ownerTransaction.get();
+
+		if (oldTrans != NULL && ownerTransaction.compareAndSet(oldTrans.get(), NULL) && objectCopy != NULL) {
 #ifdef MEMORY_PROTECTION
-		object = objectCopy->clone(NULL);
+			object = objectCopy->clone(NULL);
 #else
-		object = objectCopy;
+			object = objectCopy;
 #endif
+		}
 
 		assert(object != NULL);
 
-		ownerTransaction = NULL;
+		//ownerTransaction.compareAndSet(ownerTransaction.get(), NULL);
+		//ownerTransaction = NULL;
 		//s}
 	}
 

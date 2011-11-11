@@ -109,8 +109,6 @@ bool Transaction::start(Task* task) {
 		e.printStackTrace();
 	}
 
-	task = NULL;
-
 	runTime += System::getMikroTime() - startTime;
 
 	blockLock.rlock();
@@ -143,6 +141,8 @@ bool Transaction::commit() {
 	} else {
 		doAbort();
 	}
+
+	this->task = NULL;
 
 	Thread::yield();
 
