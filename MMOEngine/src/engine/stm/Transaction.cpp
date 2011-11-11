@@ -16,12 +16,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Transaction.h"
 
+#include "algos/FraserSTM.h"
+
 using namespace engine::stm;
 
 ReadWriteLock Transaction::blockLock;
 
 AtomicInteger HandleCounter::createdHandles;
 AtomicInteger HandleCounter::deletedHandles;
+
+STMCommitStrategy* Transaction::commitAlgorithm = new FraserSTM();
 
 Transaction::Transaction(uint64 id) : Logger() {
 	status = INITIAL;
@@ -120,6 +124,8 @@ bool Transaction::commit() {
 	int readOnlyObjectsCount = readOnlyObjects.size();
 	int readWriteObjectsCount = readWriteObjects.size();
 
+	//info("Commiting with readOnly:" + String::valueOf(readOnlyObjectsCount) + " and readWrite:" + String::valueOf(readWriteObjectsCount), true);
+
 	bool commited = doCommit();
 
 	if (commited) {
@@ -213,127 +219,8 @@ void Transaction::cleanReadOnlyHandles() {
 	}*/
 }
 
-bool Transaction::tryFinishCommit(int desiredStatus) {
-	int oldStatus = status;
-	int newStatus;
-
-	//we push final status
-	while (oldStatus <= READ_CHECKING) {
-		newStatus = status.compareAndSetReturnOld(oldStatus, desiredStatus);
-
-		if (oldStatus == newStatus)
-			break;
-
-		oldStatus = newStatus;
-
-		Thread::yield();
-	}
-
-	WMB();
-
-	int finalStatus = status;
-
-	//CLEANUP
-	if (finalStatus == COMMITTED) {
-		releaseReadWriteObjects();
-	} else {
-		discardReadWriteObjects();
-	}
-
-	cleanReadOnlyHandles();
-
-	return finalStatus == COMMITTED;
-}
-
-//Warning! This is called by several threads concurrently!
 bool Transaction::doCommit() {
-	int desiredStatus = ABORTED;
-
-	if (status == UNDECIDED && readWriteObjects.size() > 0) {
-		WMB();
-
-		//while ((i = currentWriteObjectAcquiring.increment()) < readWriteObjects.size()) { //<- slower than normal?
-		for (int i = 0; i < readWriteObjects.size(); ++i) {
-			Reference<TransactionalObjectHandle<Object*>* > handle = readWriteObjects.get(i);
-			Reference<Transaction*> competingTransaction = NULL;
-
-			while (true) {
-				competingTransaction = handle->acquireHeader(this);
-
-				if (competingTransaction == this || competingTransaction == NULL) { // we acquired the transaction
-					break;
-				} else {
-					if (competingTransaction != NULL) {
-						if (competingTransaction->isCommited()) {
-							TransactionalMemoryManager::instance()->increaseFailedByCompetingCommited();
-
-							return tryFinishCommit(desiredStatus); // we failed
-						} else
-							competingTransaction->doCommit();
-					}
-				}
-
-				Thread::yield();
-			}
-
-			if (handle->hasObjectChanged()) {
-				//we fail because a previous/faster transaction commited before we did
-				TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
-
-				return tryFinishCommit(desiredStatus); // we failed
-			}
-		}
-	}
-
-	if (validateReadOnlyObjects())
-		desiredStatus = COMMITTED;
-
-	return tryFinishCommit(desiredStatus);
-}
-
-bool Transaction::validateReadOnlyObjects() {
-	if (status <= READ_CHECKING && readOnlyObjects.size() > 0) {
-		setState(UNDECIDED, READ_CHECKING);
-
-		WMB();
-
-		//while ((i = currentReadObjectAcquiring.increment()) < readOnlyObjects.size()) {
-		for (int i = 0; i < readOnlyObjects.size(); ++i) {
-			Reference<TransactionalObjectHandle<Object*>* > handle = readOnlyObjects.get(i);
-
-			if (handle->hasObjectChanged()) {
-				TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
-				return false;
-			}
-
-			Reference<Transaction*> competingTransaction = handle->getCompetingTransaction();
-
-			if (competingTransaction != NULL) {
-				while (competingTransaction->isReadChecking()) {
-					if (tid < competingTransaction->tid) { // we fail the other one
-						competingTransaction->setState(READ_CHECKING, ABORTED);
-					} else { // we help
-						competingTransaction->doCommit();
-					}
-				}
-
-				if (competingTransaction->isCommited()) {
-					if (!handle->isCopyEqualToObject()) { // this transaction will commit or already commited a new version we fail
-						TransactionalMemoryManager::instance()->increaseFailedByCompetingCommited();
-
-						return false;
-					}
-				}
-
-				if (handle->hasObjectChanged()) {
-					TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();
-					return false;
-				}
-			}
-		}
-	}
-
-	return true;
+	return commitAlgorithm->doCommit(this);
 }
 
 void Transaction::doAbort() {
@@ -370,7 +257,7 @@ void Transaction::releaseReadWriteObjects() {
 
 	//while ((i = currentReadWriteObjectCleanup.increment()) < readWriteObjects.size()) {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
+		TransactionalObjectHandleBase* handle = readWriteObjects.get(i).get();
 
 		handle->releaseHeader();
 	}
@@ -383,7 +270,7 @@ void Transaction::releaseReadWriteObjects() {
 void Transaction::discardReadWriteObjects() {
 	//while ((i = currentReadWriteObjectCleanup.increment()) < readWriteObjects.size()) {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandle<Object*>* handle = readWriteObjects.get(i);
+		TransactionalObjectHandleBase* handle = readWriteObjects.get(i).get();
 
 		handle->discardHeader(this);
 	}

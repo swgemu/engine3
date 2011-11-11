@@ -57,9 +57,11 @@ namespace sys {
 	using namespace sys::util;
 
 	class Object : public ReferenceCounter, public Variable {
-//	#ifndef WITH_STM
+#ifdef MEMORY_PROTECTION
 		Mutex* referenceMutex;
-//	#endif
+#else
+		Mutex referenceMutex;
+#endif
 
 		//ArrayList<WeakReferenceBase*> weakReferences;
 
@@ -68,8 +70,11 @@ namespace sys {
 /*#else
 		TransactionalReference<Vector<WeakReferenceBase*>*>* weakReferences;
 #endif*/
-
-		AtomicBoolean*  _destroying;
+#ifdef MEMORY_PROTECTION
+		AtomicBoolean* _destroying;
+#else
+		AtomicBoolean _destroying;
+#endif
 
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
@@ -109,11 +114,19 @@ namespace sys {
 		}
 
 		bool _setDestroying() {
+#ifdef MEMORY_PROTECTION
 			return _destroying->compareAndSet(false, true);
+#else
+			return _destroying.compareAndSet(false, true);
+#endif
 		}
 
 		void _clearDestroying() {
+#ifdef MEMORY_PROTECTION
 			_destroying->set(false);
+#else
+			_destroying.set(false);
+#endif
 		}
 
 		void finalize() {
@@ -128,7 +141,11 @@ namespace sys {
 		}
 
 		inline bool _isGettingDestroyed() const {
+#ifdef MEMORY_PROTECTION
 			return _destroying->get();
+#else
+			return _destroying.get();
+#endif
 		}
 
 		inline void acquire() {

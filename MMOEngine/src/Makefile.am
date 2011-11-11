@@ -7,11 +7,14 @@ else
 AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wunused-parameter -DVERSION_PUBLIC
 endif
 
-#CXX = clang++
+#CC = /Users/victor/Documents/addresssanitizer/asan/asan_clang_Darwin/bin/clang
+#CXX = /Users/victor/Documents/addresssanitizer/asan/asan_clang_Darwin/bin/clang++
+
 #CC = clang
+#CXX = clang++
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I/usr/include/mysql -I/usr/include/lua5.1 \
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua \
 	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) \
 	    	-I../../../external/dlmalloc \
 	    	-I../../../external/multimmap
@@ -106,6 +109,7 @@ libengine3_a_SOURCES = \
 			engine/stm/orb/LocalObjectManager.cpp \
 			engine/stm/service/TransactionalSocketManager.cpp \
 			engine/stm/service/TransactionalBaseClientManager.cpp \
+			engine/stm/algos/FraserSTM.cpp \
 			engine/core/ManagedObject.cpp \
 			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \

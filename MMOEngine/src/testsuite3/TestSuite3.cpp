@@ -9,6 +9,7 @@
 #include "tests/memprottest.h"
 #include "tests/stmtest.h"
 #include "tests/stmmemtest.h"
+#include "tests/qtstmtest.h"
 
 class TestCore : public Core {
 public:
@@ -39,6 +40,8 @@ int main(int argc, char* argv[]) {
 				testMemoryProtection();
 			else if (arguments.contains("stmmemtest"))
 				testSTMMemory();
+			else if (arguments.contains("qtstmtest"))
+				testQTSTM();
 		}
 
 	} catch (Exception& e) {

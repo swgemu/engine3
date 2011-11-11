@@ -20,6 +20,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
+  	class STMCommitStrategy;
+
 	template<class O> class TransactionalObjectHeader;
 
 	namespace mm {
@@ -27,38 +29,42 @@ namespace engine {
 		template<class O> class TransactionalWeakObjectHeader;
 	}
 
-	class TransactionalObjectMap : public HashTable<uint64, Reference<TransactionalObjectHandle<Object*>*> > {
+	class TransactionalObjectMap : public HashTable<uint64, Reference<TransactionalObjectHandleBase*> > {
 	public:
-		TransactionalObjectMap() : HashTable<uint64, Reference<TransactionalObjectHandle<Object*>*> >(1000) {
+		TransactionalObjectMap() : HashTable<uint64, Reference<TransactionalObjectHandleBase*> >(1000) {
 		}
 
 		template<class O> TransactionalObjectHandle<O>* put(TransactionalObjectHeader<O>* header, TransactionalObjectHandle<O>* handle) {
-			Reference<TransactionalObjectHandle<Object*>*> ref = (TransactionalObjectHandle<Object*>*) handle;
+			//Reference<TransactionalObjectHandle<Object*>*> ref = (TransactionalObjectHandle<Object*>*) handle;
 
-			return (TransactionalObjectHandle<O>*) HashTable<uint64, Reference<TransactionalObjectHandle<Object*>*> >::put((uint64) header, ref).get();
+			return dynamic_cast<TransactionalObjectHandle<O>*>(HashTable<uint64, Reference<TransactionalObjectHandleBase*> >::put((uint64) header, handle).get());
 		}
 
 		template<class O> TransactionalObjectHandle<O>* get(TransactionalObjectHeader<O>* header) {
-			return (TransactionalObjectHandle<O>*) HashTable<uint64, Reference<TransactionalObjectHandle<Object*>*> >::get((uint64) header).get();
+			return dynamic_cast<TransactionalObjectHandle<O>*>(HashTable<uint64, Reference<TransactionalObjectHandleBase*> >::get((uint64) header).get());
 		}
 	};
 
-	class TransactionalObjectHandleVector : public SortedVector<Reference<TransactionalObjectHandle<Object*>*> > {
-		int compare(Reference<TransactionalObjectHandle<Object*>*>& o1, const Reference<TransactionalObjectHandle<Object*>*>& o2) const {
-			return o1->compareToHeaders(o2.get());
+	class TransactionalObjectHandleVector : public SortedVector<Reference<TransactionalObjectHandleBase*> > {
+		int compare(Reference<TransactionalObjectHandleBase*>& o1, const Reference<TransactionalObjectHandleBase*>& o2) const {
+			return o1->compareTo(o2.get());
 		}
 
 	public:
-		template<class O> void add(TransactionalObjectHandle<O>* handle) {
-			SortedVector<Reference<TransactionalObjectHandle<Object*>*> >::put((TransactionalObjectHandle<Object*>*) handle);
+		TransactionalObjectHandleVector() {
+			setInsertPlan(NO_DUPLICATE);
 		}
 
-		template<class O> bool removeElement(TransactionalObjectHandle<O>* handle) {
-			return SortedVector<Reference<TransactionalObjectHandle<Object*>*> >::drop((TransactionalObjectHandle<Object*>*) handle);
+		template<class O> void addHandle(TransactionalObjectHandle<O>* handle) {
+			SortedVector<Reference<TransactionalObjectHandleBase*> >::put(handle);
 		}
 
-		template<class O> bool contains(TransactionalObjectHandle<O>* handle) {
-			return SortedVector<Reference<TransactionalObjectHandle<Object*>*> >::contains((TransactionalObjectHandle<Object*>*) handle);
+		template<class O> bool removeHandle(TransactionalObjectHandle<O>* handle) {
+			return SortedVector<Reference<TransactionalObjectHandleBase*> >::drop(handle);
+		}
+
+		template<class O> bool containsHandle(TransactionalObjectHandle<O>* handle) {
+			return SortedVector<Reference<TransactionalObjectHandleBase*> >::contains(handle);
 		}
 	};
 
@@ -103,6 +109,8 @@ namespace engine {
 
 		uint64 commitTime;
 		uint64 runTime;
+
+		static STMCommitStrategy* commitAlgorithm;
 
 	public:
 		static ReadWriteLock blockLock;
@@ -170,8 +178,6 @@ namespace engine {
 
 		bool doCommit();
 
-		bool tryFinishCommit(int desiredStatus);
-
 		void finishCommit();
 
 		void doAbort();
@@ -182,8 +188,6 @@ namespace engine {
 		bool setState(int currentstate, int newstate);
 
 		void releaseReadWriteObjects();
-
-		bool validateReadOnlyObjects();
 
 		void discardReadWriteObjects();
 
@@ -199,6 +203,7 @@ namespace engine {
 		friend class TransactionalMemoryManager;
 		friend class TransactionalObjectManager;
 		friend class TransactionAbortedException;
+		friend class FraserSTM;
 		template<class O> friend class TransactionalObjectHeader;
 		template<class O> friend class TransactionalReference;
 		template<class O> friend class TransactionalWeakReference;
@@ -222,7 +227,7 @@ namespace engine {
 
 		openedObjets.put<O>(header, handle);
 
-		readWriteObjects.add<O>(handle);
+		readWriteObjects.addHandle<O>(handle);
 	}
 
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {
@@ -235,7 +240,7 @@ namespace engine {
 
 			openedObjets.put<O>(header, handle);
 
-			readOnlyObjects.add<O>(handle);
+			readOnlyObjects.addHandle<O>(handle);
 		}
 
 		O object = dynamic_cast<O>(handle->getObject());
@@ -261,11 +266,11 @@ namespace engine {
 
 			openedObjets.put<O>(header, handle);
 
-			readWriteObjects.add<O>(handle);
-		} else if (readOnlyObjects.contains(handle.get())) {
-			readOnlyObjects.removeElement<O>(handle);
+			readWriteObjects.addHandle<O>(handle);
+		} else if (readOnlyObjects.containsHandle(handle.get())) {
+			readOnlyObjects.removeHandle<O>(handle);
 
-			readWriteObjects.add<O>(handle);
+			readWriteObjects.addHandle<O>(handle);
 			handle->upgradeToWrite();
 
 			localObjectCache.put(handle->getObjectLocalCopy(), header);

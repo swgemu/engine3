@@ -21,8 +21,27 @@ namespace engine {
 		static AtomicInteger deletedHandles;
 	};
 
-	template<class O> class TransactionalObjectHandle : public Object {
-		TransactionalObjectHeader<O>* header;
+	class TransactionalObjectHandleBase : public Object {
+	public:
+		virtual Transaction* acquireHeader(Transaction* transaction) = 0;
+
+		virtual void releaseHeader() = 0;
+
+		virtual void discardHeader(Transaction* transaction) = 0;
+
+		//virtual uint64 getHeaderID() = 0;
+
+		virtual bool hasObjectChanged() = 0;
+
+		virtual bool isCopyEqualToObject() = 0;
+
+		virtual int compareTo(TransactionalObjectHandleBase* handle) = 0;
+
+		virtual Transaction* getCompetingTransaction() = 0;
+	};
+
+	template<class O> class TransactionalObjectHandle : public TransactionalObjectHandleBase {
+		Reference<TransactionalObjectHeader<O>*> header;
 
 		Reference<Object*> object;
 		Reference<Object*> objectCopy;
@@ -69,13 +88,20 @@ namespace engine {
 			return objectCopy == object;
 		}
 
-		int compareTo(TransactionalObjectHandle* handle) {
-			if ((TransactionalObjectHandle*) this == handle)
+		int compareTo(Object* object) {
+			TransactionalObjectHandle* otherHandle = (TransactionalObjectHandle*) object;
+
+			return compareToHeaders(otherHandle);
+		}
+
+		int compareTo(TransactionalObjectHandleBase* handle) {
+			/*if ((TransactionalObjectHandle*) this == handle)
 				return 0;
 			else if ((TransactionalObjectHandle*) this < handle)
 				return 1;
 			else
-				return -1;
+				return -1;*/
+			return compareToHeaders((TransactionalObjectHandle*) handle);
 		}
 
 		int compareToHeaders(TransactionalObjectHandle<O>* handle);
@@ -233,14 +259,21 @@ namespace engine {
 	template<class O> int TransactionalObjectHandle<O>::compareToHeaders(TransactionalObjectHandle<O>* handle) {
 		//printf("blia\n");
 
-		uint64 headerID = handle->getHeaderID();
+		/*uint64 headerID = handle->getHeaderID();
 
 		if (header->getHeaderID() == headerID)
 			return 0;
 		else if (header->getHeaderID() < headerID)
-			return 1;
-		else
 			return -1;
+		else
+			return 1;*/
+
+		if (header == handle->header)
+			return 0;
+		else if (header < handle->header)
+			return -1;
+		else
+			return 1;
 	}
 
   } // namespace stm

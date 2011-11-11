@@ -20,8 +20,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "StackTrace.h"
 
 Object::Object() : ReferenceCounter(), Variable() {
+#ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
 	referenceMutex = new Mutex();
+#endif
 
 	//deletedByTrace = NULL;
 
@@ -35,8 +37,10 @@ Object::Object() : ReferenceCounter(), Variable() {
 }
 
 Object::Object(const Object& obj) : ReferenceCounter(), Variable() {
+#ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
 	referenceMutex = new Mutex();
+#endif
 
 	//deletedByTrace = NULL;
 
@@ -59,7 +63,11 @@ Object::~Object() {
 		assert(0 && "Deleting object with reference > 0");
 
 //#ifndef WITH_STM
+#ifdef MEMORY_PROTECTION
 	Locker locker(referenceMutex);
+#else
+	Locker locker(&referenceMutex);
+#endif
 //#endif
 
 	if (weakReferences != NULL) {
@@ -83,7 +91,7 @@ Object::~Object() {
 	}		
 	
 	locker.release();
-		
+#ifdef MEMORY_PROTECTION
 	delete referenceMutex;
 	referenceMutex = NULL;
 
@@ -92,6 +100,7 @@ Object::~Object() {
 
 	delete _destroying;
 	_destroying = NULL;
+#endif
 
 	finalize();
 
@@ -114,8 +123,11 @@ void Object::release() {
 }
 
 void Object::acquireWeak(WeakReferenceBase* ref) {
-//#ifndef WITH_STM
+#ifdef MEMORY_PROTECTION
 	Locker locker(referenceMutex);
+#else
+	Locker locker(&referenceMutex);
+#endif
 
 	if (weakReferences == NULL)
 		weakReferences = new HashSet<WeakReferenceBase*>();
@@ -132,9 +144,11 @@ void Object::acquireWeak(WeakReferenceBase* ref) {
 }
 
 void Object::releaseWeak(WeakReferenceBase* ref) {
-//#ifndef WITH_STM
+#ifdef MEMORY_PROTECTION
 	Locker locker(referenceMutex);
-//#endif
+#else
+	Locker locker(&referenceMutex);
+#endif
 
 	if (weakReferences == NULL)
 		return;
@@ -158,11 +172,15 @@ void Object::releaseWeak(WeakReferenceBase* ref) {
 }
 
 void Object::destroy() {
+#ifdef MEMORY_PROTECTION
 	_destroying->set(true);
 
-//#ifndef WITH_STM
 	Locker locker(referenceMutex);
-//#endif
+#else
+	_destroying.set(true);
+
+	Locker locker(&referenceMutex);
+#endif
 
 	if (weakReferences != NULL) {
 		/*Vector<WeakReferenceBase*>* vector = weakReferences;

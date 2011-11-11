@@ -29,9 +29,9 @@ namespace engine {
 
 		Reference<Object*> object;
 
-		uint64 headerID;
+		//uint64 headerID;
 
-		static AtomicLong globalHeaderCounter;
+		//static AtomicLong globalHeaderCounter;
 
 	public:
 		TransactionalObjectHeader(O obj) {
@@ -40,24 +40,24 @@ namespace engine {
 			ownerTransaction = NULL;
 			//last = NULL;
 
-			headerID = globalHeaderCounter.increment();
+	//		headerID = globalHeaderCounter.increment();
 		}
 
 		virtual ~TransactionalObjectHeader() {
 		}
 
 		int compareTo(TransactionalObjectHeader* header) {
-			if (headerID == header->headerID)
+			if (this == header)
 				return 0;
-			else if (headerID < header->headerID)
+			else if (this < header)
 				return -1;
 			else
 				return 1;
 		}
 
-		uint64 getHeaderID() {
+		/*uint64 getHeaderID() {
 			return headerID;
-		}
+		}*/
 
 		O get();
 
@@ -121,8 +121,8 @@ namespace engine {
 		friend class TransactionalObjectHandle<O>;
 	};
 
-	template<class O>
-	AtomicLong TransactionalObjectHeader<O>::globalHeaderCounter;
+	/*template<class O>
+	AtomicLong TransactionalObjectHeader<O>::globalHeaderCounter;*/
 
 	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createCreationHandle(Transaction* transaction) {
 		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
@@ -211,7 +211,11 @@ namespace engine {
 
 		assert(ownerTransaction != NULL);
 
+#ifdef MEMORY_PROTECTION
 		object = objectCopy->clone(NULL);
+#else
+		object = objectCopy;
+#endif
 
 		assert(object != NULL);
 

@@ -118,6 +118,8 @@ public:
 			//TransactionalReference<TestClass*>& reference2 = references->get(System::random(references->size() - 1));
 
 			//TestClass* objectToRead = reference2.get();
+			/*TestClass* obj = reference.get();
+			obj = reference.get();*/
 			TestClass* object = reference.getForUpdate();
 
 			/*if (System::random(2) == 0) {

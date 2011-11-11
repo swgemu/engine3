@@ -784,6 +784,9 @@ MMOEngine/src/engine/stm/TransactionalObjectHandle.h -text
 MMOEngine/src/engine/stm/TransactionalObjectHeader.h -text
 MMOEngine/src/engine/stm/TransactionalReference.h -text
 MMOEngine/src/engine/stm/TransactionalWeakReference.h -text
+MMOEngine/src/engine/stm/algos/FraserSTM.cpp -text
+MMOEngine/src/engine/stm/algos/FraserSTM.h -text
+MMOEngine/src/engine/stm/algos/STMCommitStrategy.h -text
 MMOEngine/src/engine/stm/mm/HazardPointer.h -text
 MMOEngine/src/engine/stm/mm/KernelCall.cpp -text
 MMOEngine/src/engine/stm/mm/KernelCall.h -text
@@ -1019,5 +1022,6 @@ MMOEngine/src/testsuite3/configure.ac -text
 MMOEngine/src/testsuite3/stamp-h1 -text
 MMOEngine/src/testsuite3/tests/TestClass.h -text
 MMOEngine/src/testsuite3/tests/memprottest.h -text
+MMOEngine/src/testsuite3/tests/qtstmtest.h -text
 MMOEngine/src/testsuite3/tests/stmmemtest.h -text
 MMOEngine/src/testsuite3/tests/stmtest.h -text

@@ -30,6 +30,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTree.h"
 
+#define OUTPUTQTERRORS
+
 QuadTreeNode::QuadTreeNode() {
 	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
 
@@ -238,7 +240,9 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 		}
 
 		if (obj->getNode().get() == NULL) {
+#ifdef OUTPUTQTERRORS
 			System::out << hex << "object [" << obj->getObjectID() <<  "] updating error\n";
+#endif
 			return false;
 		}
 
@@ -528,8 +532,10 @@ bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
     // May result in another squaring frenzy.
     if (cur.get() != NULL)
         _insert(cur, obj);
+#ifdef OUTPUTQTERRORS
 	else
 		System::out << "[QuadTree] error on update() - invalid Node\n";
+#endif
 
     // We don't need the reference anymore. If the object goes out of the
     // quadtree and there aren't any references left... well... goodbye
