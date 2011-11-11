@@ -23,14 +23,14 @@ bool FraserSTM::doCommit(Transaction* transaction) {
 		for (int i = 0; i < transaction->readWriteObjects.size(); ++i) {
 			Reference<TransactionalObjectHandleBase* > handle = transaction->readWriteObjects.get(i);
 
-			/*uint64 hID = handle->getHeaderAddress();
+			uint64 hID = handle->getHeaderAddress();
 
 			//transaction->info("hID:" + String::valueOf(hID), true);
 
 			if (hID < lastHeaderID) {
 				assert("hui" && 0);
 			} else
-				lastHeaderID = hID;*/
+				lastHeaderID = hID;
 
 			Reference<Transaction*> competingTransaction = NULL;
 
