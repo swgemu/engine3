@@ -59,7 +59,7 @@ void TransactionalObjectManager::addObjectsToSave(const Vector<Reference<Object*
 		//Di
 
 		if (impl != NULL && (impl->_this != NULL)) {
-			implementationCopiesToSave.put(impl->_this, impl);
+			implementationCopiesToSave.put(impl->_this.get(), impl);
 		}
 	}
 }
