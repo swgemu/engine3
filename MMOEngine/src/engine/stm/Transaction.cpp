@@ -25,7 +25,7 @@ ReadWriteLock Transaction::blockLock;
 AtomicInteger HandleCounter::createdHandles;
 AtomicInteger HandleCounter::deletedHandles;
 
-STMCommitStrategy* Transaction::commitAlgorithm = new FraserSTM();
+STMAlgorithm* Transaction::commitAlgorithm = new FraserSTM();
 
 Transaction::Transaction(uint64 id) : Logger() {
 	status = INITIAL;
@@ -101,7 +101,9 @@ bool Transaction::start(Task* task) {
 
 		TransactionalMemoryManager::instance()->increaseFailedByExceptions();
 
-		error("ebati v rot");
+		doAbort();
+
+		//error("ebati v rot");
 	} catch (Exception& e) {
 		error("exception running a task " + e.getMessage());
 		e.printStackTrace();

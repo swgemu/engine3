@@ -13,13 +13,15 @@ namespace engine {
 
  	 class Transaction;
 
- 	 class STMCommitStrategy {
+ 	 //template<class O> class TransactionalObjectHeader;
+
+ 	 class STMAlgorithm {
  	 public:
- 		STMCommitStrategy() {
+ 		STMAlgorithm() {
 
  		}
 
- 		virtual ~STMCommitStrategy() {
+ 		virtual ~STMAlgorithm() {
 
  		}
 

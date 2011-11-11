@@ -20,7 +20,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace stm {
 
-  	class STMCommitStrategy;
+  	class STMAlgorithm;
 
 	template<class O> class TransactionalObjectHeader;
 
@@ -57,6 +57,19 @@ namespace engine {
 
 		template<class O> void addHandle(TransactionalObjectHandle<O>* handle) {
 			SortedVector<Reference<TransactionalObjectHandleBase*> >::put(handle);
+/*
+			uint64 lastHeaderID = 0;
+
+			for (int i = 0; i < size(); ++i) {
+				uint64 hID = get(i)->getHeaderAddress();
+				//transaction->info("hID:" + String::valueOf(hID), true);
+
+				if (hID < lastHeaderID) {
+					assert("hui" && 0);
+				} else
+					lastHeaderID = hID;
+			}*/
+
 		}
 
 		template<class O> bool removeHandle(TransactionalObjectHandle<O>* handle) {
@@ -110,7 +123,7 @@ namespace engine {
 		uint64 commitTime;
 		uint64 runTime;
 
-		static STMCommitStrategy* commitAlgorithm;
+		static STMAlgorithm* commitAlgorithm;
 
 	public:
 		static ReadWriteLock blockLock;

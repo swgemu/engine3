@@ -8,14 +8,14 @@
 #ifndef FRASERSTM_H_
 #define FRASERSTM_H_
 
-#include "STMCommitStrategy.h"
+#include "STMAlgorithm.h"
 
 namespace engine {
  namespace stm {
 
  	 class Transaction;
 
- 	 class FraserSTM : public STMCommitStrategy {
+ 	 class FraserSTM : public STMAlgorithm {
  	 public:
  		bool doCommit(Transaction* transaction);
  		bool tryFinishCommit(int desiredStatus, Transaction* transaction);

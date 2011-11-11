@@ -38,6 +38,8 @@ namespace engine {
 		virtual int compareTo(TransactionalObjectHandleBase* handle) = 0;
 
 		virtual Transaction* getCompetingTransaction() = 0;
+
+		virtual uint64 getHeaderAddress() = 0;
 	};
 
 	template<class O> class TransactionalObjectHandle : public TransactionalObjectHandleBase {
@@ -75,6 +77,10 @@ namespace engine {
 			return header;
 		}
 
+		uint64 getHeaderAddress() {
+			return (uint64)header.get();
+		}
+
 		Reference<TransactionalObjectHandle<Object*>*> getLastHandle() {
 			Reference<TransactionalObjectHandle<Object*>*> ref = (TransactionalObjectHandle<Object*>*) header->getLastHandle().get();
 
@@ -106,7 +112,7 @@ namespace engine {
 
 		int compareToHeaders(TransactionalObjectHandle<O>* handle);
 
-		uint64 getHeaderID();
+		//uint64 getHeaderID();
 
 		Object* getObject() {
 			return object;
@@ -251,29 +257,18 @@ namespace engine {
 		next = n;
 	}*/
 
-	template<class O> uint64 TransactionalObjectHandle<O>::getHeaderID() {
+	/*template<class O> uint64 TransactionalObjectHandle<O>::getHeaderID() {
 		return header->getHeaderID();
-	}
+	}*/
 
 
 	template<class O> int TransactionalObjectHandle<O>::compareToHeaders(TransactionalObjectHandle<O>* handle) {
-		//printf("blia\n");
-
-		/*uint64 headerID = handle->getHeaderID();
-
-		if (header->getHeaderID() == headerID)
-			return 0;
-		else if (header->getHeaderID() < headerID)
-			return -1;
-		else
-			return 1;*/
-
 		if (header == handle->header)
 			return 0;
 		else if (header < handle->header)
-			return -1;
-		else
 			return 1;
+		else
+			return -1;
 	}
 
   } // namespace stm

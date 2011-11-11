@@ -786,7 +786,7 @@ MMOEngine/src/engine/stm/TransactionalReference.h -text
 MMOEngine/src/engine/stm/TransactionalWeakReference.h -text
 MMOEngine/src/engine/stm/algos/FraserSTM.cpp -text
 MMOEngine/src/engine/stm/algos/FraserSTM.h -text
-MMOEngine/src/engine/stm/algos/STMCommitStrategy.h -text
+MMOEngine/src/engine/stm/algos/STMAlgorithm.h -text
 MMOEngine/src/engine/stm/mm/HazardPointer.h -text
 MMOEngine/src/engine/stm/mm/KernelCall.cpp -text
 MMOEngine/src/engine/stm/mm/KernelCall.h -text

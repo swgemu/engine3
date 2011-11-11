@@ -15,6 +15,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Transaction.h"
 
 //#define STMLINKELISTDHELP
+//#define EAGERABORTS
 
 namespace engine {
   namespace stm {
@@ -224,10 +225,10 @@ namespace engine {
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
-		/*Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
+		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
 		assert(object != NULL);
-
+#ifdef EAGERABORTS
 		if (transaction != NULL) {
 			if (!transaction->isCommited())
 				return dynamic_cast<O>(object.get());
@@ -238,22 +239,25 @@ namespace engine {
 		} else {
 			//add(handle);
 			return dynamic_cast<O>(object.get());
-		}*/
+		}
+#endif
 
 		return dynamic_cast<O>(object.get());
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
-		/*Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
+#ifdef EAGERABORTS
+		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
 		if (transaction != NULL) {
 			 	 if (!transaction->isCommited())
-			 	 	 return object;
+			 	 	 return dynamic_cast<O>(object.get());
 			 	 else
 			 	 	 throw TransactionAbortedException();
 
 			 	 //return ownerTransaction->getOpenedObject(this);
-			 } else {*/
+			 } else {
+#endif
 
 		this->add(handle);
 
@@ -263,7 +267,10 @@ namespace engine {
 
 		assert(objectToReturn != NULL);
 		return objectToReturn;
-		//}
+
+#ifdef EAGERABORTS
+		}
+#endif
 	}
 
   } // namespace stm
