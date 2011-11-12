@@ -27,6 +27,7 @@ public:
 	}
 
 	void run() {
+#ifdef WITH_STM
 		//Task* task = new TestTask(references);
 		//QuadTreeEntry* move = entry.getForUpdate();
 		QuadTree* quadTree = qt.getForUpdate();
@@ -35,6 +36,7 @@ public:
 
 		quadTree->update(entry);
 		quadTree->inRange(entry, 512);
+#endif
 	}
 };
 
