@@ -141,7 +141,7 @@ namespace sys {
 			}
 
 			while (true) {
-				/*O oldobj = object.get();
+				O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL) {
@@ -149,9 +149,9 @@ namespace sys {
 					}
 
 					return;
-				}*/
+				}
 
-				O oldobj = object.get();
+				/*O oldobj = object.get();
 
 				O oldRef = object.compareAndSetReturnOld(oldobj, obj);
 
@@ -160,7 +160,7 @@ namespace sys {
 						oldRef->release();
 
 					break;
-				}
+				}*/
 
 				Thread::yield();
 			}

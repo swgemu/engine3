@@ -53,7 +53,7 @@ public:
 #else
 
   	template<class O> class TransactionalWeakReference {
-		Reference<TransactionalObjectHeader<O>*> header;
+		WeakReference<TransactionalObjectHeader<O>*> header;
 
 	public:
 		TransactionalWeakReference() {

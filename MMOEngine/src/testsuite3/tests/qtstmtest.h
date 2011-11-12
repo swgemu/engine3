@@ -11,6 +11,9 @@
 #include "engine/engine.h"
 
 #define OBJECTCOUNT 10000
+#define MINCOORD -8192
+#define MAXCOORD 8192
+
 
 class QTMoveTask : public Task {
 	//TransactionalReference<TestClass*> >* references;
@@ -28,7 +31,7 @@ public:
 		//QuadTreeEntry* move = entry.getForUpdate();
 		QuadTree* quadTree = qt.getForUpdate();
 
-		entry->setPosition(System::random(16384) - 8192, 0, System::random(16384) - 8192);
+		entry->setPosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
 
 		quadTree->update(entry);
 		quadTree->inRange(entry, 512);
@@ -39,7 +42,7 @@ void testQTSTM() {
 #ifdef WITH_STM
 	Reference<Transaction*> transaction = TransactionalMemoryManager::instance()->startTransaction();
 
-	TransactionalReference<QuadTree*> qt = new QuadTree(-8192, -8192, 8192, 8192);
+	TransactionalReference<QuadTree*> qt = new QuadTree(MINCOORD, MINCOORD, MAXCOORD, MAXCOORD);
 	Vector<Reference<QuadTreeEntry*> > objects;
 
 	printf("Creating %d objects..\n", OBJECTCOUNT);
@@ -48,7 +51,7 @@ void testQTSTM() {
 		Reference<QuadTreeEntry*> entry = new QuadTreeEntry();
 //		entry->depl
 
-		entry->initializePosition(System::random(16384) - 8192, 0, System::random(16384) - 8192);
+		entry->initializePosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
 
 		objects.add(entry);
 	}
@@ -74,7 +77,7 @@ void testQTSTM() {
 
 	//Thread::sleep(3000);
 
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 60; ++i) {
 		Thread::sleep(1000);
 
 		int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();

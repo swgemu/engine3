@@ -127,7 +127,7 @@ namespace engine {
 
 			objectCopy = NULL;
 
-			header = NULL;
+			//header = NULL;
 		}
 	};
 
@@ -230,9 +230,9 @@ namespace engine {
 		//if (objectCopy.compareAndSet(obj.get(), NULL)) { // this is to avoid several threads releasing it*/
 
 		//if (object.compareAndSet(object.get(), NULL)) {
-			header->releaseObject(this, obj);
+		header->releaseObject(this, obj);
 
-			//resetObjects();
+		resetObjects();
 		//}
 		//}
 
@@ -241,7 +241,7 @@ namespace engine {
 	template<class O> void TransactionalObjectHandle<O>::discardHeader(Transaction* transaction) {
 		header->discardObject(transaction);
 
-		//resetObjects();
+		resetObjects();
 
 		//this->transaction = NULL; <---------- this is wrong its the param
 	}
