@@ -13,16 +13,20 @@ namespace engine {
   namespace core {
 
 	class TaskManager;
+	class TaskQueue;
 
 	class TaskWorkerThread : public ServiceThread {
 		Mutex blockMutex;
+		TaskQueue* queue;
 
 	public:
-		TaskWorkerThread(const String& s);
+		TaskWorkerThread(const String& s, TaskQueue* queue);
 
 		virtual ~TaskWorkerThread();
 
 		void start(TaskManager* manager);
+
+		void pushToRetryQueue(Task* task);
 
 		virtual void run();
 

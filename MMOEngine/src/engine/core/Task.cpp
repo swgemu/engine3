@@ -67,9 +67,18 @@ void Task::execute() {
 
 			++commitAttempts;
 
-			if (transaction->start(this)) {
-				if (transaction->commit())
-					break;
+			if (transaction->start(this) && transaction->commit()) {
+				break;
+			} else {
+				Thread* thisThread = Thread::getCurrentThread();
+
+				if (thisThread != NULL && taskManager->getSerialWorker() != thisThread) {
+					taskManager->retryTaskInSerial(this);
+
+					TransactionalMemoryManager::instance()->retryTransaction();
+
+					return;
+				}
 			}
 
 			if (commitAttempts > 1)

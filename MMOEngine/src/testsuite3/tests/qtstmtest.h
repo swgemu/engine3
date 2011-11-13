@@ -10,10 +10,10 @@
 
 #include "engine/engine.h"
 
-#define OBJECTCOUNT 10000
-#define MINCOORD -8192
-#define MAXCOORD 8192
-
+#define MINCOORD -512
+#define MAXCOORD 512
+#define ITERATIONS 60
+#define OBJECTCOUNT 300
 
 class QTMoveTask : public Task {
 	//TransactionalReference<TestClass*> >* references;
@@ -49,11 +49,18 @@ void testQTSTM() {
 
 	printf("Creating %d objects..\n", OBJECTCOUNT);
 
+	int j = 0;
+
 	for (int i = 0; i < OBJECTCOUNT; ++i) {
 		Reference<QuadTreeEntry*> entry = new QuadTreeEntry();
 //		entry->depl
 
-		entry->initializePosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+		//entry->initializePosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+		entry->_setObjectID(i);
+		entry->initializePosition(0, 0, 0);
+		/*float x = i % MAXCOORD;
+
+		entry->initializePosition((MINCOORD + i) % MAXCOORD, 0, MINCOORD + (++j % MAXCOORD));*/
 
 		objects.add(entry);
 	}
@@ -68,6 +75,18 @@ void testQTSTM() {
 		qt->inRange(obj, 512);
 	}
 
+	int maxInRangeObjects = 0;
+
+	for (int i = 0; i < objects.size(); ++i) {
+		Reference<QuadTreeEntry*>& obj = objects.get(i);
+
+		if (obj->inRangeObjectCount() > maxInRangeObjects)
+			maxInRangeObjects = obj->inRangeObjectCount();
+	}
+
+	printf("maxInRangeObjects = %d\n", maxInRangeObjects);
+
+
 	printf("Commiting pure transaction...\n");
 
 	TransactionalMemoryManager::commitPureTransaction(transaction);
@@ -79,7 +98,7 @@ void testQTSTM() {
 
 	//Thread::sleep(3000);
 
-	for (int i = 0; i < 60; ++i) {
+	for (int i = 0; i < ITERATIONS; ++i) {
 		Thread::sleep(1000);
 
 		int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
@@ -88,15 +107,15 @@ void testQTSTM() {
 		int taskToSchedule = 500;
 		int taskToExecute = 500;
 
-		if (scheduledTasks > 5000)
+		if (scheduledTasks > 500)
 			taskToSchedule = 0;
-		else if (scheduledTasks < 1000)
-			taskToSchedule = 3000;
+		else if (scheduledTasks < 100)
+			taskToSchedule = 100;
 
-		if (executedTasks > 5000)
+		if (executedTasks > 500)
 			taskToExecute = 0;
-		else if (executedTasks < 1000)
-			taskToExecute = 3000;
+		else if (executedTasks < 100)
+			taskToExecute = 100;
 
 		transaction = TransactionalMemoryManager::instance()->startTransaction();
 

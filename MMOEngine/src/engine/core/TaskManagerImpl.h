@@ -27,6 +27,11 @@ namespace engine {
 		Vector<TaskWorkerThread*> workers;
 		Vector<TaskScheduler*> schedulers;
 
+#ifdef WITH_STM
+		TaskWorkerThread* serialWorker;
+		TaskQueue serialTaskQueue;
+#endif
+
 		int workerThreads;
 		int schedulerThreads;
 
@@ -52,6 +57,12 @@ namespace engine {
 
 		Vector<Locker*>* blockTaskManager();
 		void unblockTaskManager(Vector<Locker*>* lockers);
+
+#ifdef WITH_STM
+		void retryTaskInSerial(Task* task);
+
+		Thread* getSerialWorker();
+#endif
 
 		void executeTask(Task* task);
 		void executeTasks(const Vector<Task*>& tasks);
@@ -85,9 +96,9 @@ namespace engine {
 
 		void setTaskScheduler(Task* task, TaskScheduler* scheduler);
 
-		inline Task* getTask() {
+		/*inline Task* getTask() {
 			return tasks.pop();
-		}
+		}*/
 
 		friend class TaskScheduler;
 		friend class TaskWorkerThread;

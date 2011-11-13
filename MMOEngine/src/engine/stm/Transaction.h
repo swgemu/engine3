@@ -187,6 +187,8 @@ namespace engine {
 
 		//template<class O> O getOpenedObject(TransactionalObjectHeader<O>* header);
 
+		template<class O> O getOpenedObject(TransactionalObjectHeader<O>* header);
+
 		template<class O> TransactionalObjectHeader<O>* getHeader(O object);
 
 		bool doCommit();
@@ -233,6 +235,8 @@ namespace engine {
 	}
 
 	template<class O> void Transaction::createObject(TransactionalObjectHeader<O>* header) {
+		assert(!isCommited());
+
 		Reference<TransactionalObjectHandle<O>*> handle = header->createCreationHandle(this);
 
 		localObjectCache.put(handle->getObjectLocalCopy(), header);
@@ -243,7 +247,28 @@ namespace engine {
 		readWriteObjects.addHandle<O>(handle);
 	}
 
+	template<class O> O Transaction::getOpenedObject(TransactionalObjectHeader<O>* header) {
+		Reference<TransactionalObjectHandle<O>*> handle = openedObjets.get<O>(header);
+
+		if (handle == NULL)
+			return NULL;
+
+		O object = NULL;
+
+		if (!isAborted()) {
+			object = dynamic_cast<O>(handle->getObject());
+
+			if (handle->getObjectLocalCopy() != NULL) {
+				object = dynamic_cast<O>(handle->getObjectLocalCopy());
+			}
+		}
+
+		return object;
+	}
+
 	template<class O> O Transaction::openObject(TransactionalObjectHeader<O>* header) {
+		assert(!isCommited());
+
 		Reference<TransactionalObjectHandle<O>*> handle = openedObjets.get<O>(header);
 
 		if (handle == NULL) {
@@ -268,6 +293,7 @@ namespace engine {
 
 	template<class O> O Transaction::openObjectForWrite(TransactionalObjectHeader<O>* header) {
 		//info("opening opbject");
+		assert(!isCommited());
 
 		Reference<TransactionalObjectHandle<O>*> handle = openedObjets.get<O>(header);
 

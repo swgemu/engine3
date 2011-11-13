@@ -43,6 +43,10 @@ bool QuadTreeEntryImplementation::isInArea(QuadTreeNode* node) {
 			(coordinates.getPositionY() + radius > node->dividerY && coordinates.getPositionY() - radius < node->dividerY);
 }
 
+uint64 QuadTreeEntryImplementation::getObjectID() {
+	return _this->_getObjectID();
+}
+
 QuadTreeEntry* QuadTreeEntryImplementation::getRootParent() {
 	/*if (parent == NULL)
 		return NULL;

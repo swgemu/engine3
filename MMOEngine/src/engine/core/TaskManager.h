@@ -37,6 +37,16 @@ namespace engine {
 
 		virtual void executeTask(Task* task) = 0;
 
+#ifdef WITH_STM
+		virtual void retryTaskInSerial(Task* task) {
+
+		}
+
+		virtual Thread* getSerialWorker() {
+			return NULL;
+		}
+#endif
+
 		virtual bool isTaskScheduled(Task* task) = 0;
 
 		virtual void scheduleTask(Task* task, uint64 delay = 0) = 0;
@@ -47,7 +57,7 @@ namespace engine {
 
 		virtual bool cancelTask(Task* task) = 0;
 
-		virtual Task* getTask() = 0;
+		//virtual Task* getTask() = 0;
 
 		virtual void flushTasks() = 0;
 

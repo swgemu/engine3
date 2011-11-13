@@ -17,7 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace core {
 
-	class TaskScheduler : public Thread, public Object,public Logger {
+	class TaskScheduler : public Thread, public Object, public Logger {
 		TaskManager* taskManager;
 
 		TimedTaskQueue tasks;

@@ -24,6 +24,16 @@ void TransactionalTaskManager::shutdown() {
 	taskManager->shutdown();
 }
 
+#ifdef WITH_STM
+void TransactionalTaskManager::retryTaskInSerial(Task* task) {
+	taskManager->retryTaskInSerial(task);
+}
+
+Thread* TransactionalTaskManager::getSerialWorker() {
+	return taskManager->getSerialWorker();
+}
+#endif
+
 void TransactionalTaskManager::executeTask(Task* task) {
 	LocalTaskManager* manager = getLocalTaskManager();
 

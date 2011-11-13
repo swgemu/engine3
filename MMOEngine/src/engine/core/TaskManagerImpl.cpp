@@ -16,6 +16,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager") {
 	shuttingDown = false;
 
+#ifdef WITH_STM
+	serialWorker = NULL;
+#endif
+
 	setInfoLogLevel();
 }
 
@@ -32,10 +36,16 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount) {
 	Locker locker(this);
 
 	for (int i = 0; i < workerCount; ++i) {
-		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(i));
+		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(i), &tasks);
 
 		workers.add(worker);
 	}
+
+#ifdef WITH_STM
+	serialWorker = new TaskWorkerThread("TaskSerialWorkerThread", &serialTaskQueue);
+
+	workers.add(serialWorker);
+#endif
 
 	for (int i = 0; i < schedulerCount; ++i) {
 		TaskScheduler* scheduler = new TaskScheduler("TaskScheduler" + String::valueOf(i));
@@ -326,5 +336,20 @@ int TaskManagerImpl::getScheduledTaskSize() {
 }
 
 int TaskManagerImpl::getExecutingTaskSize() {
+#ifdef WITH_STM
+	return tasks.size() + serialTaskQueue.size();
+#else
 	return tasks.size();
+#endif
 }
+
+#ifdef WITH_STM
+void TaskManagerImpl::retryTaskInSerial(Task* task) {
+	//serialWorker->pushToRetryQueue(task);
+	serialTaskQueue.push(task);
+}
+
+Thread* TaskManagerImpl::getSerialWorker() {
+	return serialWorker;
+}
+#endif

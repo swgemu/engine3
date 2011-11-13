@@ -49,6 +49,7 @@ class QuadTreeEntry extends Observable {
 		}
 	}
 	
+	@read
 	public QuadTreeEntry getInRangeObject(int index) {
 		return closeobjects.get(index);
 	}
@@ -84,14 +85,17 @@ class QuadTreeEntry extends Observable {
 		closeobjects.removeAll();
 	}
 
+	@read
 	public boolean containsInRangeObject(QuadTreeEntry obj) {
 		return closeobjects.contains(obj);
 	}
 
+	@read
 	public abstract boolean isInRange(QuadTreeEntry obj, float range) {
 		return isInRange(obj.getPositionX(), obj.getPositionY(), range);
 	}
 
+	@read
 	public boolean isInRange(float x, float y, float range) {
 	 	float rangesq = range * range;
 
@@ -104,6 +108,7 @@ class QuadTreeEntry extends Observable {
 			return false;
 	}
 
+	@read
 	public float getDistanceTo(QuadTreeEntry obj) {
 		float x = obj.getPositionX();
 		float y = obj.getPositionY();
@@ -119,60 +124,76 @@ class QuadTreeEntry extends Observable {
 		return closeobjects;
 	}
 	
+	@read
 	public abstract QuadTreeEntry getParent() {
 		//return parent;
 		return null;
 	}
 	
+	@read
 	public native QuadTreeEntry getRootParent();
 
+	@read
 	@local
 	public native boolean isInSWArea(QuadTreeNode node);
 
+	@read
 	@local
 	public native boolean isInSEArea(QuadTreeNode node);
     	
+	@read
 	@local
 	public native boolean isInNWArea(QuadTreeNode node);
 
+	@read
 	@local
 	public native boolean isInArea(QuadTreeNode node);
 
+	@dirty
 	public abstract void notifyInsert(QuadTreeEntry obj) {
 	}
 
+	@dirty
 	public abstract void notifyPositionUpdate(QuadTreeEntry obj) {
 	}
 
+	@dirty
 	public abstract void notifyDissapear(QuadTreeEntry obj) {
 	}
 
+	@read
 	public float getPositionX() {
 		return coordinates.getPositionX();
 	}
 
+	@read
 	public float getPositionZ() {
 		return coordinates.getPositionZ();
 	}
 
+	@read
 	public float getPositionY() {
 		return coordinates.getPositionY();
 	}
 
+	@read
 	public float getPreviousPositionX() {
 		return coordinates.getPreviousPositionX();
 	}
 
+	@read
 	public float getPreviousPositionZ() {
 		return coordinates.getPreviousPositionZ();
 	}
 
+	@read
 	public float getPreviousPositionY() {
 		return coordinates.getPreviousPositionY();
 	}
 
 	@local
 	@dereferenced
+	@read
 	public Vector3 getPosition() {
 		return coordinates.getPosition();
 	}
@@ -185,6 +206,7 @@ class QuadTreeEntry extends Observable {
 		coordinates.initializePosition(x, z, y);
 	}
 
+	@read
 	public abstract int compareTo(QuadTreeEntry obj) {
 		if (getObjectID() < obj.getObjectID())
 			return 1;
@@ -194,28 +216,32 @@ class QuadTreeEntry extends Observable {
 			return 0;
 	}
 
+	@read
 	public boolean isInQuadTree() {
 		return node != null;
 	}
 
+	@read
 	public int inRangeObjectCount() {
 		return closeobjects.size();
 	}
 
 	@local
 	@dereferenced
+	@read
 	public TransactionalReference<QuadTreeNode> getNode() {
 		return node;
 	}
 	
-	public abstract unsigned long getObjectID() {
-		return 0;
-	}
+	@dirty
+	public abstract native unsigned long getObjectID();
 	
+	@read
 	public float getRadius() {
 		return radius;
 	}
 	
+	@read
 	public boolean isBounding() {
 		return bounding;
 	}

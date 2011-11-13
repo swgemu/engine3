@@ -30,7 +30,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTree.h"
 
-#define OUTPUTQTERRORS
+//#define OUTPUTQTERRORS
 
 QuadTreeNode::QuadTreeNode() {
 	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);

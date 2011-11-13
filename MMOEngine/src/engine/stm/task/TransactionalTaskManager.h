@@ -34,6 +34,12 @@ namespace engine {
 
   		void executeTask(Task* task);
 
+#ifdef WITH_STM
+  		void retryTaskInSerial(Task* task);
+
+  		Thread* getSerialWorker();
+#endif
+
   		void scheduleTask(Task* task, uint64 delay);
   		void scheduleTask(Task* task, Time& time);
 

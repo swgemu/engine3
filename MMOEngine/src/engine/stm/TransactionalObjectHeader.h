@@ -70,9 +70,7 @@ namespace engine {
 			return add(NULL);
 		}
 
-		O getForDirty() {
-			return dynamic_cast<O>(object.get());
-		}
+		O getForDirty();
 
 		bool isCurrentVersion(Object* obj);
 
@@ -156,6 +154,21 @@ namespace engine {
 
 	template<class O> O TransactionalObjectHeader<O>::getForUpdate() {
 		return Transaction::currentTransaction()->openObjectForWrite<O>(this);
+	}
+
+	template<class O> O TransactionalObjectHeader<O>::getForDirty() {
+		Transaction* trans = Transaction::currentTransaction();
+
+		O obj = NULL;
+
+		if (trans != NULL) {
+			obj = trans->getOpenedObject<O>(this);
+		}
+
+		if (obj != NULL)
+			return obj;
+		else
+			return dynamic_cast<O>(object.get());
 	}
 
 	template<class O> Transaction* TransactionalObjectHeader<O>::acquireObject(Transaction* transaction) {

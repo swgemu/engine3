@@ -11,9 +11,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Task.h"
 
-TaskWorkerThread::TaskWorkerThread(const String& s) : ServiceThread(s) {
+TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue) : ServiceThread(s) {
 	setInfoLogLevel();
 	setGlobalLogging(true);
+
+	this->queue = queue;
 }
 
 TaskWorkerThread::~TaskWorkerThread() {
@@ -30,7 +32,7 @@ void TaskWorkerThread::start(TaskManager* manager) {
 void TaskWorkerThread::run() {
 	Reference<Task*> task = NULL;
 
-	while ((task = taskManager->getTask()) != NULL) {
+	while ((task = queue->pop()) != NULL) {
 		blockMutex.lock();
 
 		try {
