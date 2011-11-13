@@ -40,6 +40,8 @@ namespace sys {
 
 		bool drop(const E& o);
 
+		Object* clone();
+
 		inline void setInsertPlan(int plan) {
 			insertPlan = plan;
 		}
@@ -148,6 +150,10 @@ namespace sys {
 	    }
 
     	return -1;
+	}
+
+	template<class E> Object* SortedVector<E>::clone() {
+		return new SortedVector<E>(*this);
 	}
 
 	template<class E> bool SortedVector<E>::drop(const E& o) {

@@ -132,6 +132,8 @@ namespace sys {
 
 		int find(const K& key);
 
+		Object* clone();
+
 		bool contains(const K& key);
 
 		bool drop(const K& key);
@@ -177,6 +179,10 @@ namespace sys {
 
 	template<class K, class V> VectorMap<K, V>::~VectorMap() {
 
+	}
+
+	template<class K, class V> Object* VectorMap<K, V>::clone() {
+		return new VectorMap<K, V>(*this);
 	}
 
 	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
