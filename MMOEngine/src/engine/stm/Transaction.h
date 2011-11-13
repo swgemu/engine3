@@ -81,18 +81,23 @@ namespace engine {
 		}
 	};
 
-	class TransactionalObjectHeaderMap : public HashTable<uint64, TransactionalObjectHeader<Object*>*> {
+	class TransactionalObjectHeaderMap : public HashTable<uint64, Reference<TransactionalObjectHeader<Object*>*> > {
 	public:
-		TransactionalObjectHeaderMap() : HashTable<uint64, TransactionalObjectHeader<Object*>*>(1000) {
+		TransactionalObjectHeaderMap() : HashTable<uint64, Reference<TransactionalObjectHeader<Object*>*> >(1000) {
 		}
 
 		template<class O> TransactionalObjectHeader<O>* put(Object* object, TransactionalObjectHeader<O>* header) {
-			return (TransactionalObjectHeader<O>*) HashTable<uint64, TransactionalObjectHeader<Object*>*>::put((uint64) object,
-				dynamic_cast<TransactionalObjectHeader<Object*>*>(header));
+
+			TransactionalObjectHeader<Object*>* test = (TransactionalObjectHeader<Object*>*)header;
+
+			//assert(test != NULL);
+
+			return (TransactionalObjectHeader<O>*) HashTable<uint64, Reference<TransactionalObjectHeader<Object*>*> >::put((uint64) object,
+				test).get();
 		}
 
 		template<class O> TransactionalObjectHeader<O>* get(O object) {
-			return (TransactionalObjectHeader<O>*) HashTable<uint64, TransactionalObjectHeader<Object*>*>::get((uint64) dynamic_cast<O>(object));
+			return (TransactionalObjectHeader<O>*) HashTable<uint64, Reference<TransactionalObjectHeader<Object*>*> >::get((uint64) (object)).get();
 		}
 	};
 
