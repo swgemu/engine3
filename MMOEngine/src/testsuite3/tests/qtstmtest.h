@@ -191,7 +191,7 @@ void testQTSTM() {
 		printf(".");
 	}
 
-	printf("finished in %d\n", start.miliDifference());
+	printf("finished in %lld\n", start.miliDifference());
 
 	printf("\n");
 
