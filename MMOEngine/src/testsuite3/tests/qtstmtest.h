@@ -15,6 +15,8 @@
 #define ITERATIONS 60
 #define OBJECTCOUNT 300
 
+Mutex qtMutex;
+
 class QTMoveTask : public Task {
 	//TransactionalReference<TestClass*> >* references;
 	Reference<QuadTreeEntry*> entry;
@@ -28,14 +30,21 @@ public:
 
 	void run() {
 #ifdef WITH_STM
-		//Task* task = new TestTask(references);
-		//QuadTreeEntry* move = entry.getForUpdate();
 		QuadTree* quadTree = qt.getForUpdate();
 
 		entry->setPosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
 
 		quadTree->update(entry);
 		quadTree->inRange(entry, 512);
+#else
+		Locker locker(entry);
+
+		Locker locker2(&qtMutex);
+
+		entry->setPosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+
+		qt->update(entry);
+		qt->inRange(entry, 512);
 #endif
 	}
 };
@@ -43,6 +52,7 @@ public:
 void testQTSTM() {
 #ifdef WITH_STM
 	Reference<Transaction*> transaction = TransactionalMemoryManager::instance()->startTransaction();
+#endif
 
 	TransactionalReference<QuadTree*> qt = new QuadTree(MINCOORD, MINCOORD, MAXCOORD, MAXCOORD);
 	Vector<Reference<QuadTreeEntry*> > objects;
@@ -86,27 +96,32 @@ void testQTSTM() {
 
 	printf("maxInRangeObjects = %d\n", maxInRangeObjects);
 
-
+#ifdef WITH_STM
 	printf("Commiting pure transaction...\n");
 
 	TransactionalMemoryManager::commitPureTransaction(transaction);
+#endif
 
 
 	printf("starting tasks\n");
+
+	Time start;
 
 	int totalTasks = 0;
 
 	//Thread::sleep(3000);
 
 	for (int i = 0; i < ITERATIONS; ++i) {
-		Thread::sleep(1000);
-
 		int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
 		int executedTasks = Core::getTaskManager()->getExecutingTaskSize();
 
-		int taskToSchedule = 500;
-		int taskToExecute = 500;
+		if (scheduledTasks != 0 && executedTasks != 0) {
+			Thread::sleep(1000);
+		}
 
+		int taskToSchedule = 5000;
+		int taskToExecute = 5000;
+#ifdef WITH_STM
 		if (scheduledTasks > 500)
 			taskToSchedule = 0;
 		else if (scheduledTasks < 100)
@@ -116,8 +131,21 @@ void testQTSTM() {
 			taskToExecute = 0;
 		else if (executedTasks < 100)
 			taskToExecute = 100;
+#else
+		if (scheduledTasks > 5000)
+			taskToSchedule = 0;
+		else if (scheduledTasks < 1000)
+			taskToSchedule = 50000;
 
+		if (executedTasks > 5000)
+			taskToExecute = 0;
+		else if (executedTasks < 1000)
+			taskToExecute = 50000;
+#endif
+
+#ifdef WITH_STM
 		transaction = TransactionalMemoryManager::instance()->startTransaction();
+#endif
 
 		for (int i = 0; i < taskToSchedule; ++i) {
 			Reference<Task*> task = new QTMoveTask(objects.get(System::random(objects.size() - 1)), qt);
@@ -135,7 +163,9 @@ void testQTSTM() {
 			Core::getTaskManager()->executeTask(task);
 		}
 
+#ifdef WITH_STM
 		TransactionalMemoryManager::commitPureTransaction(transaction);
+#endif
 	}
 
 	/*for (int i = 0; i < references.size(); ++i) {
@@ -161,13 +191,15 @@ void testQTSTM() {
 		printf(".");
 	}
 
+	printf("finished in %d\n", start.miliDifference());
+
 	printf("\n");
 
+#ifdef WITH_STM
 	TransactionalMemoryManager::instance()->printStatistics();
+#endif
 
 	exit(0);
-
-#endif
 }
 
 
