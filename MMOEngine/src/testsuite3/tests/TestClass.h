@@ -112,7 +112,7 @@ public:
 	void run() {
 		//Task* task = new TestTask(references);
 
-		for (int i = 0; i < 25; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			int index = System::random(references->size() - 1);
 			TransactionalReference<TestClass*>& reference = references->get(index);
 			//TransactionalReference<TestClass*>& reference2 = references->get(System::random(references->size() - 1));
