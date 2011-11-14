@@ -12,8 +12,8 @@
 
 #define MINCOORD -512
 #define MAXCOORD 512
-#define ITERATIONS 60
-#define OBJECTCOUNT 300
+#define TASKSTOQUEUE 50000
+#define OBJECTCOUNT 100
 
 Mutex qtMutex;
 
@@ -32,7 +32,7 @@ public:
 #ifdef WITH_STM
 		QuadTree* quadTree = qt.getForUpdate();
 
-		entry->setPosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+		entry->setPosition(0, 0, 0);
 
 		quadTree->update(entry);
 		quadTree->inRange(entry, 512);
@@ -41,7 +41,7 @@ public:
 
 		Locker locker2(&qtMutex);
 
-		entry->setPosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+		entry->setPosition(0, 0, 0);
 
 		qt->update(entry);
 		qt->inRange(entry, 512);
@@ -111,50 +111,11 @@ void testQTSTM() {
 
 	//Thread::sleep(3000);
 
-	for (int i = 0; i < ITERATIONS; ++i) {
-		int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
-		int executedTasks = Core::getTaskManager()->getExecutingTaskSize();
-
-		if (scheduledTasks != 0 && executedTasks != 0) {
-			Thread::sleep(1000);
-		}
-
-		int taskToSchedule = 5000;
-		int taskToExecute = 5000;
-#ifdef WITH_STM
-		if (scheduledTasks > 500)
-			taskToSchedule = 0;
-		else if (scheduledTasks < 100)
-			taskToSchedule = 100;
-
-		if (executedTasks > 500)
-			taskToExecute = 0;
-		else if (executedTasks < 100)
-			taskToExecute = 100;
-#else
-		if (scheduledTasks > 5000)
-			taskToSchedule = 0;
-		else if (scheduledTasks < 1000)
-			taskToSchedule = 50000;
-
-		if (executedTasks > 5000)
-			taskToExecute = 0;
-		else if (executedTasks < 1000)
-			taskToExecute = 50000;
-#endif
+	int taskToExecute = TASKSTOQUEUE;
 
 #ifdef WITH_STM
 		transaction = TransactionalMemoryManager::instance()->startTransaction();
 #endif
-
-		for (int i = 0; i < taskToSchedule; ++i) {
-			Reference<Task*> task = new QTMoveTask(objects.get(System::random(objects.size() - 1)), qt);
-
-			Core::getTaskManager()->scheduleTask(task, System::random(2000));
-
-			++totalTasks;
-		}
-
 		for (int i = 0; i < taskToExecute; ++i) {
 			Reference<Task*> task = new QTMoveTask(objects.get(System::random(objects.size() - 1)), qt);
 
@@ -166,7 +127,7 @@ void testQTSTM() {
 #ifdef WITH_STM
 		TransactionalMemoryManager::commitPureTransaction(transaction);
 #endif
-	}
+
 
 	/*for (int i = 0; i < references.size(); ++i) {
 			TestStmTask* object = references.get(i).get();
@@ -186,12 +147,36 @@ void testQTSTM() {
 	while (scheduledTasks != 0 || executedTasks != 0) {
 		scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
 		executedTasks = Core::getTaskManager()->getExecutingTaskSize();
-		Thread::sleep(1000);
+		Thread::sleep(10);
 
 		printf(".");
 	}
 
+	Thread::sleep(1000);
+
 	printf("finished in %lld\n", start.miliDifference());
+
+
+	maxInRangeObjects = 0;
+
+#ifdef WITH_STM
+	transaction = TransactionalMemoryManager::instance()->startTransaction();
+#endif
+
+	for (int i = 0; i < objects.size(); ++i) {
+		Reference<QuadTreeEntry*>& obj = objects.get(i);
+
+		if (obj->inRangeObjectCount() > maxInRangeObjects)
+			maxInRangeObjects = obj->inRangeObjectCount();
+	}
+
+	printf("maxInRangeObjects = %d\n", maxInRangeObjects);
+
+#ifdef WITH_STM
+	TransactionalMemoryManager::commitPureTransaction(transaction);
+
+	//printf("QuadTreeEntryImplementation clone max time %lld\n", ObjectCloner<QuadTreeEntryImplementation>::maxTime);
+#endif
 
 	printf("\n");
 
