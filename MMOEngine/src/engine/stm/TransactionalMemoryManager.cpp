@@ -20,12 +20,12 @@ public:
 class TransactionalMemoryManagerStatisticsTask : public Thread {
 public:
 	void run() {
-		Thread::sleep(1000);
+		//Thread::sleep(1000);
 
 		while (true) {
 			TransactionalMemoryManager::instance()->printStatistics();
 
-			Thread::sleep(10000);
+			Thread::sleep(1000);
 		}
 	}
 };

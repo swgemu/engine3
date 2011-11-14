@@ -17,6 +17,23 @@
 
 Mutex qtMutex;
 
+AtomicInteger taskCount;
+
+#ifndef WITH_STM
+class QTStatsTask : public Task {
+public:
+	void run() {
+		char str[50];
+		sprintf(str, "[QTStatsTask] %d tasks executed", taskCount.get());
+		taskCount = 0;
+
+		Logger::console.info(str, true);
+
+		schedule(1000);
+	}
+};
+#endif
+
 class QTMoveTask : public Task {
 	//TransactionalReference<TestClass*> >* references;
 	Reference<QuadTreeEntry*> entry;
@@ -45,6 +62,8 @@ public:
 
 		qt->update(entry);
 		qt->inRange(entry, 512);
+
+		taskCount.increment();
 #endif
 	}
 };
@@ -56,6 +75,12 @@ void testQTSTM() {
 
 	TransactionalReference<QuadTree*> qt = new QuadTree(MINCOORD, MINCOORD, MAXCOORD, MAXCOORD);
 	Vector<Reference<QuadTreeEntry*> > objects;
+
+#ifdef WITH_STM
+	printf("Starting STM test with %d workers\n", TransactionalTaskManager::WORKER_THREADS);
+#else
+	printf("Starting LOCK test with %d workers\n", TaskManagerImpl::DEFAULT_WORKER_THREADS);
+#endif
 
 	printf("Creating %d objects..\n", OBJECTCOUNT);
 
@@ -103,15 +128,22 @@ void testQTSTM() {
 #endif
 
 
-	printf("starting tasks\n");
-
-	Time start;
 
 	int totalTasks = 0;
 
 	//Thread::sleep(3000);
 
 	int taskToExecute = TASKSTOQUEUE;
+
+#ifndef WITH_STM
+	printf("queuing stats task\n");
+
+	Core::getTaskManager()->scheduleTask(new QTStatsTask(), 1000);
+#endif
+
+	printf("starting tasks\n");
+
+	Time start;
 
 #ifdef WITH_STM
 		transaction = TransactionalMemoryManager::instance()->startTransaction();
@@ -128,34 +160,22 @@ void testQTSTM() {
 		TransactionalMemoryManager::commitPureTransaction(transaction);
 #endif
 
-
-	/*for (int i = 0; i < references.size(); ++i) {
-			TestStmTask* object = references.get(i).get();
-
-			printf("%i\n", object->get());
-		}*/
-
 	printf("queued %d tasks\n", totalTasks);
 
-	//TransactionalMemoryManager::commitPureTransaction();
-
-	int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
+	//int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
 	int executedTasks = Core::getTaskManager()->getExecutingTaskSize();
 
 	printf("waiting to finsih...");
 
-	while (scheduledTasks != 0 || executedTasks != 0) {
-		scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
+	Time delay;
+
+	while (executedTasks != 0) {
+		//scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
 		executedTasks = Core::getTaskManager()->getExecutingTaskSize();
 		Thread::sleep(10);
-
-		printf(".");
 	}
 
-	Thread::sleep(1000);
-
 	printf("finished in %lld\n", start.miliDifference());
-
 
 	maxInRangeObjects = 0;
 
@@ -170,7 +190,7 @@ void testQTSTM() {
 			maxInRangeObjects = obj->inRangeObjectCount();
 	}
 
-	printf("maxInRangeObjects = %d\n", maxInRangeObjects);
+	printf("maxInRangeObjects after updates = %d\n", maxInRangeObjects);
 
 #ifdef WITH_STM
 	TransactionalMemoryManager::commitPureTransaction(transaction);

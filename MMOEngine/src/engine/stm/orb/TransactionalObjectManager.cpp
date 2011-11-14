@@ -50,7 +50,7 @@ ObjectsToSaveMap* TransactionalObjectManager::getModifiedObjectsToSave() {
 void TransactionalObjectManager::addObjectsToSave(const Vector<Reference<Object*> >& objects) {
 
 	return;
-
+/*
 	Locker locker(&saveMutex);
 
 	for (int i = 0; i < objects.size(); ++i) {
@@ -61,7 +61,7 @@ void TransactionalObjectManager::addObjectsToSave(const Vector<Reference<Object*
 		if (impl != NULL && (impl->_this != NULL)) {
 			implementationCopiesToSave.put(impl->_this.get(), impl);
 		}
-	}
+	}*/
 }
 
 void TransactionalObjectManager::registerClass(const String& name, DistributedObjectClassHelper* helper) {

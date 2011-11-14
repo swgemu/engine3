@@ -22,10 +22,10 @@ namespace engine {
 
   		ThreadLocal<LocalTaskManager*>  localTaskManager;
 
-		static const int WORKER_THREADS = 10;
-		static const int SCHEDULER_THREADS = 5;
-
   	  public:
+  		static const int WORKER_THREADS = 10;
+  		static const int SCHEDULER_THREADS = 5;
+
   		void initialize();
 
   		void start();

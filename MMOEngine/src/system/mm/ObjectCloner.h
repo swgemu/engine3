@@ -6,15 +6,31 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef OBJECTCLONER_H_
 #define OBJECTCLONER_H_
 
+#include "system/lang/Time.h"
+
 namespace sys {
   namespace mm {
 
 	template <class O> class ObjectCloner {
 	public:
+
+		static uint64 maxTime;
+
 		static Object* clone(O* object) {
-			return dynamic_cast<Object*>(new O(*object));
+			//Time start;
+
+			Object* o = dynamic_cast<Object*>(new O(*object));
+
+			/*uint64 diff = start.miliDifference();
+
+			if (diff > maxTime)
+				maxTime = diff;*/
+
+			return o;
 		}
 	};
+
+	//template <class O> uint64 ObjectCloner<O>::maxTime = 0;
 
   } // namespace mm
 } // namespace sys

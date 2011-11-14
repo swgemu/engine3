@@ -73,9 +73,9 @@ namespace sys {
 		}
 
 		V get() const {
-			WMB();
+			//WMB();
 
-			return (V) value;
+			return value;
 		}
 
 		void set(V val) {

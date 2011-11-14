@@ -39,10 +39,10 @@ namespace engine {
 
 		bool shuttingDown;
 
+	public:
 		static const int DEFAULT_WORKER_THREADS = 10;
 		static const int DEFAULT_SCHEDULER_THREADS = 4;
 
-	public:
 		TaskManagerImpl();
 
 		virtual ~TaskManagerImpl();
