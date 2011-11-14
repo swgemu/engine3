@@ -13,7 +13,7 @@
 #define MINCOORD -512
 #define MAXCOORD 512
 #define TASKSTOQUEUE 50000
-#define OBJECTCOUNT 100
+#define OBJECTCOUNT 300
 
 Mutex qtMutex;
 
