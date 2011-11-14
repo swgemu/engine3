@@ -35,7 +35,7 @@ namespace engine {
 
 		virtual bool isCopyEqualToObject() = 0;
 
-		virtual int compareTo(TransactionalObjectHandleBase* handle) = 0;
+		virtual int compareTo(const TransactionalObjectHandleBase* handle) = 0;
 
 		virtual Transaction* getCompetingTransaction() = 0;
 
@@ -100,7 +100,7 @@ namespace engine {
 			return compareToHeaders(otherHandle);
 		}
 
-		int compareTo(TransactionalObjectHandleBase* handle) {
+		int compareTo(const TransactionalObjectHandleBase* handle) {
 			/*if ((TransactionalObjectHandle*) this == handle)
 				return 0;
 			else if ((TransactionalObjectHandle*) this < handle)
@@ -160,7 +160,7 @@ namespace engine {
 
 			assert(object != NULL);
 
-			objectCopy = dynamic_cast<O>(object->clone());
+			objectCopy = static_cast<O>(object->clone());
 
 #ifdef MEMORY_PROTECTION
 			ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;
@@ -213,7 +213,7 @@ namespace engine {
 		/*
 	        assert(object != NULL);
 	        
-		objectCopy = dynamic_cast<O>(object->clone());
+		objectCopy = static_cast<O>(object->clone());
 		
 		ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;
 		

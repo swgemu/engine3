@@ -167,7 +167,7 @@ void Transaction::finishCommit() {
 
 	TransactionalMemoryManager::instance()->commitTransaction();
 
-	openedObjets.removeAll();
+	//openedObjets.removeAll();
 	localObjectCache.removeAll();
 }
 
@@ -241,7 +241,7 @@ void Transaction::doAbort() {
 
 	TransactionalMemoryManager::instance()->reclaimObjects(0, 0);
 
-	openedObjets.removeAll();
+	//openedObjets.removeAll();
 
 	localObjectCache.removeAll();
 
@@ -259,7 +259,7 @@ void Transaction::releaseReadWriteObjects() {
 
 	//while ((i = currentReadWriteObjectCleanup.increment()) < readWriteObjects.size()) {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandleBase* handle = readWriteObjects.get(i).get();
+		TransactionalObjectHandleBase* handle = readWriteObjects.get(i);
 
 		handle->releaseHeader();
 	}
@@ -272,7 +272,7 @@ void Transaction::releaseReadWriteObjects() {
 void Transaction::discardReadWriteObjects() {
 	//while ((i = currentReadWriteObjectCleanup.increment()) < readWriteObjects.size()) {
 	for (int i = 0; i < readWriteObjects.size(); ++i) {
-		TransactionalObjectHandleBase* handle = readWriteObjects.get(i).get();
+		TransactionalObjectHandleBase* handle = readWriteObjects.get(i);
 
 		handle->discardHeader(this);
 	}

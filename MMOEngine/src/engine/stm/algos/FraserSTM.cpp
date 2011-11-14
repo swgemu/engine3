@@ -21,7 +21,7 @@ bool FraserSTM::doCommit(Transaction* transaction) {
 		uint64 lastHeaderID = 0;
 
 		for (int i = 0; i < transaction->readWriteObjects.size(); ++i) {
-			Reference<TransactionalObjectHandleBase* > handle = transaction->readWriteObjects.get(i);
+			TransactionalObjectHandleBase* handle = transaction->readWriteObjects.get(i);
 
 			Reference<Transaction*> competingTransaction = NULL;
 
@@ -99,7 +99,7 @@ bool FraserSTM::validateReadOnlyObjects(Transaction* transaction) {
 
 		//while ((i = currentReadObjectAcquiring.increment()) < readOnlyObjects.size()) {
 		for (int i = 0; i < transaction->readOnlyObjects.size(); ++i) {
-			Reference<TransactionalObjectHandleBase* > handle = transaction->readOnlyObjects.get(i);
+			TransactionalObjectHandleBase* handle = transaction->readOnlyObjects.get(i);
 
 			if (handle->hasObjectChanged()) {
 				TransactionalMemoryManager::instance()->increaseFailedByObjectChanged();

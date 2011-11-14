@@ -83,9 +83,9 @@ namespace engine {
 		}
 
 	protected:
-		Reference<TransactionalObjectHandle<O>*> createCreationHandle(Transaction* transaction);
-		Reference<TransactionalObjectHandle<O>*> createReadOnlyHandle(Transaction* transaction);
-		Reference<TransactionalObjectHandle<O>*> createWriteHandle(Transaction* transaction);
+		TransactionalObjectHandle<O>* createCreationHandle(Transaction* transaction);
+		TransactionalObjectHandle<O>* createReadOnlyHandle(Transaction* transaction);
+		TransactionalObjectHandle<O>* createWriteHandle(Transaction* transaction);
 
 		Transaction* acquireObject(Transaction* transaction);
 
@@ -123,22 +123,22 @@ namespace engine {
 	/*template<class O>
 	AtomicLong TransactionalObjectHeader<O>::globalHeaderCounter;*/
 
-	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createCreationHandle(Transaction* transaction) {
-		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
+	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createCreationHandle(Transaction* transaction) {
+		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>();
 		handle->initialize(this, TransactionalObjectHandle<O>::CREATE, transaction);
 
 		return handle;
 	}
 
-	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createReadOnlyHandle(Transaction* transaction) {
-		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
+	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createReadOnlyHandle(Transaction* transaction) {
+		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>();
 		handle->initialize(this, TransactionalObjectHandle<O>::READ, transaction);
 
 		return handle;
 	}
 
-	template<class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::createWriteHandle(Transaction* transaction) {
-		Reference<TransactionalObjectHandle<O>*> handle = new TransactionalObjectHandle<O>();
+	template<class O> TransactionalObjectHandle<O>* TransactionalObjectHeader<O>::createWriteHandle(Transaction* transaction) {
+		TransactionalObjectHandle<O>* handle = new TransactionalObjectHandle<O>();
 		handle->initialize(this, TransactionalObjectHandle<O>::WRITE, transaction);
 
 		return handle;
@@ -168,7 +168,7 @@ namespace engine {
 		if (obj != NULL)
 			return obj;
 		else
-			return dynamic_cast<O>(object.get());
+			return transaction_cast<O>(object.get());
 	}
 
 	template<class O> Transaction* TransactionalObjectHeader<O>::acquireObject(Transaction* transaction) {
@@ -251,18 +251,18 @@ namespace engine {
 #ifdef EAGERABORTS
 		if (transaction != NULL) {
 			if (!transaction->isCommited())
-				return dynamic_cast<O>(object.get());
+				return transaction_cast<O>(object.get());
 			else
 				throw TransactionAbortedException();
 
 			//return ownerTransaction->getOpenedObject(this);
 		} else {
 			//add(handle);
-			return dynamic_cast<O>(object.get());
+			return transaction_cast<O>(object.get());
 		}
 #endif
 
-		return dynamic_cast<O>(object.get());
+		return transaction_cast<O>(object.get());
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::getObjectForWrite(TransactionalObjectHandle<O>* handle) {
@@ -271,7 +271,7 @@ namespace engine {
 
 		if (transaction != NULL) {
 			 	 if (!transaction->isCommited())
-			 	 	 return dynamic_cast<O>(object.get());
+			 	 	 return transaction_cast<O>(object.get());
 			 	 else
 			 	 	 throw TransactionAbortedException();
 
@@ -283,7 +283,7 @@ namespace engine {
 
 		assert(object != NULL);
 
-		O objectToReturn = dynamic_cast<O>(object.get());
+		O objectToReturn = transaction_cast<O>(object.get());
 
 		assert(objectToReturn != NULL);
 		return objectToReturn;
