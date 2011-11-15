@@ -12,12 +12,26 @@
 
 #define MINCOORD -512
 #define MAXCOORD 512
+
+//#define RANDOM_MOVEMENT
+
 #ifdef WITH_STM
-#define TASKSTOQUEUE 30000
+#ifdef RANDOM_MOVEMENT
+#define TASKSTOQUEUE 250000
 #else
-#define TASKSTOQUEUE 60000
+#define TASKSTOQUEUE 30000
 #endif
+#else
+#ifdef RANDOM_MOVEMENT
+#define TASKSTOQUEUE 250000
+#else
+#define TASKSTOQUEUE 30000
+#endif
+#endif
+
 #define OBJECTCOUNT 300
+
+
 
 Mutex qtMutex;
 
@@ -53,8 +67,11 @@ public:
 #ifdef WITH_STM
 		QuadTree* quadTree = qt.get();
 
+#ifdef RANDOM_MOVEMENT
+		entry->setPosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+#else
 		entry->setPosition(0, 0, 0);
-
+#endif
 		quadTree->update(entry);
 		quadTree->inRange(entry, 512);
 #else
@@ -62,7 +79,11 @@ public:
 
 		Locker locker2(&qtMutex);
 
+#ifdef RANDOM_MOVEMENT
+		entry->setPosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+#else
 		entry->setPosition(0, 0, 0);
+#endif
 
 		qt->update(entry);
 		qt->inRange(entry, 512);
