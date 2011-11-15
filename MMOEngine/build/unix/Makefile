@@ -185,6 +185,7 @@ psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 srcdir = ../..
+subdirs =  src/testsuite3
 sysconfdir = ${prefix}/etc
 target = x86_64-unknown-linux-gnu
 target_alias = 
@@ -193,7 +194,7 @@ target_os = linux-gnu
 target_vendor = unknown
 top_builddir = .
 top_srcdir = ../..
-SUBDIRS = src
+SUBDIRS = src src/testsuite3
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

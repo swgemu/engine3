@@ -613,6 +613,7 @@ s,@SYSTEM_INCLUDES@,|#_!!_#|,g
 s,@SYSTEM_LIBS@,|#_!!_#|-lrt -ldl -lpthread -lexecinfo,g
 s,@USER_INCLUDES_PATH@,|#_!!_#|/usr/local/include,g
 s,@USER_LIBS_PATH@,|#_!!_#|/usr/local/lib,g
+s,@subdirs@,|#_!!_#| src/testsuite3,g
 s,@LIBOBJS@,|#_!!_#|,g
 s,@LTLIBOBJS@,|#_!!_#|,g
 :end

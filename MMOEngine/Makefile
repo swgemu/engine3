@@ -83,7 +83,7 @@ install:
 	build/unix/install ${INSTALL_PATH} #> /dev/null 2>&1
 
 install-headers:	
-	build/unix/install . > /dev/null 2>&1
+	#build/unix/install . > /dev/null 2>&1
 
 install-lib:
 	cp build/unix/src/libengine3.a lib/unix
