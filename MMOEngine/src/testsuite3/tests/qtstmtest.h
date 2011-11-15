@@ -115,9 +115,7 @@ void testQTSTM() {
 
 	for (int i = 0; i < OBJECTCOUNT; ++i) {
 		Reference<QuadTreeEntry*> entry = new QuadTreeEntry();
-//		entry->depl
 
-		//entry->initializePosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
 		entry->_setObjectID(i);
 
 #ifdef START_RANDOM_POSITION
@@ -125,10 +123,6 @@ void testQTSTM() {
 #else
 		entry->initializePosition(0, 0, 0);
 #endif
-		/*float x = i % MAXCOORD;
-
-		entry->initializePosition((MINCOORD + i) % MAXCOORD, 0, MINCOORD + (++j % MAXCOORD));*/
-
 		objects.add(entry);
 	}
 
@@ -158,12 +152,7 @@ void testQTSTM() {
 
 	TransactionalMemoryManager::commitPureTransaction(transaction);
 #endif
-
-
-
 	int totalTasks = 0;
-
-	//Thread::sleep(3000);
 
 	int taskToExecute = TASKSTOQUEUE;
 
@@ -194,7 +183,6 @@ void testQTSTM() {
 
 	printf("queued %d tasks\n", totalTasks);
 
-	//int scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
 	int executedTasks = Core::getTaskManager()->getExecutingTaskSize();
 
 	printf("waiting to finsih...");
@@ -202,7 +190,6 @@ void testQTSTM() {
 	Time delay;
 
 	while (executedTasks != 0) {
-		//scheduledTasks = Core::getTaskManager()->getScheduledTaskSize();
 		executedTasks = Core::getTaskManager()->getExecutingTaskSize();
 		Thread::sleep(10);
 	}
