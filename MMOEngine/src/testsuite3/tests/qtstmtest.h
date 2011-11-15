@@ -15,6 +15,8 @@
 
 //#define RANDOM_MOVEMENT
 
+//#define START_RANDOM_POSITION
+
 #ifdef WITH_STM
 #ifdef RANDOM_MOVEMENT
 #define TASKSTOQUEUE 250000
@@ -23,9 +25,9 @@
 #endif
 #else
 #ifdef RANDOM_MOVEMENT
-#define TASKSTOQUEUE 250000
+#define TASKSTOQUEUE 900000
 #else
-#define TASKSTOQUEUE 30000
+#define TASKSTOQUEUE 600000
 #endif
 #endif
 
@@ -117,7 +119,12 @@ void testQTSTM() {
 
 		//entry->initializePosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
 		entry->_setObjectID(i);
+
+#ifdef START_RANDOM_POSITION
+		entry->initializePosition(System::random(MAXCOORD * 2) + MINCOORD, 0, System::random(MAXCOORD * 2) + MINCOORD);
+#else
 		entry->initializePosition(0, 0, 0);
+#endif
 		/*float x = i % MAXCOORD;
 
 		entry->initializePosition((MINCOORD + i) % MAXCOORD, 0, MINCOORD + (++j % MAXCOORD));*/
