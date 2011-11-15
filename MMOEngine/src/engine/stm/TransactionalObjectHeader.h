@@ -26,22 +26,13 @@ namespace engine {
 	protected:
 		Reference<Transaction*> ownerTransaction;
 
-		//AtomicReference<TransactionalObjectHandle<O>* > last;
-
 		Reference<Object*> object;
 
-		//uint64 headerID;
-
-		//static AtomicLong globalHeaderCounter;
-
 	public:
-		TransactionalObjectHeader(O obj) {
-			setObject(obj);
+		TransactionalObjectHeader(O obj) : ownerTransaction(NULL), object(obj) {
+			createObject();
 
-			ownerTransaction = NULL;
-			//last = NULL;
-
-	//		headerID = globalHeaderCounter.increment();
+			assert(object != NULL);
 		}
 
 		virtual ~TransactionalObjectHeader() {
@@ -55,10 +46,6 @@ namespace engine {
 			else
 				return 1;
 		}
-
-		/*uint64 getHeaderID() {
-			return headerID;
-		}*/
 
 		O get();
 
@@ -104,16 +91,6 @@ namespace engine {
 
 		bool hasObject(Object* obj) const {
 			return object == obj;
-		}
-
-		void setObject(O obj) {
-			assert(obj != NULL);
-			assert(object == NULL);
-
-			object = obj;
-			TransactionalObjectHeader<O>::createObject();
-
-			assert(object != NULL);
 		}
 
 		friend class Transaction;

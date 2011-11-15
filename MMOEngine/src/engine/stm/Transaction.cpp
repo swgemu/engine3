@@ -25,20 +25,15 @@ ReadWriteLock Transaction::blockLock;
 AtomicInteger HandleCounter::createdHandles;
 AtomicInteger HandleCounter::deletedHandles;
 
+volatile int ArrayCloneCounter::totalCount = 0;
+
 STMAlgorithm* Transaction::commitAlgorithm = new FraserSTM();
 
-Transaction::Transaction(uint64 id) : Logger() {
+Transaction::Transaction(uint64 id) : Logger(), task(NULL) {
 	status = INITIAL;
 
 	commitTime = 0;
 	runTime = 0;
-
-	task = NULL;
-
-	/*currentWriteObjectAcquiring = -1;
-	currentReadObjectAcquiring = -1;
-	currentReadOnlyHandleCleaning = -1;
-	currentReadWriteObjectCleanup = -1;*/
 
 	openedObjets.setNullValue(NULL);
 
@@ -61,10 +56,7 @@ Transaction::Transaction(uint64 id) : Logger() {
 }
 
 Transaction::~Transaction() {
-	debug("deleted");
-
-	readWriteObjects.removeAll();
-	readOnlyObjects.removeAll();
+	//debug("deleted");
 
 	TransactionalMemoryManager::instance()->increaseDeletedTransactions();
 }
@@ -81,8 +73,6 @@ bool Transaction::start(Task* task) {
 
 	bool successFullStart = true;
 
-	//helperTransaction = NULL;
-
 	String threadName = Thread::getCurrentThread()->getName();
 	setLoggingName("Transaction " + String::valueOf(tid) + "(" + threadName + ")");
 
@@ -91,7 +81,7 @@ bool Transaction::start(Task* task) {
 	assert(isUndecided());
 
 	try {
-		debug("starting transaction");
+		//debug("starting transaction");
 
 		task->run();
 	} catch (TransactionAbortedException& e) {
@@ -101,7 +91,7 @@ bool Transaction::start(Task* task) {
 
 		TransactionalMemoryManager::instance()->increaseFailedByExceptions();
 
-		//doAbort();
+		doAbort();
 
 		//error("ebati v rot");
 	} catch (Exception& e) {
@@ -117,7 +107,7 @@ bool Transaction::start(Task* task) {
 }
 
 bool Transaction::commit() {
-	debug("commiting..");
+	//debug("commiting..");
 
 	uint64 startTime = System::getMikroTime();
 
@@ -236,8 +226,8 @@ void Transaction::doAbort() {
 		command->undo();
 	}
 
-	debug("aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, tries, R/W objects "
-			+ readOnlyObjects.size() + " / " + readWriteObjects.size() +")");
+	/*debug("aborted (" + String::valueOf(runTime) + "Us / " + String::valueOf(commitTime) + "Us, tries, R/W objects "
+			+ readOnlyObjects.size() + " / " + readWriteObjects.size() +")");*/
 
 	TransactionalMemoryManager::instance()->reclaimObjects(0, 0);
 
@@ -251,7 +241,7 @@ void Transaction::doAbort() {
 }
 
 void Transaction::releaseReadWriteObjects() {
-	debug("releasing read/write objects");
+	//debug("releasing read/write objects");
 
 	//Warning! This can be called by several threads concurrently
 
@@ -266,7 +256,7 @@ void Transaction::releaseReadWriteObjects() {
 
 	//TransactionalMemoryManager::instance()->getObjectManager()->addObjectsToSave(objects);
 
-	debug("finished releasing read/write objects");
+	//debug("finished releasing read/write objects");
 }
 
 void Transaction::discardReadWriteObjects() {

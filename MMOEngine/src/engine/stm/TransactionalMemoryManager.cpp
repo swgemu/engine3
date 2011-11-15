@@ -142,9 +142,9 @@ void TransactionalMemoryManager::commitTransaction() {
 	Reference<Transaction*>* transaction = currentTransaction.get();
 	//commitedTrans.set(transaction->getIdentifier(), true);
 
-	debug("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
+	//debug("Executing tasks: " + String::valueOf(Core::getTaskManager()->getExecutingTaskSize()));
 	Vector<Object*>* objects = getReclamationList();
-	debug("Reclamation list size:" + String::valueOf(objects->size()));
+	//debug("Reclamation list size:" + String::valueOf(objects->size()));
 
 	reclaimObjects(5000, 0);
 
@@ -223,31 +223,36 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 	//while (objects->size() > objectsToSpare) {
 	KernelCall kernelCall;
 
-	for (int i = 0; i < objects->size(); ++i) {
-		Object* obj = objects->get(i);
+	/*if (objects->size() > 50000) {
+		info("clearing objects", true);*/
+		for (int i = 0; i < objects->size(); ++i) {
+			Object* obj = objects->get(i);
 
-		if (obj->getReferenceCount() == 0) {
-			destroy(obj);
+			if (obj->getReferenceCount() == 0) {
+				destroy(obj);
 
-			/*if (++objectsReclaimed == maxObjectsToReclaim)
+				/*if (++objectsReclaimed == maxObjectsToReclaim)
 				break;*/
-		} else {
-			obj->_clearDestroying();
+			} else {
+				obj->_clearDestroying();
 
-			//deleted.drop((uint64)obj);
+				//deleted.drop((uint64)obj);
+			}
 		}
-	}
+
+		objects->removeAll(51000, 10000);
+	//}
 
 	//if (objectsReclaimed > 0)
-		debug(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
+	/*	debug(String::valueOf(objectsReclaimed) + " objects were reclaimed in "
 				+ String::valueOf(System::getMikroTime() - startTime) + " Us, "
-				+ String::valueOf(objects->size()) + " remained in queue");
+				+ String::valueOf(objects->size()) + " remained in queue");*/
 
 	Reference<Transaction*> transaction = getTransaction();
 	Vector<Object*>* objectsForNextCommit = transaction->getDeletedObjects();
 
 	if (objectsForNextCommit->size() > 0) {
-		objects->removeAll(objectsForNextCommit->size(), 100);
+		//objects->removeAll(objectsForNextCommit->size(), 100);
 
 		objects->addAll(*objectsForNextCommit);
 
@@ -256,8 +261,7 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 
 		objects->add(obj);
 	}*/
-	} else
-		objects->removeAll(100, 100);
+	}
 
 	objectsForNextCommit->removeAll();
 
@@ -268,7 +272,7 @@ Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
 	Vector<Object*>* objects = reclamationList.get();
 
 	if (objects == NULL) {
-		objects = new Vector<Object*>();
+		objects = new Vector<Object*>(50000, 10000);
 
 		reclamationList.set(objects);
 	}

@@ -32,6 +32,13 @@ namespace sys {
 			next = NULL;
 		}
 
+		Entry(const Entry<K, V>& e) {
+			hash = e.hash;
+			key = e.key;
+			value = e.value;
+			next = e.next;
+		}
+
 		Entry(int hash, K key, V value, Entry* e) {
 			Entry::hash = hash;
 			Entry::key = key;

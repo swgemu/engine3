@@ -20,8 +20,8 @@ namespace sys {
 		AtomicReference<O> object;
 
 	public:
-		Reference() : Variable() {
-			object = NULL;
+		Reference() : Variable(), object() {
+			//object = NULL;
 		}
 
 		Reference(const Reference& ref) : Variable() {

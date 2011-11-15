@@ -111,7 +111,7 @@ void Logger::log(const char *msg) {
 	if (logFile == NULL && globalLogFile == NULL)
 		return;
 
-	Locker locker(&writeLock);
+	//Locker locker(&writeLock);
 
 	if (logLevel > LOG && logFile != NULL) {
 		String time;

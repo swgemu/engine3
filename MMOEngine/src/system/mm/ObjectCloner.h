@@ -11,13 +11,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace mm {
 
+   class CloneCounter {
+   public:
+	   static AtomicInteger cloneCount;
+   };
+
 	template <class O> class ObjectCloner {
 	public:
 
-		static uint64 maxTime;
+		//static uint64 maxTime;
 
 		static Object* clone(O* object) {
 			//Time start;
+
+			//CloneCounter::cloneCount.increment();
 
 			Object* o = dynamic_cast<Object*>(new O(*object));
 

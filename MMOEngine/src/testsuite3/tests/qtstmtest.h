@@ -12,7 +12,11 @@
 
 #define MINCOORD -512
 #define MAXCOORD 512
-#define TASKSTOQUEUE 50000
+#ifdef WITH_STM
+#define TASKSTOQUEUE 30000
+#else
+#define TASKSTOQUEUE 60000
+#endif
 #define OBJECTCOUNT 300
 
 Mutex qtMutex;
@@ -47,7 +51,7 @@ public:
 
 	void run() {
 #ifdef WITH_STM
-		QuadTree* quadTree = qt.getForUpdate();
+		QuadTree* quadTree = qt.get();
 
 		entry->setPosition(0, 0, 0);
 
@@ -177,6 +181,8 @@ void testQTSTM() {
 
 	printf("finished in %lld\n", start.miliDifference());
 
+	printf("total AtomicInteger::increment %lld total AtomicInteger::decrement %lld\n", AtomicInteger::totalIncrementCount, AtomicInteger::totalDecrementCount);
+
 	maxInRangeObjects = 0;
 
 #ifdef WITH_STM
@@ -196,6 +202,9 @@ void testQTSTM() {
 	TransactionalMemoryManager::commitPureTransaction(transaction);
 
 	//printf("QuadTreeEntryImplementation clone max time %lld\n", ObjectCloner<QuadTreeEntryImplementation>::maxTime);
+	//printf("CLone count %d\n", CloneCounter::cloneCount.get());
+
+	printf("ArrayClone count:%d\n", ArrayCloneCounter::totalCount);
 #endif
 
 	printf("\n");

@@ -20,6 +20,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
  namespace util {
 
+   class ArrayCloneCounter {
+   public:
+	   static volatile int totalCount;
+   };
+
    template<class E> class ArrayList {
    protected:
        E* elementData;
@@ -108,9 +113,17 @@ namespace sys {
    }
 
    template<class E> ArrayList<E>::ArrayList(const ArrayList<E>& array) {
-	   init(10, 5);
+	   //__sync_add_and_fetch(&ArrayCloneCounter::totalCount, 1);
 
-	   array.clone(*this);
+	   init(array.elementCapacity, array.capacityIncrement);
+
+	   elementCount = array.elementCount;
+
+	   if (TypeInfo<E>::needConstructor) {
+		   for (int i = 0; i < elementCount; ++i)
+			   createElementAt(array.elementData[i], i);
+	   } else
+		   memcpy((void*)elementData, (void*)array.elementData, elementCount * sizeof(E));
    }
 
    template<class E> ArrayList<E>& ArrayList<E>::operator=(const ArrayList<E>& array) {

@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MemoryManager.h"
 
+AtomicInteger CloneCounter::cloneCount;
+
 AtomicReference<MemoryManager*> MemoryManager::inst;
 
 void MemoryManager::reclaim(Object* object) {

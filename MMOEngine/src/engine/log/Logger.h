@@ -24,7 +24,7 @@ namespace engine {
 
 		bool doGlobalLog;
 
-		Mutex writeLock;
+		//Mutex writeLock;
 
 	public:
 		static Logger console;

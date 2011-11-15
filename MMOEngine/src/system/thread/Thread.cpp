@@ -25,6 +25,9 @@ pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
 
 ThreadLocal<Thread*> Thread::currentThread;
 
+volatile uint64 AtomicInteger::totalDecrementCount = 0;
+volatile uint64 AtomicInteger::totalIncrementCount = 0;
+
 void Thread::initializeThread(Thread* thread) {
 	currentThread.set(thread);
 }

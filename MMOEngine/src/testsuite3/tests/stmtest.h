@@ -61,7 +61,7 @@ void testTransactions() {
 
 	int totalTasks = 0;
 
-	for (int i = 0; i < 50000; ++i) {
+	for (int i = 0; i < 300000; ++i) {
 		Reference<Task*> task = new TestStmTask(&references);
 		++totalTasks;
 		//Core::getTaskManager()->scheduleTask(task, 1000);
@@ -72,7 +72,8 @@ void testTransactions() {
 
 	printf("starting tasks\n");
 
-	Thread::sleep(3000);
+	while (Core::getTaskManager()->getExecutingTaskSize() != 0)
+		Thread::sleep(1000);
 
 /*	for (int i = 0; i < 20; ++i) {
 		Thread::sleep(1000);

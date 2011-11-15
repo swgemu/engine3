@@ -19,7 +19,7 @@ Lockable::Lockable() {
 	trace = NULL;
 	unlockTrace = NULL;
 
-	lockTime = new Time();
+	//lockTime = new Time();
 
 	doLog = true;
 	doTrace = true;
@@ -28,14 +28,14 @@ Lockable::Lockable() {
 Lockable::Lockable(const String& s) {
 	threadLockHolder = NULL;
 
-	lockName = s;
+	//lockName = s;
 
 	lockCount = 0;
 
 	trace = NULL;
 	unlockTrace = NULL;
 
-	lockTime = new Time();
+	//lockTime = new Time();
 
 	doLog = true;
 	doTrace = true;
@@ -52,17 +52,19 @@ Lockable::~Lockable() {
 		unlockTrace = NULL;
 	}
 
-	delete lockTime;
+	//delete lockTime;
 }
 
 void Lockable::traceDeadlock(const char* modifier) {
+#ifdef TRACE_LOCKS
 	System::out << "[" << Thread::getCurrentThread()->getName() << "] (" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "] unable to access "
 				<< modifier << "lock #" << currentCount << " at\n";
+#endif
 
 	StackTrace::printStackTrace();
 
 	if (trace != NULL) {
-		System::out << "[" << threadLockHolder->getName() << "] locked at " << lockTime->getMiliTime() << " by\n";
+		System::out << "[" << threadLockHolder->getName() << "] locked at " << lockTime.getMiliTime() << " by\n";
 		trace->print();
 	} else {
 		System::out << "no previous stackTrace created\n";

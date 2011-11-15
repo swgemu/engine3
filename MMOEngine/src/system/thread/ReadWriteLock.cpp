@@ -23,7 +23,11 @@ void ReadWriteLock::rlock(bool doLock) {
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_rdlock(&rwlock);
 		if (res != 0) {
+#ifdef TRACE_LOCKS
 			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+#else
+			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock (" << res << ")\n";
+#endif
 			StackTrace::printStackTrace();
 		}
 	#else
@@ -58,7 +62,11 @@ void ReadWriteLock::wlock(bool doLock) {
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_wrlock(&rwlock);
 		if (res != 0)
+#ifdef TRACE_LOCKS
 			System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
+#else
+		System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock (" << res << ")\n";
+#endif
 	#else
 		Time start;
 		start.addMiliTime(10000);
@@ -106,7 +114,11 @@ void ReadWriteLock::wlock(Mutex* lock) {
 
 void ReadWriteLock::wlock(ReadWriteLock* lock) {
 	if (this == lock) {
+#ifdef TRACE_LOCKS
 		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking itself [" << lockName << "]\n";
+#else
+		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking itself \n";
+#endif
 
 		StackTrace::printStackTrace();
 		return;
@@ -181,7 +193,11 @@ void ReadWriteLock::unlock(bool doLock) {
 
 	int res = pthread_rwlock_unlock(&rwlock);
 	if (res != 0) {
+#ifdef TRACE_LOCKS
 		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
+#else
+		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking itself\n";
+#endif
 
 		StackTrace::printStackTrace();
 	}
@@ -218,7 +234,11 @@ void ReadWriteLock::runlock(bool doLock) {
 
 	int res = pthread_rwlock_unlock(&rwlock);
 	if (res != 0) {
+#ifdef TRACE_LOCKS
 		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+#else
+		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on RWLock (" << res << ")\n";
+#endif
 
 		StackTrace::printStackTrace();
 	}

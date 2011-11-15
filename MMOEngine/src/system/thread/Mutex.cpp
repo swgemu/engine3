@@ -19,7 +19,11 @@ void Mutex::lock(bool doLock) {
 		int res = pthread_mutex_lock(&mutex);
 
 		if (res != 0)
+#ifdef TRACE_LOCKS
 			System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
+#else
+			System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex (" << res << ")\n";
+#endif
 	#else
 		Time start;
 		start.addMiliTime(10000);
@@ -41,7 +45,11 @@ void Mutex::lock(bool doLock) {
 
 void Mutex::lock(Mutex* m) {
 	if (this == m) {
+#ifdef TRACE_LOCKS
 		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself [" << lockName << "]\n";
+#else
+		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself\n";
+#endif
 
 		StackTrace::printStackTrace();
 		return;
@@ -66,7 +74,11 @@ void Mutex::lock(Mutex* m) {
 
 void Mutex::lock(Lockable* lockable) {
 	if (this == lockable) {
+#ifdef TRACE_LOCKS
 		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself [" << lockName << "]\n";
+#else
+		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself \n";
+#endif
 
 		StackTrace::printStackTrace();
 		return;
@@ -105,7 +117,11 @@ void Mutex::unlock(bool doLock) {
 
 	int res = pthread_mutex_unlock(&mutex);
 	if (res != 0) {
+#ifdef TRACE_LOCKS
 		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
+#else
+		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex (" << res << ")\n";
+#endif
 
 		StackTrace::printStackTrace();
 	}

@@ -23,7 +23,7 @@ namespace sys {
 		}
 
 		AtomicReference(V ref) {
-			set(ref);
+			value = ref;
 		}
 
 		V compareAndSetReturnOld(volatile void* oldval, void* newval) {
@@ -79,7 +79,6 @@ namespace sys {
 		}
 
 		void set(V val) {
-			//while (!compareAndSet(value, val)) ;
 			value = val;
 		}
 

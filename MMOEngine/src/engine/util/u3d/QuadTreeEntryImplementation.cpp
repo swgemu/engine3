@@ -60,3 +60,29 @@ QuadTreeEntry* QuadTreeEntryImplementation::getRootParent() {
 
 	return NULL;
 }
+
+int QuadTreeEntry::compareTo(QuadTreeEntry* obj) {
+	if (getDirtyObjectID() < obj->getDirtyObjectID())
+		return 1;
+	else if (getDirtyObjectID() > obj->getDirtyObjectID())
+		return -1;
+	else
+		return 0;
+}
+
+int QuadTreeEntryImplementation::compareTo(QuadTreeEntry* obj) {
+	if (getObjectID() < obj->getObjectID())
+		return 1;
+	else if (getObjectID() > obj->getObjectID())
+		return -1;
+	else
+		return 0;
+}
+
+uint64 QuadTreeEntry::getDirtyObjectID() {
+	return _getObjectID();
+}
+
+uint64 QuadTreeEntryImplementation::getDirtyObjectID() {
+	return _this->_getObjectID();
+}

@@ -206,15 +206,8 @@ class QuadTreeEntry extends Observable {
 		coordinates.initializePosition(x, z, y);
 	}
 
-	@read
-	public abstract int compareTo(QuadTreeEntry obj) {
-		if (getObjectID() < obj.getObjectID())
-			return 1;
-		else if (getObjectID() > obj.getObjectID())
-			return -1;
-		else
-			return 0;
-	}
+	@nativeStub
+	public native abstract int compareTo(QuadTreeEntry obj);
 
 	@read
 	public boolean isInQuadTree() {
@@ -232,6 +225,9 @@ class QuadTreeEntry extends Observable {
 	public TransactionalReference<QuadTreeNode> getNode() {
 		return node;
 	}
+	
+	@nativeStub
+	public abstract native unsigned long getDirtyObjectID();
 	
 	@dirty
 	public abstract native unsigned long getObjectID();

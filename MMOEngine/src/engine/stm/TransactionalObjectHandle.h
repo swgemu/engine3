@@ -40,6 +40,10 @@ namespace engine {
 		virtual Transaction* getCompetingTransaction() = 0;
 
 		virtual uint64 getHeaderAddress() = 0;
+
+		virtual bool isWriteHandle() = 0;
+
+		virtual bool isReadHandle() = 0;
 	};
 
 	template<class O> class TransactionalObjectHandle : public TransactionalObjectHandleBase {
@@ -55,7 +59,7 @@ namespace engine {
 	public:
 		TransactionalObjectHandle();
 
-		enum {CREATE, READ, WRITE, WRITE_AFTER_READ};
+		enum {CREATE, READ, WRITE};
 
 		void initialize(TransactionalObjectHeader<O>* hdr, int accessType, Transaction* trans);
 
@@ -85,6 +89,14 @@ namespace engine {
 			Reference<TransactionalObjectHandle<Object*>*> ref = (TransactionalObjectHandle<Object*>*) header->getLastHandle().get();
 
 			return ref;
+		}
+
+		bool isWriteHandle() {
+			return currentType == WRITE || currentType == CREATE;
+		}
+
+		bool isReadHandle() {
+			return currentType == READ;
 		}
 
 		bool hasObjectChanged();
@@ -131,17 +143,8 @@ namespace engine {
 		}
 	};
 
-	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle() {
-		header = NULL;
-		//transaction = NULL;
-
-		object = NULL;
-
-		objectCopy = NULL;
-		
+	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle() : header(NULL), object(NULL), objectCopy(NULL) {
 		currentType = 0;
-
-//		HandleCounter::createdHandles.increment();
 	}
 
 	template<class O> void TransactionalObjectHandle<O>::initialize(TransactionalObjectHeader<O>* hdr, int accessType, Transaction* trans) {
@@ -209,7 +212,9 @@ namespace engine {
 		
 		assert(objectCopy != NULL);
 		
-		currentType = WRITE_AFTER_READ;
+		currentType = WRITE;
+
+		//currentType = WRITE_AFTER_READ;
 		/*
 	        assert(object != NULL);
 	        

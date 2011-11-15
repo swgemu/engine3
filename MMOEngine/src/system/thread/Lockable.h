@@ -13,6 +13,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../lang/String.h"
 
 #include "../lang/StackTrace.h"
+#include "../lang/Time.h"
 
 #include "atomic/AtomicInteger.h"
 
@@ -31,7 +32,7 @@ namespace sys {
 
 	class Lockable {
 	protected:
-		String lockName;
+		//String lockName;
 
 		Thread* threadLockHolder;
 
@@ -42,7 +43,7 @@ namespace sys {
 		StackTrace* trace;
 		StackTrace* unlockTrace;
 
-		Time* lockTime;
+		Time lockTime;
 
 		bool doLog;
 		bool doTrace;
@@ -199,7 +200,7 @@ namespace sys {
 
 		// setters
 		inline void setLockName(const String& s) {
-			lockName = s;
+			//lockName = s;
 		}
 
 		inline void setLockLogging(bool dolog) {

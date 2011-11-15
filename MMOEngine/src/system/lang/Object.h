@@ -17,11 +17,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Variable.h"
 
+#ifdef MEMORY_PROTECTION
+#define REFERENCED_WEAK_MUTEX
+#endif
+
 #ifdef TRACE_REFERENCES
 #include "ref/Reference.h"
 
 #include "system/util/VectorMap.h"
 #endif
+
+#define ENABLE_WEAK_REFS
 
 namespace engine {
         namespace stm {
@@ -57,19 +63,16 @@ namespace sys {
 	using namespace sys::util;
 
 	class Object : public ReferenceCounter, public Variable {
-#ifdef MEMORY_PROTECTION
+#ifdef ENABLE_WEAK_REFS
+#ifdef REFERENCED_WEAK_MUTEX
 		Mutex* referenceMutex;
 #else
 		Mutex referenceMutex;
 #endif
-
-		//ArrayList<WeakReferenceBase*> weakReferences;
-
-//#ifndef WITH_STM
 		HashSet<WeakReferenceBase*>* weakReferences;
-/*#else
-		TransactionalReference<Vector<WeakReferenceBase*>*>* weakReferences;
-#endif*/
+
+#endif
+
 #ifdef MEMORY_PROTECTION
 		AtomicBoolean* _destroying;
 #else
@@ -79,8 +82,6 @@ namespace sys {
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 	#endif
-
-		//class StackTrace* deletedByTrace;
 
 	public:
 		Object();

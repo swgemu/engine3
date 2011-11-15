@@ -56,7 +56,7 @@ namespace sys {
 			pthread_mutex_destroy(&mutex);
 			
 			if (recursiveMutex)
-                                pthread_mutexattr_destroy(&attr);
+				pthread_mutexattr_destroy(&attr);
 		}
 
 		void lock(bool doLock = true);

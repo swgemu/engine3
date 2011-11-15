@@ -29,6 +29,9 @@ namespace sys {
 		volatile uint32 value;
 
 	public:
+		static volatile uint64 totalIncrementCount;
+		static volatile uint64 totalDecrementCount;
+
 		AtomicInteger() {
 			value = 0;
 		}
@@ -38,6 +41,8 @@ namespace sys {
 		}
 
 		uint32 increment() {
+			//__sync_add_and_fetch(&totalIncrementCount, 1);
+
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 				return __sync_add_and_fetch(&value, 1);
 			#elif defined(PLATFORM_MAC)
@@ -60,6 +65,8 @@ namespace sys {
 		}
 
 		uint32 decrement() {
+			//__sync_add_and_fetch(&totalDecrementCount, 1);
+
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 				return __sync_sub_and_fetch(&value, 1);
 			#elif defined(PLATFORM_MAC)
@@ -106,13 +113,13 @@ namespace sys {
 		}
 
 		bool compareAndSet(uint32 oldval, uint32 newval) {
-			WMB();
+			//WMB();
 
 			return compareAndSet(&value, oldval, newval);
 		}
 
 		inline uint32 get() const {
-			WMB();
+			//WMB();
 
 			return value;
 		}
@@ -132,7 +139,7 @@ namespace sys {
 		}
 
 		inline operator uint32() const {
-			WMB();
+			//WMB();
 
 			return value;
 		}

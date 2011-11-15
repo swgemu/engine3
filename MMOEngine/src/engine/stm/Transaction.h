@@ -47,6 +47,7 @@ namespace engine {
 
 	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandleBase* > {
 		int compare(TransactionalObjectHandleBase*& o1, const TransactionalObjectHandleBase*& o2) const {
+			//this needs a specific order based on the header to not create cycle helps
 			return o1->compareTo(o2);
 		}
 
@@ -97,18 +98,11 @@ namespace engine {
 
 		TransactionalObjectHandleVector readOnlyObjects;
 		TransactionalObjectHandleVector readWriteObjects;
-		/*AtomicInteger currentWriteObjectAcquiring;
-		AtomicInteger currentReadObjectAcquiring;
-		AtomicInteger currentReadOnlyHandleCleaning;
-		AtomicInteger currentReadWriteObjectCleanup;*/
-
 		TransactionalObjectHeaderMap localObjectCache;
 
 		Vector<Object*> reclaimedObjects;
 
 		Reference<Task*> task;
-
-		//SortedVector<Reference<Transaction*> > helpedTransactions;
 
 		Vector<Command*> commands;
 

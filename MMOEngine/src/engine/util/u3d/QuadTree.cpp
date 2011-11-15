@@ -560,8 +560,19 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEnt
 			float deltaY = y - o->getPositionY();
 
 			if (deltaX * deltaX + deltaY * deltaY <= rangesq) {
-				obj->addInRangeObject(o, false);
-				o->addInRangeObject(obj);
+				if (!obj->containsInRangeObject(o)) {
+					obj->addInRangeObject(o);
+					obj->notifyInsert(o);
+				}
+
+				if (!o->containsInRangeObject(obj)) {
+					o->addInRangeObject(obj);
+					o->notifyInsert(obj);
+				} else
+					o->notifyPositionUpdate(obj);
+
+				/*obj->addInRangeObject(o, false);
+				o->addInRangeObject(obj);*/
  			} else {
  				float oldDeltaX = oldx - o->getPositionX();
  				float oldDeltaY = oldy - o->getPositionY();
