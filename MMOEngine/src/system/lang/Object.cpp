@@ -110,11 +110,11 @@ void Object::release() {
 
 	if (decreaseCount()) {
 		if (notifyDestroy()) {
-/*#ifdef WITH_STM
+#ifdef WITH_STM
 			MemoryManager::getInstance()->reclaim(this);
-#else*/
+#else
 			destroy();
-//#endif
+#endif
 		}
 	}
 }
