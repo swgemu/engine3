@@ -45,6 +45,8 @@ public:
 	int compareTo(Observer* obj);
 
 	DistributedObjectServant* _getImplementation();
+	DistributedObjectServant* _getDirtyImplementation();
+	DistributedObjectServant* _getForReadImplementation();
 
 	void _setImplementation(DistributedObjectServant* servant);
 

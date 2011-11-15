@@ -10,15 +10,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 AllocationTracker* AllocationTracker::instance = NULL;
 
 AllocationTracker::AllocationTracker() {
-	allocator = NULL;
+	realAllocator = NULL;
 
 	numOfAllocatorsM = 0;
 
 	memset(allocatorsM, 0, sizeof(allocatorsM));
-
-	heap.setShared();
-	heap.setAnonymous();
-	heap.create(2 * 512UL * 1024UL * 1024UL);
 }
 
 AllocationTracker::~AllocationTracker() {
@@ -28,7 +24,7 @@ void* AllocationTracker::onAllocate(size_t size, const void* allocator) {
 	size += sizeof(uint64);
 
 	//uint64* ptr = (uint64*) unHookedAllocate(size);
-	uint64* ptr = (uint64*) heap.allocate(size);
+	uint64* ptr = (uint64*) realAllocator->allocate(size);
 
 	addOverWriteProtector(ptr, size);
 
@@ -46,13 +42,13 @@ void AllocationTracker::onFree(void* ptr, const void*) {
 
 	uint64* lptr = (uint64*) ptr;
 
-	size_t size = heap.sizeOf(ptr);
+	size_t size = realAllocator->sizeOf(ptr);
 	//void* allocator = (void*) *(lptr + size - sizeof(uint64));
 
 	//updateAllocatorList((unsigned long) allocator, -size);
 
 	//unHookedFree((void*) lptr);
-	heap.free((void*) lptr);
+	realAllocator->free((void*) lptr);
 }
 
 void* AllocationTracker::onReallocate(void* ptr, size_t size, const void* alloc) {
@@ -63,11 +59,11 @@ void* AllocationTracker::onReallocate(void* ptr, size_t size, const void* alloc)
 
 	size += sizeof(uint64);
 
-	size_t old_chunk_size = heap.sizeOf(ptr);
+	size_t old_chunk_size = realAllocator->sizeOf(ptr);
 	//void* allocator = (void*) *(lptr + old_chunk_size - sizeof(uint64));
 
 	//void* ptr2 = unHookedReallocate((void*)lptr, size);
-	void* ptr2 = heap.reallocate((void*)lptr, size);
+	void* ptr2 = realAllocator->reallocate((void*)lptr, size);
 
 	uint64* nlptr = (uint64*) ptr2;
 	//*(nlptr + size - sizeof(uint64)) = (uint64) allocator;
@@ -76,6 +72,10 @@ void* AllocationTracker::onReallocate(void* ptr, size_t size, const void* alloc)
 	//updateAllocatorList((unsigned long)allocator, -(old_chunk_size - size));
 
 	return nlptr;
+}
+
+size_t AllocationTracker::sizeOfPointer(void* ptr) {
+	return realAllocator->sizeOf(ptr);
 }
 
 void AllocationTracker::updateAllocatorList(unsigned long allocator, long size) {
@@ -133,7 +133,7 @@ void AllocationTracker::addOverWriteProtector(void* ptr, size_t size) {
 		return;
 	}
 
-	int* page = (int*) heap.allocate(4096 + 4096 - 1);
+	int* page = (int*) realAllocator->allocate(4096 + 4096 - 1);
 	page = (int *)(((uintptr_t)(page) + 4096 - 1) & ~(4096 - 1));
 
 	assert(((uintptr_t) page) % 4096 == 0);

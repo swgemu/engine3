@@ -39,6 +39,12 @@ DistributedObjectServant* ManagedVector::_getImplementation() {
 	_updated = true;
 	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
+DistributedObjectServant* ManagedVector::_getDirtyImplementation() {
+	return dynamic_cast<DistributedObjectServant*>(header->getForDirty());}
+
+DistributedObjectServant* ManagedVector::_getForReadImplementation() {
+	return dynamic_cast<DistributedObjectServant*>(header->get());}
+
 void ManagedVector::_setImplementation(DistributedObjectServant* servant) {
 	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }

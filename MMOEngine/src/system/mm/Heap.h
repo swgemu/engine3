@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HEAP_H_
 #define HEAP_H_
 
+#include "system/platform.h"
+
 #include "system/thread/atomic/AtomicInteger.h"
 
 #include "Allocator.h"
@@ -13,7 +15,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace mm {
 
-	class Heap {
+	class Heap : public Allocator {
 	protected:
 		void* heapBase;
 		size_t heapSize;

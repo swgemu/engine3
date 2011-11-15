@@ -29,6 +29,8 @@ public:
 	int clearSession();
 
 	DistributedObjectServant* _getImplementation();
+	DistributedObjectServant* _getDirtyImplementation();
+	DistributedObjectServant* _getForReadImplementation();
 
 	void _setImplementation(DistributedObjectServant* servant);
 

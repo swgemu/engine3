@@ -131,6 +131,21 @@ public:
 
 			Transaction::currentTransaction()->log(str);*/
 
+			/*for (int i = 0; i < 25; ++i) {
+				int index = System::random(references->size() - 1);
+				int index2 = System::random(references->size() - 1);
+
+				TransactionalReference<TestClass*>& reference = references->get(index);
+				TransactionalReference<TestClass*>& reference2 = references->get(index2);
+
+				TestClass* object = reference.getForUpdate();
+				TestClass* object2 = reference2.get();
+
+
+				for (int j = 0; j < object2->get(); ++j)
+					object->increment();
+			}*/
+
 			object->increment();
 		}
 	}

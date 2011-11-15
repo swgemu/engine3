@@ -86,6 +86,12 @@ DistributedObjectServant* Facade::_getImplementation() {
 	_updated = true;
 	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
+DistributedObjectServant* Facade::_getDirtyImplementation() {
+	return dynamic_cast<DistributedObjectServant*>(header->getForDirty());}
+
+DistributedObjectServant* Facade::_getForReadImplementation() {
+	return dynamic_cast<DistributedObjectServant*>(header->get());}
+
 void Facade::_setImplementation(DistributedObjectServant* servant) {
 	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }

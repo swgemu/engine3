@@ -21,7 +21,6 @@ ProtectedHeap::ProtectedHeap() {
 #ifdef MEMORY_PROTECTION
 	openDevice(0);
 
-	//heapBase = reinterpret_cast<void*>(2 * MULTIMMAP_HEAP_SIZE);
 	setShared();
 
 	offset = MULTIMMAP_KERNEL_HEAP_OFFSET;

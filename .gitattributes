@@ -1005,10 +1005,16 @@ MMOEngine/src/testsuite3/COPYING -text
 MMOEngine/src/testsuite3/ChangeLog -text
 MMOEngine/src/testsuite3/INSTALL -text
 MMOEngine/src/testsuite3/Makefile.am -text
+MMOEngine/src/testsuite3/Makefile.in -text
 MMOEngine/src/testsuite3/NEWS -text
 MMOEngine/src/testsuite3/README -text
 MMOEngine/src/testsuite3/TestSuite3.cpp -text
 MMOEngine/src/testsuite3/aclocal.m4 -text
+MMOEngine/src/testsuite3/autom4te.cache/output.0 -text
+MMOEngine/src/testsuite3/autom4te.cache/output.1 -text
+MMOEngine/src/testsuite3/autom4te.cache/requests -text
+MMOEngine/src/testsuite3/autom4te.cache/traces.0 -text
+MMOEngine/src/testsuite3/autom4te.cache/traces.1 -text
 MMOEngine/src/testsuite3/build/unix/config.h -text
 MMOEngine/src/testsuite3/build/unix/config/config.guess -text
 MMOEngine/src/testsuite3/build/unix/config/config.sub -text

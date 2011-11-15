@@ -39,7 +39,7 @@ public:
 		System::out << "Exception aborted with cause " << cause << " at\n";
 		printStackTrace();
 
-		abort();
+		exit(1);
 	}
 
 	static int GetSignalNumber() {

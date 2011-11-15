@@ -26,7 +26,7 @@ namespace sys {
 	class AllocationTracker : public AllocationHook {
 		static AllocationTracker* instance;
 
-		Allocator* allocator;
+		Allocator* realAllocator;
 
 		struct MM_Allocator
 		{
@@ -37,8 +37,6 @@ namespace sys {
 		unsigned int numOfAllocatorsM ;
 
 		MM_Allocator allocatorsM[MM_ALLOCATOR_LIST_SIZE];
-
-		Heap heap;
 
 		uint64 protectedPages[5000];
 		int protectedPagesCount;
@@ -72,10 +70,12 @@ namespace sys {
 		void* onReallocate(void* ptr, size_t size, const void* alloc);
 
 		void setAllocator(Allocator* alloc) {
-			allocator = alloc;
+			realAllocator = alloc;
 		}
 
 	protected:
+		size_t sizeOfPointer(void* ptr);
+
 		void updateAllocatorList(unsigned long allocator, long size);
 
 		void print();

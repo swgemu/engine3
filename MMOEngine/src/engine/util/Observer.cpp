@@ -95,6 +95,12 @@ DistributedObjectServant* Observer::_getImplementation() {
 	_updated = true;
 	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
 
+DistributedObjectServant* Observer::_getDirtyImplementation() {
+	return dynamic_cast<DistributedObjectServant*>(header->getForDirty());}
+
+DistributedObjectServant* Observer::_getForReadImplementation() {
+	return dynamic_cast<DistributedObjectServant*>(header->get());}
+
 void Observer::_setImplementation(DistributedObjectServant* servant) {
 	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
 }
