@@ -93,9 +93,11 @@ void TransactionalBaseClientManager::execute() {
 			} else {
 				baseClient->sendSequenceLess(pack);
 			}
+		} catch (Exception& e) {
+			error(e.getMessage());
 		} catch (...) {
-			error("HUI CATCH (...)");
-			baseClient->disconnect("unreported exception on sendPacket()", false);
+			error("unreported exception on sendPacket()");
+			//baseClient->disconnect("unreported exception on sendPacket()", false);
 		}
 	}
 
