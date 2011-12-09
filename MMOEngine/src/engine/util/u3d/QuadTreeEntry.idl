@@ -29,8 +29,8 @@ class QuadTreeEntry extends Observable {
 	
 	protected boolean bounding;
 	
-	/*@weakReference
-	protected QuadTreeEntry parent;*/
+	@weakReference
+	protected QuadTreeEntry parent;
 
 	@dereferenced
 	transient protected SortedVector<QuadTreeEntry> closeobjects;
@@ -126,8 +126,8 @@ class QuadTreeEntry extends Observable {
 	
 	@read
 	public abstract QuadTreeEntry getParent() {
-		//return parent;
-		return null;
+		return parent;
+		//return null;
 	}
 	
 	@read
@@ -258,6 +258,6 @@ class QuadTreeEntry extends Observable {
 	}
 	
 	public abstract void setParent(QuadTreeEntry par) {
-		//parent = par;
+		parent = par;
 	}
 }

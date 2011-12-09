@@ -30,7 +30,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTree.h"
 
-//#define OUTPUTQTERRORS
+#ifndef WITH_STM
+#define OUTPUTQTERRORS
+#endif
 
 QuadTreeNode::QuadTreeNode() {
 	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
@@ -202,7 +204,7 @@ void QuadTree::insert(QuadTreeEntry *obj) {
 		raise(SIGSEGV);
 	}*/
 
-	//assert(obj->getParent() == NULL);
+	assert(obj->getParent() == NULL);
 
 	try {
 		if (QuadTree::doLog()) {
@@ -268,7 +270,7 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 		raise(SIGSEGV);
 	}*/
 
-	/*assert(obj->getParent() == NULL);
+	//assert(obj->getParent() == NULL);
 
 	SortedVector<ManagedReference<QuadTreeEntry*> >* closeObjects = obj->getCloseObjects();
 
@@ -301,10 +303,10 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 					}
 				}
 			}
-		}*/
+		}
 
 
-	try {
+//	try {
 		_inRange(root, obj, range);
 
 		if (QuadTree::doLog()) {

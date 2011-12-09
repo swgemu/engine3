@@ -48,7 +48,7 @@ uint64 QuadTreeEntryImplementation::getObjectID() {
 }
 
 QuadTreeEntry* QuadTreeEntryImplementation::getRootParent() {
-	/*if (parent == NULL)
+	if (parent == NULL)
 		return NULL;
 
 	QuadTreeEntry* grandParent = parent;
@@ -56,9 +56,9 @@ QuadTreeEntry* QuadTreeEntryImplementation::getRootParent() {
 	while (grandParent->getParent() != NULL)
 		grandParent = grandParent->getParent();
 
-	return grandParent;*/
+	return grandParent;
 
-	return NULL;
+	//return NULL;
 }
 
 int QuadTreeEntry::compareTo(QuadTreeEntry* obj) {

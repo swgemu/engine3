@@ -18,8 +18,6 @@ bool FraserSTM::doCommit(Transaction* transaction) {
 	if (transaction->status == Transaction::UNDECIDED && transaction->readWriteObjects.size() > 0) {
 		WMB();
 
-		uint64 lastHeaderID = 0;
-
 		for (int i = 0; i < transaction->readWriteObjects.size(); ++i) {
 			TransactionalObjectHandleBase* handle = transaction->readWriteObjects.get(i);
 
