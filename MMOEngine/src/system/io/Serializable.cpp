@@ -29,7 +29,7 @@ Serializable::Serializable() : Object() {
 	buffer << "{" << "size=" << _variables.size();
 
 	for (int i = 0; i < _variables.size(); ++i) {
-		VectorMapEntry<VariableName, void*>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
+		VectorMapEntry<VariableName, uint64>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, uint64> >::get(i);
 
 		VariableName varName = entry->getKey();
 		void* variable = entry->getValue();
@@ -67,9 +67,9 @@ void Serializable::writeObject(ObjectOutputStream* stream) {
 	stream->writeShort((uint16)size);
 
 	for (int i = 0; i < size; ++i) {
-		VectorMapEntry<VariableName, void*>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(i);
+		VectorMapEntry<VariableName, uint64>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, uint64> >::get(i);
 		VariableName varName = entry->getKey();
-		void* variable = entry->getValue();
+		void* variable = (void*)(entry->getValue() + (uint64)this);
 
 		int type = varName.getType();
 
@@ -298,13 +298,13 @@ void Serializable::readObject(ObjectInputStream* stream) {
 		}
 
 		try {
-			VectorMapEntry<VariableName, void*> e(var);
+			VectorMapEntry<VariableName, uint64> e(var);
 
-			int pos = _variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
+			int pos = _variables.SortedVector<VectorMapEntry<VariableName, uint64> >::find(e);
 
-			VectorMapEntry<VariableName, void*>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
+			VectorMapEntry<VariableName, uint64>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, uint64> >::get(pos);
 			VariableName varName = entry->getKey();
-			void* variable = entry->getValue();
+			void* variable = (void*)(entry->getValue() + (uint64)this);
 
 			int type = varName.getType();
 
@@ -368,11 +368,11 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 
 	//System::out << "deserializing " << name << " version:" << version << "\n";
 
-	VectorMapEntry<VariableName, void*> e(var);
+	VectorMapEntry<VariableName, uint64> e(var);
 
-	int pos = _variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
+	int pos = _variables.SortedVector<VectorMapEntry<VariableName, uint64> >::find(e);
 
-	VectorMapEntry<VariableName, void*>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
+	VectorMapEntry<VariableName, uint64>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, uint64> >::get(pos);
 	VariableName varName = entry->getKey();
 	void* variable = entry->getValue();
 
@@ -395,7 +395,7 @@ void Serializable::addSerializableVariable(const char* name, Variable* variable,
 	varName.setVersion(version);
 	varName.setType(0);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, uint8* variable, int version) {
@@ -407,7 +407,7 @@ void Serializable::addSerializableVariable(const char* name, uint8* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint8>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, int8* variable, int version) {
@@ -419,7 +419,7 @@ void Serializable::addSerializableVariable(const char* name, int8* variable, int
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int8>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, uint16* variable, int version) {
@@ -431,7 +431,7 @@ void Serializable::addSerializableVariable(const char* name, uint16* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint16>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, int16* variable, int version) {
@@ -443,7 +443,7 @@ void Serializable::addSerializableVariable(const char* name, int16* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int16>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, uint32* variable, int version) {
@@ -455,7 +455,7 @@ void Serializable::addSerializableVariable(const char* name, uint32* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint32>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, int32* variable, int version) {
@@ -467,7 +467,7 @@ void Serializable::addSerializableVariable(const char* name, int32* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int32>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, uint64* variable, int version) {
@@ -479,7 +479,7 @@ void Serializable::addSerializableVariable(const char* name, uint64* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint64>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, int64* variable, int version) {
@@ -491,7 +491,7 @@ void Serializable::addSerializableVariable(const char* name, int64* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int64>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, float* variable, int version) {
@@ -503,7 +503,7 @@ void Serializable::addSerializableVariable(const char* name, float* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<float>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, double* variable, int version) {
@@ -515,7 +515,7 @@ void Serializable::addSerializableVariable(const char* name, double* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<double>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 void Serializable::addSerializableVariable(const char* name, bool* variable, int version) {
@@ -527,20 +527,20 @@ void Serializable::addSerializableVariable(const char* name, bool* variable, int
 	varName.setVersion(version);
 	varName.setType(TypeInfo<bool>::type);
 
-	_variables.put(varName, static_cast<void*>(variable));
+	_variables.put(varName, (uint64)variable - (uint64)this);
 }
 
 Variable* Serializable::getSerializableVariable(const char* name) {
 	VariableName var;
 	var.setName(name);
 
-	VectorMapEntry<VariableName, void*> e(var);
+	VectorMapEntry<VariableName, uint64> e(var);
 
-	int pos = _variables.SortedVector<VectorMapEntry<VariableName, void*> >::find(e);
+	int pos = _variables.SortedVector<VectorMapEntry<VariableName, uint64> >::find(e);
 
-	VectorMapEntry<VariableName, void*>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, void*> >::get(pos);
+	VectorMapEntry<VariableName, uint64>* entry = &_variables.SortedVector<VectorMapEntry<VariableName, uint64> >::get(pos);
 	VariableName varName = entry->getKey();
-	void* variable = entry->getValue();
+	void* variable = (void*)(entry->getValue() + (uint64)this);
 
 	if (varName.getType() == 0)
 		return static_cast<Variable*>(variable);

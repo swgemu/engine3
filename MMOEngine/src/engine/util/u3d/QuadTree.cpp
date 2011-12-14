@@ -285,6 +285,7 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 	try {
 		for (int i = 0; i < closeObjects->size(); i++) {
 			QuadTreeEntry* o = closeObjects->get(i);
+			QuadTreeEntry* objectToRemove = o;
 
 			if (o->getParent() != NULL)
 				o = o->getRootParent();
@@ -298,8 +299,8 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 					float oldDeltaY = oldy - o->getPositionY();
 
 					if (oldDeltaX * oldDeltaX + oldDeltaY * oldDeltaY <= rangesq) {
-						obj->removeInRangeObject(o);
-						o->removeInRangeObject(obj);
+						obj->removeInRangeObject(objectToRemove);
+						objectToRemove->removeInRangeObject(obj);
 					}
 				}
 			}

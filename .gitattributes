@@ -733,5 +733,6 @@ MMOEngine/src/testsuite3/stamp-h1 -text
 MMOEngine/src/testsuite3/tests/TestClass.h -text
 MMOEngine/src/testsuite3/tests/memprottest.h -text
 MMOEngine/src/testsuite3/tests/qtstmtest.h -text
+MMOEngine/src/testsuite3/tests/referencetest.h -text
 MMOEngine/src/testsuite3/tests/stmmemtest.h -text
 MMOEngine/src/testsuite3/tests/stmtest.h -text

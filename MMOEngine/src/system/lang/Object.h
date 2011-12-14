@@ -21,13 +21,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define REFERENCED_WEAK_MUTEX
 #endif
 
-#ifdef TRACE_REFERENCES
-#include "ref/Reference.h"
-
-#include "system/util/VectorMap.h"
-#endif
-
 #define ENABLE_WEAK_REFS
+//#define TRACE_REFERENCES
 
 namespace engine {
         namespace stm {
@@ -48,6 +43,7 @@ namespace sys {
 	namespace util {
 		template<class O> class SortedVector;
 		template<class E> class HashSet;
+		template<class K, class V> class VectorMap;
 	}
 }
 
@@ -80,7 +76,7 @@ namespace sys {
 #endif
 
 	#ifdef TRACE_REFERENCES
-		VectorMap<void*, StackTrace*> referenceHolders;
+		sys::util::VectorMap<void*, StackTrace*>* referenceHolders;
 	#endif
 
 	public:

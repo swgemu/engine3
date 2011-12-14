@@ -19,6 +19,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "StackTrace.h"
 
+#include "system/util/VectorMap.h"
+
 Object::Object() : ReferenceCounter(), Variable() {
 #ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
@@ -36,7 +38,9 @@ Object::Object() : ReferenceCounter(), Variable() {
 	//MemoryManager::getInstance()->create(this);
 
 #ifdef TRACE_REFERENCES
-	referenceHolders.setNullValue(NULL);
+	/*referenceHolders = new VectorMap<void*, StackTrace*>();
+	referenceHolders->setNullValue(NULL);*/
+	referenceHolders = NULL;
 #endif
 }
 
@@ -55,14 +59,18 @@ Object::Object(const Object& obj) : ReferenceCounter(), Variable() {
 	//MemoryManager::getInstance()->create(this);
 
 #ifdef TRACE_REFERENCES
-	referenceHolders.setNullValue(NULL);
+	/*referenceHolders = new VectorMap<void*, StackTrace*>();
+	referenceHolders->setNullValue(NULL);*/
+	referenceHolders = NULL;
 #endif
 }
 
 Object::~Object() {
 #ifdef TRACE_REFERENCES
-	for (int i = 0; i < referenceHolders.size(); ++i)
-		delete referenceHolders.get(i);
+	if (referenceHolders != NULL) {
+		for (int i = 0; i < referenceHolders->size(); ++i)
+			delete referenceHolders->get(i);
+	}
 #endif
 
 	if (getReferenceCount() > 0)
@@ -100,6 +108,11 @@ Object::~Object() {
 #endif
 
 	finalize();
+
+#ifdef TRACE_REFERENCES
+	delete referenceHolders;
+	referenceHolders = NULL;
+#endif
 
 	//deletedByTrace = new StackTrace();
 }
@@ -193,25 +206,38 @@ void Object::addHolder(void* obj) {
 #endif
 
 	StackTrace* trace = new StackTrace();
-	referenceHolders.put(obj, trace);
+
+	if (referenceHolders == NULL) {
+		referenceHolders = new VectorMap<void*, StackTrace*>();
+		referenceHolders->setNullValue(NULL);
+	}
+
+	referenceHolders->put(obj, trace);
 }
 
 void Object::removeHolder(void* obj) {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
 #endif
+	if (referenceHolders == NULL) {
+		return;
+	}
 
-	StackTrace* trace = referenceHolders.get(obj);
+	StackTrace* trace = referenceHolders->get(obj);
 
 	if (trace != NULL) {
 		delete trace;
-		referenceHolders.drop(obj);
+		referenceHolders->drop(obj);
 	}
 }
 
 void Object::printReferenceHolders() {
-	for (int i = 0; i < referenceHolders.size(); ++i) {
-		StackTrace* trace = referenceHolders.get(i);
+	if (referenceHolders == NULL) {
+		return;
+	}
+
+	for (int i = 0; i < referenceHolders->size(); ++i) {
+		StackTrace* trace = referenceHolders->get(i);
 
 		trace->print();
 	}

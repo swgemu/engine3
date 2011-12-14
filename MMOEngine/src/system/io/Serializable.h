@@ -26,7 +26,7 @@ namespace sys {
 		class Serializable : public virtual Object {
 		protected:
 			String _className;
-			VectorMap<VariableName, void*> _variables;
+			VectorMap<VariableName, uint64> _variables;
 
 		public:
 			Serializable();

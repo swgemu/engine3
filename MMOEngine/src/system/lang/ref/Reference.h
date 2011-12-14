@@ -101,11 +101,21 @@ namespace sys {
 			O oldRef = object.compareAndSetReturnOld(oldval, newval);
 
 			if (oldval == oldRef) { //success
-				if (newval != NULL)
+				if (newval != NULL) {
 					newval->acquire();
 
-				if (oldval != NULL)
+					#ifdef TRACE_REFERENCES
+					newval->addHolder(this);
+					#endif
+				}
+
+				if (oldval != NULL) {
+					#ifdef TRACE_REFERENCES
+					oldval->removeHolder(this);
+					#endif
+
 					oldval->release();
+				}
 			}
 
 			return oldRef;
@@ -115,11 +125,21 @@ namespace sys {
 			bool success = object.compareAndSet(oldval, newval);
 
 			if (success) {
-				if (newval != NULL)
+				if (newval != NULL) {
 					newval->acquire();
 
-				if (oldval != NULL)
+					#ifdef TRACE_REFERENCES
+					newval->addHolder(this);
+					#endif
+				}
+
+				if (oldval != NULL) {
+					#ifdef TRACE_REFERENCES
+					oldval->removeHolder(this);
+					#endif
+
 					oldval->release();
+				}
 			}
 
 			return success;
@@ -137,7 +157,12 @@ namespace sys {
 			setObject(obj);*/
 
 			if (obj != NULL) {
-				(dynamic_cast<Object*>(obj))->acquire();
+				Object* castedObject = dynamic_cast<Object*>(obj);
+				castedObject->acquire();
+
+				#ifdef TRACE_REFERENCES
+				castedObject->addHolder(this);
+				#endif
 			}
 
 			while (true) {
@@ -145,22 +170,17 @@ namespace sys {
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL) {
-						(dynamic_cast<Object*>(oldobj))->release();
+						Object* castedObject = dynamic_cast<Object*>(oldobj);
+
+						#ifdef TRACE_REFERENCES
+						castedObject->removeHolder(this);
+						#endif
+
+						castedObject->release();
 					}
 
 					return;
 				}
-
-				/*O oldobj = object.get();
-
-				O oldRef = object.compareAndSetReturnOld(oldobj, obj);
-
-				if (oldRef == oldobj) { //success
-					if (oldRef != NULL)
-						oldRef->release();
-
-					break;
-				}*/
 
 				Thread::yield();
 			}
