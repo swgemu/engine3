@@ -21,6 +21,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/util/VectorMap.h"
 
+#ifdef TRACE_REFERENCES
+AtomicInteger ReferenceIdCounter::nextID;
+#endif
+
 Object::Object() : ReferenceCounter(), Variable() {
 #ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
@@ -38,7 +42,7 @@ Object::Object() : ReferenceCounter(), Variable() {
 	//MemoryManager::getInstance()->create(this);
 
 #ifdef TRACE_REFERENCES
-	/*referenceHolders = new VectorMap<void*, StackTrace*>();
+	/*referenceHolders = new VectorMap<uint64, StackTrace*>();
 	referenceHolders->setNullValue(NULL);*/
 	referenceHolders = NULL;
 #endif
@@ -59,7 +63,7 @@ Object::Object(const Object& obj) : ReferenceCounter(), Variable() {
 	//MemoryManager::getInstance()->create(this);
 
 #ifdef TRACE_REFERENCES
-	/*referenceHolders = new VectorMap<void*, StackTrace*>();
+	/*referenceHolders = new VectorMap<uint64, StackTrace*>();
 	referenceHolders->setNullValue(NULL);*/
 	referenceHolders = NULL;
 #endif
@@ -200,7 +204,7 @@ void Object::free() {
 }
 
 #ifdef TRACE_REFERENCES
-void Object::addHolder(void* obj) {
+void Object::addHolder(uint64 obj) {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
 #endif
@@ -208,14 +212,14 @@ void Object::addHolder(void* obj) {
 	StackTrace* trace = new StackTrace();
 
 	if (referenceHolders == NULL) {
-		referenceHolders = new VectorMap<void*, StackTrace*>();
+		referenceHolders = new VectorMap<uint64, StackTrace*>();
 		referenceHolders->setNullValue(NULL);
 	}
 
 	referenceHolders->put(obj, trace);
 }
 
-void Object::removeHolder(void* obj) {
+void Object::removeHolder(uint64 obj) {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
 #endif

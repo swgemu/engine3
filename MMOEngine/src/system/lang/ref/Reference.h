@@ -11,24 +11,47 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/lang/Long.h"
 
 #include "system/thread/atomic/AtomicReference.h"
+#include "system/thread/atomic/AtomicInteger.h"
 
 namespace sys {
   namespace lang {
+
+#ifdef TRACE_REFERENCES
+  	  class ReferenceIdCounter {
+  	  public:
+  		  static AtomicInteger nextID;
+  	  };
+#endif
+
 
 	template<class O> class Reference : public Variable {
 	protected:
 		AtomicReference<O> object;
 
+#ifdef TRACE_REFERENCES
+		AtomicInteger id;
+#endif
+
 	public:
 		Reference() : Variable(), object() {
 			//object = NULL;
+#ifdef TRACE_REFERENCES
+			id = ReferenceIdCounter::nextID.increment();
+#endif
 		}
 
 		Reference(const Reference& ref) : Variable() {
+#ifdef TRACE_REFERENCES
+			id = ReferenceIdCounter::nextID.increment();
+#endif
 			initializeObject(ref.object.get());
 		}
 
 		Reference(O obj) : Variable() {
+#ifdef TRACE_REFERENCES
+			id = ReferenceIdCounter::nextID.increment();
+#endif
+
 			initializeObject(obj);
 		}
 
@@ -105,13 +128,13 @@ namespace sys {
 					newval->acquire();
 
 					#ifdef TRACE_REFERENCES
-					newval->addHolder(this);
+					newval->addHolder(id);
 					#endif
 				}
 
 				if (oldval != NULL) {
 					#ifdef TRACE_REFERENCES
-					oldval->removeHolder(this);
+					oldval->removeHolder(id);
 					#endif
 
 					oldval->release();
@@ -129,13 +152,13 @@ namespace sys {
 					newval->acquire();
 
 					#ifdef TRACE_REFERENCES
-					newval->addHolder(this);
+					newval->addHolder(id);
 					#endif
 				}
 
 				if (oldval != NULL) {
 					#ifdef TRACE_REFERENCES
-					oldval->removeHolder(this);
+					oldval->removeHolder(id);
 					#endif
 
 					oldval->release();
@@ -161,7 +184,7 @@ namespace sys {
 				castedObject->acquire();
 
 				#ifdef TRACE_REFERENCES
-				castedObject->addHolder(this);
+				castedObject->addHolder(id);
 				#endif
 			}
 
@@ -173,7 +196,7 @@ namespace sys {
 						Object* castedObject = dynamic_cast<Object*>(oldobj);
 
 						#ifdef TRACE_REFERENCES
-						castedObject->removeHolder(this);
+						castedObject->removeHolder(id);
 						#endif
 
 						castedObject->release();
@@ -203,7 +226,7 @@ namespace sys {
 		inline void acquireObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
-				object->addHolder(this);
+				object->addHolder(id);
 			#endif
 				(static_cast<Object*>(object.get()))->acquire();
 			}
@@ -212,7 +235,7 @@ namespace sys {
 		void releaseObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
-				object->removeHolder(this);
+				object->removeHolder(id);
 			#endif
 				(static_cast<Object*>(object.get()))->release();
 				object = NULL;

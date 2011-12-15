@@ -76,7 +76,7 @@ namespace sys {
 #endif
 
 	#ifdef TRACE_REFERENCES
-		sys::util::VectorMap<void*, StackTrace*>* referenceHolders;
+		sys::util::VectorMap<uint64, StackTrace*>* referenceHolders;
 	#endif
 
 	public:
@@ -158,9 +158,9 @@ namespace sys {
 		virtual String toString();
 
 	#ifdef TRACE_REFERENCES
-		void addHolder(void* obj);
+		void addHolder(uint64 obj);
 
-		void removeHolder(void* obj);
+		void removeHolder(uint64 obj);
 
 		void printReferenceHolders();
 	#endif
