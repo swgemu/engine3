@@ -48,6 +48,10 @@ namespace sys {
 		void setPrivate();
 
 		void setAnonymous();
+
+		Allocator* getAllocator() {
+			return allocator;
+		}
 };
 
 } // namespace mm

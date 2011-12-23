@@ -4,7 +4,7 @@
 if DEBUG
 AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual
 else
-AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wunused-parameter -DVERSION_PUBLIC
+AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -DVERSION_PUBLIC
 endif
 
 #CC = /Users/victor/Documents/addresssanitizer/asan/asan_clang_Darwin/bin/clang
@@ -41,9 +41,11 @@ libengine3_a_SOURCES = \
 			system/lang/ArrayIndexOutOfBoundsException.cpp \
 			system/mm/MemoryManager.cpp \
 			system/mm/AllocationHook.cpp \
+			system/mm/AllocationReplacement.cpp \
 			system/mm/AllocationTracker.cpp \
 			system/mm/Heap.cpp \
 			system/mm/ProtectedHeap.cpp \
+			system/mm/MemoryMappedFile.cpp \
 			system/mm/DLAllocator.cpp \
 			system/thread/Thread.cpp \
 			system/thread/Lockable.cpp \

@@ -10,6 +10,8 @@
 #include "tests/stmtest.h"
 #include "tests/stmmemtest.h"
 #include "tests/qtstmtest.h"
+#include "tests/referencetest.h"
+#include "tests/allocatorhook.h"
 
 class TestCore : public Core {
 public:
@@ -42,6 +44,11 @@ int main(int argc, char* argv[]) {
 				testSTMMemory();
 			else if (arguments.contains("qtstmtest"))
 				testQTSTM();
+			else if (arguments.contains("referencetest")) {
+				referenceTest();
+			} else if (arguments.contains("memfiletest")) {
+				testMemoryMappedFile();
+			}
 		}
 
 	} catch (Exception& e) {

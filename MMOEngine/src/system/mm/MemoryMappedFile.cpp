@@ -14,11 +14,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 MemoryMappedFile::MemoryMappedFile(const char* name) {
 	fileName = name;
 
+	heapBase = NULL;
+
+	setShared();
+
 	openDevice();
 }
 
 void MemoryMappedFile::openDevice() {
-	deviceFD = open(fileName, O_RDWR);
+	deviceFD = open(fileName, O_RDWR | O_CREAT );
 
 	if (deviceFD < 0) {
 		char str[100];

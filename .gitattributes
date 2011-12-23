@@ -642,6 +642,8 @@ MMOEngine/src/system/lang/types.cpp -text
 MMOEngine/src/system/lang/types.h -text
 MMOEngine/src/system/mm/AllocationHook.cpp -text
 MMOEngine/src/system/mm/AllocationHook.h -text
+MMOEngine/src/system/mm/AllocationReplacement.cpp -text
+MMOEngine/src/system/mm/AllocationReplacement.h -text
 MMOEngine/src/system/mm/AllocationTracker.cpp -text
 MMOEngine/src/system/mm/AllocationTracker.h -text
 MMOEngine/src/system/mm/Allocator.h -text
@@ -733,6 +735,7 @@ MMOEngine/src/testsuite3/configure -text
 MMOEngine/src/testsuite3/configure.ac -text
 MMOEngine/src/testsuite3/stamp-h1 -text
 MMOEngine/src/testsuite3/tests/TestClass.h -text
+MMOEngine/src/testsuite3/tests/allocatorhook.h -text
 MMOEngine/src/testsuite3/tests/memprottest.h -text
 MMOEngine/src/testsuite3/tests/qtstmtest.h -text
 MMOEngine/src/testsuite3/tests/referencetest.h -text
