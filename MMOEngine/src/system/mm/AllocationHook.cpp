@@ -80,7 +80,7 @@ void AllocationHook::install() {
 	dz->realloc = &reallocHook;
 	dz->free_definite_size = &freeDefiniteSizeHook;
 
-	if (dz->version == 8) {
+	if (dz->version <= 8) {
 		unsigned protect_size = malloc_num_zones_allocated * sizeof(malloc_zone_t *);
 
 		vm_protect(mach_task_self(), (uintptr_t)malloc_zones, protect_size, 0, VM_PROT_READ);//put the write protection back
@@ -110,7 +110,7 @@ void AllocationHook::uninstall() {
 	dz->realloc = system_realloc;
 	dz->free_definite_size = system_free_definite_size;
 
-	if (dz->version == 8) {
+	if (dz->version <= 8) {
 		unsigned protect_size = malloc_num_zones_allocated * sizeof(malloc_zone_t *);
 
 		vm_protect(mach_task_self(), (uintptr_t)malloc_zones, protect_size, 0, VM_PROT_READ);//put the write protection back

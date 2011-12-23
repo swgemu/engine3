@@ -12,8 +12,8 @@
 #include "system/mm/MemoryMappedFile.h"
 
 void testMemoryMappedFile() {
-	MemoryMappedFile* mmapped = new MemoryMappedFile("memory_mapped_file.mm");
-	mmapped->create(1024 * 1024 * 2);
+	MemoryMappedFile* mmapped = new MemoryMappedFile("memory_mapped_file.mm", 512 * 4096);
+	mmapped->create();
 	AllocationReplacement* replace = AllocationReplacement::getInstance();
 	replace->setRealAllocator(mmapped->getAllocator());
 

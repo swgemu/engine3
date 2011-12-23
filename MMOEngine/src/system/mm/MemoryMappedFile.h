@@ -13,13 +13,17 @@ namespace sys {
 
 	class MemoryMappedFile : public Heap {
 		const char* fileName;
+		uint32 fileSize;
 
 	public:
-		MemoryMappedFile(const char* name);
+		MemoryMappedFile(const char* name, uint32 size);
+
+		void create() {
+			Heap::create(fileSize);
+		}
 
 	protected:
 		void openDevice();
-
 	};
 
 } // namespace mm
