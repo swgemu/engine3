@@ -651,6 +651,8 @@ MMOEngine/src/system/mm/Heap.cpp -text
 MMOEngine/src/system/mm/Heap.h -text
 MMOEngine/src/system/mm/MemoryManager.cpp -text
 MMOEngine/src/system/mm/MemoryManager.h -text
+MMOEngine/src/system/mm/MemoryMappedFile.cpp -text
+MMOEngine/src/system/mm/MemoryMappedFile.h -text
 MMOEngine/src/system/mm/ObjectCloner.h -text
 MMOEngine/src/system/mm/PTAllocator.cpp -text
 MMOEngine/src/system/mm/PTAllocator.h -text
