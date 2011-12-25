@@ -165,6 +165,10 @@ namespace engine {
 			return (x * v.x + y * v.y + z * v.z);
 		}
 
+		inline float product() {
+			return dotProduct(Vector3(x, y, z));
+		}
+
 		/**
 		 * The cross product returns the vector which is perpendicular to this vector
 		 * and the vector passed in. For example, if you have two vectors in the same

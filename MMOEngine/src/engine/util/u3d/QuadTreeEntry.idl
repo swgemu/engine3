@@ -60,6 +60,7 @@ class QuadTreeEntry extends Observable {
 		if (closeobjects.drop(obj)) {
 			notifyDissapear(obj);
 		}
+		
 		/*else {
 			QuadTreeEntry* obj2 = NULL;
 			obj2->getPositionX();

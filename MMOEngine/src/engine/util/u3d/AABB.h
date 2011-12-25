@@ -38,7 +38,7 @@ namespace engine {
 
 	 // calculate the floating point error metric
 	 float errorMetric() const {
-		 return (Vector3(1.0f) + (mBounds[1] - mBounds[0])).length();
+		 return (Vector3(1.0f) + (mBounds[1] - mBounds[0])).product();
 	 }
 
 	 // intersection scalar (used for weighting in building aabb)
