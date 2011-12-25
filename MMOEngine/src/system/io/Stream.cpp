@@ -13,10 +13,11 @@ Stream::Stream(int initsize, int capincr) : ArrayList<char>(initsize, capincr) {
 }
 
 Stream::Stream(char *buf, int len) : ArrayList<char>(len) {
-	offset = elementData;
-	end = elementData + len;
+	end = offset = elementData;
 
-	memcpy(elementData, buf, len);
+	writeStream(buf, len);
+
+	reset();
 }
 
 Stream::~Stream() {
