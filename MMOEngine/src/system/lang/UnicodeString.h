@@ -42,11 +42,15 @@ namespace sys {
 
 		char operator[](int index) const;
 
+		UnicodeString concat(const UnicodeString& str) const;
+
 		void append(const String& ascii);
 		void append(const UnicodeString& uni);
 		void append(const char* ascii);
 		void append(const char* ascii, int len);
 		void append(const unsigned short* str, int len);
+
+		UnicodeString replaceFirst(const UnicodeString& regex, const UnicodeString& replacement) const ;
 
 		void clear();
 
@@ -88,5 +92,7 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::lang;
+
+UnicodeString operator+(const UnicodeString& str1, const UnicodeString& str2);
 
 #endif /*UNICODE_H_*/

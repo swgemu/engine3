@@ -125,6 +125,14 @@ UnicodeString& UnicodeString::operator+(const UnicodeString& str) {
 	return *this;
 }
 
+UnicodeString UnicodeString::concat(const UnicodeString& str) const {
+	UnicodeString newStr(*this);
+
+	newStr.append(str);
+
+	return newStr;
+}
+
 char UnicodeString::operator[](int index) const {
 	return (char) uString[index];
 }
@@ -288,4 +296,26 @@ bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 	delete [] uni;
 
 	return true;
+}
+
+UnicodeString UnicodeString::replaceFirst(const UnicodeString& regex, const UnicodeString& replacement) const {
+	int rlen = regex.count;
+
+	int i = indexOf(regex);
+
+	if (i != -1) {
+		if (i > 0 && i + rlen < count)
+			return subString(0, i) + replacement + subString(i + rlen, count);
+		else if (i == 0 && i + rlen < count)
+			return replacement + subString(i + rlen, count);
+		else if (i > 0 && i + rlen == count)
+			return subString(0, i) + replacement;
+		else
+			return regex;
+	} else
+		return *this;
+}
+
+UnicodeString operator+(const UnicodeString& str1, const UnicodeString& str2) {
+	return str1.concat(str2);
 }
