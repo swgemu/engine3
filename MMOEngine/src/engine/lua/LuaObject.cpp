@@ -26,7 +26,10 @@ String LuaObject::getStringField(const String& key) {
 	result = lua_tostring(L, -1);
 	lua_pop(L, 1);
 
-	return String(result);
+	if (result != NULL)
+		return String(result);
+	else
+		return String("");
 }
 
 uint32 LuaObject::getIntField(const String& key) {
