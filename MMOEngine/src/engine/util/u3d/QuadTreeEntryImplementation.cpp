@@ -11,7 +11,9 @@ QuadTreeEntryImplementation::QuadTreeEntryImplementation(QuadTreeNode* n) {
 
 	//visibilityRange = 128;
 
-	closeobjects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
+	closeobjects = NULL;
+
+	//closeobjects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
 
 	radius = 0.5f;
 }

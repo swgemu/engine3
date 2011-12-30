@@ -138,14 +138,14 @@ void testQTSTM() {
 
 	int maxInRangeObjects = 0;
 
-	for (int i = 0; i < objects.size(); ++i) {
+	/*for (int i = 0; i < objects.size(); ++i) {
 		Reference<QuadTreeEntry*>& obj = objects.get(i);
 
 		if (obj->inRangeObjectCount() > maxInRangeObjects)
 			maxInRangeObjects = obj->inRangeObjectCount();
 	}
 
-	printf("maxInRangeObjects = %d\n", maxInRangeObjects);
+	printf("maxInRangeObjects = %d\n", maxInRangeObjects);*/
 
 #ifdef WITH_STM
 	printf("Commiting pure transaction...\n");
@@ -204,14 +204,14 @@ void testQTSTM() {
 	transaction = TransactionalMemoryManager::instance()->startTransaction();
 #endif
 
-	for (int i = 0; i < objects.size(); ++i) {
+	/*for (int i = 0; i < objects.size(); ++i) {
 		Reference<QuadTreeEntry*>& obj = objects.get(i);
 
 		if (obj->inRangeObjectCount() > maxInRangeObjects)
 			maxInRangeObjects = obj->inRangeObjectCount();
 	}
 
-	printf("maxInRangeObjects after updates = %d\n", maxInRangeObjects);
+	printf("maxInRangeObjects after updates = %d\n", maxInRangeObjects);*/
 
 #ifdef WITH_STM
 	TransactionalMemoryManager::commitPureTransaction(transaction);

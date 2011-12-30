@@ -114,7 +114,7 @@ namespace engine {
 		 */
 		void inRange(QuadTreeEntry *obj, float range);
 
-		int inRange(float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
+		int inRange(float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
 
 	 	/**
 		 * Update object's position in the quad tree.
@@ -135,7 +135,7 @@ namespace engine {
 		bool _update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj);
 
 		void _inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
-		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
+		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
 
 	public:
 		static void setLogging(bool doLog) {
