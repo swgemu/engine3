@@ -22,6 +22,10 @@ void QuadTreeEntryImplementation::setNode(QuadTreeNode* n) {
 	node = n;
 }
 
+bool QuadTreeEntryImplementation::containsPoint(float px, float py) {
+	return (((px - getPositionX()) * (px - getPositionX())) + ((py - getPositionY()) * (py - getPositionY())) <= radius * radius );
+}
+
 bool QuadTreeEntryImplementation::isInSWArea(QuadTreeNode* node) {
 	return coordinates.getPositionX() >= node->minX && coordinates.getPositionX() < node->dividerX &&
 			coordinates.getPositionY() >= node->minY && coordinates.getPositionY() < node->dividerY;

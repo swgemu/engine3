@@ -114,6 +114,12 @@ namespace engine {
 		 */
 		void inRange(QuadTreeEntry *obj, float range);
 
+
+		/**
+		 * Searches for entries that contain x, y point
+		 */
+		int inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+
 		int inRange(float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
 
 	 	/**
@@ -136,6 +142,7 @@ namespace engine {
 
 		void _inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
 		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
 
 	public:
 		static void setLogging(bool doLog) {

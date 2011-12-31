@@ -631,6 +631,43 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEnt
 	}
 }
 
+int QuadTree::inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
+	try {
+		return _inRange(root, x, y, objects);
+	} catch (Exception& e) {
+		System::out << "[QuadTree] " << e.getMessage() << "\n";
+		e.printStackTrace();
+	}
+
+	return 0;
+}
+
+int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
+	int count = 0;
+
+	for (int i = 0; i < node.get()->objects.size(); i++) {
+		QuadTreeEntry *o = node.get()->objects.get(i);
+
+		if (o->containsPoint(x, y)) {
+			++count;
+			objects.put(o);
+		}
+	}
+
+	if (node.get()->hasSubNodes()) {
+		if (node.get()->nwNode.get() != NULL && node.get()->nwNode.get()->testInside(x, y))
+			count += _inRange(node.get()->nwNode, x, y, objects);
+		if (node.get()->neNode.get() != NULL && node.get()->neNode.get()->testInside(x, y))
+			count += _inRange(node.get()->neNode, x, y, objects);
+		if (node.get()->swNode.get() != NULL && node.get()->swNode.get()->testInside(x, y))
+			count += _inRange(node.get()->swNode, x, y, objects);
+		if (node.get()->seNode.get() != NULL && node.get()->seNode.get()->testInside(x, y))
+			count += _inRange(node.get()->seNode, x, y, objects);
+	}
+
+	return count;
+}
+
 int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
 	int count = 0;
 
