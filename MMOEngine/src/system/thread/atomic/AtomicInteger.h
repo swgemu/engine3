@@ -104,12 +104,19 @@ namespace sys {
 		#else
 			InterlockedCompareExchange((volatile LONG*)val, newval, oldval);
 
-			return value == newval;
+			return *val == newval;
 		#endif
 		}
 
 		uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) {
+		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 			return __sync_val_compare_and_swap(&value, oldval, newval);
+		#elif defined(PLATFORM_WIN)
+			LONG oldVal = value;
+			InterlockedCompareExchange((volatile LONG*)&oldVal, newval, oldval);
+
+			return oldVal;
+		#endif
 		}
 
 		bool compareAndSet(uint32 oldval, uint32 newval) {

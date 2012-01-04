@@ -37,8 +37,13 @@ namespace sys {
 
 			return (V) __sync_val_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
 #endif
-#else
+#elif GCC_VERSION >= 40100
 			return __sync_val_compare_and_swap(&value, oldval, newval);
+#else
+			PVOID* oldVal = (PVOID*)value;
+			InterlockedCompareExchangePointer((volatile PVOID*)&oldVal, newval, (PVOID*) oldval);
+
+			return (V) oldVal;
 #endif
 		}
 
@@ -66,7 +71,7 @@ namespace sys {
 				return false;
 			}
 #else
-			InterlockedCompareExchangePointer((volatile PVOID *)&value, newval, oldval);
+			InterlockedCompareExchangePointer((volatile PVOID *)&value, newval, (PVOID *)oldval);
 
 			return value == newval;
 #endif

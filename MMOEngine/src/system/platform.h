@@ -103,7 +103,11 @@ extern "C" int isinf (double);
 #endif
 
 //#define WMB() __asm__ __volatile__ ("" ::: "memory");
+#if GCC_VERSION >= 40100
 #define WMB() __sync_synchronize()
+#else
+#define WMB()
+#endif
 
 #ifdef __clang__
 #define CLANG_COMPILER
@@ -158,7 +162,7 @@ namespace sys {
 	#define TIME_LIMIT 24
 	#endif
 
-	#define WITH_STM
+	//#define WITH_STM
 	//#define MEMORY_PROTECTION
 
 	namespace lang {
