@@ -4,19 +4,6 @@
 
 #include "Facade.h"
 
-
-// Imported class dependencies
-
-#include "engine/core/ManagedObject.h"
-
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
-#include "system/io/ObjectInputStream.h"
-
-#include "system/io/ObjectOutputStream.h"
-
-#include "system/thread/Lockable.h"
-
 /*
  *	FacadeStub
  */
@@ -25,8 +12,8 @@ enum {RPC_INITIALIZESESSION__ = 6,RPC_CANCELSESSION__,RPC_CLEARSESSION__};
 
 Facade::Facade() : ManagedObject(DummyConstructorParameter::instance()) {
 	FacadeImplementation* _implementation = new FacadeImplementation();
-	ManagedObject::_setImplementation(_implementation);
-	_implementation->_setStub(this);
+	_impl = _implementation;
+	_impl->_setStub(this);
 }
 
 Facade::Facade(DummyConstructorParameter* param) : ManagedObject(param) {
@@ -35,11 +22,6 @@ Facade::Facade(DummyConstructorParameter* param) : ManagedObject(param) {
 Facade::~Facade() {
 }
 
-
-bool Facade::_isCurrentVersion(ManagedObjectImplementation* servant) {
-
-	return header->isCurrentVersion(servant);
-}
 
 
 int Facade::initializeSession() {
@@ -84,16 +66,11 @@ int Facade::clearSession() {
 DistributedObjectServant* Facade::_getImplementation() {
 
 	_updated = true;
-	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
-
-DistributedObjectServant* Facade::_getDirtyImplementation() {
-	return dynamic_cast<DistributedObjectServant*>(header->getForDirty());}
-
-DistributedObjectServant* Facade::_getForReadImplementation() {
-	return dynamic_cast<DistributedObjectServant*>(header->get());}
+	return _impl;
+}
 
 void Facade::_setImplementation(DistributedObjectServant* servant) {
-	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
+	_impl = servant;
 }
 
 /*
@@ -133,40 +110,32 @@ FacadeImplementation::operator const Facade*() {
 	return _this;
 }
 
-Object* FacadeImplementation::clone() {
-	return ObjectCloner<FacadeImplementation>::clone(this);
-}
-
-
-Object* FacadeImplementation::clone(void* object) {
-	return TransactionalObjectCloner<FacadeImplementation>::clone(this);
-}
-
-
-void FacadeImplementation::free() {
-	TransactionalMemoryManager::instance()->destroy(this);
-}
-
-
 void FacadeImplementation::lock(bool doLock) {
+	_this->lock(doLock);
 }
 
 void FacadeImplementation::lock(ManagedObject* obj) {
+	_this->lock(obj);
 }
 
 void FacadeImplementation::rlock(bool doLock) {
+	_this->rlock(doLock);
 }
 
 void FacadeImplementation::wlock(bool doLock) {
+	_this->wlock(doLock);
 }
 
 void FacadeImplementation::wlock(ManagedObject* obj) {
+	_this->wlock(obj);
 }
 
 void FacadeImplementation::unlock(bool doLock) {
+	_this->unlock(doLock);
 }
 
 void FacadeImplementation::runlock(bool doLock) {
+	_this->runlock(doLock);
 }
 
 void FacadeImplementation::_serializationHelperMethod() {

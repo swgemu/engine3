@@ -4,19 +4,6 @@
 
 #include "ManagedService.h"
 
-
-// Imported class dependencies
-
-#include "engine/core/ManagedObject.h"
-
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
-#include "system/io/ObjectInputStream.h"
-
-#include "system/io/ObjectOutputStream.h"
-
-#include "system/thread/Lockable.h"
-
 /*
  *	ManagedServiceStub
  */
@@ -28,25 +15,15 @@ ManagedService::~ManagedService() {
 }
 
 
-bool ManagedService::_isCurrentVersion(ManagedObjectImplementation* servant) {
-
-	return header->isCurrentVersion(servant);
-}
-
 
 DistributedObjectServant* ManagedService::_getImplementation() {
 
 	_updated = true;
-	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
-
-DistributedObjectServant* ManagedService::_getDirtyImplementation() {
-	return dynamic_cast<DistributedObjectServant*>(header->getForDirty());}
-
-DistributedObjectServant* ManagedService::_getForReadImplementation() {
-	return dynamic_cast<DistributedObjectServant*>(header->get());}
+	return _impl;
+}
 
 void ManagedService::_setImplementation(DistributedObjectServant* servant) {
-	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
+	_impl = servant;
 }
 
 /*
@@ -90,40 +67,32 @@ ManagedServiceImplementation::operator const ManagedService*() {
 	return _this;
 }
 
-Object* ManagedServiceImplementation::clone() {
-	return ObjectCloner<ManagedServiceImplementation>::clone(this);
-}
-
-
-Object* ManagedServiceImplementation::clone(void* object) {
-	return TransactionalObjectCloner<ManagedServiceImplementation>::clone(this);
-}
-
-
-void ManagedServiceImplementation::free() {
-	TransactionalMemoryManager::instance()->destroy(this);
-}
-
-
 void ManagedServiceImplementation::lock(bool doLock) {
+	_this->lock(doLock);
 }
 
 void ManagedServiceImplementation::lock(ManagedObject* obj) {
+	_this->lock(obj);
 }
 
 void ManagedServiceImplementation::rlock(bool doLock) {
+	_this->rlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(bool doLock) {
+	_this->wlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(ManagedObject* obj) {
+	_this->wlock(obj);
 }
 
 void ManagedServiceImplementation::unlock(bool doLock) {
+	_this->unlock(doLock);
 }
 
 void ManagedServiceImplementation::runlock(bool doLock) {
+	_this->runlock(doLock);
 }
 
 void ManagedServiceImplementation::_serializationHelperMethod() {

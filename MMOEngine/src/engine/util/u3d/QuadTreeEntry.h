@@ -41,15 +41,11 @@ public:
 
 	void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate = true);
 
-	QuadTreeEntry* getInRangeObject(int index);
-
 	void removeInRangeObject(QuadTreeEntry* obj);
 
 	void removeInRangeObject(int index);
 
 	void removeInRangeObjects();
-
-	bool containsInRangeObject(QuadTreeEntry* obj);
 
 	bool isInRange(QuadTreeEntry* obj, float range);
 
@@ -60,6 +56,8 @@ public:
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
 	QuadTreeEntry* getParent();
+
+	bool containsPoint(float x, float y);
 
 	QuadTreeEntry* getRootParent();
 
@@ -99,8 +97,6 @@ public:
 
 	bool isInQuadTree();
 
-	int inRangeObjectCount();
-
 	TransactionalReference<QuadTreeNode*> getNode();
 
 	unsigned long long getDirtyObjectID();
@@ -122,12 +118,8 @@ public:
 	void setParent(QuadTreeEntry* par);
 
 	DistributedObjectServant* _getImplementation();
-	DistributedObjectServant* _getDirtyImplementation();
-	DistributedObjectServant* _getForReadImplementation();
 
 	void _setImplementation(DistributedObjectServant* servant);
-
-	bool _isCurrentVersion(ManagedObjectImplementation* servant);
 
 protected:
 	QuadTreeEntry(DummyConstructorParameter* param);
@@ -155,11 +147,13 @@ class QuadTreeEntryImplementation : public ObservableImplementation {
 protected:
 	Coordinate coordinates;
 
-	TransactionalReference<QuadTreeNode* > node;
+	Reference<QuadTreeNode* > node;
 
 	bool bounding;
 
-	SortedVector<ManagedReference<QuadTreeEntry* > > closeobjects;
+	ManagedWeakReference<QuadTreeEntry* > parent;
+
+	Reference<SortedVector<ManagedReference<QuadTreeEntry* > >* > closeobjects;
 
 	float radius;
 
@@ -170,15 +164,11 @@ public:
 
 	void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate = true);
 
-	QuadTreeEntry* getInRangeObject(int index);
-
 	void removeInRangeObject(QuadTreeEntry* obj);
 
 	void removeInRangeObject(int index);
 
 	void removeInRangeObjects();
-
-	bool containsInRangeObject(QuadTreeEntry* obj);
 
 	virtual bool isInRange(QuadTreeEntry* obj, float range);
 
@@ -189,6 +179,8 @@ public:
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
 	virtual QuadTreeEntry* getParent();
+
+	virtual bool containsPoint(float x, float y);
 
 	QuadTreeEntry* getRootParent();
 
@@ -228,8 +220,6 @@ public:
 
 	bool isInQuadTree();
 
-	int inRangeObjectCount();
-
 	TransactionalReference<QuadTreeNode*> getNode();
 
 	virtual unsigned long long getDirtyObjectID();
@@ -260,10 +250,6 @@ public:
 protected:
 	virtual ~QuadTreeEntryImplementation();
 
-	Object* clone();
-	Object* clone(void* object);
-	void free();
-
 	void finalize();
 
 	void _initializeImplementation();
@@ -289,8 +275,6 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class QuadTreeEntry;
-	friend class TransactionalObjectHandle<QuadTreeEntryImplementation*>;
-	friend class TransactionalObjectHeader<QuadTreeEntryImplementation*>;
 };
 
 class QuadTreeEntryAdapter : public ObservableAdapter {
@@ -301,15 +285,11 @@ public:
 
 	void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate);
 
-	QuadTreeEntry* getInRangeObject(int index);
-
 	void removeInRangeObject(QuadTreeEntry* obj);
 
 	void removeInRangeObject(int index);
 
 	void removeInRangeObjects();
-
-	bool containsInRangeObject(QuadTreeEntry* obj);
 
 	bool isInRange(QuadTreeEntry* obj, float range);
 
@@ -318,6 +298,8 @@ public:
 	float getDistanceTo(QuadTreeEntry* obj);
 
 	QuadTreeEntry* getParent();
+
+	bool containsPoint(float x, float y);
 
 	QuadTreeEntry* getRootParent();
 
@@ -346,8 +328,6 @@ public:
 	int compareTo(QuadTreeEntry* obj);
 
 	bool isInQuadTree();
-
-	int inRangeObjectCount();
 
 	unsigned long long getDirtyObjectID();
 

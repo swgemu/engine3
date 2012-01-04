@@ -20,12 +20,8 @@ namespace util {
 class ManagedVector : public ManagedObject {
 public:
 	DistributedObjectServant* _getImplementation();
-	DistributedObjectServant* _getDirtyImplementation();
-	DistributedObjectServant* _getForReadImplementation();
 
 	void _setImplementation(DistributedObjectServant* servant);
-
-	bool _isCurrentVersion(ManagedObjectImplementation* servant);
 
 protected:
 	ManagedVector(DummyConstructorParameter* param);
@@ -61,10 +57,6 @@ public:
 protected:
 	virtual ~ManagedVectorImplementation();
 
-	Object* clone();
-	Object* clone(void* object);
-	void free();
-
 	void finalize();
 
 	void _initializeImplementation();
@@ -90,8 +82,6 @@ protected:
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedVector;
-	friend class TransactionalObjectHandle<ManagedVectorImplementation*>;
-	friend class TransactionalObjectHeader<ManagedVectorImplementation*>;
 };
 
 class ManagedVectorAdapter : public ManagedObjectAdapter {

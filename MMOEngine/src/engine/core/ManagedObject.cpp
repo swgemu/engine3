@@ -14,8 +14,8 @@ enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOC
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
-	ManagedObject::_setImplementation(_implementation);
-	_implementation->_setStub(this);
+	_impl = _implementation;
+	_impl->_setStub(this);
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
@@ -24,11 +24,6 @@ ManagedObject::ManagedObject(DummyConstructorParameter* param) {
 ManagedObject::~ManagedObject() {
 }
 
-
-bool ManagedObject::_isCurrentVersion(ManagedObjectImplementation* servant) {
-
-	return header->isCurrentVersion(servant);
-}
 
 
 void ManagedObject::_updateForWrite() {
@@ -276,7 +271,7 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 }
 
 unsigned int ManagedObject::getLastCRCSave() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -289,7 +284,7 @@ unsigned int ManagedObject::getLastCRCSave() {
 }
 
 void ManagedObject::setLastCRCSave(unsigned int crc) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -303,7 +298,7 @@ void ManagedObject::setLastCRCSave(unsigned int crc) {
 }
 
 bool ManagedObject::isPersistent() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -316,7 +311,7 @@ bool ManagedObject::isPersistent() {
 }
 
 int ManagedObject::getPersistenceLevel() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getDirtyImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -340,16 +335,11 @@ void ManagedObject::setPersistent(int level) {
 DistributedObjectServant* ManagedObject::_getImplementation() {
 
 	_updated = true;
-	return dynamic_cast<DistributedObjectServant*>(header->getForUpdate());}
-
-DistributedObjectServant* ManagedObject::_getDirtyImplementation() {
-	return dynamic_cast<DistributedObjectServant*>(header->getForDirty());}
-
-DistributedObjectServant* ManagedObject::_getForReadImplementation() {
-	return dynamic_cast<DistributedObjectServant*>(header->get());}
+	return _impl;
+}
 
 void ManagedObject::_setImplementation(DistributedObjectServant* servant) {
-	header = new TransactionalObjectHeader<ManagedObjectImplementation*>(dynamic_cast<ManagedObjectImplementation*>(servant));
+	_impl = servant;
 }
 
 /*
@@ -387,21 +377,6 @@ DistributedObjectStub* ManagedObjectImplementation::_getStub() {
 ManagedObjectImplementation::operator const ManagedObject*() {
 	return _this;
 }
-
-Object* ManagedObjectImplementation::clone() {
-	return ObjectCloner<ManagedObjectImplementation>::clone(this);
-}
-
-
-Object* ManagedObjectImplementation::clone(void* object) {
-	return TransactionalObjectCloner<ManagedObjectImplementation>::clone(this);
-}
-
-
-void ManagedObjectImplementation::free() {
-	TransactionalMemoryManager::instance()->destroy(this);
-}
-
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
 	_setClassName("ManagedObject");
