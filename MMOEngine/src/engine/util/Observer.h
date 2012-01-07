@@ -38,11 +38,17 @@ namespace util {
 
 class Observer : public ManagedObject {
 public:
+	Observer();
+
 	int notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2);
 
 	unsigned long long getObjectID();
 
 	int compareTo(Observer* obj);
+
+	void setObserverType(unsigned int type);
+
+	bool isObserverType(unsigned int type);
 
 	DistributedObjectServant* _getImplementation();
 
@@ -65,9 +71,12 @@ namespace engine {
 namespace util {
 
 class ObserverImplementation : public ManagedObjectImplementation {
+protected:
+	unsigned int observerType;
 
 public:
 	ObserverImplementation();
+
 	ObserverImplementation(DummyConstructorParameter* param);
 
 	virtual int notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2);
@@ -75,6 +84,10 @@ public:
 	virtual unsigned long long getObjectID();
 
 	int compareTo(Observer* obj);
+
+	void setObserverType(unsigned int type);
+
+	virtual bool isObserverType(unsigned int type);
 
 	WeakReference<Observer*> _this;
 
@@ -124,6 +137,10 @@ public:
 	unsigned long long getObjectID();
 
 	int compareTo(Observer* obj);
+
+	void setObserverType(unsigned int type);
+
+	bool isObserverType(unsigned int type);
 
 };
 

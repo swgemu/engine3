@@ -12,7 +12,13 @@
  *	ObserverStub
  */
 
-enum {RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_ = 6,RPC_GETOBJECTID__,RPC_COMPARETO__OBSERVER_};
+enum {RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_ = 6,RPC_GETOBJECTID__,RPC_COMPARETO__OBSERVER_,RPC_SETOBSERVERTYPE__INT_,RPC_ISOBSERVERTYPE__INT_};
+
+Observer::Observer() : ManagedObject(DummyConstructorParameter::instance()) {
+	ObserverImplementation* _implementation = new ObserverImplementation();
+	_impl = _implementation;
+	_impl->_setStub(this);
+}
 
 Observer::Observer(DummyConstructorParameter* param) : ManagedObject(param) {
 }
@@ -66,6 +72,34 @@ int Observer::compareTo(Observer* obj) {
 		return _implementation->compareTo(obj);
 }
 
+void Observer::setObserverType(unsigned int type) {
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETOBSERVERTYPE__INT_);
+		method.addUnsignedIntParameter(type);
+
+		method.executeWithVoidReturn();
+	} else
+		_implementation->setObserverType(type);
+}
+
+bool Observer::isObserverType(unsigned int type) {
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_ISOBSERVERTYPE__INT_);
+		method.addUnsignedIntParameter(type);
+
+		return method.executeWithBooleanReturn();
+	} else
+		return _implementation->isObserverType(type);
+}
+
 DistributedObjectServant* Observer::_getImplementation() {
 
 	_updated = true;
@@ -79,10 +113,6 @@ void Observer::_setImplementation(DistributedObjectServant* servant) {
 /*
  *	ObserverImplementation
  */
-
-ObserverImplementation::ObserverImplementation() : ManagedObjectImplementation() {
-	_initializeImplementation();
-}
 
 ObserverImplementation::ObserverImplementation(DummyConstructorParameter* param) : ManagedObjectImplementation(param) {
 	_initializeImplementation();
@@ -175,6 +205,11 @@ bool ObserverImplementation::readObjectMember(ObjectInputStream* stream, const S
 	if (ManagedObjectImplementation::readObjectMember(stream, _name))
 		return true;
 
+	if (_name == "observerType") {
+		TypeInfo<unsigned int >::parseFromBinaryStream(&observerType, stream);
+		return true;
+	}
+
 
 	return false;
 }
@@ -190,13 +225,27 @@ int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	String _name;
 	int _offset;
 	uint16 _totalSize;
+	_name = "observerType";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<unsigned int >::toBinaryStream(&observerType, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
 
-	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
+
+	return 1 + ManagedObjectImplementation::writeObjectMembers(stream);
 }
 
 int ObserverImplementation::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
 	// engine/util/Observer.idl():  		return 1;
 	return 1;
+}
+
+ObserverImplementation::ObserverImplementation() {
+	_initializeImplementation();
+	// engine/util/Observer.idl():  		observerType = 0;
+	observerType = 0;
 }
 
 int ObserverImplementation::compareTo(Observer* obj) {
@@ -210,6 +259,16 @@ int ObserverImplementation::compareTo(Observer* obj) {
 
 	else 	// engine/util/Observer.idl():  			return 0;
 	return 0;
+}
+
+void ObserverImplementation::setObserverType(unsigned int type) {
+	// engine/util/Observer.idl():  		observerType = type;
+	observerType = type;
+}
+
+bool ObserverImplementation::isObserverType(unsigned int type) {
+	// engine/util/Observer.idl():  		return observerType == type;
+	return observerType == type;
 }
 
 /*
@@ -232,6 +291,12 @@ Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	case RPC_COMPARETO__OBSERVER_:
 		resp->insertSignedInt(compareTo(static_cast<Observer*>(inv->getObjectParameter())));
 		break;
+	case RPC_SETOBSERVERTYPE__INT_:
+		setObserverType(inv->getUnsignedIntParameter());
+		break;
+	case RPC_ISOBSERVERTYPE__INT_:
+		resp->insertBoolean(isObserverType(inv->getUnsignedIntParameter()));
+		break;
 	default:
 		return NULL;
 	}
@@ -249,6 +314,14 @@ unsigned long long ObserverAdapter::getObjectID() {
 
 int ObserverAdapter::compareTo(Observer* obj) {
 	return (static_cast<Observer*>(stub))->compareTo(obj);
+}
+
+void ObserverAdapter::setObserverType(unsigned int type) {
+	(static_cast<Observer*>(stub))->setObserverType(type);
+}
+
+bool ObserverAdapter::isObserverType(unsigned int type) {
+	return (static_cast<Observer*>(stub))->isObserverType(type);
 }
 
 /*
