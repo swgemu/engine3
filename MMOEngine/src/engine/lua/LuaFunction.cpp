@@ -40,12 +40,12 @@ void LuaFunction::operator<<(sys::uint32 number) {
 
 void LuaFunction::operator<<(int64 number) {
 	numberOfArgs++;
-	lua_pushnumber(L, number);
+	lua_pushinteger(L, number);
 }
 
 void LuaFunction::operator<<(uint64 number) {
 	numberOfArgs++;
-	lua_pushnumber(L, number);
+	lua_pushinteger(L, number);
 }
 
 void LuaFunction::operator<<(bool boolean) {

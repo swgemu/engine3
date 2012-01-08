@@ -172,7 +172,7 @@ uint64 Lua::getGlobalLong(const String& name) {
 		return 0;
 	}
 
-	result = (uint64) (lua_tonumber(L, -1));
+	result = (uint64) (lua_tointeger(L, -1));
 	lua_pop(L, 1);
 
 	return result;
@@ -314,7 +314,7 @@ int64 Lua::getLongParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int64)lua_tonumber(lState, -1);
+	result = (int64)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;
@@ -332,7 +332,7 @@ uint64 Lua::getUnsignedLongParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint64)lua_tonumber(lState, -1);
+	result = (uint64)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;
@@ -442,7 +442,7 @@ void Lua::setGlobalInt(const String& name, const int value) {
 }
 
 void Lua::setGlobalLong(const String& name, const uint64 value) {
-	lua_pushnumber(L, value);
+	lua_pushinteger(L, value);
 	lua_setglobal(L, name.toCharArray());
 }
 

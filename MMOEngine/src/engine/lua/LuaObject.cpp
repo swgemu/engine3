@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 void LuaObject::setField(const String& key, uint64 value) {
 	lua_pushstring(L, key.toCharArray());
-	lua_pushnumber(L, (double)value);
+	lua_pushinteger(L, (double)value);
 	lua_settable(L, -3);
 }
 
