@@ -570,18 +570,29 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEnt
 
 			if (deltaX * deltaX + deltaY * deltaY <= rangesq) {
 				SortedVector<ManagedReference<QuadTreeEntry* > >* objCloseObjects = obj->getCloseObjects();
+
+#ifdef WITH_STM
 				if (objCloseObjects != NULL && !objCloseObjects->contains(o)) {
 					obj->addInRangeObject(o);
 					//obj->notifyInsert(o);
 				}
+#else
+				if (objCloseObjects != NULL)
+					obj->addInRangeObject(o);
+#endif
 
 				SortedVector<ManagedReference<QuadTreeEntry* > >* oCloseObjects = o->getCloseObjects();
 
+#ifdef WITH_STM
 				if (oCloseObjects != NULL && !oCloseObjects->contains(obj)) {
 					o->addInRangeObject(obj);
 					//o->notifyInsert(obj);
 				} else
 					o->notifyPositionUpdate(obj);
+#else
+				if (oCloseObjects != NULL)
+					o->addInRangeObject(obj);
+#endif
 
 				/*obj->addInRangeObject(o, false);
 				o->addInRangeObject(obj);*/

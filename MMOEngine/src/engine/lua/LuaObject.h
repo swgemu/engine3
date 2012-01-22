@@ -37,6 +37,7 @@ namespace lua {
 		float getFloatField(const String& key);
 		uint64 getLongField(const String& key);
 		LuaObject getObjectField(const String& key);
+		bool getBooleanField(const String& key);
 
 		void setField(const String& key, sys::uint64 value);
 		void setField(const String& key, const String& value);
@@ -44,6 +45,7 @@ namespace lua {
 		String getStringAt(int idx);
 		sys::uint32 getIntAt(int idx);
 		float getFloatAt(int idx);
+		LuaObject getObjectAt(int idx);
 
 		int getTableSize();
 

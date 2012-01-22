@@ -9,13 +9,15 @@
 #include "Observer.h"
 
 void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1, int64 arg2) {
-	int index = find(eventType);
+	/*int index = find(eventType);
 
 	if (index == -1) {
 		return;
-	}
+	}*/
+	if (!containsKey(eventType))
+		return;
 
-	SortedVector<ManagedReference<Observer*> >* observers = &elementAt(index).getValue();
+	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
 
 	SortedVector<ManagedReference<Observer*> > observersCopy(*observers);
 
@@ -39,15 +41,16 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 		return;
 	}
 
-	int index = find(eventType);
+	/*int index = find(eventType);
 
-	if (index == -1) {
+	if (index == -1) {*/
+	if (!containsKey(eventType)) {
 		SortedVector<ManagedReference<Observer*> > observers;
 		observers.put(observer);
 
 		this->put(eventType, observers);
 	} else {
-		SortedVector<ManagedReference<Observer*> >* observers = &elementAt(index).getValue();
+		SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
 		observers->setNoDuplicateInsertPlan();
 
 		observers->put(observer);
@@ -55,37 +58,49 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 }
 
 void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
-	int index = find(eventType);
+	/*int index = find(eventType);
 
 	if (index == -1)
+		return;*/
+
+	if (!containsKey(eventType))
 		return;
 
-	SortedVector<ManagedReference<Observer*> >* observers = &elementAt(index).getValue();
+	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
 
 	observers->drop(observer);
 
+	/*if (observers->size() == 0)
+		this->remove(index);*/
+
 	if (observers->size() == 0)
-		this->remove(index);
+		remove(eventType);
 }
 
 SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint32 eventType) {
-	int index = find(eventType);
+	/*int index = find(eventType);
 
 	if (index == -1)
+		return NULL;*/
+
+	if (!containsKey(eventType))
 		return NULL;
 
-	SortedVector<ManagedReference<Observer*> >* observers = &elementAt(index).getValue();
+	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
 
 	return observers;
 }
 
 int ObserverEventMap::getObserverCount(uint32 eventType) {
-	int index = find(eventType);
+	/*int index = find(eventType);
 
 	if (index == -1)
-		return 0;
+		return 0;*/
 
-	SortedVector<ManagedReference<Observer*> >* observers = &elementAt(index).getValue();
+	if (!containsKey(eventType))
+		return NULL;
+
+	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);//&elementAt(index).getValue();
 
 	return observers->size();
 }

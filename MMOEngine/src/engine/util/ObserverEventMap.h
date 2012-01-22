@@ -21,14 +21,14 @@ using namespace engine::util;
 
 #include "engine/core/ManagedReference.h"
 
-class ObserverEventMap : public VectorMap<uint32, SortedVector<ManagedReference<Observer*> > > {
+class ObserverEventMap : public HashTable<uint32, SortedVector<ManagedReference<Observer*> > > {
 public:
 	ObserverEventMap() {
-		setNoDuplicateInsertPlan();
+		//setNoDuplicateInsertPlan();
 	}
 
-	ObserverEventMap(const ObserverEventMap& map) : VectorMap<uint32, SortedVector<ManagedReference<Observer*> > >(map) {
-		setNoDuplicateInsertPlan();
+	ObserverEventMap(const ObserverEventMap& map) : HashTable<uint32, SortedVector<ManagedReference<Observer*> > >(map) {
+		//setNoDuplicateInsertPlan();
 	}
 
 	void notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1 = NULL, int64 arg2 = 0);

@@ -677,6 +677,7 @@ MMOEngine/src/system/net/TCPSocket.h -text
 MMOEngine/src/system/net/UDPServerSocket.h -text
 MMOEngine/src/system/net/UDPSocket.h -text
 MMOEngine/src/system/platform.h -text
+MMOEngine/src/system/security/Crypto.h -text
 MMOEngine/src/system/thread/Condition.h -text
 MMOEngine/src/system/thread/Lockable.cpp -text
 MMOEngine/src/system/thread/Lockable.h -text
@@ -737,6 +738,7 @@ MMOEngine/src/testsuite3/stamp-h1 -text
 MMOEngine/src/testsuite3/tests/TestClass.h -text
 MMOEngine/src/testsuite3/tests/allocatorhook.h -text
 MMOEngine/src/testsuite3/tests/memprottest.h -text
+MMOEngine/src/testsuite3/tests/qtboundingtest.h -text
 MMOEngine/src/testsuite3/tests/qtstmtest.h -text
 MMOEngine/src/testsuite3/tests/referencetest.h -text
 MMOEngine/src/testsuite3/tests/stmmemtest.h -text

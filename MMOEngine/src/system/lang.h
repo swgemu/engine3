@@ -91,4 +91,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "net/TCPSocket.h"
 #include "net/TCPServerSocket.h"
 
+#include "security/Crypto.h"
+
 #endif /*SYS_H_*/

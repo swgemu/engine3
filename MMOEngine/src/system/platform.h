@@ -180,6 +180,9 @@ namespace sys {
 	namespace io {
 	} // namespace net
 
+	namespace security {
+	}
+
 } // namespace sys
 
 using namespace sys;

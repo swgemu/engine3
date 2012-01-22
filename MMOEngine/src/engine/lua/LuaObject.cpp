@@ -32,6 +32,17 @@ String LuaObject::getStringField(const String& key) {
 		return String("");
 }
 
+bool LuaObject::getBooleanField(const String& key) {
+	lua_pushstring(L, key.toCharArray());
+	lua_gettable(L, -2);
+
+	bool res = lua_toboolean(L, -1);
+
+	lua_pop(L, 1);
+
+	return res;
+}
+
 uint32 LuaObject::getIntField(const String& key) {
 	uint32 result = 0;
 
@@ -101,6 +112,14 @@ LuaObject LuaObject::getObjectField(const String& key) {
 	return obj;
 }
 
+LuaObject LuaObject::getObjectAt(int idx) {
+	lua_rawgeti(L, -1, idx);
+
+	LuaObject obj(L);
+
+	return obj;
+}
+
 sys::uint32 LuaObject::getIntAt(int idx) {
 	uint32 result = 0;
 
@@ -108,7 +127,7 @@ sys::uint32 LuaObject::getIntAt(int idx) {
 		throw ArrayIndexOutOfBoundsException(idx);
 
 	lua_rawgeti(L, -1, idx);
-	result = (uint32)lua_tonumber(L, -1);
+	result = (uint32)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 
 	return result;
