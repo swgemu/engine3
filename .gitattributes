@@ -373,6 +373,7 @@ MMOEngine/src/engine/lua/LuaFunction.cpp -text
 MMOEngine/src/engine/lua/LuaFunction.h -text
 MMOEngine/src/engine/lua/LuaObject.cpp -text
 MMOEngine/src/engine/lua/LuaObject.h -text
+MMOEngine/src/engine/lua/LuaPanicException.h -text
 MMOEngine/src/engine/lua/Luna.h -text
 MMOEngine/src/engine/lua/Lunar.h -text
 MMOEngine/src/engine/orb/DOBObjectManager.cpp -text

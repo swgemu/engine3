@@ -42,6 +42,8 @@ namespace engine {
 		//static
 		static void runFile(const String& filename, lua_State* lState);
 
+		static int atPanic(lua_State* L);
+
 		static lua_State* callFunction(LuaFunction* func);
 
 		// getters

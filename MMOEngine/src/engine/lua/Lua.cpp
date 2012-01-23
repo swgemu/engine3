@@ -1,17 +1,19 @@
 /*
 Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
-*/
+ */
 
 #include "../log/Logger.h"
 
 #include "Lua.h"
 
 extern "C" {
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 }
+
+#include "LuaPanicException.h"
 
 Lua::Lua() : Logger("Lua") {
 	L = NULL;
@@ -24,6 +26,8 @@ Lua::~Lua() {
 void Lua::init() {
 	L = lua_open();
 	luaL_openlibs(L);
+
+	lua_atpanic(L, Lua::atPanic);
 }
 
 void Lua::deinit() {
@@ -44,13 +48,20 @@ bool Lua::runFile(const String& filename) {
 	if (!L)
 		init();
 
-	if (luaL_loadfile(L, filename.toCharArray()) || lua_pcall(L, 0, 0, 0)) {
-		const char* err = lua_tostring(L, -1);
-		lua_pop(L,1);
+	try {
 
-		StringBuffer msg;
-		msg << "file:" << filename << " ERROR " << err;
-		info(msg);
+		if (luaL_loadfile(L, filename.toCharArray()) || lua_pcall(L, 0, 0, 0)) {
+			const char* err = lua_tostring(L, -1);
+			lua_pop(L,1);
+
+			StringBuffer msg;
+			msg << "file:" << filename << " ERROR " << err;
+			info(msg);
+
+			return false;
+		}
+	} catch (LuaPanicException& e) {
+		error("LuaPanicException while running " + filename);
 
 		return false;
 	}
@@ -59,15 +70,21 @@ bool Lua::runFile(const String& filename) {
 }
 
 void Lua::runFile(const String& filename, lua_State* lState) {
-	if (!filename.isEmpty()) {
-		//System::out << "Loading lua file: " << filename << "\n";
+	try {
+		if (!filename.isEmpty()) {
+			//System::out << "Loading lua file: " << filename << "\n";
 
-		if (luaL_loadfile(lState, filename.toCharArray()) || lua_pcall(lState, 0, 0, 0)) {
-			const char* err = lua_tostring(lState, -1);
-			lua_pop(lState,1);
+			if (luaL_loadfile(lState, filename.toCharArray()) || lua_pcall(lState, 0, 0, 0)) {
+				const char* err = lua_tostring(lState, -1);
+				lua_pop(lState,1);
 
-			System::out << "file:" << filename << " ERROR " << err << "\n";
+				System::out << "file:" << filename << " ERROR " << err << "\n";
+			}
 		}
+	} catch (LuaPanicException& e) {
+		Logger::console.error("LuaPanicException while running " + filename);
+
+		return;
 	}
 }
 
@@ -82,13 +99,19 @@ bool Lua::runString(const String& str) {
 	if (!L)
 		init();
 
-	if (luaL_loadbuffer(L, str.toCharArray(), str.length(), "command") || lua_pcall(L, 0, 0, 0)) {
-		const char* err = lua_tostring(L, -1);
-		lua_pop(L,1);
+	try {
+		if (luaL_loadbuffer(L, str.toCharArray(), str.length(), "command") || lua_pcall(L, 0, 0, 0)) {
+			const char* err = lua_tostring(L, -1);
+			lua_pop(L,1);
 
-		StringBuffer msg;
-		msg << "ERROR " << err;
-		info(msg);
+			StringBuffer msg;
+			msg << "ERROR " << err;
+			info(msg);
+
+			return false;
+		}
+	} catch (LuaPanicException& e) {
+		Logger::console.error("LuaPanicException while " + str);
 
 		return false;
 	}
@@ -97,12 +120,22 @@ bool Lua::runString(const String& str) {
 }
 
 lua_State* Lua::callFunction(LuaFunction* func) {
-	if (lua_pcall(func->getLuaState(), func->getNumberOfArgs(), func->getNumberOfReturnArgs(), 0) != 0) {
-		System::out << "Error running function " << func->getFunctionName() << " " << lua_tostring(func->getLuaState(), -1);
+	try {
+		if (lua_pcall(func->getLuaState(), func->getNumberOfArgs(), func->getNumberOfReturnArgs(), 0) != 0) {
+			Logger::console.error("Error running function " + func->getFunctionName() + " " + lua_tostring(func->getLuaState(), -1));
+			return NULL;
+		}
+	} catch (LuaPanicException& e) {
+		Logger::console.error("LuaPanicException running function " + func->getFunctionName() + " " + lua_tostring(func->getLuaState(), -1));
+
 		return NULL;
 	}
 
 	return func->getLuaState();
+}
+
+int Lua::atPanic(lua_State* L) {
+	throw LuaPanicException("Lua panic");
 }
 
 // getters
@@ -257,7 +290,7 @@ String Lua::getStringParameter(lua_State* lState) {
 		msg << "ERROR expected STRING";
 		info(msg);
 		System::out << "error reading STRING value while loading lua\n";
-		*/
+		 */
 		return result;
 	}
 	result = lua_tostring(lState, -1);
