@@ -27,6 +27,21 @@ namespace engine {
 		 matrix[2] = v3;
 	 }
 
+	 Matrix3(const Matrix3& mat) {
+		 for (int i = 0; i < 3; ++i)
+			 matrix[i] = mat.matrix[i];
+	 }
+
+	 Matrix3& operator=(const Matrix3& mat) {
+		 if (this == &mat)
+			 return *this;
+
+		 for (int i = 0; i < 3; ++i)
+			 matrix[i] = mat.matrix[i];
+
+		 return *this;
+	 }
+
 	 void scale(const Vector3& p) {
 		 matrix[0][0] *= p.getX();	matrix[0][1] *= p.getX();	matrix[0][2] *= p.getX();
 		 matrix[1][0] *= p.getY();	matrix[1][1] *= p.getY();	matrix[1][2] *= p.getY();

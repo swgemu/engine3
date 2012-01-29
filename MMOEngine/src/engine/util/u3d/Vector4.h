@@ -37,8 +37,24 @@ public:
 		w = v.w;
 	}
 
-	inline void setZero() {
+	Vector4& operator=(const Vector4& v) {
+		if (this == &v)
+			return *this;
+
+		x = v.x;
+		y = v.y;
+		z = v.z;
+		w = v.w;
+
+		return *this;
+	}
+
+	void setZero() {
 		x = 0, y = 0, z = 0, w = 0;
+	}
+
+	bool isZero() {
+		return x == 0 && y == 0 && z == 0 && w == 0;
 	}
 
 	inline float& operator[](uint32 index) {
