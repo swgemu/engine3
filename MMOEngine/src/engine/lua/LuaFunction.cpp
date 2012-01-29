@@ -65,7 +65,11 @@ void LuaFunction::operator<<(const char* str) {
 
 void LuaFunction::operator<<(void* ptr) {
 	numberOfArgs++;
-	lua_pushlightuserdata(L, ptr);
+
+	if (ptr != NULL)
+		lua_pushlightuserdata(L, ptr);
+	else
+		lua_pushnil(L);
 }
 
 
