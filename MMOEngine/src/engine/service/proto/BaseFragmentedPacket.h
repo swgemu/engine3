@@ -15,7 +15,7 @@ namespace engine {
 	class BaseFragmentedPacket : public BasePacket {
 		BasePacket* singlePacket;
 
-		int offset;
+		int totalSize;
 
 	public:
 		BaseFragmentedPacket();

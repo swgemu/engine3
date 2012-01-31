@@ -360,7 +360,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 }
 
 void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
-	//Logger::console.info("handleFragmentedPacket " + pack->toStringData());
+	//Logger::console.info("handleFragmentedPacket " + pack->toStringData(), true);
 	//pack must have offset after sequence 0D 00 XX XX HERE
 
 	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
