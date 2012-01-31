@@ -100,6 +100,15 @@ class ManagedObject {
 		return true;
 	}
 	
+	/**
+	 * Gets called when this objects is loaded from database
+	 * @pre { this locked }
+	 * @post { this locked }
+	 */
+	public abstract void notifyLoadFromDatabase() {
+		
+	}
+	
 	/*public abstract void readObject(final string data) {
 		Serializable.readObject(data);
 		

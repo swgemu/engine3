@@ -294,7 +294,6 @@ namespace sys {
 			readStream(stream, len);
 		}
 
-		String toStringData();
 	};
 
   } // namespace net

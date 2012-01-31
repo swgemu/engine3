@@ -172,3 +172,20 @@ void Stream::readStream(Stream* stream, int len) {
 
 	readStream(stream->getBuffer(), stream->size());
 }
+
+String Stream::toStringData() {
+	StringBuffer str;
+	str << "Stream [" << size() << "] " << uppercase << hex;
+
+	for (int i = 0; i < size(); ++i) {
+		unsigned int byte = ((unsigned int) elementData[i]) & 0xFF;
+
+		if ((byte & 0xF0) == 0)
+			str << "0" << hex << byte  << " ";
+		else
+			str << hex << byte  << " ";
+	}
+
+	return str.toString();
+}
+

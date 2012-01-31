@@ -72,6 +72,8 @@ public:
 
 	bool parseFromBinaryStream(ObjectInputStream* stream);
 
+	void notifyLoadFromDatabase();
+
 	DistributedObjectServant* getServant();
 
 	void initializeTransientMembers();
@@ -172,6 +174,8 @@ public:
 
 	bool parseFromBinaryStream(ObjectInputStream* stream);
 
+	virtual void notifyLoadFromDatabase();
+
 	DistributedObjectServant* getServant();
 
 	virtual void initializeTransientMembers();
@@ -244,6 +248,8 @@ public:
 	void setLockName(const String& name);
 
 	bool notifyDestroy();
+
+	void notifyLoadFromDatabase();
 
 	void initializeTransientMembers();
 

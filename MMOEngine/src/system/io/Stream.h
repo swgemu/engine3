@@ -58,6 +58,8 @@ namespace sys {
 		void readStream(char* buf, int len);
 		void readStream(Stream* stream, int len);
 		
+		String toStringData();
+
 		// getters
 		inline int getOffset() {
 			return offset - elementData;

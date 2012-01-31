@@ -10,7 +10,7 @@
  *	ManagedObjectStub
  */
 
-enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
+enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_NOTIFYLOADFROMDATABASE__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
@@ -207,6 +207,19 @@ bool ManagedObject::parseFromBinaryStream(ObjectInputStream* stream) {
 
 	} else
 		return _implementation->parseFromBinaryStream(stream);
+}
+
+void ManagedObject::notifyLoadFromDatabase() {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_NOTIFYLOADFROMDATABASE__);
+
+		method.executeWithVoidReturn();
+	} else
+		_implementation->notifyLoadFromDatabase();
 }
 
 DistributedObjectServant* ManagedObject::_getServant() {
@@ -471,6 +484,9 @@ bool ManagedObjectImplementation::parseFromBinaryStream(ObjectInputStream* strea
 	return true;
 }
 
+void ManagedObjectImplementation::notifyLoadFromDatabase() {
+}
+
 void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
 	// engine/core/ManagedObject.idl():  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
@@ -542,6 +558,9 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 	case RPC_NOTIFYDESTROY__:
 		resp->insertBoolean(notifyDestroy());
 		break;
+	case RPC_NOTIFYLOADFROMDATABASE__:
+		notifyLoadFromDatabase();
+		break;
 	case RPC_INITIALIZETRANSIENTMEMBERS__:
 		initializeTransientMembers();
 		break;
@@ -611,6 +630,10 @@ void ManagedObjectAdapter::setLockName(const String& name) {
 
 bool ManagedObjectAdapter::notifyDestroy() {
 	return (static_cast<ManagedObject*>(stub))->notifyDestroy();
+}
+
+void ManagedObjectAdapter::notifyLoadFromDatabase() {
+	(static_cast<ManagedObject*>(stub))->notifyLoadFromDatabase();
 }
 
 void ManagedObjectAdapter::initializeTransientMembers() {

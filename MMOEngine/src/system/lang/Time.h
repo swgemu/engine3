@@ -78,15 +78,15 @@ namespace sys {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			stream->writeInt(ts.tv_sec);
-			stream->writeInt(ts.tv_nsec);
+			stream->writeLong(ts.tv_sec);
+			stream->writeLong(ts.tv_nsec);
 
 			return true;
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			ts.tv_sec = stream->readInt();
-			ts.tv_nsec = stream->readInt();
+			ts.tv_sec = stream->readLong();
+			ts.tv_nsec = stream->readLong();
 
 			return true;
 		}

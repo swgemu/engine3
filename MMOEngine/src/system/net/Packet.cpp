@@ -20,19 +20,3 @@ Packet* Packet::clone(int startoffs) {
 
 	return pack;
 }
-
-String Packet::toStringData() {
-	StringBuffer str;
-	str << "Packet [" << size() << "] " << uppercase << hex;
-
-	for (int i = 0; i < size(); ++i) {
-		unsigned int byte = ((unsigned int) elementData[i]) & 0xFF;
-
-		if ((byte & 0xF0) == 0)
-			str << "0" << hex << byte  << " ";
-		else
-			str << hex << byte  << " ";
-	}
-
-	return str.toString();
-}
