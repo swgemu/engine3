@@ -25,7 +25,7 @@ DLAllocator::~DLAllocator() {
 }
 
 void DLAllocator::initialize() {
-	printf("creating dlallocator at %p with size %llu\n", dlBase, dlSize);
+	printf("creating dlallocator at %p with size %lu\n", dlBase, dlSize);
 
 	dlMspace = create_mspace_with_base(dlBase, dlSize, 0);
 }
