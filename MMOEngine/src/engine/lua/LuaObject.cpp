@@ -97,7 +97,7 @@ uint64 LuaObject::getLongField(const String& key) {
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (uint64)lua_tonumber(L, -1);
+	result = (uint64)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 
 	return result;
@@ -130,6 +130,19 @@ sys::uint32 LuaObject::getIntAt(int idx) {
 	result = (uint32)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 
+	return result;
+}
+
+sys::uint64 LuaObject::getLongAt(int idx) {
+	uint64 result = 0;
+	
+	if (idx > (int)getTableSize() || idx < 1)
+		throw ArrayIndexOutOfBoundsException(idx);
+		
+	lua_rawgeti(L, -1, idx);
+	result = (uint64)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+	
 	return result;
 }
 
