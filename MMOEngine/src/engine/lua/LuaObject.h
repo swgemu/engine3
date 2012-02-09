@@ -47,6 +47,8 @@ namespace lua {
 		float getFloatAt(int idx);
 		LuaObject getObjectAt(int idx);
 		sys::uint64 getLongAt(int idx);
+		bool getBooleanAt(int idx);
+
 
 		int getTableSize();
 

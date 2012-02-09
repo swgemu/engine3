@@ -40,6 +40,8 @@ namespace sys {
 		UnicodeString& operator+(const UnicodeString& str);
 		UnicodeString& operator+(const char* ascii);
 
+		int compareTo(const UnicodeString& str) const;
+
 		char operator[](int index) const;
 
 		UnicodeString concat(const UnicodeString& str) const;
@@ -73,6 +75,22 @@ namespace sys {
 
 		inline bool isEmpty() const {
 			return count == 0;
+		}
+
+		bool operator== (const UnicodeString& str) const {
+			return compareTo(str) == 0;
+		}
+
+		bool operator< (const UnicodeString& str) const {
+			return compareTo(str) < 0;
+		}
+
+		bool operator> (const UnicodeString& str) const {
+			return compareTo(str) > 0;
+		}
+
+		bool operator!= (const UnicodeString& str) const {
+			return compareTo(str) != 0;
 		}
 
 	private:

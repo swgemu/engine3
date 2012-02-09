@@ -190,6 +190,14 @@ void DistributedMethod::addUnsignedLongParameter(unsigned long long val) {
 	invmsg->insertLong(val);
 }
 
+void DistributedMethod::addSignedShortParameter(short val) {
+	invmsg->insertSignedShort(val);
+}
+
+void DistributedMethod::addUnsignedShortParameter(unsigned short val) {
+	invmsg->insertShort(val);
+}
+
 void DistributedMethod::addFloatParameter(float val) {
 	invmsg->insertFloat(val);
 }
@@ -239,6 +247,14 @@ long long DistributedMethod::getSignedLongParameter() {
 
 unsigned long long DistributedMethod::getUnsignedLongParameter() {
 	return invmsg->parseLong();
+}
+
+short DistributedMethod::getSignedShortParameter() {
+	return invmsg->parseSignedShort();
+}
+
+unsigned short DistributedMethod::getUnsignedShortParameter() {
+	return invmsg->parseShort();
 }
 
 float DistributedMethod::getFloatParameter() {

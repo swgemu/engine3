@@ -69,6 +69,7 @@ namespace engine {
 		static int8 getByteParameter(lua_State* lState);
 		static sys::uint8 getUnsignedByteParameter(lua_State* lState);
 		static float getFloatParameter(lua_State* lState);
+		static bool getBooleanParameter(lua_State* lState);
 
 		// setters
 		void setGlobalString(const String& name, const String& value);

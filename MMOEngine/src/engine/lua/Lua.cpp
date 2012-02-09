@@ -135,7 +135,15 @@ lua_State* Lua::callFunction(LuaFunction* func) {
 }
 
 int Lua::atPanic(lua_State* L) {
-	throw LuaPanicException("Lua panic");
+	const char* msg = lua_tostring(L, -1);
+
+	String errorMessage;
+
+	if (msg != NULL) {
+		errorMessage = msg;
+	}
+
+	throw LuaPanicException("Lua panic: " + errorMessage);
 }
 
 // getters
@@ -438,6 +446,21 @@ uint8 Lua::getUnsignedByteParameter(lua_State* lState) {
 	}
 
 	result = (uint8)lua_tonumber(lState, -1);
+	lua_pop(lState, 1);
+
+	return result;
+}
+
+bool Lua::getBooleanParameter(lua_State* lState) {
+	bool result = false;
+
+	if (!lua_isboolean(lState, -1)) {
+		lua_pop(lState, 1);
+
+		return false;
+	}
+
+	result = lua_toboolean(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;

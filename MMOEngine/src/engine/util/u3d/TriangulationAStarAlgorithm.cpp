@@ -9,6 +9,7 @@
 
 #include "TriangulationAStarAlgorithm.h"
 #include "Segment.h"
+#include "Funnel.h"
 
 Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint, const Vector3& goalPoint, TriangleNode* source, TriangleNode* target) {
 	HashTable<uint32, Reference<AStarNode<TriangleNode, uint32>* > > visited;
@@ -44,18 +45,48 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				Vector3 closestPoint = Segment::getClosestPoint(pointA, pointB, goalPoint);
 
-				float h = closestPoint.squaredDistanceTo(goalPoint);
+				float h = closestPoint.distanceTo(goalPoint);
 
 				closestPoint = Segment::getClosestPoint(pointA, pointB, startPoint);
 
-				float distEA = closestPoint.squaredDistanceTo(startPoint);
+				float distEA = closestPoint.distanceTo(startPoint);
 
 				//funnel distance
 				//replacing with straight line for performance
 
-				float estimatedPathDistance = neighbor->getBarycenter().squaredDistanceTo(startPoint);
+				//funnel
 
-				float g = MAX(MAX(x->getG(), distEA), estimatedPathDistance);
+				Vector<Triangle*> currentPath;
+				currentPath.add(neighbor);
+				//path->add(goal->getNode());
+
+				AStarNode<TriangleNode, uint32>* parent = x;
+
+				while (parent != NULL) {
+					currentPath.insertElementAt(parent->getNode(), 0);
+					parent = parent->getCameFrom();
+				}
+
+				Vector<Vector3>* funnelPath = Funnel::funnel(startPoint, closestPoint, &currentPath);
+
+				float funnelPathDistance = 0;
+
+				if (funnelPath->size() > 1) {
+					for (int i = 1; i < funnelPath->size(); ++i) {
+						Vector3* firstPoint = &funnelPath->get(i - 1);
+						Vector3* secondPoint = &funnelPath->get(i);
+
+						funnelPathDistance += secondPoint->distanceTo(*firstPoint);
+					}
+				}
+
+				delete funnelPath;
+
+				//
+
+			//	float estimatedPathDistance = neighbor->getBarycenter().squaredDistanceTo(startPoint);
+
+				float g = MAX(MAX(x->getG(), distEA), funnelPathDistance);
 
 				AStarNode<TriangleNode, uint32>* newNode = new AStarNode<TriangleNode, uint32>(neighbor, g, h);
 				newNode->setCameFrom(x);

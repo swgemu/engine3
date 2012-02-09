@@ -100,13 +100,17 @@ void ReadWriteLock::wlock(Mutex* lock) {
     while (pthread_rwlock_trywrlock(&rwlock)) {
     	#ifndef TRACE_LOCKS
 			pthread_mutex_unlock(&(lock->mutex));
+
+			Thread::yield();
+
       		pthread_mutex_lock(&(lock->mutex));
 		#else
       		lock->unlock();
+
+      		Thread::yield();
+
 	      	lock->lock();
 	 	#endif
-
-		Thread::yield();
 	}
 
 	lockAcquired(lock, "w");
@@ -138,12 +142,14 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
     while (pthread_rwlock_trywrlock(&rwlock)) {
     	#ifndef TRACE_LOCKS
   			pthread_rwlock_unlock(&(lock->rwlock));
+
+  			Thread::yield();
+
        		pthread_rwlock_wrlock(&(lock->rwlock));
        	#else
        		lock->unlock();
        		lock->wlock();
        	#endif
-			Thread::yield();
 	}
 
 	lockAcquired(lock, "w");
@@ -154,9 +160,10 @@ void ReadWriteLock::lock(Lockable* lockable) {
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
   		lockable->unlock();
-      	lockable->lock();
 
-		Thread::yield();
+  		Thread::yield();
+
+      	lockable->lock();
 	}
 
 	lockAcquired(lockable, "w");

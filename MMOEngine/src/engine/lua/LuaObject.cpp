@@ -146,6 +146,19 @@ sys::uint64 LuaObject::getLongAt(int idx) {
 	return result;
 }
 
+bool LuaObject::getBooleanAt(int idx) {
+	bool result = 0;
+
+	if (idx > (int)getTableSize() || idx < 1)
+		throw ArrayIndexOutOfBoundsException(idx);
+
+	lua_rawgeti(L, -1, idx);
+	result = (bool)lua_toboolean(L, -1);
+	lua_pop(L, 1);
+
+	return result;
+}
+
 String LuaObject::getStringAt(int idx) {
 	const char* result = NULL;
 

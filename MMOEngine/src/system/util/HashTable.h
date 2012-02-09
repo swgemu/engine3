@@ -118,6 +118,10 @@ namespace sys {
 	    	nullValue = val;
 	    }
 
+	    inline V& getNullValue() {
+	    	return nullValue;
+	    }
+
 	    friend class HashTableIterator<K,V>;
 
 	};

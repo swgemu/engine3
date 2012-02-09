@@ -61,6 +61,9 @@ namespace engine {
 		void addSignedCharParameter(char val);
 		void addUnsignedCharParameter(unsigned char val);
 
+		void addSignedShortParameter(short val);
+		void addUnsignedShortParameter(unsigned short val);
+
 		void addSignedIntParameter(int val);
 		void addUnsignedIntParameter(unsigned int val);
 
@@ -81,6 +84,9 @@ namespace engine {
 
 		int getSignedIntParameter();
 		unsigned int getUnsignedIntParameter();
+
+		short getSignedShortParameter();
+		unsigned short getUnsignedShortParameter();
 
 		char getSignedCharParameter();
 		unsigned char getUnsignedCharParameter();

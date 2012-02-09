@@ -133,6 +133,28 @@ UnicodeString UnicodeString::concat(const UnicodeString& str) const {
 	return newStr;
 }
 
+int UnicodeString::compareTo(const UnicodeString& str) const {
+	int n = MIN(str.length(), count);
+
+	unsigned short* s1 = str.uString;
+	unsigned short* s2 = uString;
+
+	while (n-- != 0) {
+		if (*s1 < *s2) return -1;
+		if (*s1 > *s2) return 1;
+		++s1; ++s2;
+	}
+
+	if (str.length() != count) {
+		if (str.length() > count)
+			return 1;
+		else
+			return -1;
+	}
+
+	return 0;
+}
+
 char UnicodeString::operator[](int index) const {
 	return (char) uString[index];
 }
