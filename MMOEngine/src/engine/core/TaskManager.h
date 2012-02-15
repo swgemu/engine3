@@ -61,7 +61,7 @@ namespace engine {
 
 		virtual void flushTasks() = 0;
 
-		virtual void printInfo() = 0;
+		virtual String getInfo(bool print) = 0;
 
 		virtual int getScheduledTaskSize() = 0;
 

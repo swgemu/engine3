@@ -280,18 +280,25 @@ void TaskManagerImpl::flushTasks() {
 
 }
 
-void TaskManagerImpl::printInfo() {
+String TaskManagerImpl::getInfo(bool print) {
 	lock();
 
 	StringBuffer msg;
 	msg << "executing tasks - " << getExecutingTaskSize();
-	info(msg);
+
+	if (print)
+		info(msg);
 
 	StringBuffer msg2;
 	msg2 << "scheduled tasks - " << getScheduledTaskSize();
-	info(msg2);
+
+	if (print)
+		info(msg2);
 
 	unlock();
+
+	msg << endl << msg.toString();
+	return msg.toString();
 }
 
 class TestTask : public Task {

@@ -166,7 +166,7 @@ namespace engine {
 
   		void undoTasks();
 
-  		void printInfo();
+  		String getInfo(bool print);
 
   		int getScheduledTaskSize();
 

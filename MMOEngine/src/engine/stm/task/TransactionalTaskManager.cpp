@@ -114,8 +114,8 @@ void TransactionalTaskManager::flushTasks() {
 	taskManager->flushTasks();
 }
 
-void TransactionalTaskManager::printInfo() {
-	taskManager->printInfo();
+String TransactionalTaskManager::getInfo(bool print) {
+	return taskManager->getInfo(print);
 }
 
 int TransactionalTaskManager::getScheduledTaskSize() {

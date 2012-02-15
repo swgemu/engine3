@@ -311,7 +311,8 @@ void LocalTaskManager::flushTasks() {
 	cancelledTasks.removeAll();*/
 }
 
-void LocalTaskManager::printInfo() {
+String LocalTaskManager::getInfo(bool print) {
+	return "";
 }
 
 int LocalTaskManager::getScheduledTaskSize() {

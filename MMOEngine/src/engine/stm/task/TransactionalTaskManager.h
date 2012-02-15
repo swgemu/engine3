@@ -23,7 +23,7 @@ namespace engine {
   		ThreadLocal<LocalTaskManager*>  localTaskManager;
 
   	  public:
-  		static const int WORKER_THREADS = 10;
+  		static const int WORKER_THREADS = 2;
   		static const int SCHEDULER_THREADS = 5;
 
   		void initialize();
@@ -63,7 +63,7 @@ namespace engine {
 
   		void flushTasks();
 
-  		void printInfo();
+  		String getInfo(bool print);
 
   		int getScheduledTaskSize();
 

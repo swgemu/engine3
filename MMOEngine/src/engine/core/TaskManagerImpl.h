@@ -85,7 +85,7 @@ namespace engine {
 
 		void testScheduler();
 
-		void printInfo();
+		String getInfo(bool print);
 
 		int getScheduledTaskSize();
 
