@@ -58,6 +58,18 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
     if (environmentConfig.getLogAutoRemove())
     	databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
 
+    int maxwritep;
+    unsigned int maxwrite_sleepp;
+
+    databaseEnvironment->get_mp_max_write(databaseEnvironment, &maxwritep, &maxwrite_sleepp);
+
+    //printf("maxwritep:%d maxwrite_speepp:%d\n", maxwritep, maxwrite_sleepp);
+
+    int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, 5, 50000);
+
+    if (resSleep != 0) {
+    	printf("could not set max writes\n");
+    }
 }
 
 Environment::~Environment() {
