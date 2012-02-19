@@ -72,7 +72,7 @@ class ObservableImplementation : public ManagedObjectImplementation {
 protected:
 	ObserverEventMap observerEventMap;
 
-	Reference<SortedVector<ManagedReference<Observable* > >* > observableChildren;
+	SortedVector<ManagedReference<Observable* > > observableChildren;
 
 public:
 	ObservableImplementation();

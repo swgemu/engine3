@@ -225,7 +225,7 @@ bool ObservableImplementation::readObjectMember(ObjectInputStream* stream, const
 	}
 
 	if (_name == "observableChildren") {
-		TypeInfo<Reference<SortedVector<ManagedReference<Observable* > >* > >::parseFromBinaryStream(&observableChildren, stream);
+		TypeInfo<SortedVector<ManagedReference<Observable* > > >::parseFromBinaryStream(&observableChildren, stream);
 		return true;
 	}
 
@@ -256,7 +256,7 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);
-	TypeInfo<Reference<SortedVector<ManagedReference<Observable* > >* > >::toBinaryStream(&observableChildren, stream);
+	TypeInfo<SortedVector<ManagedReference<Observable* > > >::toBinaryStream(&observableChildren, stream);
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
@@ -267,7 +267,7 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 ObservableImplementation::ObservableImplementation() {
 	_initializeImplementation();
 	// engine/util/Observable.idl():  		observableChildren.setNoDuplicateInsertPlan();
-	observableChildren->setNoDuplicateInsertPlan();
+	(&observableChildren)->setNoDuplicateInsertPlan();
 }
 
 void ObservableImplementation::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
@@ -276,10 +276,10 @@ void ObservableImplementation::notifyObservers(unsigned int eventType, ManagedOb
 	// engine/util/Observable.idl():  		}
 	for (	// engine/util/Observable.idl():  		for (int i = 0;
 	int i = 0;
-	i < observableChildren->size();
+	i < (&observableChildren)->size();
  ++i) {
 	// engine/util/Observable.idl():  			observableChildren.get(i).notifyObservers(eventType, arg1, arg2);
-	observableChildren->get(i)->notifyObservers(eventType, arg1, arg2);
+	(&observableChildren)->get(i)->notifyObservers(eventType, arg1, arg2);
 }
 }
 
@@ -300,12 +300,12 @@ int ObservableImplementation::getObserverCount(unsigned int eventType) {
 
 void ObservableImplementation::addObservableChild(Observable* observable) {
 	// engine/util/Observable.idl():  		observableChildren.put(observable);
-	observableChildren->put(observable);
+	(&observableChildren)->put(observable);
 }
 
 void ObservableImplementation::dropObserveableChild(Observable* observable) {
 	// engine/util/Observable.idl():  		observableChildren.drop(observable);
-	observableChildren->drop(observable);
+	(&observableChildren)->drop(observable);
 }
 
 /*

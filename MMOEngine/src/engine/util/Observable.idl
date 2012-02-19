@@ -17,7 +17,7 @@ class Observable extends ManagedObject {
 	@dereferenced
 	protected ObserverEventMap observerEventMap;
 	
-	@dereferenved
+	@dereferenced
 	protected SortedVector<Observable> observableChildren;
 	
 	public Observable() {
