@@ -10,7 +10,13 @@
  *	ObservableStub
  */
 
-enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 6,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_};
+enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 6,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_,RPC_ADDOBSERVABLECHILD__OBSERVABLE_,RPC_DROPOBSERVEABLECHILD__OBSERVABLE_};
+
+Observable::Observable() : ManagedObject(DummyConstructorParameter::instance()) {
+	ObservableImplementation* _implementation = new ObservableImplementation();
+	_impl = _implementation;
+	_impl->_setStub(this);
+}
 
 Observable::Observable(DummyConstructorParameter* param) : ManagedObject(param) {
 }
@@ -80,6 +86,34 @@ int Observable::getObserverCount(unsigned int eventType) {
 		return _implementation->getObserverCount(eventType);
 }
 
+void Observable::addObservableChild(Observable* observable) {
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_ADDOBSERVABLECHILD__OBSERVABLE_);
+		method.addObjectParameter(observable);
+
+		method.executeWithVoidReturn();
+	} else
+		_implementation->addObservableChild(observable);
+}
+
+void Observable::dropObserveableChild(Observable* observable) {
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_DROPOBSERVEABLECHILD__OBSERVABLE_);
+		method.addObjectParameter(observable);
+
+		method.executeWithVoidReturn();
+	} else
+		_implementation->dropObserveableChild(observable);
+}
+
 DistributedObjectServant* Observable::_getImplementation() {
 
 	_updated = true;
@@ -93,10 +127,6 @@ void Observable::_setImplementation(DistributedObjectServant* servant) {
 /*
  *	ObservableImplementation
  */
-
-ObservableImplementation::ObservableImplementation() : ManagedObjectImplementation() {
-	_initializeImplementation();
-}
 
 ObservableImplementation::ObservableImplementation(DummyConstructorParameter* param) : ManagedObjectImplementation(param) {
 	_initializeImplementation();
@@ -194,6 +224,11 @@ bool ObservableImplementation::readObjectMember(ObjectInputStream* stream, const
 		return true;
 	}
 
+	if (_name == "observableChildren") {
+		TypeInfo<Reference<SortedVector<ManagedReference<Observable* > >* > >::parseFromBinaryStream(&observableChildren, stream);
+		return true;
+	}
+
 
 	return false;
 }
@@ -217,13 +252,35 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
+	_name = "observableChildren";
+	_name.toBinaryStream(stream);
+	_offset = stream->getOffset();
+	stream->writeShort(0);
+	TypeInfo<Reference<SortedVector<ManagedReference<Observable* > >* > >::toBinaryStream(&observableChildren, stream);
+	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
+	stream->writeShort(_offset, _totalSize);
 
-	return 1 + ManagedObjectImplementation::writeObjectMembers(stream);
+
+	return 2 + ManagedObjectImplementation::writeObjectMembers(stream);
+}
+
+ObservableImplementation::ObservableImplementation() {
+	_initializeImplementation();
+	// engine/util/Observable.idl():  		observableChildren.setNoDuplicateInsertPlan();
+	observableChildren->setNoDuplicateInsertPlan();
 }
 
 void ObservableImplementation::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
 	// engine/util/Observable.idl():  		observerEventMap.notifyObservers(eventType, this, arg1, arg2);
 	(&observerEventMap)->notifyObservers(eventType, _this, arg1, arg2);
+	// engine/util/Observable.idl():  		}
+	for (	// engine/util/Observable.idl():  		for (int i = 0;
+	int i = 0;
+	i < observableChildren->size();
+ ++i) {
+	// engine/util/Observable.idl():  			observableChildren.get(i).notifyObservers(eventType, arg1, arg2);
+	observableChildren->get(i)->notifyObservers(eventType, arg1, arg2);
+}
 }
 
 void ObservableImplementation::registerObserver(unsigned int eventType, Observer* observer) {
@@ -239,6 +296,16 @@ void ObservableImplementation::dropObserver(unsigned int eventType, Observer* ob
 int ObservableImplementation::getObserverCount(unsigned int eventType) {
 	// engine/util/Observable.idl():  		return observerEventMap.getObserverCount(eventType);
 	return (&observerEventMap)->getObserverCount(eventType);
+}
+
+void ObservableImplementation::addObservableChild(Observable* observable) {
+	// engine/util/Observable.idl():  		observableChildren.put(observable);
+	observableChildren->put(observable);
+}
+
+void ObservableImplementation::dropObserveableChild(Observable* observable) {
+	// engine/util/Observable.idl():  		observableChildren.drop(observable);
+	observableChildren->drop(observable);
 }
 
 /*
@@ -264,6 +331,12 @@ Packet* ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	case RPC_GETOBSERVERCOUNT__INT_:
 		resp->insertSignedInt(getObserverCount(inv->getUnsignedIntParameter()));
 		break;
+	case RPC_ADDOBSERVABLECHILD__OBSERVABLE_:
+		addObservableChild(static_cast<Observable*>(inv->getObjectParameter()));
+		break;
+	case RPC_DROPOBSERVEABLECHILD__OBSERVABLE_:
+		dropObserveableChild(static_cast<Observable*>(inv->getObjectParameter()));
+		break;
 	default:
 		return NULL;
 	}
@@ -285,6 +358,14 @@ void ObservableAdapter::dropObserver(unsigned int eventType, Observer* observer)
 
 int ObservableAdapter::getObserverCount(unsigned int eventType) {
 	return (static_cast<Observable*>(stub))->getObserverCount(eventType);
+}
+
+void ObservableAdapter::addObservableChild(Observable* observable) {
+	(static_cast<Observable*>(stub))->addObservableChild(observable);
+}
+
+void ObservableAdapter::dropObserveableChild(Observable* observable) {
+	(static_cast<Observable*>(stub))->dropObserveableChild(observable);
 }
 
 /*

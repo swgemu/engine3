@@ -27,11 +27,15 @@ using namespace engine::log;
 
 #include "engine/util/ObserverEventMap.h"
 
+#include "system/util/SortedVector.h"
+
 namespace engine {
 namespace util {
 
 class Observable : public ManagedObject {
 public:
+	Observable();
+
 	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = NULL, long long arg2 = 0);
 
 	void registerObserver(unsigned int eventType, Observer* observer);
@@ -39,6 +43,10 @@ public:
 	void dropObserver(unsigned int eventType, Observer* observer);
 
 	int getObserverCount(unsigned int eventType);
+
+	void addObservableChild(Observable* observable);
+
+	void dropObserveableChild(Observable* observable);
 
 	DistributedObjectServant* _getImplementation();
 
@@ -64,8 +72,11 @@ class ObservableImplementation : public ManagedObjectImplementation {
 protected:
 	ObserverEventMap observerEventMap;
 
+	Reference<SortedVector<ManagedReference<Observable* > >* > observableChildren;
+
 public:
 	ObservableImplementation();
+
 	ObservableImplementation(DummyConstructorParameter* param);
 
 	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = NULL, long long arg2 = 0);
@@ -75,6 +86,10 @@ public:
 	void dropObserver(unsigned int eventType, Observer* observer);
 
 	int getObserverCount(unsigned int eventType);
+
+	void addObservableChild(Observable* observable);
+
+	void dropObserveableChild(Observable* observable);
 
 	WeakReference<Observable*> _this;
 
@@ -126,6 +141,10 @@ public:
 	void dropObserver(unsigned int eventType, Observer* observer);
 
 	int getObserverCount(unsigned int eventType);
+
+	void addObservableChild(Observable* observable);
+
+	void dropObserveableChild(Observable* observable);
 
 };
 
