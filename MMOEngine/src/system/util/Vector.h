@@ -30,6 +30,8 @@ namespace sys {
 
        bool parseFromBinaryStream(ObjectInputStream* stream);
 
+       bool operator==(const Vector<E>& v) const;
+
        Object* clone();
 
        static int getObjectData(const String& str, String& obj);
@@ -97,6 +99,13 @@ namespace sys {
 
    template<class E> Object* Vector<E>::clone() {
 	   return new Vector<E>(*this);
+   }
+
+   template<class E>  bool Vector<E>::operator==(const Vector<E>& v) const {
+	   if (this == &v)
+		   return true;
+
+	   return false;
    }
 
    template<class E> int Vector<E>::getObjectData(const String& str, String& obj) {
