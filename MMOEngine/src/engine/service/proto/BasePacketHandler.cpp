@@ -36,7 +36,7 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 		DO_TIMELIMIT;
 	#endif
 
-	//info("READ - " + pack->toString());
+//	info("READ - " + pack->toStringData(), true);
 		try {
 			uint16 opcode = pack->parseShort();
 
@@ -260,6 +260,8 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 }
 
 void BasePacketHandler::processBufferedPackets(BaseClient* client) {
+//	Logger::console.info("processing buffered packets", true);
+
 	while (true) {
 		Packet* pack = client->getBufferedPacket();
 		if (pack == NULL)
@@ -271,15 +273,20 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 			uint8 blockSize = pack->parseByte(offset - 5);
 			//System::out << (int) blockSize << " : " << pack->toString() << "\n";
 
+			pack->setOffset(3);
+
 			handleDataChannelMultiPacket(client, pack, blockSize);
 		} else if (pack->parseShort(0) == 0x0D00) {
-			pack->shiftOffset(4);
+			pack->setOffset(4);
+			//pack->shiftOffset(4);
 			handleFragmentedPacket(client, pack);
 		} else
 			handleDataChannelPacket(client, pack);
 
 		delete pack;
 	}
+
+	//Logger::console.info("finished processing buffered packets", true);
 }
 
 void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack) {
@@ -344,6 +351,22 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 
 			pack->shiftOffset(blockSize);
 		}
+	} else if (opCount == 0x0D00) {
+		pack->shiftOffset(2); // past seq
+
+		int offset = pack->getOffset();
+
+		BaseMessage* message = new BaseMessage(pack, offset , offset + (size - 4));
+
+		// semi-worst case waiting time 50 ms
+		// TODO implement preprocess to set this time correctly according to priority
+
+		message->setClient(client);
+		message->setTimeStampMili(System::getMiliTime() + 50);
+
+		handleFragmentedPacket(client, message);
+
+		delete message;
 	} else {  // single DataChannel
 		int offset = pack->getOffset() - 2;
 
@@ -360,7 +383,7 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 }
 
 void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
-	//Logger::console.info("handleFragmentedPacket " + pack->toStringData(), true);
+//	Logger::console.info("handleFragmentedPacket " + pack->toStringData(), true);
 	//pack must have offset after sequence 0D 00 XX XX HERE
 
 	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);

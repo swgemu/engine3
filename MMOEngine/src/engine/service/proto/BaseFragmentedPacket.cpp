@@ -51,7 +51,9 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 	if (readBytes < 0) {
 		Logger::console.error("error parsing fragmented packet readBytes < 0");
 		return false;
-	}
+	} /*else {
+		Logger::console.info("readBytes = " + String::valueOf(readBytes), true);
+	}*/
 
 	insertStream(pack->getBuffer() + packetOffset, readBytes/* - 3*/);
 
@@ -95,9 +97,11 @@ bool BaseFragmentedPacket::isComplete() {
 
 	if (currentSize < totalSize)
 		return false;
-	else if (currentSize == totalSize)
+	else if (currentSize == totalSize) {
+		//Logger::console.info("currentSize == totalSize : " + String::valueOf(totalSize), true);
+
 		return true;
-	else
+	} else
 		throw Exception("fragmented packet exceeded size (" + String::valueOf(totalSize)
 				+ ") - size = " + String::valueOf(currentSize));
 }
