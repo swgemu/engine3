@@ -367,6 +367,21 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 		handleFragmentedPacket(client, message);
 
 		delete message;
+	} else if (opCount == 0x0900) {
+		pack->shiftOffset(2); // past seq
+
+		int offset = pack->getOffset();
+
+		BaseMessage* message = new BaseMessage(pack, offset , offset + (size - 4));
+
+		// semi-worst case waiting time 50 ms
+		// TODO implement preprocess to set this time correctly according to priority
+
+		message->setClient(client);
+		message->setTimeStampMili(System::getMiliTime() + 50);
+
+		processMessage(message);
+
 	} else {  // single DataChannel
 		int offset = pack->getOffset() - 2;
 
