@@ -122,7 +122,8 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 				break;
 #endif
 			default:
-				client->processRecieve(pack);
+				if (!client->processRecieve(pack))
+					return;
 
 				pack->setOffset(0);
 
@@ -195,7 +196,7 @@ void BasePacketHandler::doAcknowledge(BaseClient* client, Packet* pack) {
 	client->acknowledgeServerPackets(seq);
 }
 
-void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
+void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack, bool validatePackets) {
 	while (pack->hasData()) {
 		uint8 blockSize = pack->parseByte();
 
@@ -205,12 +206,17 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 
 		switch (opcode) {
 			case 0x0900: //Data Channel
-				if (!client->validatePacket(pack))
-					break;
+				if (validatePackets) {
+					if (!client->validatePacket(pack))
+						break;
+				} else {
+					pack->shiftOffset(2); // skip seq
+				}
 
 				handleDataChannelMultiPacket(client, pack, (uint16) blockSize);
 
-				processBufferedPackets(client);
+				if (validatePackets)
+					processBufferedPackets(client);
 				break;
 			case 0x1100: //Out of order
 				doOutOfOrder(client, pack);
@@ -222,8 +228,12 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 				AcknowledgeOkMessage::parseOk(pack);
 				break;
 			case 0x0D00: {//Fragmented
-				if (!client->validatePacket(pack))
-					break;
+				if (validatePackets) {
+					if (!client->validatePacket(pack))
+						break;
+				} else {
+					pack->shiftOffset(2); // skip seq
+				}
 
 				int endOffset = pack->getOffset() + blockSize - 4;
 
@@ -236,7 +246,9 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack) {
 
 				delete fragPiece;
 
-				processBufferedPackets(client);
+				if (validatePackets)
+					processBufferedPackets(client);
+
 				break;
 			}
 			default:
@@ -268,14 +280,16 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 			break;
 
 		if (pack->parseShort(0) == 0x0300) {
-			int offset = pack->getOffset();
+			pack->setOffset(2);
 
-			uint8 blockSize = pack->parseByte(offset - 5);
+			/*uint8 blockSize = pack->parseByte();
 			//System::out << (int) blockSize << " : " << pack->toString() << "\n";
 
-			pack->setOffset(3);
+			handleDataChannelMultiPacket(client, pack, blockSize);*/
 
-			handleDataChannelMultiPacket(client, pack, blockSize);
+			//Logger::console.info("parsing multi in buffered packets", true);
+
+			handleMultiPacket(client, pack, false);
 		} else if (pack->parseShort(0) == 0x0D00) {
 			pack->setOffset(4);
 			//pack->shiftOffset(4);

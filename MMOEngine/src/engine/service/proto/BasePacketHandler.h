@@ -40,7 +40,7 @@ namespace engine {
 
 		void processBufferedPackets(BaseClient* client);
 
-		void handleMultiPacket(BaseClient* client, Packet* pack);
+		void handleMultiPacket(BaseClient* client, Packet* pack, bool validatePackets = true);
 
 		void handleDataChannelPacket(BaseClient* client, Packet* pack);
 		void handleDataChannelMultiPacket(BaseClient* client, Packet* pack, sys::uint16 size);
