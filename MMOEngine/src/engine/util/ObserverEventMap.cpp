@@ -9,11 +9,6 @@
 #include "Observer.h"
 
 void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1, int64 arg2) {
-	/*int index = find(eventType);
-
-	if (index == -1) {
-		return;
-	}*/
 	if (!containsKey(eventType))
 		return;
 
@@ -41,9 +36,9 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 		return;
 	}
 
-	/*int index = find(eventType);
+	if (!observer->isDeplyoed())
+		observer->deploy();
 
-	if (index == -1) {*/
 	if (!containsKey(eventType)) {
 		SortedVector<ManagedReference<Observer*> > observers;
 		observers.put(observer);
@@ -53,16 +48,13 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 		SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
 		observers->setNoDuplicateInsertPlan();
 
-		observers->put(observer);
+		if (observers->put(observer) == -1) {
+			Logger::console.warning("duplicate observer when registering");
+		}
 	}
 }
 
 void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
-	/*int index = find(eventType);
-
-	if (index == -1)
-		return;*/
-
 	if (!containsKey(eventType))
 		return;
 
@@ -70,19 +62,11 @@ void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
 
 	observers->drop(observer);
 
-	/*if (observers->size() == 0)
-		this->remove(index);*/
-
 	if (observers->size() == 0)
 		remove(eventType);
 }
 
 SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint32 eventType) {
-	/*int index = find(eventType);
-
-	if (index == -1)
-		return NULL;*/
-
 	if (!containsKey(eventType))
 		return NULL;
 
@@ -92,11 +76,6 @@ SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint3
 }
 
 int ObserverEventMap::getObserverCount(uint32 eventType) {
-	/*int index = find(eventType);
-
-	if (index == -1)
-		return 0;*/
-
 	if (!containsKey(eventType))
 		return NULL;
 
