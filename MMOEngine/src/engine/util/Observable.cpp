@@ -219,12 +219,12 @@ bool ObservableImplementation::readObjectMember(ObjectInputStream* stream, const
 	if (ManagedObjectImplementation::readObjectMember(stream, _name))
 		return true;
 
-	if (_name == "observerEventMap") {
+	if (_name == "Observable.observerEventMap") {
 		TypeInfo<ObserverEventMap >::parseFromBinaryStream(&observerEventMap, stream);
 		return true;
 	}
 
-	if (_name == "observableChildren") {
+	if (_name == "Observable.observableChildren") {
 		TypeInfo<SortedVector<ManagedReference<Observable* > > >::parseFromBinaryStream(&observableChildren, stream);
 		return true;
 	}
@@ -244,7 +244,7 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	String _name;
 	int _offset;
 	uint16 _totalSize;
-	_name = "observerEventMap";
+	_name = "Observable.observerEventMap";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);
@@ -252,7 +252,7 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
-	_name = "observableChildren";
+	_name = "Observable.observableChildren";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);

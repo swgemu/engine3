@@ -628,22 +628,22 @@ bool QuadTreeEntryImplementation::readObjectMember(ObjectInputStream* stream, co
 	if (ObservableImplementation::readObjectMember(stream, _name))
 		return true;
 
-	if (_name == "coordinates") {
+	if (_name == "QuadTreeEntry.coordinates") {
 		TypeInfo<Coordinate >::parseFromBinaryStream(&coordinates, stream);
 		return true;
 	}
 
-	if (_name == "bounding") {
+	if (_name == "QuadTreeEntry.bounding") {
 		TypeInfo<bool >::parseFromBinaryStream(&bounding, stream);
 		return true;
 	}
 
-	if (_name == "parent") {
+	if (_name == "QuadTreeEntry.parent") {
 		TypeInfo<ManagedWeakReference<QuadTreeEntry* > >::parseFromBinaryStream(&parent, stream);
 		return true;
 	}
 
-	if (_name == "radius") {
+	if (_name == "QuadTreeEntry.radius") {
 		TypeInfo<float >::parseFromBinaryStream(&radius, stream);
 		return true;
 	}
@@ -663,7 +663,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	String _name;
 	int _offset;
 	uint16 _totalSize;
-	_name = "coordinates";
+	_name = "QuadTreeEntry.coordinates";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);
@@ -671,7 +671,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
-	_name = "bounding";
+	_name = "QuadTreeEntry.bounding";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);
@@ -679,7 +679,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
-	_name = "parent";
+	_name = "QuadTreeEntry.parent";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);
@@ -687,7 +687,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	_totalSize = (uint16) (stream->getOffset() - (_offset + 2));
 	stream->writeShort(_offset, _totalSize);
 
-	_name = "radius";
+	_name = "QuadTreeEntry.radius";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);

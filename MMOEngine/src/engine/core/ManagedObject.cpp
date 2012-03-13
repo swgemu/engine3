@@ -421,7 +421,7 @@ bool ManagedObjectImplementation::readObjectMember(ObjectInputStream* stream, co
 		return true;
 	}
 
-	if (_name == "persistenceLevel") {
+	if (_name == "ManagedObject.persistenceLevel") {
 		TypeInfo<int >::parseFromBinaryStream(&persistenceLevel, stream);
 		return true;
 	}
@@ -441,7 +441,7 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	String _name;
 	int _offset;
 	uint16 _totalSize;
-	_name = "persistenceLevel";
+	_name = "ManagedObject.persistenceLevel";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);

@@ -15,6 +15,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ObjectOutputStream.h"
 #include "ObjectInputStream.h"
+#include "engine/log/Logger.h"
 
 Serializable::Serializable() : Object() {
 	_variables.setInsertPlan(SortedVector<VectorMapEntry<VariableName, Variable*> >::NO_DUPLICATE);
@@ -395,7 +396,8 @@ void Serializable::addSerializableVariable(const char* name, Variable* variable,
 	varName.setVersion(version);
 	varName.setType(0);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, uint8* variable, int version) {
@@ -407,7 +409,8 @@ void Serializable::addSerializableVariable(const char* name, uint8* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint8>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, int8* variable, int version) {
@@ -419,7 +422,8 @@ void Serializable::addSerializableVariable(const char* name, int8* variable, int
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int8>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, uint16* variable, int version) {
@@ -431,7 +435,8 @@ void Serializable::addSerializableVariable(const char* name, uint16* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint16>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, int16* variable, int version) {
@@ -443,7 +448,8 @@ void Serializable::addSerializableVariable(const char* name, int16* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int16>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, uint32* variable, int version) {
@@ -455,7 +461,8 @@ void Serializable::addSerializableVariable(const char* name, uint32* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint32>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, int32* variable, int version) {
@@ -467,7 +474,8 @@ void Serializable::addSerializableVariable(const char* name, int32* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int32>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, uint64* variable, int version) {
@@ -479,7 +487,8 @@ void Serializable::addSerializableVariable(const char* name, uint64* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<uint64>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, int64* variable, int version) {
@@ -491,7 +500,8 @@ void Serializable::addSerializableVariable(const char* name, int64* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<int64>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, float* variable, int version) {
@@ -503,7 +513,8 @@ void Serializable::addSerializableVariable(const char* name, float* variable, in
 	varName.setVersion(version);
 	varName.setType(TypeInfo<float>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, double* variable, int version) {
@@ -515,7 +526,8 @@ void Serializable::addSerializableVariable(const char* name, double* variable, i
 	varName.setVersion(version);
 	varName.setType(TypeInfo<double>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 void Serializable::addSerializableVariable(const char* name, bool* variable, int version) {
@@ -527,7 +539,8 @@ void Serializable::addSerializableVariable(const char* name, bool* variable, int
 	varName.setVersion(version);
 	varName.setType(TypeInfo<bool>::type);
 
-	_variables.put(varName, (uint64)variable - (uint64)this);
+	if (_variables.put(varName, (uint64)variable - (uint64)this) == -1)
+		Logger::console.warning("duplicate serializable variable: " + String(name));
 }
 
 Variable* Serializable::getSerializableVariable(const char* name) {

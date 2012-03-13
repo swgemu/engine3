@@ -205,7 +205,7 @@ bool ObserverImplementation::readObjectMember(ObjectInputStream* stream, const S
 	if (ManagedObjectImplementation::readObjectMember(stream, _name))
 		return true;
 
-	if (_name == "observerType") {
+	if (_name == "Observer.observerType") {
 		TypeInfo<unsigned int >::parseFromBinaryStream(&observerType, stream);
 		return true;
 	}
@@ -225,7 +225,7 @@ int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	String _name;
 	int _offset;
 	uint16 _totalSize;
-	_name = "observerType";
+	_name = "Observer.observerType";
 	_name.toBinaryStream(stream);
 	_offset = stream->getOffset();
 	stream->writeShort(0);
