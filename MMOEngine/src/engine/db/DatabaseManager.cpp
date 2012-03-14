@@ -108,7 +108,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 			}
 
 			if (tableKey == VERSIONKEY) {
-				currentVersion = tableKey;
+				TypeInfo<uint64>::parseFromBinaryStream(&currentVersion, &tableName);
 
 				tableName.reset();
 				inputKey.reset();
