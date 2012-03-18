@@ -45,8 +45,7 @@ namespace engine {
 
 		static void closeGlobalFileLogger();
 
-		void setFileLogger(const char* file);
-		void setFileLogger(const String& file);
+		void setFileLogger(const String& file, bool appendData = false);
 
 		void closeFileLogger();
 

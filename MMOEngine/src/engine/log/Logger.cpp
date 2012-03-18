@@ -58,15 +58,13 @@ void Logger::setGlobalFileLogger(const String& file) {
 	starttime.updateToCurrentTime();
 }
 
-void Logger::setFileLogger(const char* file) {
+void Logger::setFileLogger(const String& file, bool appendData) {
 	if (logFile != NULL)
 		closeFileLogger();
 
-	logFile = new FileWriter(new File(file));
-}
+	File* fileObject = new File(file);
 
-void Logger::setFileLogger(const String& file) {
-	//logFile = new FileWriter(new File(file));
+	logFile = new FileWriter(fileObject, appendData);
 }
 
 void Logger::closeGlobalFileLogger() {

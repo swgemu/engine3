@@ -26,6 +26,8 @@ namespace sys {
 
 		static const int WRITEABLE_ACCESS = 2;
 
+		static const int APPENDABLE_ACCESS = 3;
+
 	public:
 		File(const String& pathname);
 
@@ -43,6 +45,8 @@ namespace sys {
   		bool setReadOnly();
 
   		bool setWriteable();
+
+  		bool setAppendable();
 
 		// getters
 		inline bool exists() {

@@ -48,6 +48,9 @@ String File::getModeString(int mode, int access) {
 	case WRITEABLE_ACCESS:
 		str = "w";
 		break;
+	case APPENDABLE_ACCESS:
+		str = "a";
+		break;
 	default:
 		return "";
 	}
@@ -80,4 +83,8 @@ bool File::setReadOnly() {
 
 bool File::setWriteable() {
 	return open(File::WRITEABLE_ACCESS);
+}
+
+bool File::setAppendable() {
+	return open(File::APPENDABLE_ACCESS);
 }

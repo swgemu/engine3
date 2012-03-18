@@ -738,6 +738,7 @@ MMOEngine/src/testsuite3/configure.ac -text
 MMOEngine/src/testsuite3/stamp-h1 -text
 MMOEngine/src/testsuite3/tests/TestClass.h -text
 MMOEngine/src/testsuite3/tests/allocatorhook.h -text
+MMOEngine/src/testsuite3/tests/loggertest.h -text
 MMOEngine/src/testsuite3/tests/memprottest.h -text
 MMOEngine/src/testsuite3/tests/qtboundingtest.h -text
 MMOEngine/src/testsuite3/tests/qtstmtest.h -text

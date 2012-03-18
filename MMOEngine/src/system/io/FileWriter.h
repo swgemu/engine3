@@ -16,8 +16,11 @@ namespace sys {
   		char buf[256];
 
   	public:
-  		FileWriter(File* file) {
-  			file->setWriteable();
+  		FileWriter(File* file, bool append = false) {
+  			if (append)
+  				file->setAppendable();
+  			else
+  				file->setWriteable();
 
   			FileWriter::file = file;
   		}
