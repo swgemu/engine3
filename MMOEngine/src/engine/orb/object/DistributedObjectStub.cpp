@@ -85,8 +85,8 @@ void DistributedObjectStub::deploy(const String& name, uint64 nid) {
 }
 
 bool DistributedObjectStub::undeploy() {
-	if (destroyed)
-		assert(0 && "destroying again a destroyed object");
+	/*if (destroyed)
+		assert(0 && "destroying again a destroyed object");*/
 
 	if (deployed) {
 		/*ObjectBroker* broker = Core::getObjectBroker();

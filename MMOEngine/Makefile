@@ -1,7 +1,7 @@
 # Copyright (C) 2007 <SWGEmu>. All rights reserved.
 # Distribution of this file for usage outside of Core3 is prohibited.
 
-IDLC = /usr/local/bin/idlc
+IDLC = bin/idlc
 
 INSTALL_PATH = /usr/local/engine3
 
@@ -13,7 +13,8 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/util/Observer.idl \
 			  engine/util/Observable.idl \
 			  engine/util/Facade.idl \
-			  engine/util/u3d/QuadTreeEntry.idl
+			  engine/util/u3d/QuadTreeEntry.idl \
+			  testsuite3/tests/TestIDLClass.idl
 
 IDL_DIRECTIVES =
 	

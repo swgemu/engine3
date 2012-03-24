@@ -148,18 +148,20 @@ int ManagedServiceImplementation::writeObjectMembers(ObjectOutputStream* stream)
  *	ManagedServiceAdapter
  */
 
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
 ManagedServiceAdapter::ManagedServiceAdapter(ManagedService* obj) : ManagedObjectAdapter(obj) {
 }
 
-Packet* ManagedServiceAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
-	Packet* resp = new MethodReturnMessage(0);
+void ManagedServiceAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
 
 	switch (methid) {
 	default:
-		return NULL;
+		throw Exception("Method does not exists");
 	}
-
-	return resp;
 }
 
 /*

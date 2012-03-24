@@ -85,6 +85,10 @@ void DatagramServiceClient::recieveMessages() {
 	}
 }
 
+void DatagramServiceClient::handleMessage(Packet* message) {
+	serviceHandler->handleMessage(this, message);
+}
+
 bool DatagramServiceClient::send(Packet* pack) {
 	if (packetLossChance != 0 && System::random(100) < (uint32) packetLossChance)
 		return false;

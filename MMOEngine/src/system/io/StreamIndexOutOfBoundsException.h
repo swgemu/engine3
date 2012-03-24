@@ -8,6 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang/Exception.h"
 
+#include "system/lang/System.h"
 #include "system/lang/StringBuffer.h"
 
 namespace sys {
@@ -23,9 +24,10 @@ namespace sys {
 			StringBuffer str;
 			str << "StreamIndexOutOfBoundsException at " << index << "\n";
 			message = str.toString();
+			//System::out << message;
 		}
 
-		Stream* getStream() {
+		Stream* getStream() const {
 			return stream;
 		}
 

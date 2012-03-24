@@ -184,7 +184,7 @@ void BaseClient::send(Packet* pack, bool doLock) {
 	try {
 		if (isAvailable()) {
 			#ifdef TRACE_CLIENTS
-				debug("SEND(RAW) - " + pack->toStringData());
+				debug("SEND(RAW) - " + pack->toString());
 			#endif
 
 			if (!DatagramServiceClient::send(pack))
@@ -270,12 +270,12 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 void BaseClient::sendSequenceLess(BasePacket* pack) {
 	try {
 		#ifdef TRACE_CLIENTS
-			debug("SEND(NOSEQ) - " + pack->toStringData());
+			debug("SEND(NOSEQ) - " + pack->toString());
 		#endif
 
 		prepareSend(pack);
 		if (!DatagramServiceClient::send(pack))
-			debug("LOSING " + pack->toStringData());
+			debug("LOSING " + pack->toString());
 
 		delete pack;
 	} catch (SocketException& e) {
@@ -349,7 +349,7 @@ void BaseClient::run() {
 
 			#ifdef TRACE_CLIENTS
 				StringBuffer msg;
-				msg << "SEND(" << serverSequence << ") - " << pack->toStringData();
+				msg << "SEND(" << serverSequence << ") - " << pack->toString();
 				debug(msg);
 			#endif
 
@@ -460,7 +460,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 
 	#ifdef TRACE_CLIENTS
 		StringBuffer msg;
-		msg  << "READ(" << seq << ") - " << pack->toStringData();
+		msg  << "READ(" << seq << ") - " << pack->toString();
 		debug(msg);
 	#endif
 
@@ -535,7 +535,7 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 
 		if (fragmentedPacket != NULL) {
 			StringBuffer msg;
-			msg << "current fragmented packet.." << fragmentedPacket->toStringData();
+			msg << "current fragmented packet.." << fragmentedPacket->toString();
 			Logger::console.error(msg.toString());
 
 			delete fragmentedPacket;
@@ -609,7 +609,7 @@ void BaseClient::resendPackets() {
 
 		if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
-			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toStringData();
+			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
 			debug(msg);
 		}
 
@@ -617,7 +617,7 @@ void BaseClient::resendPackets() {
 
 		#ifdef TRACE_CLIENTS
 			StringBuffer msg;
-			msg << "RESEND(" << packet->getSequence() << ") - " << packet->toStringData();
+			msg << "RESEND(" << packet->getSequence() << ") - " << packet->toString();
 			debug(msg);
 		#endif
 	}
@@ -643,7 +643,7 @@ void BaseClient::resendPackets(int seq) {
 
 		if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
-			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toStringData();
+			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
 			debug(msg);
 		}
 

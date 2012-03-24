@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace ORB {
 
-	class NamingDirectoryService;
+	class ObjectBroker;
 
 	class DistributedObjectAdapter;
 	class DistributedObjectStub;
@@ -23,7 +23,7 @@ namespace engine {
 
 		uint64 _objectID;
 
-		NamingDirectoryService* _namingDirectory;
+		ObjectBroker* _objectBroker;
 
 		bool _updated;
 		bool _markedForDeletion;
@@ -54,8 +54,8 @@ namespace engine {
 			_markedForDeletion = var;
 		}
 
-		inline void _setNamingDirectory(NamingDirectoryService* service) {
-			_namingDirectory = service;
+		inline void _setObjectBroker(ObjectBroker* broker) {
+			_objectBroker = broker;
 		}
 
 		// getters
@@ -71,8 +71,8 @@ namespace engine {
 			return _objectID;
 		}
 
-		inline NamingDirectoryService* _getNamingDirectory() {
-			return _namingDirectory;
+		inline ObjectBroker* _getObjectBroker() {
+			return _objectBroker;
 		}
 
 		inline bool _isUpdated() {

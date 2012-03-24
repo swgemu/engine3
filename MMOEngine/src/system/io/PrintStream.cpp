@@ -4,6 +4,7 @@
 
 PrintStream::PrintStream() {
 	streamFlags = SF_none;
+	setbuf(stdout, 0);
 }
 
 void PrintStream::print(char ch) {

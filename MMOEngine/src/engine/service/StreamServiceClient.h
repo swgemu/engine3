@@ -35,11 +35,6 @@ namespace engine {
 		// message methods
 		void receiveMessages();
 
-		virtual void handleMessage(Packet* message) {
-		}
-
-		virtual bool handleError(Exception& e);
-
 		// socket methods
 		bool send(Packet* pack);
 	

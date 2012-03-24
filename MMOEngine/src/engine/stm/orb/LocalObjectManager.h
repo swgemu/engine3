@@ -11,8 +11,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/orb/ObjectBroker.h"
 #include "engine/orb/DistributedObjectBroker.h"
 
-#include "engine/orb/NamingDirectoryServiceImpl.h"
-
 #include "engine/log/Logger.h"
 
 namespace engine {

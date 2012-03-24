@@ -260,6 +260,10 @@ void UnicodeString::clear() {
 	create("", 0);
 }
 
+const char* UnicodeString::toCharArray() const {
+	return (const char*) uString;
+}
+
 const unsigned short* UnicodeString::toWideCharArray() const {
 	return uString;
 }

@@ -16,6 +16,7 @@ ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
 	_impl = _implementation;
 	_impl->_setStub(this);
+	_setClassName("ManagedObject");
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
@@ -521,11 +522,15 @@ void ManagedObjectImplementation::_setClassName(const String& name) {
  *	ManagedObjectAdapter
  */
 
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
 ManagedObjectAdapter::ManagedObjectAdapter(ManagedObject* obj) : DistributedObjectAdapter(static_cast<DistributedObjectStub*>(obj)) {
 }
 
-Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
-	Packet* resp = new MethodReturnMessage(0);
+void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
 
 	switch (methid) {
 	case RPC_UPDATEFORWRITE__:
@@ -586,10 +591,8 @@ Packet* ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		resp->insertSignedInt(getPersistenceLevel());
 		break;
 	default:
-		return NULL;
+		throw Exception("Method does not exists");
 	}
-
-	return resp;
 }
 
 void ManagedObjectAdapter::updateForWrite() {

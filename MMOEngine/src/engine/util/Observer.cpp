@@ -18,6 +18,7 @@ Observer::Observer() : ManagedObject(DummyConstructorParameter::instance()) {
 	ObserverImplementation* _implementation = new ObserverImplementation();
 	_impl = _implementation;
 	_impl->_setStub(this);
+	_setClassName("Observer");
 }
 
 Observer::Observer(DummyConstructorParameter* param) : ManagedObject(param) {
@@ -275,11 +276,15 @@ bool ObserverImplementation::isObserverType(unsigned int type) {
  *	ObserverAdapter
  */
 
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
 ObserverAdapter::ObserverAdapter(Observer* obj) : ManagedObjectAdapter(obj) {
 }
 
-Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
-	Packet* resp = new MethodReturnMessage(0);
+void ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
 
 	switch (methid) {
 	case RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_:
@@ -298,10 +303,8 @@ Packet* ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		resp->insertBoolean(isObserverType(inv->getUnsignedIntParameter()));
 		break;
 	default:
-		return NULL;
+		throw Exception("Method does not exists");
 	}
-
-	return resp;
 }
 
 int ObserverAdapter::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {

@@ -14,13 +14,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ObjectBroker.h"
 
-#include "DistributedObjectDirectory.h"
-
 #include "NamingDirectoryService.h"
 
-#include "DistributedObjectBrokerClient.h"
-
-#include "DOBPacketHandler.h"
+#include "messages/DOBServiceClient.h"
 
 #include "object/DistributedObject.h"
 #include "object/DistributedObjectStub.h"
@@ -41,19 +37,17 @@ namespace engine {
 
 	class DOBObjectManager;
 
-	class DistributedObjectBrokerClient;
-
 	class DistributedObjectBroker : public StreamServiceThread, public ObjectBroker, public Singleton<DistributedObjectBroker> {
-		String address;
+		ObjectBroker* rootObjectBroker;
 
-		NamingDirectoryService* namingDirectoryInterface;
+		NamingDirectoryService* namingDirectoryService;
 
 		DistributedObjectClassHelperMap classMap;
 
-		DOBPacketHandler* phandler;
 		DOBObjectManager* objectManager;
 
-		DistributedObjectBrokerClient* orbClient;
+		String address;
+		int port;
 
 	protected:
 		DistributedObjectBroker();
@@ -69,8 +63,6 @@ namespace engine {
 
 		void shutdown();
 
-		DistributedObjectBrokerClient* createConnection(Socket* sock, SocketAddress& addr);
-
 		void registerClass(const String& name, DistributedObjectClassHelper* helper);
 
 		// deployment methods
@@ -84,39 +76,39 @@ namespace engine {
 
 		DistributedObjectStub* undeploy(const String& name);
 
+		DistributedObjectStub* createObjectStub(const String& className, const String& name);
+		DistributedObjectServant* createObjectServant(const String& className, DistributedObjectStub* stub);
+
 		DistributedObjectAdapter* getObjectAdapter(const String& name);
 		DistributedObjectAdapter* getObjectAdapter(uint64 oid);
 
 		// getters
-		/*inline bool hasRootDirectory() {
-			return namingDirectoryInterface->isRootDirectory();
+		bool isRootBroker() {
+			return rootObjectBroker == NULL;
+		}
+
+		/*inline DistributedObjectClassHelperMap* getClassMap() {
+			return &classMap;
 		}*/
 
-		inline DistributedObjectClassHelperMap* getClassMap() {
-			return &classMap;
-		}
-
-		inline DOBPacketHandler* getPacketHandler() {
-			return phandler;
-		}
-
-		inline DistributedObjectBrokerClient* getOrbClient() {
-			return orbClient;
-		}
-
-		inline DOBObjectManager* getObjectManager() {
+		inline DOBObjectManager* getObjectManager() const {
 			return objectManager;
 		}
 
 		// setters
 		void setCustomObjectManager(DOBObjectManager* manager);
 
-		inline void setOrbClient(DistributedObjectBrokerClient* client) {
-			orbClient = client;
-		}
+	private:
+		void localDeploy(const String& name, DistributedObjectStub* obj);
+
+		DistributedObjectStub* localUndeploy(const String& name);
 
 		friend class engine::core::Core;
 		friend class NamingDirectoryService;
+		friend class RemoteObjectBroker;
+
+		friend class DeployObjectMessage;
+		friend class UndeployObjectMessage;
 
 		friend class SingletonWrapper<DistributedObjectBroker>;
 	};

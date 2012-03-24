@@ -9,12 +9,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DistributedObjectBroker.h"
 
-#include "DistributedObjectBrokerClient.h"
+#include "messages/DOBServiceHandler.h"
+#include "messages/DOBServiceClient.h"
 
-#include "NamingDirectoryServiceImpl.h"
+#include "messages/RemoteObjectBroker.h"
 
-#include "DOBObjectManager.h"
-#include "DOBObjectManagerImplementation.h"
+#include "db/DOBObjectManager.h"
 
 #include "engine/service/proto/events/BaseClientNetStatusRequestEvent.h"
 #include "engine/service/proto/events/BaseClientNetStatusCheckupEvent.h"
@@ -22,28 +22,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 DistributedObjectBroker::DistributedObjectBroker()
 		: StreamServiceThread("DistributedObjectBroker") {
-	phandler = NULL;
+	rootObjectBroker = NULL;
 
-	namingDirectoryInterface = NULL;
+	namingDirectoryService = NULL;
 
 	objectManager = NULL;
 
-	orbClient = NULL;
-
-	setInfoLogLevel();
+	setDebugLogLevel();
 }
 
 DistributedObjectBroker::~DistributedObjectBroker() {
 	shutdown();
 
-	if (namingDirectoryInterface != NULL) {
-		delete namingDirectoryInterface;
-		namingDirectoryInterface = NULL;
-	}
-
-	if (phandler != NULL) {
-		delete phandler;
-		phandler = NULL;
+	if (namingDirectoryService != NULL) {
+		delete namingDirectoryService;
+		namingDirectoryService = NULL;
 	}
 
 	/*if (objectManager != NULL) {
@@ -59,33 +52,35 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr, int port) {
 	DistributedObjectBroker* inst = DistributedObjectBroker::instance();
 	inst->address = addr;
+	inst->port = port;
+
+	try {
+		if (addr.isEmpty())
+			inst->start(port);
+	} catch (const Exception& e) {
+		inst->address = "127.0.0.1";
+	}
 
 	inst->initialize();
-
-	if (addr.isEmpty())
-		inst->start(port);
 
 	return inst;
 }
 
 void DistributedObjectBroker::initialize() {
 	if (address.isEmpty()) {
-		namingDirectoryInterface = new NamingDirectoryServiceImpl();
-
 		info("root naming directory initialized");
 	} else {
-		namingDirectoryInterface = new NamingDirectoryService(address);
-		orbClient = namingDirectoryInterface->getClient();
-	}
+		info("attaching to root naming directory at " + address + ":" + String::valueOf(port));
 
-	phandler = new DOBPacketHandler("ORBPacketHandler", this);
-	phandler->setLogging(false);
+		rootObjectBroker = new RemoteObjectBroker(address, port);
+	}		
 
-	if (address.isEmpty()) {
-		objectManager = new DOBObjectManagerImplementation();
-	} else {
-		objectManager = new DOBObjectManager(orbClient);
-	}
+	namingDirectoryService = new NamingDirectoryService();
+
+	DOBServiceHandler* serviceHandler = new DOBServiceHandler();
+	setHandler(serviceHandler);
+
+	objectManager = new DOBObjectManager();
 }
 
 void DistributedObjectBroker::run() {
@@ -102,13 +97,6 @@ void DistributedObjectBroker::shutdown() {
 	}
 }
 
-DistributedObjectBrokerClient* DistributedObjectBroker::createConnection(Socket* sock, SocketAddress& addr) {
-	DistributedObjectBrokerClient* client = new DistributedObjectBrokerClient(this, sock);
-	client->start();
-
-	return client;
-}
-
 void DistributedObjectBroker::registerClass(const String& name, DistributedObjectClassHelper* helper) {
 	//Locker locker(this);
 
@@ -116,88 +104,57 @@ void DistributedObjectBroker::registerClass(const String& name, DistributedObjec
 }
 
 void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
+	uint64 objectid = obj->_getObjectID();
+	String name = obj->_getName();
 
-	/*DistributedObjectServant* servant = obj->_getImplementation();
-	if (servant == NULL)
-		throw ObjectNotLocalException(obj);*/
+	if (!isRootBroker()) {
+		debug("deploying object \"" + name + "\" remotely");
 
-	try {
-		uint64 objectid = obj->_getObjectID();
-		String name = obj->_getName();
-
-		Locker locker(objectManager);
-
-		objectManager->createObjectID(name, obj);
-
-		name = obj->_getName();
-
-		if (!namingDirectoryInterface->bind(name, obj)) {
-			error("object \'" + name + "\' already bound");
-
-			StackTrace::printStackTrace();
-		}
-
-		if (objectManager->addObject(obj) != NULL) {
-			StringBuffer msg;
-			msg << "obejctid 0x" << hex << objectid << " already deployed";
-			error(msg.toString());
-			StackTrace::printStackTrace();
-		} else
-			debug("object \'" + obj->_getName() + "\' deployed");
-	} catch (Exception& e) {
-		error(e.getMessage());
+		rootObjectBroker->deploy(obj);
 	}
+
+	localDeploy(name, obj);
 }
 
 void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
-	/*DistributedObjectServant* servant = obj->_getImplementation();
-	if (servant == NULL)
-		throw ObjectNotLocalException(obj);*/
+	if (!isRootBroker()) {
+		debug("deploying object \"" + name + "\" remotely");
 
-	try {
-		Locker locker(objectManager);
-
-		objectManager->createObjectID(name, obj);
-
-		String newName = obj->_getName();
-
-		if (!namingDirectoryInterface->bind(newName, obj)) {
-			error("object \'" + newName + "\' already bound");
-
-			StackTrace::printStackTrace();
-		}
-
-		if (objectManager->addObject(obj) != NULL) {
-			StringBuffer msg;
-			msg << "obejctid 0x" << hex << obj->_getObjectID() << " already deployed";
-			error(msg.toString());
-			StackTrace::printStackTrace();
-		} else
-			debug("object \'" + obj->_getName() + "\' deployed");
-
-	} catch (Exception& e) {
-		error(e.getMessage());
+		rootObjectBroker->deploy(name, obj);
 	}
+
+	localDeploy(name, obj);
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
-	//Locker locker(this);
-	Locker locker(objectManager);
+	if (!isRootBroker()) {
+		debug("looking up object \"" + name + "\" remotely");
 
-	return namingDirectoryInterface->lookup(name);
+		return rootObjectBroker->lookUp(name);
+	} else {
+		Locker locker(objectManager);
+
+		return namingDirectoryService->lookup(name);
+	}
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
-	//Locker locker(objectManager);
+	if (!isRootBroker()) {
+		debug("looking up object 0x" + String::valueOf(objid) + " remotely");
 
-	DistributedObject* obj = objectManager->getObject(objid);
+		return rootObjectBroker->lookUp(objid);
+	} else {
+		//Locker locker(objectManager);
 
-	//locker.release();
+		DistributedObject* obj = objectManager->getObject(objid);
 
-	if (obj == NULL)
-		obj = objectManager->loadPersistentObject(objid);
+		//locker.release();
 
-	return obj;
+		if (obj == NULL)
+			obj = objectManager->loadPersistentObject(objid);
+
+		return obj;
+	}
 }
 
 bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
@@ -221,13 +178,37 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 }
 
 DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
-	Locker locker(objectManager);//Locker locker(this);
+	if (!isRootBroker()) {
+		debug("undeploying object \"" + name + "\" remotely");
 
-#ifndef WITH_STM
-	//DistributedObjectServant* servant = NULL;
-#endif
+		rootObjectBroker->undeploy(name);
+	}
 
-	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryInterface->unbind(name);
+	return localUndeploy(name);
+}
+
+void DistributedObjectBroker::localDeploy(const String& name, DistributedObjectStub* obj) {
+	Locker locker(objectManager);
+
+	assert(!obj->isDeplyoed());
+
+	objectManager->createObjectID(name, obj);
+
+	if (!namingDirectoryService->bind(obj->_getName(), obj))
+		throw NameAlreadyBoundException(obj);
+
+	if (objectManager->addObject(obj) != NULL) {
+		throw ObjectAlreadyDeployedException(obj);
+	} else
+		debug("object \'" + obj->_getName() + "\' deployed");
+
+	obj->setDeployed(true);
+}
+
+DistributedObjectStub* DistributedObjectBroker::localUndeploy(const String& name) {
+	Locker locker(objectManager); //Locker locker(this);
+
+	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryService->unbind(name);
 
 	locker.release();
 
@@ -235,47 +216,66 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 		DistributedObjectAdapter* adapter = objectManager->removeObject(obj->_getObjectID());
 
 		if (adapter != NULL) {
-#ifndef WITH_STM
-			//servant = adapter->_getImplementation();
-#endif
-
 			delete adapter;
 		}
+
+	#ifndef WITH_STM
+		obj->_setImplementation(NULL);
+
+		/*if (servant != NULL) {
+			debug("deleting servant \'" + name + "\'");
+
+			delete servant;
+		}*/
+	#endif
 
 		debug("object \'" + obj->_getName() + "\' undeployed");
 	}
 
-#ifndef WITH_STM
-	obj->_setImplementation(NULL);
-
-	/*if (servant != NULL) {
-		debug("deleting servant \'" + name + "\'");
-
-		delete servant;
-	}*/
-#else
-	/*if (obj != NULL)
-		obj->_setImplementation(NULL);*/
-#endif
-
 	return obj;
 }
-
-/*ORBObjectAdapter* ObjectRequestBroker::getObjectAdapter(const String& name) {
-	lock();
-
-	ORBObjectStub* obj = namingDirectoryInterface->lookUp(name);
-	ORBObjectAdapter* adapter = objectDirectory.getAdapter(obj->getObjectID());
-
-	unlock();
-	return adapter;
-}*/
 
 void DistributedObjectBroker::setCustomObjectManager(DOBObjectManager* manager) {
 	Locker locker(this);
 
 	delete objectManager;
 	objectManager = manager;
+}
+
+DistributedObjectStub* DistributedObjectBroker::createObjectStub(const String& className, const String& name) {
+	DistributedObjectStub* obj = NULL;
+
+	DistributedObjectClassHelper* helper = classMap.get(className);
+	if (helper != NULL) {
+		debug("class \'" + className + "\' found when creating stub");
+
+		obj = dynamic_cast<DistributedObjectStub*>(helper->instantiateObject());
+
+		obj->_setName(name);
+
+		obj->_setObjectBroker(this);
+	} else
+		warning("class \'" + className + "\' is not declared when creating stub");
+
+	return obj;
+}
+
+DistributedObjectServant* DistributedObjectBroker::createObjectServant(const String& className, DistributedObjectStub* stub) {
+	DistributedObjectServant* servant = NULL;
+
+	DistributedObjectClassHelper* helper = classMap.get(className);
+	if (helper != NULL) {
+		debug("class \'" + className + "\' found when creating servant");
+
+		servant = helper->instantiateServant();
+
+		servant->_setStub(stub);
+		servant->_setClassHelper(helper);
+	} else
+		warning("class \'" + className + "\' is not declared when creating servant");
+
+
+	return servant;
 }
 
 DistributedObjectAdapter* DistributedObjectBroker::getObjectAdapter(uint64 oid) {

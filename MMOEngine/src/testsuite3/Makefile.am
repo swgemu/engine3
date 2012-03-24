@@ -60,4 +60,5 @@ LIBS =	$(SYSTEM_LIBS)  \
 bin_PROGRAMS = testsuite3
 
 testsuite3_SOURCES = \
+		tests/TestIDLClass.cpp \
 		TestSuite3.cpp

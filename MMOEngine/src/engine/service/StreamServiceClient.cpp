@@ -3,7 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../log/Logger.h"
+#include "engine/log/Logger.h"
+
+#include "ServiceHandler.h"
 
 #include "StreamServiceClient.h"
 
@@ -59,19 +61,20 @@ void StreamServiceClient::receiveMessages() {
 
 	socket->setTimeOut(1000);
 
+	assert(serviceHandler);
+
 	while (doRun) {
 		try	{
 			packet.clear();
-
 
 			if (recieve(&packet)) {
 				if (packet.size() == 0)
 					break;
 
-				handleMessage(&packet);
+				serviceHandler->handleMessage(this, &packet);
 			}
 		} catch (SocketException& e) {
-			if (!handleError(e))
+			if (!serviceHandler->handleError(this, e))
 				break;
 		}
 	}
@@ -79,15 +82,11 @@ void StreamServiceClient::receiveMessages() {
 	disconnect();
 }
 
-bool StreamServiceClient::handleError(Exception& e) {
-	Logger::console.info("(" + addr.getFullIPAddress() + ") - " + e.getMessage());
-
-	return false;
-}
-
 bool StreamServiceClient::send(Packet* pack) {
 	if (socket != NULL) {
 		socket->send(pack);
+
+		serviceHandler->messageSent(pack);
 	} else {
 		doRun = false;
 

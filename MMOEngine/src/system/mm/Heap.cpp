@@ -76,7 +76,7 @@ void Heap::create(size_t size) {
 
 	heapBase = mmap(heapBase, heapSize, PROT_READ | PROT_WRITE, flags, deviceFD, offset);
 	if (heapBase == reinterpret_cast<void*>(-1)) {
-		printf("mmap failed on dev %i with size %lu (%s)\n", deviceFD, heapSize, strerror(errno));
+		printf("mmap failed on dev %i with size %zu (%s)\n", deviceFD, heapSize, strerror(errno));
 
 		abort();
 	}

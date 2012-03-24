@@ -6,13 +6,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SERVICECLIENT_H_
 #define SERVICECLIENT_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 namespace engine {
   namespace service {
 
+  	class ServiceHandler;
+
 	class ServiceClient : public virtual Object {
 	protected:
+		ServiceHandler* serviceHandler;
+
 		SocketAddress addr;
 		Socket* socket;
 
@@ -49,6 +53,10 @@ namespace engine {
 		virtual void release();
 
 		// setters
+		void setHandler(ServiceHandler* handler) {
+			serviceHandler = handler;
+		}
+
 		inline void setAddress(const String& host, int port) {
 			addr = SocketAddress(host, port);
 		}

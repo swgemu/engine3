@@ -14,6 +14,8 @@ namespace engine {
 	class DistributedObjectBroker;
 	class DistributedObject;
 
+	class InvokeMethodMessage;
+
 	class DistributedMethod {
 		DistributedObject* object;
 
@@ -21,11 +23,15 @@ namespace engine {
 		sys::uint32 invocationID;
 
 		DistributedObjectBroker* orb;
-		Packet* invmsg;
+
+		InvokeMethodMessage* invocationMessgage;
+		Packet* response;
 
 	public:
 		DistributedMethod(DistributedObject* obj, sys::uint32 methid);
-		DistributedMethod(DistributedObjectBroker* broker, Packet* pack);
+		DistributedMethod(DistributedObjectBroker* broker, InvokeMethodMessage* invmsg);
+
+		~DistributedMethod();
 
 		// exeuctor methods
 		void executeWithVoidReturn();
@@ -101,8 +107,16 @@ namespace engine {
 
 		DistributedObject* getObjectParameter();
 
+		InvokeMethodMessage* getInvocationMessage() {
+			return invocationMessgage;
+		}
+
+		Packet* getResponseMessage() {
+			return response;
+		}
+
 	private:
-		void execute(Packet* response);
+		void execute();
 
 	};
 

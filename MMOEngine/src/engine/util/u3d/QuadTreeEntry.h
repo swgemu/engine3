@@ -281,7 +281,7 @@ class QuadTreeEntryAdapter : public ObservableAdapter {
 public:
 	QuadTreeEntryAdapter(QuadTreeEntry* impl);
 
-	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+	void invokeMethod(sys::uint32 methid, DistributedMethod* method);
 
 	void addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate);
 

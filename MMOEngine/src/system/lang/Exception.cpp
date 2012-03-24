@@ -17,7 +17,7 @@ Exception::Exception(const String& msg) {
 Exception::~Exception() {
 }
 
-void Exception::printStackTrace() {
+void Exception::printStackTrace() const {
 	System::out << message << "\n";
 	trace.print();
 }

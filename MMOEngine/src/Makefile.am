@@ -73,6 +73,10 @@ libengine3_a_SOURCES = \
 			engine/core/TimedTaskQueue.cpp \
 			engine/core/TaskWorkerThread.cpp \
 			engine/core/ObjectUpdateToDatabaseTask.cpp \
+			engine/core/ManagedObject.cpp \
+			engine/core/ManagedService.cpp \
+			engine/core/ManagedObjectImplementation.cpp \
+			engine/core/ManagedProcess.cpp \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \
@@ -91,17 +95,16 @@ libengine3_a_SOURCES = \
 			engine/service/proto/BaseClientProxy.cpp \
 			engine/service/proto/events/BasePacketChekupEvent.cpp \
 			engine/orb/DistributedObjectBroker.cpp \
-			engine/orb/DistributedObjectDirectory.cpp \
-			engine/orb/DOBObjectManager.cpp \
-			engine/orb/DOBObjectManagerImplementation.cpp \
 			engine/orb/NamingDirectoryService.cpp \
-			engine/orb/NamingDirectoryServiceImpl.cpp \
-			engine/orb/DistributedObjectBrokerClient.cpp \
-			engine/orb/DOBPacketHandler.cpp \
+			engine/orb/db/DistributedObjectDirectory.cpp \
+			engine/orb/db/DOBObjectManager.cpp \
 			engine/orb/object/DistributedObject.cpp \
 			engine/orb/object/DistributedObjectServant.cpp \
 			engine/orb/object/DistributedObjectStub.cpp \
 			engine/orb/object/DistributedMethod.cpp \
+			engine/orb/messages/RemoteObjectBroker.cpp \
+			engine/orb/messages/DOBServiceClient.cpp \
+			engine/orb/messages/DOBMessageFactory.cpp \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/stm/mm/KernelCall.cpp \
@@ -112,9 +115,6 @@ libengine3_a_SOURCES = \
 			engine/stm/service/TransactionalSocketManager.cpp \
 			engine/stm/service/TransactionalBaseClientManager.cpp \
 			engine/stm/algos/FraserSTM.cpp \
-			engine/core/ManagedObject.cpp \
-			engine/core/ManagedService.cpp \
-			engine/core/ManagedObjectImplementation.cpp \
 			engine/util/Observer.cpp \
 			engine/util/ObserverImplementation.cpp \
 			engine/util/ObserverEventMap.cpp \

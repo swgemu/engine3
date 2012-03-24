@@ -15,6 +15,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Lunar.h"
 #include "Luna.h"
 
+#include "LuaCallbackException.h"
+
 #include "engine/log/Logger.h"
 
 namespace engine {

@@ -23,7 +23,7 @@ StackTrace::~StackTrace() {
 
 }
 
-void StackTrace::print() {
+void StackTrace::print() const {
 	#ifdef PLATFORM_UNIX
 		#ifdef LINE_TRACING
 			StringBuffer command;

@@ -64,6 +64,7 @@ void StreamServiceThread::acceptConnections(int limit) {
 			Socket* sock = socket->accept(&address);
 			sock->disableLingering();
 			
+			assert(serviceHandler != NULL);
 			serviceHandler->createConnection(sock, address);
 		}	
 	} catch (...) {

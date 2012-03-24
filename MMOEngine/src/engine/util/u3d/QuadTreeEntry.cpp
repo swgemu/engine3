@@ -14,6 +14,7 @@ QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParam
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
 	_impl = _implementation;
 	_impl->_setStub(this);
+	_setClassName("QuadTreeEntry");
 }
 
 QuadTreeEntry::QuadTreeEntry(DummyConstructorParameter* param) : Observable(param) {
@@ -872,11 +873,15 @@ void QuadTreeEntryImplementation::setParent(QuadTreeEntry* par) {
  *	QuadTreeEntryAdapter
  */
 
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
 QuadTreeEntryAdapter::QuadTreeEntryAdapter(QuadTreeEntry* obj) : ObservableAdapter(obj) {
 }
 
-Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
-	Packet* resp = new MethodReturnMessage(0);
+void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
 
 	switch (methid) {
 	case RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_:
@@ -973,10 +978,8 @@ Packet* QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv
 		setParent(static_cast<QuadTreeEntry*>(inv->getObjectParameter()));
 		break;
 	default:
-		return NULL;
+		throw Exception("Method does not exists");
 	}
-
-	return resp;
 }
 
 void QuadTreeEntryAdapter::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {

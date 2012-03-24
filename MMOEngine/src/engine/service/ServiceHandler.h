@@ -30,6 +30,9 @@ namespace engine {
 
 		virtual void processMessage(Message* message) = 0;
 
+		virtual void messageSent(Packet* message) {
+		}
+
 		virtual bool handleError(ServiceClient* client, Exception& e) = 0;
 	};
 

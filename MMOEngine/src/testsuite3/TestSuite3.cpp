@@ -12,6 +12,7 @@
 #include "tests/qtstmtest.h"
 #include "tests/referencetest.h"
 #include "tests/allocatorhook.h"
+#include "tests/orbtest.h"
 
 class TestCore : public Core {
 public:
@@ -48,6 +49,10 @@ int main(int argc, char* argv[]) {
 				referenceTest();
 			} else if (arguments.contains("memfiletest")) {
 				testMemoryMappedFile();
+			} else if (arguments.contains("orbtestmaster")) {
+				orbTestDeploy();
+			} else if (arguments.contains("orbtest")) {
+				orbTestLookup();
 			}
 		}
 

@@ -14,6 +14,7 @@ Facade::Facade() : ManagedObject(DummyConstructorParameter::instance()) {
 	FacadeImplementation* _implementation = new FacadeImplementation();
 	_impl = _implementation;
 	_impl->_setStub(this);
+	_setClassName("Facade");
 }
 
 Facade::Facade(DummyConstructorParameter* param) : ManagedObject(param) {
@@ -212,11 +213,15 @@ int FacadeImplementation::clearSession() {
  *	FacadeAdapter
  */
 
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
 FacadeAdapter::FacadeAdapter(Facade* obj) : ManagedObjectAdapter(obj) {
 }
 
-Packet* FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
-	Packet* resp = new MethodReturnMessage(0);
+void FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
 
 	switch (methid) {
 	case RPC_INITIALIZESESSION__:
@@ -229,10 +234,8 @@ Packet* FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		resp->insertSignedInt(clearSession());
 		break;
 	default:
-		return NULL;
+		throw Exception("Method does not exists");
 	}
-
-	return resp;
 }
 
 int FacadeAdapter::initializeSession() {

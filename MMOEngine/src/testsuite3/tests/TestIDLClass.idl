@@ -1,0 +1,24 @@
+/*
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
+
+package testsuite3.tests;
+
+import engine.core.ManagedObject;
+
+class TestIDLClass extends ManagedObject {
+	private int value;
+	
+	public TestIDLClass(int val) {
+		value = val;
+	}
+	
+	public int getValue() {
+		return value;
+	}
+	
+	public void setValue(int val) {
+		value = val;
+	}
+}

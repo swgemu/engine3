@@ -148,18 +148,20 @@ int ManagedVectorImplementation::writeObjectMembers(ObjectOutputStream* stream) 
  *	ManagedVectorAdapter
  */
 
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
 ManagedVectorAdapter::ManagedVectorAdapter(ManagedVector* obj) : ManagedObjectAdapter(obj) {
 }
 
-Packet* ManagedVectorAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
-	Packet* resp = new MethodReturnMessage(0);
+void ManagedVectorAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
 
 	switch (methid) {
 	default:
-		return NULL;
+		throw Exception("Method does not exists");
 	}
-
-	return resp;
 }
 
 /*

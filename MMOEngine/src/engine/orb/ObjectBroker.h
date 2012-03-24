@@ -8,18 +8,19 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "object/DistributedObject.h"
-#include "object/DistributedObjectStub.h"
-#include "object/DistributedObjectClassHelper.h"
+#include "NameAlreadyBoundException.h"
 
+#include "object/ObjectAlreadyDeployedException.h"
 #include "object/ObjectNotDeployedException.h"
 #include "object/ObjectNotLocalException.h"
 
-#include "packets/DeployObjectMessage.h"
-#include "packets/MethodReturnMessage.h"
-
 namespace engine {
   namespace ORB {
+
+  	class DistributedObjectClassHelper;
+
+  	class DistributedObject;
+  	class DistributedObjectStub;
 
 	class ObjectBroker {
 	public:

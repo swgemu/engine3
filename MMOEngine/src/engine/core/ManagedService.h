@@ -85,7 +85,7 @@ class ManagedServiceAdapter : public ManagedObjectAdapter {
 public:
 	ManagedServiceAdapter(ManagedService* impl);
 
-	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+	void invokeMethod(sys::uint32 methid, DistributedMethod* method);
 
 };
 

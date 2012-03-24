@@ -8,11 +8,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DistributedObjectStub.h"
 
-#include "DistributedMethod.h"
+#include "engine/orb/messages/DOBMessage.h"
 
 namespace engine {
   namespace ORB {
-  	
+
+	class DistributedMethod;
+
 	class DistributedObjectServant;
 	
 	class DistributedObjectAdapter {
@@ -31,7 +33,7 @@ namespace engine {
 		virtual ~DistributedObjectAdapter() {
 		}
 		
-		virtual Packet* invokeMethod(sys::uint32 methid, DistributedMethod* inv) = 0;
+		virtual void invokeMethod(sys::uint32 methid, DistributedMethod* inv) = 0;
 		
 		inline void setStub(DistributedObjectStub* stb) {
 			stub = stb;

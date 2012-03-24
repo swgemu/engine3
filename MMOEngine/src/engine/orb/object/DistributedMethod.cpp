@@ -6,13 +6,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/core/Core.h"
 
 #include "engine/orb/DistributedObjectBroker.h"
-#include "engine/orb/DistributedObjectBrokerClient.h"
 
 #include "DistributedObject.h"
 
 #include "DistributedMethod.h"
 
-#include "engine/orb/packets/InvokeMethodMessage.h"
+#include "engine/orb/messages/DOBServiceClient.h"
+
+#include "engine/orb/messages/RemoteObjectBroker.h"
+
+#include "engine/orb/messages/DeployObjectMessage.h"
+#include "engine/orb/messages/InvokeMethodMessage.h"
 
 DistributedMethod::DistributedMethod(DistributedObject* obj, uint32 methid) {
 	object = obj;
@@ -20,261 +24,243 @@ DistributedMethod::DistributedMethod(DistributedObject* obj, uint32 methid) {
 
 	orb = NULL;
 
-	invmsg = new InvokeMethodMessage(object->_getObjectID(), methid, 0);
+	invocationMessgage = new InvokeMethodMessage(object->_getObjectID(), methid, 0);
+	response = NULL;
 }
 
-DistributedMethod::DistributedMethod(DistributedObjectBroker* broker, Packet* pack) {
+DistributedMethod::DistributedMethod(DistributedObjectBroker* broker, InvokeMethodMessage* invmsg) {
 	orb = broker;
 
-	invmsg = pack;
+	invocationMessgage = invmsg;
+	response = invmsg;
+}
+
+DistributedMethod::~DistributedMethod() {
+	if (invocationMessgage != NULL)
+		delete invocationMessgage;
+
+	/*if (response != NULL)
+		delete response;*/
 }
 
 void DistributedMethod::executeWithVoidReturn() {
-	Packet resp;
-
-	execute(&resp);
+	execute();
 }
 
 bool DistributedMethod::executeWithBooleanReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseByte(8);
+	return response->parseBoolean();
 }
 
 byte DistributedMethod::executeWithByteReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseByte(8);
+	return response->parseByte();
 }
 
 char DistributedMethod::executeWithSignedCharReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseSignedByte(8);
+	return response->parseSignedByte();
 }
 
 unsigned char DistributedMethod::executeWithUnsignedCharReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseByte(8);
+	return response->parseByte();
 }
 
 int DistributedMethod::executeWithSignedIntReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseSignedInt(8);
+	return response->parseSignedInt();
 }
 
 unsigned int DistributedMethod::executeWithUnsignedIntReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseInt(8);
+	return response->parseInt();
 }
 
 long long DistributedMethod::executeWithSignedLongReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseSignedLong(8);
+	return response->parseSignedLong();
 }
 
 unsigned long long DistributedMethod::executeWithUnsignedLongReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseLong(8);
+	return response->parseLong();
 }
 
 float DistributedMethod::executeWithFloatReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseFloat(8);
+	return response->parseFloat();
 }
 
 void DistributedMethod::executeWithAsciiReturn(String& value) {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	resp.parseAscii(8, value);
+	response->parseAscii(value);
 }
 
 void DistributedMethod::executeWithUnicodeReturn(UnicodeString& value) {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	resp.parseUnicode(8, value);
+	response->parseUnicode(value);
 }
 
 short DistributedMethod::executeWithSignedShortReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseSignedShort(8);
+	return response->parseSignedShort();
 }
 
 unsigned short DistributedMethod::executeWithUnsignedShortReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	return resp.parseShort(8);
+	return response->parseShort();
 }
 
 DistributedObject* DistributedMethod::executeWithObjectReturn() {
-	Packet resp;
+	execute();
 
-	execute(&resp);
-
-	uint64 objid = resp.parseLong(8);
+	uint64 objid = response->parseLong();
 	if (objid != 0)
 		return Core::getObjectBroker()->lookUp(objid);
 	else
 		return NULL;
 }
 
-void DistributedMethod::execute(Packet* response) {
-	DistributedObjectBrokerClient* client = object->_getNamingDirectory()->getClient();
-	client->send(invmsg);
+void DistributedMethod::execute() {
+	RemoteObjectBroker* broker = dynamic_cast<RemoteObjectBroker*>(object->_getObjectBroker());
+	assert(broker != NULL);
 
-	client->read(response);
+	broker->invokeMethod(*this);
+
+	response = invocationMessgage->getResponseMessage();
 }
 
 void DistributedMethod::addBooleanParameter(bool val) {
-	invmsg->insertByte(val);
+	invocationMessgage->insertBoolean(val);
 }
 
 void DistributedMethod::addByteParameter(byte val) {
-	invmsg->insertByte(val);
+	invocationMessgage->insertByte(val);
 }
 
 void DistributedMethod::addSignedCharParameter(char val) {
-	invmsg->insertSignedByte(val);
+	invocationMessgage->insertSignedByte(val);
 }
 
 void DistributedMethod::addUnsignedCharParameter(unsigned char val) {
-	invmsg->insertByte(val);
+	invocationMessgage->insertByte(val);
 }
 
 void DistributedMethod::addSignedIntParameter(int val) {
-	invmsg->insertSignedInt(val);
+	invocationMessgage->insertSignedInt(val);
 }
 
 void DistributedMethod::addUnsignedIntParameter(unsigned int val) {
-	invmsg->insertInt(val);
+	invocationMessgage->insertInt(val);
 }
 
 void DistributedMethod::addSignedLongParameter(long long val) {
-	invmsg->insertSignedLong(val);
+	invocationMessgage->insertSignedLong(val);
 }
 
 void DistributedMethod::addUnsignedLongParameter(unsigned long long val) {
-	invmsg->insertLong(val);
+	invocationMessgage->insertLong(val);
 }
 
 void DistributedMethod::addSignedShortParameter(short val) {
-	invmsg->insertSignedShort(val);
+	invocationMessgage->insertSignedShort(val);
 }
 
 void DistributedMethod::addUnsignedShortParameter(unsigned short val) {
-	invmsg->insertShort(val);
+	invocationMessgage->insertShort(val);
 }
 
 void DistributedMethod::addFloatParameter(float val) {
-	invmsg->insertFloat(val);
+	invocationMessgage->insertFloat(val);
 }
 
 void DistributedMethod::addAsciiParameter(const String& ascii) {
-	invmsg->insertAscii(ascii);
+	invocationMessgage->insertAscii(ascii);
 }
 
 void DistributedMethod::addUnicodeParameter(const UnicodeString& str) {
-	invmsg->insertUnicode(str);
+	invocationMessgage->insertUnicode(str);
 }
 
 void DistributedMethod::addObjectParameter(DistributedObject* obj) {
 	if (obj != NULL)
-		invmsg->insertLong(obj->_getObjectID());
+		invocationMessgage->insertLong(obj->_getObjectID());
 	else
-		invmsg->insertLong(0);
+		invocationMessgage->insertLong(0);
 }
 
 bool DistributedMethod::getBooleanParameter() {
-	return invmsg->parseByte();
+	return invocationMessgage->getBooleanParameter();
 }
 
 byte DistributedMethod::getByteParameter() {
-	return invmsg->parseByte();
+	return invocationMessgage->getByteParameter();
 }
 
 char DistributedMethod::getSignedCharParameter() {
-	return invmsg->parseSignedByte();
+	return invocationMessgage->getSignedCharParameter();
 }
 
 unsigned char DistributedMethod::getUnsignedCharParameter() {
-	return invmsg->parseByte();
+	return invocationMessgage->getUnsignedCharParameter();
 }
 
 int DistributedMethod::getSignedIntParameter() {
-	return invmsg->parseSignedInt();
+	return invocationMessgage->getSignedIntParameter();
 }
 
 unsigned int DistributedMethod::getUnsignedIntParameter() {
-	return invmsg->parseInt();
+	return invocationMessgage->getUnsignedIntParameter();
 }
 
 long long DistributedMethod::getSignedLongParameter() {
-	return invmsg->parseSignedLong();
+	return invocationMessgage->getSignedLongParameter();
 }
 
 unsigned long long DistributedMethod::getUnsignedLongParameter() {
-	return invmsg->parseLong();
+	return invocationMessgage->getUnsignedLongParameter();
 }
 
 short DistributedMethod::getSignedShortParameter() {
-	return invmsg->parseSignedShort();
+	return invocationMessgage->getSignedShortParameter();
 }
 
 unsigned short DistributedMethod::getUnsignedShortParameter() {
-	return invmsg->parseShort();
+	return invocationMessgage->getUnsignedShortParameter();
 }
 
 float DistributedMethod::getFloatParameter() {
-	return invmsg->parseFloat();
+	return invocationMessgage->getFloatParameter();
 }
 
 String& DistributedMethod::getAsciiParameter(String& ascii) {
-	invmsg->parseAscii(ascii);
+	invocationMessgage->getAsciiParameter(ascii);
 
 	return ascii;
 }
 
 UnicodeString& DistributedMethod::getUnicodeParameter(UnicodeString& str) {
-	invmsg->parseUnicode(str);
+	invocationMessgage->getUnicodeParameter(str);
 
 	return str;
 }
 
 DistributedObject* DistributedMethod::getObjectParameter() {
-	uint64 objid = invmsg->parseLong();
+	uint64 objid = invocationMessgage->parseLong();
 
 	if (objid != 0)
 		return orb->lookUp(objid);

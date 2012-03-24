@@ -6,34 +6,34 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef NAMINGDIRECTORYSERVICE_H_
 #define NAMINGDIRECTORYSERVICE_H_
 
-#include "DistributedObjectBrokerClient.h"
+#include "messages/DOBServiceClient.h"
 
 #include "object/DistributedObject.h"
-
 #include "object/DistributedObjectClassHelperMap.h"
 
 namespace engine {
   namespace ORB {
 
 	class NamingDirectoryService {
-		DistributedObjectBrokerClient* brokerClient;
+		HashTable<String, DistributedObjectStub*> objectNameMap;
 
-		DistributedObjectClassHelperMap* classMap;
-		
 	public:
 		NamingDirectoryService();
-		NamingDirectoryService(const String& address);
 		
 		virtual ~NamingDirectoryService();
 	
-		virtual bool bind(const String& name, DistributedObjectStub* stub);
+		bool bind(const String& name, DistributedObjectStub* stub);
 	
-		virtual DistributedObject* lookup(const String& name);
+		DistributedObject* lookup(const String& name);
 		
-		virtual DistributedObject* unbind(const String& name);
+		DistributedObject* unbind(const String& name);
 		
-		inline DistributedObjectBrokerClient* getClient() {
-			return brokerClient;
+		HashTableIterator<String, DistributedObjectStub*> getBoundObjects() {
+			return objectNameMap.iterator();
+		}
+
+		void clearNameMap() {
+			objectNameMap.removeAll();
 		}
 
 	};

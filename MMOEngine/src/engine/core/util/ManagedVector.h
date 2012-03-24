@@ -88,7 +88,7 @@ class ManagedVectorAdapter : public ManagedObjectAdapter {
 public:
 	ManagedVectorAdapter(ManagedVector* impl);
 
-	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+	void invokeMethod(sys::uint32 methid, DistributedMethod* method);
 
 };
 

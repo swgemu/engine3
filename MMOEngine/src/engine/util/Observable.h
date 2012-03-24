@@ -132,7 +132,7 @@ class ObservableAdapter : public ManagedObjectAdapter {
 public:
 	ObservableAdapter(Observable* impl);
 
-	Packet* invokeMethod(sys::uint32 methid, DistributedMethod* method);
+	void invokeMethod(sys::uint32 methid, DistributedMethod* method);
 
 	void notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2);
 

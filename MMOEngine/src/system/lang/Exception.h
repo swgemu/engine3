@@ -27,7 +27,7 @@ namespace sys {
 
 		virtual ~Exception();
 
-		void printStackTrace();
+		void printStackTrace() const;
 
 		// setters and getters
 		inline void setMessage(const String& msg) {

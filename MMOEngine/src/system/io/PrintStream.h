@@ -18,6 +18,9 @@ namespace sys {
 		StreamFlags streamFlags;
 
 	public:
+		static const char endl = '\n';
+
+	public:
 		PrintStream();
 
 		void print(char ch);

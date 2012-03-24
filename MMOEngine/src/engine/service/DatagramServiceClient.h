@@ -9,15 +9,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/lang.h"
 
 #include "ServiceClient.h"
-#include "ServiceHandler.h"
 
 namespace engine {
   namespace service {
 
 	class DatagramServiceClient : public ServiceClient {
 	protected:
-		ServiceHandler* serviceHandler;
-
 		bool doRun;
 
 	public:
@@ -33,19 +30,12 @@ namespace engine {
 
 		void recieveMessages();
 
-		void handleMessage(Packet* message) {
-			serviceHandler->handleMessage(this, message);
-		}
+		void handleMessage(Packet* message);
 
 		// socket methods
 		bool send(Packet* pack);
 
 		bool read(Packet* pack);
-
-		void setHandler(ServiceHandler* handler) {
-			serviceHandler = handler;
-		}
-
 	};
 
   } // namespace service

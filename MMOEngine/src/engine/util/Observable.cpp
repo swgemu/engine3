@@ -16,6 +16,7 @@ Observable::Observable() : ManagedObject(DummyConstructorParameter::instance()) 
 	ObservableImplementation* _implementation = new ObservableImplementation();
 	_impl = _implementation;
 	_impl->_setStub(this);
+	_setClassName("Observable");
 }
 
 Observable::Observable(DummyConstructorParameter* param) : ManagedObject(param) {
@@ -312,11 +313,15 @@ void ObservableImplementation::dropObserveableChild(Observable* observable) {
  *	ObservableAdapter
  */
 
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
 ObservableAdapter::ObservableAdapter(Observable* obj) : ManagedObjectAdapter(obj) {
 }
 
-Packet* ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
-	Packet* resp = new MethodReturnMessage(0);
+void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
 
 	switch (methid) {
 	case RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_:
@@ -338,10 +343,8 @@ Packet* ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		dropObserveableChild(static_cast<Observable*>(inv->getObjectParameter()));
 		break;
 	default:
-		return NULL;
+		throw Exception("Method does not exists");
 	}
-
-	return resp;
 }
 
 void ObservableAdapter::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
