@@ -48,14 +48,14 @@ namespace engine {
 
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID) {
-			if (!objectCreator.contains(uniqueID))
+			if (!objectCreator.containsKey(uniqueID))
 				return NULL;
 
 			return objectCreator.get(uniqueID)();
 		}
 
 		template<typename ClassType> bool registerObject(UniqueIdType uniqueID) {
-			if (objectCreator.contains(uniqueID))
+			if (objectCreator.containsKey(uniqueID))
 				return false;
 
 			objectCreator.put(uniqueID, &CreateObject<BaseClassType, ClassType>);
@@ -68,11 +68,11 @@ namespace engine {
 		}
 
 		bool containsObject(UniqueIdType uniqueID) {
-			return objectCreator.contains(uniqueID);
+			return objectCreator.containsKey(uniqueID);
 		}
 
 	protected:
-		VectorMap<UniqueIdType, CreateObjectFunc> objectCreator;
+		HashTable<UniqueIdType, CreateObjectFunc> objectCreator;
 	};
 
 	template<typename BaseClassType, typename Param1Type, typename ClassType> BaseClassType CreateObject(Param1Type param1) {
@@ -87,14 +87,14 @@ namespace engine {
 
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1) {
-			if (!objectCreator.contains(uniqueID))
+			if (!objectCreator.containsKey(uniqueID))
 				return NULL;
 
 			return objectCreator.get(uniqueID)(param1);
 		}
 
 		template<typename ClassType> bool registerObject(UniqueIdType uniqueID) {
-			if (objectCreator.contains(uniqueID))
+			if (objectCreator.containsKey(uniqueID))
 				return false;
 
 			objectCreator.put(uniqueID, &CreateObject<BaseClassType, Param1Type, ClassType>);
@@ -107,11 +107,11 @@ namespace engine {
 		}
 
 		bool containsObject(UniqueIdType uniqueID) {
-			return objectCreator.contains(uniqueID);
+			return objectCreator.containsKey(uniqueID);
 		}
 
 	protected:
-		VectorMap<UniqueIdType, CreateObjectFunc> objectCreator;
+		HashTable<UniqueIdType, CreateObjectFunc> objectCreator;
 	};
 
 	template<typename BaseClassType, typename Param1Type, typename Param2Type, typename ClassType> BaseClassType CreateObject(Param1Type param1, Param2Type param2) {
@@ -126,14 +126,14 @@ namespace engine {
 
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2) {
-			if (!objectCreator.contains(uniqueID))
+			if (!objectCreator.containsKey(uniqueID))
 				return NULL;
 
 			return objectCreator.get(uniqueID)(param1, param2);
 		}
 
 		template<typename ClassType> bool registerObject(UniqueIdType uniqueID) {
-			if (objectCreator.contains(uniqueID))
+			if (objectCreator.containsKey(uniqueID))
 				return false;
 
 			objectCreator.put(uniqueID, &CreateObject<BaseClassType, Param1Type, Param2Type, ClassType>);
@@ -146,11 +146,11 @@ namespace engine {
 		}
 
 		bool containsObject(UniqueIdType uniqueID) {
-			return objectCreator.contains(uniqueID);
+			return objectCreator.containsKey(uniqueID);
 		}
 
 	protected:
-		VectorMap<UniqueIdType, CreateObjectFunc> objectCreator;
+		HashTable<UniqueIdType, CreateObjectFunc> objectCreator;
 	};
 
 	template<typename BaseClassType, typename Param1Type, typename Param2Type, typename Param3Type, typename ClassType> BaseClassType CreateObject(Param1Type param1, Param2Type param2, Param3Type param3) {
@@ -165,14 +165,14 @@ namespace engine {
 
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2, Param3Type param3) {
-			if (!objectCreator.contains(uniqueID))
+			if (!objectCreator.containsKey(uniqueID))
 				return NULL;
 
 			return objectCreator.get(uniqueID)(param1, param2, param3);
 		}
 
 		template<typename ClassType> bool registerObject(UniqueIdType uniqueID) {
-			if (objectCreator.contains(uniqueID))
+			if (objectCreator.containsKey(uniqueID))
 				return false;
 
 			objectCreator.put(uniqueID, &CreateObject<BaseClassType, Param1Type, Param2Type, Param3Type, ClassType>);
@@ -185,11 +185,11 @@ namespace engine {
 		}
 
 		bool containsObject(UniqueIdType uniqueID) {
-			return objectCreator.contains(uniqueID);
+			return objectCreator.containsKey(uniqueID);
 		}
 
 	protected:
-		VectorMap<UniqueIdType, CreateObjectFunc> objectCreator;
+		HashTable<UniqueIdType, CreateObjectFunc> objectCreator;
 	};
 
 	template<typename BaseClassType, typename Param1Type, typename Param2Type, typename Param3Type, typename Param4Type, typename ClassType> BaseClassType CreateObject(Param1Type param1, Param2Type param2, Param3Type param3, Param4Type param4) {
@@ -204,14 +204,14 @@ namespace engine {
 
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2, Param3Type param3, Param4Type param4) {
-			if (!objectCreator.contains(uniqueID))
+			if (!objectCreator.containsKey(uniqueID))
 				return NULL;
 
 			return objectCreator.get(uniqueID)(param1, param2, param3, param4);
 		}
 
 		template<typename ClassType> bool registerObject(UniqueIdType uniqueID) {
-			if (objectCreator.contains(uniqueID))
+			if (objectCreator.containsKey(uniqueID))
 				return false;
 
 			objectCreator.put(uniqueID, &CreateObject<BaseClassType, Param1Type, Param2Type, Param3Type, Param4Type, ClassType>);
@@ -224,11 +224,11 @@ namespace engine {
 		}
 
 		bool containsObject(UniqueIdType uniqueID) {
-			return objectCreator.contains(uniqueID);
+			return objectCreator.containsKey(uniqueID);
 		}
 
 	protected:
-		VectorMap<UniqueIdType, CreateObjectFunc> objectCreator;
+		HashTable<UniqueIdType, CreateObjectFunc> objectCreator;
 	};
 
 	}

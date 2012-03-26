@@ -45,7 +45,7 @@ uint64 StringTokenizer::getLongToken() {
 	String token;
 	nextToken(token);
 
-	return Long::unsignedvalueOf(token);
+	return Long::valueOf(token);
 }
 
 void StringTokenizer::getStringToken(String& token) {

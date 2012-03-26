@@ -28,7 +28,7 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 	Vector3 portalLeft = startPoint;
 	Vector3 portalRight = startPoint;
 
-	for (int i = 1; i < triangleChannel->size(); ++i) {
+	for (int i = 0; i < triangleChannel->size(); ++i) {
 		Vector3 left;
 		Vector3 right;
 

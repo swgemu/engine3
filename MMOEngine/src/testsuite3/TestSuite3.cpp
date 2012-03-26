@@ -12,6 +12,9 @@
 #include "tests/qtstmtest.h"
 #include "tests/referencetest.h"
 #include "tests/allocatorhook.h"
+#include "tests/qtboundingtest.h"
+#include "tests/timeserialize.h"
+#include "tests/loggertest.h"
 #include "tests/orbtest.h"
 
 class TestCore : public Core {
@@ -49,6 +52,12 @@ int main(int argc, char* argv[]) {
 				referenceTest();
 			} else if (arguments.contains("memfiletest")) {
 				testMemoryMappedFile();
+			} else if (arguments.contains("qtboundingtest")) {
+				testQTBounding();
+			} else if (arguments.contains("timeserialize")) {
+				testTimeSerialization();
+			} else if (arguments.contains("loggertest")) {
+				loggertest();
 			} else if (arguments.contains("orbtestmaster")) {
 				orbTestDeploy();
 			} else if (arguments.contains("orbtest")) {

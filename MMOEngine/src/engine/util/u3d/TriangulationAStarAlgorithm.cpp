@@ -17,7 +17,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 	PriorityQueue priorityQueue;
 
-	Reference<AStarNode<TriangleNode, uint32>* > start = new AStarNode<TriangleNode, uint32>(source, 0, startPoint.squaredDistanceTo(goalPoint));
+	Reference<AStarNode<TriangleNode, uint32>* > start = new AStarNode<TriangleNode, uint32>(source, 0, startPoint.distanceTo(goalPoint));
 	priorityQueue.add(start);
 
 	Reference<AStarNode<TriangleNode, uint32>* > goal = NULL;
@@ -56,9 +56,10 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				//funnel
 
+
 				Vector<Triangle*> currentPath;
 				currentPath.add(neighbor);
-				//path->add(goal->getNode());
+
 
 				AStarNode<TriangleNode, uint32>* parent = x;
 
@@ -82,10 +83,12 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				delete funnelPath;
 
+
 				//
 
-			//	float estimatedPathDistance = neighbor->getBarycenter().squaredDistanceTo(startPoint);
+				//float estimatedPathDistance = neighbor->getBarycenter().distanceTo(startPoint);
 
+				//printf("x->getG():%f distEA:%f funnelPathDistance:%f heuristic:%f\n", x->getG(), distEA, funnelPathDistance, h);
 				float g = MAX(MAX(x->getG(), distEA), funnelPathDistance);
 
 				AStarNode<TriangleNode, uint32>* newNode = new AStarNode<TriangleNode, uint32>(neighbor, g, h);

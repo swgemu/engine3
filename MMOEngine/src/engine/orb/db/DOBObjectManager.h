@@ -35,25 +35,25 @@ namespace engine {
 			//localObjectDirectory.destroyContainingObjects();
 		}
 
-		DistributedObject* loadPersistentObject(uint64 objid) {
+		virtual DistributedObject* loadPersistentObject(uint64 objid) {
 			return NULL;
 		}
 
-		void updateModifiedObjectsToDatabase();
+		virtual void updateModifiedObjectsToDatabase();
 
-		int updatePersistentObject(DistributedObject* object);
+		virtual int updatePersistentObject(DistributedObject* object);
 
-		DistributedObjectAdapter* addObject(DistributedObjectStub* object);
+		virtual DistributedObjectAdapter* addObject(DistributedObjectStub* object);
 
-		DistributedObject* getObject(uint64 objectID);
+		virtual DistributedObject* getObject(uint64 objectID);
 
-		DistributedObjectAdapter* getAdapter(uint64 objectID);
+		virtual DistributedObjectAdapter* getAdapter(uint64 objectID);
 
-		DistributedObjectAdapter* removeObject(uint64 objectID);
+		virtual DistributedObjectAdapter* removeObject(uint64 objectID);
 
 		virtual void createObjectID(const String& name, DistributedObjectStub* object);
 
-		uint64 getNextFreeObjectID();
+		virtual uint64 getNextFreeObjectID();
 
 		//virtual void savePersistentObjects();
 	};

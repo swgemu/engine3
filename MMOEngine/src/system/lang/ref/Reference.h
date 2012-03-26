@@ -170,20 +170,15 @@ namespace sys {
 
 	protected:
 		inline void updateObject(O obj) {
-			/*if (obj == object.get())
-				return;*/
-
 			//This needs to be an atomic operation, 2 threads updating/reading this messes shit up
 			//Thread A reading while thread B updating, thread A reads NULL cause it releases and then acquires
-			/*releaseObject();
-
-			setObject(obj);*/
 
 			if (obj != NULL) {
-				Object* castedObject = dynamic_cast<Object*>(obj);
-				castedObject->acquire();
+				obj->acquire();
 
 				#ifdef TRACE_REFERENCES
+				Object* castedObject = dynamic_cast<Object*>(obj);
+
 				castedObject->addHolder(id);
 				#endif
 			}
@@ -193,13 +188,13 @@ namespace sys {
 
 				if (object.compareAndSet(oldobj, obj)) {
 					if (oldobj != NULL) {
+						#ifdef TRACE_REFERENCES
 						Object* castedObject = dynamic_cast<Object*>(oldobj);
 
-						#ifdef TRACE_REFERENCES
 						castedObject->removeHolder(id);
 						#endif
 
-						castedObject->release();
+						oldobj->release();
 					}
 
 					return;
@@ -228,7 +223,7 @@ namespace sys {
 			#ifdef TRACE_REFERENCES
 				object->addHolder(id);
 			#endif
-				(static_cast<Object*>(object.get()))->acquire();
+				object->acquire();
 			}
 		}
 
@@ -237,7 +232,7 @@ namespace sys {
 			#ifdef TRACE_REFERENCES
 				object->removeHolder(id);
 			#endif
-				(static_cast<Object*>(object.get()))->release();
+				object->release();
 				object = NULL;
 			}
 		}

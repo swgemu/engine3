@@ -297,7 +297,7 @@ String TaskManagerImpl::getInfo(bool print) {
 
 	unlock();
 
-	msg << endl << msg.toString();
+	msg << endl << msg2.toString();
 	return msg.toString();
 }
 
