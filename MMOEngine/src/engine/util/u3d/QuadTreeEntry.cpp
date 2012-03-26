@@ -18,6 +18,7 @@ QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParam
 }
 
 QuadTreeEntry::QuadTreeEntry(DummyConstructorParameter* param) : Observable(param) {
+	_setClassName("QuadTreeEntry");
 }
 
 QuadTreeEntry::~QuadTreeEntry() {
@@ -661,6 +662,8 @@ void QuadTreeEntryImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ObservableImplementation::writeObjectMembers(stream);
+
 	String _name;
 	int _offset;
 	uint16 _totalSize;
@@ -697,7 +700,7 @@ int QuadTreeEntryImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 4 + ObservableImplementation::writeObjectMembers(stream);
+	return _count + 4;
 }
 
 void QuadTreeEntryImplementation::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {

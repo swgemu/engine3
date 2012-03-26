@@ -9,6 +9,7 @@
  */
 
 ManagedService::ManagedService(DummyConstructorParameter* param) : ManagedObject(param) {
+	_setClassName("ManagedService");
 }
 
 ManagedService::~ManagedService() {
@@ -137,11 +138,13 @@ void ManagedServiceImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int ManagedServiceImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+
 	String _name;
 	int _offset;
 	uint16 _totalSize;
 
-	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
+	return _count + 0;
 }
 
 /*

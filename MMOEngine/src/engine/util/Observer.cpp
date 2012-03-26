@@ -22,6 +22,7 @@ Observer::Observer() : ManagedObject(DummyConstructorParameter::instance()) {
 }
 
 Observer::Observer(DummyConstructorParameter* param) : ManagedObject(param) {
+	_setClassName("Observer");
 }
 
 Observer::~Observer() {
@@ -223,6 +224,8 @@ void ObserverImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+
 	String _name;
 	int _offset;
 	uint16 _totalSize;
@@ -235,7 +238,7 @@ int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 1 + ManagedObjectImplementation::writeObjectMembers(stream);
+	return _count + 1;
 }
 
 int ObserverImplementation::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {

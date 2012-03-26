@@ -20,6 +20,7 @@ ManagedObject::ManagedObject() {
 }
 
 ManagedObject::ManagedObject(DummyConstructorParameter* param) {
+	_setClassName("ManagedObject");
 }
 
 ManagedObject::~ManagedObject() {

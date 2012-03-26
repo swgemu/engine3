@@ -6,11 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef CONDITION_H_
 #define CONDITION_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include <pthread.h>
 
 #include <sys/time.h>
+
+#include <errno.h>
 
 #include "system/lang/Time.h"
 
@@ -57,14 +59,14 @@ namespace sys {
 			return res;
 		}
 	
-		inline bool timedWait(Mutex* m, Time* time) {
+		inline int timedWait(Mutex* m, Time* time) {
 			return doTimedWait(&(m->mutex), time);
 		}
 	
-		inline bool timedWait(Time* time) {
+		inline int timedWait(Time* time) {
 			pthread_mutex_lock(&cmutex);
 
-			bool res = doTimedWait(&cmutex, time);
+			int res = doTimedWait(&cmutex, time);
 
 			pthread_mutex_unlock(&cmutex);
 			return res;
@@ -113,7 +115,7 @@ namespace sys {
 			return res;
 		}
 
-		inline bool doTimedWait(pthread_mutex_t* mutex, Time* time) {
+		inline int doTimedWait(pthread_mutex_t* mutex, Time* time) {
 			if (signalCount > 0) {
 				--signalCount;
 
@@ -129,11 +131,10 @@ namespace sys {
 
 			waiterCount--;
 
-			if (res != 0 && res != 116) {
+			if (res != 0 && res != ETIMEDOUT) {
 				System::out << "timedwait() failed on Condition (" << res << ")\n";
-				return false;
-			} else
-				return true;
+				return res;
+			}
 
 			return res;
 		}

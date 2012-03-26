@@ -17,7 +17,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "RemoteObjectBroker.h"
 
 void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
-	DeployObjectMessage deployMessage(obj->_getName(), obj->_getClassName());
+	const String& className = obj->_getClassName();
+	assert(!className.isEmpty());
+
+	DeployObjectMessage deployMessage(obj->_getName(), className);
 	brokerClient->sendAndAcceptReply(&deployMessage);
 
 	if (!deployMessage.isDeployed())
@@ -27,7 +30,10 @@ void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 }
 
 void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
-	DeployObjectMessage deployMessage(name, obj->_getClassName());
+	const String& className = obj->_getClassName();
+	assert(!className.isEmpty());
+
+	DeployObjectMessage deployMessage(name, className);
 	brokerClient->sendAndAcceptReply(&deployMessage);
 
 	if (!deployMessage.isDeployed())
@@ -66,7 +72,24 @@ DistributedObject* RemoteObjectBroker::lookUp(const String& name) {
 }
 
 DistributedObject* RemoteObjectBroker::lookUp(uint64 objid) {
-	return NULL;
+	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+
+	LookUpObjectByIDMessage lookupMessage(objid);
+	brokerClient->sendAndAcceptReply(&lookupMessage);
+
+	if (!lookupMessage.isFound())
+		return NULL;
+
+	const String& name = lookupMessage.getName();
+
+	DistributedObjectStub* obj = broker->createObjectStub(lookupMessage.getClassName(), name);
+	if (obj != NULL) {
+		broker->localDeploy(name, obj);
+
+		obj->_setObjectBroker(this);
+	}
+
+	return obj;
 }
 
 bool RemoteObjectBroker::destroyObject(DistributedObjectStub* obj) {

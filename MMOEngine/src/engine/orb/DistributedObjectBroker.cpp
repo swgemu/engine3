@@ -28,7 +28,7 @@ DistributedObjectBroker::DistributedObjectBroker()
 
 	objectManager = NULL;
 
-	setDebugLogLevel();
+	setInfoLogLevel();
 }
 
 DistributedObjectBroker::~DistributedObjectBroker() {
@@ -127,34 +127,43 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
+	Locker locker(objectManager);
+
+	DistributedObject* object = namingDirectoryService->lookup(name);
+	if (object != NULL)
+		return object;
+
+	locker.release();
+
 	if (!isRootBroker()) {
 		debug("looking up object \"" + name + "\" remotely");
 
-		return rootObjectBroker->lookUp(name);
-	} else {
-		Locker locker(objectManager);
-
-		return namingDirectoryService->lookup(name);
+		object = rootObjectBroker->lookUp(name);
 	}
+
+	return object;
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
+	//Locker locker(objectManager);
+
+	DistributedObject* object = objectManager->getObject(objid);
+
+	//locker.release();
+
+	if (object == NULL)
+		object = objectManager->loadPersistentObject(objid);
+
+	if (object != NULL)
+		return object;
+
 	if (!isRootBroker()) {
 		debug("looking up object 0x" + String::valueOf(objid) + " remotely");
 
 		return rootObjectBroker->lookUp(objid);
-	} else {
-		//Locker locker(objectManager);
-
-		DistributedObject* obj = objectManager->getObject(objid);
-
-		//locker.release();
-
-		if (obj == NULL)
-			obj = objectManager->loadPersistentObject(objid);
-
-		return obj;
 	}
+
+	return object;
 }
 
 bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
@@ -271,6 +280,8 @@ DistributedObjectServant* DistributedObjectBroker::createObjectServant(const Str
 
 		servant->_setStub(stub);
 		servant->_setClassHelper(helper);
+
+		stub->_setImplementation(servant);
 	} else
 		warning("class \'" + className + "\' is not declared when creating servant");
 

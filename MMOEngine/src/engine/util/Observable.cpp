@@ -20,6 +20,7 @@ Observable::Observable() : ManagedObject(DummyConstructorParameter::instance()) 
 }
 
 Observable::Observable(DummyConstructorParameter* param) : ManagedObject(param) {
+	_setClassName("Observable");
 }
 
 Observable::~Observable() {
@@ -242,6 +243,8 @@ void ObservableImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+
 	String _name;
 	int _offset;
 	uint16 _totalSize;
@@ -262,7 +265,7 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 2 + ManagedObjectImplementation::writeObjectMembers(stream);
+	return _count + 2;
 }
 
 ObservableImplementation::ObservableImplementation() {

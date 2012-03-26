@@ -20,6 +20,8 @@ namespace engine {
 	class LookUpObjectByIDMessage : public DOBMessage {
 		uint64 objectid;
 
+		String name;
+		String className;
 		bool found;
 
 	public:	
@@ -32,22 +34,39 @@ namespace engine {
 		}
 
 		void execute() {
-			DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
+			DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+			DOBObjectManager* objectManager = broker->getObjectManager();
 
 			DistributedObject* obj = objectManager->getObject(objectid);
 
 			if (obj != NULL) {
 				insertBoolean(true);
 				insertAscii(obj->_getClassName());
-				insertLong(obj->_getObjectID());
+				insertAscii(obj->_getName());
+
+				broker->debug("looked up 0x" + String::valueOf(objectid) + " with name \'"
+						+ obj->_getName() + "\' (" + obj->_getClassName() + ")");
 			} else
-				insertByte(0);
+				insertBoolean(false);
 
 			client->sendReply(this);
 		}
 
 		void handleReply(Packet* message) {
 			found = message->parseBoolean();
+
+			if (found) {
+				message->parseAscii(className);
+				message->parseAscii(name);
+			}
+		}
+
+		const String& getClassName() {
+			return className;
+		}
+
+		const String& getName() {
+			return name;
 		}
 
 		bool isFound() {

@@ -49,6 +49,9 @@ namespace engine {
 		String address;
 		int port;
 
+	public:
+		static const int NAMING_DIRECTORY_PORT = 44459;
+
 	protected:
 		DistributedObjectBroker();
 

@@ -18,6 +18,7 @@ TestIDLClass::TestIDLClass(int val) : ManagedObject(DummyConstructorParameter::i
 }
 
 TestIDLClass::TestIDLClass(DummyConstructorParameter* param) : ManagedObject(param) {
+	_setClassName("TestIDLClass");
 }
 
 TestIDLClass::~TestIDLClass() {
@@ -174,6 +175,8 @@ void TestIDLClassImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int TestIDLClassImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+
 	String _name;
 	int _offset;
 	uint16 _totalSize;
@@ -186,7 +189,7 @@ int TestIDLClassImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	stream->writeShort(_offset, _totalSize);
 
 
-	return 1 + ManagedObjectImplementation::writeObjectMembers(stream);
+	return _count + 1;
 }
 
 TestIDLClassImplementation::TestIDLClassImplementation(int val) {

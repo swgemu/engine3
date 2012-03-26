@@ -9,6 +9,7 @@
  */
 
 ManagedVector::ManagedVector(DummyConstructorParameter* param) : ManagedObject(param) {
+	_setClassName("ManagedVector");
 }
 
 ManagedVector::~ManagedVector() {
@@ -137,11 +138,13 @@ void ManagedVectorImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int ManagedVectorImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+
 	String _name;
 	int _offset;
 	uint16 _totalSize;
 
-	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
+	return _count + 0;
 }
 
 /*

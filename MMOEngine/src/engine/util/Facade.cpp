@@ -18,6 +18,7 @@ Facade::Facade() : ManagedObject(DummyConstructorParameter::instance()) {
 }
 
 Facade::Facade(DummyConstructorParameter* param) : ManagedObject(param) {
+	_setClassName("Facade");
 }
 
 Facade::~Facade() {
@@ -181,11 +182,13 @@ void FacadeImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int FacadeImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+
 	String _name;
 	int _offset;
 	uint16 _totalSize;
 
-	return 0 + ManagedObjectImplementation::writeObjectMembers(stream);
+	return _count + 0;
 }
 
 FacadeImplementation::FacadeImplementation() {
