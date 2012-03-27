@@ -26,7 +26,7 @@ void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 	if (!deployMessage.isDeployed())
 		throw ObjectAlreadyDeployedException(obj);
 
-	obj->_setObjectID(deployMessage.getObjectID());
+	// obj->_setObjectID(deployMessage.getObjectID());
 }
 
 void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
@@ -39,7 +39,7 @@ void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) 
 	if (!deployMessage.isDeployed())
 		throw ObjectAlreadyDeployedException(obj);
 
-	obj->_setObjectID(deployMessage.getObjectID());
+	// obj->_setObjectID(deployMessage.getObjectID());
 }
 
 DistributedObjectStub* RemoteObjectBroker::undeploy(const String& name) {

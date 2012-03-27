@@ -38,7 +38,7 @@ namespace engine {
 
 			DistributedObjectStub* obj = NULL;
 			try {
-				obj = broker->localUndeploy(name);
+				//obj = broker->localUndeploy(name);
 			} catch (const Exception& e) {
 				e.printStackTrace();
 			}

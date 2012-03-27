@@ -25,7 +25,7 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 	try {
 		uint32 messageType = message->parseInt();
 
-		System::out << "DOBMessage: " << messageType << " arrived with content: " << message->toStringData() << "\n";
+		//System::out << "DOBMessage: " << messageType << " arrived with content: " << message->toStringData() << "\n";
 
 		if (messageType != DOBMessage::REPLYMESSAGE) {
 			DOBMessage* dobMessage = create(messageType, message);

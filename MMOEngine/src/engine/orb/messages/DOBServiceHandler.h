@@ -47,7 +47,7 @@ public:
 	void messageSent(Packet* message){
 		uint32 messageType = message->parseInt(0);
 
-		System::out << "DOBMessage: " << messageType << " sent with content: " << message->toStringData() << "\n";
+		//System::out << "DOBMessage: " << messageType << " sent with content: " << message->toStringData() << "\n";
 	}
 
 	bool handleError(ServiceClient* client, Exception& e) {

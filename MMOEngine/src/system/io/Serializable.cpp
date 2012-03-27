@@ -172,11 +172,13 @@ ObjectOutputStream* Serializable::addVariable(const String& variableName, Object
 	uint16 oldVariableCount = object->readShort();
 
 	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
-	object->copy(newData);
+	object->copy(newData, 0);
 
 	newData->writeShort(0, oldVariableCount + 1);
 
-	newData->setOffset(newData->size() - 1);
+	newData->setOffset(newData->size());
+
+	const_cast<String*>(&variableName)->toBinaryStream(newData);
 
 	newData->writeShort(newVariableData->size());
 	newData->writeStream(newVariableData);
