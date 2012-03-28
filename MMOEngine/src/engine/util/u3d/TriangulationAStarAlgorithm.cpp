@@ -22,7 +22,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 	Reference<AStarNode<TriangleNode, uint32>* > goal = NULL;
 
-	while (priorityQueue.size() != 0 && goal == NULL) {
+	while (!priorityQueue.isEmpty() && goal == NULL) {
 		Reference<AStarNode<TriangleNode, uint32>* > x = (AStarNode<TriangleNode, uint32>*)const_cast<PriorityQueueEntry*>(priorityQueue.poll());
 
 		if (target == x->getNode()) {
