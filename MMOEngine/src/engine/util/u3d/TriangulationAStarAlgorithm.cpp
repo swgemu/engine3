@@ -23,7 +23,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 	Reference<AStarNode<TriangleNode, uint32>* > goal = NULL;
 
 	while (!priorityQueue.isEmpty() && goal == NULL) {
-		Reference<AStarNode<TriangleNode, uint32>* > x = (AStarNode<TriangleNode, uint32>*)const_cast<PriorityQueueEntry*>(priorityQueue.poll());
+		Reference<AStarNode<TriangleNode, uint32>* > x = static_cast<AStarNode<TriangleNode, uint32>*>(const_cast<PriorityQueueEntry*>(priorityQueue.poll()));
 
 		if (target == x->getNode()) {
 			goal = x;
@@ -56,7 +56,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				//funnel
 
-
+/*
 				Vector<Triangle*> currentPath;
 				currentPath.add(neighbor);
 
@@ -83,13 +83,13 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				delete funnelPath;
 
-
+*/
 				//
 
-				//float estimatedPathDistance = neighbor->getBarycenter().distanceTo(startPoint);
-
 				//printf("x->getG():%f distEA:%f funnelPathDistance:%f heuristic:%f\n", x->getG(), distEA, funnelPathDistance, h);
-				float g = MAX(MAX(x->getG(), distEA), funnelPathDistance);
+	//			float g = MAX(MAX(x->getG(), distEA), funnelPathDistance);
+
+				float g = MAX(MAX(x->getG(), distEA), x->getG() + (x->getHeuristic() - h));
 
 				AStarNode<TriangleNode, uint32>* newNode = new AStarNode<TriangleNode, uint32>(neighbor, g, h);
 				newNode->setCameFrom(x);

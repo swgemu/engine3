@@ -16,12 +16,6 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 
 	path->add(startPoint);
 
-	if (triangleChannel->size() < 3) {
-		path->add(goalPoint);
-
-		return path;
-	}
-
 	int apexIndex = 0, leftIndex = 0, rightIndex = 0;
 
 	Vector3 portalApex = startPoint;
