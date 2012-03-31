@@ -79,7 +79,7 @@ void Serializable::writeObject(ObjectOutputStream* stream) {
 		name.toBinaryStream(stream);
 
 		int offset = stream->getOffset();
-		stream->writeShort(0);
+		stream->writeInt(0);
 
 		if (type == 0) {
 			(static_cast<Variable*>(variable))->toBinaryStream(stream);
@@ -87,9 +87,9 @@ void Serializable::writeObject(ObjectOutputStream* stream) {
 			serializeAtomicType(variable, type, stream);
 		}
 
-		uint16 totalSize = (uint16) (stream->getOffset() - (offset + 2));
+		uint32 totalSize = (uint32) (stream->getOffset() - (offset + 4));
 
-		stream->writeShort(offset, totalSize);
+		stream->writeInt(offset, totalSize);
 	}
 }
 
@@ -101,7 +101,7 @@ int Serializable::getVariableDataOffset(const String& variableName, ObjectInputS
 		String name;
 		name.parseFromBinaryStream(stream);
 
-		uint16 varSize = stream->readShort();
+		uint32 varSize = stream->readInt();
 
 		offset = stream->getOffset();
 
@@ -129,7 +129,7 @@ int Serializable::getVariableNames(Vector<String>& variableNames, ObjectInputStr
 
 		variableNames.add(name);
 
-		uint16 varSize = stream->readShort();
+		uint32 varSize = stream->readInt();
 		stream->shiftOffset(varSize);
 	}
 
@@ -149,15 +149,15 @@ ObjectOutputStream* Serializable::changeVariableData(const String& variableName,
 
 	object->reset();
 	newData->reset();
-	object->shiftOffset(offset - 2);
-	uint16 dataSize = object->readShort();
+	object->shiftOffset(offset - 4);
+	uint32 dataSize = object->readInt();
 
 	newData->shiftOffset(offset); //we go data length
 
 	if (dataSize > 0)
 		newData->removeRange(offset, offset + dataSize);
 
-	newData->writeShort(offset - 2, newVariableData->size());
+	newData->writeInt(offset - 4, newVariableData->size());
 	newData->insertStream(newVariableData, newVariableData->size(), offset);
 
 	object->reset();
@@ -180,7 +180,7 @@ ObjectOutputStream* Serializable::addVariable(const String& variableName, Object
 
 	const_cast<String*>(&variableName)->toBinaryStream(newData);
 
-	newData->writeShort(newVariableData->size());
+	newData->writeInt(newVariableData->size());
 	newData->writeStream(newVariableData);
 
 	return newData;
@@ -199,7 +199,7 @@ ObjectOutputStream* Serializable::deleteVariable(const String& variableName, Obj
 		String name;
 		name.parseFromBinaryStream(object);
 
-		uint16 varSize = object->readShort();
+		uint32 varSize = object->readInt();
 
 		if (name == variableName) {
 			//2 bytes size
@@ -238,7 +238,7 @@ ObjectOutputStream* Serializable::changeVariableName(const String& variableName,
 		String name;
 		name.parseFromBinaryStream(object);
 
-		uint16 varSize = object->readShort();
+		uint32 varSize = object->readInt();
 
 		if (name == variableName) {
 			//2 bytes size
@@ -285,7 +285,7 @@ void Serializable::readObject(ObjectInputStream* stream) {
 		String name;
 		name.parseFromBinaryStream(stream);
 
-		uint16 varSize = stream->readShort();
+		uint32 varSize = stream->readInt();
 
 		VariableName var;
 		var.setName(name.toCharArray());
