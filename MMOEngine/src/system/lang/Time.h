@@ -157,6 +157,17 @@ namespace sys {
 
 		}
 
+		String getFormattedTime() {
+			char str[100];
+
+			char* ret = ctime_r(&ts.tv_sec, str);
+
+			if (ret != NULL)
+				return String(ret);
+			else
+				return String("");
+		}
+
 		int compareMiliTo(Time& t) {
 			uint64 t1 = getMiliTime();
 			uint64 t2 = t.getMiliTime();
