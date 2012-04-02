@@ -21,17 +21,13 @@ public:
 };
 
 DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000){
-	//helperObjectMap = new ObjectContainer<uint64, DistributedObject*>(new DirectoryKeyHandler());
-	helperObjectMap = new HashTable<uint64, Reference<DistributedObject*> >();
 }
 
 DistributedObjectDirectory::~DistributedObjectDirectory() {
-	//delete helperObjectMap;
-	helperObjectMap = NULL;
 }
 
 DistributedObjectAdapter* DistributedObjectDirectory::add(uint64 objid, DistributedObjectAdapter* adapter) {
-	helperObjectMap->put(objid, adapter->getStub());
+	helperObjectMap.add(objid, adapter->getStub());
 
 	return objectMap.put(objid, adapter);
 }
@@ -46,7 +42,7 @@ DistributedObject* DistributedObjectDirectory::get(uint64 objid) {
 	}
 
 	if (adapter != NULL) {
-		helperObjectMap->put(objid, adapter->getStub());
+		helperObjectMap.add(objid, adapter->getStub());
 		return adapter->getStub();
 	} else
 		return NULL;
@@ -58,13 +54,13 @@ DistributedObjectAdapter* DistributedObjectDirectory::remove(uint64 objid) {
 	if (adapter != NULL)
 		objectMap.remove(objid);
 	
-	helperObjectMap->remove(objid);
+	helperObjectMap.remove(objid);
 
 	return adapter;
 }
 
 void DistributedObjectDirectory::removeHelper(uint64 objid) {
-	helperObjectMap->remove(objid);
+	helperObjectMap.remove(objid);
 }
 
 DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {

@@ -30,6 +30,9 @@ namespace engine {
 
 		virtual void processMessage(Message* message) = 0;
 
+		virtual void handleReject(Packet* message) {
+		}
+
 		virtual void messageSent(Packet* message) {
 		}
 

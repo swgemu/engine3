@@ -137,3 +137,7 @@ bool LocalObjectManager::destroyObject(DistributedObjectStub* obj) {
 
 	return true;
 }
+
+uint64 LocalObjectManager::getNextFreeObjectID() {
+	return objectManager->getNextFreeObjectID();
+}

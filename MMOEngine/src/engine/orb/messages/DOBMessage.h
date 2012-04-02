@@ -54,11 +54,11 @@ namespace engine {
 			replyCondition.signal();
 		}
 
-		void waitForReply(uint32 timeout = 3000) {
+		bool waitForReply(uint32 timeout = 10000) {
 			Time time;
 			time.addMiliTime(timeout);
 
-			replyCondition.timedWait(&time);
+			return replyCondition.timedWait(&time) == 0;
 		}
 
 		DOBServiceClient* getClient() {

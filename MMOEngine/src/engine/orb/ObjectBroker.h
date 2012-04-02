@@ -39,6 +39,8 @@ namespace engine {
 		virtual DistributedObject* lookUp(uint64 objid) = 0;
 
 		virtual bool destroyObject(DistributedObjectStub* obj) = 0;
+
+		virtual uint64 getNextFreeObjectID() = 0;
 	};
 
   } // namespace ORB

@@ -23,9 +23,9 @@ DOBMessageFactory::DOBMessageFactory() {
 
 void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 	try {
-		uint32 messageType = message->parseInt();
+		DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
-		//System::out << "DOBMessage: " << messageType << " arrived with content: " << message->toStringData() << "\n";
+		uint32 messageType = message->parseInt();
 
 		if (messageType != DOBMessage::REPLYMESSAGE) {
 			DOBMessage* dobMessage = create(messageType, message);
@@ -33,13 +33,21 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 
 			dobMessage->setClient(client);
 
+			broker->debug("DOBMessage(" + String::valueOf(dobMessage->getSequence()) + "): " + String::valueOf(messageType)
+							+ " arrived with content: " + message->toStringData());
+
 			dobMessage->execute();
 		} else {
 			DOBMessage* queuedMessage = client->getQueuedMessage(message->parseInt());
+
+			broker->debug("DOBMessage(" + String::valueOf(queuedMessage->getSequence()) + "): "
+							+ "reply arrived with content: " + message->toStringData());
+
 			queuedMessage->handleReply(message);
 
 			queuedMessage->signalReply();
 		}
+
 	} catch (const StreamIndexOutOfBoundsException& e) {
 		e.printStackTrace();
 

@@ -382,15 +382,16 @@ MMOEngine/src/engine/lua/Luna.h -text
 MMOEngine/src/engine/lua/Lunar.h -text
 MMOEngine/src/engine/orb/DistributedObjectBroker.cpp -text
 MMOEngine/src/engine/orb/DistributedObjectBroker.h -text
+MMOEngine/src/engine/orb/DistributionException.h -text
 MMOEngine/src/engine/orb/NameAlreadyBoundException.h -text
 MMOEngine/src/engine/orb/NamingDirectoryService.cpp -text
 MMOEngine/src/engine/orb/NamingDirectoryService.h -text
 MMOEngine/src/engine/orb/ObjectBroker.h -text
-MMOEngine/src/engine/orb/ObjectBrokerDirectory.h -text
 MMOEngine/src/engine/orb/db/DOBObjectManager.cpp -text
 MMOEngine/src/engine/orb/db/DOBObjectManager.h -text
 MMOEngine/src/engine/orb/db/DistributedObjectDirectory.cpp -text
 MMOEngine/src/engine/orb/db/DistributedObjectDirectory.h -text
+MMOEngine/src/engine/orb/db/DistributedObjectMap.h -text
 MMOEngine/src/engine/orb/messages/DOBMessage.h -text
 MMOEngine/src/engine/orb/messages/DOBMessageFactory.cpp -text
 MMOEngine/src/engine/orb/messages/DOBMessageFactory.h -text

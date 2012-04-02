@@ -28,6 +28,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "object/DistributedMethod.h"
 
+#include "db/DistributedObjectMap.h"
+
 namespace engine {
   namespace core {
   	class Core;
@@ -45,6 +47,8 @@ namespace engine {
 		DistributedObjectClassHelperMap classMap;
 
 		DOBObjectManager* objectManager;
+
+		DistributedObjectMap remoteObjectCache;
 
 		String address;
 		int port;
@@ -85,6 +89,8 @@ namespace engine {
 		DistributedObjectAdapter* getObjectAdapter(const String& name);
 		DistributedObjectAdapter* getObjectAdapter(uint64 oid);
 
+		uint64 getNextFreeObjectID();
+
 		// getters
 		bool isRootBroker() {
 			return rootObjectBroker == NULL;
@@ -102,9 +108,11 @@ namespace engine {
 		void setCustomObjectManager(DOBObjectManager* manager);
 
 	private:
-		void localDeploy(const String& name, DistributedObjectStub* obj);
+		void deployLocal(const String& name, DistributedObjectStub* obj);
+		void deployRemote(const String& name, DistributedObjectStub* obj);
 
-		DistributedObjectStub* localUndeploy(const String& name);
+		DistributedObjectStub* undeployLocal(const String& name);
+		DistributedObjectStub* undeployRemote(const String& name);
 
 		friend class engine::core::Core;
 		friend class NamingDirectoryService;

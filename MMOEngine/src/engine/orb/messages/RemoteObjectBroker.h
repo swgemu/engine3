@@ -47,6 +47,8 @@ namespace engine {
 		bool destroyObject(DistributedObjectStub* obj);
 
 		void invokeMethod(DistributedMethod& method);
+
+		uint64 getNextFreeObjectID();
 	};
 
   } // namespace ORB

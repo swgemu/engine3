@@ -75,7 +75,10 @@ bool DOBServiceClient::sendAndAcceptReply(DOBMessage* message) {
 	//info("SEND " + pack->toString());
 	StreamServiceClient::send(message);
 
-	message->waitForReply();
+	bool res =  message->waitForReply();
 
-	return true;
+	if (!res)
+		error("timeout on message " + String::valueOf(message->getSequence()));
+
+	return res;
 }

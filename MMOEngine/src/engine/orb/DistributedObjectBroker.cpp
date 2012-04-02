@@ -28,7 +28,7 @@ DistributedObjectBroker::DistributedObjectBroker()
 
 	objectManager = NULL;
 
-	setInfoLogLevel();
+	setDebugLogLevel();
 }
 
 DistributedObjectBroker::~DistributedObjectBroker() {
@@ -113,7 +113,7 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 		rootObjectBroker->deploy(obj);
 	}
 
-	localDeploy(name, obj);
+	deployLocal(name, obj);
 }
 
 void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
@@ -123,7 +123,7 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 		rootObjectBroker->deploy(name, obj);
 	}
 
-	localDeploy(name, obj);
+	deployLocal(name, obj);
 }
 
 DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
@@ -147,7 +147,22 @@ DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
 DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
 	//Locker locker(objectManager);
 
-	DistributedObject* object = objectManager->getObject(objid);
+	DistributedObject* object = NULL;
+
+	if (!isRootBroker()) {
+		object = remoteObjectCache.get(objid);
+		if (object != NULL) {
+			debug("found object 0x" + String::valueOf(objid) + " in remote cache");
+
+			return object;
+		}
+
+		debug("looking up object 0x" + String::valueOf(objid) + " remotely");
+
+		return rootObjectBroker->lookUp(objid);
+	}
+
+	object = objectManager->getObject(objid);
 
 	//locker.release();
 
@@ -156,12 +171,6 @@ DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
 
 	if (object != NULL)
 		return object;
-
-	if (!isRootBroker()) {
-		debug("looking up object 0x" + String::valueOf(objid) + " remotely");
-
-		return rootObjectBroker->lookUp(objid);
-	}
 
 	return object;
 }
@@ -193,10 +202,20 @@ DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 		rootObjectBroker->undeploy(name);
 	}
 
-	return localUndeploy(name);
+	return undeployLocal(name);
 }
 
-void DistributedObjectBroker::localDeploy(const String& name, DistributedObjectStub* obj) {
+uint64 DistributedObjectBroker::getNextFreeObjectID() {
+	if (!isRootBroker()) {
+		debug("getting next free objectID remotely");
+
+		return rootObjectBroker->getNextFreeObjectID();
+	}
+
+	return objectManager->getNextFreeObjectID();
+}
+
+void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectStub* obj) {
 	Locker locker(objectManager);
 
 	assert(!obj->isDeplyoed());
@@ -209,12 +228,30 @@ void DistributedObjectBroker::localDeploy(const String& name, DistributedObjectS
 	if (objectManager->addObject(obj) != NULL) {
 		throw ObjectAlreadyDeployedException(obj);
 	} else
-		debug("object \'" + obj->_getName() + "\' deployed");
+		debug("object \'" + obj->_getName() + "\' deployed with ID 0x" + String::valueOf(obj->_getObjectID()));
 
 	obj->setDeployed(true);
 }
 
-DistributedObjectStub* DistributedObjectBroker::localUndeploy(const String& name) {
+void DistributedObjectBroker::deployRemote(const String& name, DistributedObjectStub* obj) {
+	Locker locker(objectManager);
+
+	assert(!obj->isDeplyoed());
+
+	objectManager->createObjectID(name, obj);
+
+	if (!namingDirectoryService->bind(obj->_getName(), obj))
+		throw NameAlreadyBoundException(obj);
+
+	if (remoteObjectCache.add(obj->_getObjectID(), obj) != NULL) {
+		throw ObjectAlreadyDeployedException(obj);
+	} else
+		debug("remote object \'" + obj->_getName() + "\' deployed with ID 0x" + String::valueOf(obj->_getObjectID()));
+
+	obj->setDeployed(true);
+}
+
+DistributedObjectStub* DistributedObjectBroker::undeployLocal(const String& name) {
 	Locker locker(objectManager); //Locker locker(this);
 
 	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryService->unbind(name);
@@ -239,6 +276,23 @@ DistributedObjectStub* DistributedObjectBroker::localUndeploy(const String& name
 	#endif
 
 		debug("object \'" + obj->_getName() + "\' undeployed");
+	}
+
+	return obj;
+}
+
+DistributedObjectStub* DistributedObjectBroker::undeployRemote(const String& name) {
+	Locker locker(objectManager); //Locker locker(this);
+
+	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryService->unbind(name);
+
+	locker.release();
+
+	if (obj != NULL) {
+		remoteObjectCache.remove(obj->_getObjectID());
+
+
+		debug("remote object \'" + obj->_getName() + "\' undeployed");
 	}
 
 	return obj;

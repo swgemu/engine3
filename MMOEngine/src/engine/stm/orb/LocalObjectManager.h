@@ -46,6 +46,8 @@ namespace engine {
 		DistributedObject* lookUp(uint64 objid);
 
 		bool destroyObject(DistributedObjectStub* obj);
+
+		uint64 getNextFreeObjectID();
   	};
 
   } // namespace stm

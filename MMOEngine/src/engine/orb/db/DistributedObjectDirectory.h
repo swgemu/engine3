@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/orb/object/DistributedObject.h"
 #include "engine/orb/object/DistributedObjectAdapter.h"
 
+#include "DistributedObjectMap.h"
+
 #include "engine/util/ObjectContainer.h"
 
 namespace engine {
@@ -17,8 +19,7 @@ namespace engine {
 	class DistributedObjectDirectory {
     	HashTable<uint64, DistributedObjectAdapter*> objectMap;
 
-    	HashTable<uint64, Reference<DistributedObject*> >* helperObjectMap;
-    	//HashTable<uint64, Reference<DistributedObject*> >* helperObjectMap;
+    	DistributedObjectMap helperObjectMap;
 	
 	public:
 		DistributedObjectDirectory();

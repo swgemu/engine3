@@ -107,6 +107,10 @@ namespace engine {
 
 		DistributedObject* getObjectParameter();
 
+		DistributedObject* getObject() {
+			return object;
+		}
+
 		InvokeMethodMessage* getInvocationMessage() {
 			return invocationMessgage;
 		}

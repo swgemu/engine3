@@ -44,7 +44,7 @@ namespace engine {
 			DistributedObjectStub* obj = broker->createObjectStub(className, name);
 			if (obj != NULL) {
 				try {
-					broker->localDeploy(obj->_getName(), obj);
+					broker->deployLocal(obj->_getName(), obj);
 
 					obj->_setObjectBroker(remoteBroker);
 

@@ -44,10 +44,15 @@ public:
 		//broker->processMessage(message);
 	}
 
-	void messageSent(Packet* message){
+	void messageSent(Packet* packet){
+		DOBMessage* message = static_cast<DOBMessage*>(packet);
+
+		DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+
 		uint32 messageType = message->parseInt(0);
 
-		//System::out << "DOBMessage: " << messageType << " sent with content: " << message->toStringData() << "\n";
+		broker->debug("DOBMessage(" + String::valueOf(message->getSequence()) + "): " + String::valueOf(messageType)
+						+ " sent with content: " + message->toStringData());
 	}
 
 	bool handleError(ServiceClient* client, Exception& e) {

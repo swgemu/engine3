@@ -23,19 +23,16 @@ namespace engine {
 		uint64 objectID;
 
 	public:
-		GetNextFreeObjectIDMessage(bool doLock) : DOBMessage(GETNEXTFREEOBJECTIDMESSAGE, 10) {
-			insertBoolean(doLock);
+		GetNextFreeObjectIDMessage() : DOBMessage(GETNEXTFREEOBJECTIDMESSAGE, 20) {
 		}
 
 		GetNextFreeObjectIDMessage(Packet* message) : DOBMessage(message) {
-			doLock = message->parseBoolean();
 		}
 
 		void execute() {
-			DistributedObjectBroker* orb = DistributedObjectBroker::instance();
-			DOBObjectManager* objectManager = orb->getObjectManager();
+			DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
-			uint64 objectID = objectManager->getNextFreeObjectID();
+			uint64 objectID = broker->getNextFreeObjectID();
 
 			insertLong(objectID);
 			client->sendReply(this);
