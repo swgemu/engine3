@@ -149,6 +149,16 @@ DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
 
 	DistributedObject* object = NULL;
 
+	object = objectManager->getObject(objid);
+
+	//locker.release();
+
+	if (object == NULL)
+		object = objectManager->loadPersistentObject(objid);
+
+	if (object != NULL)
+		return object;
+
 	if (!isRootBroker()) {
 		object = remoteObjectCache.get(objid);
 		if (object != NULL) {
@@ -161,16 +171,6 @@ DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
 
 		return rootObjectBroker->lookUp(objid);
 	}
-
-	object = objectManager->getObject(objid);
-
-	//locker.release();
-
-	if (object == NULL)
-		object = objectManager->loadPersistentObject(objid);
-
-	if (object != NULL)
-		return object;
 
 	return object;
 }
