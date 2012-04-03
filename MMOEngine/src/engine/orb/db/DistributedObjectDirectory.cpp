@@ -68,7 +68,7 @@ DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {
 }
 
 void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
-		Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM) {
+		Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
 
 	objectsToUpdate.removeAll(objectMap.size(), 1);
 
@@ -82,6 +82,11 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 
 		if (dobObject->getReferenceCount() == 1)
 			objectsToDeleteFromRAM.add(dobObject);
+		else if (inRamClassCount != NULL) {
+			String className = TypeInfo<DistributedObject>::getClassName(dobObject, false);
+
+			inRamClassCount->put(className, inRamClassCount->get(className) + 1);
+		}
 
 		ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
 

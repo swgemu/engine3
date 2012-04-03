@@ -35,7 +35,8 @@ namespace engine {
 
 		DistributedObjectAdapter* getAdapter(uint64 objid);
 
-		void getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete, Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM);
+		void getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
+				Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount);
 
 		inline int getSize() {
 			return objectMap.size();
