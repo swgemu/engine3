@@ -99,12 +99,11 @@ void DOBObjectManager::createObjectID(const String& name, DistributedObjectStub*
 uint64 DOBObjectManager::getNextFreeObjectID() {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
-	if (!broker->isRootBroker())
+	if (!broker->isRootBroker()) {
 		return broker->getNextFreeObjectID();
+	}
 
-	Locker _locker(this);
-
-	uint64 val = ++nextObjectID;
+	uint64 val = nextObjectID.increment();
 
 	return val;
 }

@@ -26,7 +26,7 @@ namespace engine {
 	protected:
 		DistributedObjectDirectory localObjectDirectory;
 
-		uint64 nextObjectID;
+		AtomicLong nextObjectID;
 
 	public:
 		DOBObjectManager();
