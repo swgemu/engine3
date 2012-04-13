@@ -196,7 +196,11 @@ void Object::destroy() {
 	if (getReferenceCount() > 0)
 		assert(0 && "Deleting object with reference > 0");
 
+#ifdef WITH_STM
 	free();
+#else
+	Object::free();
+#endif
 }
 
 void Object::free() {
