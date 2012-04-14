@@ -274,7 +274,7 @@ DistributedObject* FacadeHelper::instantiateObject() {
 }
 
 DistributedObjectServant* FacadeHelper::instantiateServant() {
-	return new FacadeImplementation(DummyConstructorParameter::instance());
+	return new FacadeImplementation();
 }
 
 DistributedObjectAdapter* FacadeHelper::createAdapter(DistributedObjectStub* obj) {

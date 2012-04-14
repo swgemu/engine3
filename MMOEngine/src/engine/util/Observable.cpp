@@ -395,7 +395,7 @@ DistributedObject* ObservableHelper::instantiateObject() {
 }
 
 DistributedObjectServant* ObservableHelper::instantiateServant() {
-	return new ObservableImplementation(DummyConstructorParameter::instance());
+	return new ObservableImplementation();
 }
 
 DistributedObjectAdapter* ObservableHelper::createAdapter(DistributedObjectStub* obj) {

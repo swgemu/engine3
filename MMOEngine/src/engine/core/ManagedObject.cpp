@@ -693,7 +693,7 @@ DistributedObject* ManagedObjectHelper::instantiateObject() {
 }
 
 DistributedObjectServant* ManagedObjectHelper::instantiateServant() {
-	return new ManagedObjectImplementation(DummyConstructorParameter::instance());
+	return new ManagedObjectImplementation();
 }
 
 DistributedObjectAdapter* ManagedObjectHelper::createAdapter(DistributedObjectStub* obj) {
