@@ -101,7 +101,7 @@ void TaskScheduler::run() {
 		#endif
 			debug("executing scheduled task");
 
-			task->execute();
+			task->doExecute();
 		} catch (Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();

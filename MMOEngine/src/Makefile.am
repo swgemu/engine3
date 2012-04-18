@@ -98,6 +98,8 @@ libengine3_a_SOURCES = \
 			engine/orb/NamingDirectoryService.cpp \
 			engine/orb/db/DistributedObjectDirectory.cpp \
 			engine/orb/db/DOBObjectManager.cpp \
+			engine/orb/db/CommitMasterTransactionThread.cpp \
+			engine/orb/db/UpdateModifiedObjectsThread.cpp \
 			engine/orb/object/DistributedObject.cpp \
 			engine/orb/object/DistributedObjectServant.cpp \
 			engine/orb/object/DistributedObjectStub.cpp \
@@ -105,6 +107,8 @@ libengine3_a_SOURCES = \
 			engine/orb/messages/RemoteObjectBroker.cpp \
 			engine/orb/messages/DOBServiceClient.cpp \
 			engine/orb/messages/DOBMessageFactory.cpp \
+			engine/orb/control/ObjectBrokerDirector.cpp \
+			engine/orb/control/ObjectBrokerAgent.cpp \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/stm/mm/KernelCall.cpp \

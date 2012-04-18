@@ -33,9 +33,12 @@ namespace engine {
 		
 		bool send(DOBMessage* message);
 
-		bool sendReply(DOBMessage* message);
 		bool sendAndAcceptReply(DOBMessage* message);
+		bool sendReply(DOBMessage* message);
+		bool sendWithReply(DOBMessage* message);
 		
+		bool waitForReply(DOBMessage* message);
+
 		inline RemoteObjectBroker* getRemoteObjectBroker() {
 			return rob;
 		}

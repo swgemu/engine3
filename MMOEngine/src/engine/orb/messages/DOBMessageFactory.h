@@ -21,6 +21,10 @@ namespace engine {
 
 	private:
 		DOBMessage* create(uint32 messageType, Packet* packet);
+
+		class MessageProcessorTask : public Task {
+
+		};
 	};
 
   } // namespace ORB

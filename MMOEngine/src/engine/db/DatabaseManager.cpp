@@ -318,6 +318,8 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
 	}*/
 
+	assert(transaction != NULL);
+
 	if ((commitRet = transaction->commitSync()) != 0) {
 		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
 	}

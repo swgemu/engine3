@@ -38,7 +38,7 @@ void TaskWorkerThread::run() {
 		try {
 			debug("executing task");
 
-			task->execute();
+			task->doExecute();
 		} catch (Exception& e) {
 			error(e.getMessage());
 		} catch (...) {

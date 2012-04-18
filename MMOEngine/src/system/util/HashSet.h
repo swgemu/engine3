@@ -52,6 +52,10 @@ namespace sys {
 
 		HashSetIterator(HashSet<E>* set)  :  HashTableIterator<E, uint8>(set) {
 		}
+
+		E& next() {
+			return HashTableIterator<E, uint8>::getNextKey();
+		}
 	};
 
   } // namespace util

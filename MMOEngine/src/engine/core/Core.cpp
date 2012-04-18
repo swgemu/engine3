@@ -80,7 +80,7 @@ public:
 
 void Core::start() {
 	Reference<Task*> initializerTask = new CoreInitializationTask(this);
-	initializerTask->execute();
+	initializerTask->doExecute();
 
 	run();
 }

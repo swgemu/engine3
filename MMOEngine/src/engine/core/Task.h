@@ -42,8 +42,6 @@ namespace engine {
 
 		virtual ~Task();
 
-		void execute();
-
 		bool isScheduled();
 
 		bool cancel();
@@ -60,6 +58,8 @@ namespace engine {
 		void reschedule(uint64 delay = 0);
 		void rescheduleNonTransactionally(uint64 delay = 0);
 		void reschedule(Time& time);
+
+		void execute();
 
 		int compareTo(PriorityQueueEntry* node) {
 			Task* task = (Task*) node;
@@ -89,6 +89,8 @@ namespace engine {
 
 	protected:
 		void initialize();
+
+		void doExecute();
 
 		void setExecutionTime(Time& time) {
 			nextExecutionTime = time;
@@ -157,8 +159,11 @@ namespace engine {
 	#endif
 
 		friend class TimedTaskQueue;
+		friend class TaskScheduler;
+		friend class TaskWorkerThread;
 		friend class engine::stm::LocalTaskManager;
 		friend class engine::stm::TransactionalTaskManager;
+		friend class engine::core::Core;
 		friend class engine::core::TaskManagerImpl;
 	};
 

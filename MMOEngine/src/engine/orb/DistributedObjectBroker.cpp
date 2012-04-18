@@ -5,9 +5,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/core/Core.h"
 
-#include "engine/service/proto/BasePacketHandler.h"
-
 #include "DistributedObjectBroker.h"
+
+#include "control/ObjectBrokerDirector.h"
+#include "control/ObjectBrokerAgent.h"
 
 #include "messages/DOBServiceHandler.h"
 #include "messages/DOBServiceClient.h"
@@ -28,7 +29,8 @@ DistributedObjectBroker::DistributedObjectBroker()
 
 	objectManager = NULL;
 
-	setDebugLogLevel();
+	//setDebugLogLevel();
+	setInfoLogLevel();
 }
 
 DistributedObjectBroker::~DistributedObjectBroker() {
@@ -68,19 +70,25 @@ DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr,
 
 void DistributedObjectBroker::initialize() {
 	if (address.isEmpty()) {
-		info("root naming directory initialized");
+		info("root naming directory initialized", true);
+
+		ObjectBrokerDirector::instance()->start();
 	} else {
-		info("attaching to root naming directory at " + address + ":" + String::valueOf(port));
+		info("attaching to root naming directory at " + address + ":" + String::valueOf(port), true);
 
 		rootObjectBroker = new RemoteObjectBroker(address, port);
 	}		
+
+	ObjectBrokerDirector::instance()->brokerConnected(this);
 
 	namingDirectoryService = new NamingDirectoryService();
 
 	DOBServiceHandler* serviceHandler = new DOBServiceHandler();
 	setHandler(serviceHandler);
 
-	objectManager = new DOBObjectManager();
+	objectManager = NULL; //new DOBObjectManager();
+
+	ObjectBrokerAgent::instance()->start();
 }
 
 void DistributedObjectBroker::run() {

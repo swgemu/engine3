@@ -16,10 +16,26 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "GetNextFreeObjectIDMessage.h"
 #include "UndeployObjectMessage.h"
 
+#include "engine/orb/control/ControlMessage.h"
+#include "engine/orb/control/StateUpdateMessage.h"
+
 #include "DOBMessageFactory.h"
 
 DOBMessageFactory::DOBMessageFactory() {
 }
+
+class ControlMessageProcessorTask : public Task {
+	DOBMessage* message;
+
+public:
+	ControlMessageProcessorTask(DOBMessage* msg) {
+		message = msg;
+	}
+
+	void run() {
+		message->execute();
+	}
+};
 
 void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 	try {
@@ -36,7 +52,11 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 			broker->debug("DOBMessage(" + String::valueOf(dobMessage->getSequence()) + "): " + String::valueOf(messageType)
 							+ " arrived with content: " + message->toStringData());
 
-			dobMessage->execute();
+			if (messageType == DOBMessage::CONTROLMESSAGE) {
+				Task* task = new ControlMessageProcessorTask(dobMessage);
+				task->execute();
+			} else
+				dobMessage->execute();
 		} else {
 			DOBMessage* queuedMessage = client->getQueuedMessage(message->parseInt());
 
@@ -76,13 +96,18 @@ DOBMessage* DOBMessageFactory::create(uint32 messageType, Packet* message) {
 
 	case DOBMessage::LOADPERSISTENTOBJECTMESSAGE:
 		return new LoadPersistentObjectMessage(message);
-		break;
 
 	case DOBMessage::UPDATEPERSISTENTOBJECTMESSAGE:
 		return new UpdatePersistentObjectMessage(message);
 
 	case DOBMessage::GETNEXTFREEOBJECTIDMESSAGE:
 		return new GetNextFreeObjectIDMessage(message);
+
+	case DOBMessage::CONTROLMESSAGE:
+		return new ControlMessage(message);
+
+	case DOBMessage::STATEUPDATEMESSAGE:
+		return new StateUpdateMessage(message);
 
 	default:
 		return NULL;

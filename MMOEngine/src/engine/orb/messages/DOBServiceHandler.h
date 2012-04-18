@@ -10,6 +10,10 @@
 
 #include "engine/orb/DistributedObjectBroker.h"
 
+#include "engine/orb/messages/RemoteObjectBroker.h"
+
+#include "engine/orb/control/ObjectBrokerDirector.h"
+
 #include "DOBMessageFactory.h"
 
 class DOBServiceHandler : public ServiceHandler {
@@ -28,16 +32,29 @@ public:
 		client->setHandler(this);
 		client->start();
 
+		RemoteObjectBroker* broker = client->getRemoteObjectBroker();
+
+		ObjectBrokerDirector::instance()->brokerConnected(broker);
+
 		return client;
 	}
 
 	bool deleteConnection(ServiceClient* client) {
-		//client->stop();
+		DOBServiceClient* dobClient = static_cast<DOBServiceClient*>(client);
+		dobClient->stop();
+
+		ObjectBroker* broker = dobClient->getRemoteObjectBroker();
+
+		ObjectBrokerDirector::instance()->brokerDisconnected(broker);
+
 		return true;
 	}
 
 	void handleMessage(ServiceClient* client, Packet* message) {
-		messageFactory.process(static_cast<DOBServiceClient*>(client), message);
+		DOBServiceClient* dobClient = static_cast<DOBServiceClient*>(client);
+
+		while (message->hasData())
+			messageFactory.process(dobClient, message);
 	}
 
 	void processMessage(Message* message) {

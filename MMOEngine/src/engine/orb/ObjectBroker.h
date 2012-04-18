@@ -41,6 +41,15 @@ namespace engine {
 		virtual bool destroyObject(DistributedObjectStub* obj) = 0;
 
 		virtual uint64 getNextFreeObjectID() = 0;
+
+		int compareTo(ObjectBroker*& b) {
+			if (this < b)
+				return 1;
+			else if (this > b)
+				return -1;
+			else
+				return 0;
+		}
 	};
 
   } // namespace ORB

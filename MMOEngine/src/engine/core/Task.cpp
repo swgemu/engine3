@@ -52,6 +52,10 @@ void Task::initialize() {
 }
 
 void Task::execute() {
+	taskManager->executeTask(this);
+}
+
+void Task::doExecute() {
 #ifdef WITH_STM
 
 	//Logger::console.info("executing " + TypeInfo<Task>::getClassName(this), true);
@@ -103,7 +107,7 @@ void Task::execute() {
 		run();
 
 	} catch (Exception& e) {
-		Logger::console.error("exception caught while running a task");
+		//Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
 	} catch (...) {
 		Logger::console.error("unreported exception caught while running a task");

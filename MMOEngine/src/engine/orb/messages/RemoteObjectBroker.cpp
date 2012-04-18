@@ -11,8 +11,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "InvokeMethodMessage.h"
 #include "LookUpObjectMessage.h"
 #include "LookUpObjectByIDMessage.h"
-#include "GetNextFreeObjectIDMessage.h"
 #include "UndeployObjectMessage.h"
+
+#include "GetNextFreeObjectIDMessage.h"
 
 #include "engine/orb/object/DistributedMethod.h"
 
@@ -54,7 +55,6 @@ DistributedObjectStub* RemoteObjectBroker::undeploy(const String& name) {
 	if (!brokerClient->sendAndAcceptReply(&undeployMessage))
 		throw DistributionException(name);
 
-	//obj->_setObjectID(deployMessage.getObjectID());
 	return NULL;
 }
 
@@ -133,8 +133,6 @@ bool RemoteObjectBroker::destroyObject(DistributedObjectStub* obj) {
 }*/
 
 uint64 RemoteObjectBroker::getNextFreeObjectID() {
-	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
-
 	GetNextFreeObjectIDMessage objectIDMessage;
 
 	if (!brokerClient->sendAndAcceptReply(&objectIDMessage))

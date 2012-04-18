@@ -1,14 +1,19 @@
 /*
- * DOBObjectManager.h
- *
- *  Created on: 18/08/2009
- *      Author: victor
- */
+Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Distribution of this file for usage outside of Core3 is prohibited.
+*/
 
 #ifndef DOBOBJECTMANAGER_H_
 #define DOBOBJECTMANAGER_H_
 
 #include "system/platform.h"
+
+#include "engine/core/Task.h"
+
+#include "engine/log/Logger.h"
+
+#include "engine/db/ObjectDatabase.h"
+#include "engine/db/ObjectDatabaseManager.h"
 
 #include "engine/util/ObjectFactory.h"
 
@@ -20,13 +25,32 @@ namespace engine {
 	class DistributedObject;
 	class DistributedObjectAdapter;
 	class DistributedObjectStub;
+
 	class DOBServiceClient;
 
-	class DOBObjectManager : public Mutex {
+	class UpdateModifiedObjectsThread;
+
+	class DOBObjectManager : public Mutex, public Logger {
 	protected:
 		DistributedObjectDirectory localObjectDirectory;
 
 		AtomicLong nextObjectID;
+
+		ObjectDatabaseManager* databaseManager;
+
+		Reference<Task*> updateModifiedObjectsTask;
+
+		Vector<UpdateModifiedObjectsThread*> updateModifiedObjectsThreads;
+
+		bool objectUpdateInProcess;
+
+		AtomicInteger totalUpdatedObjects;
+
+		const static int UPDATETODATABASETIME = 300000;
+
+		const static int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 10;
+
+		const static int MAXOBJECTSTOUPDATEPERTHREAD = 7000;
 
 	public:
 		DOBObjectManager();
@@ -39,7 +63,24 @@ namespace engine {
 			return NULL;
 		}
 
-		virtual void updateModifiedObjectsToDatabase();
+		void createBackup();
+
+		void scheduleUpdateToDatabase();
+
+		void cancelUpdateModifiedObjectsTask();
+
+		void updateModifiedObjectsToDatabase();
+
+		virtual void onUpdateModifiedObjectsToDatabase() {
+		}
+
+		virtual void onCommitData() {
+		}
+
+		int commitUpdatePersistentObjectToDB(DistributedObject* object);
+		int commitDestroyObjectToDB(uint64 objectID);
+
+		ObjectDatabase* getTable(uint64 objectID);
 
 		virtual int updatePersistentObject(DistributedObject* object);
 
@@ -56,10 +97,19 @@ namespace engine {
 		virtual uint64 getNextFreeObjectID();
 
 		//virtual void savePersistentObjects();
+
+	protected:
+		void finishObjectUpdate();
+
+		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
+
+		int deployUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete, engine::db::berkley::Transaction* transaction);
+
+		friend class CommitMasterTransactionThread;
 	};
 
-	}
-}
+  } // namespace ORB
+} // namespace engine
 
 using namespace engine::ORB;
 

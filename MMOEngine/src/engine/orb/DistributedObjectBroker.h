@@ -92,6 +92,10 @@ namespace engine {
 		uint64 getNextFreeObjectID();
 
 		// getters
+		ObjectBroker* getRootBroker() {
+			return rootObjectBroker;
+		}
+
 		bool isRootBroker() {
 			return rootObjectBroker == NULL;
 		}

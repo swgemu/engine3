@@ -49,6 +49,10 @@ namespace engine {
 		void invokeMethod(DistributedMethod& method);
 
 		uint64 getNextFreeObjectID();
+
+		DOBServiceClient* getBrokerClient() {
+			return brokerClient;
+		}
 	};
 
   } // namespace ORB

@@ -54,7 +54,7 @@ namespace sys {
 			pthread_mutex_lock(&cmutex);
 
 			int res = doWait(&cmutex);
-	
+
 			pthread_mutex_unlock(&cmutex);
 			return res;
 		}

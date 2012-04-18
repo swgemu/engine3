@@ -109,6 +109,8 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/orb/NamingDirectoryService.$(OBJEXT) \
 	engine/orb/db/DistributedObjectDirectory.$(OBJEXT) \
 	engine/orb/db/DOBObjectManager.$(OBJEXT) \
+	engine/orb/db/CommitMasterTransactionThread.$(OBJEXT) \
+	engine/orb/db/UpdateModifiedObjectsThread.$(OBJEXT) \
 	engine/orb/object/DistributedObject.$(OBJEXT) \
 	engine/orb/object/DistributedObjectServant.$(OBJEXT) \
 	engine/orb/object/DistributedObjectStub.$(OBJEXT) \
@@ -116,6 +118,8 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/orb/messages/RemoteObjectBroker.$(OBJEXT) \
 	engine/orb/messages/DOBServiceClient.$(OBJEXT) \
 	engine/orb/messages/DOBMessageFactory.$(OBJEXT) \
+	engine/orb/control/ObjectBrokerDirector.$(OBJEXT) \
+	engine/orb/control/ObjectBrokerAgent.$(OBJEXT) \
 	engine/stm/Transaction.$(OBJEXT) \
 	engine/stm/TransactionalMemoryManager.$(OBJEXT) \
 	engine/stm/mm/KernelCall.$(OBJEXT) \
@@ -392,6 +396,8 @@ libengine3_a_SOURCES = \
 			engine/orb/NamingDirectoryService.cpp \
 			engine/orb/db/DistributedObjectDirectory.cpp \
 			engine/orb/db/DOBObjectManager.cpp \
+			engine/orb/db/CommitMasterTransactionThread.cpp \
+			engine/orb/db/UpdateModifiedObjectsThread.cpp \
 			engine/orb/object/DistributedObject.cpp \
 			engine/orb/object/DistributedObjectServant.cpp \
 			engine/orb/object/DistributedObjectStub.cpp \
@@ -399,6 +405,8 @@ libengine3_a_SOURCES = \
 			engine/orb/messages/RemoteObjectBroker.cpp \
 			engine/orb/messages/DOBServiceClient.cpp \
 			engine/orb/messages/DOBMessageFactory.cpp \
+			engine/orb/control/ObjectBrokerDirector.cpp \
+			engine/orb/control/ObjectBrokerAgent.cpp \
 			engine/stm/Transaction.cpp \
 			engine/stm/TransactionalMemoryManager.cpp \
 			engine/stm/mm/KernelCall.cpp \
@@ -713,6 +721,12 @@ engine/orb/db/DistributedObjectDirectory.$(OBJEXT):  \
 engine/orb/db/DOBObjectManager.$(OBJEXT):  \
 	engine/orb/db/$(am__dirstamp) \
 	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
+engine/orb/db/CommitMasterTransactionThread.$(OBJEXT):  \
+	engine/orb/db/$(am__dirstamp) \
+	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
+engine/orb/db/UpdateModifiedObjectsThread.$(OBJEXT):  \
+	engine/orb/db/$(am__dirstamp) \
+	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
 engine/orb/object/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/object
 	@: > engine/orb/object/$(am__dirstamp)
@@ -746,6 +760,18 @@ engine/orb/messages/DOBServiceClient.$(OBJEXT):  \
 engine/orb/messages/DOBMessageFactory.$(OBJEXT):  \
 	engine/orb/messages/$(am__dirstamp) \
 	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/control/$(am__dirstamp):
+	@$(MKDIR_P) engine/orb/control
+	@: > engine/orb/control/$(am__dirstamp)
+engine/orb/control/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) engine/orb/control/$(DEPDIR)
+	@: > engine/orb/control/$(DEPDIR)/$(am__dirstamp)
+engine/orb/control/ObjectBrokerDirector.$(OBJEXT):  \
+	engine/orb/control/$(am__dirstamp) \
+	engine/orb/control/$(DEPDIR)/$(am__dirstamp)
+engine/orb/control/ObjectBrokerAgent.$(OBJEXT):  \
+	engine/orb/control/$(am__dirstamp) \
+	engine/orb/control/$(DEPDIR)/$(am__dirstamp)
 engine/stm/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm
 	@: > engine/stm/$(am__dirstamp)
@@ -988,8 +1014,12 @@ mostlyclean-compile:
 	-rm -f engine/lua/LuaObject.$(OBJEXT)
 	-rm -f engine/orb/DistributedObjectBroker.$(OBJEXT)
 	-rm -f engine/orb/NamingDirectoryService.$(OBJEXT)
+	-rm -f engine/orb/control/ObjectBrokerAgent.$(OBJEXT)
+	-rm -f engine/orb/control/ObjectBrokerDirector.$(OBJEXT)
+	-rm -f engine/orb/db/CommitMasterTransactionThread.$(OBJEXT)
 	-rm -f engine/orb/db/DOBObjectManager.$(OBJEXT)
 	-rm -f engine/orb/db/DistributedObjectDirectory.$(OBJEXT)
+	-rm -f engine/orb/db/UpdateModifiedObjectsThread.$(OBJEXT)
 	-rm -f engine/orb/messages/DOBMessageFactory.$(OBJEXT)
 	-rm -f engine/orb/messages/DOBServiceClient.$(OBJEXT)
 	-rm -f engine/orb/messages/RemoteObjectBroker.$(OBJEXT)
@@ -1112,8 +1142,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/LuaObject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/$(DEPDIR)/DistributedObjectBroker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/$(DEPDIR)/NamingDirectoryService.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/control/$(DEPDIR)/ObjectBrokerAgent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/control/$(DEPDIR)/ObjectBrokerDirector.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/CommitMasterTransactionThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DOBObjectManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DistributedObjectDirectory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/UpdateModifiedObjectsThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBMessageFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBServiceClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/RemoteObjectBroker.Po@am__quote@
@@ -1344,6 +1378,8 @@ distclean-generic:
 	-rm -f engine/lua/$(am__dirstamp)
 	-rm -f engine/orb/$(DEPDIR)/$(am__dirstamp)
 	-rm -f engine/orb/$(am__dirstamp)
+	-rm -f engine/orb/control/$(DEPDIR)/$(am__dirstamp)
+	-rm -f engine/orb/control/$(am__dirstamp)
 	-rm -f engine/orb/db/$(DEPDIR)/$(am__dirstamp)
 	-rm -f engine/orb/db/$(am__dirstamp)
 	-rm -f engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
@@ -1400,7 +1436,7 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/control/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1434,7 +1470,7 @@ install-ps: install-ps-am
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/control/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

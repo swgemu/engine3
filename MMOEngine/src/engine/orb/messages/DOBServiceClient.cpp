@@ -53,7 +53,7 @@ bool DOBServiceClient::send(DOBMessage* message) {
 	//info("SEND " + pack->toString());
 	StreamServiceClient::send(message);
 	
-	delete message;
+	//delete message;
 	return true;
 }
 
@@ -67,15 +67,23 @@ bool DOBServiceClient::sendReply(DOBMessage* message) {
 }
 
 bool DOBServiceClient::sendAndAcceptReply(DOBMessage* message) {
+	sendWithReply(message);
+
+	return waitForReply(message);
+}
+
+bool DOBServiceClient::sendWithReply(DOBMessage* message) {
 	uint32 sequence = sentMessageSequence.increment();
 	message->setSequence(sequence);
 
 	sentMessageQueue.put(sequence, message);
 
 	//info("SEND " + pack->toString());
-	StreamServiceClient::send(message);
+	return StreamServiceClient::send(message);
+}
 
-	bool res =  message->waitForReply();
+bool DOBServiceClient::waitForReply(DOBMessage* message) {
+	bool res = message->waitForReply();
 
 	if (!res)
 		error("timeout on message " + String::valueOf(message->getSequence()));
