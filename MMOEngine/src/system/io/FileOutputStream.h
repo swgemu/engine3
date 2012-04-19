@@ -13,8 +13,6 @@ namespace sys {
   	class FileOutputStream : public OutputStream {
   		File* file;
 
-  		char buf[256];
-
   	public:
   		FileOutputStream(File* file) {
   			file->setBinary();
@@ -53,49 +51,35 @@ namespace sys {
   		}
 
   		int write(char ch) {
-			buf[0] = (byte) ch;
-
-			return write((byte*) buf, 1);
+			return fwrite(&ch, 1, 1, file->getDescriptor());
 		}
 
   		int write(int val) {
-			*((int*) buf) = val;
-
-			return write((byte*) buf, 4);
+			return fwrite(&val, 1, 4, file->getDescriptor());
 		}
 
   		int write(uint32 val) {
-  			*((uint32*) buf) = val;
-
-			return write((byte*) buf, 4);
+			return fwrite(&val, 1, 4, file->getDescriptor());
 		}
 
   		int write(long val) {
-  			*((long*) buf) = val;
-
-			return write((byte*) buf, sizeof(long));
+			return fwrite(&val, 1, sizeof(long), file->getDescriptor());
 		}
 
   		int write(int64 val) {
-  			*((int64*) buf) = val;
-
-			return write((byte*) buf, 8);
+  			return fwrite(&val, 1, 8, file->getDescriptor());
 		}
 
   		int write(uint64 val) {
-  			*((uint64*) buf) = val;
-
-			return write((byte*) buf, 8);
+			return fwrite(&val, 1, 8, file->getDescriptor());
 		}
 
   		int write(float val) {
-  			*((float*) buf) = val;
-
-			return write((byte*) buf, sizeof(float));
+			return fwrite(&val, 1, sizeof(float), file->getDescriptor());
 		}
 
   		int write(const char* str) {
-  			return write((byte*) str, strlen(str));
+  			return fwrite(str, 1, strlen(str), file->getDescriptor());
   		}
 
   		int write(const String& str) {
