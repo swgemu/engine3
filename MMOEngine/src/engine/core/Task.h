@@ -12,6 +12,10 @@ namespace engine {
   	  class TransactionalTaskManager;
   }
 
+  namespace service {
+  	  class DatagramServiceThread;
+  }
+
   namespace core {
 
 	class TaskManager;
@@ -165,6 +169,7 @@ namespace engine {
 		friend class engine::stm::TransactionalTaskManager;
 		friend class engine::core::Core;
 		friend class engine::core::TaskManagerImpl;
+		friend class engine::service::DatagramServiceThread;
 	};
 
   } // namespace core

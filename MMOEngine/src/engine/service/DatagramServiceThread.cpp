@@ -113,7 +113,7 @@ void DatagramServiceThread::receiveMessages() {
 				continue;
 
 			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
-			receiverTask->execute();
+			receiverTask->doExecute();
 		} catch (SocketException& e) {
 			debug(e.getMessage());
 		} catch (Exception& e) {
