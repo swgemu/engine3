@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
-*/
+ */
 
 #include "Logger.h"
 
@@ -196,8 +196,12 @@ void Logger::getTime(String& times, bool getFull) {
 
 	uint64 elapsed = Logger::starttime.miliDifference(time);
 
-	if (getFull)
-		str << time.getMiliTime() << " msec ";
+	if (getFull) {
+		//str << time.getMiliTime() << " msec ";
+		String formattedTime = time.getFormattedTime();
+		formattedTime = formattedTime.replaceAll("\n", "");
+		str << formattedTime << " [" << time.getMiliTime() << " msec] ";
+	}
 
 	str << "(" << (elapsed / 1000) << " s)";
 
@@ -215,8 +219,12 @@ void Logger::printTime(bool getFull) {
 
 	uint64 elapsed = Logger::starttime.miliDifference(time);
 
-	if (getFull)
-		System::out << time.getMiliTime() << " msec ";
+	if (getFull) {
+		//System::out << time.getMiliTime() << " msec ";
+		String formattedTime = time.getFormattedTime();
+		formattedTime = formattedTime.replaceAll("\n", "");
+		System::out << formattedTime << " [" << time.getMiliTime() << " msec] ";
+	}
 
 	System::out << "(" << (elapsed / 1000) << " s)";
 
