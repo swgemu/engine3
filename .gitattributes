@@ -591,12 +591,17 @@ MMOEngine/src/system/io/BufferedReader.cpp -text
 MMOEngine/src/system/io/BufferedReader.h -text
 MMOEngine/src/system/io/File.cpp -text
 MMOEngine/src/system/io/File.h -text
+MMOEngine/src/system/io/FileDescriptor.h -text
 MMOEngine/src/system/io/FileInputStream.h -text
 MMOEngine/src/system/io/FileNotFoundException.h -text
 MMOEngine/src/system/io/FileOutputStream.h -text
 MMOEngine/src/system/io/FileReader.h -text
 MMOEngine/src/system/io/FileWriter.h -text
+MMOEngine/src/system/io/IOEvent.h -text
 MMOEngine/src/system/io/IOException.h -text
+MMOEngine/src/system/io/IOHandler.h -text
+MMOEngine/src/system/io/IOProcessor.cpp -text
+MMOEngine/src/system/io/IOProcessor.h -text
 MMOEngine/src/system/io/InputStream.h -text
 MMOEngine/src/system/io/ObjectInputStream.h -text
 MMOEngine/src/system/io/ObjectOutputStream.h -text

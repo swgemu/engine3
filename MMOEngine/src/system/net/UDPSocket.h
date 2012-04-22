@@ -14,9 +14,9 @@ namespace sys {
 	class UDPSocket : public Socket {
 	public:
 		UDPSocket() : Socket() {
-			sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+			fileDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 			
-			if (sock < 0)
+			if (fileDescriptor < 0)
 				throw SocketException("unable to create socket");
 			
 			setTimeOut(10);

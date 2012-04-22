@@ -25,7 +25,7 @@ Socket::Socket() {
 }
 
 Socket::Socket(int handle) {
-	sock = handle;
+	fileDescriptor = handle;
 		
 	setTimeOut(10);
 }
@@ -43,7 +43,7 @@ void Socket::initialize() {
 }
 
 void Socket::bindTo(SocketAddress* bindpoint) {
-	if (bind(sock, bindpoint->getAddress(), bindpoint->getAddressSize())) {
+	if (bind(fileDescriptor, bindpoint->getAddress(), bindpoint->getAddressSize())) {
 		StringBuffer msg;
 		msg << "unable to bind to socket " << bindpoint->getPort();
 
@@ -52,11 +52,11 @@ void Socket::bindTo(SocketAddress* bindpoint) {
 }
 
 void Socket::listen(int maxconn) {
-	::listen(sock, maxconn);
+	::listen(fileDescriptor, maxconn);
 }
 
 Socket* Socket::accept() {
-	int handle = ::accept(sock, 0, 0);
+	int handle = ::accept(fileDescriptor, 0, 0);
 	
 	if (handle < 0)
 		throw SocketException("failed to accept connection");
@@ -71,7 +71,7 @@ Socket* Socket::accept(SocketAddress* addr) {
 		int addr_len = addr->getAddressSize();
 	#endif
 
-	int handle = ::accept(sock, addr->getAddress(), &addr_len);
+	int handle = ::accept(fileDescriptor, addr->getAddress(), &addr_len);
 
 	if (handle < 0)
 		throw SocketException("failed to accept connection");
@@ -80,7 +80,7 @@ Socket* Socket::accept(SocketAddress* addr) {
 }
 
 void Socket::connect(SocketAddress* address) {
-	if (::connect(sock, address->getAddress(), address->getAddressSize())) {
+	if (::connect(fileDescriptor, address->getAddress(), address->getAddressSize())) {
 		StringBuffer msg;
 		msg << "unable to connect to socket " << address->getPort();
 
@@ -109,7 +109,7 @@ bool Socket::recieveFrom(Packet* pack, SocketAddress* addr) {
 }
 
 bool Socket::read(Packet* pack) {
-	int len = recv(sock, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0);
+	int len = recv(fileDescriptor, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0);
 	if (len < 0) {
 		StringBuffer msg;
 		msg << "error reading from socket";
@@ -133,7 +133,7 @@ void Socket::readFrom(Packet* pack, SocketAddress* addr) {
 
 	addr->clear();
 
-	int len = recvfrom(sock, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0, addr->getAddress(), &addr_len);
+	int len = recvfrom(fileDescriptor, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0, addr->getAddress(), &addr_len);
 	if (len < 0) {
 		StringBuffer msg;
 		msg << "error reading from socket";
@@ -146,7 +146,7 @@ void Socket::readFrom(Packet* pack, SocketAddress* addr) {
 }
 
 void Socket::send(Packet* pack) {
-	int res = ::send(sock, pack->getBuffer(), pack->size(), 0); 
+	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), 0); 
 		
 	if (res < 0/* && errno != EAGAIN*/) {
 		StringBuffer msg;
@@ -157,7 +157,7 @@ void Socket::send(Packet* pack) {
 }
 
 void Socket::sendTo(Packet* pack, SocketAddress* addr) {
-	int res = sendto(sock, pack->getBuffer(), pack->size(), 0, addr->getAddress(), addr->getAddressSize()); 
+	int res = sendto(fileDescriptor, pack->getBuffer(), pack->size(), 0, addr->getAddress(), addr->getAddressSize()); 
 		
 	if (res < 0/* && errno != EAGAIN*/) {
 		StringBuffer msg;
@@ -169,9 +169,9 @@ void Socket::sendTo(Packet* pack, SocketAddress* addr) {
 	
 void Socket::close() {
 	#ifndef PLATFORM_WIN
-		::close(sock);
+		::close(fileDescriptor);
 	#else
-		closesocket(sock);
+		closesocket(fileDescriptor);
 	#endif
 }
 
@@ -179,25 +179,25 @@ bool Socket::hasData() {
 	fd_set readSet;
 
 	FD_ZERO(&readSet);
-	FD_SET(sock, &readSet);
+	FD_SET(fileDescriptor, &readSet);
 
 	updateTimeOut();
 	
-	if (select(sock + 1, &readSet, NULL, NULL, &tv) < 0) {
+	if (select(fileDescriptor + 1, &readSet, NULL, NULL, &tv) < 0) {
 		StringBuffer msg;
 		msg << "select error";
 
 		throw SocketException(msg.toString());
 	}
 
-	return FD_ISSET(sock, &readSet) != 0;
+	return FD_ISSET(fileDescriptor, &readSet) != 0;
 }
 
 void Socket::setBlocking(bool b) {
 	#ifndef PLATFORM_WIN
 		unsigned long mode = !b;
 
-		int ret = ioctl(sock, FIONBIO, &mode );
+		int ret = ioctl(fileDescriptor, FIONBIO, &mode );
 		if (ret < 0)
 			throw SocketException("unable to set blocking mode");					
 	#endif
@@ -215,7 +215,7 @@ void Socket::setLingering(int time) {
 
 	linger.l_linger = time; 
 
-	result = setsockopt(sock, SOL_SOCKET, SO_LINGER, (char*) &linger, sizeof(linger));
+	result = setsockopt(fileDescriptor, SOL_SOCKET, SO_LINGER, (char*) &linger, sizeof(linger));
 
 	if (result != 0)
 		throw SocketException("unable to set linger options");

@@ -1,9 +1,9 @@
 #ifndef FILE_H_
 #define FILE_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../lang/String.h"
+#include "system/lang/String.h"
 
 namespace sys {
   namespace io {

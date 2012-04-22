@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HASHTABLE_H_
 #define HASHTABLE_H_
 
-#include "system/lang.h"
+#include "system/platform.h"
 
 #include "system/lang/StringBuffer.h"
 #include "system/lang/Variable.h"

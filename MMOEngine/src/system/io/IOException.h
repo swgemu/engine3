@@ -1,15 +1,19 @@
 #ifndef IOEXCEPTION_H_
 #define IOEXCEPTION_H_
 
-#include "../lang/Exception.h"
+#include <errno.h>
+
+#include "system/lang/Exception.h"
 
 namespace sys {
   namespace io {
 
 	class IOException : public Exception {
 	public:
-		IOException(const String& msg) : Exception(msg) {
+		IOException(const String& msg) {
+			message = msg + "(" + String::valueOf(errno) + ")";
 		}
+
 	};
 
   } // namespace io

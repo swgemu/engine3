@@ -56,6 +56,7 @@ libengine3_a_SOURCES = \
 			system/net/InetAddress.cpp \
 			system/net/NetworkInterface.cpp \
 			system/net/Packet.cpp \
+			system/io/IOProcessor.cpp \
 			system/io/Stream.cpp \
 			system/io/File.cpp \
 			system/io/BufferedReader.cpp \

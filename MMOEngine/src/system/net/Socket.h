@@ -6,7 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SOCKET_H_
 #define SOCKET_H_
 
-#include "../platform.h"
+#include "system/platform.h"
+
+#include "system/io/FileDescriptor.h"
 
 #include "SocketAddress.h"
 
@@ -15,10 +17,8 @@ namespace sys {
 	
 	class Packet; 
 	
-	class Socket {
+	class Socket : public FileDescriptor {
 	protected:
-		int sock;
-		
 		uint64 timeout;
 		struct timeval tv;
 	

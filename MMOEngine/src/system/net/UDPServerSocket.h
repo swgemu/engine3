@@ -14,9 +14,9 @@ namespace sys {
 	class UDPServerSocket : public Socket {
 	public:
 		UDPServerSocket(SocketAddress* addr) : Socket() {
-			sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+			fileDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	
-			if (sock < 0)
+			if (fileDescriptor < 0)
 				throw SocketException("unable to create server socket");
 	
 			bindTo(addr);

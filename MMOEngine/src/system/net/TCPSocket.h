@@ -14,8 +14,8 @@ namespace sys {
 	class TCPSocket : public Socket {
 	public:
 	  	TCPSocket() : Socket() {
-			sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-			if (sock < 0)
+			fileDescriptor = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			if (fileDescriptor < 0)
 				throw SocketException("unable to create socket");
 			
 			setTimeOut(10);
