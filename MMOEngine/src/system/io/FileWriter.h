@@ -17,6 +17,8 @@ namespace sys {
 
   	public:
   		FileWriter(File* file, bool append = false) {
+  			file->mkdirs();
+
   			if (append)
   				file->setAppendable();
   			else

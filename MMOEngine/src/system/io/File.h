@@ -18,6 +18,8 @@ namespace sys {
 
 		int access;
 
+		int permissions;
+
 		static const int TEXT_MODE = 1;
 
 		static const int BINARY_MODE = 2;
@@ -38,6 +40,9 @@ namespace sys {
 		bool deleteFile();
 
 		FILE* getDescriptor() const;
+
+		bool mkdir();
+		bool mkdirs();
 
   		int seek(uint32 offset, int origin = SEEK_SET);
   		int size();
@@ -64,6 +69,8 @@ namespace sys {
 
 	protected:
 		bool open(int access);
+
+		static bool doMkdir(const char* path, int mode);
 
 		String getModeString(int mode, int access);
 	};
