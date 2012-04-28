@@ -21,6 +21,10 @@ namespace sys {
 		virtual void handleEvent(const IOEvent& event) {
 		}
 
+		virtual ~FileDescriptor() {
+
+		}
+
 		int getFileDescriptor() {
 			return fileDescriptor;
 		}

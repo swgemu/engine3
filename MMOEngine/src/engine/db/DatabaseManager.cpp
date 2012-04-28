@@ -349,6 +349,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 	int iteration = 0;
 	int ret = -1;
+	int count = 0;
 
 	Transaction* berkeleyTransaction = NULL;
 
@@ -365,6 +366,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 			if (stream != NULL) {
 				ret = db->tryPutData(id, stream, berkeleyTransaction);
+				++count;
 
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
@@ -393,6 +395,8 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 			}
 
 			Thread::yield();
+
+			printf("\r\tCommiting objects to the database: [%d / %d]", count, updateObjects->size());
 		}
 
 
@@ -403,6 +407,9 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 		error("error exceeded deadlock retries shutting down");
 		exit(1);
 	}
+
+	if (count > 0)
+		printf("\n");
 
 	if (ret != 0 && ret != DB_NOTFOUND)
 		berkeleyTransaction->abort();
