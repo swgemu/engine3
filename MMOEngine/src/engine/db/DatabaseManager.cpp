@@ -364,9 +364,10 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 			Stream* id = updateObject->key;
 			Stream* stream = updateObject->stream;
 
+			++count;
+
 			if (stream != NULL) {
 				ret = db->tryPutData(id, stream, berkeleyTransaction);
-				++count;
 
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
@@ -396,7 +397,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 			Thread::yield();
 
-			printf("\r\tCommiting objects to the database: [%d / %d]", count, updateObjects->size());
+			printf("\r\tCommiting database updates: [%d / %d]", count, updateObjects->size());
 		}
 
 
