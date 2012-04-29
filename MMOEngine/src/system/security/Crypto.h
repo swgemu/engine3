@@ -49,7 +49,7 @@ namespace sys {
 			}
 
 			static String randomSalt(uint8 length = 16) {
-				static char buffer[256];
+				char buffer[256];
 
 				for(int i = 0; i < length; i++) {
 					buffer[i] = System::random();
