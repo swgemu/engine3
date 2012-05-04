@@ -16,6 +16,7 @@
 #include "tests/timeserialize.h"
 #include "tests/loggertest.h"
 #include "tests/orbtest.h"
+#include "tests/lowerbound.h"
 
 class TestCore : public Core {
 public:
@@ -62,6 +63,8 @@ int main(int argc, char* argv[]) {
 				orbTestDeploy();
 			} else if (arguments.contains("orbtest")) {
 				orbTestLookup();
+			} else if (arguments.contains("lowerbound")) {
+				lowerBoundTest();
 			}
 		}
 

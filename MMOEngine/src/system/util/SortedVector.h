@@ -38,6 +38,9 @@ namespace sys {
 
 		int find(const E& o) const;
 
+		int lowerBound(const E& o) const;
+		int upperBound(const E& o) const;
+
 		bool drop(const E& o);
 
 		Object* clone();
@@ -85,6 +88,66 @@ namespace sys {
 		Vector<E>::operator=(vector);
 
 		return *this;
+	}
+
+	template<class E> int SortedVector<E>::lowerBound(const E& o) const {
+		if (ArrayList<E>::size() == 0)
+			return -1;
+
+		int l = 0, r = Vector<E>::elementCount - 1;
+		int m = 0, cmp = 0;
+
+		while (l <= r) {
+			m = (l + r) / 2;
+
+			E& obj = Vector<E>::elementData[m];
+			cmp = compare(obj, o);
+
+			if (cmp == 0)
+				return m;
+			else if (cmp > 0) {
+				l = m + 1;
+
+				if (r < l)
+					return m < ArrayList<E>::size() - 1 ? m + 1 : -1;
+			} else {
+				r = m - 1;
+
+				if (r < l)
+					return m;
+			}
+		}
+
+		return -1;
+	}
+
+	template<class E> int SortedVector<E>::upperBound(const E& o) const {
+		if (ArrayList<E>::size() == 0)
+			return -1;
+
+		int l = 0, r = Vector<E>::elementCount - 1;
+		int m = 0, cmp = 0;
+
+		while (l <= r) {
+			m = (l + r) / 2;
+
+			E& obj = Vector<E>::elementData[m];
+			cmp = compare(obj, o);
+
+			if (cmp == 0 || cmp > 0) {
+				l = m + 1;
+
+				if (r < l)
+					return m < ArrayList<E>::size() - 1 ? m + 1 : -1;
+			} else {
+				r = m - 1;
+
+				if (r < l)
+					return m;
+			}
+		}
+
+		return -1;
 	}
 
 	template<class E> int SortedVector<E>::put(const E& o) {
