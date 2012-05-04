@@ -125,7 +125,7 @@ void TaskScheduler::run() {
 void TaskScheduler::stop() {
 	if (doRun) {
 		doRun = false;
-		tasks.flush();
+		//tasks.flush();
 
 		join();
 	}

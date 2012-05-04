@@ -67,51 +67,54 @@ String File::getModeString(int mode, int access) {
 }
 
 bool File::mkdir() {
-    return doMkdir(name.toCharArray(), permissions);
+	return doMkdir(name.toCharArray(), permissions);
 }
 
 bool File::doMkdir(const char* path, int mode) {
-    struct stat st;
-    int status = 0;
+	struct stat st;
+	int status = 0;
 
-    if (stat(path, &st) != 0) {
-        /* Directory does not exist */
-        if (::mkdir(path, (mode_t) (mode | 0711)) != 0)
-            status = -1;
-    } else if (!S_ISDIR(st.st_mode)) {
-        errno = ENOTDIR;
-        status = -1;
-    }
+	if (stat(path, &st) != 0) {
+		/* Directory does not exist */
+		if (::mkdir(path, (mode_t) (mode | 0711)) != 0)
+			status = -1;
+	} else if (!S_ISDIR(st.st_mode)) {
+		errno = ENOTDIR;
+		status = -1;
+	}
 
-    return status != -1;
+	return status != -1;
 }
 
 bool File::mkdirs() {
-    char* pp;
-    char* sp;
-    int status;
+	char* pp;
+	char* sp;
+	int status;
 
-    const char* path = name.toCharArray();
-    char* copypath = strdup(path);
+	if (!name.contains("/") && !name.contains("\\"))
+		return true;
 
-    status = 0;
-    pp = copypath;
-    while (status == 0 && (sp = strchr(pp, '/')) != 0) {
-        if (sp != pp) {
-            /* Neither root nor double slash in path */
-            *sp = '\0';
-            status = doMkdir(copypath, permissions);
-            *sp = '/';
-        }
+	const char* path = name.toCharArray();
+	char* copypath = strdup(path);
 
-        pp = sp + 1;
-    }
+	status = 0;
+	pp = copypath;
+	while (status == 0 && (sp = strchr(pp, '/')) != 0) {
+		if (sp != pp) {
+			/* Neither root nor double slash in path */
+			*sp = '\0';
+			status = doMkdir(copypath, permissions);
+			*sp = '/';
+		}
 
-    if (status == 0)
-        status = doMkdir(path, permissions);
+		pp = sp + 1;
+	}
 
-    free(copypath);
-    return (status);
+	if (status == 0)
+		status = doMkdir(path, permissions);
+
+	free(copypath);
+	return (status);
 }
 
 int File::seek(uint32 offset, int origin) {

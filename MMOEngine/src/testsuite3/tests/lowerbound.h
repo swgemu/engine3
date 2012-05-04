@@ -20,7 +20,7 @@ void lowerBoundTest() {
 
 	//int search = 4;
 
-	String search("Alfa");
+	String search("AlfaBetaGamma");
 
 	int low = vec.lowerBound(search);
 	int up = vec.upperBound(search);
