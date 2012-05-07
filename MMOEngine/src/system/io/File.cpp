@@ -89,17 +89,13 @@ bool File::doMkdir(const char* path, int mode) {
 bool File::mkdirs() {
 	char* pp;
 	char* sp;
-	int status;
-
-	if (!name.contains("/") && !name.contains("\\"))
-		return true;
+	bool status = true;
 
 	const char* path = name.toCharArray();
 	char* copypath = strdup(path);
 
-	status = 0;
 	pp = copypath;
-	while (status == 0 && (sp = strchr(pp, '/')) != 0) {
+	while (status && (sp = strchr(pp, '/')) != 0) {
 		if (sp != pp) {
 			/* Neither root nor double slash in path */
 			*sp = '\0';
@@ -110,7 +106,7 @@ bool File::mkdirs() {
 		pp = sp + 1;
 	}
 
-	if (status == 0)
+	if (status && pp != copypath)
 		status = doMkdir(path, permissions);
 
 	free(copypath);
