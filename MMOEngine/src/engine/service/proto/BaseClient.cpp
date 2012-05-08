@@ -397,7 +397,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 		debug(msg);
 	#endif*/
 
-	if (serverSequence - acknowledgedServerSequence > 2000) { //originally 25
+	if (serverSequence - acknowledgedServerSequence > 200) { //originally 25
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
 			reentrantTask->schedule(5);
 
@@ -496,8 +496,10 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 
 	BasePacket* packet = NULL;
 
-	if (fragmentedPacket == NULL)
+	if (fragmentedPacket == NULL) {
 		fragmentedPacket = new BaseFragmentedPacket();
+		//Logger::console.info("creating new BaseFragmentedPacket", true);
+	}
 
 	if (!fragmentedPacket->addFragment(pack)) {
 		delete fragmentedPacket;
@@ -511,7 +513,7 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 		if (fragmentedPacket->isComplete()) {
 			fragmentedPacket->setOffset(0);
 
-			//Logger::console.debug("completed fragmented packet");
+			//Logger::console.info("completed fragmented packet", true);
 
 			packet = fragmentedPacket;
 			fragmentedPacket = NULL;
@@ -602,10 +604,15 @@ void BaseClient::resendPackets() {
 	#endif*/
 	
 	if (sequenceBuffer.size() == 0)
-	        return;
+		return;
 	
-        float checkupTime = (float) ((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime() / 1000.f;
-	int maxPacketResent = (float)30000.f * checkupTime / 496.f; //30kb * second assuming 496 packet size
+	float checkupTime = (float) ((float)((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime()) / 1000.f;
+	int maxPacketResent = MAX(5, (float)30000.f * checkupTime / 496.f); //30kb * second assuming 496 packet size
+
+	/*StringBuffer msg2;
+	msg2 << "resending MIN(" << sequenceBuffer.size() << " and " << maxPacketResent << ") packets to \'" << ip << "\' ["
+			<< ((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime() << "]";
+	info(msg2, true);*/
 	
 	for (int i = 0; i < MIN(sequenceBuffer.size(), maxPacketResent); ++i) {
 	//for (int i = 0; i < sequenceBuffer.size(); ++i) {
