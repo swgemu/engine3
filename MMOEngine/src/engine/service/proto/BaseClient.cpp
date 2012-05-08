@@ -263,7 +263,7 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 			sendSequenced(pack);
 
 		if (!reentrantTask->isScheduled())
-			reentrantTask->scheduleNonTransactionally(10);
+			reentrantTask->scheduleNonTransactionally(5);
 	}
 }
 
@@ -294,7 +294,7 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		sendBuffer.add(pack);
 
 		if (!reentrantTask->isScheduled())
-			reentrantTask->scheduleNonTransactionally(10);
+			reentrantTask->scheduleNonTransactionally(5);
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -370,7 +370,7 @@ void BaseClient::run() {
 			}
 
 			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
-				reentrantTask->schedule(10);
+				reentrantTask->schedule(5);
 			}
 		}
 	} catch (SocketException& e) {
@@ -397,9 +397,9 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 		debug(msg);
 	#endif*/
 
-	if (serverSequence - acknowledgedServerSequence > 25) {
+	if (serverSequence - acknowledgedServerSequence > 2000) { //originally 25
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
-			reentrantTask->schedule(10);
+			reentrantTask->schedule(5);
 
 		if (sendBuffer.size() > 6000) {
 			StringBuffer msg;
@@ -548,6 +548,8 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 }
 
 void BaseClient::checkupServerPackets(BasePacket* pack) {
+//        return;
+        
 	lock();
 
 	try {
@@ -568,7 +570,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 		if (seq > (uint32) acknowledgedServerSequence) {
 			resendPackets();
 
-			((BasePacketChekupEvent*)(checkupEvent.get()))->increaseCheckupTime(100);
+			((BasePacketChekupEvent*)(checkupEvent.get()))->increaseCheckupTime(250);
 			((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
 
 			#ifdef TRACE_CLIENTS
@@ -598,8 +600,15 @@ void BaseClient::resendPackets() {
 			 << checkupEvent->getCheckupTime() << "]";
 		debug(msg2, true);
 	#endif*/
-
-	for (int i = 0; i < MIN(sequenceBuffer.size(), 5); ++i) {
+	
+	if (sequenceBuffer.size() == 0)
+	        return;
+	
+        float checkupTime = (float) ((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime() / 1000.f;
+	int maxPacketResent = (float)30000.f * checkupTime / 496.f; //30kb * second assuming 496 packet size
+	
+	for (int i = 0; i < MIN(sequenceBuffer.size(), maxPacketResent); ++i) {
+	//for (int i = 0; i < sequenceBuffer.size(); ++i) {
 		BasePacket* packet = sequenceBuffer.get(i);
 
 		if (packet->getTimeout().isFuture())
@@ -654,7 +663,7 @@ void BaseClient::resendPackets(int seq) {
 }
 
 void BaseClient::balancePacketCheckupTime() {
-	setPacketCheckupTime(4000);
+	setPacketCheckupTime(2000);
 
 	#ifdef TRACE_CLIENTS
 		StringBuffer msg;

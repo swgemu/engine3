@@ -44,7 +44,7 @@ namespace engine {
 		}
 
 		void increaseCheckupTime(sys::uint32 time) {
-			if (checkupTime < 500)
+			if (checkupTime < 2000)
 				checkupTime += time;
 		}
 
