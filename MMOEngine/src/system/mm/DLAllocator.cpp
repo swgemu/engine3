@@ -9,6 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define USE_LOCKS 1
 #define MSPACES 1
 //#define HAVE_MMAP 0
+#undef _GNU_SOURCE
 #include "dlmalloc.h"
 
 DLAllocator::DLAllocator(void* base, size_t size) {

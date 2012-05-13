@@ -106,8 +106,8 @@ bool File::mkdirs() {
 		pp = sp + 1;
 	}
 
-	if (status && pp != copypath)
-		status = doMkdir(path, permissions);
+	/*if (status && pp != copypath)
+		status = doMkdir(path, permissions);*/
 
 	free(copypath);
 	return (status);
