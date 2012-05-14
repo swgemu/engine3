@@ -48,8 +48,10 @@ void DatabaseManager::checkpoint() {
 
 	databaseEnvironment->checkpoint(checkpointConfig);
 
+	/*
 	if (!checkpointTask->isScheduled())
 		checkpointTask->schedule(CHECKPOINTTIME);
+	 */
 }
 
 void DatabaseManager::openEnvironment() {
