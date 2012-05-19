@@ -59,11 +59,14 @@ void Mutex::lock(Mutex* m) {
 
 	while (pthread_mutex_trylock(&mutex)) {
 		#ifndef TRACE_LOCKS
-			pthread_mutex_unlock(&(m->mutex));
+			//pthread_mutex_unlock(&(m->mutex));
+			m->unlock();
 
 			Thread::yield();
 
-			pthread_mutex_lock(&(m->mutex));
+			//pthread_mutex_lock(&(m->mutex));
+
+			m->lock();
 		#else
 			m->unlock();
 			m->lock();
