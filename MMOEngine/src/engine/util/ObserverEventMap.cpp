@@ -18,6 +18,8 @@ void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable,
 
 	SortedVector<ManagedReference<Observer*> > observersCopy(*observers);
 
+	locker.release();
+
 	for (int i = 0; i < observersCopy.size(); ++i) {
 		ManagedReference<Observer*> observer = observersCopy.get(i);
 
