@@ -291,19 +291,29 @@ void ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	case RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_:
-		resp->insertSignedInt(notifyObserverEvent(inv->getUnsignedIntParameter(), static_cast<Observable*>(inv->getObjectParameter()), static_cast<ManagedObject*>(inv->getObjectParameter()), inv->getSignedLongParameter()));
+		{
+			resp->insertSignedInt(notifyObserverEvent(inv->getUnsignedIntParameter(), static_cast<Observable*>(inv->getObjectParameter()), static_cast<ManagedObject*>(inv->getObjectParameter()), inv->getSignedLongParameter()));
+		}
 		break;
 	case RPC_GETOBJECTID__:
-		resp->insertLong(getObjectID());
+		{
+			resp->insertLong(getObjectID());
+		}
 		break;
 	case RPC_COMPARETO__OBSERVER_:
-		resp->insertSignedInt(compareTo(static_cast<Observer*>(inv->getObjectParameter())));
+		{
+			resp->insertSignedInt(compareTo(static_cast<Observer*>(inv->getObjectParameter())));
+		}
 		break;
 	case RPC_SETOBSERVERTYPE__INT_:
-		setObserverType(inv->getUnsignedIntParameter());
+		{
+			setObserverType(inv->getUnsignedIntParameter());
+		}
 		break;
 	case RPC_ISOBSERVERTYPE__INT_:
-		resp->insertBoolean(isObserverType(inv->getUnsignedIntParameter()));
+		{
+			resp->insertBoolean(isObserverType(inv->getUnsignedIntParameter()));
+		}
 		break;
 	default:
 		throw Exception("Method does not exists");

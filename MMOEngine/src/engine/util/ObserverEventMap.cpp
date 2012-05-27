@@ -9,6 +9,8 @@
 #include "Observer.h"
 
 void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1, int64 arg2) {
+	Locker locker(&observerMutex);
+
 	if (!containsKey(eventType))
 		return;
 
@@ -36,6 +38,8 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 		return;
 	}
 
+	Locker locker(&observerMutex);
+
 	if (!observer->isDeplyoed())
 		observer->deploy();
 
@@ -55,6 +59,8 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 }
 
 void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
+	Locker locker(&observerMutex);
+
 	if (!containsKey(eventType))
 		return;
 
@@ -67,6 +73,8 @@ void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
 }
 
 SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint32 eventType) {
+	Locker locker(&observerMutex);
+
 	if (!containsKey(eventType))
 		return NULL;
 
@@ -76,6 +84,8 @@ SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint3
 }
 
 int ObserverEventMap::getObserverCount(uint32 eventType) {
+	Locker locker(&observerMutex);
+
 	if (!containsKey(eventType))
 		return NULL;
 

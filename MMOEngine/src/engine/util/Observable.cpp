@@ -328,22 +328,34 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	case RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_:
-		notifyObservers(inv->getUnsignedIntParameter(), static_cast<ManagedObject*>(inv->getObjectParameter()), inv->getSignedLongParameter());
+		{
+			notifyObservers(inv->getUnsignedIntParameter(), static_cast<ManagedObject*>(inv->getObjectParameter()), inv->getSignedLongParameter());
+		}
 		break;
 	case RPC_REGISTEROBSERVER__INT_OBSERVER_:
-		registerObserver(inv->getUnsignedIntParameter(), static_cast<Observer*>(inv->getObjectParameter()));
+		{
+			registerObserver(inv->getUnsignedIntParameter(), static_cast<Observer*>(inv->getObjectParameter()));
+		}
 		break;
 	case RPC_DROPOBSERVER__INT_OBSERVER_:
-		dropObserver(inv->getUnsignedIntParameter(), static_cast<Observer*>(inv->getObjectParameter()));
+		{
+			dropObserver(inv->getUnsignedIntParameter(), static_cast<Observer*>(inv->getObjectParameter()));
+		}
 		break;
 	case RPC_GETOBSERVERCOUNT__INT_:
-		resp->insertSignedInt(getObserverCount(inv->getUnsignedIntParameter()));
+		{
+			resp->insertSignedInt(getObserverCount(inv->getUnsignedIntParameter()));
+		}
 		break;
 	case RPC_ADDOBSERVABLECHILD__OBSERVABLE_:
-		addObservableChild(static_cast<Observable*>(inv->getObjectParameter()));
+		{
+			addObservableChild(static_cast<Observable*>(inv->getObjectParameter()));
+		}
 		break;
 	case RPC_DROPOBSERVEABLECHILD__OBSERVABLE_:
-		dropObserveableChild(static_cast<Observable*>(inv->getObjectParameter()));
+		{
+			dropObserveableChild(static_cast<Observable*>(inv->getObjectParameter()));
+		}
 		break;
 	default:
 		throw Exception("Method does not exists");

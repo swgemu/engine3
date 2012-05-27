@@ -228,13 +228,19 @@ void FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	case RPC_INITIALIZESESSION__:
-		resp->insertSignedInt(initializeSession());
+		{
+			resp->insertSignedInt(initializeSession());
+		}
 		break;
 	case RPC_CANCELSESSION__:
-		resp->insertSignedInt(cancelSession());
+		{
+			resp->insertSignedInt(cancelSession());
+		}
 		break;
 	case RPC_CLEARSESSION__:
-		resp->insertSignedInt(clearSession());
+		{
+			resp->insertSignedInt(clearSession());
+		}
 		break;
 	default:
 		throw Exception("Method does not exists");

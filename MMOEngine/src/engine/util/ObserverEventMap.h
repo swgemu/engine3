@@ -22,6 +22,7 @@ using namespace engine::util;
 #include "engine/core/ManagedReference.h"
 
 class ObserverEventMap : public HashTable<uint32, SortedVector<ManagedReference<Observer*> > > {
+	Mutex observerMutex;
 public:
 	ObserverEventMap() {
 		//setNoDuplicateInsertPlan();
