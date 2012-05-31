@@ -59,7 +59,7 @@ namespace engine {
 				unloadedObjectID = 0;
 			}
 
-			return WeakReference<O>::object;
+			return WeakReference<O>::get();
 		}
 
 		inline O getForUpdate() {
@@ -68,7 +68,7 @@ namespace engine {
 				unloadedObjectID = 0;
 			}
 
-			return WeakReference<O>::object;
+			return WeakReference<O>::get();
 		}
 
 
