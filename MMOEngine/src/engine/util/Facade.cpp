@@ -105,39 +105,39 @@ void FacadeImplementation::_setStub(DistributedObjectStub* stub) {
 }
 
 DistributedObjectStub* FacadeImplementation::_getStub() {
-	return _this;
+	return _this.get();
 }
 
 FacadeImplementation::operator const Facade*() {
-	return _this;
+	return _this.get();
 }
 
 void FacadeImplementation::lock(bool doLock) {
-	_this->lock(doLock);
+	_this.get()->lock(doLock);
 }
 
 void FacadeImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
+	_this.get()->lock(obj);
 }
 
 void FacadeImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
+	_this.get()->rlock(doLock);
 }
 
 void FacadeImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
+	_this.get()->wlock(doLock);
 }
 
 void FacadeImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void FacadeImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
+	_this.get()->unlock(doLock);
 }
 
 void FacadeImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
+	_this.get()->runlock(doLock);
 }
 
 void FacadeImplementation::_serializationHelperMethod() {

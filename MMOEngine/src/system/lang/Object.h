@@ -8,12 +8,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang/ref/ReferenceCounter.h"
 //#include "system/lang/ref/WeakReference.h"
+#include "system/lang/ref/StrongAndWeakReferenceCount.h"
 
 #include "system/thread/Mutex.h"
 
 #include "system/util/ArrayList.h"
 
 #include "system/thread/atomic/AtomicBoolean.h"
+#include "system/thread/atomic/AtomicReference.h"
 
 #include "Variable.h"
 
@@ -21,7 +23,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define REFERENCED_WEAK_MUTEX
 #endif
 
-#define ENABLE_WEAK_REFS
 //#define TRACE_REFERENCES
 
 namespace engine {
@@ -52,22 +53,13 @@ namespace sys {
   namespace lang {
 
     class String;
-    class WeakReferenceBase;
     template<class O> class WeakReference;
 
 	using namespace sys::io;
 	using namespace sys::util;
 
-	class Object : public ReferenceCounter, public Variable {
-#ifdef ENABLE_WEAK_REFS
-#ifdef REFERENCED_WEAK_MUTEX
-		Mutex* referenceMutex;
-#else
-		Mutex referenceMutex;
-#endif
-		HashSet<WeakReferenceBase*>* weakReferences;
-
-#endif
+	class Object : public Variable {
+		AtomicReference<StrongAndWeakReferenceCount*> referenceCounters;
 
 #ifdef MEMORY_PROTECTION
 		AtomicBoolean* _destroying;
@@ -145,15 +137,29 @@ namespace sys {
 #endif
 		}
 
-		inline void acquire() {
-			increaseCount();
-		}
-
+		void acquire();
 		void release();
 
-		void acquireWeak(WeakReferenceBase* ref);
+		inline uint32 getReferenceCount() {
+			if (referenceCounters == NULL)
+				return 0;
+			else
+				return referenceCounters->getStrongReferenceCount();
+		}
 
-		void releaseWeak(WeakReferenceBase* ref);
+		template<class O>
+		void acquireWeak(WeakReference<O>* ref) {
+			if (referenceCounters == NULL) {
+				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 1);
+
+				if (!referenceCounters.compareAndSet(NULL, newCount))
+					delete newCount;
+			}
+
+			referenceCounters->increaseWeakCount();
+
+			ref->set(referenceCounters);
+		}
 
 		virtual String toString();
 

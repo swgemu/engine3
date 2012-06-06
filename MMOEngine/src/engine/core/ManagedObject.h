@@ -267,8 +267,6 @@ public:
 
 	int getPersistenceLevel();
 
-protected:
-	String _param0_setLockName__String_;
 };
 
 class ManagedObjectHelper : public DistributedObjectClassHelper, public Singleton<ManagedObjectHelper> {

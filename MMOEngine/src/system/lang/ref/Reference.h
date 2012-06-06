@@ -144,6 +144,10 @@ namespace sys {
 			return oldRef;
 		}
 
+		void initializeWithoutAcquire(O obj) {
+			object = obj;
+		}
+
 		bool compareAndSet(O oldval, O newval) {
 			bool success = object.compareAndSet(oldval, newval);
 

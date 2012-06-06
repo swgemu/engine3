@@ -25,19 +25,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 AtomicInteger ReferenceIdCounter::nextID;
 #endif
 
-Object::Object() : ReferenceCounter(), Variable() {
+Object::Object() : Variable() {
 #ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
+#else
+	_destroying = false;
 #endif
 
-#ifdef ENABLE_WEAK_REFS
-#ifdef REFERENCED_WEAK_MUTEX
-	referenceMutex = new Mutex();
-#endif
-
-	weakReferences = NULL;
-
-#endif
+	referenceCounters = NULL;
 
 	//MemoryManager::getInstance()->create(this);
 
@@ -48,17 +43,14 @@ Object::Object() : ReferenceCounter(), Variable() {
 #endif
 }
 
-Object::Object(const Object& obj) : ReferenceCounter(), Variable() {
+Object::Object(const Object& obj) : Variable() {
 #ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
+#else
+	_destroying = false;
 #endif
 
-#ifdef ENABLE_WEAK_REFS
-#ifdef REFERENCED_WEAK_MUTEX
-	referenceMutex = new Mutex();
-#endif
-	weakReferences = NULL;
-#endif
+	referenceCounters = NULL;
 
 	//MemoryManager::getInstance()->create(this);
 
@@ -77,34 +69,16 @@ Object::~Object() {
 	}
 #endif
 
-	if (getReferenceCount() > 0)
-		assert(0 && "Deleting object with reference > 0");
+	if (referenceCounters != NULL) {
+		if ((referenceCounters->getStrongReferenceCount() % 2) == 0) {
+			assert(0 && "Deleting object with strong references");
+		}
 
-#ifdef ENABLE_WEAK_REFS
-	if (weakReferences != NULL) {
-#ifdef REFERENCED_WEAK_MUTEX
-		Locker locker(referenceMutex);
-#else
-		Locker locker(&referenceMutex);
-#endif
-		HashSetIterator<WeakReferenceBase*> iterator = weakReferences->iterator();
-
-		while (iterator.hasNext())
-			iterator.getNextKey()->clearObject();
-
-		delete weakReferences;
-		weakReferences = NULL;
-
-		locker.release();
+		if (referenceCounters->decreaseWeakCount() == 0) {
+			delete referenceCounters;
+			referenceCounters = NULL;
+		}
 	}
-	
-
-#ifdef REFERENCED_WEAK_MUTEX
-	delete referenceMutex;
-	referenceMutex = NULL;
-#endif
-
-#endif
 
 #ifdef MEMORY_PROTECTION
 	delete _destroying;
@@ -121,11 +95,38 @@ Object::~Object() {
 	//deletedByTrace = new StackTrace();
 }
 
+/*
+bool Object::tryAcquire() {
+	WMB();
+
+	if (_destroying && getReferenceCount() == 0) {
+		printf("try Acquire failed\n");
+
+		return false;
+	} else
+		increaseCount();
+
+	return true;
+}
+*/
+
+void Object::acquire() {
+	if (referenceCounters == NULL) {
+		StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 1);
+
+		if (!referenceCounters.compareAndSet(NULL, newCount)) {
+			delete newCount;
+		}
+	}
+
+	referenceCounters->increaseStrongCount();
+}
+
 void Object::release() {
 /*	if (getReferenceCount() == 0)
 		assert(0 && "Object already delted");*/
 
-	if (decreaseCount()) {
+	if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
 		if (notifyDestroy()) {
 #ifdef WITH_STM
 			MemoryManager::getInstance()->reclaim(this);
@@ -136,65 +137,15 @@ void Object::release() {
 	}
 }
 
-void Object::acquireWeak(WeakReferenceBase* ref) {
-#ifdef ENABLE_WEAK_REFS
-#ifdef REFERENCED_WEAK_MUTEX
-	Locker locker(referenceMutex);
-#else
-	Locker locker(&referenceMutex);
-#endif
-
-	if (weakReferences == NULL)
-		weakReferences = new HashSet<WeakReferenceBase*>();
-
-	weakReferences->add(ref);
-#endif
-}
-
-void Object::releaseWeak(WeakReferenceBase* ref) {
-#ifdef ENABLE_WEAK_REFS
-#ifdef REFERENCED_WEAK_MUTEX
-	Locker locker(referenceMutex);
-#else
-	Locker locker(&referenceMutex);
-#endif
-
-	if (weakReferences == NULL)
-		return;
-
-	weakReferences->remove(ref);
-#endif
-}
-
 void Object::destroy() {
 #ifdef MEMORY_PROTECTION
 	_destroying->set(true);
 #else
 	_destroying.set(true);
-#endif
-#ifdef ENABLE_WEAK_REFS
-#ifdef REFERENCED_WEAK_MUTEX
-	Locker locker(referenceMutex);
-#else
-	Locker locker(&referenceMutex);
+
 #endif
 
-	if (weakReferences != NULL) {
-		HashSetIterator<WeakReferenceBase*> iterator = weakReferences->iterator();
-
-		while (iterator.hasNext())
-			iterator.getNextKey()->clearObject();
-
-		delete weakReferences;
-		weakReferences = NULL;
-	}
-
-
-	locker.release();
-#endif
-
-	if (getReferenceCount() > 0)
-		assert(0 && "Deleting object with reference > 0");
+	//printf("deleting in ::destroy\n");
 
 #ifdef WITH_STM
 	free();

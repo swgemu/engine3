@@ -156,39 +156,39 @@ void ObservableImplementation::_setStub(DistributedObjectStub* stub) {
 }
 
 DistributedObjectStub* ObservableImplementation::_getStub() {
-	return _this;
+	return _this.get();
 }
 
 ObservableImplementation::operator const Observable*() {
-	return _this;
+	return _this.get();
 }
 
 void ObservableImplementation::lock(bool doLock) {
-	_this->lock(doLock);
+	_this.get()->lock(doLock);
 }
 
 void ObservableImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
+	_this.get()->lock(obj);
 }
 
 void ObservableImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
+	_this.get()->rlock(doLock);
 }
 
 void ObservableImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
+	_this.get()->wlock(doLock);
 }
 
 void ObservableImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void ObservableImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
+	_this.get()->unlock(doLock);
 }
 
 void ObservableImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
+	_this.get()->runlock(doLock);
 }
 
 void ObservableImplementation::_serializationHelperMethod() {
@@ -276,7 +276,7 @@ ObservableImplementation::ObservableImplementation() {
 
 void ObservableImplementation::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
 	// engine/util/Observable.idl():  		observerEventMap.notifyObservers(eventType, this, arg1, arg2);
-	(&observerEventMap)->notifyObservers(eventType, _this, arg1, arg2);
+	(&observerEventMap)->notifyObservers(eventType, _this.get(), arg1, arg2);
 	// engine/util/Observable.idl():  		}
 	for (	// engine/util/Observable.idl():  		for (int i = 0;
 	int i = 0;

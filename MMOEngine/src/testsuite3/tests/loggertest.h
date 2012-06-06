@@ -15,7 +15,7 @@ public:
 	LoggerTest() {
 		setLogging(true);
 		setLoggingName("LoggerTest");
-		setFileLogger("loggertest.log", true);
+		setFileLogger("ebati.log", true);
 	}
 };
 

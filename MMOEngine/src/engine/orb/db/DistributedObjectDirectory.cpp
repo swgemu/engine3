@@ -80,7 +80,7 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 		DistributedObject* dobObject = adapter->getStub();
 		//DistributedObjectServant* dobServant = adapter->getImplementation();
 
-		if (dobObject->getReferenceCount() == 1)
+		if (dobObject->getReferenceCount() == 2) // 2 is the lowest count now
 			objectsToDeleteFromRAM.add(dobObject);
 		else if (inRamClassCount != NULL) {
 			String className = TypeInfo<DistributedObject>::getClassName(dobObject, false);

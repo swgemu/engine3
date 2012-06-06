@@ -30,9 +30,9 @@ public:
 
 	}
 
-	TransactionalReference(const TransactionalWeakReference<O>& ref) : Reference<O>(ref) {
+	/*TransactionalReference(const TransactionalWeakReference<O>& ref) : Reference<O>(ref) {
 
-	}
+	}*/
 
 	TransactionalReference(O obj) : Reference<O>(obj) {
 

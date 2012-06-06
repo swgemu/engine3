@@ -15,6 +15,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace core {
 
+  	template<class O> class ManagedReference;
+
 	template<class O> class ManagedWeakReference : public WeakReference<O> {
 	protected:
 		uint64 unloadedObjectID;
@@ -53,7 +55,15 @@ namespace engine {
 			return obj;
 		}
 
-		inline O get() {
+		bool operator==(O obj) {
+			return get() == obj;
+		}
+
+		bool operator!=(O obj) {
+			return get() != obj;
+		}
+
+		inline ManagedReference<O> get() {
 			if (unloadedObjectID != 0) {
 				WeakReference<O>::updateObject(dynamic_cast<O>(Core::getObjectBroker()->lookUp(unloadedObjectID)));
 				unloadedObjectID = 0;
@@ -62,7 +72,7 @@ namespace engine {
 			return WeakReference<O>::get();
 		}
 
-		inline O getForUpdate() {
+		inline ManagedReference<O> getForUpdate() {
 			if (unloadedObjectID != 0) {
 				WeakReference<O>::updateObject(dynamic_cast<O>(Core::getObjectBroker()->lookUp(unloadedObjectID)));
 				unloadedObjectID = 0;
@@ -70,8 +80,6 @@ namespace engine {
 
 			return WeakReference<O>::get();
 		}
-
-
 
 		int compareTo(const ManagedWeakReference& ref) const;
 
@@ -88,13 +96,6 @@ namespace engine {
 //#else
 	public:
 //#endif
-		O operator->() {
-			return get();
-		}
-
-		operator O() {
-			return get();
-		}
 
 	protected:
 		void clearObject();
@@ -183,7 +184,7 @@ namespace engine {
 	}
 
 	template<class O> void ManagedWeakReference<O>::clearObject() {
-		WeakReference<O>::rwlock.wlock();
+		WeakReference<O>::mutex.wlock();
 
 		DistributedObject* obj = static_cast<DistributedObject*>(WeakReference<O>::object.get());
 
@@ -194,7 +195,7 @@ namespace engine {
 
 		WeakReference<O>::object = NULL;
 
-		WeakReference<O>::rwlock.unlock();
+		WeakReference<O>::mutex.unlock();
 	}
 
   } // namespace core

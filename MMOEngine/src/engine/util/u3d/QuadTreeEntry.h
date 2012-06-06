@@ -55,11 +55,11 @@ public:
 
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
-	QuadTreeEntry* getParent();
+	ManagedWeakReference<QuadTreeEntry* > getParent();
 
 	bool containsPoint(float x, float y);
 
-	QuadTreeEntry* getRootParent();
+	ManagedWeakReference<QuadTreeEntry* > getRootParent();
 
 	bool isInSWArea(QuadTreeNode* node);
 
@@ -178,11 +178,11 @@ public:
 
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
-	virtual QuadTreeEntry* getParent();
+	ManagedWeakReference<QuadTreeEntry* > getParent();
 
 	virtual bool containsPoint(float x, float y);
 
-	QuadTreeEntry* getRootParent();
+	ManagedWeakReference<QuadTreeEntry* > getRootParent();
 
 	bool isInSWArea(QuadTreeNode* node);
 
@@ -297,11 +297,11 @@ public:
 
 	float getDistanceTo(QuadTreeEntry* obj);
 
-	QuadTreeEntry* getParent();
+	ManagedWeakReference<QuadTreeEntry* > getParent();
 
 	bool containsPoint(float x, float y);
 
-	QuadTreeEntry* getRootParent();
+	ManagedWeakReference<QuadTreeEntry* > getRootParent();
 
 	void notifyInsert(QuadTreeEntry* obj);
 

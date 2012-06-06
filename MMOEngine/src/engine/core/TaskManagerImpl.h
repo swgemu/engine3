@@ -24,8 +24,8 @@ namespace engine {
 	class TaskManagerImpl : public TaskManager, public Mutex, public Logger {
 		TaskQueue tasks;
 
-		Vector<TaskWorkerThread*> workers;
-		Vector<TaskScheduler*> schedulers;
+		Vector<Reference<TaskWorkerThread*> > workers;
+		Vector<Reference<TaskScheduler*> > schedulers;
 
 #ifdef WITH_STM
 		TaskWorkerThread* serialWorker;

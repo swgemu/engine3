@@ -17,6 +17,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace core {
 
+    template<class O> class ManagedWeakReference;
+
 	template<class O> class ManagedReference : public Reference<O> {
 
 	public:
@@ -27,6 +29,13 @@ namespace engine {
 		}*/
 
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
+		}
+
+		ManagedReference(const Reference<O>& r) : Reference<O>(r) {
+		}
+
+		ManagedReference(ManagedWeakReference<O> r) : Reference<O>(r.get()) {
+
 		}
 
 		ManagedReference(O obj) : Reference<O>(obj) {
@@ -40,6 +49,12 @@ namespace engine {
 				return *this;
 
 			updateObject(ref);
+
+			return *this;
+		}
+
+		ManagedReference& operator=(ManagedWeakReference<O> ref) {
+			updateObject(ref.get());
 
 			return *this;
 		}

@@ -40,6 +40,23 @@ namespace sys {
 			value = val;
 		}
 
+		uint32 add(uint32 val) {
+			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
+				return __sync_add_and_fetch(&value, val);
+			#elif PLATFORM_FREEBSD
+				atomic_add_int(&value, val);
+				return value;
+			#elif defined PLATFORM_LINUX
+				//TODO: find appropriate method
+				return value = value + val;
+			#elif defined PLATFORM_CYGWIN
+				//TODO: find appropriate method
+				return value = value + val;
+			#else
+				return InterlockedAdd((long*) &value, val);
+			#endif
+		}
+
 		uint32 increment() {
 			//__sync_add_and_fetch(&totalIncrementCount, 1);
 

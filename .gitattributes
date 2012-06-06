@@ -661,6 +661,7 @@ MMOEngine/src/system/lang/mersenne/MersenneTwister.cpp -text
 MMOEngine/src/system/lang/mersenne/MersenneTwister.h -text
 MMOEngine/src/system/lang/ref/Reference.h -text
 MMOEngine/src/system/lang/ref/ReferenceCounter.h -text
+MMOEngine/src/system/lang/ref/StrongAndWeakReferenceCount.h -text
 MMOEngine/src/system/lang/ref/WeakReference.h -text
 MMOEngine/src/system/lang/types.cpp -text
 MMOEngine/src/system/lang/types.h -text
@@ -774,3 +775,4 @@ MMOEngine/src/testsuite3/tests/referencetest.h -text
 MMOEngine/src/testsuite3/tests/stmmemtest.h -text
 MMOEngine/src/testsuite3/tests/stmtest.h -text
 MMOEngine/src/testsuite3/tests/timeserialize.h -text
+MMOEngine/src/testsuite3/tests/weakreftest.h -text

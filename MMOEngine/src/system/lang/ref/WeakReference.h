@@ -8,44 +8,33 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../Variable.h"
 
-#include "../../thread/ReadWriteLock.h"
+#include "system/thread/ReadWriteLock.h"
+#include "system/thread/Locker.h"
 #include "system/thread/atomic/AtomicReference.h"
-#include "../Object.h"
+#include "system/lang/Object.h"
+#include "StrongAndWeakReferenceCount.h"
+
+#define ENABLE_THREAD_SAFE_MUTEX_WEAK
 
 namespace sys {
   namespace lang {
 
-   class WeakReferenceBase {
-   public:
-	   virtual ~WeakReferenceBase() {
 
-	   }
-
-	   int compareTo(WeakReferenceBase* base) {
-		   if (this < base)
-			   return 1;
-		   else if (this > base)
-			   return -1;
-		   else return 0;
-	   }
-
-   protected:
-	   virtual void clearObject() = 0;
-
-	   friend class Object;
-   };
-
-	template<class O> class WeakReference : public Variable, public WeakReferenceBase {
+	template<class O> class WeakReference : public Variable {
 	protected:
+#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
+		mutable ReadWriteLock mutex;
+#endif
+		StrongAndWeakReferenceCount* count;
 		AtomicReference<O> object;
-		ReadWriteLock rwlock;
 
 	public:
 		WeakReference() : Variable() {
+			count = NULL;
 			object = NULL;
 		}
 
-		WeakReference(const WeakReference<O>& ref) : Variable(), WeakReferenceBase() {
+		WeakReference(const WeakReference<O>& ref) : Variable() {
 			initializeObject(ref.object);
 		}
 
@@ -66,6 +55,10 @@ namespace sys {
 				return 0;
 		}
 
+		void set(StrongAndWeakReferenceCount* count) {
+			this->count = count;
+		}
+
 		WeakReference<O>& operator=(const WeakReference<O>& ref) {
 			if (this == &ref)
 				return *this;
@@ -78,32 +71,48 @@ namespace sys {
 		O operator=(O obj) {
 			updateObject(obj);
 
-			return object;
+			return obj;
 		}
 
-		O operator->() const {
-			assert(object != NULL);
-			return object;
+		bool operator==(O obj) {
+			return object == obj;
 		}
 
-		operator O() const {
-			return object;
+		bool operator!=(O obj) {
+			return object != obj;
 		}
 
-		inline O get() {
-			rwlock.wlock();
+		Reference<O> get() const {
+			Reference<O> objectToReturn;
 
-			O copy = object;
+#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
+			mutex.rlock();
+#endif
 
-			if (object != NULL && (static_cast<Object*>(object.get()))->_isGettingDestroyed()) {
-				rwlock.unlock();
-				return NULL;
+			if (object == NULL) {
+#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
+				mutex.runlock();
+#endif
+				return objectToReturn;
 			}
 
-			rwlock.unlock();
+			if (count->increaseStrongCount() & 1) {
+#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
+				mutex.runlock();
+#endif
+				return objectToReturn;
+			}
 
-			return copy;
+			objectToReturn.initializeWithoutAcquire(object);
+
+#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
+			mutex.runlock();
+#endif
+
+			return objectToReturn;
 		}
+
+	public:
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			return false;
@@ -113,32 +122,24 @@ namespace sys {
 			return false;
 		}
 
-	protected:
-
 		inline void updateObject(O obj) {
+#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
+			Locker locker(&mutex);
+#endif
+
 			if (obj == object.get())
 				return;
 
-			//This needs to be an atomic operation, 2 threads updating/reading this messes shit up
-			//Thread A reading while thread B updating, thread A reads NULL cause it releases and then acquires
-			/*releaseObject();
-
-						setObject(obj);*/
-
-			if (obj != NULL)
-				(static_cast<Object*>(obj))->acquireWeak(this);
-
-			while (true) {
-				O oldobj = object.get();
-
-				if (object.compareAndSet(oldobj, obj)) {
-					if (oldobj != NULL)
-						(static_cast<Object*>(oldobj))->releaseWeak(this);
-
-					return;
+			if (object != NULL) {
+				if (count->decreaseWeakCount() == 0) {
+					delete count;
+					count = NULL;
 				}
 			}
 
+			object = obj;
+
+			acquireObject();
 		}
 
 		inline void setObject(O obj) {
@@ -157,29 +158,23 @@ namespace sys {
 		inline void acquireObject() {
 			if (object != NULL) {
 				(static_cast<Object*>(object.get()))->acquireWeak(this);
+			} else {
+				count = NULL;
 			}
 		}
 
 		void releaseObject() {
-			rwlock.wlock();
-
+#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
+			Locker locker(&mutex);
+#endif
 			if (object != NULL) {
-				(static_cast<Object*>(object.get()))->releaseWeak(this);
-
-				object = NULL;
+				if (count->decreaseWeakCount() == 0) {
+					delete count;
+					count = NULL;
+				}
 			}
 
-			rwlock.unlock();
-		}
-
-		void clearObject() {
-			rwlock.wlock();
-
-			if (object != NULL) {
-				object = NULL;
-			}
-
-			rwlock.unlock();
+			object = NULL;
 		}
 
 		friend class Object;

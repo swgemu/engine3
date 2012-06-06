@@ -91,14 +91,6 @@ public:
 			return header != getHeader(obj);
 		}
 
-		O operator->() {
-			return getForUpdate();
-		}
-
-		operator O() {
-			return getForUpdate();
-		}
-
 		O get() {
 			if (header != NULL)
 				return header->get();

@@ -61,39 +61,39 @@ void ManagedServiceImplementation::_setStub(DistributedObjectStub* stub) {
 }
 
 DistributedObjectStub* ManagedServiceImplementation::_getStub() {
-	return _this;
+	return _this.get();
 }
 
 ManagedServiceImplementation::operator const ManagedService*() {
-	return _this;
+	return _this.get();
 }
 
 void ManagedServiceImplementation::lock(bool doLock) {
-	_this->lock(doLock);
+	_this.get()->lock(doLock);
 }
 
 void ManagedServiceImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
+	_this.get()->lock(obj);
 }
 
 void ManagedServiceImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
+	_this.get()->rlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
+	_this.get()->wlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void ManagedServiceImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
+	_this.get()->unlock(doLock);
 }
 
 void ManagedServiceImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
+	_this.get()->runlock(doLock);
 }
 
 void ManagedServiceImplementation::_serializationHelperMethod() {

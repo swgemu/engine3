@@ -50,21 +50,21 @@ bool QuadTreeEntryImplementation::isInArea(QuadTreeNode* node) {
 }
 
 uint64 QuadTreeEntryImplementation::getObjectID() {
-	return _this->_getObjectID();
+	return _this.get()->_getObjectID();
 }
 
-QuadTreeEntry* QuadTreeEntryImplementation::getRootParent() {
+ManagedWeakReference<QuadTreeEntry*> QuadTreeEntryImplementation::getRootParent() {
 	if (parent == NULL)
 		return NULL;
 
-	QuadTreeEntry* grandParent = parent;
+	ManagedReference<QuadTreeEntry*> grandParent = parent.get();
 
 	while (grandParent->getParent() != NULL)
 		grandParent = grandParent->getParent();
 
-	return grandParent;
+	ManagedWeakReference<QuadTreeEntry*> weak = grandParent.get();
 
-	//return NULL;
+	return weak;
 }
 
 int QuadTreeEntry::compareTo(QuadTreeEntry* obj) {
@@ -90,5 +90,5 @@ uint64 QuadTreeEntry::getDirtyObjectID() {
 }
 
 uint64 QuadTreeEntryImplementation::getDirtyObjectID() {
-	return _this->_getObjectID();
+	return _this.get()->_getObjectID();
 }

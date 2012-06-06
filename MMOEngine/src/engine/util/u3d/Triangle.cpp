@@ -177,9 +177,76 @@ AABB Triangle::triAABB() const {
 }*/
 
 bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersectionDistance) {
-	// Find vectors for two edges sharing vert0
 	intersectionDistance = 0;
 
+	/*
+	Vector3    u, v, n;             // triangle vectors
+	Vector3    dir, w0, w;          // ray vectors
+	float     r, a, b;             // params to calc ray-plane intersect
+
+	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
+	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
+	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+
+	// get triangle edge vectors and plane normal
+	u = vert1 - vert0;
+	v = vert2 - vert0;
+	n = u.crossProduct(v);             // cross product
+
+	if (n == Vector3(0, 0, 0))            // triangle is degenerate
+		return false;                 // do not deal with this case
+
+	dir = ray.getDirection();             // ray direction vector
+	w0 = ray.getOrigin() - vert0;
+
+	//a = -dot(n,w0);
+	a = -n.dotProduct(w0);
+
+	//b = dot(n,dir);
+	b = n.dotProduct(dir);
+
+	if (fabs(b) < SMALL_NUM) {     // ray is parallel to triangle plane
+		if (a == 0)                // ray lies in triangle plane
+			return false;
+		else return false;             // ray disjoint from plane
+	}
+
+	// get intersect point of ray with triangle plane
+	r = a / b;
+	if (r < 0.0)                   // ray goes away from triangle
+		return false;                  // => no intersect
+	// for a segment, also test if (r > 1.0) => no intersect
+
+	Vector3 intersectionPoint = ray.getOrigin() + r * dir;           // intersect point of ray and plane
+
+	// is I inside T?
+	float    uu, uv, vv, wu, wv, D;
+	uu = u.dotProduct(u);
+	uv = u.dotProduct(v);
+	vv = v.dotProduct(v);
+	w = intersectionPoint - vert0;
+	wu = w.dotProduct(u);
+	wv = w.dotProduct(v);
+	D = uv * uv - uu * vv;
+
+	// get and test parametric coords
+	float s, t;
+	s = (uv * wv - vv * wu) / D;
+	if (s < 0.0 || s > 1.0)        // I is outside T
+		return false;
+	t = (uv * wu - uu * wv) / D;
+	if (t < 0.0 || (s + t) > 1.0)  // I is outside T
+		return false;
+
+	intersectionDistance = r;
+
+	return true;                      // I is in T
+
+
+*/
+
+
+// Find vectors for two edges sharing vert0
 	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
 	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
 	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
@@ -208,7 +275,7 @@ bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersection
 	float mU, mV;
 	mU = (tvec.dotProduct(pvec)) * OneOverDet;
 	//		if(IR(u)&0x80000000 || u>1.0f)					return FALSE;
-	if (mU < 0 || mU > 1.f)
+	if (mU < 0.0f || mU > 1.f)
 		return false;
 
 	// prepare to test V parameter
@@ -225,11 +292,11 @@ bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersection
 	if (mDistance < 0)
 		return false;
 
-	/*String a = "ray/triangle intersecting with mDistance:";
-	a += String::valueOf(mDistance);
-	a += " maxDistance:";
-	a += String::valueOf(maxDistance);
-	Logger::console.info(a, true);*/
+	//String a = "ray/triangle intersecting with mDistance:";
+	//a += String::valueOf(mDistance);
+	//a += " maxDistance:";
+	//a += String::valueOf(maxDistance);
+	//Logger::console.info(a, true);
 
 	if (mDistance <= maxDistance) {
 		intersectionDistance = mDistance;
@@ -239,6 +306,7 @@ bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersection
 		return false;
 
 	//return true;
+
 }
 
 int Triangle::getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertexB) {

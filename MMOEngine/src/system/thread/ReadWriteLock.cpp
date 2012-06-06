@@ -24,9 +24,9 @@ void ReadWriteLock::rlock(bool doLock) {
 		int res = pthread_rwlock_rdlock(&rwlock);
 		if (res != 0) {
 #ifdef TRACE_LOCKS
-			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << res << ")\n";
+			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
 #else
-			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock (" << res << ")\n";
+			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock (" << strerror(res) << ")\n";
 #endif
 			StackTrace::printStackTrace();
 		}
@@ -65,7 +65,7 @@ void ReadWriteLock::wlock(bool doLock) {
 #ifdef TRACE_LOCKS
 			System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
 #else
-		System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock (" << res << ")\n";
+		System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock (" << strerror(res) << ")\n";
 #endif
 	#else
 		Time start;

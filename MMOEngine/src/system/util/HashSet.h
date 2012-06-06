@@ -27,6 +27,10 @@ namespace sys {
 			PRESENT = 0;//new Object();
 		}
 		
+		HashSet(const HashSet<E>& h) : HashTable<E, uint8>(h) {
+			PRESENT = h.PRESENT;
+		}
+
 		virtual ~HashSet() {
 			//delete PRESENT;
 		}

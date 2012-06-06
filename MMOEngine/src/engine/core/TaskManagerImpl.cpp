@@ -83,13 +83,11 @@ void TaskManagerImpl::shutdown() {
 	while (!schedulers.isEmpty()) {
 		lock();
 
-		TaskScheduler* scheduler = schedulers.remove(0);
+		Reference<TaskScheduler*> scheduler = schedulers.remove(0);
 
 		unlock();
 
 		scheduler->stop();
-
-		delete scheduler;
 	}
 
 	tasks.flush();
@@ -97,13 +95,11 @@ void TaskManagerImpl::shutdown() {
 	while (!workers.isEmpty()) {
 		lock();
 
-		TaskWorkerThread* worker = workers.remove(0);
+		Reference<TaskWorkerThread*> worker = workers.remove(0);
 
 		unlock();
 
 		worker->stop();
-
-		delete worker;
 	}
 
 	debug("stopped");

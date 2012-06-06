@@ -139,15 +139,16 @@ bool QuadTreeNode::testInRange(float x, float y, float range) {
 }
 
 void QuadTreeNode::check () {
-    if (isEmpty() && !hasSubNodes() && parentNode != NULL) {
-        if (parentNode.get()->nwNode == this)
-            parentNode->nwNode = NULL;
-        else if (parentNode.get()->neNode == this)
-            parentNode->neNode = NULL;
-        else if (parentNode.get()->swNode == this)
-            parentNode->swNode = NULL;
-        else if (parentNode.get()->seNode == this)
-            parentNode->seNode = NULL;
+	TransactionalReference<QuadTreeNode*> strongRef = parentNode.get();
+    if (isEmpty() && !hasSubNodes() && strongRef != NULL) {
+        if (strongRef->nwNode == this)
+        	strongRef->nwNode = NULL;
+        else if (strongRef->neNode == this)
+        	strongRef->neNode = NULL;
+        else if (strongRef->swNode == this)
+        	strongRef->swNode = NULL;
+        else if (strongRef->seNode == this)
+        	strongRef->seNode = NULL;
 
 		if (QuadTree::doLog())
 			System::out << "deleteing node (" << this << ")\n";
@@ -285,8 +286,8 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 	try {
 		if (closeObjects != NULL) {
 			for (int i = 0; i < closeObjects->size(); i++) {
-				QuadTreeEntry* o = closeObjects->get(i);
-				QuadTreeEntry* objectToRemove = o;
+				ManagedReference<QuadTreeEntry*> o = closeObjects->get(i);
+				ManagedReference<QuadTreeEntry*> objectToRemove = o.get();
 
 				if (o->getParent() != NULL)
 					o = o->getRootParent();
@@ -531,9 +532,9 @@ bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
     //data->IncRef ();
 
     // Go upwards til the object is inside the square.
-    TransactionalReference<QuadTreeNode*> cur = node.get()->parentNode;
+    TransactionalReference<QuadTreeNode*> cur = node.get()->parentNode.get();
     while (cur.get() != NULL && !cur.get()->testInside(obj))
-        cur = cur.get()->parentNode;
+        cur = cur.get()->parentNode.get();
 
     remove(obj);
 

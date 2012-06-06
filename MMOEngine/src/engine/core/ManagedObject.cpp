@@ -386,11 +386,11 @@ void ManagedObjectImplementation::_setStub(DistributedObjectStub* stub) {
 }
 
 DistributedObjectStub* ManagedObjectImplementation::_getStub() {
-	return _this;
+	return _this.get();
 }
 
 ManagedObjectImplementation::operator const ManagedObject*() {
-	return _this;
+	return _this.get();
 }
 
 void ManagedObjectImplementation::_serializationHelperMethod() {
@@ -535,61 +535,100 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	case RPC_UPDATEFORWRITE__:
-		updateForWrite();
+		{
+			updateForWrite();
+		}
 		break;
 	case RPC_LOCK__BOOL_:
-		lock(inv->getBooleanParameter());
+		{
+			lock(inv->getBooleanParameter());
+		}
 		break;
 	case RPC_LOCK__MANAGEDOBJECT_:
-		lock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+		{
+			lock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+		}
 		break;
 	case RPC_RLOCK__BOOL_:
-		rlock(inv->getBooleanParameter());
+		{
+			rlock(inv->getBooleanParameter());
+		}
 		break;
 	case RPC_WLOCK__BOOL_:
-		wlock(inv->getBooleanParameter());
+		{
+			wlock(inv->getBooleanParameter());
+		}
 		break;
 	case RPC_WLOCK__MANAGEDOBJECT_:
-		wlock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+		{
+			wlock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+		}
 		break;
 	case RPC_UNLOCK__BOOL_:
-		unlock(inv->getBooleanParameter());
+		{
+			unlock(inv->getBooleanParameter());
+		}
 		break;
 	case RPC_RUNLOCK__BOOL_:
-		runlock(inv->getBooleanParameter());
+		{
+			runlock(inv->getBooleanParameter());
+		}
 		break;
 	case RPC_SETLOCKNAME__STRING_:
-		setLockName(inv->getAsciiParameter(_param0_setLockName__String_));
+		{
+			String name; 
+			setLockName(inv->getAsciiParameter(name));
+		}
 		break;
 	case RPC_NOTIFYDESTROY__:
-		resp->insertBoolean(notifyDestroy());
+		{
+			resp->insertBoolean(notifyDestroy());
+		}
 		break;
 	case RPC_NOTIFYLOADFROMDATABASE__:
-		notifyLoadFromDatabase();
+		{
+			notifyLoadFromDatabase();
+		}
 		break;
 	case RPC_INITIALIZETRANSIENTMEMBERS__:
-		initializeTransientMembers();
+		{
+			initializeTransientMembers();
+		}
 		break;
 	case RPC_UPDATETODATABASE__:
-		updateToDatabase();
+		{
+			updateToDatabase();
+		}
 		break;
 	case RPC_QUEUEUPDATETODATABASETASK__:
-		queueUpdateToDatabaseTask();
+		{
+			queueUpdateToDatabaseTask();
+		}
 		break;
 	case RPC_CLEARUPDATETODATABASETASK__:
-		clearUpdateToDatabaseTask();
+		{
+			clearUpdateToDatabaseTask();
+		}
 		break;
 	case RPC_GETLASTCRCSAVE__:
-		resp->insertInt(getLastCRCSave());
+		{
+			resp->insertInt(getLastCRCSave());
+		}
 		break;
 	case RPC_SETLASTCRCSAVE__INT_:
-		setLastCRCSave(inv->getUnsignedIntParameter());
+		{
+			setLastCRCSave(inv->getUnsignedIntParameter());
+		}
 		break;
 	case RPC_ISPERSISTENT__:
-		resp->insertBoolean(isPersistent());
+		{
+			resp->insertBoolean(isPersistent());
+		}
 		break;
 	case RPC_GETPERSISTENCELEVEL__:
-		resp->insertSignedInt(getPersistenceLevel());
+		{
+			resp->insertSignedInt(getPersistenceLevel());
+		}
 		break;
 	default:
 		throw Exception("Method does not exists");

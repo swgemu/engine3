@@ -8,5 +8,5 @@
 #include "Observer.h"
 
 uint64 ObserverImplementation::getObjectID() {
-	return _this->_getObjectID();
+	return _this.get()->_getObjectID();
 }

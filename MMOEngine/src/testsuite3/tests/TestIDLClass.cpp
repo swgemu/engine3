@@ -93,39 +93,39 @@ void TestIDLClassImplementation::_setStub(DistributedObjectStub* stub) {
 }
 
 DistributedObjectStub* TestIDLClassImplementation::_getStub() {
-	return _this;
+	return _this.get();
 }
 
 TestIDLClassImplementation::operator const TestIDLClass*() {
-	return _this;
+	return _this.get();
 }
 
 void TestIDLClassImplementation::lock(bool doLock) {
-	_this->lock(doLock);
+	_this.get()->lock(doLock);
 }
 
 void TestIDLClassImplementation::lock(ManagedObject* obj) {
-	_this->lock(obj);
+	_this.get()->lock(obj);
 }
 
 void TestIDLClassImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
+	_this.get()->rlock(doLock);
 }
 
 void TestIDLClassImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
+	_this.get()->wlock(doLock);
 }
 
 void TestIDLClassImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void TestIDLClassImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
+	_this.get()->unlock(doLock);
 }
 
 void TestIDLClassImplementation::runlock(bool doLock) {
-	_this->runlock(doLock);
+	_this.get()->runlock(doLock);
 }
 
 void TestIDLClassImplementation::_serializationHelperMethod() {
@@ -224,10 +224,14 @@ void TestIDLClassAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	case RPC_GETVALUE__:
-		resp->insertSignedInt(getValue());
+		{
+			resp->insertSignedInt(getValue());
+		}
 		break;
 	case RPC_SETVALUE__INT_:
-		setValue(inv->getSignedIntParameter());
+		{
+			setValue(inv->getSignedIntParameter());
+		}
 		break;
 	default:
 		throw Exception("Method does not exists");

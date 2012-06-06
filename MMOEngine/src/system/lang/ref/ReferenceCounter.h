@@ -19,64 +19,56 @@ namespace sys {
 
 	class ReferenceCounter {
 	protected:
-#ifdef MEMORY_PROTECTION
-		AtomicInteger* _references;
-#else
 		AtomicInteger _references;
-#endif
 
 	public:
 		ReferenceCounter() {
-#ifdef MEMORY_PROTECTION
-			_references = new AtomicInteger();
-#endif
+		}
+
+		ReferenceCounter(uint32 count) : _references(count) {
 		}
 
 		ReferenceCounter(const ReferenceCounter& counter) {
-#ifdef MEMORY_PROTECTION
-			_references = new AtomicInteger();
-#endif
+			_references = counter._references;
 		}
 
 		virtual ~ReferenceCounter() {
-			if (getReferenceCount() > 1) {
-				StackTrace::printStackTrace();
-				assert(0 && "reference count was not zero on delete");
-			}
-
-#ifdef MEMORY_PROTECTION
-			delete _references;
-			//_references = (AtomicInteger*)(uint64)-1;
-			_references = NULL;
-#endif
-		}
-
-	protected:
-		inline void increaseCount() {
-#ifdef MEMORY_PROTECTION
-			_references->increment();
-#else
-			_references.increment();
-#endif
-		}
-
-		inline bool decreaseCount() {
-			/*if (getReferenceCount() < 1)
-				assert(0 && "reference count getting under zero");*/
-#ifdef MEMORY_PROTECTION
-			return _references->decrement() == 0;
-#else
-			return _references.decrement() == 0;
-#endif
 		}
 
 	public:
+		inline uint32 increaseCount() {
+			return _references.add(2);
+		}
+
+		void clearLowestBit() {
+			uint32 oldVal, newVal;
+
+			do {
+				oldVal = _references;
+				newVal = oldVal - 1;
+			} while (!_references.compareAndSet(oldVal, newVal));
+		}
+
+		inline uint32 decrementAndTestAndSet() {
+			uint32 oldVal, newVal;
+
+			do {
+				oldVal = _references;
+				newVal = oldVal - 2;
+
+				assert(oldVal >= 2);
+
+				if (newVal == 0)
+					newVal = 1;
+			} while (!_references.compareAndSet(oldVal, newVal));
+
+			return ((oldVal - newVal) & 1);
+		}
+
 		inline uint32 getReferenceCount() {
-#ifdef MEMORY_PROTECTION
-			return _references->get();
-#else
+			WMB();
+
 			return _references.get();
-#endif
 		}
 
 	};

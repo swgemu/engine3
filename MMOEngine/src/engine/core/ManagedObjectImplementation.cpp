@@ -140,31 +140,31 @@ void ManagedObjectImplementation::updateForWrite() {
 }
 
 void ManagedObjectImplementation::lock(bool doLock) {
-	_this->wlock(doLock);
+	_this.get()->wlock(doLock);
 }
 
 void ManagedObjectImplementation::lock(Lockable* obj) {
-	_this->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void ManagedObjectImplementation::lock(ManagedObject* obj) {
-	_this->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void ManagedObjectImplementation::rlock(bool doLock) {
-	_this->rlock(doLock);
+	_this.get()->rlock(doLock);
 }
 
 void ManagedObjectImplementation::wlock(bool doLock) {
-	_this->wlock(doLock);
+	_this.get()->wlock(doLock);
 }
 
 void ManagedObjectImplementation::wlock(ManagedObject* obj) {
-	_this->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void ManagedObjectImplementation::unlock(bool doLock) {
-	_this->unlock(doLock);
+	_this.get()->unlock(doLock);
 }
 
 void ManagedObjectImplementation::runlock(bool doLock) {
