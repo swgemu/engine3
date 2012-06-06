@@ -190,11 +190,13 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 
 	Locker clocker(objectManager);
 
+	/*
 	if (obj->_isGettingDestroyed())
 		return false;
 
-	if (obj->getReferenceCount() > 0)
+	if (obj->getReferenceCount() % 2)
 		return false;
+	 */
 
 	obj->_setDestroying();
 
