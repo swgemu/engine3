@@ -34,7 +34,7 @@ namespace engine {
 		ManagedReference(const Reference<O>& r) : Reference<O>(r) {
 		}
 
-		ManagedReference(ManagedWeakReference<O>& r) : Reference<O>() {
+		ManagedReference(const WeakReference<O>& r) : Reference<O>() {
 			updateObject(r.get());
 		}
 
