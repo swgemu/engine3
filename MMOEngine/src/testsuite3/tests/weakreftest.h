@@ -81,6 +81,11 @@ void weakreftest() {
 		Reference<Object*> strongReference = new Object();
 
 		Reference<Task*> task = new StrongTask(strongReference);
+		WeakReference<Task*> weak = task.castTo<StrongTask*>().get();
+
+		Reference<StrongTask*> castTest = task.castTo<StrongTask*>();
+		WeakReference<StrongTask*> wcastTest = weak.castTo<StrongTask*>().get();
+
 
 		for (int j = 0; j < 1000; ++j) {
 			Reference<Task*> weakTask = new WeakTask(strongReference);

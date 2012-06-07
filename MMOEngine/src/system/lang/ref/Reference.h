@@ -106,6 +106,14 @@ namespace sys {
 			return object.get();
 		}
 
+		template<class B>
+		Reference<B> castTo() {
+			Reference<B> stored;
+
+			stored = dynamic_cast<B>(get());
+			return stored;
+		}
+
 		inline O get() const {
 			return object.get();
 		}

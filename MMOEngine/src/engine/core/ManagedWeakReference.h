@@ -61,6 +61,15 @@ namespace engine {
 			return obj;
 		}
 
+		template<class B>
+		ManagedReference<B> castTo() {
+			ManagedReference<B> stored;
+			ManagedReference<O> strong = get();
+
+			stored = dynamic_cast<B>(strong.get());
+			return stored;
+		}
+
 		bool operator==(O obj) {
 			return get() == obj;
 		}

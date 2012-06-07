@@ -67,6 +67,14 @@ namespace engine {
 			return obj;
 		}
 
+		template<class B>
+		ManagedReference<B> castTo() {
+			ManagedReference<B> stored;
+
+			stored = dynamic_cast<B>(get());
+			return stored;
+		}
+
 		inline O get() const {
 			return Reference<O>::object;
 		}
