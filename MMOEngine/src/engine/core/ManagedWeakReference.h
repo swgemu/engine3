@@ -19,7 +19,7 @@ namespace engine {
 
 	template<class O> class ManagedWeakReference : public WeakReference<O> {
 	protected:
-		uint64 savedObjectID;
+		mutable uint64 savedObjectID;
 	public:
 		ManagedWeakReference() : WeakReference<O>() {
 			savedObjectID = 0;

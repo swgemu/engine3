@@ -35,7 +35,7 @@ namespace sys {
 		}
 
 		WeakReference(const WeakReference<O>& ref) : Variable() {
-			initializeObject(ref.object);
+			initializeObject(ref.get().get());
 		}
 
 		WeakReference(O obj) : Variable() {
