@@ -19,21 +19,24 @@ namespace engine {
 
 	template<class O> class ManagedWeakReference : public WeakReference<O> {
 	protected:
-		uint64 unloadedObjectID;
+		uint64 savedObjectID;
 	public:
 		ManagedWeakReference() : WeakReference<O>() {
-			unloadedObjectID = 0;
+			savedObjectID = 0;
 		}
 
 		/*ManagedWeakReference(ManagedWeakReference& ref) : WeakReference<O>(ref) {
 		}*/
 
 		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref) {
-			unloadedObjectID = 0;
+			savedObjectID = ref.savedObjectID;
 		}
 
 		ManagedWeakReference(O obj) : WeakReference<O>(obj) {
-			unloadedObjectID = 0;
+			savedObjectID = 0;
+
+			if (obj != NULL)
+				savedObjectID = obj->_getObjectID();
 		}
 
 		ManagedWeakReference& operator=(const ManagedWeakReference& ref) {
@@ -42,7 +45,7 @@ namespace engine {
 
 			WeakReference<O>::updateObject(ref.object);
 
-			unloadedObjectID = ref.unloadedObjectID;
+			savedObjectID = ref.savedObjectID;
 
 			return *this;
 		}
@@ -50,7 +53,10 @@ namespace engine {
 		O operator=(O obj) {
 			WeakReference<O>::updateObject(obj);
 
-			unloadedObjectID = 0;
+			if (obj == NULL)
+				savedObjectID = 0;
+			else
+				savedObjectID = obj->_getObjectID();
 
 			return obj;
 		}
@@ -64,21 +70,27 @@ namespace engine {
 		}
 
 		inline ManagedReference<O> get() {
-			if (unloadedObjectID != 0) {
-				WeakReference<O>::updateObject(dynamic_cast<O>(Core::getObjectBroker()->lookUp(unloadedObjectID)));
-				unloadedObjectID = 0;
+			ManagedReference<O> strongRef = WeakReference<O>::get();
+
+			if (savedObjectID != 0 && strongRef == NULL) {
+				strongRef = dynamic_cast<O>(Core::getObjectBroker()->lookUp(savedObjectID));
+
+				WeakReference<O>::updateObject(strongRef.get());
 			}
 
-			return WeakReference<O>::get();
+			return strongRef;
 		}
 
 		inline ManagedReference<O> getForUpdate() {
-			if (unloadedObjectID != 0) {
-				WeakReference<O>::updateObject(dynamic_cast<O>(Core::getObjectBroker()->lookUp(unloadedObjectID)));
-				unloadedObjectID = 0;
+			ManagedReference<O> strongRef = WeakReference<O>::get();
+
+			if (savedObjectID != 0 && strongRef == NULL) {
+				strongRef = dynamic_cast<O>(Core::getObjectBroker()->lookUp(savedObjectID));
+
+				WeakReference<O>::updateObject(strongRef.get());
 			}
 
-			return WeakReference<O>::get();
+			return strongRef;
 		}
 
 		int compareTo(const ManagedWeakReference& ref) const;
@@ -97,17 +109,11 @@ namespace engine {
 	public:
 //#endif
 
-	protected:
-		void clearObject();
-
 	};
 
 	template<class O> int ManagedWeakReference<O>::compareTo(const ManagedWeakReference& ref) const {
-		DistributedObject* thisObj = static_cast<DistributedObject*>(WeakReference<O>::object.get());
-		DistributedObject* otherObj = static_cast<DistributedObject*>(ref.WeakReference<O>::object.get());
-
-		uint64 thisOid = (thisObj == NULL) ? unloadedObjectID : thisObj->_getObjectID();
-		uint64 otherOid = (otherObj == NULL) ? ref.unloadedObjectID : otherObj->_getObjectID();
+		uint64 thisOid = savedObjectID;
+		uint64 otherOid = ref.savedObjectID;
 
 		if (thisOid < otherOid)
 			return 1;
@@ -118,53 +124,45 @@ namespace engine {
 	}
 
 	template<class O> bool ManagedWeakReference<O>::toString(String& str) {
-		if (WeakReference<O>::get() != NULL)
-			str = String::valueOf((static_cast<DistributedObject*>(WeakReference<O>::get())->_getObjectID()));
-		else if (unloadedObjectID != 0)
-			str = String::valueOf(unloadedObjectID);
-		else
-			str = String::valueOf(0);
+		str = String::valueOf(savedObjectID);
 
 		return true;
 	}
 
 	template<class O> bool ManagedWeakReference<O>::parseFromString(const String& str, int version) {
-		DistributedObject* obj = Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str));
-		unloadedObjectID = 0;
+		uint64 oid = UnsignedLong::valueOf(str);
+
+		DistributedObject* obj = Core::getObjectBroker()->lookUp(oid);
+		savedObjectID = 0;
 
 		if (obj == NULL) {
 			WeakReference<O>::updateObject(NULL);
 
-			unloadedObjectID = 0;
 			return false;
 		}
 
 		O castedObject = dynamic_cast<O>(obj);
 
-		WeakReference<O>::updateObject(castedObject);
-
-		if (castedObject == NULL)
+		if (castedObject == NULL) {
 			return false;
+		}
+
+		savedObjectID = oid;
+
+		WeakReference<O>::updateObject(castedObject);
 
 		return true;
 	}
 
 	template<class O> bool ManagedWeakReference<O>::toBinaryStream(ObjectOutputStream* stream) {
-		O object = WeakReference<O>::get();
-
-		if (object != NULL)
-			stream->writeLong((static_cast<DistributedObject*>(object))->_getObjectID());
-		else if (unloadedObjectID != 0)
-			stream->writeLong(unloadedObjectID);
-		else
-			stream->writeLong(0);
+		stream->writeLong(savedObjectID);
 
 		return true;
 	}
 
 	template<class O> bool ManagedWeakReference<O>::parseFromBinaryStream(ObjectInputStream* stream) {
 		uint64 oid = stream->readLong();
-		unloadedObjectID = 0;
+		savedObjectID = 0;
 
 		DistributedObject* obj = Core::getObjectBroker()->lookUp(oid);
 
@@ -175,27 +173,14 @@ namespace engine {
 
 		O castedObject = dynamic_cast<O>(obj);
 
-		WeakReference<O>::updateObject(castedObject);
-
 		if (castedObject == NULL)
 			return false;
 
+		savedObjectID = oid;
+
+		WeakReference<O>::updateObject(castedObject);
+
 		return true;
-	}
-
-	template<class O> void ManagedWeakReference<O>::clearObject() {
-		WeakReference<O>::mutex.wlock();
-
-		DistributedObject* obj = static_cast<DistributedObject*>(WeakReference<O>::object.get());
-
-		if (obj != NULL) {
-			unloadedObjectID = obj->_getObjectID();
-		} else
-			unloadedObjectID = 0;
-
-		WeakReference<O>::object = NULL;
-
-		WeakReference<O>::mutex.unlock();
 	}
 
   } // namespace core
