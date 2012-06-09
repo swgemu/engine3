@@ -69,31 +69,31 @@ ManagedVectorImplementation::operator const ManagedVector*() {
 }
 
 void ManagedVectorImplementation::lock(bool doLock) {
-	_this.get()->lock(doLock);
+	_this.getReferenceUnsafe()->lock(doLock);
 }
 
 void ManagedVectorImplementation::lock(ManagedObject* obj) {
-	_this.get()->lock(obj);
+	_this.getReferenceUnsafe()->lock(obj);
 }
 
 void ManagedVectorImplementation::rlock(bool doLock) {
-	_this.get()->rlock(doLock);
+	_this.getReferenceUnsafe()->rlock(doLock);
 }
 
 void ManagedVectorImplementation::wlock(bool doLock) {
-	_this.get()->wlock(doLock);
+	_this.getReferenceUnsafe()->wlock(doLock);
 }
 
 void ManagedVectorImplementation::wlock(ManagedObject* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafe()->wlock(obj);
 }
 
 void ManagedVectorImplementation::unlock(bool doLock) {
-	_this.get()->unlock(doLock);
+	_this.getReferenceUnsafe()->unlock(doLock);
 }
 
 void ManagedVectorImplementation::runlock(bool doLock) {
-	_this.get()->runlock(doLock);
+	_this.getReferenceUnsafe()->runlock(doLock);
 }
 
 void ManagedVectorImplementation::_serializationHelperMethod() {

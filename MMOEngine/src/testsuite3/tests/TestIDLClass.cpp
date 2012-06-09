@@ -101,31 +101,31 @@ TestIDLClassImplementation::operator const TestIDLClass*() {
 }
 
 void TestIDLClassImplementation::lock(bool doLock) {
-	_this.get()->lock(doLock);
+	_this.getReferenceUnsafe()->lock(doLock);
 }
 
 void TestIDLClassImplementation::lock(ManagedObject* obj) {
-	_this.get()->lock(obj);
+	_this.getReferenceUnsafe()->lock(obj);
 }
 
 void TestIDLClassImplementation::rlock(bool doLock) {
-	_this.get()->rlock(doLock);
+	_this.getReferenceUnsafe()->rlock(doLock);
 }
 
 void TestIDLClassImplementation::wlock(bool doLock) {
-	_this.get()->wlock(doLock);
+	_this.getReferenceUnsafe()->wlock(doLock);
 }
 
 void TestIDLClassImplementation::wlock(ManagedObject* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafe()->wlock(obj);
 }
 
 void TestIDLClassImplementation::unlock(bool doLock) {
-	_this.get()->unlock(doLock);
+	_this.getReferenceUnsafe()->unlock(doLock);
 }
 
 void TestIDLClassImplementation::runlock(bool doLock) {
-	_this.get()->runlock(doLock);
+	_this.getReferenceUnsafe()->runlock(doLock);
 }
 
 void TestIDLClassImplementation::_serializationHelperMethod() {

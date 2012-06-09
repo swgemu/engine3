@@ -573,31 +573,31 @@ QuadTreeEntryImplementation::operator const QuadTreeEntry*() {
 }
 
 void QuadTreeEntryImplementation::lock(bool doLock) {
-	_this.get()->lock(doLock);
+	_this.getReferenceUnsafe()->lock(doLock);
 }
 
 void QuadTreeEntryImplementation::lock(ManagedObject* obj) {
-	_this.get()->lock(obj);
+	_this.getReferenceUnsafe()->lock(obj);
 }
 
 void QuadTreeEntryImplementation::rlock(bool doLock) {
-	_this.get()->rlock(doLock);
+	_this.getReferenceUnsafe()->rlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(bool doLock) {
-	_this.get()->wlock(doLock);
+	_this.getReferenceUnsafe()->wlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(ManagedObject* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafe()->wlock(obj);
 }
 
 void QuadTreeEntryImplementation::unlock(bool doLock) {
-	_this.get()->unlock(doLock);
+	_this.getReferenceUnsafe()->unlock(doLock);
 }
 
 void QuadTreeEntryImplementation::runlock(bool doLock) {
-	_this.get()->runlock(doLock);
+	_this.getReferenceUnsafe()->runlock(doLock);
 }
 
 void QuadTreeEntryImplementation::_serializationHelperMethod() {

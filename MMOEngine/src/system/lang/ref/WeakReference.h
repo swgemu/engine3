@@ -91,6 +91,10 @@ namespace sys {
 			return object != obj;
 		}
 
+		O getReferenceUnsafe() const {
+			return object.get();
+		}
+
 		Reference<O> get() const {
 			Reference<O> objectToReturn;
 

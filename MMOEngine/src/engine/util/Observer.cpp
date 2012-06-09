@@ -150,31 +150,31 @@ ObserverImplementation::operator const Observer*() {
 }
 
 void ObserverImplementation::lock(bool doLock) {
-	_this.get()->lock(doLock);
+	_this.getReferenceUnsafe()->lock(doLock);
 }
 
 void ObserverImplementation::lock(ManagedObject* obj) {
-	_this.get()->lock(obj);
+	_this.getReferenceUnsafe()->lock(obj);
 }
 
 void ObserverImplementation::rlock(bool doLock) {
-	_this.get()->rlock(doLock);
+	_this.getReferenceUnsafe()->rlock(doLock);
 }
 
 void ObserverImplementation::wlock(bool doLock) {
-	_this.get()->wlock(doLock);
+	_this.getReferenceUnsafe()->wlock(doLock);
 }
 
 void ObserverImplementation::wlock(ManagedObject* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafe()->wlock(obj);
 }
 
 void ObserverImplementation::unlock(bool doLock) {
-	_this.get()->unlock(doLock);
+	_this.getReferenceUnsafe()->unlock(doLock);
 }
 
 void ObserverImplementation::runlock(bool doLock) {
-	_this.get()->runlock(doLock);
+	_this.getReferenceUnsafe()->runlock(doLock);
 }
 
 void ObserverImplementation::_serializationHelperMethod() {

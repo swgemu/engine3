@@ -140,35 +140,36 @@ void ManagedObjectImplementation::updateForWrite() {
 }
 
 void ManagedObjectImplementation::lock(bool doLock) {
-	_this.get()->wlock(doLock);
+	_this.getReferenceUnsafe()->wlock(doLock);
 }
 
 void ManagedObjectImplementation::lock(Lockable* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafe()->wlock(obj);
 }
 
 void ManagedObjectImplementation::lock(ManagedObject* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafe()->wlock(obj);
 }
 
 void ManagedObjectImplementation::rlock(bool doLock) {
-	_this.get()->rlock(doLock);
+	_this.getReferenceUnsafe()->rlock(doLock);
 }
 
 void ManagedObjectImplementation::wlock(bool doLock) {
-	_this.get()->wlock(doLock);
+	_this.getReferenceUnsafe()->wlock(doLock);
 }
 
 void ManagedObjectImplementation::wlock(ManagedObject* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafe()->wlock(obj);
 }
 
 void ManagedObjectImplementation::unlock(bool doLock) {
-	_this.get()->unlock(doLock);
+	_this.getReferenceUnsafe()->unlock(doLock);
 }
 
 void ManagedObjectImplementation::runlock(bool doLock) {
 	//_this->runlock(doLock);
+	_this.getReferenceUnsafe()->runlock(doLock);
 }
 
 void ManagedObjectImplementation::setLockName(const String& name) {
