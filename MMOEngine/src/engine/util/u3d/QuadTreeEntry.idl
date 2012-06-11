@@ -131,6 +131,12 @@ class QuadTreeEntry extends Observable {
 	}
 	
 	@read
+	public native QuadTreeEntry getParentUnsafe();
+	
+	@read
+	public native QuadTreeEntry getRootParentUnsafe();
+	
+	@read
 	public abstract native boolean containsPoint(float x, float y);
 	
 	@read

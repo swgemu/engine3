@@ -8,7 +8,7 @@
  *	QuadTreeEntryStub
  */
 
-enum {RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_ = 6,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_GETPARENT__,RPC_CONTAINSPOINT__FLOAT_FLOAT_,RPC_GETROOTPARENT__,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_GETDIRTYOBJECTID__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_SETRADIUS__FLOAT_,RPC_CLEARBOUNDING__,RPC_SETPARENT__QUADTREEENTRY_};
+enum {RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_ = 6,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_GETPARENT__,RPC_GETPARENTUNSAFE__,RPC_GETROOTPARENTUNSAFE__,RPC_CONTAINSPOINT__FLOAT_FLOAT_,RPC_GETROOTPARENT__,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_GETDIRTYOBJECTID__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_SETRADIUS__FLOAT_,RPC_CLEARBOUNDING__,RPC_SETPARENT__QUADTREEENTRY_};
 
 QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParameter::instance()) {
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
@@ -147,6 +147,32 @@ ManagedWeakReference<QuadTreeEntry* > QuadTreeEntry::getParent() {
 		return static_cast<QuadTreeEntry*>(method.executeWithObjectReturn());
 	} else
 		return _implementation->getParent();
+}
+
+QuadTreeEntry* QuadTreeEntry::getParentUnsafe() {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETPARENTUNSAFE__);
+
+		return static_cast<QuadTreeEntry*>(method.executeWithObjectReturn());
+	} else
+		return _implementation->getParentUnsafe();
+}
+
+QuadTreeEntry* QuadTreeEntry::getRootParentUnsafe() {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETROOTPARENTUNSAFE__);
+
+		return static_cast<QuadTreeEntry*>(method.executeWithObjectReturn());
+	} else
+		return _implementation->getRootParentUnsafe();
 }
 
 bool QuadTreeEntry::containsPoint(float x, float y) {
@@ -573,31 +599,31 @@ QuadTreeEntryImplementation::operator const QuadTreeEntry*() {
 }
 
 void QuadTreeEntryImplementation::lock(bool doLock) {
-	_this.getReferenceUnsafe()->lock(doLock);
+	_this.get()->lock(doLock);
 }
 
 void QuadTreeEntryImplementation::lock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->lock(obj);
+	_this.get()->lock(obj);
 }
 
 void QuadTreeEntryImplementation::rlock(bool doLock) {
-	_this.getReferenceUnsafe()->rlock(doLock);
+	_this.get()->rlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(bool doLock) {
-	_this.getReferenceUnsafe()->wlock(doLock);
+	_this.get()->wlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->wlock(obj);
+	_this.get()->wlock(obj);
 }
 
 void QuadTreeEntryImplementation::unlock(bool doLock) {
-	_this.getReferenceUnsafe()->unlock(doLock);
+	_this.get()->unlock(doLock);
 }
 
 void QuadTreeEntryImplementation::runlock(bool doLock) {
-	_this.getReferenceUnsafe()->runlock(doLock);
+	_this.get()->runlock(doLock);
 }
 
 void QuadTreeEntryImplementation::_serializationHelperMethod() {
@@ -927,6 +953,16 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			resp->insertLong(getParent().get()->_getObjectID());
 		}
 		break;
+	case RPC_GETPARENTUNSAFE__:
+		{
+			resp->insertLong(getParentUnsafe()->_getObjectID());
+		}
+		break;
+	case RPC_GETROOTPARENTUNSAFE__:
+		{
+			resp->insertLong(getRootParentUnsafe()->_getObjectID());
+		}
+		break;
 	case RPC_CONTAINSPOINT__FLOAT_FLOAT_:
 		{
 			resp->insertBoolean(containsPoint(inv->getFloatParameter(), inv->getFloatParameter()));
@@ -1077,6 +1113,14 @@ float QuadTreeEntryAdapter::getDistanceTo(QuadTreeEntry* obj) {
 
 ManagedWeakReference<QuadTreeEntry* > QuadTreeEntryAdapter::getParent() {
 	return (static_cast<QuadTreeEntry*>(stub))->getParent();
+}
+
+QuadTreeEntry* QuadTreeEntryAdapter::getParentUnsafe() {
+	return (static_cast<QuadTreeEntry*>(stub))->getParentUnsafe();
+}
+
+QuadTreeEntry* QuadTreeEntryAdapter::getRootParentUnsafe() {
+	return (static_cast<QuadTreeEntry*>(stub))->getRootParentUnsafe();
 }
 
 bool QuadTreeEntryAdapter::containsPoint(float x, float y) {

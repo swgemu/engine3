@@ -286,11 +286,11 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 	try {
 		if (closeObjects != NULL) {
 			for (int i = 0; i < closeObjects->size(); i++) {
-				ManagedReference<QuadTreeEntry*> o = closeObjects->get(i);
-				ManagedReference<QuadTreeEntry*> objectToRemove = o.get();
+				QuadTreeEntry* o = closeObjects->get(i);
+				QuadTreeEntry* objectToRemove = o;
 
-				if (o->getParent() != NULL)
-					o = o->getRootParent();
+				if (o->getParentUnsafe() != NULL)
+					o = o->getRootParentUnsafe();
 
 				if (o != obj) {
 					float deltaX = x - o->getPositionX();

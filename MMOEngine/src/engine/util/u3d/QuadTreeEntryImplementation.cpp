@@ -67,6 +67,24 @@ ManagedWeakReference<QuadTreeEntry*> QuadTreeEntryImplementation::getRootParent(
 	return weak;
 }
 
+QuadTreeEntry* QuadTreeEntryImplementation::getParentUnsafe() {
+	return parent.getReferenceUnsafe();
+}
+
+QuadTreeEntry* QuadTreeEntryImplementation::getRootParentUnsafe() {
+	QuadTreeEntry* parent = this->parent.getReferenceUnsafe();
+
+	if (parent == NULL)
+		return NULL;
+
+	QuadTreeEntry* grandParent = parent;
+
+	while (grandParent->getParentUnsafe() != NULL)
+		grandParent = grandParent->getParentUnsafe();
+
+	return grandParent;
+}
+
 int QuadTreeEntry::compareTo(QuadTreeEntry* obj) {
 	if (getDirtyObjectID() < obj->getDirtyObjectID())
 		return 1;

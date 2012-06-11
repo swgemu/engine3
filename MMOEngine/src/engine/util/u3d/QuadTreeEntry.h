@@ -57,6 +57,10 @@ public:
 
 	ManagedWeakReference<QuadTreeEntry* > getParent();
 
+	QuadTreeEntry* getParentUnsafe();
+
+	QuadTreeEntry* getRootParentUnsafe();
+
 	bool containsPoint(float x, float y);
 
 	ManagedWeakReference<QuadTreeEntry* > getRootParent();
@@ -180,6 +184,10 @@ public:
 
 	ManagedWeakReference<QuadTreeEntry* > getParent();
 
+	QuadTreeEntry* getParentUnsafe();
+
+	QuadTreeEntry* getRootParentUnsafe();
+
 	virtual bool containsPoint(float x, float y);
 
 	ManagedWeakReference<QuadTreeEntry* > getRootParent();
@@ -298,6 +306,10 @@ public:
 	float getDistanceTo(QuadTreeEntry* obj);
 
 	ManagedWeakReference<QuadTreeEntry* > getParent();
+
+	QuadTreeEntry* getParentUnsafe();
+
+	QuadTreeEntry* getRootParentUnsafe();
 
 	bool containsPoint(float x, float y);
 
