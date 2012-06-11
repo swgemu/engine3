@@ -10,6 +10,7 @@ include system.lang.Math;
 include system.util.SortedVector;
 
 include engine.stm.TransactionalReference;
+include engine.util.u3d.CloseObjectsVector;
 
 import engine.core.ManagedObject;
 
@@ -32,7 +33,7 @@ class QuadTreeEntry extends Observable {
 	@weakReference
 	protected QuadTreeEntry parent;
 
-	transient protected SortedVector<QuadTreeEntry> closeobjects;
+	transient protected CloseObjectsVector closeobjects;
 
 	protected float radius;
 

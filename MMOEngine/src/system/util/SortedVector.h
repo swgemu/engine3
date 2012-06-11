@@ -12,6 +12,7 @@ namespace sys {
   namespace util {
 
 	template<class E> class SortedVector : public Vector<E> {
+	protected:
 		int insertPlan;
 
 		virtual int compare(E& o1, const E& o2) const {
@@ -32,11 +33,11 @@ namespace sys {
 
 		SortedVector<E>& operator=(const SortedVector<E>& vector);
 
-		int put(const E& o);
+		virtual int put(const E& o);
+
+		virtual int find(const E& o) const;
 
 		bool contains(const E& o) const;
-
-		int find(const E& o) const;
 
 		int lowerBound(const E& o) const;
 		int upperBound(const E& o) const;

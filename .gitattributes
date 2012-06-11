@@ -561,6 +561,7 @@ MMOEngine/src/engine/util/u3d/AABBNode.h -text
 MMOEngine/src/engine/util/u3d/AABBTree.cpp -text
 MMOEngine/src/engine/util/u3d/AABBTree.h -text
 MMOEngine/src/engine/util/u3d/AStarAlgorithm.h -text
+MMOEngine/src/engine/util/u3d/CloseObjectsVector.h -text
 MMOEngine/src/engine/util/u3d/Coordinate.h -text
 MMOEngine/src/engine/util/u3d/Funnel.cpp -text
 MMOEngine/src/engine/util/u3d/Funnel.h -text

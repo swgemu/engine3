@@ -43,9 +43,6 @@ namespace engine {
 		ManagedReference(O obj) : Reference<O>(obj) {
 		}
 
-		~ManagedReference() {
-		}
-
 		ManagedReference& operator=(const ManagedReference& ref) {
 			if (this == &ref)
 				return *this;
@@ -83,7 +80,14 @@ namespace engine {
 			return Reference<O>::object;
 		}
 
-		int compareTo(const ManagedReference& ref) const;
+		inline int compareTo(const ManagedReference& ref) const {
+			if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() < ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
+				return 1;
+			else if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() > ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
+				return -1;
+			else
+				return 0;
+		}
 
 		bool toString(String& str);
 
@@ -117,14 +121,6 @@ namespace engine {
 
 };
 
-	template<class O> int ManagedReference<O>::compareTo(const ManagedReference& ref) const {
-		if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() < ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
-			return 1;
-		else if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() > ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
-			return -1;
-		else
-			return 0;
-	}
 
 	template<class O> bool ManagedReference<O>::toString(String& str) {
 		if (Reference<O>::get() != NULL)

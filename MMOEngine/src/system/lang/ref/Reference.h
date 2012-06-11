@@ -55,7 +55,7 @@ namespace sys {
 			initializeObject(obj);
 		}
 
-		virtual ~Reference() {
+		inline virtual ~Reference() {
 			releaseObject();
 		}
 
@@ -239,7 +239,7 @@ namespace sys {
 			}
 		}
 
-		void releaseObject() {
+		inline void releaseObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
 				object->removeHolder(id);

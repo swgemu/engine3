@@ -77,7 +77,7 @@ namespace sys {
 #endif
 		}
 
-		V get() const {
+		inline V get() const {
 			//WMB();
 
 			return value;

@@ -19,6 +19,8 @@
 
 #include "engine/stm/TransactionalReference.h"
 
+#include "engine/util/u3d/CloseObjectsVector.h"
+
 #include "engine/util/u3d/Coordinate.h"
 
 #include "engine/core/ManagedObject.h"
@@ -157,7 +159,7 @@ protected:
 
 	ManagedWeakReference<QuadTreeEntry* > parent;
 
-	Reference<SortedVector<ManagedReference<QuadTreeEntry* > >* > closeobjects;
+	Reference<CloseObjectsVector* > closeobjects;
 
 	float radius;
 
