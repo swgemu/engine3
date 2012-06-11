@@ -284,6 +284,8 @@ namespace sys {
            int newCapacity = (capacityIncrement > 0) ?
                (oldCapacity + capacityIncrement) : (oldCapacity * 2);
 
+           capacityIncrement *= 2;
+
            if (newCapacity < minCapacity)
                newCapacity = minCapacity;
 
