@@ -83,19 +83,19 @@ namespace sys {
 			return obj;
 		}
 
-		bool operator==(O obj) {
+		inline bool operator==(O obj) {
 			return object == obj;
 		}
 
-		bool operator!=(O obj) {
+		inline bool operator!=(O obj) {
 			return object != obj;
 		}
 
-		O getReferenceUnsafe() const {
+		inline O getReferenceUnsafe() const {
 			return object.get();
 		}
 
-		Reference<O> get() const {
+		inline Reference<O> get() const {
 			Reference<O> objectToReturn;
 
 #ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK

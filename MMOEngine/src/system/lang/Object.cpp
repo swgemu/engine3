@@ -109,7 +109,7 @@ bool Object::tryAcquire() {
 	return true;
 }
 */
-
+/*
 void Object::acquire() {
 	if (referenceCounters == NULL) {
 		StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 1);
@@ -123,9 +123,6 @@ void Object::acquire() {
 }
 
 void Object::release() {
-/*	if (getReferenceCount() == 0)
-		assert(0 && "Object already delted");*/
-
 	if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
 		if (notifyDestroy()) {
 #ifdef WITH_STM
@@ -136,6 +133,7 @@ void Object::release() {
 		}
 	}
 }
+*/
 
 void Object::destroy() {
 #ifdef MEMORY_PROTECTION

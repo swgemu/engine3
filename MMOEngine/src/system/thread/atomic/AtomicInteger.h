@@ -40,7 +40,7 @@ namespace sys {
 			value = val;
 		}
 
-		uint32 add(uint32 val) {
+		inline uint32 add(uint32 val) {
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 				return __sync_add_and_fetch(&value, val);
 			#elif PLATFORM_FREEBSD
@@ -57,7 +57,7 @@ namespace sys {
 			#endif
 		}
 
-		uint32 increment() {
+		inline uint32 increment() {
 			//__sync_add_and_fetch(&totalIncrementCount, 1);
 
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
@@ -81,7 +81,7 @@ namespace sys {
 			#endif
 		}
 
-		uint32 decrement() {
+		inline uint32 decrement() {
 			//__sync_add_and_fetch(&totalDecrementCount, 1);
 
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)

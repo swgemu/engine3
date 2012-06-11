@@ -137,8 +137,33 @@ namespace sys {
 #endif
 		}
 
-		void acquire();
-		void release();
+		inline void acquire() {
+			if (referenceCounters == NULL) {
+				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 1);
+
+				if (!referenceCounters.compareAndSet(NULL, newCount)) {
+					delete newCount;
+				}
+			}
+
+			referenceCounters->increaseStrongCount();
+		}
+
+		inline void release() {
+		/*	if (getReferenceCount() == 0)
+				assert(0 && "Object already delted");*/
+
+			if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
+				if (notifyDestroy()) {
+		#ifdef WITH_STM
+					MemoryManager::getInstance()->reclaim(this);
+		#else
+					destroy();
+		#endif
+				}
+			}
+		}
+
 
 		inline uint32 getReferenceCount() {
 			if (referenceCounters == NULL)
