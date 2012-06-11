@@ -70,12 +70,16 @@ namespace engine {
 			return stored;
 		}
 
+		O getReferenceUnsafe() const {
+			return WeakReference<O>::object.get();
+		}
+
 		bool operator==(O obj) {
-			return get() == obj;
+			return getReferenceUnsafe() == obj;
 		}
 
 		bool operator!=(O obj) {
-			return get() != obj;
+			return getReferenceUnsafe() != obj;
 		}
 
 		inline ManagedReference<O> get() {
