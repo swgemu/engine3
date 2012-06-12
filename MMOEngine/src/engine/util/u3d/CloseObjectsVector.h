@@ -21,8 +21,36 @@ namespace engine {
 using namespace engine::util::u3d;
 
 class CloseObjectsVector : public SortedVector<ManagedReference<QuadTreeEntry*> > {
+	mutable ReadWriteLock mutex;
+
 public:
+	bool drop(const ManagedReference<QuadTreeEntry*>& o) {
+		Locker locker(&mutex);
+
+		return SortedVector<ManagedReference<QuadTreeEntry*> >::drop(o);
+	}
+
+	void safeCopyTo(Vector<QuadTreeEntry*>& vec) {
+		mutex.rlock();
+
+		for (int i = 0; i < size(); ++i) {
+			vec.add(get(i).get());
+		}
+
+		mutex.runlock();
+	}
+
+	void safeCopyTo(Vector<ManagedReference<QuadTreeEntry*> >& vec) {
+		mutex.rlock();
+
+		vec.addAll(*this);
+
+		mutex.runlock();
+	}
+
 	int put(const ManagedReference<QuadTreeEntry*>& o) {
+		Locker locker(&mutex);
+
 		int m = 0, l = 0;
 		int r = Vector<ManagedReference<QuadTreeEntry*> >::elementCount - 1;
 
