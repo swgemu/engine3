@@ -24,6 +24,12 @@ class CloseObjectsVector : public SortedVector<ManagedReference<QuadTreeEntry*> 
 	mutable ReadWriteLock mutex;
 
 public:
+	ManagedReference<QuadTreeEntry*> remove(int index) {
+		Locker locker(&mutex);
+
+		return SortedVector<ManagedReference<QuadTreeEntry*> >::remove(index);
+	}
+
 	void removeAll(int newSize = 10, int newIncrement = 5) {
 		Locker locker(&mutex);
 
