@@ -72,7 +72,7 @@ namespace engine {
 		}
 
 		inline O getReferenceUnsafe() const {
-			return WeakReference<O>::getReferenceUnsafe();
+			return WeakReference<O>::getReferenceUnsafeStaticCast();
 		}
 
 		inline bool operator==(O obj) {

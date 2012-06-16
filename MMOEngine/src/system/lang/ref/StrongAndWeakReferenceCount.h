@@ -66,6 +66,10 @@ public:
 		return strongReferenceCount.getReferenceCount();
 	}
 
+	Object* getObject() {
+		return object;
+	}
+
 	template <class O>
 	O getObjectReference() {
 		return dynamic_cast<O>(object);

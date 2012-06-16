@@ -44,13 +44,13 @@ namespace sys {
 		}
 
 		virtual int compareTo(const WeakReference<O>& val) const {
-			O object = NULL;
-			O valObject = NULL;
+			Object* object = NULL;
+			Object* valObject = NULL;
 
 			StrongAndWeakReferenceCount* old = safeRead();
 
 			if (old != NULL) {
-				object = old->getObjectReference<O>();
+				object = old->getObject();
 
 				release(old);
 			}
@@ -58,7 +58,7 @@ namespace sys {
 			StrongAndWeakReferenceCount* valOld = val.safeRead();
 
 			if (valOld != NULL) {
-				valObject = valOld->getObjectReference<O>();
+				valObject = valOld->getObject();
 
 				release(valOld);
 			}
@@ -108,14 +108,22 @@ namespace sys {
 			return getReferenceUnsafe() != obj;
 		}
 
+		inline O getReferenceUnsafeDynamicCast() const {
+			return dynamic_cast<O>(getReferenceUnsafe());
+		}
+
+		inline O getReferenceUnsafeStaticCast() const {
+			return static_cast<O>(getReferenceUnsafe());
+		}
+
 		//returns an unsafe object pointer
-		inline O getReferenceUnsafe() const {
-			O object = NULL;
+		inline Object* getReferenceUnsafe() const {
+			Object* object = NULL;
 
 			StrongAndWeakReferenceCount* old = safeRead();
 
 			if (old != NULL) {
-				object = old->getObjectReference<O>();
+				object = old->getObject();
 
 				release(old);
 			}
