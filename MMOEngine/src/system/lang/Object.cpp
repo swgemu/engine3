@@ -74,10 +74,11 @@ Object::~Object() {
 			assert(0 && "Deleting object with strong references");
 		}
 
-		if (referenceCounters->decreaseWeakCount() == 0) {
+		if (referenceCounters->decrementAndTestAndSetWeakCount() != 0) {
 			delete referenceCounters;
 			referenceCounters = NULL;
 		}
+
 	}
 
 #ifdef MEMORY_PROTECTION

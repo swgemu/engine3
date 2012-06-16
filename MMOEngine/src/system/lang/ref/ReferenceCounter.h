@@ -56,7 +56,7 @@ namespace sys {
 				oldVal = _references;
 				newVal = oldVal - 2;
 
-				assert(oldVal >= 2);
+				//assert(oldVal >= 2);
 
 				if (newVal == 0)
 					newVal = 1;

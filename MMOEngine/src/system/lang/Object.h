@@ -139,7 +139,7 @@ namespace sys {
 
 		inline void acquire() {
 			if (referenceCounters == NULL) {
-				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 1);
+				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
 
 				if (!referenceCounters.compareAndSet(NULL, newCount)) {
 					delete newCount;
@@ -172,18 +172,15 @@ namespace sys {
 				return referenceCounters->getStrongReferenceCount();
 		}
 
-		template<class O>
-		void acquireWeak(WeakReference<O>* ref) {
+		StrongAndWeakReferenceCount* requestWeak() {
 			if (referenceCounters == NULL) {
-				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 1);
+				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
 
 				if (!referenceCounters.compareAndSet(NULL, newCount))
 					delete newCount;
 			}
 
-			referenceCounters->increaseWeakCount();
-
-			ref->set(referenceCounters);
+			return referenceCounters;
 		}
 
 		virtual String toString();

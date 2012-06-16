@@ -14,28 +14,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/lang/Object.h"
 #include "StrongAndWeakReferenceCount.h"
 
-#define ENABLE_THREAD_SAFE_MUTEX_WEAK
+//#define ENABLE_THREAD_SAFE_MUTEX_WEAK
 
 namespace sys {
   namespace lang {
 
-
 	template<class O> class WeakReference : public Variable {
 	protected:
-#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
-		mutable ReadWriteLock mutex;
-#endif
-		StrongAndWeakReferenceCount* count;
-		AtomicReference<O> object;
-
+		AtomicReference<StrongAndWeakReferenceCount* > weakReference;
 	public:
 		WeakReference() : Variable() {
-			count = NULL;
-			object = NULL;
+			weakReference = NULL;
 		}
 
 		WeakReference(const WeakReference<O>& ref) : Variable() {
-			initializeObject(ref.get().get());
+			initializeObject(ref.weakReference);
 		}
 
 		WeakReference(O obj) : Variable() {
@@ -47,23 +40,39 @@ namespace sys {
 		}
 
 		virtual int compareTo(const WeakReference<O>& val) const {
-			if (object < val.object)
-				return 1;
-			else if (object > val.object)
-				return -1;
-			else
-				return 0;
-		}
+			O object = NULL;
+			O valObject = NULL;
 
-		void set(StrongAndWeakReferenceCount* count) {
-			this->count = count;
+			StrongAndWeakReferenceCount* old = safeRead();
+
+			if (old != NULL) {
+				object = old->getObjectReference<O>();
+
+				release(old);
+			}
+
+			StrongAndWeakReferenceCount* valOld = val.safeRead();
+
+			if (valOld != NULL) {
+				valObject = valOld->getObjectReference<O>();
+
+				release(valOld);
+			}
+
+			if (object < valObject) {
+				return 1;
+			} else if (object > valObject) {
+				return -1;
+			} else {
+				return 0;
+			}
 		}
 
 		WeakReference<O>& operator=(const WeakReference<O>& ref) {
 			if (this == &ref)
 				return *this;
 
-			updateObject(ref.object);
+			updateObject(ref.weakReference);
 
 			return *this;
 		}
@@ -84,43 +93,44 @@ namespace sys {
 		}
 
 		inline bool operator==(O obj) {
-			return object == obj;
+			return getReferenceUnsafe() == obj;
 		}
 
 		inline bool operator!=(O obj) {
-			return object != obj;
+			return getReferenceUnsafe() != obj;
 		}
 
+		//returns an unsafe object pointer
 		inline O getReferenceUnsafe() const {
-			return object.get();
+			O object = NULL;
+
+			StrongAndWeakReferenceCount* old = safeRead();
+
+			if (old != NULL) {
+				object = old->getObjectReference<O>();
+
+				release(old);
+			}
+
+			return object;
 		}
 
 		inline Reference<O> get() const {
 			Reference<O> objectToReturn;
+			StrongAndWeakReferenceCount* currentRef = safeRead();
 
-#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
-			mutex.rlock();
-#endif
+			if (currentRef == NULL)
+				return objectToReturn;
 
-			if (object == NULL) {
-#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
-				mutex.runlock();
-#endif
+			if (currentRef->increaseStrongCount() & 1) {
+				release(currentRef);
+
 				return objectToReturn;
 			}
 
-			if (count->increaseStrongCount() & 1) {
-#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
-				mutex.runlock();
-#endif
-				return objectToReturn;
-			}
+			objectToReturn.initializeWithoutAcquire(currentRef->getObjectReference<O>());
 
-			objectToReturn.initializeWithoutAcquire(object);
-
-#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
-			mutex.runlock();
-#endif
+			release(currentRef);
 
 			return objectToReturn;
 		}
@@ -135,59 +145,71 @@ namespace sys {
 			return false;
 		}
 
-		inline void updateObject(O obj) {
-#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
-			Locker locker(&mutex);
-#endif
+	private:
+		inline StrongAndWeakReferenceCount* safeRead() const {
+			for (;;) {
+				StrongAndWeakReferenceCount* old = weakReference;
 
-			if (obj == object.get())
-				return;
+				if (old == NULL)
+					return NULL;
 
-			if (object != NULL) {
-				if (count->decreaseWeakCount() == 0) {
-					delete count;
-					count = NULL;
-				}
+				old->increaseWeakCount();
+
+				if (old == weakReference)
+					return old;
+				else
+					release(old);
 			}
-
-			object = obj;
-
-			acquireObject();
 		}
 
-		inline void setObject(O obj) {
-			if (obj == object)
+		inline void release(StrongAndWeakReferenceCount* old) const {
+			if (old == NULL)
 				return;
 
-			initializeObject(obj);
+			if (old->decrementAndTestAndSetWeakCount() == 0)
+				return;
+
+			delete old;
+		}
+
+		inline void newref(StrongAndWeakReferenceCount* newRef) {
+			if (newRef != NULL)
+				newRef->increaseWeakCount();
+
+			for (;;) {
+				StrongAndWeakReferenceCount* p = safeRead();
+
+				if (weakReference.compareAndSet(p, newRef)) {
+
+					release(p);
+
+					return;
+				} else
+					release(p);
+			}
+		}
+
+	public:
+
+		inline void updateObject(O obj) {
+			StrongAndWeakReferenceCount* newRef = NULL;
+
+			if (obj != NULL)
+				newRef = obj->requestWeak();
+
+			newref(newRef);
 		}
 
 		inline void initializeObject(O obj) {
-			object = obj;
-
-			acquireObject();
+			updateObject(obj);
 		}
 
-		inline void acquireObject() {
-			if (object != NULL) {
-				(static_cast<Object*>(object.get()))->acquireWeak(this);
-			} else {
-				count = NULL;
-			}
+		inline void initializeObject(StrongAndWeakReferenceCount* count) {
+			newref(count);
 		}
 
 		void releaseObject() {
-#ifdef ENABLE_THREAD_SAFE_MUTEX_WEAK
-			Locker locker(&mutex);
-#endif
-			if (object != NULL) {
-				if (count->decreaseWeakCount() == 0) {
-					delete count;
-					count = NULL;
-				}
-			}
-
-			object = NULL;
+			newref(NULL);
 		}
 
 		friend class Object;
