@@ -43,7 +43,8 @@ namespace engine {
 			if (this == &ref)
 				return *this;
 
-			WeakReference<O>::updateObject(ref.WeakReference<O>::weakReference);
+
+			WeakReference<O>::operator=(ref);
 
 			savedObjectID = ref.savedObjectID;
 

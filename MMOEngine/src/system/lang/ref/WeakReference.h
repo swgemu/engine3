@@ -72,7 +72,11 @@ namespace sys {
 			if (this == &ref)
 				return *this;
 
-			updateObject(ref.weakReference);
+			StrongAndWeakReferenceCount* p = ref.safeRead();
+
+			updateObject(p);
+
+			release(p);
 
 			return *this;
 		}
