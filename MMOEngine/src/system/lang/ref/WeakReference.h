@@ -28,7 +28,11 @@ namespace sys {
 		}
 
 		WeakReference(const WeakReference<O>& ref) : Variable() {
-			initializeObject(ref.weakReference);
+			StrongAndWeakReferenceCount* p = ref.safeRead();
+
+			initializeObject(p);
+
+			release(p);
 		}
 
 		WeakReference(O obj) : Variable() {
