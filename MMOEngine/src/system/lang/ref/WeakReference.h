@@ -74,7 +74,7 @@ namespace sys {
 
 			StrongAndWeakReferenceCount* p = ref.safeRead();
 
-			updateObject(p);
+			newref(p);
 
 			release(p);
 
