@@ -46,6 +46,14 @@ namespace sys {
 			next = e;
 		}
 
+		V& getValue() {
+			return value;
+		}
+
+		K& getKey() {
+			return key;
+		}
+
 		friend class HashTable<K,V>;
 		friend class HashTableIterator<K,V>;
 	};
@@ -81,6 +89,8 @@ namespace sys {
 	    V& put(const K& key, const V& value);
 
 	    V& get(const K& key);
+
+	    Entry<K, V>* getEntry(const K& key);
 
 	    bool containsKey(const K& key);
 
@@ -306,6 +316,19 @@ namespace sys {
 		}
 
 		return false;
+	}
+
+	template<class K, class V> Entry<K,V>* HashTable<K,V>::getEntry(const K& key) {
+		int hashCode = hash(key);
+		int index = (hashCode & 0x7FFFFFFF) % tableLength;
+
+		for (Entry<K,V>* e = table[index]; e != NULL; e = e->next) {
+			if ((e->hash == hashCode) && e->key == key) {
+				return e;
+			}
+		}
+
+		return NULL;
 	}
 
 	template<class K, class V> HashTableIterator<K, V> HashTable<K,V>::iterator() {

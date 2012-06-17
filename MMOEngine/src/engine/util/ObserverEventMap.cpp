@@ -11,10 +11,12 @@
 void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1, int64 arg2) {
 	Locker locker(&observerMutex);
 
-	if (!containsKey(eventType))
+	sys::util::Entry<uint32, SortedVector<ManagedReference<Observer*> > >* entry = getEntry(eventType);
+
+	if (entry == NULL)
 		return;
 
-	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
+	SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
 
 	SortedVector<ManagedReference<Observer*> > observersCopy(*observers);
 
@@ -45,13 +47,15 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 	if (!observer->isDeplyoed())
 		observer->deploy();
 
-	if (!containsKey(eventType)) {
+	sys::util::Entry<uint32, SortedVector<ManagedReference<Observer*> > >* entry = getEntry(eventType);
+
+	if (entry == NULL) {
 		SortedVector<ManagedReference<Observer*> > observers;
 		observers.put(observer);
 
 		this->put(eventType, observers);
 	} else {
-		SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
+		SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
 		observers->setNoDuplicateInsertPlan();
 
 		if (observers->put(observer) == -1) {
@@ -63,10 +67,15 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
 	Locker locker(&observerMutex);
 
-	if (!containsKey(eventType))
+	/*if (!containsKey(eventType))
+		return;*/
+
+	sys::util::Entry<uint32, SortedVector<ManagedReference<Observer*> > >* entry = getEntry(eventType);
+
+	if (entry == NULL)
 		return;
 
-	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
+	SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
 
 	observers->drop(observer);
 
@@ -77,10 +86,17 @@ void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
 SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint32 eventType) {
 	Locker locker(&observerMutex);
 
-	if (!containsKey(eventType))
+	/*if (!containsKey(eventType))
 		return NULL;
 
-	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);
+	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType); */
+
+	sys::util::Entry<uint32, SortedVector<ManagedReference<Observer*> > >* entry = getEntry(eventType);
+
+	if (entry == NULL)
+		return NULL;
+
+	SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
 
 	return observers;
 }
@@ -88,10 +104,17 @@ SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint3
 int ObserverEventMap::getObserverCount(uint32 eventType) {
 	Locker locker(&observerMutex);
 
-	if (!containsKey(eventType))
+	/*if (!containsKey(eventType))
 		return NULL;
 
-	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);//&elementAt(index).getValue();
+	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);//&elementAt(index).getValue();*/
+
+	sys::util::Entry<uint32, SortedVector<ManagedReference<Observer*> > >* entry = getEntry(eventType);
+
+	if (entry == NULL)
+		return 0;
+
+	SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
 
 	return observers->size();
 }
