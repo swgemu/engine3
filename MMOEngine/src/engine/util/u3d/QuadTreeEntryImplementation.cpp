@@ -54,15 +54,16 @@ uint64 QuadTreeEntryImplementation::getObjectID() {
 }
 
 ManagedWeakReference<QuadTreeEntry*> QuadTreeEntryImplementation::getRootParent() {
-	if (parent == NULL)
+	ManagedReference<SceneObject*> grandParent = getParent();
+	ManagedReference<SceneObject*> tempParent = NULL;
+
+	if (grandParent == NULL)
 		return NULL;
 
-	ManagedReference<QuadTreeEntry*> grandParent = parent.get();
+	while ((tempParent = grandParent->getParent()) != NULL)
+		grandParent = tempParent;
 
-	while (grandParent->getParent() != NULL)
-		grandParent = grandParent->getParent();
-
-	ManagedWeakReference<QuadTreeEntry*> weak = grandParent.get();
+	ManagedWeakReference<SceneObject*> weak = grandParent.get();
 
 	return weak;
 }
