@@ -710,6 +710,7 @@ MMOEngine/src/system/thread/Lockable.h -text
 MMOEngine/src/system/thread/Locker.h -text
 MMOEngine/src/system/thread/Mutex.cpp -text
 MMOEngine/src/system/thread/Mutex.h -text
+MMOEngine/src/system/thread/ReadLocker.h -text
 MMOEngine/src/system/thread/ReadWriteLock.cpp -text
 MMOEngine/src/system/thread/ReadWriteLock.h -text
 MMOEngine/src/system/thread/Thread.cpp -text

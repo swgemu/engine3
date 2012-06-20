@@ -51,11 +51,11 @@ namespace sys {
 
        void insertElementAt(const E& element, int index);
 
-       E& get(int index) const;
+       virtual E& get(int index) const;
 
        E& elementAt(int index) const;
 
-       E remove(int index);
+       virtual E remove(int index);
 
        bool removeElement(const E& element);
 
@@ -63,7 +63,7 @@ namespace sys {
 
        virtual void removeRange(int fromIndex, int toIndex);
 
-       void removeAll(int newSize = 10, int newIncrement = 5);
+       virtual void removeAll(int newSize = 10, int newIncrement = 5);
 
        E set(int index, const E& element);
        void setElementAt(int index, const E& element);

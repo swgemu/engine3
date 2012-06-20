@@ -42,22 +42,26 @@ public:
 		return SortedVector<ManagedReference<QuadTreeEntry*> >::drop(o);
 	}
 
+/*	ManagedReference<QuadTreeEntry*>& get(int index) const {
+		ReadLocker locker(&mutex);
+
+		return SortedVector<ManagedReference<QuadTreeEntry*> >::get(index);
+	}
+
+*/
+
 	void safeCopyTo(Vector<QuadTreeEntry*>& vec) {
-		mutex.rlock();
+		ReadLocker locker(&mutex);
 
 		for (int i = 0; i < size(); ++i) {
 			vec.add(get(i).get());
 		}
-
-		mutex.runlock();
 	}
 
 	void safeCopyTo(Vector<ManagedReference<QuadTreeEntry*> >& vec) {
-		mutex.rlock();
+		ReadLocker locker(&mutex);
 
 		vec.addAll(*this);
-
-		mutex.runlock();
 	}
 
 	int put(const ManagedReference<QuadTreeEntry*>& o) {

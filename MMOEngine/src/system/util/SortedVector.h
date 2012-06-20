@@ -42,7 +42,7 @@ namespace sys {
 		int lowerBound(const E& o) const;
 		int upperBound(const E& o) const;
 
-		bool drop(const E& o);
+		virtual bool drop(const E& o);
 
 		Object* clone();
 
