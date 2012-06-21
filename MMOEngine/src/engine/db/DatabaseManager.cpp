@@ -61,7 +61,7 @@ void DatabaseManager::openEnvironment() {
 	config.setInitializeLogging(true);
 	config.setLogAutoRemove(true);
 	config.setThreaded(true);
-	config.setThreadCount(50);
+	config.setThreadCount(512);
 	config.setTransactional(true);
 	config.setInitializeCache(true);
 	config.setMaxLogFileSize(1000 * 1000 * 100); // 100mb
@@ -399,7 +399,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 			Thread::yield();
 
-			printf("\r\tCommiting database updates: [%d / %d]", count, updateObjects->size());
+			//printf("\r\tCommiting database updates: [%d / %d]", count, updateObjects->size());
 		}
 
 

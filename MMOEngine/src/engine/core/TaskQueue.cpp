@@ -93,11 +93,12 @@ void TaskQueue::push(Task* task) {
 	#endif
 
 	//if (waitingForTask)
-		broadcast(condMutex);
+//		broadcast(condMutex);
+	signal(condMutex);
 
 	condMutex->unlock();
 
-	Thread::yield();
+//	Thread::yield();
 }
 
 void TaskQueue::pushAll(const Vector<Task*>& tasks) {

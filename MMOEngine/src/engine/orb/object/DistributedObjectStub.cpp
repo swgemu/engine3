@@ -135,7 +135,7 @@ void DistributedObjectStub::finalize() {
 
 	Object::finalize();
 }
-
+/*
 void DistributedObjectStub::acquire() {
 	#ifdef TRACE_REFERENCING
 		traces.add(new StackTrace());
@@ -143,9 +143,9 @@ void DistributedObjectStub::acquire() {
 		
 	Object::acquire();
 		
-	/*StringBuffer msg;
+*/	/*StringBuffer msg;
 	msg << "[" << _getName() << "] acquired (" << getReferenceCount() << ")";
-	Logger::console.info(msg);*/
+	Logger::console.info(msg);*//*
 }
 	
 void DistributedObjectStub::release() {
@@ -159,13 +159,13 @@ void DistributedObjectStub::release() {
 		}
 	#endif
 
-	/*StringBuffer msg;
+*/	/*StringBuffer msg;
 	msg << "[" << _getName() << "] released (" << getReferenceCount() - 1 << ")";
-	Logger::console.info(msg);*/
+	Logger::console.info(msg);*//*
 
 	Object::release();
 }
-	
+	*/
 void DistributedObjectStub::printReferenceTrace() {
 	System::out << "ERROR - reference count getting under zero\n";
 

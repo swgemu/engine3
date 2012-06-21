@@ -144,7 +144,7 @@ void BaseClient::close() {
 	netcheckupEvent->cancel();
 
 	Reference<Task*> task = new BaseClientCleanupEvent(this);
-	task->schedule();
+	task->scheduleInIoScheduler();
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
@@ -263,7 +263,7 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 			sendSequenced(pack);
 
 		if (!reentrantTask->isScheduled())
-			reentrantTask->scheduleNonTransactionally(5);
+			reentrantTask->scheduleInIoScheduler(10);
 	}
 }
 
@@ -294,7 +294,7 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		sendBuffer.add(pack);
 
 		if (!reentrantTask->isScheduled())
-			reentrantTask->scheduleNonTransactionally(5);
+			reentrantTask->scheduleInIoScheduler(10);
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -344,7 +344,7 @@ void BaseClient::run() {
 				pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 				if (!checkupEvent->isScheduled())
-					checkupEvent->schedule(pack->getTimeout());
+					checkupEvent->scheduleInIoScheduler(pack->getTimeout());
 			}
 
 			#ifdef TRACE_CLIENTS
@@ -370,7 +370,7 @@ void BaseClient::run() {
 			}
 
 			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
-				reentrantTask->schedule(5);
+				reentrantTask->scheduleInIoScheduler(10);
 			}
 		}
 	} catch (SocketException& e) {
@@ -399,7 +399,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 	if (serverSequence - acknowledgedServerSequence > 200) { //originally 25
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
-			reentrantTask->schedule(5);
+			reentrantTask->scheduleInIoScheduler(10);
 
 		if (sendBuffer.size() > 6000) {
 			StringBuffer msg;
@@ -582,7 +582,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 			#endif
 
 			if (!checkupEvent->isScheduled())
-				checkupEvent->schedule(pack->getTimeout());
+				checkupEvent->scheduleInIoScheduler(pack->getTimeout());
 		}
 	} catch (SocketException& e) {
 		disconnect("on checkupServerPackets() - " + e.getMessage(), false);
@@ -615,7 +615,7 @@ void BaseClient::resendPackets() {
 	info(msg2, true);*/
 	
 	for (int i = 0; i < MIN(sequenceBuffer.size(), maxPacketResent); ++i) {
-	//for (int i = 0; i < sequenceBuffer.size(); ++i) {
+//	for (int i = 0; i < sequenceBuffer.size(); ++i) {
 		BasePacket* packet = sequenceBuffer.get(i);
 
 		if (packet->getTimeout().isFuture())
@@ -772,7 +772,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 			if (!checkupEvent->isScheduled())
-				checkupEvent->schedule(pack->getTimeout());
+				checkupEvent->scheduleInIoScheduler(pack->getTimeout());
 		}
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		debug("on acknowledgeServerPackets() - " + e.getMessage());
@@ -830,17 +830,17 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 			msg << "recievedTick: " << hostByte << " clientDelta:" << clientDelta << " serverDelta:" << serverDelta;
 			debug(msg, true);*/
 
-			/*if (clientDelta > serverDelta) {
+			if (clientDelta > serverDelta) {
 				uint16 difference = clientDelta - serverDelta;
 
-				if ((difference > 100) && (++erroneusTicks > 2)) {
+				if ((difference > 200) && (++erroneusTicks > 2)) {
 					disconnect("client clock desync", false);
 
 					unlock();
 
 					return false;
 				}
-			} else*/
+			} else
 				erroneusTicks = 0;
 		}
 
@@ -851,7 +851,7 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 			debug("setting net status");
 		#endif
 
-		netcheckupEvent->reschedule(NETSTATUSCHECKUP_TIMEOUT);
+		netcheckupEvent->rescheduleInIoScheduler(NETSTATUSCHECKUP_TIMEOUT);
 	} catch (Exception& e) {
 		e.printStackTrace();
 		disconnect("Exception on updateNetStatus()", false);
@@ -879,7 +879,7 @@ void BaseClient::requestNetStatus() {
 		BasePacket* resp = new NetStatusRequestMessage(tick);
 		sendPacket(resp, false);
 
-		netRequestEvent->reschedule(NETSTATUSREQUEST_TIME);
+		netRequestEvent->rescheduleInIoScheduler(NETSTATUSREQUEST_TIME);
 	} catch (Exception& e) {
 		e.printStackTrace();
 		disconnect("Exception on requestNetStatus()", false);
@@ -965,7 +965,7 @@ bool BaseClient::connect() {
 		debug("connection established");
 
 		if (!netRequestEvent->isScheduled())
-			netRequestEvent->schedule(NETSTATUSREQUEST_TIME);
+			netRequestEvent->scheduleInIoScheduler(NETSTATUSREQUEST_TIME);
 
 		unlock();
 	} catch (...) {

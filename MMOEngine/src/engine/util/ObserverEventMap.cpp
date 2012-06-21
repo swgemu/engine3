@@ -18,8 +18,14 @@ void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable,
 
 	SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
 
-	SortedVector<ManagedReference<Observer*> > observersCopy(*observers);
-
+	//SortedVector<ManagedReference<Observer*> > observersCopy(*observers);
+	
+	SortedVector<Observer*> observersCopy(observers->size(), 50);
+	
+	for (int i = 0; i < observers->size(); ++i) {
+		observersCopy.add(observers->get(i).get());
+	}
+	
 	locker.release();
 
 	for (int i = 0; i < observersCopy.size(); ++i) {
@@ -59,12 +65,16 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 		observers->setNoDuplicateInsertPlan();
 
 		if (observers->put(observer) == -1) {
-			Logger::console.warning("duplicate observer when registering");
+//			StackTrace::printStackTrace();
+//			Logger::console.warning("duplicate observer when registering");
 		}
 	}
 }
 
 void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
+	if (observer == NULL)
+		return;
+		
 	Locker locker(&observerMutex);
 
 	/*if (!containsKey(eventType))

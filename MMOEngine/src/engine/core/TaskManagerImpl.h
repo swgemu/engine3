@@ -22,10 +22,12 @@ namespace engine {
 	class Task;
 
 	class TaskManagerImpl : public TaskManager, public Mutex, public Logger {
-		TaskQueue tasks;
+		Vector<TaskQueue*> taskQueues;
 
 		Vector<Reference<TaskWorkerThread*> > workers;
 		Vector<Reference<TaskScheduler*> > schedulers;
+
+		Vector<Reference<TaskScheduler*> > ioSchedulers;
 
 #ifdef WITH_STM
 		TaskWorkerThread* serialWorker;
@@ -40,8 +42,10 @@ namespace engine {
 		bool shuttingDown;
 
 	public:
-		static const int DEFAULT_WORKER_THREADS = 10;
-		static const int DEFAULT_SCHEDULER_THREADS = 4;
+		static const int DEFAULT_WORKER_THREADS = 20;
+		static const int DEFAULT_SCHEDULER_THREADS = 20;
+		static const int DEFAULT_IO_SCHEDULER_THREADS = 10;
+		static const int DEFAULT_TASK_QUEUES = 7;
 
 		TaskManagerImpl();
 
@@ -49,7 +53,7 @@ namespace engine {
 
 		void initialize();
 
-		void initialize(int workerCount, int schedulerCount);
+		void initialize(int workerCount, int schedulerCount, int ioCount = DEFAULT_IO_SCHEDULER_THREADS);
 
 		void start();
 
@@ -65,6 +69,7 @@ namespace engine {
 #endif
 
 		void executeTask(Task* task);
+		void executeTask(Task* task, int taskQueue);
 		void executeTasks(const Vector<Task*>& tasks);
 
 		void executeTaskFront(Task* task);
@@ -76,8 +81,14 @@ namespace engine {
 		void scheduleTask(Task* task, uint64 delay = 0);
 		void scheduleTask(Task* task, Time& time);
 
+		void scheduleIoTask(Task* task, uint64 delay = 0);
+		void scheduleIoTask(Task* task, Time& time);
+
 		void rescheduleTask(Task* task, uint64 delay = 0);
 		void rescheduleTask(Task* task, Time& time);
+
+		void rescheduleIoTask(Task* task, uint64 delay = 0);
+		void rescheduleIoTask(Task* task, Time& time);
 
 		bool cancelTask(Task* task);
 
@@ -89,10 +100,13 @@ namespace engine {
 
 		int getScheduledTaskSize();
 
+		int getIoScheduledTaskSize();
+
 		int getExecutingTaskSize();
 
 	private:
 		TaskScheduler* getTaskScheduler();
+		TaskScheduler* getIoTaskScheduler();
 
 		void setTaskScheduler(Task* task, TaskScheduler* scheduler);
 

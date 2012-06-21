@@ -436,6 +436,15 @@ TransactionalReference<QuadTreeNode*> QuadTreeEntry::getNode() {
 		return _implementation->getNode();
 }
 
+void QuadTreeEntry::setCloseObjects(CloseObjectsVector* vec) {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	if (_implementation == NULL) {
+		throw ObjectNotLocalException(this);
+
+	} else
+		_implementation->setCloseObjects(vec);
+}
+
 unsigned long long QuadTreeEntry::_getDirtyObjectID() {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
@@ -553,7 +562,7 @@ void QuadTreeEntry::setParent(QuadTreeEntry* par) {
 
 DistributedObjectServant* QuadTreeEntry::_getImplementation() {
 
-	_updated = true;
+	 if (!_updated) _updated = true;
 	return _impl;
 }
 
@@ -599,31 +608,31 @@ QuadTreeEntryImplementation::operator const QuadTreeEntry*() {
 }
 
 void QuadTreeEntryImplementation::lock(bool doLock) {
-	_this.get()->lock(doLock);
+	_this.getReferenceUnsafeStaticCast()->lock(doLock);
 }
 
 void QuadTreeEntryImplementation::lock(ManagedObject* obj) {
-	_this.get()->lock(obj);
+	_this.getReferenceUnsafeStaticCast()->lock(obj);
 }
 
 void QuadTreeEntryImplementation::rlock(bool doLock) {
-	_this.get()->rlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(bool doLock) {
-	_this.get()->wlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
 }
 
 void QuadTreeEntryImplementation::wlock(ManagedObject* obj) {
-	_this.get()->wlock(obj);
+	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
 void QuadTreeEntryImplementation::unlock(bool doLock) {
-	_this.get()->unlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->unlock(doLock);
 }
 
 void QuadTreeEntryImplementation::runlock(bool doLock) {
-	_this.get()->runlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->runlock(doLock);
 }
 
 void QuadTreeEntryImplementation::_serializationHelperMethod() {
@@ -866,6 +875,11 @@ bool QuadTreeEntryImplementation::isInQuadTree() {
 TransactionalReference<QuadTreeNode*> QuadTreeEntryImplementation::getNode() {
 	// engine/util/u3d/QuadTreeEntry.idl():  		return node;
 	return node;
+}
+
+void QuadTreeEntryImplementation::setCloseObjects(CloseObjectsVector* vec) {
+	// engine/util/u3d/QuadTreeEntry.idl():  		closeobjects = vec;
+	closeobjects = vec;
 }
 
 float QuadTreeEntryImplementation::getRadius() {

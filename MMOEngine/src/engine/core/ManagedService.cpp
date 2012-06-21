@@ -19,7 +19,7 @@ ManagedService::~ManagedService() {
 
 DistributedObjectServant* ManagedService::_getImplementation() {
 
-	_updated = true;
+	 if (!_updated) _updated = true;
 	return _impl;
 }
 
@@ -69,31 +69,31 @@ ManagedServiceImplementation::operator const ManagedService*() {
 }
 
 void ManagedServiceImplementation::lock(bool doLock) {
-	_this.getReferenceUnsafe()->lock(doLock);
+	_this.getReferenceUnsafeStaticCast()->lock(doLock);
 }
 
 void ManagedServiceImplementation::lock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->lock(obj);
+	_this.getReferenceUnsafeStaticCast()->lock(obj);
 }
 
 void ManagedServiceImplementation::rlock(bool doLock) {
-	_this.getReferenceUnsafe()->rlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(bool doLock) {
-	_this.getReferenceUnsafe()->wlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
 }
 
 void ManagedServiceImplementation::wlock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->wlock(obj);
+	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
 void ManagedServiceImplementation::unlock(bool doLock) {
-	_this.getReferenceUnsafe()->unlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->unlock(doLock);
 }
 
 void ManagedServiceImplementation::runlock(bool doLock) {
-	_this.getReferenceUnsafe()->runlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->runlock(doLock);
 }
 
 void ManagedServiceImplementation::_serializationHelperMethod() {

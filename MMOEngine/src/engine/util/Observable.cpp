@@ -118,7 +118,7 @@ void Observable::dropObserveableChild(Observable* observable) {
 
 DistributedObjectServant* Observable::_getImplementation() {
 
-	_updated = true;
+	 if (!_updated) _updated = true;
 	return _impl;
 }
 
@@ -164,31 +164,31 @@ ObservableImplementation::operator const Observable*() {
 }
 
 void ObservableImplementation::lock(bool doLock) {
-	_this.getReferenceUnsafe()->lock(doLock);
+	_this.getReferenceUnsafeStaticCast()->lock(doLock);
 }
 
 void ObservableImplementation::lock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->lock(obj);
+	_this.getReferenceUnsafeStaticCast()->lock(obj);
 }
 
 void ObservableImplementation::rlock(bool doLock) {
-	_this.getReferenceUnsafe()->rlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
 }
 
 void ObservableImplementation::wlock(bool doLock) {
-	_this.getReferenceUnsafe()->wlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
 }
 
 void ObservableImplementation::wlock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->wlock(obj);
+	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
 void ObservableImplementation::unlock(bool doLock) {
-	_this.getReferenceUnsafe()->unlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->unlock(doLock);
 }
 
 void ObservableImplementation::runlock(bool doLock) {
-	_this.getReferenceUnsafe()->runlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->runlock(doLock);
 }
 
 void ObservableImplementation::_serializationHelperMethod() {

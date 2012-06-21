@@ -59,6 +59,8 @@ namespace engine {
 
 		static bool logTree;
 
+		ReadWriteLock mutex;
+
 	public:
 		QuadTree();
 		QuadTree(float minx, float miny, float maxx, float maxy);
@@ -114,6 +116,11 @@ namespace engine {
 		 */
 		void inRange(QuadTreeEntry *obj, float range);
 
+		/**
+		 * Same as above, but does rlocks the tree and then unlocks when calling addInRangeObject/remove on the entry
+		 */
+		void safeInRange(QuadTreeEntry* obj, float range);
+
 
 		/**
 		 * Searches for entries that contain x, y point
@@ -143,6 +150,8 @@ namespace engine {
 		void _inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
 		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
 		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+
+		void copyObjects(Reference<QuadTreeNode*> node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects);
 
 	public:
 		static void setLogging(bool doLog) {

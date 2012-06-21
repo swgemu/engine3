@@ -138,6 +138,14 @@ void Task::schedule(uint64 delay) {
 	taskManager->scheduleTask(this, delay);
 }
 
+void Task::scheduleInIoScheduler(uint64 delay) {
+	taskManager->scheduleIoTask(this, delay);
+}
+
+void Task::scheduleInIoScheduler(Time& time) {
+	taskManager->scheduleIoTask(this, time);
+}
+
 void Task::scheduleNonTransactionally(uint64 delay) {
 #ifdef WITH_STM
 	TransactionalMemoryManager::instance()->getTaskManager()->getTaskManagerImpl()->scheduleTask(this, delay);
@@ -165,6 +173,14 @@ void Task::schedulePeriodic(Time& time, uint64 period) {
 
 void Task::reschedule(uint64 delay) {
 	taskManager->rescheduleTask(this, delay);
+}
+
+void Task::rescheduleInIoScheduler(uint64 delay) {
+	taskManager->rescheduleIoTask(this, delay);
+}
+
+void Task::rescheduleInIoScheduler(Time& time) {
+	taskManager->rescheduleIoTask(this, time);
 }
 
 void Task::rescheduleNonTransactionally(uint64 delay) {

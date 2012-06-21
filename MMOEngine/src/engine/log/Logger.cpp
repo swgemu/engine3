@@ -119,12 +119,13 @@ void Logger::log(const char *msg) {
 
 		logFile->flush();
 	} else if (doGlobalLog && globalLogFile != NULL) {
-		String time;
+/*		String time;
 		getTime(time);
 
 		(*globalLogFile) << time << " [" << name << "] " << msg << "\n";
 
 		globalLogFile->flush();
+		*/
 	}
 }
 

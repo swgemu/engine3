@@ -89,6 +89,8 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 			}
 		}
 	}
+	
+	path->add(goalPoint);
 
 	return path;
 }

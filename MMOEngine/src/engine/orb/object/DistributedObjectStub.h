@@ -48,9 +48,9 @@ namespace engine {
 		// reference counting methods
 		virtual void finalize();
 
-		virtual void acquire();
+		//virtual void acquire();
 
-		virtual void release();
+		//virtual void release();
 
 		void printReferenceTrace();
 

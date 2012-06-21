@@ -104,7 +104,7 @@ bool Observer::isObserverType(unsigned int type) {
 
 DistributedObjectServant* Observer::_getImplementation() {
 
-	_updated = true;
+	 if (!_updated) _updated = true;
 	return _impl;
 }
 
@@ -150,31 +150,31 @@ ObserverImplementation::operator const Observer*() {
 }
 
 void ObserverImplementation::lock(bool doLock) {
-	_this.getReferenceUnsafe()->lock(doLock);
+	_this.getReferenceUnsafeStaticCast()->lock(doLock);
 }
 
 void ObserverImplementation::lock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->lock(obj);
+	_this.getReferenceUnsafeStaticCast()->lock(obj);
 }
 
 void ObserverImplementation::rlock(bool doLock) {
-	_this.getReferenceUnsafe()->rlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
 }
 
 void ObserverImplementation::wlock(bool doLock) {
-	_this.getReferenceUnsafe()->wlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
 }
 
 void ObserverImplementation::wlock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->wlock(obj);
+	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
 void ObserverImplementation::unlock(bool doLock) {
-	_this.getReferenceUnsafe()->unlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->unlock(doLock);
 }
 
 void ObserverImplementation::runlock(bool doLock) {
-	_this.getReferenceUnsafe()->runlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->runlock(doLock);
 }
 
 void ObserverImplementation::_serializationHelperMethod() {

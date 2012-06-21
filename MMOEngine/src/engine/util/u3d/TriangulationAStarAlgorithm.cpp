@@ -65,7 +65,9 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				while (parent != NULL) {
 					currentPath.insertElementAt(parent->getNode(), 0);
-					parent = parent->getCameFrom();
+					
+					if (parent != parent->getCameFrom())
+						parent = parent->getCameFrom();
 				}
 
 				Vector<Vector3>* funnelPath = Funnel::funnel(startPoint, closestPoint, &currentPath);

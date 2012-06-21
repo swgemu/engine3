@@ -236,6 +236,11 @@ class QuadTreeEntry extends Observable {
 	public TransactionalReference<QuadTreeNode> getNode() {
 		return node;
 	}
+
+	@local
+	public void setCloseObjects(CloseObjectsVector vec) {
+		closeobjects = vec;
+	}
 	
 	@nativeStub
 	public abstract native unsigned long getDirtyObjectID();

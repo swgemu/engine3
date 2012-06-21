@@ -349,7 +349,7 @@ void ManagedObject::setPersistent(int level) {
 
 DistributedObjectServant* ManagedObject::_getImplementation() {
 
-	_updated = true;
+	 if (!_updated) _updated = true;
 	return _impl;
 }
 

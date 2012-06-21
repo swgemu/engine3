@@ -23,7 +23,7 @@ namespace engine {
 	class TimedTaskQueue;
 	class TaskManagerImpl;
 
-	class Task : public PriorityQueueEntry, public Runnable, public virtual Object {
+	class Task : public PriorityQueueEntry, public Runnable, public Object {
 	protected:
 		class TaskManager* taskManager;
 
@@ -54,6 +54,9 @@ namespace engine {
 		void schedule(uint64 delay = 0);
 		void schedule(Time& time);
 
+		void scheduleInIoScheduler(uint64 delay = 0);
+		void scheduleInIoScheduler(Time& time);
+
 		void scheduleNonTransactionally(uint64 delay = 0);
 
 		void schedulePeriodic(uint64 delay, uint64 period);
@@ -62,6 +65,9 @@ namespace engine {
 		void reschedule(uint64 delay = 0);
 		void rescheduleNonTransactionally(uint64 delay = 0);
 		void reschedule(Time& time);
+
+		void rescheduleInIoScheduler(uint64 delay = 0);
+		void rescheduleInIoScheduler(Time& time);
 
 		void execute();
 

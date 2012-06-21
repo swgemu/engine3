@@ -105,6 +105,8 @@ public:
 
 	TransactionalReference<QuadTreeNode*> getNode();
 
+	void setCloseObjects(CloseObjectsVector* vec);
+
 	unsigned long long getDirtyObjectID();
 
 	unsigned long long getObjectID();
@@ -231,6 +233,8 @@ public:
 	bool isInQuadTree();
 
 	TransactionalReference<QuadTreeNode*> getNode();
+
+	void setCloseObjects(CloseObjectsVector* vec);
 
 	virtual unsigned long long getDirtyObjectID();
 

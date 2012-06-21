@@ -99,7 +99,7 @@ void TaskScheduler::run() {
 		#ifdef VERSION_PUBLIC
 			DO_TIMELIMIT;
 		#endif
-			debug("executing scheduled task");
+//			debug("executing scheduled task");
 
 			task->doExecute();
 		} catch (Exception& e) {

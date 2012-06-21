@@ -36,7 +36,7 @@ void TaskWorkerThread::run() {
 		blockMutex.lock();
 
 		try {
-			debug("executing task");
+//			debug("executing task");
 
 			task->doExecute();
 		} catch (Exception& e) {
