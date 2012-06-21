@@ -78,7 +78,12 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 
 	task->acquire();
 
-	assert(task->setTaskScheduler(taskScheduler));
+	if (!task->setTaskScheduler(taskScheduler)) {
+		task->release();
+
+		return true;
+	}
+
 
 	PriorityQueue::add(task);
 
