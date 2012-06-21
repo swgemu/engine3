@@ -120,12 +120,13 @@ namespace sys {
 		inline Object* getReferenceUnsafe() const {
 			Object* object = NULL;
 
-			StrongAndWeakReferenceCount* old = safeRead();
+//			StrongAndWeakReferenceCount* old = safeRead();
+                        StrongAndWeakReferenceCount* old = weakReference;
 
 			if (old != NULL) {
 				object = old->getObject();
 
-				release(old);
+//				release(old);
 			}
 
 			return object;

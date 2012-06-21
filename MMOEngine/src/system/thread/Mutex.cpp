@@ -117,7 +117,7 @@ bool Mutex::tryLock(uint64 millis) {
 void Mutex::unlock(bool doLock) {
 	if (!doLock)
 		return;
-
+		
 	lockReleasing();
 
 	int res = pthread_mutex_unlock(&mutex);

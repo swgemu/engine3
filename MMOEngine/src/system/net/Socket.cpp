@@ -146,7 +146,7 @@ void Socket::readFrom(Packet* pack, SocketAddress* addr) {
 }
 
 void Socket::send(Packet* pack) {
-	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), 0); 
+	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL); 
 		
 	if (res < 0/* && errno != EAGAIN*/) {
 		StringBuffer msg;
@@ -157,7 +157,7 @@ void Socket::send(Packet* pack) {
 }
 
 void Socket::sendTo(Packet* pack, SocketAddress* addr) {
-	int res = sendto(fileDescriptor, pack->getBuffer(), pack->size(), 0, addr->getAddress(), addr->getAddressSize()); 
+	int res = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize()); 
 		
 	if (res < 0/* && errno != EAGAIN*/) {
 		StringBuffer msg;

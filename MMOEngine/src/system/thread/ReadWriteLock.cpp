@@ -201,6 +201,8 @@ void ReadWriteLock::unlock(bool doLock) {
 			}
 		}
 	#endif
+	
+//	assert(threadLockHolder == Thread::getCurrentThread());
 
 	lockReleasing();
 
