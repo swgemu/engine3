@@ -479,6 +479,7 @@ MMOEngine/src/engine/service/proto/BaseProtocol.cpp -text
 MMOEngine/src/engine/service/proto/BaseProtocol.h -text
 MMOEngine/src/engine/service/proto/PacketHandler.h -text
 MMOEngine/src/engine/service/proto/StandaloneBaseMessage.h -text
+MMOEngine/src/engine/service/proto/events/AcknowledgeTask.h -text
 MMOEngine/src/engine/service/proto/events/BaseClientCleanUpEvent.hpp -text
 MMOEngine/src/engine/service/proto/events/BaseClientCleanupEvent.h -text
 MMOEngine/src/engine/service/proto/events/BaseClientEvent.h -text
@@ -486,6 +487,11 @@ MMOEngine/src/engine/service/proto/events/BaseClientNetStatusCheckupEvent.h -tex
 MMOEngine/src/engine/service/proto/events/BaseClientNetStatusRequestEvent.h -text
 MMOEngine/src/engine/service/proto/events/BasePacketChekupEvent.cpp -text
 MMOEngine/src/engine/service/proto/events/BasePacketChekupEvent.h -text
+MMOEngine/src/engine/service/proto/events/DisconnectTask.h -text
+MMOEngine/src/engine/service/proto/events/NetStatusResponseTask.h -text
+MMOEngine/src/engine/service/proto/events/OutOfOrderTask.h -text
+MMOEngine/src/engine/service/proto/events/SessionResponseTask.h -text
+MMOEngine/src/engine/service/proto/events/SessionStartTask.h -text
 MMOEngine/src/engine/service/proto/packets/AcknowledgeMessage.h -text
 MMOEngine/src/engine/service/proto/packets/AcknowledgeOkMessage.h -text
 MMOEngine/src/engine/service/proto/packets/ConnectionServerMessage.h -text

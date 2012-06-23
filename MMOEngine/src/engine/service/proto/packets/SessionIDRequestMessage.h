@@ -25,6 +25,10 @@ namespace engine {
 			sys::uint32 connID = pack->parseInt(6);
 	        prot->setConnectionID(connID);
 		}
+
+		static uint32 parse(Packet* pack) {
+			return pack->parseInt(6);
+		}
 	};
 
     } // namespace proto

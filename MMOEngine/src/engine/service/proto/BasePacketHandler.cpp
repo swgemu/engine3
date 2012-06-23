@@ -5,6 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "BasePacketHandler.h"
 
+#include "engine/core/Core.h"
 #include "packets/SessionIDRequestMessage.h"
 #include "packets/SessionIDResponseMessage.h"
 #include "packets/ConnectionServerMessage.h"
@@ -19,9 +20,20 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "events/BaseClientNetStatusRequestEvent.h"
 #include "events/BaseClientEvent.h"
 
+#include "events/SessionStartTask.h"
+#include "events/SessionResponseTask.h"
+#include "events/DisconnectTask.h"
+#include "events/NetStatusResponseTask.h"
+#include "events/OutOfOrderTask.h"
+#include "events/AcknowledgeTask.h"
+
 #ifdef VERSION_PUBLIC
 #include "events/BaseClientCleanUpEvent.hpp"
 #endif
+
+#define BASE_PACKET_HANDLER_TASK_QUEUE 9
+
+#define MULTI_THREADED_BASE_PACKET_HANDLER
 
 BasePacketHandler::BasePacketHandler() : Logger() {
 	serviceHandler = NULL;
@@ -139,10 +151,18 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
 	//client->info("session request recieved");
 
+#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+	uint32 cid = SessionIDRequestMessage::parse(pack);
+
+	Reference<Task*> task = new SessionStartTask(client, cid);
+	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+#else
+
     SessionIDRequestMessage::parse(pack, client);
 
     Packet* msg = new SessionIDResponseMessage(client);
     client->send(msg);
+#endif
 
     /*
     info("sending connection server message");
@@ -157,34 +177,50 @@ void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
 
     uint32 seed = SessionIDResponseMessage::parse(pack);
 
+#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+    Reference<Task*> task = new SessionResponseTask(client, seed);
+    Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+#else
     client->notifyReceivedSeed(seed);
+#endif
 }
 
 void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
 	client->info("SELF DISCONNECTING CLIENT");
 
+#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+	Reference<Task*> task = new DisconnectTask(client);
+	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+#else
 	client->setClientDisconnected();
 	client->disconnect();
+#endif
 }
 
 void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 	uint16 tick = NetStatusRequestMessage::parseTick(pack);
 
+#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+	Reference<Task*> task = new NetStatusResponseTask(client, tick);
+	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+#else
 	if (client->updateNetStatus(tick)) {
-
-		/*StringBuffer msg;
-    	msg << hex << "NETSTAT respond with 0x" << tick << "\n";
-		info(msg);*/
 
 		BasePacket* resp = new NetStatusResponseMessage(tick);
 		client->sendPacket(resp);
 	}
+#endif
 }
 
 void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 	uint16 seq = OutOfOrderMessage::parse(pack);
 
+#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+	Reference<Task*> task = new OutOfOrderTask(client, seq);
+	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+#else
 	client->resendPackets(seq);
+#endif
 
 	/*StringBuffer msg;
 	msg << "packet Out of Order(" << seq << ")";
@@ -193,7 +229,13 @@ void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 
 void BasePacketHandler::doAcknowledge(BaseClient* client, Packet* pack) {
 	uint16 seq = AcknowledgeMessage::parse(pack);
+
+#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+	Reference<Task*> task = new AcknowledgeTask(client, seq);
+	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+#else
 	client->acknowledgeServerPackets(seq);
+#endif
 }
 
 void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack, bool validatePackets) {
