@@ -29,6 +29,8 @@ void ReadWriteLock::rlock(bool doLock) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock (" << strerror(res) << ")\n";
 #endif
 			StackTrace::printStackTrace();
+			
+			assert(0 && "rlock failed");
 		}
 	#else
 		#ifndef LOG_LOCKS
@@ -61,12 +63,14 @@ void ReadWriteLock::wlock(bool doLock) {
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_wrlock(&rwlock);
-		if (res != 0)
+		if (res != 0){
 #ifdef TRACE_LOCKS
 			System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
 #else
 		System::out << "(" << Time::currentNanoTime() << " nsec) wlock() failed on RWLock (" << strerror(res) << ")\n";
 #endif
+		assert(0 && "wlock failed");
+		}
 	#else
 		Time start;
 		start.addMiliTime(10000);
@@ -215,6 +219,7 @@ void ReadWriteLock::unlock(bool doLock) {
 #endif
 
 		StackTrace::printStackTrace();
+		assert(0 && "unlock failed");
 	}
 
 	lockReleased();
@@ -256,6 +261,8 @@ void ReadWriteLock::runlock(bool doLock) {
 #endif
 
 		StackTrace::printStackTrace();
+		
+		assert(0 && "runlock failed");
 	}
 
 	lockReleased();
