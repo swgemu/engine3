@@ -143,6 +143,9 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 	Vector<Locker*>* lockers = new Vector<Locker*>();
 
 	for (int i = 0; i < workers.size(); ++i) {
+		if (i == 9 || i == 7) //mysql and bas packet handler workers should continue
+			continue;
+			
 		TaskWorkerThread* worker = workers.get(i);
 
 		Mutex* blockMutex = worker->getBlockMutex();
@@ -160,6 +163,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		lockers->add(locker);
 	}
 
+/* dont block base clients for db update
 	for (int i = 0; i < ioSchedulers.size(); ++i) {
 		TaskScheduler* scheduler = ioSchedulers.get(i);
 
@@ -168,6 +172,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		Locker* locker = new Locker(blockMutex);
 		lockers->add(locker);
 	}
+	*/
 
 	return lockers;
 }

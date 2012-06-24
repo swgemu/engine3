@@ -42,10 +42,10 @@ namespace engine {
 		bool shuttingDown;
 
 	public:
-		static const int DEFAULT_WORKER_THREADS = 20;
-		static const int DEFAULT_SCHEDULER_THREADS = 20;
-		static const int DEFAULT_IO_SCHEDULER_THREADS = 10;
-		static const int DEFAULT_TASK_QUEUES = 7;
+		static const int DEFAULT_WORKER_THREADS = 15;
+		static const int DEFAULT_SCHEDULER_THREADS = 30;
+		static const int DEFAULT_IO_SCHEDULER_THREADS = 15;
+		static const int DEFAULT_TASK_QUEUES = 10;
 
 		TaskManagerImpl();
 

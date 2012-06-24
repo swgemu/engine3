@@ -25,6 +25,21 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
+class AcknowledgeClientPackets : public Task {
+        Reference<BaseClient*> client;
+        uint16 seq;
+        
+public:
+        AcknowledgeClientPackets(BaseClient* cl, uint16 s) {
+                client = cl;
+                seq = s;
+        }       
+        
+        void run() {
+                client->acknowledgeClientPackets(seq);
+        } 
+};
+
 BaseClient::BaseClient() : DatagramServiceClient(),
 		BaseProtocol(), Mutex("Client") {
 	bufferedPacket = NULL;
@@ -427,7 +442,9 @@ bool BaseClient::validatePacket(Packet* pack) {
 	uint16 seq = pack->parseNetShort();
 
 	if (seq < clientSequence) {
-		acknowledgeClientPackets(seq);
+		//acknowledgeClientPackets(seq);
+		Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, seq), 9);
+		
 
 		return false;
 	} else if (seq > clientSequence) {
@@ -456,7 +473,9 @@ bool BaseClient::validatePacket(Packet* pack) {
 	} /*else
 		throw Exception("received same packet sequence");*/
 
-	acknowledgeClientPackets(clientSequence++);
+	//acknowledgeClientPackets(clientSequence++);
+	Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, clientSequence++), 9);
+		
 
 	#ifdef TRACE_CLIENTS
 		StringBuffer msg;
@@ -751,6 +770,11 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			msg << "ACKNOWLEDGED SEND(" << seq << ") [real = " << realseq << ", ackedseq = " << acknowledgedServerSequence << "]";
 			debug(msg);
 		#endif
+		
+		if (realseq < acknowledgedServerSequence) {
+		        unlock();
+		        return;
+		}
 
 		checkupEvent->cancel();
 

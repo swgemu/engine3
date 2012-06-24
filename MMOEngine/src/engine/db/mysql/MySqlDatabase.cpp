@@ -7,16 +7,40 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MySqlDatabase.h"
 
+#include "engine/engine.h"
+
+class MysqlTask : public Task {
+	MySqlDatabase* database;
+	String query;
+public:
+	MysqlTask(MySqlDatabase* db, const String& q) {
+		database = db;
+		query = q;
+	}
+	
+	void run() {
+		try {
+			database->doExecuteStatement(query);
+		} catch (Exception& e) {
+			database->error(e.getMessage());
+		}
+	}	
+};
+
 using namespace engine::db::mysql;
 
 MySqlDatabase::MySqlDatabase(const String& s) : Mutex("MYSQL DB"), Logger(s) {
-	queryTimeout = 600000;
+	queryTimeout = 5;
+	writeQueryTimeout = queryTimeout * 10;
+	
 }
 
 MySqlDatabase::MySqlDatabase(const String& s, const String& host) : Mutex("MYSQL DB"), Logger(s) {
 	MySqlDatabase::host = host;
 
-	queryTimeout = 600000;
+	queryTimeout = 5;
+	writeQueryTimeout = queryTimeout * 10;
+	
 
 	setLockTracing(false);
 }
@@ -32,7 +56,7 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 		error();
 
 	mysql_options(&mysql, MYSQL_OPT_READ_TIMEOUT, (char*)&queryTimeout);
-	mysql_options(&mysql, MYSQL_OPT_WRITE_TIMEOUT, (char*)&queryTimeout);
+	mysql_options(&mysql, MYSQL_OPT_WRITE_TIMEOUT, (char*)&writeQueryTimeout);
 	my_bool reconnect = 1;
 	mysql_options(&mysql, MYSQL_OPT_RECONNECT, &reconnect);
 
@@ -48,13 +72,13 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 #endif
 }
 
-void MySqlDatabase::executeStatement(const char* statement) {
+void MySqlDatabase::doExecuteStatement(const String& statement) {
 	Locker locker(this);
 
 	/*if (mysql_query(&mysql, statement))
 		error(statement);*/
 
-	while (mysql_query(&mysql, statement)) {
+	while (mysql_query(&mysql, statement.toCharArray())) {
 		unsigned int errorNumber = mysql_errno(&mysql);
 
 		if (errorNumber != 1205/*ER_LOCK_WAIT_TIMEOUT*/) {
@@ -67,6 +91,12 @@ void MySqlDatabase::executeStatement(const char* statement) {
 #ifdef WITH_STM
 	MysqlDatabaseManager::instance()->addModifiedDatabase(this);
 #endif
+
+}
+
+void MySqlDatabase::executeStatement(const char* statement) {
+	Reference<Task*> task = new MysqlTask(this, statement);
+	Core::getTaskManager()->executeTask(task, 7);
 }
 
 void MySqlDatabase::executeStatement(const String& statement) {

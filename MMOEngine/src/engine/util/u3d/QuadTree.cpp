@@ -589,6 +589,8 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 	float oldx = obj->getPreviousPositionX();
 	float oldy = obj->getPreviousPositionY();
 
+
+	Locker objLocker(obj);
 	//update current objects...
 
 	try {
@@ -598,7 +600,9 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 			ManagedReference<QuadTreeEntry*> rootParent = o->getRootParent();
 
 			if (rootParent != NULL)
-				o = rootParent;;
+				o = rootParent;
+				
+              //          Locker crossLock(o, obj);
 
 			if (o != obj) {
 				float deltaX = x - o->getPositionX();

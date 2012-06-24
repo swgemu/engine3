@@ -30,6 +30,7 @@ namespace engine {
 		String host;
 
 		uint32 queryTimeout;
+		uint32 writeQueryTimeout;
 
 	public:
 		MySqlDatabase(const String& s);
@@ -42,6 +43,8 @@ namespace engine {
 		void executeStatement(const char* statement);
 		void executeStatement(const String& statement);
 		void executeStatement(const StringBuffer& statement);
+		
+		void doExecuteStatement(const String& statement);
 
 		engine::db::ResultSet* executeQuery(const char* statement);
 		engine::db::ResultSet* executeQuery(const String& statement);

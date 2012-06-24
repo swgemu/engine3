@@ -14,9 +14,9 @@ BaseProtocol::BaseProtocol() : Logger("PROTO") {
 }
 
 void BaseProtocol::prepareSend(BasePacket* pack) {
-	if (pack->doCompression())
+/*	if (pack->doCompression())
 		pack->setCompression(false);
-
+*/
 	pack->close();
 
 	/*StringBuffer msg;
