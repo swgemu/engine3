@@ -104,9 +104,7 @@ namespace sys {
 			E& obj = Vector<E>::elementData[m];
 			cmp = compare(obj, o);
 
-			if (cmp == 0)
-				return m;
-			else if (cmp > 0) {
+			if (cmp > 0) {
 				l = m + 1;
 
 				if (r < l)
