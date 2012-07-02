@@ -30,7 +30,7 @@ namespace engine {
 
 	class UpdateModifiedObjectsThread;
 
-	class DOBObjectManager : public Mutex, public Logger {
+	class DOBObjectManager : public ReadWriteLock, public Logger {
 	protected:
 		DistributedObjectDirectory localObjectDirectory;
 

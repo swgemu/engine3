@@ -23,6 +23,8 @@ namespace engine {
 	
 		Time timestamp;
 		Time timeout;
+		
+		int outOfOrderCount;
 	
 	public:
 		BasePacket();	

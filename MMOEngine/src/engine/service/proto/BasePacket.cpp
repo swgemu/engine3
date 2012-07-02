@@ -11,6 +11,8 @@ BasePacket::BasePacket() : Message() {
 	doEncr = true;
 	doComp = false;
 	doCRCTest = true;
+	
+	outOfOrderCount = 0;
 }
 
 BasePacket::BasePacket(int size) : Message(size) {
@@ -22,6 +24,8 @@ BasePacket::BasePacket(int size) : Message(size) {
 	doEncr = true;
 	doComp = false;
 	doCRCTest = true;
+	
+	outOfOrderCount = 0;
 }
 
 BasePacket::BasePacket(Packet* pack, int seq) : Message(pack->size()) {
@@ -31,6 +35,8 @@ BasePacket::BasePacket(Packet* pack, int seq) : Message(pack->size()) {
 
 	doSeq = true;
 	sequence = seq;
+	
+	outOfOrderCount = 0;
 }
 
 BasePacket* BasePacket::clone(int startoffs) {

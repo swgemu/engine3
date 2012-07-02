@@ -155,7 +155,7 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 
 	try {
 		ManagedObject* managedObject = cast<ManagedObject*>(object);
-		ObjectOutputStream* objectData = new ObjectOutputStream(500);
+		ObjectOutputStream* objectData = new ObjectOutputStream(8000);
 
 		managedObject->writeObject(objectData);
 
@@ -352,6 +352,8 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 
 
 	int numberOfThreads = numberOfObjects / MAXOBJECTSTOUPDATEPERTHREAD;
+	
+	numberOfThreads = MIN(numberOfThreads, 20);
 	int rest = numberOfThreads > 0 ? numberOfObjects % numberOfThreads : 0;
 
 	if (rest != 0)

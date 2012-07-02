@@ -14,9 +14,14 @@ BaseProtocol::BaseProtocol() : Logger("PROTO") {
 }
 
 void BaseProtocol::prepareSend(BasePacket* pack) {
-/*	if (pack->doCompression())
+	if (pack->doCompression())
 		pack->setCompression(false);
-*/
+		
+/*        if (pack->doEncryption()) {
+            pack->setEncryption(false);
+        }
+    */
+
 	pack->close();
 
 	/*StringBuffer msg;
@@ -33,6 +38,7 @@ void BaseProtocol::prepareSend(BasePacket* pack) {
 	if (pack->doEncryption()) {
 		encrypt(pack, true);
 	}
+	
 
 	if (pack->doCRCChecking()) {
 		appendCRC(pack);
@@ -351,10 +357,19 @@ void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
     if (crcLength > 0) {
         uint32 crc = generateCrc(pack, nLength - crcLength);
         pData += (nLength-crcLength);
+        
+        /*if (crcLength == 2) {
+            crc = crc & 0xFFFF;
+        
+            pData[1] = (char) ((crc >> 0) & 0xFF);
+            pData[0] = (char) ((crc >> 8) & 0xFF);
+        } else {
 
-        for (uint16 i = 0; i < crcLength; i++) {
-            pData[(crcLength - 1) - i] = (char)((crc >> (8 * i)) & 0xFF);
-        }
+*/
+            for (uint16 i = 0; i < crcLength; i++) {
+                pData[(crcLength - 1) - i] = (char)((crc >> (8 * i)) & 0xFF);
+            }
+        
     }
 }
 

@@ -27,6 +27,7 @@ namespace engine {
 
 		bool _updated;
 		bool _markedForDeletion;
+		bool _deletedFromDatabase;
 
 	public:
 		DistributedObject();
@@ -49,6 +50,10 @@ namespace engine {
 		inline void _setUpdated(bool var) {
 			_updated = var;
 		}
+		
+		inline void _setDeletedFromDatabase(bool val) {
+		        _deletedFromDatabase = val;
+		}
 
 		inline void _setMarkedForDeletion(bool var) {
 			_markedForDeletion = var;
@@ -61,6 +66,10 @@ namespace engine {
 		// getters
 		inline const String& _getClassName() {
 			return _className;
+		}
+		
+		inline bool _isDeletedFromDatabase() {
+		        return _deletedFromDatabase;
 		}
 
 		inline const String& _getName() {

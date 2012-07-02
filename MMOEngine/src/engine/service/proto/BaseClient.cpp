@@ -350,6 +350,11 @@ void BaseClient::run() {
 		if (isAvailable()) {
 			BasePacket* pack = getNextSequencedPacket();
 			if (pack == NULL) {
+			
+			 if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL || !sequenceBuffer.isEmpty())) {
+				reentrantTask->scheduleInIoScheduler(10);
+				}
+			
 				unlock();
 				return;
 			}
@@ -412,9 +417,22 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 		debug(msg);
 	#endif*/
 
-	if (serverSequence - acknowledgedServerSequence > 200) { //originally 25
+	if (serverSequence - acknowledgedServerSequence > 50) { //originally 25
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
+			
+                try {
+                        if (!checkupEvent->isScheduled()) {
+                                checkupEvent->schedule(5);
+                        }
+                } catch (...) {
+                }
+        
+        
+//                resendPackets();
+
+        
+                
 
 		if (sendBuffer.size() > 6000) {
 			StringBuffer msg;
@@ -635,10 +653,11 @@ void BaseClient::resendPackets() {
 	
 	for (int i = 0; i < MIN(sequenceBuffer.size(), maxPacketResent); ++i) {
 //	for (int i = 0; i < sequenceBuffer.size(); ++i) {
+//	for (int i = 0; i < MIN(sequenceBuffer.size(), 1); ++i) {
 		BasePacket* packet = sequenceBuffer.get(i);
 
-		if (packet->getTimeout().isFuture())
-			break;
+		/*if (packet->getTimeout().isFuture())
+			break;*/
 
 		packet->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
@@ -659,22 +678,57 @@ void BaseClient::resendPackets() {
 }
 
 void BaseClient::resendPackets(int seq) {
+        return;
+        
 	lock();
+	
+	int maxPackets = 5;
+	
+	
+	for (int i = 0; i < sequenceBuffer.size(); ++i) {
+	        BasePacket* packet = sequenceBuffer.get(i);
+	        
+	        if (packet->getSequence() != (uint32)seq - 1) {
+	                continue;
+	        }
+	        
+	        if (!DatagramServiceClient::send(packet)) {
+			StringBuffer msg;
+			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
+			debug(msg);
+		}
+		
+		packet->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
+
+		++resentPackets;
+		
+		break;
+	}
+	
+	unlock();
+	
+	return;
 
 	for (int i = 0; i < sequenceBuffer.size(); ++i) {
+	
+	        if (i >= maxPackets) {
+	                break;
+	        }
+	        
 		BasePacket* packet = sequenceBuffer.get(i);
 
 		if (packet->getSequence() == (uint32) seq) {
-			sequenceBuffer.remove(i);
+//			sequenceBuffer.remove(i);
 
-			delete packet;
+//			delete packet;
 			break;
 		}
 
-		if (packet->getTimeout().isFuture())
+/*		if (packet->getTimeout().isFuture())
 			continue;
 
 		packet->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
+*/
 
 		if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
@@ -853,11 +907,11 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 			/*StringBuffer msg;
 			msg << "recievedTick: " << hostByte << " clientDelta:" << clientDelta << " serverDelta:" << serverDelta;
 			debug(msg, true);*/
-
+/*
 			if (clientDelta > serverDelta) {
 				uint16 difference = clientDelta - serverDelta;
 
-				if ((difference > 200) && (++erroneusTicks > 2)) {
+				if ((difference > 200) && (++erroneusTicks > 10)) {
 					disconnect("client clock desync", false);
 
 					unlock();
@@ -866,6 +920,8 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 				}
 			} else
 				erroneusTicks = 0;
+				
+				*/
 		}
 
 		lastNetStatusTimeStamp.updateToCurrentTime();

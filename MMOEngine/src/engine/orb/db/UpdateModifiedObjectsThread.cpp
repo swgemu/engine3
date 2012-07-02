@@ -66,6 +66,10 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 
 			for (int i = startOffset; i <= endOffset; ++i) {
 				DistributedObject* object = objectsToUpdate->get(i);
+				
+				if (object->_isDeletedFromDatabase()) {
+					object->_setDeletedFromDatabase(false);
+				}
 
 				if (objectManager->commitUpdatePersistentObjectToDB(object) == 0)
 					++j;
@@ -84,7 +88,10 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			for (int i = 0; i < objectsToDelete->size(); ++i) {
 				DistributedObject* object = objectsToDelete->get(i);
 
-				objectManager->commitDestroyObjectToDB(object->_getObjectID());
+				if (!object->_isDeletedFromDatabase()) {
+					objectManager->commitDestroyObjectToDB(object->_getObjectID());
+					object->_setDeletedFromDatabase(true);
+				}
 			}
 
 			StringBuffer msg;

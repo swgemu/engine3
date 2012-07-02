@@ -19,8 +19,8 @@ namespace engine {
 			insertInt(prot->getConnectionID());
 			insertInt(htonl(prot->getSeed()));
 			insertByte(0x02);
-			insertByte(0x01);
-			insertByte(0x04);
+			insertByte(0x01); //1
+			insertByte(0x04); //4
 			insertByte(0x00);
 			insertByte(0x00);
 			insertByte(0x01);

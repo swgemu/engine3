@@ -64,7 +64,9 @@ void DatabaseManager::openEnvironment() {
 	config.setThreadCount(512);
 	config.setTransactional(true);
 	config.setInitializeCache(true);
-	config.setMaxLogFileSize(1000 * 1000 * 100); // 100mb
+	uint32 logFileSize = 3000;
+	logFileSize = logFileSize * 1024 * 1024;
+	config.setMaxLogFileSize(logFileSize); // 3gb
 	config.setLockDetectMode(LockDetectMode::RANDOM);
 	//config.setLockDetectMode(LockDetectMode::YOUNGEST);
 

@@ -22,10 +22,13 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 	int i = 0;
 
 	Transaction* transaction = NULL;
+	
+	TransactionConfig cfg = TransactionConfig::DEFAULT;
+	cfg.setNoSync(true);
 
 	do {
 		ret  = -1;
-		transaction = environment->beginTransaction(NULL);
+		transaction = environment->beginTransaction(NULL, cfg);
 
 		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
 
@@ -52,7 +55,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 	}
 
 	if (transaction != NULL) {
-		transaction->commit();
+		transaction->commitNoSync();
 	}
 
 

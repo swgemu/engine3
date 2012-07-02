@@ -10,6 +10,7 @@
 #include "Environment.h"
 #include "BTransaction.h"
 #include "BerkeleyDatabase.h"
+#include <sys/ipc.h>
 
 using namespace engine::db::berkley;
 
@@ -29,14 +30,20 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 	//System::out << "trying to set " << threadCount << " thread count" << endl;
 
 	//databaseEnvironment->mutex_set_max(databaseEnvironment, 75000);
-	databaseEnvironment->set_lk_max_locks(databaseEnvironment, 75000);
-	databaseEnvironment->set_lk_max_lockers(databaseEnvironment, 75000);
-	databaseEnvironment->set_lk_max_objects(databaseEnvironment, 75000);
+	databaseEnvironment->set_lk_max_locks(databaseEnvironment, 750000);
+	databaseEnvironment->set_lk_max_lockers(databaseEnvironment, 750000);
+	databaseEnvironment->set_lk_max_objects(databaseEnvironment, 750000);
 
-	databaseEnvironment->set_cachesize(databaseEnvironment, 0, 26214400, 0);
-	databaseEnvironment->set_lg_bsize(databaseEnvironment, 26214400);
+	databaseEnvironment->set_cachesize(databaseEnvironment, 0, 262144000 * 2, 0);
+	
+	uint32 logCache = 600 * 1024 * 1024;
+	databaseEnvironment->set_lg_bsize(databaseEnvironment, logCache);
 
 	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
+
+//        key_t shm_key = ftok("/mnt/ssd/workspaceALPHA/MMOCoreORB/bin/databases", 'D');
+        	
+	//databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
 
 	ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER, 0);
 
@@ -59,7 +66,7 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
     	databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
 
 #ifndef VERSION_PUBLIC
-    int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, 2, 500000);
+    int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, 1, 500000);
 
     if (resSleep != 0) {
     	printf("could not set max writes\n");

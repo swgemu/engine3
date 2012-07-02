@@ -14,6 +14,7 @@ DistributedObject::DistributedObject() : Object() {
 
 	_updated = true;
 	_markedForDeletion = false;
+	_deletedFromDatabase = true;
 }
 
 DistributedObject::~DistributedObject() {
