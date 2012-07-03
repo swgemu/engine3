@@ -4,7 +4,7 @@ Stream::Stream() : ArrayList<char>() {
 	end = offset = elementData;
 }
 
-Stream::Stream(int initsize) : ArrayList<char>(initsize) {
+Stream::Stream(int initsize) : ArrayList<char>(initsize, initsize / 2) {
 	end = offset = elementData;
 }
 
@@ -12,7 +12,7 @@ Stream::Stream(int initsize, int capincr) : ArrayList<char>(initsize, capincr) {
 	end = offset = elementData;
 }
 
-Stream::Stream(char *buf, int len) : ArrayList<char>(len) {
+Stream::Stream(char *buf, int len) : ArrayList<char>(len, len / 2) {
 	end = offset = elementData;
 
 	writeStream(buf, len);
