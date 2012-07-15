@@ -351,10 +351,14 @@ void BaseClient::run() {
 			BasePacket* pack = getNextSequencedPacket();
 			if (pack == NULL) {
 			
-			 if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL || !sequenceBuffer.isEmpty())) {
-				reentrantTask->scheduleInIoScheduler(10);
+				if (!reentrantTask->isScheduled()) {
+					try {
+						reentrantTask->scheduleInIoScheduler(10);
+					} catch (Exception& e) {
+
+					}
 				}
-			
+
 				unlock();
 				return;
 			}
@@ -389,8 +393,16 @@ void BaseClient::run() {
 				debug(msg);
 			}
 
-			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
+			/*if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 				reentrantTask->scheduleInIoScheduler(10);
+			}*/
+
+			if (!reentrantTask->isScheduled()) {
+				try {
+					reentrantTask->scheduleInIoScheduler(10);
+				} catch (Exception& e) {
+
+				}
 			}
 		}
 	} catch (SocketException& e) {
@@ -983,7 +995,7 @@ bool BaseClient::checkNetStatus() {
 			return false;
 		}*/
 
-		debug("netStatusTimeout on client");
+		error("netStatusTimeout on client");
 
 		setError();
 		disconnect(false);
