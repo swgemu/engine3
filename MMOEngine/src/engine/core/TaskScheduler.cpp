@@ -116,9 +116,13 @@ void TaskScheduler::run() {
 
 		task->release();
 
-		task = NULL;
-
 		blockMutex.unlock();
+
+		if (task->isPeriodic()) {
+			taskManager->scheduleTask(task, task->getPeriod());
+
+			//assert(task->isScheduled());
+		}
 	}
 }
 

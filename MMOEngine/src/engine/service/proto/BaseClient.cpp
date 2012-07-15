@@ -55,6 +55,8 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 
 	setInfoLogLevel();
    	setGlobalLogging(true);
+
+   	reentrantTask->schedulePeriodic(10, 10);
 }
 
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
@@ -72,6 +74,8 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 
 	setInfoLogLevel();
    	setGlobalLogging(true);
+
+   	reentrantTask->schedulePeriodic(10, 10);
 }
 
 BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClient(sock, addr),
@@ -95,6 +99,8 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 
 	setInfoLogLevel();
    	setGlobalLogging(true);
+
+   	reentrantTask->schedulePeriodic(10, 10);
 }
 
 BaseClient::~BaseClient() {
@@ -277,8 +283,9 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 		else
 			sendSequenced(pack);
 
-		if (!reentrantTask->isScheduled())
+		/*if (!reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
+			*/
 	}
 }
 
@@ -308,8 +315,9 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 		sendBuffer.add(pack);
 
-		if (!reentrantTask->isScheduled())
+		/*if (!reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
+			*/
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -351,13 +359,13 @@ void BaseClient::run() {
 			BasePacket* pack = getNextSequencedPacket();
 			if (pack == NULL) {
 			
-				if (!reentrantTask->isScheduled()) {
+				/*if (!reentrantTask->isScheduled()) {
 					try {
 						reentrantTask->scheduleInIoScheduler(10);
 					} catch (Exception& e) {
 
 					}
-				}
+				}*/
 
 				unlock();
 				return;
@@ -395,7 +403,7 @@ void BaseClient::run() {
 
 			/*if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 				reentrantTask->scheduleInIoScheduler(10);
-			}*/
+			}
 
 			if (!reentrantTask->isScheduled()) {
 				try {
@@ -403,7 +411,7 @@ void BaseClient::run() {
 				} catch (Exception& e) {
 
 				}
-			}
+			}*/
 		}
 	} catch (SocketException& e) {
 		disconnect("on activate() - " + e.getMessage(), false);
@@ -431,7 +439,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 	if (serverSequence - acknowledgedServerSequence > 50) { //originally 25
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
-			reentrantTask->scheduleInIoScheduler(10);
+			/*reentrantTask->scheduleInIoScheduler(10);
 			
                 try {
                         if (!checkupEvent->isScheduled()) {
@@ -439,6 +447,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
                         }
                 } catch (...) {
                 }
+                */
         
         
 //                resendPackets();
