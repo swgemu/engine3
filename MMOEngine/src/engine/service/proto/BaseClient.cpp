@@ -992,6 +992,8 @@ void BaseClient::requestNetStatus() {
 }
 
 bool BaseClient::checkNetStatus() {
+	return false;
+
 	lock();
 
 	try {
