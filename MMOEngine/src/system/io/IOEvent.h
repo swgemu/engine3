@@ -22,6 +22,10 @@ namespace sys {
   		unsigned int events;
 
   	public:
+  		IOEvent() {
+  			events = 0;
+  		}
+
   		IOEvent(unsigned int evnts) {
   			events = events;
   		}

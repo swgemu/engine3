@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "system/io/IOProcessor.h"
+
 #include "engine/core/Core.h"
 
 #include "DatagramServiceThread.h"
@@ -36,7 +38,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 		SocketAddress addr(port);
 		socket = new UDPServerSocket(&addr);
 
-		socket->setBlocking(true);
+		socket->setBlocking(false);
 	} catch (SocketException& e) {
 		socket = NULL;
 
@@ -98,6 +100,10 @@ public:
 };
 
 void DatagramServiceThread::receiveMessages() {
+	IOProcessor processor;
+	processor.initialize();
+	processor.addFileDescriptor(socket, true);
+
 	Packet packet;
 
 	#ifdef VERSION_PUBLIC
@@ -109,11 +115,12 @@ void DatagramServiceThread::receiveMessages() {
 		try	{
 			SocketAddress addr;
 
-			if (!socket->recieveFrom(&packet, &addr))
-				continue;
-
-			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
-			receiverTask->doExecute();
+			if (processor.getEvents(socket, 1000).hasInEvent()) {
+				while (socket->readFrom(&packet, &addr) != 0) {
+					Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
+					receiverTask->doExecute();
+				}
+			}
 		} catch (SocketException& e) {
 			debug(e.getMessage());
 		} catch (Exception& e) {

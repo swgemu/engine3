@@ -44,7 +44,7 @@ namespace sys {
 	
 		bool read(Packet* pack);
 	
-		void readFrom(Packet* pack, SocketAddress* addr);
+		int readFrom(Packet* pack, SocketAddress* addr);
 	
 		void send(Packet* pack);
 	

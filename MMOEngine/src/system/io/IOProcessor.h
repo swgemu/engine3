@@ -29,7 +29,9 @@ namespace sys {
 
 		void pollEvents(int timeout = 0);
 
-		void addFileDescriptor(FileDescriptor* descriptor);
+		IOEvent getEvents(FileDescriptor* descriptor, int timeout);
+
+		void addFileDescriptor(FileDescriptor* descriptor, bool edgeTriggered = false);
 		void removeFileDescriptor(FileDescriptor* descriptor);
 	};
 

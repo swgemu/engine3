@@ -52,11 +52,35 @@ void IOProcessor::pollEvents(int timeout) {
 	}
 }
 
-void IOProcessor::addFileDescriptor(FileDescriptor* descriptor) {
+IOEvent IOProcessor::getEvents(FileDescriptor* descriptor, int timeout) {
+	if (epollFileDescritptor < 0)
+		throw IOException("epoll not initialized for processing events");
+
+	struct epoll_event events[epollQueueLength];
+
+	int fileDescriptorCount = epoll_wait(epollFileDescritptor, events, epollQueueLength, timeout);
+	if (fileDescriptorCount < 0)
+		throw IOException("epoll_wait failed");
+
+	for (int i = 0; i < fileDescriptorCount; i++) {
+		FileDescriptor* fileDescriptor = (FileDescriptor*) (events[i].data.ptr);
+		if (descriptor == fileDescriptor) {
+			IOEvent ioEvent(events[i].events);
+			return ioEvent;
+		}
+	}
+
+	return IOEvent();
+}
+
+void IOProcessor::addFileDescriptor(FileDescriptor* descriptor, bool edgeTriggered) {
 	int fileDescriptor = descriptor->getFileDescriptor();
 
 	struct epoll_event ev;
-	ev.events = EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP;
+	if (edgeTriggered)
+		ev.events = EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP | EPOLLET;
+	else
+		ev.events = EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP;
 	ev.data.fd = fileDescriptor;
 	ev.data.ptr = descriptor;
 

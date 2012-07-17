@@ -124,7 +124,7 @@ bool Socket::read(Packet* pack) {
 	return true;
 }
 
-void Socket::readFrom(Packet* pack, SocketAddress* addr) {
+int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 	#ifndef PLATFORM_WIN
 		socklen_t addr_len = addr->getAddressSize();
 	#else
@@ -143,6 +143,8 @@ void Socket::readFrom(Packet* pack, SocketAddress* addr) {
 			
 	pack->setSize(len);
 	pack->reset();
+
+	return len;
 }
 
 void Socket::send(Packet* pack) {
