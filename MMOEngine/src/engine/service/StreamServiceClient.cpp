@@ -82,18 +82,18 @@ void StreamServiceClient::receiveMessages() {
 	disconnect();
 }
 
-bool StreamServiceClient::send(Packet* pack) {
+int StreamServiceClient::send(Packet* pack) {
 	if (socket != NULL) {
-		socket->send(pack);
+		int res = socket->send(pack);
 
 		serviceHandler->messageSent(pack);
+
+		return res;
 	} else {
 		doRun = false;
 
 		throw SocketException();
 	}
-
-	return true;
 }
 
 bool StreamServiceClient::read(Packet* pack) {

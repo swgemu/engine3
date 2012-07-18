@@ -36,7 +36,7 @@ namespace engine {
 		void receiveMessages();
 
 		// socket methods
-		bool send(Packet* pack);
+		int send(Packet* pack);
 	
 		bool read(Packet* pack);
 

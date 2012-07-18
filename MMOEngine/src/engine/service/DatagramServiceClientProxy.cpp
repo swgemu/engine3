@@ -16,13 +16,11 @@ DatagramServiceClientProxy::~DatagramServiceClientProxy() {
 void DatagramServiceClientProxy::run() {
 }
 
-bool DatagramServiceClientProxy::send(Packet* pack) {
+int DatagramServiceClientProxy::send(Packet* pack) {
 	if (packetLossChance != 0 && System::random(100) < (uint32) packetLossChance)
-		return false;
+		return -1;
 	
-	socket->sendTo(pack, &addr);
-	
-	return true;
+	return socket->sendTo(pack, &addr);
 }
 
 bool DatagramServiceClientProxy::read(Packet* pack) {

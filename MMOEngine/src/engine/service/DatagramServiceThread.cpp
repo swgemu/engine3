@@ -101,8 +101,14 @@ public:
 
 void DatagramServiceThread::receiveMessages() {
 	IOProcessor processor;
-	processor.initialize();
-	processor.addFileDescriptor(socket, true);
+
+	try {
+		processor.initialize(1);
+		processor.addFileDescriptor(socket, true);
+	} catch (const IOException& e) {
+		e.printStackTrace();
+		throw ServiceException(e.getMessage());
+	}
 
 	Packet packet;
 

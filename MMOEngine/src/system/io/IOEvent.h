@@ -26,24 +26,24 @@ namespace sys {
   			events = 0;
   		}
 
-  		IOEvent(unsigned int evnts) {
-  			events = events;
+  		IOEvent(unsigned int ev) {
+  			events = ev;
   		}
 
   		bool hasInEvent() const {
-  			return events == EPOLLIN;
+  			return events & EPOLLIN;
   		}
 
   		bool hasOutEvent() const {
-  			return events == EPOLLOUT;
+  			return events & EPOLLOUT;
   		}
 
   		bool hasHangupEvent() const {
-  			return events == EPOLLHUP;
+  			return events & EPOLLHUP;
   		}
 
   		bool hasErrorEvent() const {
-  			return events == EPOLLERR;
+  			return events & EPOLLERR;
   		}
 
   	};

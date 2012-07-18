@@ -17,6 +17,7 @@
 #include "tests/loggertest.h"
 #include "tests/orbtest.h"
 #include "tests/lowerbound.h"
+#include "tests/udptest.h"
 
 class TestCore : public Core {
 public:
@@ -65,6 +66,8 @@ int main(int argc, char* argv[]) {
 				orbTestLookup();
 			} else if (arguments.contains("lowerbound")) {
 				lowerBoundTest();
+			} else if (arguments.contains("udptest")) {
+				udptest();
 			}
 		}
 

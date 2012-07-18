@@ -34,7 +34,7 @@ namespace sys {
 			message = msg;
 		}
 
-	 	inline String& getMessage() {
+	 	inline const String& getMessage() const {
 			return message;
 		}
 

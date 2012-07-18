@@ -33,7 +33,7 @@ namespace engine {
 		void handleMessage(Packet* message);
 
 		// socket methods
-		bool send(Packet* pack);
+		int send(Packet* pack);
 
 		bool read(Packet* pack);
 	};

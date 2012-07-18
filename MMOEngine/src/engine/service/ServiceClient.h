@@ -34,7 +34,7 @@ namespace engine {
 
 		void close();
 
-		virtual bool send(Packet* packet) = 0;
+		virtual int send(Packet* packet) = 0;
 
 		bool isAvailable();
 

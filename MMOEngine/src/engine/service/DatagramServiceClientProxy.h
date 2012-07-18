@@ -21,7 +21,7 @@ namespace engine {
 		
 		void run();
 
-		bool send(Packet* pack);
+		int send(Packet* pack);
 
 		bool read(Packet* pack);
 		

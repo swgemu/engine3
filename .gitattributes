@@ -783,4 +783,5 @@ MMOEngine/src/testsuite3/tests/referencetest.h -text
 MMOEngine/src/testsuite3/tests/stmmemtest.h -text
 MMOEngine/src/testsuite3/tests/stmtest.h -text
 MMOEngine/src/testsuite3/tests/timeserialize.h -text
+MMOEngine/src/testsuite3/tests/udptest.h -text
 MMOEngine/src/testsuite3/tests/weakreftest.h -text

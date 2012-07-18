@@ -20,9 +20,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "String.h"
 #include "StringBuffer.h"
+
 #include "Long.h"
 
-#include "../io/StringTokenizer.h"
+#include "system/io/StringTokenizer.h"
 
 namespace sys {
   namespace lang {

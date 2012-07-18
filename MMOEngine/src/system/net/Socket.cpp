@@ -135,6 +135,9 @@ int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 
 	int len = recvfrom(fileDescriptor, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0, addr->getAddress(), &addr_len);
 	if (len < 0) {
+		if (errno == EAGAIN)
+			return 0;
+
 		StringBuffer msg;
 		msg << "error reading from socket";
 			
@@ -147,7 +150,7 @@ int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 	return len;
 }
 
-void Socket::send(Packet* pack) {
+int Socket::send(Packet* pack) {
 #ifndef PLATFORM_MAC
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL);
 #else
@@ -160,9 +163,11 @@ void Socket::send(Packet* pack) {
 
 		throw SocketException(msg.toString());
 	}
+
+	return res;
 }
 
-void Socket::sendTo(Packet* pack, SocketAddress* addr) {
+int Socket::sendTo(Packet* pack, SocketAddress* addr) {
 #ifndef PLATFORM_MAC
 	int res = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize());
 #else
@@ -175,6 +180,8 @@ void Socket::sendTo(Packet* pack, SocketAddress* addr) {
 
 		throw SocketException(msg.toString());
 	}
+
+	return res;
 }
 	
 void Socket::close() {

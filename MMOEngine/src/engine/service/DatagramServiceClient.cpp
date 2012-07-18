@@ -89,7 +89,7 @@ void DatagramServiceClient::handleMessage(Packet* message) {
 	serviceHandler->handleMessage(this, message);
 }
 
-bool DatagramServiceClient::send(Packet* pack) {
+int DatagramServiceClient::send(Packet* pack) {
 	if (packetLossChance != 0 && System::random(100) < (uint32) packetLossChance)
 		return false;
 
@@ -100,12 +100,10 @@ bool DatagramServiceClient::send(Packet* pack) {
 
 		TransactionalMemoryManager::instance()->getSocketManager()->sendMessage(message);
 	#else
-		socket->sendTo(pack, &addr);
+		return socket->sendTo(pack, &addr);
 	#endif
 	} else
 		throw SocketException();
-
-	return true;
 }
 
 bool DatagramServiceClient::read(Packet* pack) {

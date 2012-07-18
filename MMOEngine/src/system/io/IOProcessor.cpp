@@ -4,6 +4,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include <sys/epoll.h>
+#include <errno.h>
 
 #include "IOException.h"
 
@@ -20,7 +21,9 @@ IOProcessor::~IOProcessor() {
 }
 
 void IOProcessor::initialize(int queueLength) {
-	assert(epollFileDescritptor != -1);
+	assert(epollFileDescritptor == -1);
+
+	epollQueueLength = queueLength;
 
 	epollFileDescritptor = epoll_create(epollQueueLength);
 	if (epollFileDescritptor < 0)
@@ -65,8 +68,7 @@ IOEvent IOProcessor::getEvents(FileDescriptor* descriptor, int timeout) {
 	for (int i = 0; i < fileDescriptorCount; i++) {
 		FileDescriptor* fileDescriptor = (FileDescriptor*) (events[i].data.ptr);
 		if (descriptor == fileDescriptor) {
-			IOEvent ioEvent(events[i].events);
-			return ioEvent;
+			return IOEvent(events[i].events);
 		}
 	}
 
