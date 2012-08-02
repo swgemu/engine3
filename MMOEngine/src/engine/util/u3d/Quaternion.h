@@ -16,7 +16,7 @@ namespace engine {
   namespace util {
   	namespace u3d {
 
-  	class Quaternion : public Serializable {
+  	class Quaternion : public Variable {
 	protected:
 		float w, x, y, z;
 
@@ -33,17 +33,13 @@ namespace engine {
 			x = 0.0f;
 			y = 0.0f;
 			z = 0.0f;
-
-			addSerializableVariables();
 		}
 
-		Quaternion(const Quaternion& qt) : Object(), Serializable() {
+		Quaternion(const Quaternion& qt) : Variable() {
 			w = qt.w;
 			x = qt.x;
 			y = qt.y;
 			z = qt.z;
-
-			addSerializableVariables();
 		}
 
 		/**
@@ -58,8 +54,6 @@ namespace engine {
 			x = fx;
 			y = fy;
 			z = fz;
-
-			addSerializableVariables();
 		}
 
 
@@ -77,8 +71,6 @@ namespace engine {
 			x = axis.x * fsin;
 			y = axis.y * fsin;
 			z = axis.z * fsin;
-
-			addSerializableVariables();
 		}
 
 		//inline explicit Quaternion(const Matrix4& matrix) {
@@ -91,12 +83,103 @@ namespace engine {
 		/**
 		 * Returns the string representation of the vector in (x, y, z) format.
 		 */
-
+/*
 		void addSerializableVariables() {
 			addSerializableVariable("w", &w);
 			addSerializableVariable("x", &x);
 			addSerializableVariable("y", &y);
 			addSerializableVariable("z", &z);
+		}
+		*/
+
+		bool readObjectMember(ObjectInputStream* stream, const String& name) {
+			if (name == "x") {
+				TypeInfo<float>::parseFromBinaryStream(&x, stream);
+
+				return true;
+			} else if (name == "w") {
+				TypeInfo<float>::parseFromBinaryStream(&w, stream);
+
+				return true;
+			} else if (name == "y") {
+				TypeInfo<float>::parseFromBinaryStream(&y, stream);
+
+				return true;
+			} else if (name == "z") {
+				TypeInfo<float>::parseFromBinaryStream(&z, stream);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		int writeObjectMembers(ObjectOutputStream* stream) {
+			String _name;
+			int _offset;
+			uint32 _totalSize;
+			_name = "x";
+			_name.toBinaryStream(stream);
+			_offset = stream->getOffset();
+			stream->writeInt(0);
+			TypeInfo<float >::toBinaryStream(&x, stream);
+			_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+			stream->writeInt(_offset, _totalSize);
+
+			_name = "w";
+			_name.toBinaryStream(stream);
+			_offset = stream->getOffset();
+			stream->writeInt(0);
+			TypeInfo<float>::toBinaryStream(&w, stream);
+			_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+			stream->writeInt(_offset, _totalSize);
+
+			_name = "y";
+			_name.toBinaryStream(stream);
+			_offset = stream->getOffset();
+			stream->writeInt(0);
+			TypeInfo<float>::toBinaryStream(&y, stream);
+			_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+			stream->writeInt(_offset, _totalSize);
+
+			_name = "z";
+			_name.toBinaryStream(stream);
+			_offset = stream->getOffset();
+			stream->writeInt(0);
+			TypeInfo<float>::toBinaryStream(&z, stream);
+			_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+			stream->writeInt(_offset, _totalSize);
+
+			return 4;
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			int _currentOffset = stream->getOffset();
+			stream->writeShort(0);
+			int _varCount = writeObjectMembers(stream);
+			stream->writeShort(_currentOffset, _varCount);
+
+			return true;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			uint16 _varCount = stream->readShort();
+
+			for (int i = 0; i < _varCount; ++i) {
+				String _name;
+				_name.parseFromBinaryStream(stream);
+
+				uint32 _varSize = stream->readInt();
+
+				int _currentOffset = stream->getOffset();
+
+				if(readObjectMember(stream, _name)) {
+				}
+
+				stream->setOffset(_currentOffset + _varSize);
+			}
+
+			return true;
 		}
 
 		inline Quaternion& operator = (const Quaternion& q) {
