@@ -59,7 +59,7 @@ namespace sys {
 	using namespace sys::util;
 
 	class Object : public Variable {
-		AtomicReference<StrongAndWeakReferenceCount*> referenceCounters;
+		volatile StrongAndWeakReferenceCount* referenceCounters;
 
 #ifdef MEMORY_PROTECTION
 		AtomicBoolean* _destroying;
@@ -141,7 +141,7 @@ namespace sys {
 			if (referenceCounters == NULL) {
 				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
 
-				if (!referenceCounters.compareAndSet(NULL, newCount)) {
+				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, NULL, newCount)) {
 					delete newCount;
 				}
 			}
@@ -176,11 +176,11 @@ namespace sys {
 			if (referenceCounters == NULL) {
 				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
 
-				if (!referenceCounters.compareAndSet(NULL, newCount))
+				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, NULL, newCount))
 					delete newCount;
 			}
 
-			return referenceCounters;
+			return (StrongAndWeakReferenceCount*) referenceCounters;
 		}
 
 		virtual String toString();

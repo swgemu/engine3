@@ -42,27 +42,27 @@ public:
 		return *this;
 	}
 
-	inline uint32 increaseStrongCount() {
+	inline uint32 increaseStrongCount() volatile {
 		return strongReferenceCount.increaseCount();
 	}
 
-	inline uint32 increaseWeakCount() {
+	inline uint32 increaseWeakCount() volatile {
 		return weakReferenceCount.increaseCount();
 	}
 
-	inline uint32 decrementAndTestAndSetStrongCount() {
+	inline uint32 decrementAndTestAndSetStrongCount() volatile {
 		return strongReferenceCount.decrementAndTestAndSet();
 	}
 
-	inline uint32 decrementAndTestAndSetWeakCount() {
+	inline uint32 decrementAndTestAndSetWeakCount() volatile {
 		return weakReferenceCount.decrementAndTestAndSet();
 	}
 
-	inline void clearStrongCountLowestBit() {
+	inline void clearStrongCountLowestBit() volatile {
 		strongReferenceCount.clearLowestBit();
 	}
 
-	inline uint32 getStrongReferenceCount() {
+	inline uint32 getStrongReferenceCount() volatile {
 		return strongReferenceCount.getReferenceCount();
 	}
 

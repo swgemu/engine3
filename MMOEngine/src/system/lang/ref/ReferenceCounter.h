@@ -19,7 +19,7 @@ namespace sys {
 
 	class ReferenceCounter {
 	protected:
-		AtomicInteger _references;
+		volatile uint32 _references;
 
 	public:
 		ReferenceCounter() {
@@ -36,39 +36,41 @@ namespace sys {
 		}
 
 	public:
-		inline uint32 increaseCount() {
-			return _references.add(2);
+		inline uint32 increaseCount() volatile {
+			return AtomicInteger::add(&_references, 2);
 		}
 
-		void clearLowestBit() {
+		void clearLowestBit() volatile {
 			uint32 oldVal, newVal;
 
 			do {
 				oldVal = _references;
+
 				newVal = oldVal - 1;
-			} while (!_references.compareAndSet(oldVal, newVal));
+			} while (!AtomicInteger::compareAndSet(&_references, oldVal, newVal));
 		}
 
-		inline uint32 decrementAndTestAndSet() {
+		inline uint32 decrementAndTestAndSet() volatile {
 			uint32 oldVal, newVal;
 
 			do {
 				oldVal = _references;
+
 				newVal = oldVal - 2;
 
 				//assert(oldVal >= 2);
 
 				if (newVal == 0)
 					newVal = 1;
-			} while (!_references.compareAndSet(oldVal, newVal));
+			} while (!AtomicInteger::compareAndSet(&_references, oldVal, newVal));
 
 			return ((oldVal - newVal) & 1);
 		}
 
-		inline uint32 getReferenceCount() {
-			WMB();
+		inline uint32 getReferenceCount() volatile {
+			//WMB();
 
-			return _references.get();
+			return _references;
 		}
 
 	};

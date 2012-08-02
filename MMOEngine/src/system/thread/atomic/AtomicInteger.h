@@ -40,7 +40,7 @@ namespace sys {
 			value = val;
 		}
 
-		inline uint32 add(uint32 val) {
+		inline uint32 add(uint32 val) volatile {
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 				return __sync_add_and_fetch(&value, val);
 			#elif PLATFORM_FREEBSD
@@ -57,7 +57,25 @@ namespace sys {
 			#endif
 		}
 
-		inline uint32 increment() {
+		static
+		inline uint32 add(volatile uint32* value, uint32 val) {
+#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
+			return __sync_add_and_fetch(value, val);
+#elif PLATFORM_FREEBSD
+			atomic_add_int(value, val);
+			return value;
+#elif defined PLATFORM_LINUX
+			//TODO: find appropriate method
+			return *value = *value + val;
+#elif defined PLATFORM_CYGWIN
+			//TODO: find appropriate method
+			return *value = *value + val;
+#else
+			return InterlockedAdd((long*) value, val);
+#endif
+		}
+
+		inline uint32 increment() volatile {
 			//__sync_add_and_fetch(&totalIncrementCount, 1);
 
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
@@ -81,7 +99,7 @@ namespace sys {
 			#endif
 		}
 
-		inline uint32 decrement() {
+		inline uint32 decrement() volatile {
 			//__sync_add_and_fetch(&totalDecrementCount, 1);
 
 			#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
@@ -125,7 +143,7 @@ namespace sys {
 		#endif
 		}
 
-		uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) {
+		uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) volatile {
 		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 			return __sync_val_compare_and_swap(&value, oldval, newval);
 		#elif defined(PLATFORM_WIN)
@@ -136,13 +154,13 @@ namespace sys {
 		#endif
 		}
 
-		bool compareAndSet(uint32 oldval, uint32 newval) {
+		bool compareAndSet(uint32 oldval, uint32 newval) volatile {
 			//WMB();
 
 			return compareAndSet(&value, oldval, newval);
 		}
 
-		inline uint32 get() const {
+		inline uint32 get() const volatile {
 			//WMB();
 
 			return value;
