@@ -43,7 +43,11 @@ void IOProcessor::pollEvents(int timeout) {
 
 	struct epoll_event events[epollQueueLength];
 
-	int fileDescriptorCount = epoll_wait(epollFileDescritptor, events, epollQueueLength, timeout);
+	int fileDescriptorCount = -1;
+	do {
+		fileDescriptorCount = epoll_wait(epollFileDescritptor, events, epollQueueLength, timeout);
+	} while (fileDescriptorCount < 0 && errno == EINTR);
+
 	if (fileDescriptorCount < 0)
 		throw IOException("epoll_wait failed");
 
@@ -61,7 +65,11 @@ IOEvent IOProcessor::getEvents(FileDescriptor* descriptor, int timeout) {
 
 	struct epoll_event events[epollQueueLength];
 
-	int fileDescriptorCount = epoll_wait(epollFileDescritptor, events, epollQueueLength, timeout);
+	int fileDescriptorCount = -1;
+	do {
+		fileDescriptorCount = epoll_wait(epollFileDescritptor, events, epollQueueLength, timeout);
+	} while (fileDescriptorCount < 0 && errno == EINTR);
+
 	if (fileDescriptorCount < 0)
 		throw IOException("epoll_wait failed");
 

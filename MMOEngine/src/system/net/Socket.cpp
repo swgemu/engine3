@@ -133,7 +133,11 @@ int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 
 	addr->clear();
 
-	int len = recvfrom(fileDescriptor, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0, addr->getAddress(), &addr_len);
+	int len = -1;
+	do {
+		len = recvfrom(fileDescriptor, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0, addr->getAddress(), &addr_len);
+	} while (len < 0 && errno == EINTR);
+
 	if (len < 0) {
 		if (errno == EAGAIN)
 			return 0;
