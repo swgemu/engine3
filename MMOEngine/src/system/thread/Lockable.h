@@ -36,17 +36,21 @@ namespace sys {
 
 		Thread* threadLockHolder;
 
-		AtomicInteger lockCount;
-
-		int currentCount;
-
+#ifdef TRACE_LOCKS
 		StackTrace* trace;
 		StackTrace* unlockTrace;
 
 		Time lockTime;
 
-		bool doLog;
 		bool doTrace;
+#endif
+
+#ifdef LOG_LOCKS
+		AtomicInteger lockCount;
+		int currentCount;
+
+		bool doLog;
+#endif
 
 	public:
 		Lockable();
@@ -204,11 +208,15 @@ namespace sys {
 		}
 
 		inline void setLockLogging(bool dolog) {
+#ifdef LOG_LOCKS
 			doLog = dolog;
+#endif
 		}
 
 		inline void setLockTracing(bool tracing) {
+#ifdef TRACE_LOCKS
 			doTrace = tracing;
+#endif
 		}
 	};
 
