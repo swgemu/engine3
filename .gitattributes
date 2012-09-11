@@ -780,6 +780,7 @@ MMOEngine/src/testsuite3/tests/orbtest.h -text
 MMOEngine/src/testsuite3/tests/qtboundingtest.h -text
 MMOEngine/src/testsuite3/tests/qtstmtest.h -text
 MMOEngine/src/testsuite3/tests/referencetest.h -text
+MMOEngine/src/testsuite3/tests/sizeoftest.h -text
 MMOEngine/src/testsuite3/tests/stmmemtest.h -text
 MMOEngine/src/testsuite3/tests/stmtest.h -text
 MMOEngine/src/testsuite3/tests/timeserialize.h -text

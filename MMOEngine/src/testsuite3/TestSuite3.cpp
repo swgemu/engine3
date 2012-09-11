@@ -18,6 +18,7 @@
 #include "tests/orbtest.h"
 #include "tests/lowerbound.h"
 #include "tests/udptest.h"
+#include "tests/sizeoftest.h"
 
 class TestCore : public Core {
 public:
@@ -68,6 +69,8 @@ int main(int argc, char* argv[]) {
 				lowerBoundTest();
 			} else if (arguments.contains("udptest")) {
 				udptest();
+			} else if (arguments.contains("sizeoftest")) {
+				testObjectSizes();
 			}
 		}
 
