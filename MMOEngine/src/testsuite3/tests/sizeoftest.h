@@ -90,6 +90,12 @@ void testObjectSizes() {
 	PRINT_OBJECT_SIZE(Locker);
 	PRINT_OBJECT_SIZE(ReadLocker);
 
+	//atomic
+	PRINT_OBJECT_SIZE(AtomicBoolean);
+	PRINT_OBJECT_SIZE(AtomicInteger);
+	PRINT_OBJECT_SIZE(AtomicLong);
+	PRINT_OBJECT_SIZE(AtomicReference<Object*>);
+
 	//util
 	PRINT_OBJECT_SIZE(Vector<Object*>);
 	PRINT_OBJECT_SIZE(ArrayList<Object*>);
