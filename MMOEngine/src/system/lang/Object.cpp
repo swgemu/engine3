@@ -140,7 +140,7 @@ void Object::destroy() {
 #ifdef MEMORY_PROTECTION
 	_destroying->set(true);
 #else
-	_destroying.set(true);
+	_destroying = true;
 
 #endif
 

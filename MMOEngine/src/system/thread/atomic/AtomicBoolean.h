@@ -37,6 +37,26 @@ namespace sys {
 			value = (uint32) val;
 		}
 
+		static bool compareAndSet(volatile bool* address, bool oldval, bool newval) {
+		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
+			return __sync_bool_compare_and_swap(address, oldval, newval);
+		#elif defined(PLATFORM_MAC)
+			return OSAtomicCompareAndSwapLong((uint32) oldvalue, (uint32) newvalue, (volatile int32_t*) address);
+		#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
+			//TODO: find appropriate method
+			 if ( *address == oldval ) {
+				 *address = newval;
+			      return true;
+			  } else {
+			      return false;
+			  }
+		#else
+			InterlockedCompareExchange((volatile LONG*)address, (uint32) newval, (uint32) oldval);
+
+			return *address == newval;
+		#endif
+		}
+
 		bool compareAndSet(bool oldval, bool newval) {
 		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 			return __sync_bool_compare_and_swap(&value, (uint32) oldval, (uint32) newval);

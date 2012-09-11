@@ -64,7 +64,7 @@ namespace sys {
 #ifdef MEMORY_PROTECTION
 		AtomicBoolean* _destroying;
 #else
-		AtomicBoolean _destroying;
+		volatile bool _destroying;
 #endif
 
 	#ifdef TRACE_REFERENCES
@@ -106,7 +106,7 @@ namespace sys {
 #ifdef MEMORY_PROTECTION
 			return _destroying->compareAndSet(false, true);
 #else
-			return _destroying.compareAndSet(false, true);
+			return AtomicBoolean::compareAndSet(&_destroying, false, true);
 #endif
 		}
 
@@ -114,7 +114,7 @@ namespace sys {
 #ifdef MEMORY_PROTECTION
 			_destroying->set(false);
 #else
-			_destroying.set(false);
+			_destroying = false;
 #endif
 		}
 
@@ -133,7 +133,7 @@ namespace sys {
 #ifdef MEMORY_PROTECTION
 			return _destroying->get();
 #else
-			return _destroying.get();
+			return (bool) _destroying;
 #endif
 		}
 
