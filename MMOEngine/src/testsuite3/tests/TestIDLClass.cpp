@@ -55,7 +55,7 @@ void TestIDLClass::setValue(int val) {
 
 DistributedObjectServant* TestIDLClass::_getImplementation() {
 
-	_updated = true;
+	 if (!_updated) _updated = true;
 	return _impl;
 }
 
@@ -101,31 +101,31 @@ TestIDLClassImplementation::operator const TestIDLClass*() {
 }
 
 void TestIDLClassImplementation::lock(bool doLock) {
-	_this.getReferenceUnsafe()->lock(doLock);
+	_this.getReferenceUnsafeStaticCast()->lock(doLock);
 }
 
 void TestIDLClassImplementation::lock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->lock(obj);
+	_this.getReferenceUnsafeStaticCast()->lock(obj);
 }
 
 void TestIDLClassImplementation::rlock(bool doLock) {
-	_this.getReferenceUnsafe()->rlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
 }
 
 void TestIDLClassImplementation::wlock(bool doLock) {
-	_this.getReferenceUnsafe()->wlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
 }
 
 void TestIDLClassImplementation::wlock(ManagedObject* obj) {
-	_this.getReferenceUnsafe()->wlock(obj);
+	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
 void TestIDLClassImplementation::unlock(bool doLock) {
-	_this.getReferenceUnsafe()->unlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->unlock(doLock);
 }
 
 void TestIDLClassImplementation::runlock(bool doLock) {
-	_this.getReferenceUnsafe()->runlock(doLock);
+	_this.getReferenceUnsafeStaticCast()->runlock(doLock);
 }
 
 void TestIDLClassImplementation::_serializationHelperMethod() {

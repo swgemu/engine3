@@ -773,6 +773,7 @@ MMOEngine/src/testsuite3/tests/TestIDLClass.cpp -text
 MMOEngine/src/testsuite3/tests/TestIDLClass.h -text
 MMOEngine/src/testsuite3/tests/TestIDLClass.idl -text
 MMOEngine/src/testsuite3/tests/allocatorhook.h -text
+MMOEngine/src/testsuite3/tests/hashtableiterator.h -text
 MMOEngine/src/testsuite3/tests/loggertest.h -text
 MMOEngine/src/testsuite3/tests/lowerbound.h -text
 MMOEngine/src/testsuite3/tests/memprottest.h -text
