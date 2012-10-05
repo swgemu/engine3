@@ -19,6 +19,7 @@
 #include "tests/lowerbound.h"
 #include "tests/udptest.h"
 #include "tests/sizeoftest.h"
+#include "tests/hashtableiterator.h"
 
 class TestCore : public Core {
 public:
@@ -71,6 +72,8 @@ int main(int argc, char* argv[]) {
 				udptest();
 			} else if (arguments.contains("sizeoftest")) {
 				testObjectSizes();
+			} else if (arguments.contains("hashtableiterator")) {
+				testHashTableIterator();
 			}
 		}
 
