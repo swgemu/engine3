@@ -30,6 +30,8 @@ BaseClientProxy::BaseClientProxy(Socket* sock, SocketAddress& addr) : BaseClient
 void BaseClientProxy::init(DatagramServiceThread* serv) {
 	crcSeed = System::random();
 
+	//info("crc seed:0x" + String::hexvalueOf((int)crcSeed), true);
+
 	serverSequence = 0;
    	clientSequence = 0;
 

@@ -162,7 +162,15 @@ void BaseClient::close() {
 	reentrantTask->cancel();
 
 	checkupEvent->cancel();
+
 	netcheckupEvent->cancel();
+	netcheckupEvent.castTo<BaseClientNetStatusCheckupEvent*>()->clearClient();
+
+	if (netRequestEvent) {
+		netRequestEvent->cancel();
+
+		netRequestEvent.castTo<BaseClientNetStatusRequestEvent*>()->clearClient();
+	}
 
 	Reference<Task*> task = new BaseClientCleanupEvent(this);
 	task->scheduleInIoScheduler();

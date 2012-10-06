@@ -48,7 +48,7 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 		DO_TIMELIMIT;
 	#endif
 
-//	info("READ - " + pack->toStringData(), true);
+	//info("READ - " + pack->toStringData(), true);
 		try {
 			uint16 opcode = pack->parseShort();
 

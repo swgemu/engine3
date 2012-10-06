@@ -17,6 +17,7 @@ namespace engine {
 
 	class BaseClientNetStatusRequestEvent : public Task {
 		Reference<BaseClient*> client;
+		Mutex lock;
 
 	public:
 		BaseClientNetStatusRequestEvent(BaseClient* cl) : Task(5000) {
@@ -24,7 +25,16 @@ namespace engine {
 		}
 
 		void run() {
-			client->requestNetStatus();
+			Locker locker(&lock);
+
+			if (client != NULL)
+				client->requestNetStatus();
+		}
+
+		void clearClient() {
+			Locker locker(&lock);
+
+			client = NULL;
 		}
 	};
 

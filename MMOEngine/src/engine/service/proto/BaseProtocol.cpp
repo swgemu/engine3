@@ -49,13 +49,15 @@ void BaseProtocol::prepareSend(BasePacket* pack) {
 bool BaseProtocol::processRecieve(Packet* pack) {
 	if (!testCRC(pack)) {
 		/*StringBuffer msg;
-		msg << "incorrect CRC\n" << pack->toString() << "\n";
+		msg << "incorrect CRC\n" << pack->toStringData() << "\n";
 		error(msg);*/
 
 		return false;
 	}
 
 	decrypt(pack);
+
+	//info("decrypted into" + pack->toStringData(), true);
 
 	if (pack->size() < 3)
 		throw PacketIndexOutOfBoundsException(pack, 3);
@@ -74,6 +76,8 @@ bool BaseProtocol::processRecieve(Packet* pack) {
 }
 
 void BaseProtocol::encrypt(Packet* pack, bool crc) {
+	//info("encrypting packet: " + pack->toStringData(), true);
+
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
