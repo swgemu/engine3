@@ -76,19 +76,35 @@ namespace engine {
 		}
 
 		inline bool operator==(O obj) {
-			return getReferenceUnsafe() == obj;
+			O ref = getReferenceUnsafe();
+
+			if (ref == NULL && savedObjectID != 0) {
+				if (obj == NULL)
+					return savedObjectID == 0;
+				else
+					return savedObjectID == obj->_getObjectID();
+			} else
+				return ref == obj;
 		}
 
 		inline bool operator!=(O obj) {
-			return getReferenceUnsafe() != obj;
+			O ref = getReferenceUnsafe();
+
+			if (ref == NULL && savedObjectID != 0) {
+				if (obj == NULL)
+					return savedObjectID != 0;
+				else
+					return savedObjectID != obj->_getObjectID();
+			} else
+				return ref != obj;
 		}
 
 		inline bool operator!=(const ManagedWeakReference<O>& r) {
-			return getReferenceUnsafe() != r.getReferenceUnsafe();
+			return savedObjectID != r.savedObjectID;
 		}
 
 		inline bool operator==(const ManagedWeakReference<O>& r) {
-			return getReferenceUnsafe() == r.getReferenceUnsafe();
+			return savedObjectID == r.savedObjectID;
 		}
 
 		inline ManagedReference<O> get() {
@@ -184,8 +200,8 @@ namespace engine {
 
 	template<class O> bool ManagedWeakReference<O>::parseFromBinaryStream(ObjectInputStream* stream) {
 		uint64 oid = stream->readLong();
-		savedObjectID = 0;
-
+		savedObjectID = oid;
+/*
 		DistributedObject* obj = Core::getObjectBroker()->lookUp(oid);
 
 		if (obj == NULL) {
@@ -199,8 +215,9 @@ namespace engine {
 			return false;
 
 		savedObjectID = oid;
+		*/
 
-		WeakReference<O>::updateObject(castedObject);
+		WeakReference<O>::updateObject(NULL);
 
 		return true;
 	}
