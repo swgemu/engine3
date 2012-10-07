@@ -39,7 +39,7 @@ ServiceClient::ServiceClient(const String& host, int port) {
 }
 
 ServiceClient::~ServiceClient() {
-	StackTrace::printStackTrace();
+	//StackTrace::printStackTrace();
 }
 
 void ServiceClient::close() {
