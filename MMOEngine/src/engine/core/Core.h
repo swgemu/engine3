@@ -36,8 +36,8 @@ namespace engine {
 
 		template<class T> static T* lookupObject(const String& name);
 
-		static void scheduleTask(Task* task, uint64 time = 0);
-		static void scheduleTask(Task* task, Time& time);
+		/*static void scheduleTask(Task* task, uint64 time = 0);
+		static void scheduleTask(Task* task, Time& time);*/
 
 		static TaskManager* getTaskManager();
 

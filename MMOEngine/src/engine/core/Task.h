@@ -5,6 +5,10 @@
 
 #include "system/lang.h"
 
+#include "system/util/Timer.h"
+
+//#define COLLECT_TASKSTATISTICS
+
 namespace engine {
 
   namespace stm {
@@ -34,6 +38,12 @@ namespace engine {
 		int priority;
 
 		uint64 period;
+
+	#ifdef COLLECT_TASKSTATISTICS
+		Timer queuedTimer;
+		Timer executionTimer;
+		Timer blockedTimer;
+	#endif
 
 	#ifdef TRACE_TASKS
 		StackTrace* scheduleTrace;

@@ -279,6 +279,8 @@ namespace sys {
        int oldCapacity = elementCapacity;
 
        if (minCapacity > oldCapacity) {
+    	   assert(capacityIncrement != 0);
+
            E* oldData = elementData;
 
            int newCapacity = (capacityIncrement > 0) ?

@@ -85,7 +85,7 @@ void Core::start() {
 	run();
 }
 
-void Core::scheduleTask(Task* task, uint64 time) {
+/*void Core::scheduleTask(Task* task, uint64 time) {
 	TaskManager* taskManager = getTaskManager();
 	taskManager->scheduleTask(task, time);
 }
@@ -93,7 +93,7 @@ void Core::scheduleTask(Task* task, uint64 time) {
 void Core::scheduleTask(Task* task, Time& time) {
 	TaskManager* taskManager = getTaskManager();
 	taskManager->scheduleTask(task, time);
-}
+}*/
 
 TaskManager* Core::getTaskManager() {
 	if (taskManager == NULL)

@@ -322,6 +322,8 @@ MMOEngine/src/engine/core/TaskQueue.cpp -text
 MMOEngine/src/engine/core/TaskQueue.h -text
 MMOEngine/src/engine/core/TaskScheduler.cpp -text
 MMOEngine/src/engine/core/TaskScheduler.h -text
+MMOEngine/src/engine/core/TaskStatistics.cpp -text
+MMOEngine/src/engine/core/TaskStatistics.h -text
 MMOEngine/src/engine/core/TaskWorkerThread.cpp -text
 MMOEngine/src/engine/core/TaskWorkerThread.h -text
 MMOEngine/src/engine/core/TimedTaskQueue.cpp -text
@@ -461,6 +463,8 @@ MMOEngine/src/engine/service/StreamServiceClient.h -text
 MMOEngine/src/engine/service/StreamServiceClientProxy.h -text
 MMOEngine/src/engine/service/StreamServiceThread.cpp -text
 MMOEngine/src/engine/service/StreamServiceThread.h -text
+MMOEngine/src/engine/service/SynchronizedMessageQueue.cpp -text
+MMOEngine/src/engine/service/SynchronizedMessageQueue.h -text
 MMOEngine/src/engine/service/proto/AbstractProtocol.h -text
 MMOEngine/src/engine/service/proto/BaseClient.cpp -text
 MMOEngine/src/engine/service/proto/BaseClient.h -text
@@ -738,6 +742,7 @@ MMOEngine/src/system/util/PriorityQueue.cpp -text
 MMOEngine/src/system/util/PriorityQueue.h -text
 MMOEngine/src/system/util/SortedVector.h -text
 MMOEngine/src/system/util/StaticMap.h -text
+MMOEngine/src/system/util/SynchronizedLinkedList.h -text
 MMOEngine/src/system/util/Timer.h -text
 MMOEngine/src/system/util/Vector.h -text
 MMOEngine/src/system/util/VectorMap.h -text

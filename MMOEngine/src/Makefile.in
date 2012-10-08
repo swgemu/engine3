@@ -70,8 +70,9 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	system/net/Socket.$(OBJEXT) system/net/SocketAddress.$(OBJEXT) \
 	system/net/InetAddress.$(OBJEXT) \
 	system/net/NetworkInterface.$(OBJEXT) \
-	system/net/Packet.$(OBJEXT) system/io/Stream.$(OBJEXT) \
-	system/io/File.$(OBJEXT) system/io/BufferedReader.$(OBJEXT) \
+	system/net/Packet.$(OBJEXT) system/io/IOProcessor.$(OBJEXT) \
+	system/io/Stream.$(OBJEXT) system/io/File.$(OBJEXT) \
+	system/io/BufferedReader.$(OBJEXT) \
 	system/io/StringTokenizer.$(OBJEXT) \
 	system/io/UnicodeTokenizer.$(OBJEXT) \
 	system/io/PrintStream.$(OBJEXT) \
@@ -354,6 +355,7 @@ libengine3_a_SOURCES = \
 			system/net/InetAddress.cpp \
 			system/net/NetworkInterface.cpp \
 			system/net/Packet.cpp \
+			system/io/IOProcessor.cpp \
 			system/io/Stream.cpp \
 			system/io/File.cpp \
 			system/io/BufferedReader.cpp \
@@ -575,6 +577,8 @@ system/io/$(am__dirstamp):
 system/io/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/io/$(DEPDIR)
 	@: > system/io/$(DEPDIR)/$(am__dirstamp)
+system/io/IOProcessor.$(OBJEXT): system/io/$(am__dirstamp) \
+	system/io/$(DEPDIR)/$(am__dirstamp)
 system/io/Stream.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
 system/io/File.$(OBJEXT): system/io/$(am__dirstamp) \
@@ -1074,6 +1078,7 @@ mostlyclean-compile:
 	-rm -f engine/util/u3d/TriangulationAStarAlgorithm.$(OBJEXT)
 	-rm -f system/io/BufferedReader.$(OBJEXT)
 	-rm -f system/io/File.$(OBJEXT)
+	-rm -f system/io/IOProcessor.$(OBJEXT)
 	-rm -f system/io/PrintStream.$(OBJEXT)
 	-rm -f system/io/Serializable.$(OBJEXT)
 	-rm -f system/io/Stream.$(OBJEXT)
@@ -1202,6 +1207,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/TriangulationAStarAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/BufferedReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/File.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/IOProcessor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/PrintStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/Serializable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/Stream.Po@am__quote@

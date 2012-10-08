@@ -103,15 +103,23 @@ void Task::doExecute() {
 #else
 	ObjectDatabaseManager::instance()->startLocalTransaction();
 
+#ifdef COLLECT_TASKSTATISTICS
+	executionTimer.start();
+#endif
+
 	try {
 		run();
-
 	} catch (Exception& e) {
 		//Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
 	} catch (...) {
 		Logger::console.error("unreported exception caught while running a task");
 	}
+
+#ifdef COLLECT_TASKSTATISTICS
+	uint64 executionTime = executionTimer.stop();
+
+#endif
 
 	ObjectDatabaseManager::instance()->commitLocalTransaction();
 #endif

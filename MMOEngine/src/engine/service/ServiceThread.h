@@ -36,14 +36,14 @@ namespace engine {
 		
 		virtual void stop(bool doJoin = true);
 		
-		// scheduler methods
+		/*// scheduler methods
 		inline void scheduleTask(Task* task, uint64 delay = 0) {
 			taskManager->scheduleTask(task, delay);
 		}
 
 		inline void scheduleTask(Task* task, Time& time) {
 			taskManager->scheduleTask(task, time);
-		}
+		}*/
 
 		// setters and getters
 		inline void setRunning(bool val) {

@@ -30,9 +30,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define PLATFORM_32
 #endif
 
-#define GCC_VERSION (__GNUC__ * 10000 \
-								+ __GNUC_MINOR__ * 100 \
-								+ __GNUC_PATCHLEVEL__)
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
 #ifdef _MSC_VER
 #pragma warning (disable : 4018)

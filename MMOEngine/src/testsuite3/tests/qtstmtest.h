@@ -159,7 +159,8 @@ void testQTSTM() {
 #ifndef WITH_STM
 	printf("queuing stats task\n");
 
-	Core::getTaskManager()->scheduleTask(new QTStatsTask(), 1000);
+	Task* task = new QTStatsTask();
+	task->schedule(1000);
 #endif
 
 	printf("starting tasks\n");
@@ -174,7 +175,7 @@ void testQTSTM() {
 
 			++totalTasks;
 
-			Core::getTaskManager()->executeTask(task);
+			task->execute();
 		}
 
 #ifdef WITH_STM
