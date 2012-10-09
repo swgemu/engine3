@@ -400,6 +400,7 @@ MMOEngine/src/engine/orb/db/CommitMasterTransactionThread.cpp -text
 MMOEngine/src/engine/orb/db/CommitMasterTransactionThread.h -text
 MMOEngine/src/engine/orb/db/DOBObjectManager.cpp -text
 MMOEngine/src/engine/orb/db/DOBObjectManager.h -text
+MMOEngine/src/engine/orb/db/DestroyFromRamObjectsTask.h -text
 MMOEngine/src/engine/orb/db/DistributedObjectDirectory.cpp -text
 MMOEngine/src/engine/orb/db/DistributedObjectDirectory.h -text
 MMOEngine/src/engine/orb/db/DistributedObjectMap.h -text
