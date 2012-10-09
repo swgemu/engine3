@@ -42,6 +42,10 @@ public:
 		return *this;
 	}
 
+	inline void markAsDestroyed() volatile {
+		strongReferenceCount.setLowestBit();
+	}
+
 	inline uint32 increaseStrongCount() volatile {
 		return strongReferenceCount.increaseCount();
 	}

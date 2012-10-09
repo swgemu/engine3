@@ -40,6 +40,16 @@ namespace sys {
 			return AtomicInteger::add(&_references, 2);
 		}
 
+		void setLowestBit() volatile {
+			uint32 oldVal, newVal;
+
+			do {
+				oldVal = _references;
+
+				newVal = oldVal | 1;
+			} while (!AtomicInteger::compareAndSet(&_references, oldVal, newVal));
+		}
+
 		void clearLowestBit() volatile {
 			uint32 oldVal, newVal;
 

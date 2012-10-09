@@ -164,6 +164,10 @@ namespace sys {
 			}
 		}
 
+		inline void _markAsDestroyed() {
+			if (referenceCounters != NULL)
+				referenceCounters->markAsDestroyed();
+		}
 
 		inline uint32 getReferenceCount() {
 			if (referenceCounters == NULL)
