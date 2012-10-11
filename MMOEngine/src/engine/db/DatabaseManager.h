@@ -38,7 +38,7 @@ namespace engine {
 
 		engine::db::LocalDatabase* database;
 
-		Reference<Object*> object;
+		Object* object;
 
 		//if stream null its a delete action
 
@@ -71,7 +71,7 @@ namespace engine {
 
 
 		//stores a references for an object so we dont delete it in the transaction
-		Vector<Reference<Object*> > temporaryObjects;
+		Vector<Object* > temporaryObjects;
 
 	public:
 		CurrentTransaction(engine::db::berkley::Environment* env) {
