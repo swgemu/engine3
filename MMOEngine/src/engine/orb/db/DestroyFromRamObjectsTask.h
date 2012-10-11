@@ -20,7 +20,7 @@ public:
 		Logger::console.info("starting to delete " + String::valueOf(objects->size()) + " objects from ram...");
 
 		for (int i = 0; i < objects->size(); ++i) {
-			objects->get(i)->release();
+			objects->get(i)->_destroyIgnoringCount();
 		}
 
 		delete objects;
