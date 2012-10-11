@@ -164,6 +164,16 @@ namespace sys {
 			}
 		}
 
+		inline void _destroyIgnoringCount() {
+			if (notifyDestroy()) {
+#ifdef WITH_STM
+				MemoryManager::getInstance()->reclaim(this);
+#else
+				destroy();
+#endif
+			}
+		}
+
 		inline void _markAsDestroyed() {
 			if (referenceCounters != NULL)
 				referenceCounters->markAsDestroyed();
