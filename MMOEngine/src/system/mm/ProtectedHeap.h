@@ -20,12 +20,6 @@ namespace sys {
 		void protect();
 		void unprotect();
 
-	protected:
-		void openDevice(unsigned deviceNumber);
-
-		//void initializeKernelStatics(uintptr_t kernelStaticsAddress, size_t kernelStaticsSize);
-		void setKernelMemoryProtection(unsigned desiredKEL);
-
 	};
 
 } // namespace mm

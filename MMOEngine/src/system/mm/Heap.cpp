@@ -9,14 +9,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DLAllocator.h"
 
+#include "MultimapMemoryManager.h"
+
 #include "Heap.h"
 
 #include <sys/mman.h>
 #include <limits.h>
-
-#ifdef MEMORY_PROTECTION
-#include <multimmap.h>
-#endif
 
 #include <errno.h>
 
@@ -27,74 +25,28 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/thread/Mutex.h"
 #include "system/thread/Locker.h"
 
-AtomicInteger Heap::heapCount;
-
 Heap::Heap() {
-	int count = heapCount.increment();
+	mmapManager = MultimapMemoryManager::getInstance();
 
-#ifdef MEMORY_PROTECTION
-	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
-#else
-	heapBase = reinterpret_cast<void*>(512*512*512*4096UL * count);
-#endif
-
+	heapBase = reinterpret_cast<void*>(-1);
 	heapSize = -1;
+
 	offset = 0;
-
-	deviceFD = -1;
-
-	setPrivate();
-}
-
-Heap::Heap(int fd) {
-	int count = heapCount.increment();
-
-#ifdef MEMORY_PROTECTION
-	heapBase = reinterpret_cast<void*>(MULTIMMAP_HEAP_SIZE * count);
-#else
-	heapBase = reinterpret_cast<void*>(512*512*512*4096UL * count);
-#endif
-
-	heapSize = -1;
-	offset = 0;
-
-	deviceFD = fd;
 
 	setPrivate();
 }
 
 Heap::~Heap() {
 	delete allocator;
-
-	close(deviceFD);
 }
 
-extern int __data_start, _end;
-
 void Heap::create(size_t size) {
+	heapBase = mmapManager->createHeapBase(size);
+
 	heapSize = size;
 
-	heapBase = mmap(heapBase, heapSize, PROT_READ | PROT_WRITE, flags, deviceFD, offset);
-	if (heapBase == reinterpret_cast<void*>(-1)) {
-		printf("mmap failed on dev %i with size %zu (%s)\n", deviceFD, heapSize, strerror(errno));
-
-		abort();
-	}
-
-	/*if (offset == 0) {
-	   multimmap_statics_info statics_info;
-
-	    statics_info.start = reinterpret_cast<unsigned long>(&__data_start);
-	    statics_info.start &= ~4095UL;
-	    statics_info.size = reinterpret_cast<unsigned long>(&_end) - statics_info.start;
-
-	    if (ioctl(deviceFD, MULTIMMAP_INIT_STATICS, &statics_info) < 0) {
-	        perror("ioctl[MULTIMMAP_INIT_STATICS]");
-	        abort();
-	    }
-	}*/
-
-	printf("[Heap] created at %p-%p on fd %i\n", heapBase, (void*)((uintptr_t) heapBase + heapSize), deviceFD);
+	printf("[Heap] created at %p-%p on fd %i\n", heapBase, (void*)((uintptr_t) heapBase + heapSize),
+			mmapManager->getDeviceFD());
 
 	//if (offset != 0)
 		allocator = new DLAllocator(heapBase, heapSize);

@@ -15,6 +15,8 @@ namespace sys {
 		const char* fileName;
 		uint32 fileSize;
 
+		int deviceFD;
+
 	public:
 		MemoryMappedFile(const char* name, uint32 size);
 

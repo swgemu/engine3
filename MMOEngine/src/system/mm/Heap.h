@@ -6,9 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HEAP_H_
 #define HEAP_H_
 
-#include "system/platform.h"
-
-#include "system/thread/atomic/AtomicInteger.h"
+#include "MultimapMemoryManager.h"
 
 #include "Allocator.h"
 
@@ -17,20 +15,17 @@ namespace sys {
 
 	class Heap : public Allocator {
 	protected:
+		MultimapMemoryManager* mmapManager;
+
 		void* heapBase;
 		size_t heapSize;
 		int flags;
 		off_t offset;
 
-		int deviceFD;
-
 		Allocator* allocator;
-
-		static AtomicInteger heapCount;
 
 	public:
 		Heap();
-		Heap(int fd);
 
 		~Heap();
 

@@ -43,8 +43,10 @@ libengine3_a_SOURCES = \
 			system/mm/AllocationHook.cpp \
 			system/mm/AllocationReplacement.cpp \
 			system/mm/AllocationTracker.cpp \
+			system/mm/MultimapMemoryManager.cpp \
 			system/mm/Heap.cpp \
 			system/mm/ProtectedHeap.cpp \
+			system/mm/ProcessHeap.cpp \
 			system/mm/MemoryMappedFile.cpp \
 			system/mm/DLAllocator.cpp \
 			system/thread/Thread.cpp \

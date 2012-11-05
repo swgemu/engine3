@@ -692,9 +692,13 @@ MMOEngine/src/system/mm/MemoryManager.cpp -text
 MMOEngine/src/system/mm/MemoryManager.h -text
 MMOEngine/src/system/mm/MemoryMappedFile.cpp -text
 MMOEngine/src/system/mm/MemoryMappedFile.h -text
+MMOEngine/src/system/mm/MultimapMemoryManager.cpp -text
+MMOEngine/src/system/mm/MultimapMemoryManager.h -text
 MMOEngine/src/system/mm/ObjectCloner.h -text
 MMOEngine/src/system/mm/PTAllocator.cpp -text
 MMOEngine/src/system/mm/PTAllocator.h -text
+MMOEngine/src/system/mm/ProcessHeap.cpp -text
+MMOEngine/src/system/mm/ProcessHeap.h -text
 MMOEngine/src/system/mm/ProtectedHeap.cpp -text
 MMOEngine/src/system/mm/ProtectedHeap.h -text
 MMOEngine/src/system/net/InetAddress.cpp -text
