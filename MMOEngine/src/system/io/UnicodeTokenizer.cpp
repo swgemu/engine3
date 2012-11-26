@@ -71,7 +71,7 @@ float UnicodeTokenizer::getFloatToken() {
 	UnicodeString token;
 	nextToken(token);
 
-	return (float) atof(token.toString());
+	return (float) atof(token.toString().toCharArray());
 }
 
 uint64 UnicodeTokenizer::getLongToken() {

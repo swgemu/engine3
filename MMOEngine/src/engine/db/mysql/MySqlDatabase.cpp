@@ -22,7 +22,7 @@ public:
 		try {
 			database->doExecuteStatement(query);
 		} catch (Exception& e) {
-			database->error(e.getMessage());
+			database->error(e.getMessage().toCharArray());
 		}
 	}	
 };
@@ -82,7 +82,7 @@ void MySqlDatabase::doExecuteStatement(const String& statement) {
 		unsigned int errorNumber = mysql_errno(&mysql);
 
 		if (errorNumber != 1205/*ER_LOCK_WAIT_TIMEOUT*/) {
-			error(statement);
+			error(statement.toCharArray());
 			break;
 		} else
 			info(String("Warning mysql lock wait timeout on statement: ") + statement);

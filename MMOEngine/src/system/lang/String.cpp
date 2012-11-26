@@ -202,7 +202,7 @@ int String::indexOf(const String& str) const {
 }
 
 int String::indexOf(const String& str, int fromIndex) const {
-	char* position = strstr(value + fromIndex, str);
+	char* position = strstr(value + fromIndex, str.toCharArray());
 
 	if (position != NULL)
 		return position - value;
@@ -552,7 +552,7 @@ String& String::operator+=(const String& str) {
 
 	value = (char*) realloc(value, newlen + 1);
 
-	memcpy(value + count, str, str.count);
+	memcpy(value + count, str.toCharArray(), str.count);
 	value[newlen] = 0;
 
 	count = newlen;

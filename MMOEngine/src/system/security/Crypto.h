@@ -17,7 +17,7 @@ namespace sys {
 				char hex[3];
 
 				for(int i = 0; i < hash.length(); i++) {
-					sprintf(hex, "%02x", (unsigned char) hash[i]);
+					sprintf(hex, "%02x", (unsigned char) hash.charAt(i));
 					sb << hex;
 				}
 

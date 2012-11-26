@@ -137,7 +137,7 @@ int StringBuffer::indexOf(const String& str, int fromIndex) const {
 		return -1;
 
 	for (int i = fromIndex; i <= elementCount - str.length(); ++i) {
-		if (!memcmp(elementData + i, str, str.length() * sizeof(char)))
+		if (!memcmp(elementData + i, str.toCharArray(), str.length() * sizeof(char)))
 			return i;
 	}
 

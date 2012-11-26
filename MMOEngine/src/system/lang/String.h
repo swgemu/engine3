@@ -131,9 +131,14 @@ namespace sys {
 		String& operator+= (const char* str);
 		String& operator+= (const String& str);
 
+		/*
+		 * This allows nasty things like substracting ints from String because it casts to char* i.e:
+		 * String test = "blabla";
+		 * String mistake = test - 100; compiles fine and currupts memory :)
 		operator char* () const {
 			return value;
 		}
+		*/
 
 		char charAt(int index) const;
 
