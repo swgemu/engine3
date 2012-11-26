@@ -560,6 +560,13 @@ String& String::operator+=(const String& str) {
 	return *this;
 }
 
+char& String::operator[](int i) {
+	if (i < 0 || i >= count)
+		throw ArrayIndexOutOfBoundsException(i);
+
+	return value[i];
+}
+
 char String::charAt(int index) const {
 	if (index < 0 || index >= count)
 		throw ArrayIndexOutOfBoundsException(index);
