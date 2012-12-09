@@ -176,3 +176,12 @@ int BerkeleyDatabase::truncate(Transaction* txn, bool countRecords) {
 	else
 		return -1;
 }
+
+int BerkeleyDatabase::compact(Transaction* txn, DB_COMPACT* compactData, uint32 flags) {
+	DB_TXN* txnid = NULL;
+
+	if (txn != NULL)
+		txnid = txn->getDBTXN();
+
+	return dbp->compact(dbp, txnid, NULL, NULL, compactData, flags, NULL);
+}

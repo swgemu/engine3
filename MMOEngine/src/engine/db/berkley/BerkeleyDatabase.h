@@ -76,6 +76,11 @@ namespace engine {
 		 */
 		void close(bool noSync);
 
+		/**
+		 * Compact database
+		 */
+		int compact(Transaction* txn, DB_COMPACT* compactData, uint32 flags);
+
 
 		inline String& getDatabaseFile() {
 			return filename;
