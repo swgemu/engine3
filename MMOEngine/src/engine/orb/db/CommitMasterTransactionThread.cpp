@@ -17,16 +17,20 @@ CommitMasterTransactionThread::CommitMasterTransactionThread() {
 	transaction = NULL;
 	threads = NULL;
 
+	objectsToDeleteFromRam = NULL;
+
 	doRun = true;
 }
 
-void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number) {
+void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<Reference<DistributedObject*> >* objectsToCollect) {
 	assert(trans != NULL);
 	assert(workers != NULL);
+	assert(objectsToCollect != NULL);
 
 	transaction = trans;
 	threads = workers;
 	numberOfThreads = number;
+	objectsToDeleteFromRam = objectsToCollect;
 
 	blockMutex.lock();
 
@@ -45,9 +49,44 @@ void CommitMasterTransactionThread::run() {
 
 		transaction = NULL;
 		threads = NULL;
+		objectsToDeleteFromRam = NULL;
 
 		blockMutex.unlock();
 	}
+}
+
+int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
+	int i = 0;
+
+	while (objectsToDeleteFromRam->size() != 0) {
+		Locker locker(objectManager);
+
+		Reference<DistributedObject*> object = objectsToDeleteFromRam->get(0);
+
+		objectsToDeleteFromRam->remove(0);
+
+		//printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
+
+		if (object->getReferenceCount() == 4 && !object->_isUpdated()) {
+			objectManager->localObjectDirectory.removeHelper(object->_getObjectID());
+			//localObjectDirectory.removeHelper(object->_getObjectID());
+
+			++i;
+
+			object = NULL;
+
+			if (((i + 1) % 100) == 0) {
+				locker.release();
+
+				Thread::sleep(250);
+			}
+		}
+	}
+
+	delete objectsToDeleteFromRam;
+	objectsToDeleteFromRam = NULL;
+
+	return i;
 }
 
 void CommitMasterTransactionThread::commitData() {
@@ -68,5 +107,13 @@ void CommitMasterTransactionThread::commitData() {
 	objectManager->onCommitData();
 
 	objectManager->info("master transaction commited", true);
+
+	int candidates = objectsToDeleteFromRam->size();
+	objectManager->info("starting garbage collection for " + String::valueOf(candidates) + " candidates", true);
+
+	int objs = garbageCollect(objectManager);
+
+	objectManager->info("deleted from ram " + String::valueOf(objs) + " objects", true);
+
 	objectManager->finishObjectUpdate();
 }

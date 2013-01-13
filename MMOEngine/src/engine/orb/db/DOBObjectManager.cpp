@@ -277,7 +277,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	Vector<DistributedObject*> objectsToUpdate;
 	Vector<DistributedObject*> objectsToDelete;
-	Vector<Reference<DistributedObject*> > objectsToDeleteFromRAM;
+	Vector<Reference<DistributedObject*> >* objectsToDeleteFromRAM = new Vector<Reference<DistributedObject*> >();
 
 #ifdef PRINT_OBJECT_COUNT
 	VectorMap<String, int> inRamClassCount;
@@ -285,7 +285,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, objectsToDeleteFromRAM, &inRamClassCount);
 #else
-	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, objectsToDeleteFromRAM, NULL);
+	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, NULL);
 #endif
 
 	Time start;
@@ -295,21 +295,19 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 //#endif
 
 	info("copied objects into ram in " + String::valueOf(start.miliDifference()) + " ms", true);
-
+/*
 	info("objects to delete from ram: " + String::valueOf(objectsToDeleteFromRAM.size()), true);
 
 	for (int i = 0; i < objectsToDeleteFromRAM.size(); ++i) {
 		DistributedObject* object = objectsToDeleteFromRAM.get(i);
 
-		/*DistributedObjectBroker::instance()->undeploy(object->_getName());
-
-			localObjectDirectory.remove(object->_getObjectID());*/
 		localObjectDirectory.removeHelper(object->_getObjectID());
 	}
 
 	objectsToDeleteFromRAM.removeAll();
 
 	info("finished deleting objects from ram", true);
+	*/
 
 #ifdef WITH_STM
 	TransactionalMemoryManager::instance()->unblockTransactions();
@@ -322,7 +320,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	delete lockers;
 //#endif
 
-	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, numberOfThreads);
+	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, numberOfThreads, objectsToDeleteFromRAM);
 
 #ifndef WITH_STM
 	_locker.release();
