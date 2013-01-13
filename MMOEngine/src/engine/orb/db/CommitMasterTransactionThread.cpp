@@ -56,14 +56,14 @@ void CommitMasterTransactionThread::run() {
 }
 
 int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
-	int i = 0;
+	int i = 0, j = 0;
 
 	while (objectsToDeleteFromRam->size() != 0) {
-		Locker locker(objectManager);
-
 		Reference<DistributedObject*> object = objectsToDeleteFromRam->get(0);
 
 		objectsToDeleteFromRam->remove(0);
+
+		Locker locker(objectManager);
 
 		//printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
 
@@ -74,12 +74,12 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 			++i;
 
 			object = NULL;
+		}
 
-			if (((i + 1) % 100) == 0) {
-				locker.release();
+		if (((++j % 10000) == 0) || (((i + 1) % 100) == 0)) {
+			locker.release();
 
-				Thread::sleep(250);
-			}
+			Thread::sleep(250);
 		}
 	}
 
