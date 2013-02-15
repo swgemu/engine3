@@ -22,7 +22,7 @@ CommitMasterTransactionThread::CommitMasterTransactionThread() {
 	doRun = true;
 }
 
-void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<Reference<DistributedObject*> >* objectsToCollect) {
+void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
 	assert(trans != NULL);
 	assert(workers != NULL);
 	assert(objectsToCollect != NULL);
@@ -56,18 +56,16 @@ void CommitMasterTransactionThread::run() {
 }
 
 int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
-	int i = 0, j = 0;
+	int i = 0;
 
-	while (objectsToDeleteFromRam->size() != 0) {
-		Reference<DistributedObject*> object = objectsToDeleteFromRam->get(0);
-
-		objectsToDeleteFromRam->remove(0);
+	for (int j = 0; j < objectsToDeleteFromRam->size(); ++j) {
+		DistributedObject* object = objectsToDeleteFromRam->get(j);
 
 		Locker locker(objectManager);
 
 		//printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
 
-		if (object->getReferenceCount() == 4 && !object->_isUpdated()) {
+		if (object->getReferenceCount() == 2 && (!object->_isUpdated() || object->_isDeletedFromDatabase())) {
 			objectManager->localObjectDirectory.removeHelper(object->_getObjectID());
 			//localObjectDirectory.removeHelper(object->_getObjectID());
 
@@ -76,10 +74,10 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 			object = NULL;
 		}
 
-		if (((++j % 10000) == 0) || (((i + 1) % 100) == 0)) {
+		if (((j + 1 % 10000) == 0) || (((i + 1) % 100) == 0)) {
 			locker.release();
 
-			Thread::sleep(250);
+			Thread::sleep(25);
 		}
 	}
 

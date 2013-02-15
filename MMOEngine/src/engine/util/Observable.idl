@@ -40,6 +40,7 @@ class Observable extends ManagedObject {
 		observerEventMap.dropObserver(eventType, observer);
 	}
 	
+	@read
 	public int getObserverCount(unsigned int eventType) {
 		return observerEventMap.getObserverCount(eventType);
 	}

@@ -169,7 +169,10 @@ String LuaObject::getStringAt(int idx) {
 	result = lua_tostring(L, -1);
 	lua_pop(L, 1);
 
-	return String(result);
+	if (result)
+		return String(result);
+	else
+		return String("");
 }
 
 float LuaObject::getFloatAt(int idx) {

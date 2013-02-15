@@ -100,6 +100,7 @@ public:
 };
 
 void DatagramServiceThread::receiveMessages() {
+#ifdef PLATFORM_LINUX
 	IOProcessor processor;
 
 	try {
@@ -109,6 +110,7 @@ void DatagramServiceThread::receiveMessages() {
 		e.printStackTrace();
 		throw ServiceException(e.getMessage());
 	}
+#endif
 
 	Packet packet;
 
@@ -121,12 +123,20 @@ void DatagramServiceThread::receiveMessages() {
 		try	{
 			SocketAddress addr;
 
+#ifdef PLATFORM_LINUX
 			if (processor.getEvents(socket, 1000).hasInEvent()) {
 				while (socket->readFrom(&packet, &addr) != 0) {
 					Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
 					receiverTask->doExecute();
 				}
 			}
+#else
+			if (!socket->recieveFrom(&packet, &addr))
+				continue;
+
+			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
+			receiverTask->doExecute();
+#endif
 		} catch (SocketException& e) {
 			debug(e.getMessage());
 		} catch (Exception& e) {

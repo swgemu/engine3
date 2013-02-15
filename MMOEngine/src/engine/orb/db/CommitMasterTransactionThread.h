@@ -21,7 +21,7 @@ namespace engine {
 
 		engine::db::berkley::Transaction* transaction;
 		Vector<UpdateModifiedObjectsThread*>* threads;
-		Vector<Reference<DistributedObject*> >* objectsToDeleteFromRam;
+		Vector<DistributedObject* >* objectsToDeleteFromRam;
 		int numberOfThreads;
 
 		bool doRun;
@@ -31,7 +31,7 @@ namespace engine {
 
 		void run();
 
-		void startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<Reference<DistributedObject*> >* objectsToCollect);
+		void startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect);
 
 		void commitData();
 

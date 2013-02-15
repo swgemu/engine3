@@ -68,8 +68,10 @@ DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {
 }
 
 void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
-		Vector<Reference<DistributedObject*> >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
+		Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
 
+	Time start;
+//	Logger::console.info("starting ")
 	objectsToUpdate.removeAll(objectMap.size(), 1);
 
 	HashTableIterator<uint64, DistributedObjectAdapter*> iterator(&objectMap);
@@ -99,6 +101,8 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 			objectsToUpdate.add(dobObject);
 		}
 	}
+
+	Logger::console.info("finished iterating the objectMap in " + String::valueOf(start.miliDifference()), true);
 
 	StringBuffer msg;
 	msg << "[DistributedObjectDirectory] marked " << objectsToUpdate.size() << " objects to update and "

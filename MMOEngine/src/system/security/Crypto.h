@@ -12,12 +12,12 @@ namespace sys {
 		class Crypto {
 		public:
 
-			static String hashToString(String hash) {
+			static String hashToString(unsigned char* val, int size) {
 				StringBuffer sb;
 				char hex[3];
 
-				for(int i = 0; i < hash.length(); i++) {
-					sprintf(hex, "%02x", (unsigned char) hash.charAt(i));
+				for(int i = 0; i < size; i++) {
+					sprintf(hex, "%02x", val[i]);
 					sb << hex;
 				}
 
@@ -25,39 +25,44 @@ namespace sys {
 			}
 
 			static String MD5Hash(const String& str) {
-				String hash = (char *) MD5(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), NULL);
+				unsigned char res[MD5_DIGEST_LENGTH];
+				MD5(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), res);
 
-				return hashToString(hash);
+				return hashToString(res, MD5_DIGEST_LENGTH);
 			}
 
 			static String SHA1Hash(const String& str) {
-				String hash = (char *) SHA1(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), NULL);
+				unsigned char res[SHA_DIGEST_LENGTH];
 
-				return hashToString(hash);
+				SHA1(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), res);
+
+				return hashToString(res, SHA_DIGEST_LENGTH);
 			}
 
 			static String SHA256Hash(const String& str) {
-				String hash = (char *) SHA256(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), NULL);
+				unsigned char res[SHA256_DIGEST_LENGTH];
 
-				return hashToString(hash);
+				SHA256(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), res);
+
+				return hashToString(res, SHA256_DIGEST_LENGTH);
 			}
 
 			static String SHA512Hash(const String& str) {
-				String hash = (char *) SHA512(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), NULL);
+				unsigned char res[SHA512_DIGEST_LENGTH];
 
-				return hashToString(hash);
+				SHA512(reinterpret_cast<const unsigned char *>(str.toCharArray()), str.length(), res);
+
+				return hashToString(res, SHA512_DIGEST_LENGTH);
 			}
 
 			static String randomSalt(uint8 length = 16) {
-				char buffer[256];
+				unsigned char buffer[256];
 
 				for(int i = 0; i < length; i++) {
 					buffer[i] = System::random();
 				}
 
-				buffer[length] = 0;
-
-				return hashToString(String(buffer, length));
+				return hashToString(buffer, length);
 			}
 
 

@@ -26,7 +26,7 @@ namespace sys {
 			value = ref;
 		}
 
-		V compareAndSetReturnOld(volatile void* oldval, void* newval) {
+		inline V compareAndSetReturnOld(volatile void* oldval, void* newval) volatile {
 #ifdef CLANG_COMPILER
 #ifdef PLATFORM_64
 			volatile long long* addy = (volatile long long*) &value;
@@ -47,7 +47,7 @@ namespace sys {
 #endif
 		}
 
-		bool compareAndSet(volatile void* oldval, void* newval) {
+		inline bool compareAndSet(volatile void* oldval, void* newval) volatile {
 #ifdef CLANG_COMPILER
 #ifdef PLATFORM_64
 //			void* blia = value;
@@ -78,7 +78,7 @@ namespace sys {
 		}
 
 		template<typename T>
-		static T compareAndSetReturnOld(volatile T* value, volatile void* oldval, void* newval) {
+		static inline T compareAndSetReturnOld(volatile T* value, volatile void* oldval, void* newval) {
 		#ifdef CLANG_COMPILER
 		#ifdef PLATFORM_64
 					volatile long long* addy = (volatile long long*) value;
@@ -100,7 +100,7 @@ namespace sys {
 				}
 
 		template<typename T>
-		static bool compareAndSet(volatile T* value, volatile void* oldval, void* newval) {
+		static inline bool compareAndSet(volatile T* value, volatile void* oldval, void* newval) {
 		#ifdef CLANG_COMPILER
 		#ifdef PLATFORM_64
 		//			void* blia = value;
@@ -130,7 +130,7 @@ namespace sys {
 		#endif
 		}
 
-		inline V get() const {
+		inline V get() const volatile {
 			//WMB();
 
 			return value;
@@ -150,11 +150,11 @@ namespace sys {
 			return get();
 		}
 
-		V operator->() const {
+		inline V operator->() const {
 			return get();
 		}
 
-		bool operator== (const V val) const {
+		inline bool operator== (const V val) const {
 			WMB();
 
 			return val == value;

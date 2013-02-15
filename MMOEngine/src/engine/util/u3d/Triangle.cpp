@@ -8,7 +8,7 @@
 #include "Triangle.h"
 #include "AABBTree.h"
 
-#define LOCAL_EPSILON 0.000001f
+#define LOCAL_EPSILON FLT_EPSILON
 
 Triangle::Triangle() {
 

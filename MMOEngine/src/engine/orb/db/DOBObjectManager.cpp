@@ -277,7 +277,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	Vector<DistributedObject*> objectsToUpdate;
 	Vector<DistributedObject*> objectsToDelete;
-	Vector<Reference<DistributedObject*> >* objectsToDeleteFromRAM = new Vector<Reference<DistributedObject*> >();
+	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
 
 #ifdef PRINT_OBJECT_COUNT
 	VectorMap<String, int> inRamClassCount;

@@ -123,7 +123,7 @@ namespace sys {
 			#endif
 		}
 
-		static bool compareAndSet(volatile uint32* val, uint32 oldval, uint32 newval) {
+		inline static bool compareAndSet(volatile uint32* val, uint32 oldval, uint32 newval) {
 		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 			return __sync_bool_compare_and_swap(val, oldval, newval);
 		#elif defined(PLATFORM_MAC)
@@ -143,7 +143,7 @@ namespace sys {
 		#endif
 		}
 
-		uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) volatile {
+		inline uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) volatile {
 		#if GCC_VERSION >= 40100 && !defined(PLATFORM_WIN)
 			return __sync_val_compare_and_swap(&value, oldval, newval);
 		#elif defined(PLATFORM_WIN)
@@ -154,7 +154,7 @@ namespace sys {
 		#endif
 		}
 
-		bool compareAndSet(uint32 oldval, uint32 newval) volatile {
+		inline bool compareAndSet(uint32 oldval, uint32 newval) volatile {
 			//WMB();
 
 			return compareAndSet(&value, oldval, newval);

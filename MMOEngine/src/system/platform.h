@@ -80,6 +80,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <cstdio>
 #include <cmath>
 #include <memory>
+#include <limits>
+#include <float.h>
 
 #include <assert.h>
 
@@ -137,8 +139,8 @@ namespace sys {
 
 	#define SQR(x) ((x) * (x))
 
-	#define MAX_FLOAT 3.4028235E38
-	#define SMALL_NUM  0.00000001
+	#define MAX_FLOAT FLT_MAX
+	#define SMALL_NUM  FLT_EPSILON
 
 	#ifdef DEFAULT_DYNAMIC_CAST
 	#define cast dynamic_cast

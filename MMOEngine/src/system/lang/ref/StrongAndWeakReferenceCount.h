@@ -43,7 +43,6 @@ public:
 	}
 
 	inline void markAsDestroyed() volatile {
-		strongReferenceCount.increaseCount();
 		strongReferenceCount.setLowestBit();
 	}
 
