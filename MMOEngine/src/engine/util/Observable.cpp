@@ -75,7 +75,7 @@ void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 }
 
 int Observable::getObserverCount(unsigned int eventType) {
-	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -119,6 +119,10 @@ void Observable::dropObserveableChild(Observable* observable) {
 DistributedObjectServant* Observable::_getImplementation() {
 
 	 if (!_updated) _updated = true;
+	return _impl;
+}
+
+DistributedObjectServant* Observable::_getImplementationForRead() {
 	return _impl;
 }
 
@@ -201,14 +205,14 @@ void ObservableImplementation::_serializationHelperMethod() {
 void ObservableImplementation::readObject(ObjectInputStream* stream) {
 	uint16 _varCount = stream->readShort();
 	for (int i = 0; i < _varCount; ++i) {
-		String _name;
-		_name.parseFromBinaryStream(stream);
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
 
 		uint32 _varSize = stream->readInt();
 
 		int _currentOffset = stream->getOffset();
 
-		if(ObservableImplementation::readObjectMember(stream, _name)) {
+		if(ObservableImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
 
 		stream->setOffset(_currentOffset + _varSize);
@@ -217,20 +221,20 @@ void ObservableImplementation::readObject(ObjectInputStream* stream) {
 	initializeTransientMembers();
 }
 
-bool ObservableImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+bool ObservableImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
 		return true;
 
-	if (_name == "Observable.observerEventMap") {
+	switch(nameHashCode) {
+	case 0xe6687dd1: //Observable.observerEventMap
 		TypeInfo<ObserverEventMap >::parseFromBinaryStream(&observerEventMap, stream);
 		return true;
-	}
 
-	if (_name == "Observable.observableChildren") {
+	case 0xc23a7ce7: //Observable.observableChildren
 		TypeInfo<SortedVector<ManagedReference<Observable* > > >::parseFromBinaryStream(&observableChildren, stream);
 		return true;
-	}
 
+	}
 
 	return false;
 }
@@ -245,19 +249,19 @@ void ObservableImplementation::writeObject(ObjectOutputStream* stream) {
 int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
 
-	String _name;
+	uint32 _nameHashCode;
 	int _offset;
 	uint32 _totalSize;
-	_name = "Observable.observerEventMap";
-	_name.toBinaryStream(stream);
+	_nameHashCode = 0xe6687dd1; //Observable.observerEventMap
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
 	_offset = stream->getOffset();
 	stream->writeInt(0);
 	TypeInfo<ObserverEventMap >::toBinaryStream(&observerEventMap, stream);
 	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
 	stream->writeInt(_offset, _totalSize);
 
-	_name = "Observable.observableChildren";
-	_name.toBinaryStream(stream);
+	_nameHashCode = 0xc23a7ce7; //Observable.observableChildren
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
 	_offset = stream->getOffset();
 	stream->writeInt(0);
 	TypeInfo<SortedVector<ManagedReference<Observable* > > >::toBinaryStream(&observableChildren, stream);

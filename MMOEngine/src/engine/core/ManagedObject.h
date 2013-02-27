@@ -95,6 +95,7 @@ public:
 	void setPersistent(int level);
 
 	DistributedObjectServant* _getImplementation();
+	DistributedObjectServant* _getImplementationForRead();
 
 	void _setImplementation(DistributedObjectServant* servant);
 
@@ -217,7 +218,7 @@ protected:
 	void _setStub(DistributedObjectStub* stub);
 
 	void _serializationHelperMethod();
-	bool readObjectMember(ObjectInputStream* stream, const String& name);
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
 	int writeObjectMembers(ObjectOutputStream* stream);
 
 	friend class ManagedObject;

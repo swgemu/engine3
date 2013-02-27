@@ -10,6 +10,6 @@
 using namespace engine::db;
 using namespace engine::db::berkley;
 
-ObjectDatabase* ObjectDatabaseManager::loadObjectDatabase(const String& name, bool create, uint16 uniqueID) {
-	return dynamic_cast<ObjectDatabase*>(instantiateDatabase(name, create, uniqueID, true));
+ObjectDatabase* ObjectDatabaseManager::loadObjectDatabase(const String& name, bool create, uint16 uniqueID, bool compression) {
+	return dynamic_cast<ObjectDatabase*>(instantiateDatabase(name, create, uniqueID, true, compression));
 }

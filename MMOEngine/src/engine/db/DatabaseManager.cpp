@@ -8,6 +8,12 @@ void BerkeleyCheckpointTask::run() {
 	manager->checkpoint();
 }
 
+#ifdef VERSION_PUBLIC
+uint64 DatabaseManager::MAX_CACHE_SIZE = 500000000; // 500MB
+#else
+uint64 DatabaseManager::MAX_CACHE_SIZE = -1; // 500MB
+#endif
+
 DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 	loaded = false;
 
@@ -26,6 +32,8 @@ DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 
 	lastTableID = 0;
 	currentVersion = 0;
+
+	managedObjectsWithHashCodeMembers = false;
 }
 
 DatabaseManager::~DatabaseManager() {
@@ -64,7 +72,7 @@ void DatabaseManager::openEnvironment() {
 	config.setThreadCount(512);
 	config.setTransactional(true);
 	config.setInitializeCache(true);
-	uint32 logFileSize = 3000;
+	uint32 logFileSize = 50;
 	logFileSize = logFileSize * 1024 * 1024;
 	config.setMaxLogFileSize(logFileSize); // 3gb
 	config.setLockDetectMode(LockDetectMode::RANDOM);
@@ -94,7 +102,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 	try {
 		openEnvironment();
 
-		databaseDirectory = new LocalDatabase(this, "databases.db");
+		databaseDirectory = new LocalDatabase(this, "databases.db", false);
 
 		LocalDatabaseIterator iterator(databaseDirectory);
 
@@ -119,6 +127,14 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 				continue;
 			}
 
+			if (tableKey == MANAGED_OBJECTS_HASHCODE_MEMBERS) {
+				managedObjectsWithHashCodeMembers = true;
+
+				tableName.reset();
+				inputKey.reset();
+				continue;
+			}
+
 			String dbName;
 			dbName.parseFromBinaryStream(&tableName);
 
@@ -129,15 +145,17 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 
 			StringBuffer msg;
 
-			if (tableType == LOCALDATABASE) {
-				db = new LocalDatabase(this, String(dbName + ".db"));
+			bool compressionFlag = tableType & COMPRESSION_FLAG;
+
+			if ((tableType & 0x7FFFFFFF) == LOCALDATABASE) {
+				db = new LocalDatabase(this, String(dbName + ".db"), compressionFlag);
 
 				if (truncateDatabases)
 					msg << "truncating local database: ";
 				else
 					msg << "loading local database: ";
 			} else {
-				db = new ObjectDatabase(this, String(dbName + ".db"));
+				db = new ObjectDatabase(this, String(dbName + ".db"), compressionFlag);
 
 				if (truncateDatabases)
 					msg << "truncating local database: ";
@@ -146,6 +164,10 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 			}
 
 			msg << dbName << " with id 0x" << hex << (uint16)tableID;
+
+			if (compressionFlag)
+				msg << " with compression enabled";
+
 			info(msg);
 
 			if (truncateDatabases) {
@@ -173,7 +195,52 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 		assert(0 && "Database exception loading databases");
 	}
 
+	if (!managedObjectsWithHashCodeMembers)
+		convertDatabasesToHashCodeMembers();
+
 	checkpoint();
+}
+
+void DatabaseManager::convertDatabasesToHashCodeMembers() {
+	info("converting database objects to new format", true);
+
+	commitLocalTransaction();
+
+	Transaction* transaction = startTransaction();
+
+	for (int i = 0; i < databases.size(); ++i) {
+		LocalDatabase* db = databases.elementAt(i).getValue();
+
+		if (!db->isObjectDatabase())
+			continue;
+
+		String name;
+		db->getDatabaseName(name);
+
+		info("converting database " + name, true);
+
+		ObjectDatabase* objectDatabase = dynamic_cast<ObjectDatabase*>(db);
+
+		ObjectDatabaseIterator iterator(transaction, db);
+
+		ObjectInputStream data;
+		uint64 key;
+
+		while (iterator.getNextKeyAndValue(key, &data)) {
+			ObjectOutputStream* newData = Serializable::convertToHashCodeNameMembers(&data);
+
+			objectDatabase->putData(key, newData, NULL, transaction);
+
+			data.clear();
+		}
+	}
+
+	setManagedObjectsWithHashCodeMembersFlag(transaction);
+
+	commitLocalTransaction(transaction);
+	commitTransaction(transaction);
+
+	info("finished converting data to new format", true);
 }
 
 void DatabaseManager::closeDatabases() {
@@ -191,7 +258,7 @@ void DatabaseManager::closeDatabases() {
 	loaded = false;
 }
 
-LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool create, uint16 uniqueID, bool objectDatabase) {
+LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool create, uint16 uniqueID, bool objectDatabase, bool compression) {
 	Locker _locker(this);
 
 	if (uniqueID == 0xFFFF)
@@ -209,12 +276,16 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 		uniqueID = ++lastTableID;
 
 	if (objectDatabase)
-		db = new ObjectDatabase(this, String(name + ".db"));
+		db = new ObjectDatabase(this, String(name + ".db"), compression);
 	else
-		db = new LocalDatabase(this, String(name + ".db"));
+		db = new LocalDatabase(this, String(name + ".db"), compression);
 
 	StringBuffer msg;
 	msg << "trying to create database " << name << " with id 0x" << hex << uniqueID;
+
+	if (compression)
+		msg << " with compression enabled";
+
 	info(msg);
 
 	ObjectOutputStream* nameData = new ObjectOutputStream(20);
@@ -229,6 +300,9 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 	else
 		fullKey += LOCALDATABASE;
 
+	if (compression)
+		fullKey |= COMPRESSION_FLAG;
+
 	fullKey = fullKey << 32;
 	fullKey += uniqueID;
 
@@ -242,8 +316,8 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 	return db;
 }
 
-LocalDatabase* DatabaseManager::loadLocalDatabase(const String& name, bool create, uint16 uniqueID) {
-	return instantiateDatabase(name, create, uniqueID, false);
+LocalDatabase* DatabaseManager::loadLocalDatabase(const String& name, bool create, uint16 uniqueID, bool compression) {
+	return instantiateDatabase(name, create, uniqueID, false, compression);
 }
 
 CurrentTransaction* DatabaseManager::getCurrentTransaction() {
@@ -332,6 +406,7 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 }
 
 void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* masterTransaction) {
+	//printf("commiting local transaction\n");
 	if (this == NULL)
 		return;
 
@@ -410,11 +485,11 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 	if (iteration >= ObjectDatabase::DEADLOCK_MAX_RETRIES) {
 		error("error exceeded deadlock retries shutting down");
-		exit(1);
+		assert(0 && "error exceeded deadlock retries shutting down");
 	}
 
-	if (count > 0)
-		printf("\n");
+	/*if (count > 0)
+		printf("\n");*/
 
 	if (ret != 0 && ret != DB_NOTFOUND)
 		berkeleyTransaction->abort();
@@ -424,6 +499,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 		//if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
 		if ((commitRet = berkeleyTransaction->commitSync()) != 0) {
 			error("error commiting berkeley transaction " + String::valueOf(db_strerror(commitRet)));
+			assert(0 && "could not commit berkeley transaction");
 		}
 	}
 
@@ -444,6 +520,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 	}
 
 	updateObjects->removeAll(oldSize, 50);
+	transaction->resetCurrentSize();
 }
 
 
@@ -516,4 +593,64 @@ void DatabaseManager::updateCurrentVersion(uint64 version) {
 	TypeInfo<uint64>::toBinaryStream(&lastKey, stream);
 
 	databaseDirectory->putData(stream, idData);
+}
+
+void DatabaseManager::setManagedObjectsWithHashCodeMembersFlag(engine::db::berkley::Transaction* transaction) {
+	if (managedObjectsWithHashCodeMembers)
+		return;
+
+	uint64 flag = 1;
+
+	ObjectOutputStream* idData = new ObjectOutputStream(8, 8);
+	TypeInfo<uint64>::toBinaryStream(&flag, idData);
+
+	ObjectOutputStream* stream = new ObjectOutputStream(8, 8);
+
+	uint64 lastKey = MANAGED_OBJECTS_HASHCODE_MEMBERS;
+	TypeInfo<uint64>::toBinaryStream(&lastKey, stream);
+
+	databaseDirectory->putData(stream, idData, transaction);
+
+	managedObjectsWithHashCodeMembers = true;
+}
+
+int DatabaseManager::compressDatabase(const String& name, engine::db::berkley::Transaction* transaction) {
+	String unconstName = name;
+
+	uint16 id = nameDirectory.get(name);
+	LocalDatabase* database = databases.get(id);
+
+	if (database == NULL) {
+		error("no " + name + " database found to compress");
+		return 1;
+	}
+
+	if (database->hasCompressionEnabled()) {
+		error(name + " already has compression enabled");
+		return 2;
+	}
+
+	database->compressDatabaseEntries(transaction);
+
+	uint64 fullKey = 0;
+
+	if (database->isObjectDatabase())
+		fullKey += OBJECTDATABASE;
+	else
+		fullKey += LOCALDATABASE;
+
+	fullKey |= COMPRESSION_FLAG;
+
+	fullKey = fullKey << 32;
+	fullKey += id;
+
+	ObjectOutputStream* stream = new ObjectOutputStream(8, 8);
+	TypeInfo<uint64>::toBinaryStream(&fullKey, stream);
+
+	ObjectOutputStream* nameData = new ObjectOutputStream(20);
+	unconstName.toBinaryStream(nameData);
+
+	databaseDirectory->putData(stream, nameData, transaction);
+
+	return 0;
 }

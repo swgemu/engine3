@@ -23,6 +23,10 @@ DistributedObjectServant* ManagedVector::_getImplementation() {
 	return _impl;
 }
 
+DistributedObjectServant* ManagedVector::_getImplementationForRead() {
+	return _impl;
+}
+
 void ManagedVector::_setImplementation(DistributedObjectServant* servant) {
 	_impl = servant;
 }
@@ -106,14 +110,14 @@ void ManagedVectorImplementation::_serializationHelperMethod() {
 void ManagedVectorImplementation::readObject(ObjectInputStream* stream) {
 	uint16 _varCount = stream->readShort();
 	for (int i = 0; i < _varCount; ++i) {
-		String _name;
-		_name.parseFromBinaryStream(stream);
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
 
 		uint32 _varSize = stream->readInt();
 
 		int _currentOffset = stream->getOffset();
 
-		if(ManagedVectorImplementation::readObjectMember(stream, _name)) {
+		if(ManagedVectorImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
 
 		stream->setOffset(_currentOffset + _varSize);
@@ -122,10 +126,12 @@ void ManagedVectorImplementation::readObject(ObjectInputStream* stream) {
 	initializeTransientMembers();
 }
 
-bool ManagedVectorImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+bool ManagedVectorImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
 		return true;
 
+	switch(nameHashCode) {
+	}
 
 	return false;
 }
@@ -140,7 +146,7 @@ void ManagedVectorImplementation::writeObject(ObjectOutputStream* stream) {
 int ManagedVectorImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
 
-	String _name;
+	uint32 _nameHashCode;
 	int _offset;
 	uint32 _totalSize;
 

@@ -48,7 +48,7 @@ int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable
 }
 
 unsigned long long Observer::getObjectID() {
-	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -61,7 +61,7 @@ unsigned long long Observer::getObjectID() {
 }
 
 int Observer::compareTo(Observer* obj) {
-	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -89,7 +89,7 @@ void Observer::setObserverType(unsigned int type) {
 }
 
 bool Observer::isObserverType(unsigned int type) {
-	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
+	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -105,6 +105,10 @@ bool Observer::isObserverType(unsigned int type) {
 DistributedObjectServant* Observer::_getImplementation() {
 
 	 if (!_updated) _updated = true;
+	return _impl;
+}
+
+DistributedObjectServant* Observer::_getImplementationForRead() {
 	return _impl;
 }
 
@@ -187,14 +191,14 @@ void ObserverImplementation::_serializationHelperMethod() {
 void ObserverImplementation::readObject(ObjectInputStream* stream) {
 	uint16 _varCount = stream->readShort();
 	for (int i = 0; i < _varCount; ++i) {
-		String _name;
-		_name.parseFromBinaryStream(stream);
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
 
 		uint32 _varSize = stream->readInt();
 
 		int _currentOffset = stream->getOffset();
 
-		if(ObserverImplementation::readObjectMember(stream, _name)) {
+		if(ObserverImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
 
 		stream->setOffset(_currentOffset + _varSize);
@@ -203,15 +207,16 @@ void ObserverImplementation::readObject(ObjectInputStream* stream) {
 	initializeTransientMembers();
 }
 
-bool ObserverImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+bool ObserverImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
 		return true;
 
-	if (_name == "Observer.observerType") {
+	switch(nameHashCode) {
+	case 0x893f1c9: //Observer.observerType
 		TypeInfo<unsigned int >::parseFromBinaryStream(&observerType, stream);
 		return true;
-	}
 
+	}
 
 	return false;
 }
@@ -226,11 +231,11 @@ void ObserverImplementation::writeObject(ObjectOutputStream* stream) {
 int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
 
-	String _name;
+	uint32 _nameHashCode;
 	int _offset;
 	uint32 _totalSize;
-	_name = "Observer.observerType";
-	_name.toBinaryStream(stream);
+	_nameHashCode = 0x893f1c9; //Observer.observerType
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
 	_offset = stream->getOffset();
 	stream->writeInt(0);
 	TypeInfo<unsigned int >::toBinaryStream(&observerType, stream);

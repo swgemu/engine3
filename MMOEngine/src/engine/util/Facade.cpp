@@ -71,6 +71,10 @@ DistributedObjectServant* Facade::_getImplementation() {
 	return _impl;
 }
 
+DistributedObjectServant* Facade::_getImplementationForRead() {
+	return _impl;
+}
+
 void Facade::_setImplementation(DistributedObjectServant* servant) {
 	_impl = servant;
 }
@@ -150,14 +154,14 @@ void FacadeImplementation::_serializationHelperMethod() {
 void FacadeImplementation::readObject(ObjectInputStream* stream) {
 	uint16 _varCount = stream->readShort();
 	for (int i = 0; i < _varCount; ++i) {
-		String _name;
-		_name.parseFromBinaryStream(stream);
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
 
 		uint32 _varSize = stream->readInt();
 
 		int _currentOffset = stream->getOffset();
 
-		if(FacadeImplementation::readObjectMember(stream, _name)) {
+		if(FacadeImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
 
 		stream->setOffset(_currentOffset + _varSize);
@@ -166,10 +170,12 @@ void FacadeImplementation::readObject(ObjectInputStream* stream) {
 	initializeTransientMembers();
 }
 
-bool FacadeImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+bool FacadeImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
 		return true;
 
+	switch(nameHashCode) {
+	}
 
 	return false;
 }
@@ -184,7 +190,7 @@ void FacadeImplementation::writeObject(ObjectOutputStream* stream) {
 int FacadeImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
 
-	String _name;
+	uint32 _nameHashCode;
 	int _offset;
 	uint32 _totalSize;
 

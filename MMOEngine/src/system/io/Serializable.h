@@ -103,6 +103,7 @@ namespace sys {
 
 			static int getVariableDataMap(const String& serializedData, VectorMap<String, String>& map);
 			static int getVariableDataOffset(const String& variableName, ObjectInputStream* stream);
+			static int getVariableDataOffset(const uint32& variableHashCode, ObjectInputStream* stream);
 
 			static int getVariableNames(Vector<String>& variableNames, ObjectInputStream* stream);
 
@@ -110,13 +111,30 @@ namespace sys {
 			 * Returns a new ObjectOutputStream with the modified variable data
 			 * Returns NULL on error
 			 */
+			static ObjectOutputStream* convertToHashCodeNameMembers(ObjectInputStream* object);
 			static ObjectOutputStream* changeVariableData(const String& variableName, ObjectInputStream* object, Stream* newVariableData);
+			static ObjectOutputStream* changeVariableData(const uint32& variableHashCode, ObjectInputStream* object, Stream* newVariableData);
 			static ObjectOutputStream* deleteVariable(const String& variableName, ObjectInputStream* object);
 			static ObjectOutputStream* changeVariableName(const String& variableName, const String& newVariableName, ObjectInputStream* object);
 			static ObjectOutputStream* addVariable(const String& variableName, ObjectInputStream* object, Stream* newVariableData);
 
 			template<typename ClassType> static bool getVariable(const String& variableName, ClassType* address, ObjectInputStream* serializedObject) {
 				int offset = getVariableDataOffset(variableName, serializedObject);
+
+				if (offset == -1)
+					return false;
+
+				serializedObject->setOffset(offset);
+
+				TypeInfo<ClassType>::parseFromBinaryStream(address, serializedObject);
+
+				serializedObject->reset();
+
+				return true;
+			}
+
+			template<typename ClassType> static bool getVariable(const uint32& variableHashCode, ClassType* address, ObjectInputStream* serializedObject) {
+				int offset = getVariableDataOffset(variableHashCode, serializedObject);
 
 				if (offset == -1)
 					return false;

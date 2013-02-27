@@ -38,7 +38,7 @@ namespace engine {
 
 		engine::db::LocalDatabase* database;
 
-		Object* object;
+		Reference<Object*> object;
 
 		//if stream null its a delete action
 
@@ -62,6 +62,14 @@ namespace engine {
 			object = i.object;
 		}
 
+		uint32 getSize() {
+			if (key && stream) {
+				return stream->size() + key->size();
+			} else {
+				return 10;
+			}
+		}
+
 
 	};
 
@@ -71,11 +79,14 @@ namespace engine {
 
 
 		//stores a references for an object so we dont delete it in the transaction
-		Vector<Object* > temporaryObjects;
+		Vector<Reference<Object*> > temporaryObjects;
+
+		uint64 currentSize;
 
 	public:
 		CurrentTransaction(engine::db::berkley::Environment* env) {
 			databaseEnvironment = env;
+			currentSize = 0;
 		}
 
 		inline void addTemporaryObject(Object* obj) {
@@ -86,16 +97,28 @@ namespace engine {
 			temporaryObjects.removeAll();
 		}
 
-		inline void addUpdateObject(Stream* id, Stream* str, engine::db::LocalDatabase* db, Object* obj) {
+		inline uint32 addUpdateObject(Stream* id, Stream* str, engine::db::LocalDatabase* db, Object* obj) {
 			updateObjects.add(UpdateObject(str, id, db, obj));
+
+			return currentSize += (id->size() + str->size());
 		}
 
-		inline void addDeleteObject(Stream* id, engine::db::LocalDatabase* db) {
+		inline uint32 addDeleteObject(Stream* id, engine::db::LocalDatabase* db) {
 			updateObjects.add(UpdateObject(NULL, id, db, NULL));
+
+			return currentSize += 100;
 		}
 
 		inline Vector<UpdateObject>* getUpdateVector() {
 			return &updateObjects;
+		}
+
+		inline uint64 getCurrentSize() {
+			return currentSize;
+		}
+
+		inline void resetCurrentSize() {
+			currentSize = 0;
 		}
 
 	};
@@ -121,19 +144,25 @@ namespace engine {
 
 		bool loaded;
 
+		bool managedObjectsWithHashCodeMembers;
+
 	public:
 		const static int CHECKPOINTTIME = 1800000; //msec
 		const static uint64 LASTOBJECTIDKEY = uint64((uint64)0xFFFFFFFF << 32) + 0xFFFFFFFF;
 		const static uint64 VERSIONKEY = uint64((uint64)0xFFFFFFFF << 32) + 0xFFFFFFFE;
+		const static uint64 MANAGED_OBJECTS_HASHCODE_MEMBERS = uint64((uint64)0xFFFFFFFF << 32) + 0xFFFFFFFD;
+		const static uint64 COMPRESSION_FLAG = 0x80000000;
 		const static uint32 LOCALDATABASE = 1;
 		const static uint32 OBJECTDATABASE = 2;
+
+		static uint64 MAX_CACHE_SIZE; // max in ram cache per thread
 
 	private:
 		void openEnvironment();
 		void closeEnvironment();
 
 	protected:
-		LocalDatabase* instantiateDatabase(const String& name, bool create, uint16 uniqueID, bool objectDatabase);
+		LocalDatabase* instantiateDatabase(const String& name, bool create, uint16 uniqueID, bool objectDatabase, bool compression);
 
 	public:
 		DatabaseManager();
@@ -148,7 +177,7 @@ namespace engine {
 		 * @param create create if no database exists with specified uniqueID/name pair
 		 * @param uniqueID if not specified, uniqueID will be set to name.hashCode()
 		 */
-		LocalDatabase* loadLocalDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF);
+		LocalDatabase* loadLocalDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF, bool compression = true);
 
 		void checkpoint();
 
@@ -172,6 +201,11 @@ namespace engine {
 		uint64 getLastUsedObjectID();
 
 		void updateCurrentVersion(uint64 version);
+
+		int compressDatabase(const String& name, engine::db::berkley::Transaction* transaction);
+
+		void setManagedObjectsWithHashCodeMembersFlag(engine::db::berkley::Transaction* transaction);
+		void convertDatabasesToHashCodeMembers();
 
 		inline uint64 getCurrentVersion() {
 			return currentVersion;

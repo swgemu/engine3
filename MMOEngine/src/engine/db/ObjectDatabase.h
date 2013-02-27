@@ -20,13 +20,13 @@ namespace engine {
 		}
 
 	public:
-		ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName);
+		ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression);
 
 		int getData(uint64 objKey, ObjectInputStream* objectData);
 
 		//stream will be deleted
-		int putData(uint64 objKey, Stream* stream, Object* object);
-		int deleteData(uint64 objKey);
+		int putData(uint64 objKey, Stream* stream, Object* object, engine::db::berkley::Transaction* masterTransaction = NULL);
+		int deleteData(uint64 objKey, engine::db::berkley::Transaction* masterTransaction = NULL);
 
 		int tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction);
 		int tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction);
@@ -39,6 +39,11 @@ namespace engine {
 
 	class ObjectDatabaseIterator : public LocalDatabaseIterator {
 	public:
+		ObjectDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database)
+			: LocalDatabaseIterator(transaction, database) {
+
+		}
+
 		ObjectDatabaseIterator(ObjectDatabase* database, bool useCurrentThreadTransaction = false)
 			: LocalDatabaseIterator(database, useCurrentThreadTransaction) {
 

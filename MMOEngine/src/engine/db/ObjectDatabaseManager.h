@@ -21,7 +21,7 @@ namespace engine {
 	  * @param create create if no database exists with specified uniqueID/name pair
 	  * @param uniqueID if not specified, uniqueID will be set to name.hashCode()
 	  */
-	 ObjectDatabase* loadObjectDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF);
+	 ObjectDatabase* loadObjectDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF, bool compression = true);
  };
 
 

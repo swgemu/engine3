@@ -5,8 +5,8 @@
 using namespace engine::db;
 using namespace engine::db::berkley;
 
-ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName)
-	: LocalDatabase(dbEnv, dbFileName) {
+ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression)
+	: LocalDatabase(dbEnv, dbFileName, compression) {
 
 	setInfoLogLevel();
 	setLoggingName("ObjectDatabase " + dbFileName);
@@ -42,7 +42,10 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
 
 	if (ret == 0) {
-		objectData->writeStream((const char*) data.getData(), data.getSize());
+		if (!compression)
+			objectData->writeStream((const char*) data.getData(), data.getSize());
+		else
+			uncompress(data.getData(), data.getSize(), objectData);
 
 		objectData->reset();
 	} else if (ret != DB_NOTFOUND) {
@@ -67,9 +70,22 @@ int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkle
 
 	DatabaseEntry key, data;
 	key.setData(&objKey, sizeof(uint64));
-	data.setData(stream->getBuffer(), stream->size());
 
-	ret = objectsDatabase->put(transaction, &key, &data);
+	//data.setData(stream->getBuffer(), stream->size());
+
+	if (!compression) {
+		data.setData(stream->getBuffer(), stream->size());
+
+		ret = objectsDatabase->put(transaction, &key, &data);
+	} else {
+		Stream* compressed = compress(stream);
+
+		data.setData(compressed->getBuffer(), compressed->size());
+
+		ret = objectsDatabase->put(transaction, &key, &data);
+
+		delete compressed;
+	}
 
 	return ret;
 }
@@ -85,23 +101,28 @@ int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transactio
 	return ret;
 }
 
-int ObjectDatabase::putData(uint64 objKey, Stream* objectData, Object* obj) {
+int ObjectDatabase::putData(uint64 objKey, Stream* objectData, Object* obj, engine::db::berkley::Transaction* masterTransaction) {
 	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
 
 	ObjectOutputStream* key = new ObjectOutputStream(8, 8);
 	TypeInfo<uint64>::toBinaryStream(&objKey, key);
-	transaction->addUpdateObject(key, objectData, this, obj);
+
+	uint64 currentSize = transaction->addUpdateObject(key, objectData, this, obj);
+
+	if (currentSize > DatabaseManager::MAX_CACHE_SIZE) {
+		ObjectDatabaseManager::instance()->commitLocalTransaction(masterTransaction);
+	}
 
 	return 0;
 }
 
-int ObjectDatabase::deleteData(uint64 objKey) {
+int ObjectDatabase::deleteData(uint64 objKey, engine::db::berkley::Transaction* masterTransaction) {
 	ObjectOutputStream* key = new ObjectOutputStream(8, 8);
 	TypeInfo<uint64>::toBinaryStream(&objKey, key);
 
-	return LocalDatabase::deleteData(key);
+	return LocalDatabase::deleteData(key, masterTransaction);
 
 	/*StringBuffer msg;
 	msg << "added to deleteData objid" << hex << objKey;

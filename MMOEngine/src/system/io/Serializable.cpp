@@ -93,6 +93,32 @@ void Serializable::writeObject(ObjectOutputStream* stream) {
 	}
 }
 
+int Serializable::getVariableDataOffset(const uint32& variableHashCode, ObjectInputStream* stream) {
+	uint16 dataSize = stream->readShort();
+	int offset;
+
+	for (int i = 0; i < dataSize; ++i) {
+		uint32 namehashCode = stream->readInt();
+
+		uint32 varSize = stream->readInt();
+
+		offset = stream->getOffset();
+
+		if (namehashCode != variableHashCode)
+			stream->shiftOffset(varSize);
+		else {
+			stream->reset();
+			return offset;
+		}
+	}
+
+	offset = -1;
+
+	stream->reset();
+
+	return offset;
+}
+
 int Serializable::getVariableDataOffset(const String& variableName, ObjectInputStream* stream) {
 	uint16 dataSize = stream->readShort();
 	int offset;
@@ -136,6 +162,64 @@ int Serializable::getVariableNames(Vector<String>& variableNames, ObjectInputStr
 	stream->reset();
 
 	return dataSize;
+}
+
+ObjectOutputStream* Serializable::convertToHashCodeNameMembers(ObjectInputStream* stream) {
+	ObjectOutputStream* newData = new ObjectOutputStream(stream->size());
+
+	uint16 dataSize = stream->readShort();
+	newData->writeShort(dataSize);
+
+	int offset;
+
+	for (int i = 0; i < dataSize; ++i) {
+		String name;
+		name.parseFromBinaryStream(stream);
+
+		newData->writeInt(name.hashCode());
+
+		uint32 varSize = stream->readInt();
+
+		newData->writeInt(varSize);
+
+		Stream str;
+
+		stream->readStream(&str, varSize);
+
+		str.reset();
+
+		newData->writeStream(&str);
+	}
+
+	return newData;
+}
+
+ObjectOutputStream* Serializable::changeVariableData(const uint32& variableHashCode, ObjectInputStream* object, Stream* newVariableData) {
+	int offset = getVariableDataOffset(variableHashCode, object);
+
+	if (offset == -1)
+		return NULL;
+
+	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
+	object->copy(newData);
+
+	object->reset();
+	newData->reset();
+	object->shiftOffset(offset - 4);
+	uint32 dataSize = object->readInt();
+
+	newData->shiftOffset(offset); //we go data length
+
+	if (dataSize > 0)
+		newData->removeRange(offset, offset + dataSize);
+
+	newData->writeInt(offset - 4, newVariableData->size());
+	newData->insertStream(newVariableData, newVariableData->size(), offset);
+
+	object->reset();
+	//newData->reset();
+
+	return newData;
 }
 
 ObjectOutputStream* Serializable::changeVariableData(const String& variableName, ObjectInputStream* object, Stream* newVariableData) {

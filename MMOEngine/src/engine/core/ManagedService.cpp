@@ -23,6 +23,10 @@ DistributedObjectServant* ManagedService::_getImplementation() {
 	return _impl;
 }
 
+DistributedObjectServant* ManagedService::_getImplementationForRead() {
+	return _impl;
+}
+
 void ManagedService::_setImplementation(DistributedObjectServant* servant) {
 	_impl = servant;
 }
@@ -106,14 +110,14 @@ void ManagedServiceImplementation::_serializationHelperMethod() {
 void ManagedServiceImplementation::readObject(ObjectInputStream* stream) {
 	uint16 _varCount = stream->readShort();
 	for (int i = 0; i < _varCount; ++i) {
-		String _name;
-		_name.parseFromBinaryStream(stream);
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
 
 		uint32 _varSize = stream->readInt();
 
 		int _currentOffset = stream->getOffset();
 
-		if(ManagedServiceImplementation::readObjectMember(stream, _name)) {
+		if(ManagedServiceImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
 
 		stream->setOffset(_currentOffset + _varSize);
@@ -122,10 +126,12 @@ void ManagedServiceImplementation::readObject(ObjectInputStream* stream) {
 	initializeTransientMembers();
 }
 
-bool ManagedServiceImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+bool ManagedServiceImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
 		return true;
 
+	switch(nameHashCode) {
+	}
 
 	return false;
 }
@@ -140,7 +146,7 @@ void ManagedServiceImplementation::writeObject(ObjectOutputStream* stream) {
 int ManagedServiceImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
 
-	String _name;
+	uint32 _nameHashCode;
 	int _offset;
 	uint32 _totalSize;
 

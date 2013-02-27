@@ -313,7 +313,7 @@ void ManagedObject::setLastCRCSave(unsigned int crc) {
 }
 
 bool ManagedObject::isPersistent() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -326,7 +326,7 @@ bool ManagedObject::isPersistent() {
 }
 
 int ManagedObject::getPersistenceLevel() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -350,6 +350,10 @@ void ManagedObject::setPersistent(int level) {
 DistributedObjectServant* ManagedObject::_getImplementation() {
 
 	 if (!_updated) _updated = true;
+	return _impl;
+}
+
+DistributedObjectServant* ManagedObject::_getImplementationForRead() {
 	return _impl;
 }
 
@@ -401,14 +405,14 @@ void ManagedObjectImplementation::_serializationHelperMethod() {
 void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
 	uint16 _varCount = stream->readShort();
 	for (int i = 0; i < _varCount; ++i) {
-		String _name;
-		_name.parseFromBinaryStream(stream);
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
 
 		uint32 _varSize = stream->readInt();
 
 		int _currentOffset = stream->getOffset();
 
-		if(ManagedObjectImplementation::readObjectMember(stream, _name)) {
+		if(ManagedObjectImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
 
 		stream->setOffset(_currentOffset + _varSize);
@@ -417,17 +421,18 @@ void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
 	initializeTransientMembers();
 }
 
-bool ManagedObjectImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (_name == "_className") {
+bool ManagedObjectImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (nameHashCode == String("_className").hashCode()) {
 		TypeInfo<String>::parseFromBinaryStream(&_className, stream);
 		return true;
 	}
 
-	if (_name == "ManagedObject.persistenceLevel") {
+	switch(nameHashCode) {
+	case 0x62b0f0cf: //ManagedObject.persistenceLevel
 		TypeInfo<int >::parseFromBinaryStream(&persistenceLevel, stream);
 		return true;
-	}
 
+	}
 
 	return false;
 }
@@ -440,11 +445,11 @@ void ManagedObjectImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) {
-	String _name;
+	uint32 _nameHashCode;
 	int _offset;
 	uint32 _totalSize;
-	_name = "ManagedObject.persistenceLevel";
-	_name.toBinaryStream(stream);
+	_nameHashCode = 0x62b0f0cf; //ManagedObject.persistenceLevel
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
 	_offset = stream->getOffset();
 	stream->writeInt(0);
 	TypeInfo<int >::toBinaryStream(&persistenceLevel, stream);
@@ -452,8 +457,8 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	stream->writeInt(_offset, _totalSize);
 
 
-	_name = "_className";
-	_name.toBinaryStream(stream);
+	_nameHashCode = String("_className").hashCode();
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
 	_offset = stream->getOffset();
 	stream->writeInt(0);
 	TypeInfo<String>::toBinaryStream(&_className, stream);

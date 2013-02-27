@@ -5,6 +5,8 @@
  *      Author: victor
  */
 
+#include <zlib.h>
+
 #include "LocalDatabase.h"
 #include "DatabaseManager.h"
 #include "ObjectDatabaseManager.h"
@@ -12,7 +14,7 @@
 using namespace engine::db;
 using namespace engine::db::berkley;
 
-LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName) {
+LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression) {
 	environment = dbEnv->getBerkeleyEnvironment();
 
 	setLoggingName("LocalDatabase " + dbFileName);
@@ -22,6 +24,8 @@ LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName) {
 	databaseFileName = dbFileName;
 
 	objectsDatabase = NULL;
+
+	this->compression = compression;
 
 	//setFileLogger("log/berkeley.log");
 
@@ -103,6 +107,90 @@ void LocalDatabase::closeDatabase() {
 	}
 }
 
+Stream* LocalDatabase::compress(Stream* data) {
+	char outputData[CHUNK_SIZE];// = (char*) malloc(CHUNK_SIZE);
+	Stream* outputStream  = new Stream();
+
+	try {
+		z_stream packet;
+		packet.zalloc = Z_NULL;
+		packet.zfree = Z_NULL;
+		packet.opaque = Z_NULL;
+		packet.avail_in = 0;
+		packet.next_in = Z_NULL;
+		deflateInit(&packet, Z_DEFAULT_COMPRESSION);
+		packet.next_in = (Bytef* )(data->getBuffer());
+		packet.avail_in = data->size();
+
+		do {
+			packet.next_out = (Bytef* )outputData;
+			packet.avail_out = CHUNK_SIZE;
+
+			int ret = deflate(&packet,  Z_FINISH);
+
+			assert(ret == Z_OK || ret == Z_STREAM_END);
+
+			int wrote = CHUNK_SIZE - packet.avail_out;
+
+			outputStream->writeStream(outputData, wrote);
+
+		} while (packet.avail_out == 0);
+
+		deflateEnd(&packet);
+	} catch (...) {
+		assert(0 && "LocalDatabase::decompress");
+	}
+
+	//printf("%d uncompressed -> %d compressed\n", data->size(), outputStream->size());
+
+	//free(outputData);
+
+	return outputStream;
+}
+
+void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decompressedData) {
+	char outputData[CHUNK_SIZE];
+	//char* outputData = (char*) malloc(CHUNK_SIZE);
+
+	try {
+		z_stream packet;
+		packet.zalloc = Z_NULL;
+		packet.zfree = Z_NULL;
+		packet.opaque = Z_NULL;
+		packet.avail_in = 0;
+		packet.next_in = Z_NULL;
+		inflateInit(&packet);
+		packet.next_in = (Bytef* )(data);
+		packet.avail_in = (size);
+
+		do {
+			packet.next_out = (Bytef* )outputData;
+			packet.avail_out = CHUNK_SIZE;
+
+			int ret = inflate(&packet, Z_FINISH);
+/*
+			if (ret != Z_OK || Z_STREAM_END) {
+				printf("ret %d\n", ret);
+			}
+
+			*/
+
+			assert(ret == Z_OK || ret == Z_STREAM_END);
+
+			int wrote = CHUNK_SIZE - packet.avail_out;
+
+			decompressedData->writeStream(outputData, wrote);
+			//avail_out
+		} while (packet.avail_out == 0);
+
+		inflateEnd(&packet); //close buffer*/
+	} catch (...) {
+		assert(0 && "LocalDatabase::uncompress");
+	}
+
+	//free(outputData);
+}
+
 int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 	int ret = 0;
 
@@ -131,7 +219,11 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
 
 	if (ret == 0) {
-		objectData->writeStream((const char*) data.getData(), data.getSize());
+		if (!compression) {
+			objectData->writeStream((const char*) data.getData(), data.getSize());
+		} else {
+			uncompress(data.getData(), data.getSize(), objectData);
+		}
 
 		objectData->reset();
 	} else if (ret != DB_NOTFOUND) {
@@ -151,28 +243,67 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 }
 
 //stream will be deleted
-int LocalDatabase::putData(Stream* inputKey, Stream* stream) {
+int LocalDatabase::putData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* masterTransaction) {
 	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
 
-	transaction->addUpdateObject(inputKey, stream, this, NULL);
+	uint64 currentSize = transaction->addUpdateObject(inputKey, stream, this, NULL);
+
+	if (currentSize > DatabaseManager::MAX_CACHE_SIZE) {
+		ObjectDatabaseManager::instance()->commitLocalTransaction(masterTransaction);
+	}
 
 	return 0;
 }
 
-int LocalDatabase::deleteData(Stream* inputKey) {
+int LocalDatabase::deleteData(Stream* inputKey, engine::db::berkley::Transaction* masterTransaction) {
 	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
 
-	transaction->addDeleteObject(inputKey, this);
+	uint64 currentSize = transaction->addDeleteObject(inputKey, this);
 
 	/*StringBuffer msg;
 		msg << "added to deleteData objid" << hex << objKey;
 		info(msg);*/
 
+	if (currentSize > DatabaseManager::MAX_CACHE_SIZE) {
+		ObjectDatabaseManager::instance()->commitLocalTransaction(masterTransaction);
+	}
+
 	return 0;
+}
+
+void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* transaction) {
+	if (compression)
+		return;
+
+	LocalDatabaseIterator iterator(transaction, this);
+
+	ObjectInputStream keyStream;
+	ObjectInputStream data;
+
+	while (iterator.getNextKeyAndValue(&keyStream, &data)) {
+		compression = true;
+
+		ObjectOutputStream* key = new ObjectOutputStream();
+		keyStream.copy(key);
+		key->reset();
+
+		ObjectOutputStream* dataNew = new ObjectOutputStream();
+		data.copy(dataNew);
+		dataNew->reset();
+
+		putData(key, dataNew, transaction);
+
+		compression = false;
+
+		keyStream.clear();
+		data.clear();
+	}
+
+	compression = true;
 }
 
 int LocalDatabase::tryPutData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
@@ -180,9 +311,20 @@ int LocalDatabase::tryPutData(Stream* inputKey, Stream* stream, engine::db::berk
 
 	DatabaseEntry key, data;
 	key.setData(inputKey->getBuffer(), inputKey->size());
-	data.setData(stream->getBuffer(), stream->size());
 
-	ret = objectsDatabase->put(transaction, &key, &data);
+	if (!compression) {
+		data.setData(stream->getBuffer(), stream->size());
+
+		ret = objectsDatabase->put(transaction, &key, &data);
+	} else {
+		Stream* compressed = compress(stream);
+
+		data.setData(compressed->getBuffer(), compressed->size());
+
+		ret = objectsDatabase->put(transaction, &key, &data);
+
+		delete compressed;
+	}
 
 	return ret;
 }
@@ -198,6 +340,18 @@ int LocalDatabase::tryDeleteData(Stream* inputKey, engine::db::berkley::Transact
 	return ret;
 }
 
+LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database)
+	: Logger("LocalDatabaseIterator") {
+
+	databaseHandle = database->getDatabaseHandle();
+
+	cursor = databaseHandle->openCursor(transaction);
+
+	localDatabase = database;
+
+	data.setReuseBuffer(true);
+	key.setReuseBuffer(true);
+}
 
 LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, bool useCurrentThreadTransaction)
 	: Logger("LocalDatabaseIterator") {
@@ -210,6 +364,8 @@ LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, bool useCu
 		txn = ObjectDatabaseManager::instance()->getLocalTransaction();*/
 
 	cursor = databaseHandle->openCursor(txn);
+
+	localDatabase = database;
 
 	data.setReuseBuffer(true);
 	key.setReuseBuffer(true);
@@ -251,7 +407,11 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 		}
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
-		data->writeStream((char*)this->data.getData(), this->data.getSize());
+
+		if (!localDatabase->hasCompressionEnabled())
+			data->writeStream((char*)this->data.getData(), this->data.getSize());
+		else
+			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
 
 		data->reset();
 		key->reset();
@@ -271,7 +431,11 @@ bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data) {
 			return false;
 		}
 
-		data->writeStream((char*)this->data.getData(), this->data.getSize());
+		if (!localDatabase->hasCompressionEnabled()) {
+			data->writeStream((char*)this->data.getData(), this->data.getSize());
+		} else {
+			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
+		}
 
 		data->reset();
 
