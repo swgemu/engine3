@@ -104,7 +104,7 @@ namespace engine {
 			return &classMap;
 		}*/
 
-		inline DOBObjectManager* getObjectManager() const {
+		DOBObjectManager* getObjectManager() {
 			return objectManager;
 		}
 

@@ -11,6 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Core.h"
 
 #include "ManagedObject.h"
+#include "engine/orb/db/DOBObjectManager.h"
 
 namespace engine {
   namespace core {
@@ -108,7 +109,11 @@ namespace engine {
 		}
 
 		inline ManagedReference<O> get() {
+		        Locker locker(Core::getObjectBroker()->getObjectManager());
+		        
 			ManagedReference<O> strongRef = WeakReference<O>::get();
+			
+			locker.release();
 
 			if (savedObjectID != 0 && strongRef == NULL) {
 				strongRef = dynamic_cast<O>(Core::getObjectBroker()->lookUp(savedObjectID));
@@ -120,7 +125,11 @@ namespace engine {
 		}
 
 		inline ManagedReference<O> getForUpdate() {
+		        Locker locker(Core::getObjectBroker()->getObjectManager());
+		        
 			ManagedReference<O> strongRef = WeakReference<O>::get();
+			
+			locker.release();
 
 			if (savedObjectID != 0 && strongRef == NULL) {
 				strongRef = dynamic_cast<O>(Core::getObjectBroker()->lookUp(savedObjectID));

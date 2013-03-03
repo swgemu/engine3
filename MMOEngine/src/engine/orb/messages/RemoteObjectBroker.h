@@ -47,6 +47,10 @@ namespace engine {
 		bool destroyObject(DistributedObjectStub* obj);
 
 		void invokeMethod(DistributedMethod& method);
+		
+		DOBObjectManager* getObjectManager() {
+		        return NULL;
+                }
 
 		uint64 getNextFreeObjectID();
 

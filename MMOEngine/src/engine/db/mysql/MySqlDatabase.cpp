@@ -39,7 +39,7 @@ MySqlDatabase::MySqlDatabase(const String& s, const String& host) : Mutex("MYSQL
 	MySqlDatabase::host = host;
 
 	queryTimeout = 5;
-	writeQueryTimeout = queryTimeout * 10;
+	writeQueryTimeout = queryTimeout * 1000;
 	
 
 	setLockTracing(false);

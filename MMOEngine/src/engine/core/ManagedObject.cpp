@@ -185,7 +185,7 @@ void ManagedObject::_writeObject(ObjectOutputStream* stream) {
 }
 
 void ManagedObject::readObject(ObjectInputStream* stream) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -194,7 +194,7 @@ void ManagedObject::readObject(ObjectInputStream* stream) {
 }
 
 bool ManagedObject::toBinaryStream(ObjectOutputStream* stream) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -286,7 +286,7 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 }
 
 unsigned int ManagedObject::getLastCRCSave() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -422,7 +422,7 @@ void ManagedObjectImplementation::readObject(ObjectInputStream* stream) {
 }
 
 bool ManagedObjectImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
-	if (nameHashCode == String("_className").hashCode()) {
+	if (nameHashCode == 0x76457cca) {//_className 
 		TypeInfo<String>::parseFromBinaryStream(&_className, stream);
 		return true;
 	}
@@ -457,7 +457,7 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	stream->writeInt(_offset, _totalSize);
 
 
-	_nameHashCode = String("_className").hashCode();
+	_nameHashCode = 0x76457cca;//_className
 	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
 	_offset = stream->getOffset();
 	stream->writeInt(0);

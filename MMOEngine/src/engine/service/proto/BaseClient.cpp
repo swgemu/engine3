@@ -363,6 +363,7 @@ void BaseClient::run() {
 	lock();
 
 	try {
+	        for (int i = 0; i < 8; ++i) {
 		if (isAvailable()) {
 			BasePacket* pack = getNextSequencedPacket();
 			if (pack == NULL) {
@@ -397,26 +398,28 @@ void BaseClient::run() {
 			pack->setTimestamp();
 
 			//prepareSend(pack);
+			
 			prepareSequence(pack);
-
 			if (pack->getSequence() != (uint32) realServerSequence++) {
 				StringBuffer msg;
 				msg << "invalid server Packet " << pack->getSequence() << " sent (" << realServerSequence - 1 << ")";
 				error(msg);
 			}
-
+			
 			unlock();
 
 			prepareEncryptionAndCompression(pack);
-
+			
 			lock();
-
+			
 			if (!DatagramServiceClient::send(pack)) {
 				StringBuffer msg;
 				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
 				debug(msg);
 			}
-
+			
+			//lock();
+			
 			sequenceBuffer.add(pack);
 
 			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
@@ -431,6 +434,7 @@ void BaseClient::run() {
 
 				}
 			}*/
+		}
 		}
 	} catch (SocketException& e) {
 		disconnect("on activate() - " + e.getMessage(), false);

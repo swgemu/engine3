@@ -14,16 +14,15 @@ BaseProtocol::BaseProtocol() : Logger("PROTO") {
 }
 
 void BaseProtocol::prepareSequence(BasePacket* pack) {
-	pack->close();
+        pack->close();
 
 	/*StringBuffer msg;
-		msg << "SEND - " << pack->toString();
-		info(msg);*/
+	msg << "SEND - " << pack->toString();
+	info(msg);*/
 
 	if (pack->doSequencing())
 		pack->setSequence(serverSequence++);
 }
-
 
 void BaseProtocol::prepareEncryptionAndCompression(BasePacket* pack) {
 	if (pack->doCompression()) {
@@ -33,15 +32,21 @@ void BaseProtocol::prepareEncryptionAndCompression(BasePacket* pack) {
 	if (pack->doEncryption()) {
 		encrypt(pack, true);
 	}
+	
 
 	if (pack->doCRCChecking()) {
 		appendCRC(pack);
-	}
+        }
 }
 
 void BaseProtocol::prepareSend(BasePacket* pack) {
 	if (pack->doCompression())
 		pack->setCompression(false);
+		
+/*        if (pack->doEncryption()) {
+            pack->setEncryption(false);
+        }
+    */
 
 	pack->close();
 
@@ -60,9 +65,11 @@ void BaseProtocol::prepareSend(BasePacket* pack) {
 		encrypt(pack, true);
 	}
 	
+
 	if (pack->doCRCChecking()) {
 		appendCRC(pack);
 	}
+
 }
 
 bool BaseProtocol::processRecieve(Packet* pack) {

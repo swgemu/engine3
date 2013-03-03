@@ -143,8 +143,8 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 	Vector<Locker*>* lockers = new Vector<Locker*>();
 
 	for (int i = 0; i < workers.size(); ++i) {
-		if (i == 9 || i == 7) //mysql and bas packet handler workers should continue
-			continue;
+//		if (i == 9 || i == 7) //mysql and bas packet handler workers should continue
+//			continue;
 			
 		TaskWorkerThread* worker = workers.get(i);
 

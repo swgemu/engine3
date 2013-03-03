@@ -69,10 +69,13 @@ DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {
 
 void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
 		Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
+		
+	Logger::console.info("starting getObjectsMarkedForUpdate", true);
 
-	Time start;
-//	Logger::console.info("starting ")
 	objectsToUpdate.removeAll(objectMap.size(), 1);
+	objectsToDelete.removeAll(100000, 0);
+	
+	Logger::console.info("allocated objectsToUpdate size", true);
 
 	HashTableIterator<uint64, DistributedObjectAdapter*> iterator(&objectMap);
 
@@ -90,10 +93,13 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 			inRamClassCount->put(className, inRamClassCount->get(className) + 1);
 		}
 
-		ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
+		//ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
+		
 
-		if (managedObject == NULL/* || !managedObject->isPersistent()*/)
-			continue;
+		//if (managedObject == NULL/* || !managedObject->isPersistent()*/)
+		//	continue;
+		
+		ManagedObject* managedObject = static_cast<ManagedObject*>(dobObject);
 
 		if (dobObject->_isMarkedForDeletion()) {
 			objectsToDelete.add(dobObject);
@@ -102,11 +108,9 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 		}
 	}
 
-	Logger::console.info("finished iterating the objectMap in " + String::valueOf(start.miliDifference()), true);
-
 	StringBuffer msg;
 	msg << "[DistributedObjectDirectory] marked " << objectsToUpdate.size() << " objects to update and "
 			<< objectsToDelete.size() << " for deletion";
 
-	Logger::console.info(msg.toString());
+	Logger::console.info(msg.toString(), true);
 }

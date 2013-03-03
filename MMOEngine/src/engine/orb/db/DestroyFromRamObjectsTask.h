@@ -17,7 +17,7 @@ public:
 	}
 
 	void run() {
-		Logger::console.info("starting to delete " + String::valueOf(objects->size()) + " objects from ram...");
+		Logger::console.info("starting to delete " + String::valueOf(objects->size()) + " objects from ram...", true);
 
 		for (int i = 0; i < objects->size(); ++i) {
 			objects->get(i)->_destroyIgnoringCount();
@@ -26,7 +26,7 @@ public:
 		delete objects;
 		objects = NULL;
 
-		Logger::console.info("finished deleting objects from ram");
+		Logger::console.info("finished deleting objects from ram", true);
 	}
 };
 

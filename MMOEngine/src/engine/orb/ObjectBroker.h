@@ -21,6 +21,7 @@ namespace engine {
 
   	class DistributedObject;
   	class DistributedObjectStub;
+  	class DOBObjectManager;
 
 	class ObjectBroker {
 	public:
@@ -39,6 +40,8 @@ namespace engine {
 		virtual DistributedObject* lookUp(uint64 objid) = 0;
 
 		virtual bool destroyObject(DistributedObjectStub* obj) = 0;
+		
+		virtual DOBObjectManager* getObjectManager() = 0;
 
 		virtual uint64 getNextFreeObjectID() = 0;
 

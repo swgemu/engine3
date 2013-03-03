@@ -33,19 +33,32 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 	databaseEnvironment->set_lk_max_locks(databaseEnvironment, 750000);
 	databaseEnvironment->set_lk_max_lockers(databaseEnvironment, 750000);
 	databaseEnvironment->set_lk_max_objects(databaseEnvironment, 750000);
-
-	databaseEnvironment->set_cachesize(databaseEnvironment, 0, 262144000 * 2, 0);
+/*
+#ifndef VERSION_PUBLIC
+	databaseEnvironment->set_cachesize(databaseEnvironment, 0, 262144000 * 4, 8);
 	
-	uint32 logCache = 600 * 1024 * 1024;
+	uint32 logCache = 1024 * 1024;
+	logCache = 1000 * logCache;
 	databaseEnvironment->set_lg_bsize(databaseEnvironment, logCache);
 
 	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
 
-//        key_t shm_key = ftok("/mnt/ssd/workspaceALPHA/MMOCoreORB/bin/databases", 'D');
+        key_t shm_key = ftok("/mnt/ssd/workspaceALPHA/MMOCoreORB/bin/databases/err2.file", 7232);
         	
-	//databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
+	databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
 
-	ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER, 0);
+	ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER | DB_SYSTEM_MEM, 0);
+#else
+*/
+        databaseEnvironment->set_cachesize(databaseEnvironment, 0, 262144000, 0);
+	
+        databaseEnvironment->set_lg_bsize(databaseEnvironment, 262144000);
+
+	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
+
+        ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER, 0);
+        
+//#endif
 
 	if (ret != 0)
 		throw DatabaseException("unable to open environment handle with ret code " + String(db_strerror(ret)));
@@ -64,9 +77,9 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
     if (environmentConfig.getLogAutoRemove())
     	databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
-
+/*
 #ifndef VERSION_PUBLIC
-    int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, 1, 500000);
+    int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, 1, 50000 / 2);
 
     if (resSleep != 0) {
     	printf("could not set max writes\n");
@@ -81,7 +94,7 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
     printf("maxwritep:%d maxwrite_speepp:%d\n", maxwritep, maxwrite_sleepp); 
 #endif  
-    
+ */   
   
     
 

@@ -107,6 +107,7 @@ void LocalDatabase::closeDatabase() {
 	}
 }
 
+
 Stream* LocalDatabase::compress(Stream* data) {
 	char outputData[CHUNK_SIZE];// = (char*) malloc(CHUNK_SIZE);
 	Stream* outputStream  = new Stream();
@@ -407,7 +408,7 @@ void LocalDatabaseIterator::resetIterator() {
 
 bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data) {
 	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
+		if (cursor->getNext(&this->key, &this->data, LockMode::READ_COMMITED) != 0) {
 			/*this->key.setData(NULL, 0);
 			this->data.setData(NULL, 0);*/
 			return false;

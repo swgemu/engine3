@@ -22,6 +22,8 @@
 
 #include "CommitMasterTransactionThread.h"
 
+#include "DestroyFromRamObjectsTask.h"
+
 #include "DOBObjectManager.h"
 
 //#define PRINT_OBJECT_COUNT
@@ -283,7 +285,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	VectorMap<String, int> inRamClassCount;
 	inRamClassCount.setNullValue(0);
 
-	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, objectsToDeleteFromRAM, &inRamClassCount);
+	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, &inRamClassCount);
 #else
 	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, NULL);
 #endif
@@ -296,17 +298,17 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	info("copied objects into ram in " + String::valueOf(start.miliDifference()) + " ms", true);
 /*
-	info("objects to delete from ram: " + String::valueOf(objectsToDeleteFromRAM.size()), true);
+	info("objects to delete from ram: " + String::valueOf(objectsToDeleteFromRAM->size()), true);
 
-	for (int i = 0; i < objectsToDeleteFromRAM.size(); ++i) {
-		DistributedObject* object = objectsToDeleteFromRAM.get(i);
-
-		localObjectDirectory.removeHelper(object->_getObjectID());
+	for (int i = 0; i < objectsToDeleteFromRAM->size(); ++i) {
+		DistributedObjectStub* object = static_cast<DistributedObjectStub*>(objectsToDeleteFromRAM->get(i));
+		
+	localObjectDirectory.removeHelper(object->_getObjectID());
 	}
 
-	objectsToDeleteFromRAM.removeAll();
+//	objectsToDeleteFromRAM.removeAll();
 
-	info("finished deleting objects from ram", true);
+	info("finished undeploying objects from orb", true);
 	*/
 
 #ifdef WITH_STM
@@ -314,17 +316,44 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 #endif
 
 	onUpdateModifiedObjectsToDatabase();
-
+	
 //#ifndef WITH_STM
 	Core::getTaskManager()->unblockTaskManager(lockers);
 	delete lockers;
 //#endif
+/*
+	Reference<DestroyFromRamObjectsTask*> dest = new DestroyFromRamObjectsTask(objectsToDeleteFromRAM);
+	dest->execute();
+*/
 
 	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, numberOfThreads, objectsToDeleteFromRAM);
 
 #ifndef WITH_STM
 	_locker.release();
 #endif
+
+//	delete objectsToDeleteFromRAM;
+
+#ifdef PRINT_OBJECT_COUNT
+
+	VectorMap<int, String> orderedMap(inRamClassCount.size(), 0);
+	orderedMap.setAllowDuplicateInsertPlan();
+	
+	for (int i = 0; i < inRamClassCount.size(); ++i) {
+		String name = inRamClassCount.elementAt(i).getKey();
+		int val = inRamClassCount.elementAt(i).getValue();
+		
+		orderedMap.put(val, name);	
+	}
+
+	for (int i = 0; i < orderedMap.size(); ++i) {
+		String name = orderedMap.elementAt(i).getValue();
+		int val = orderedMap.elementAt(i).getKey();
+		
+		printf("%s\t%d\n", name.toCharArray(), val);
+	}
+#endif
+
 }
 
 UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread() {
