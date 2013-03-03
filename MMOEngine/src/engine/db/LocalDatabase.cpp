@@ -168,7 +168,7 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 			packet.next_out = (Bytef* )outputData;
 			packet.avail_out = CHUNK_SIZE;
 
-			int ret = inflate(&packet, Z_FINISH);
+			int ret = inflate(&packet, Z_NO_FLUSH);
 
 			if (ret == Z_DATA_ERROR) {
 				Logger::console.error("could not decompress stream from database returning uncompressed");
