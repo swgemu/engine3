@@ -67,9 +67,11 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			for (int i = startOffset; i <= endOffset; ++i) {
 				DistributedObject* object = objectsToUpdate->get(i);
 				
+				/*
 				if (object->_isDeletedFromDatabase()) {
 					object->_setDeletedFromDatabase(false);
 				}
+				*/
 
 				if (objectManager->commitUpdatePersistentObjectToDB(object) == 0)
 					++j;
