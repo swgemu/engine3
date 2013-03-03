@@ -112,7 +112,7 @@ void convertDatabase(const String& dbName, const String& targetDirectory) {
 				delete newData;
 
 			printf("could not convert object\n");
-			printf("%s\n", data.toStringData());
+			printf("%s\n", data.toStringData().toCharArray());
 
 			newData = NULL;
 		}
