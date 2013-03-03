@@ -294,16 +294,16 @@ void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* tr
 	while (iterator.getNextKeyAndValue(&keyStream, &data)) {
 		compression = true;
 
-		/*ObjectOutputStream* key = new ObjectOutputStream();
+		ObjectOutputStream* key = new ObjectOutputStream();
 		keyStream.copy(key);
-		key->reset();*/
+		key->reset();
 
 		ObjectOutputStream* dataNew = new ObjectOutputStream();
 		data.copy(dataNew);
 		dataNew->reset();
 
-		//putData(key, dataNew, transaction);
-		assert(iterator.putCurrent(dataNew) == 0);
+		putData(key, dataNew, transaction);
+		//assert(iterator.putCurrent(dataNew) == 0);
 
 		compression = false;
 

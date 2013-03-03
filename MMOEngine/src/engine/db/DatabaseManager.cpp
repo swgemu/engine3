@@ -242,16 +242,25 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 
 			++convertedCount;
 
+			/*
+			 * ObjectOutputStream* newData = Serializable::convertToHashCodeNameMembers(&data);
+
+			objectDatabase->putData(key, newData, NULL, transaction);
+			 *
+			 */
+
 			try {
 				newData = Serializable::convertToHashCodeNameMembers(&data);
 			} catch (Exception& e) {
-				error("could not convert:" + data.toStringData());
+				//error("could not convert:" + data.toStringData());
 
 				data.clear();
 				continue;
 			}
 
-			assert(iterator.putCurrent(newData) == 0);
+			//assert(iterator.putCurrent(newData) == 0);
+
+			objectDatabase->putData(key, newData, NULL, transaction);
 
 			data.clear();
 		}
