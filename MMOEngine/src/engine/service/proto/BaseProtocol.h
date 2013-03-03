@@ -38,6 +38,9 @@ namespace engine {
 
 		virtual void prepareSend(BasePacket* pack);
 
+		void prepareSequence(BasePacket* pack);
+		void prepareEncryptionAndCompression(BasePacket* pack);
+
 		virtual bool processRecieve(Packet* pack);
 
 		void encrypt(Packet* pack, bool crc);

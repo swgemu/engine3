@@ -168,12 +168,16 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 			packet.avail_out = CHUNK_SIZE;
 
 			int ret = inflate(&packet, Z_FINISH);
-/*
-			if (ret != Z_OK || Z_STREAM_END) {
-				printf("ret %d\n", ret);
-			}
 
-			*/
+			if (ret == Z_DATA_ERROR) {
+				Logger::console.error("could not decompress stream from database returning uncompressed");
+
+				decompressedData->writeStream((char*)data, size);
+
+				inflateEnd(&packet);
+
+				return;
+			}
 
 			assert(ret == Z_OK || ret == Z_STREAM_END);
 
@@ -279,6 +283,8 @@ void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* tr
 	if (compression)
 		return;
 
+	HashSet<uint64> compressed;
+
 	LocalDatabaseIterator iterator(transaction, this);
 
 	ObjectInputStream keyStream;
@@ -287,15 +293,16 @@ void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* tr
 	while (iterator.getNextKeyAndValue(&keyStream, &data)) {
 		compression = true;
 
-		ObjectOutputStream* key = new ObjectOutputStream();
+		/*ObjectOutputStream* key = new ObjectOutputStream();
 		keyStream.copy(key);
-		key->reset();
+		key->reset();*/
 
 		ObjectOutputStream* dataNew = new ObjectOutputStream();
 		data.copy(dataNew);
 		dataNew->reset();
 
-		putData(key, dataNew, transaction);
+		//putData(key, dataNew, transaction);
+		assert(iterator.putCurrent(dataNew) == 0);
 
 		compression = false;
 
@@ -469,5 +476,31 @@ bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key) {
 	}
 
 	return true;
+}
+
+int LocalDatabaseIterator::putCurrent(ObjectOutputStream* data) {
+	DatabaseEntry dataEntry;
+
+	int ret = -1;
+
+	if (!localDatabase->hasCompressionEnabled()) {
+		dataEntry.setData(data->getBuffer(), data->size());
+
+		ret = cursor->putCurrent(&dataEntry);
+
+		delete data;
+	} else {
+		Stream* compressed = LocalDatabase::compress(data);
+
+		delete data;
+
+		dataEntry.setData(compressed->getBuffer(), compressed->size());
+
+		ret = cursor->putCurrent(&dataEntry);
+
+		delete compressed;
+	}
+
+	return ret;
 }
 

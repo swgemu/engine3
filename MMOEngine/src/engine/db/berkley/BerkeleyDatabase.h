@@ -81,6 +81,10 @@ namespace engine {
 		 */
 		int compact(Transaction* txn, DB_COMPACT* compactData, uint32 flags);
 
+		/**
+		 * Returns number of unique keys, returns 0 if it was never calculated
+		 */
+		uint64 count(bool forceCalculation = false, Transaction* txn = NULL);
 
 		inline String& getDatabaseFile() {
 			return filename;

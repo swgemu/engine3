@@ -153,7 +153,7 @@ void BerkeleyDatabase::close(bool noSync) {
 		int ret = dbp->close(dbp, flags);
 
 		if (ret != 0)
-			throw DatabaseException("error while closing database with ret " + String::valueOf(ret));
+			throw DatabaseException(String("error while closing database with ret ") + db_strerror(ret));
 
 		dbp = NULL;
 	}
@@ -184,4 +184,69 @@ int BerkeleyDatabase::compact(Transaction* txn, DB_COMPACT* compactData, uint32 
 		txnid = txn->getDBTXN();
 
 	return dbp->compact(dbp, txnid, NULL, NULL, compactData, flags, NULL);
+}
+
+uint64 BerkeleyDatabase::count(bool forceCalculation, Transaction* txn) {
+	int ret = -1;
+	uint32 flags = 0;
+
+	DB_TXN* txnid = NULL;
+
+	if (txn != NULL)
+		txnid = txn->getDBTXN();
+
+	if (!forceCalculation)
+		flags |= DB_FAST_STAT;
+
+	switch (databaseConfig.getDatabaseType()) {
+	case DatabaseType::HASH: {
+		DB_HASH_STAT *sp;
+
+		if (!(ret = dbp->stat(dbp, txnid, &sp, flags))) {
+			uint64 val = sp->hash_nkeys;
+
+			free(sp);
+
+			return val;
+		}
+
+		break;
+	}
+	case DatabaseType::BTREE:
+	case DatabaseType::RECNO: {
+		DB_BTREE_STAT* sp;
+
+		if (!(ret = dbp->stat(dbp, txnid, &sp, flags))) {
+			uint64 val = sp->bt_nkeys;
+
+			free(sp);
+
+			return val;
+		}
+
+		break;
+	}
+	case DatabaseType::QUEUE: {
+		DB_QUEUE_STAT* sp;
+
+		if (!(ret = dbp->stat(dbp, txnid, &sp, flags))) {
+			uint64 val = sp->qs_nkeys;
+
+			free(sp);
+
+			return val;
+		}
+
+		break;
+	}
+	default:
+		throw DatabaseException("error in BerkeleyDatabase::count unknown database type");
+		break;
+	}
+
+	if (ret != 0) {
+		throw DatabaseException("error BerkeleyDatabase::count with ret " + String::valueOf(ret));
+	}
+
+	return -1;
 }

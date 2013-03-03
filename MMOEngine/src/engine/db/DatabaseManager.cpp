@@ -14,6 +14,8 @@ uint64 DatabaseManager::MAX_CACHE_SIZE = 500000000; // 500MB
 uint64 DatabaseManager::MAX_CACHE_SIZE = -1; // 500MB
 #endif
 
+bool DatabaseManager::CONVERT_DATABASES = true;
+
 DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 	loaded = false;
 
@@ -195,7 +197,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 		assert(0 && "Database exception loading databases");
 	}
 
-	if (!managedObjectsWithHashCodeMembers)
+	if (!managedObjectsWithHashCodeMembers && CONVERT_DATABASES)
 		convertDatabasesToHashCodeMembers();
 
 	checkpoint();
@@ -205,6 +207,8 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 	info("converting database objects to new format", true);
 
 	commitLocalTransaction();
+
+	MAX_CACHE_SIZE = 500000000;
 
 	Transaction* transaction = startTransaction();
 
@@ -227,9 +231,18 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 		uint64 key;
 
 		while (iterator.getNextKeyAndValue(key, &data)) {
-			ObjectOutputStream* newData = Serializable::convertToHashCodeNameMembers(&data);
+			ObjectOutputStream* newData = NULL;
 
-			objectDatabase->putData(key, newData, NULL, transaction);
+			try {
+				newData = Serializable::convertToHashCodeNameMembers(&data);
+			} catch (Exception& e) {
+				error("could not convert:" + data.toStringData());
+
+				data.clear();
+				continue;
+			}
+
+			assert(iterator.putCurrent(newData) == 0);
 
 			data.clear();
 		}
@@ -239,6 +252,8 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 
 	commitLocalTransaction(transaction);
 	commitTransaction(transaction);
+
+	MAX_CACHE_SIZE = -1;
 
 	info("finished converting data to new format", true);
 }

@@ -396,19 +396,28 @@ void BaseClient::run() {
 
 			pack->setTimestamp();
 
-			prepareSend(pack);
+			//prepareSend(pack);
+			prepareSequence(pack);
+
 			if (pack->getSequence() != (uint32) realServerSequence++) {
 				StringBuffer msg;
 				msg << "invalid server Packet " << pack->getSequence() << " sent (" << realServerSequence - 1 << ")";
 				error(msg);
 			}
 
-			sequenceBuffer.add(pack);
+			unlock();
+
+			prepareEncryptionAndCompression(pack);
+
+			lock();
+
 			if (!DatagramServiceClient::send(pack)) {
 				StringBuffer msg;
 				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
 				debug(msg);
 			}
+
+			sequenceBuffer.add(pack);
 
 			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 				reentrantTask->scheduleInIoScheduler(10);

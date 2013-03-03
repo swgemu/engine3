@@ -156,6 +156,7 @@ namespace engine {
 		const static uint32 OBJECTDATABASE = 2;
 
 		static uint64 MAX_CACHE_SIZE; // max in ram cache per thread
+		static bool CONVERT_DATABASES;
 
 	private:
 		void openEnvironment();

@@ -101,11 +101,17 @@ namespace engine {
 	 bool getNextValue(ObjectInputStream* data);
 	 bool getNextKey(ObjectInputStream* key);
 
+	 //data is freed
+	 int putCurrent(ObjectOutputStream* data);
+
 	 inline void closeCursor() {
 		 if (cursor != NULL) {
-			 cursor->close();
+			 int ret = cursor->close();
 
 			 delete cursor;
+
+			 if (ret != 0)
+				 throw DatabaseException("could not close cursor ret: " + String::valueOf(ret));
 		 }
 
 		 cursor = NULL;
