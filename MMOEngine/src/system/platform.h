@@ -82,7 +82,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <memory>
 #include <limits>
 #include <float.h>
-
 #include <assert.h>
 
 #ifdef PLATFORM_SOLARIS
@@ -141,7 +140,7 @@ namespace sys {
 
 	#define MAX_FLOAT FLT_MAX
 	#define SMALL_NUM  FLT_EPSILON
-
+	
 	#ifdef DEFAULT_DYNAMIC_CAST
 	#define cast dynamic_cast
 	#else
@@ -152,7 +151,7 @@ namespace sys {
 	//#define TRACE_LOCKS
 
 	//#define TRACE_REFERENCING
-	//#define LINE_TRACING
+	#define LINE_TRACING
 	//#define TRACE_REFERENCES
 
 	//#define TRACE_TASKS

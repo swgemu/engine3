@@ -26,7 +26,7 @@ namespace sys {
 			value = ref;
 		}
 
-		inline V compareAndSetReturnOld(volatile void* oldval, void* newval) volatile {
+		inline V compareAndSetReturnOld(volatile void* oldval, void* newval) {
 #ifdef CLANG_COMPILER
 #ifdef PLATFORM_64
 			volatile long long* addy = (volatile long long*) &value;
@@ -47,7 +47,7 @@ namespace sys {
 #endif
 		}
 
-		inline bool compareAndSet(volatile void* oldval, void* newval) volatile {
+		inline bool compareAndSet(volatile void* oldval, void* newval) {
 #ifdef CLANG_COMPILER
 #ifdef PLATFORM_64
 //			void* blia = value;
@@ -130,7 +130,7 @@ namespace sys {
 		#endif
 		}
 
-		inline V get() const volatile {
+		inline V get() const {
 			//WMB();
 
 			return value;

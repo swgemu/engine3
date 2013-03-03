@@ -101,11 +101,11 @@ namespace sys {
    };
 
    template<class E> ArrayList<E>::ArrayList() {
-       init(10, 5);
+       init(1, 0);
    }
 
    template<class E> ArrayList<E>::ArrayList(int incr) {
-       init(10, incr);
+       init(1, incr);
    }
 
    template<class E> ArrayList<E>::ArrayList(int initsize, int incr) {
@@ -279,7 +279,7 @@ namespace sys {
        int oldCapacity = elementCapacity;
 
        if (minCapacity > oldCapacity) {
-    	   assert(capacityIncrement != 0);
+    	   //assert(capacityIncrement != 0);
 
            E* oldData = elementData;
 

@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
- */
+*/
 
 #ifndef WEAKREFERENCE_H_
 #define WEAKREFERENCE_H_
@@ -17,221 +17,222 @@ Distribution of this file for usage outside of Core3 is prohibited.
 //#define ENABLE_THREAD_SAFE_MUTEX_WEAK
 
 namespace sys {
-namespace lang {
+  namespace lang {
 
-template<class O> class WeakReference : public Variable {
-protected:
-	volatile AtomicReference<StrongAndWeakReferenceCount* > weakReference;
-public:
-	WeakReference() : Variable() {
-	}
-
-	WeakReference(const WeakReference<O>& ref) : Variable() {
-		StrongAndWeakReferenceCount* p = ref.safeRead();
-
-		initializeObject(p);
-
-		release(p);
-	}
-
-	WeakReference(O obj) : Variable() {
-		initializeObject(obj);
-	}
-
-	virtual ~WeakReference() {
-		releaseObject();
-	}
-
-	virtual int compareTo(const WeakReference<O>& val) const {
-		Object* object = NULL;
-		Object* valObject = NULL;
-
-		StrongAndWeakReferenceCount* old = safeRead();
-
-		if (old != NULL) {
-			object = old->getObject();
-
-			release(old);
+	template<class O> class WeakReference : public Variable {
+	protected:
+		AtomicReference<StrongAndWeakReferenceCount* > weakReference;
+	public:
+		WeakReference() : Variable() {
+			weakReference = NULL;
 		}
 
-		StrongAndWeakReferenceCount* valOld = val.safeRead();
+		WeakReference(const WeakReference<O>& ref) : Variable() {
+			StrongAndWeakReferenceCount* p = ref.safeRead();
 
-		if (valOld != NULL) {
-			valObject = valOld->getObject();
+			initializeObject(p);
 
-			release(valOld);
+			release(p);
 		}
 
-		if (object < valObject) {
-			return 1;
-		} else if (object > valObject) {
-			return -1;
-		} else {
-			return 0;
+		WeakReference(O obj) : Variable() {
+			initializeObject(obj);
 		}
-	}
 
-	WeakReference<O>& operator=(const WeakReference<O>& ref) {
-		if (this == &ref)
+		virtual ~WeakReference() {
+			releaseObject();
+		}
+
+		virtual int compareTo(const WeakReference<O>& val) const {
+			Object* object = NULL;
+			Object* valObject = NULL;
+
+			StrongAndWeakReferenceCount* old = safeRead();
+
+			if (old != NULL) {
+				object = old->getObject();
+
+				release(old);
+			}
+
+			StrongAndWeakReferenceCount* valOld = val.safeRead();
+
+			if (valOld != NULL) {
+				valObject = valOld->getObject();
+
+				release(valOld);
+			}
+
+			if (object < valObject) {
+				return 1;
+			} else if (object > valObject) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+
+		WeakReference<O>& operator=(const WeakReference<O>& ref) {
+			if (this == &ref)
+				return *this;
+
+			StrongAndWeakReferenceCount* p = ref.safeRead();
+
+			newref(p);
+
+			release(p);
+
 			return *this;
-
-		StrongAndWeakReferenceCount* p = ref.safeRead();
-
-		newref(p);
-
-		release(p);
-
-		return *this;
-	}
-
-	template<class B>
-	Reference<B> castTo() {
-		Reference<B> stored;
-		Reference<O> strong = get();
-
-		stored = dynamic_cast<B>(strong.get());
-		return stored;
-	}
-
-	O operator=(O obj) {
-		updateObject(obj);
-
-		return obj;
-	}
-
-	inline bool operator==(O obj) {
-		return getReferenceUnsafe() == obj;
-	}
-
-	inline bool operator!=(O obj) {
-		return getReferenceUnsafe() != obj;
-	}
-
-	inline O getReferenceUnsafeDynamicCast() const {
-		return dynamic_cast<O>(getReferenceUnsafe());
-	}
-
-	inline O getReferenceUnsafeStaticCast() const {
-		return static_cast<O>(getReferenceUnsafe());
-	}
-
-	//returns an unsafe object pointer
-	inline Object* getReferenceUnsafe() const {
-		Object* object = NULL;
-
-		//			StrongAndWeakReferenceCount* old = safeRead();
-		StrongAndWeakReferenceCount* old = weakReference.get();
-
-		if (old != NULL) {
-			object = old->getObject();
-
-			//				release(old);
 		}
 
-		return object;
-	}
+		template<class B>
+		Reference<B> castTo() {
+			Reference<B> stored;
+			Reference<O> strong = get();
 
-	inline Reference<O> get() const {
-		Reference<O> objectToReturn;
-		StrongAndWeakReferenceCount* currentRef = safeRead();
+			stored = dynamic_cast<B>(strong.get());
+			return stored;
+		}
 
-		if (currentRef == NULL)
-			return objectToReturn;
+		O operator=(O obj) {
+			updateObject(obj);
 
-		if (currentRef->increaseStrongCount() & 1) {
+			return obj;
+		}
+
+		inline bool operator==(O obj) {
+			return getReferenceUnsafe() == obj;
+		}
+
+		inline bool operator!=(O obj) {
+			return getReferenceUnsafe() != obj;
+		}
+
+		inline O getReferenceUnsafeDynamicCast() const {
+			return dynamic_cast<O>(getReferenceUnsafe());
+		}
+
+		inline O getReferenceUnsafeStaticCast() const {
+			return static_cast<O>(getReferenceUnsafe());
+		}
+
+		//returns an unsafe object pointer
+		inline Object* getReferenceUnsafe() const {
+			Object* object = NULL;
+
+//			StrongAndWeakReferenceCount* old = safeRead();
+                        StrongAndWeakReferenceCount* old = weakReference;
+
+			if (old != NULL) {
+				object = old->getObject();
+
+//				release(old);
+			}
+
+			return object;
+		}
+
+		inline Reference<O> get() const {
+			Reference<O> objectToReturn;
+			StrongAndWeakReferenceCount* currentRef = safeRead();
+
+			if (currentRef == NULL)
+				return objectToReturn;
+
+			if (currentRef->increaseStrongCount() & 1) {
+				release(currentRef);
+
+				return objectToReturn;
+			}
+
+			objectToReturn.initializeWithoutAcquire(currentRef->getObjectReference<O>());
+
 			release(currentRef);
 
 			return objectToReturn;
 		}
 
-		objectToReturn.initializeWithoutAcquire(currentRef->getObjectReference<O>());
+	public:
 
-		release(currentRef);
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			return false;
+		}
 
-		return objectToReturn;
-	}
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			return false;
+		}
 
-public:
+	private:
+		inline StrongAndWeakReferenceCount* safeRead() const {
+			for (;;) {
+				StrongAndWeakReferenceCount* old = weakReference;
 
-	bool toBinaryStream(ObjectOutputStream* stream) {
-		return false;
-	}
+				if (old == NULL)
+					return NULL;
 
-	bool parseFromBinaryStream(ObjectInputStream* stream) {
-		return false;
-	}
+				old->increaseWeakCount();
 
-private:
-	inline StrongAndWeakReferenceCount* safeRead() const {
-		for (;;) {
-			StrongAndWeakReferenceCount* old = weakReference.get();
+				if (old == weakReference)
+					return old;
+				else
+					release(old);
+			}
+		}
 
+		inline void release(StrongAndWeakReferenceCount* old) const {
 			if (old == NULL)
-				return NULL;
-
-			old->increaseWeakCount();
-
-			if (old == weakReference.get())
-				return old;
-			else
-				release(old);
-		}
-	}
-
-	inline void release(StrongAndWeakReferenceCount* old) const {
-		if (old == NULL)
-			return;
-
-		if (old->decrementAndTestAndSetWeakCount() == 0)
-			return;
-
-		delete old;
-	}
-
-	inline void newref(StrongAndWeakReferenceCount* newRef) {
-		if (newRef != NULL)
-			newRef->increaseWeakCount();
-
-		for (;;) {
-			StrongAndWeakReferenceCount* p = safeRead();
-
-			if (weakReference.compareAndSet(p, newRef)) {
-
-				release(p);
-
 				return;
-			} else
-				release(p);
+
+			if (old->decrementAndTestAndSetWeakCount() == 0)
+				return;
+
+			delete old;
 		}
-	}
 
-public:
+		inline void newref(StrongAndWeakReferenceCount* newRef) {
+			if (newRef != NULL)
+				newRef->increaseWeakCount();
 
-	inline void updateObject(O obj) {
-		StrongAndWeakReferenceCount* newRef = NULL;
+			for (;;) {
+				StrongAndWeakReferenceCount* p = safeRead();
 
-		if (obj != NULL)
-			newRef = obj->requestWeak();
+				if (weakReference.compareAndSet(p, newRef)) {
 
-		newref(newRef);
-	}
+					release(p);
 
-	inline void initializeObject(O obj) {
-		updateObject(obj);
-	}
+					return;
+				} else
+					release(p);
+			}
+		}
 
-	inline void initializeObject(StrongAndWeakReferenceCount* count) {
-		newref(count);
-	}
+	public:
 
-	void releaseObject() {
-		newref(NULL);
-	}
+		inline void updateObject(O obj) {
+			StrongAndWeakReferenceCount* newRef = NULL;
 
-	friend class Object;
-};
+			if (obj != NULL)
+				newRef = obj->requestWeak();
 
-} // namespace lang
+			newref(newRef);
+		}
+
+		inline void initializeObject(O obj) {
+			updateObject(obj);
+		}
+
+		inline void initializeObject(StrongAndWeakReferenceCount* count) {
+			newref(count);
+		}
+
+		void releaseObject() {
+			newref(NULL);
+		}
+
+		friend class Object;
+	};
+
+  } // namespace lang
 } // namespace sys
 
 using namespace sys::lang;

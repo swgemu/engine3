@@ -61,7 +61,7 @@ namespace sys {
 			#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
 				return __sync_add_and_fetch(&value, val);
 			#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
-				return ++(value);
+				return value += val;
 			#else
 				return InterlockedAdd64((volatile LONGLONG *) &value, val);
 			#endif
@@ -108,18 +108,18 @@ namespace sys {
 
 			return val == value;
 		}
-
+		
 		bool toBinaryStream(sys::io::ObjectOutputStream* stream) {
-			stream->writeLong(value);
-
-			return true;
+		        stream->writeLong(value);
+		        
+		        return true;
 		}
-
+		
 		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream) {
-			*this = stream->readLong();
-
-			return true;
-		}
+		        *this = stream->readLong();
+		        
+		        return true;
+                }
 	};
 
 	} // namespace atomic
