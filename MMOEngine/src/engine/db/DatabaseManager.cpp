@@ -24,7 +24,7 @@ DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 	setInfoLogLevel();
 
 	databases.setNullValue(NULL);
-	databases.setNoDuplicateInsertPlan();
+	databases.setAllowOverwriteInsertPlan();
 
 	nameDirectory.setNullValue(-1);
 	nameDirectory.setNoDuplicateInsertPlan();
@@ -232,8 +232,15 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 		ObjectInputStream data;
 		uint64 key;
 
+		//uint64 count = objectDatabase->getDatabaseHandle()->count(true, transaction);
+		uint64 convertedCount = 0;
+
+		//printf("total count %llu\n", count);
+
 		while (iterator.getNextKeyAndValue(key, &data)) {
 			ObjectOutputStream* newData = NULL;
+
+			++convertedCount;
 
 			try {
 				newData = Serializable::convertToHashCodeNameMembers(&data);
@@ -248,6 +255,8 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 
 			data.clear();
 		}
+
+		printf("converted %llu\n", convertedCount);
 	}
 
 	setManagedObjectsWithHashCodeMembersFlag(transaction);
@@ -650,6 +659,21 @@ int DatabaseManager::compressDatabase(const String& name, engine::db::berkley::T
 	database->compressDatabaseEntries(transaction);
 
 	uint64 fullKey = 0;
+
+	if (database->isObjectDatabase())
+		fullKey += OBJECTDATABASE;
+	else
+		fullKey += LOCALDATABASE;
+
+	fullKey = fullKey << 32;
+	fullKey += id;
+
+	ObjectOutputStream* oldKeyStream = new ObjectOutputStream(8, 8);
+	TypeInfo<uint64>::toBinaryStream(&fullKey, oldKeyStream);
+
+	databaseDirectory->deleteData(oldKeyStream, transaction);
+
+	fullKey = 0;
 
 	if (database->isObjectDatabase())
 		fullKey += OBJECTDATABASE;
