@@ -59,6 +59,10 @@ DistributedObjectServant* TestIDLClass::_getImplementation() {
 	return _impl;
 }
 
+DistributedObjectServant* TestIDLClass::_getImplementationForRead() {
+	return _impl;
+}
+
 void TestIDLClass::_setImplementation(DistributedObjectServant* servant) {
 	_impl = servant;
 }
@@ -138,14 +142,14 @@ void TestIDLClassImplementation::_serializationHelperMethod() {
 void TestIDLClassImplementation::readObject(ObjectInputStream* stream) {
 	uint16 _varCount = stream->readShort();
 	for (int i = 0; i < _varCount; ++i) {
-		String _name;
-		_name.parseFromBinaryStream(stream);
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
 
 		uint32 _varSize = stream->readInt();
 
 		int _currentOffset = stream->getOffset();
 
-		if(TestIDLClassImplementation::readObjectMember(stream, _name)) {
+		if(TestIDLClassImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
 
 		stream->setOffset(_currentOffset + _varSize);
@@ -154,15 +158,16 @@ void TestIDLClassImplementation::readObject(ObjectInputStream* stream) {
 	initializeTransientMembers();
 }
 
-bool TestIDLClassImplementation::readObjectMember(ObjectInputStream* stream, const String& _name) {
-	if (ManagedObjectImplementation::readObjectMember(stream, _name))
+bool TestIDLClassImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
 		return true;
 
-	if (_name == "TestIDLClass.value") {
+	switch(nameHashCode) {
+	case 0x3f1d6b14: //TestIDLClass.value
 		TypeInfo<int >::parseFromBinaryStream(&value, stream);
 		return true;
-	}
 
+	}
 
 	return false;
 }
@@ -177,11 +182,11 @@ void TestIDLClassImplementation::writeObject(ObjectOutputStream* stream) {
 int TestIDLClassImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
 
-	String _name;
+	uint32 _nameHashCode;
 	int _offset;
 	uint32 _totalSize;
-	_name = "TestIDLClass.value";
-	_name.toBinaryStream(stream);
+	_nameHashCode = 0x3f1d6b14; //TestIDLClass.value
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
 	_offset = stream->getOffset();
 	stream->writeInt(0);
 	TypeInfo<int >::toBinaryStream(&value, stream);

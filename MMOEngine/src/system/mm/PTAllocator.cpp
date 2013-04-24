@@ -21,7 +21,7 @@ PTAllocator::PTAllocator(void* base, size_t size) {
 	dlBase = base;
 	dlSize = size;
 
-	new AllocationTracker(NULL);
+	//new AllocationTracker();
 
 	initialize();
 }
@@ -86,5 +86,5 @@ void PTAllocator::free(void* mem) {
 }
 
 void PTAllocator::printStatistics() {
-	mspace_malloc_stats((mspace) dlMspace);
+	//mspace_malloc_stats((mspace) dlMspace);
 }

@@ -1,1 +1,3 @@
-java -cp /home/oru/workspace-pub/MMOEngine/bin/idlc.jar org.sr.idlc.compiler.Compiler $@
+#!/bin/bash
+
+java -cp $(dirname $0)/../lib/idlc.jar org.sr.idlc.compiler.Compiler $@

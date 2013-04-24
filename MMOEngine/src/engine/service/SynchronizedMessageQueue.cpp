@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "SynchronizedMessageQueue.h"
 
-SynchronizedMessageQueue::SynchronizedMessageQueue(int capacity) : ArrayList<Message*>(capacity, 0), Logger("SynchronizedMessageQueue") {
+/*SynchronizedMessageQueue::SynchronizedMessageQueue(int capacity) : ArrayList<Message*>(capacity, 0), Logger("SynchronizedMessageQueue") {
 	blocked = false;
 
 	setLogging(false);
@@ -28,14 +28,6 @@ void SynchronizedMessageQueue::push(Message* msg) {
 }
 
 Message* SynchronizedMessageQueue::pop() {
-	/*while (isEmpty()) {
-		if (blocked) {
-			return NULL;
-		}
-
-		wait(condMutex);
-	}*/
-
 	int index = readIndex.get();
 	if (writeIndex.get() == index)
 		return NULL;
@@ -54,3 +46,4 @@ void SynchronizedMessageQueue::flush() {
 
 	//signal(condMutex);
 }
+*/

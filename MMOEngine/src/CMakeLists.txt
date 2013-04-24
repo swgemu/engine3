@@ -1,24 +1,44 @@
 # Copyright (C) 2007 <SWGEmu>. All rights reserved.
 # Distribution of this file for usage outside of Core3 is prohibited.
 
-# set cmake find moudles path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/build/unix/cmake/Modules/")
+# Add sources
+file(GLOB_RECURSE system3_sources "system/*.cpp") 
+file(GLOB_RECURSE engine3_sources "engine/*.cpp") 
 
-# find mysql includes and libraries
-find_package(MySql REQUIRED)
-INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})
-set(LIBS ${LIBS} ${MYSQL_LIBRARY})
+#Exclude sources from engine
+#file(GLOB_RECURSE engine3_excludes "")
+#list(REMOVE_ITEM engine3_sources ${engine3_excludes})
 
-# find berkeley includes and libraries
-find_package(Berkeley REQUIRED)
-INCLUDE_DIRECTORIES(${DB_INCLUDE_DIR})
-set(LIBS ${LIBS} ${DB_LIBRARIES})
+# Add includes
+include_directories(.)
+include_directories(../external/dlmalloc)
+include_directories(../external/ptmalloc3)
+include_directories(../external/multimmap)
 
-# add engine3 sources
-FILE(GLOB_RECURSE engine3_sources "*.cpp") 
+message("Compiling for ${ARCH}-bit architecture")
 
-# add engine3 includes
-INCLUDE_DIRECTORIES(.)
+if (ARCH EQUAL 32)
+# Create library
+add_library(engine3_32 SHARED ${system3_sources} ${engine3_sources})
 
-# create engine3 library
-ADD_LIBRARY(engine3 SHARED ${engine3_sources})
+# Set target specific compile flags 
+set_target_properties(engine3_32 PROPERTIES COMPILE_FLAGS -m32 LINK_FLAGS -m32)
+
+# Install library
+install(TARGETS engine3_32 DESTINATION lib)
+
+else ()
+# Create library
+add_library(engine3 SHARED ${system3_sources} ${engine3_sources})
+
+# Install headers and library
+install(TARGETS engine3 DESTINATION lib)
+install(DIRECTORY . DESTINATION include
+	FILES_MATCHING PATTERN "*.h"
+	PATTERN "testsuite3" EXCLUDE)
+
+# Install idlc
+install(PROGRAMS ../bin/idlc DESTINATION bin)
+install(FILES ../lib/idlc.jar DESTINATION lib)
+endif ()
+	

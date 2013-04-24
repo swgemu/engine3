@@ -1,8 +1,8 @@
-# Install script for directory: /home/oru/workspace/MMOEngine
+# Install script for directory: /home/oru/workspace-pub/MMOEngine-Private
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "/usr/local")
+  SET(CMAKE_INSTALL_PREFIX "/opt/engine3")
 ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
 STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,7 +34,7 @@ ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 
 IF(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  INCLUDE("/home/oru/workspace/MMOEngine/build/unix/src/cmake_install.cmake")
+  INCLUDE("/home/oru/workspace-pub/MMOEngine-Private/build/unix/src/cmake_install.cmake")
 
 ENDIF(NOT CMAKE_INSTALL_LOCAL_ONLY)
 
@@ -44,7 +44,7 @@ ELSE(CMAKE_INSTALL_COMPONENT)
   SET(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 ENDIF(CMAKE_INSTALL_COMPONENT)
 
-FILE(WRITE "/home/oru/workspace/MMOEngine/build/unix/${CMAKE_INSTALL_MANIFEST}" "")
+FILE(WRITE "/home/oru/workspace-pub/MMOEngine-Private/build/unix/${CMAKE_INSTALL_MANIFEST}" "")
 FOREACH(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  FILE(APPEND "/home/oru/workspace/MMOEngine/build/unix/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
+  FILE(APPEND "/home/oru/workspace-pub/MMOEngine-Private/build/unix/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
 ENDFOREACH(file)

@@ -8,12 +8,12 @@
 namespace engine {
   namespace core {
 
-	class TaskStatistics : public Logger, public Singleton<TaskStatistics> {
+	/*class TaskStatistics : public Logger, public Singleton<TaskStatistics> {
 	public:
 		TaskStatistics();
 
 		void taskFinished(Task* task, uint64 executionTime);
-	};
+	};*/
 
   } // namespace core
 } // namespace engine
