@@ -102,18 +102,18 @@ pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
 
 build-cmake: recompile-idlc
-	cd build/unix && cmake -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && make -j`grep -c processor /proc/cpuinfo`
+	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && make -j`grep -c processor /proc/cpuinfo`
 
 build-cmake-pub: recompile-idlc
-	cd build/unix && cmake -DVERSION_PUBLIC=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && make -j`grep -c processor /proc/cpuinfo`
-	cd build/unix32 && cmake DVERSION_PUBLIC=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=32 ../../ && make -j`grep -c processor /proc/cpuinfo`
+	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && make -j`grep -c processor /proc/cpuinfo`
+	cd build/unix32 && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=32 ../../ && make -j`grep -c processor /proc/cpuinfo`
 	
 install-cmake:
 	cd build/unix && make install
 
 install-cmake-pub:
-	cd build/unix && make install
-	cd build/unix32 && make install
+	cd build/unix && make install/strip
+	cd build/unix32 && make install/strip
 
 clean-cmake:
 	cd build/unix && make clean

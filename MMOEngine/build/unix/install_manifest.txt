@@ -313,5 +313,13 @@
 /opt/engine3/include/./system/util/BinarySearchTree.h
 /opt/engine3/include/./system/util/SortedVector.h
 /opt/engine3/include/./system/util/Vector.h
+/opt/engine3/include/./engine/core/ManagedService.idl
+/opt/engine3/include/./engine/core/ManagedObject.idl
+/opt/engine3/include/./engine/core/util/ManagedVector.idl
+/opt/engine3/include/./engine/util/Observer.idl
+/opt/engine3/include/./engine/util/Observable.idl
+/opt/engine3/include/./engine/util/u3d/QuadTreeEntry.idl
+/opt/engine3/include/./engine/util/Facade.idl
+/opt/engine3/include/./testsuite3/tests/TestIDLClass.idl
 /opt/engine3/bin/idlc
 /opt/engine3/lib/idlc.jar

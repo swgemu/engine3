@@ -18,27 +18,31 @@ include_directories(../external/multimmap)
 message("Compiling for ${ARCH}-bit architecture")
 
 if (ARCH EQUAL 32)
-# Create library
-add_library(engine3_32 SHARED ${system3_sources} ${engine3_sources})
+	# Create library
+	add_library(engine3_32 SHARED ${system3_sources} ${engine3_sources})
 
-# Set target specific compile flags 
-set_target_properties(engine3_32 PROPERTIES COMPILE_FLAGS -m32 LINK_FLAGS -m32)
+	# Set target specific compile flags 
+	set_target_properties(engine3_32 PROPERTIES COMPILE_FLAGS -m32 LINK_FLAGS -m32)
 
-# Install library
-install(TARGETS engine3_32 DESTINATION lib)
+	# Install library
+	install(TARGETS engine3_32 DESTINATION lib)
 
 else ()
-# Create library
-add_library(engine3 SHARED ${system3_sources} ${engine3_sources})
+	# Create library
+	add_library(engine3 SHARED ${system3_sources} ${engine3_sources})
 
-# Install headers and library
-install(TARGETS engine3 DESTINATION lib)
-install(DIRECTORY . DESTINATION include
-	FILES_MATCHING PATTERN "*.h"
-	PATTERN "testsuite3" EXCLUDE)
+	# Install headers and library
+	install(TARGETS engine3 DESTINATION lib)
+	install(DIRECTORY . DESTINATION include
+		FILES_MATCHING PATTERN "*.h"
+		PATTERN "testsuite3" EXCLUDE)
 
-# Install idlc
-install(PROGRAMS ../bin/idlc DESTINATION bin)
-install(FILES ../lib/idlc.jar DESTINATION lib)
+	# Install idl sources
+	install(DIRECTORY . DESTINATION include
+		FILES_MATCHING PATTERN "*.idl")
+
+	# Install idlc
+	install(PROGRAMS ../bin/idlc DESTINATION bin)
+	install(FILES ../lib/idlc.jar DESTINATION lib)
 endif ()
 	

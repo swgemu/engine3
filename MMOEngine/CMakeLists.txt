@@ -20,7 +20,7 @@ find_package(Berkeley REQUIRED)
 include_directories(${DB_INCLUDE_DIR})
 
 # Define build flags for public or private engine builds
-if (VERSION_PUBLIC)
+if (ENGINE_TYPE EQUAL 2)
 	message("Building public engine")
 	set(CMAKE_CXX_FLAGS "-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual")
 else ()

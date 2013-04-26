@@ -19,14 +19,16 @@ INCLUDES =  $(SYSTEM_INCLUDES) \
 	    	-I../../../external/dlmalloc \
 	    	-I../../../external/multimmap
 
-LIBS =  $(SYSTEM_LIBS) \
-		-L/usr/local/BerkeleyDB.5.0/lib \
-		-lmysqlclient -llua -lz -ldb \
-		-lengine3
+#LIBS =  $(SYSTEM_LIBS) \
+#		-L/usr/local/BerkeleyDB.5.0/lib \
+#		-lmysqlclient -llua -lz -ldb \
+#		-lengine3
 
-noinst_LIBRARIES = libengine3.a
+#noinst_LIBRARIES = libengine3.a
 
-libengine3_a_SOURCES = \
+lib_LTLIBRARIES = libengine3.la
+
+libengine3_la_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
 			system/lang/Exception.cpp \
@@ -156,6 +158,8 @@ libengine3_a_SOURCES = \
 			engine/lua/Lua.cpp \
 			engine/lua/LuaFunction.cpp \
 			engine/lua/LuaObject.cpp
+
+#libengine3_la_SOURCES = libengine3_a_SOURCES
 
 .h.gch:
 	$(CXXCOMPILE) $<
