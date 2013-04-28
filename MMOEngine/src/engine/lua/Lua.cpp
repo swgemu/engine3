@@ -62,6 +62,7 @@ bool Lua::runFile(const String& filename) {
 		}
 	} catch (LuaPanicException& e) {
 		error("LuaPanicException while running " + filename);
+		error(e.getMessage());
 
 		return false;
 	}
@@ -69,7 +70,7 @@ bool Lua::runFile(const String& filename) {
 	return true;
 }
 
-void Lua::runFile(const String& filename, lua_State* lState) {
+bool Lua::runFile(const String& filename, lua_State* lState) {
 	try {
 		if (!filename.isEmpty()) {
 			//System::out << "Loading lua file: " << filename << "\n";
@@ -79,13 +80,18 @@ void Lua::runFile(const String& filename, lua_State* lState) {
 				lua_pop(lState,1);
 
 				System::out << "file:" << filename << " ERROR " << err << "\n";
+
+				return false;
 			}
 		}
 	} catch (LuaPanicException& e) {
 		Logger::console.error("LuaPanicException while running " + filename);
+		Logger::console.error(e.getMessage());
 
-		return;
+		return false;
 	}
+
+	return true;
 }
 
 bool Lua::runString(const String& str) {

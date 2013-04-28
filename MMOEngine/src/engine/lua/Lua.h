@@ -42,7 +42,7 @@ namespace engine {
 		bool runString(const String& str);
 
 		//static
-		static void runFile(const String& filename, lua_State* lState);
+		static bool runFile(const String& filename, lua_State* lState);
 
 		static int atPanic(lua_State* L);
 
