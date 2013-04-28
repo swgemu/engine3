@@ -101,7 +101,15 @@ pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
 
-CPU_CORES:=$(shell grep -c processor /proc/cpuinfo)
+PLATFORM:=$(shell uname -s)
+
+ifeq ($(PLATFORM),Linux)
+	CPU_CORES:=$(shell grep -c processor /proc/cpuinfo)
+else 
+ifeq ($(PLATFORM),Darwin)
+  	CPU_CORES:=$(shell system_profiler | awk '/Number Of CPUs/{print $4}{next;}'}
+endif
+endif
 
 build-cmake: recompile-idlc
 	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && make -j$(CPU_CORES)

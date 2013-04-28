@@ -294,6 +294,7 @@
 /opt/engine3/include/./system/thread/Condition.h
 /opt/engine3/include/./system/thread/ReadWriteLock.h
 /opt/engine3/include/./system/thread/Lockable.h
+/opt/engine3/include/./system/thread/ChildProcess.h
 /opt/engine3/include/./system/thread/Mutex.h
 /opt/engine3/include/./system/thread/Thread.h
 /opt/engine3/include/./system/platform.h
