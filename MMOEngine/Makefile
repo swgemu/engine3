@@ -107,7 +107,7 @@ ifeq ($(PLATFORM),Linux)
 	CPU_CORES:=$(shell grep -c processor /proc/cpuinfo)
 else 
 ifeq ($(PLATFORM),Darwin)
-  	CPU_CORES:=$(shell system_profiler | awk '/Number Of CPUs/{print $4}{next;}'}
+  	CPU_CORES:=$(shell system_profiler | awk '/Number Of CPUs/{print $4}{next;}')
 endif
 endif
 
