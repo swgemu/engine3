@@ -6,36 +6,31 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef CHILDPROCESS_H_
 #define CHILDPROCESS_H_
 
-#include "system/platform.h"
-
-#include <unistd.h>
-#include <signal.h>
-#include <sys/wait.h>
-
-#include "system/lang/Runnable.h"
+#include "Process.h"
 
 namespace sys {
   namespace thread {
 
-  	class ChildProcess :public Runnable {
-  		int pid;
-
+  	class ChildProcess : public Process {
   	public:
-  		ChildProcess() : pid(0) { }
+  		ChildProcess();
 
-  		void start() {
-  		    pid = fork();
-  		    if (!pid) {
-  		        //dup2(2,0); // redirect output to stdout
+  		void initialize();
 
-  		    	run();
-  		    }
+  		void start();
+
+  		virtual bool isDeadlocked() {
+  			return false;
   		}
 
-  		void wait() {
-  			if (pid)
-  				waitpid(pid,NULL,0);
+  		virtual void handleCrash() {
   		}
+
+  		virtual void handleDeadlock() {
+  		}
+
+  		void printCrash();
+  		void printDeadlock();
   	};
 
   } // namespace thread

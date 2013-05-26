@@ -96,7 +96,8 @@ void IOProcessor::addFileDescriptor(FileDescriptor* descriptor, bool edgeTrigger
 
 	int res = epoll_ctl(epollFileDescritptor, EPOLL_CTL_ADD, fileDescriptor, &ev);
 	if (res < 0)
-		throw IOException("epoll file descriptor add failed");
+		throw IOException("epoll file descriptor \'" + String::valueOf(fileDescriptor)
+						+ "\' add failed");
 }
 
 void IOProcessor::removeFileDescriptor(FileDescriptor* descriptor) {

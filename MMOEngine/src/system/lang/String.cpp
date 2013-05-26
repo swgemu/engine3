@@ -304,7 +304,7 @@ String String::subString(int beginIndex, int endIndex) const {
 String String::valueOf(int val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%d", val);
+	snprintf(buf, 20, "%i", val);
 
 	return String(buf);
 }

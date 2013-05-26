@@ -265,6 +265,7 @@
 /opt/engine3/include/./system/io/InputStream.h
 /opt/engine3/include/./system/io/StringTokenizer.h
 /opt/engine3/include/./system/io/FileWriter.h
+/opt/engine3/include/./system/io/Pipe.h
 /opt/engine3/include/./system/io/PrintStream.h
 /opt/engine3/include/./system/io/IOException.h
 /opt/engine3/include/./system/io/File.h
@@ -284,9 +285,11 @@
 /opt/engine3/include/./system/io/FileOutputStream.h
 /opt/engine3/include/./system/io/IOEvent.h
 /opt/engine3/include/./system/io/FileDescriptor.h
+/opt/engine3/include/./system/thread/gdb/GdbStub.h
 /opt/engine3/include/./system/thread/ThreadLocal.h
 /opt/engine3/include/./system/thread/Locker.h
 /opt/engine3/include/./system/thread/ReadLocker.h
+/opt/engine3/include/./system/thread/Process.h
 /opt/engine3/include/./system/thread/atomic/AtomicBoolean.h
 /opt/engine3/include/./system/thread/atomic/AtomicInteger.h
 /opt/engine3/include/./system/thread/atomic/AtomicLong.h

@@ -11,7 +11,7 @@ namespace sys {
 	class IOException : public Exception {
 	public:
 		IOException(const String& msg) {
-			message = msg + "(" + String::valueOf(errno) + ")";
+			message = msg + " (" + String::valueOf(errno) + ": " + strerror(errno)  +  ")";
 		}
 
 	};

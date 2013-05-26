@@ -18,6 +18,10 @@ namespace sys {
 		int fileDescriptor;
 
 	public:
+		FileDescriptor() {
+			fileDescriptor = -1;
+		}
+
 		virtual void handleEvent(const IOEvent& event) {
 		}
 

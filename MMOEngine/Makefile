@@ -118,7 +118,7 @@ build-cmake-pub: recompile-idlc
 	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && make -j$(CPU_CORES)
 	cd build/unix32 && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=32 ../../ && make -j$(CPU_CORES)
 	
-install-cmake:
+install-cmake: build-cmake
 	cd build/unix && make install
 
 install-cmake-pub:
