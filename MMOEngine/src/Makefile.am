@@ -50,9 +50,12 @@ libengine3_a_SOURCES = \
 			system/mm/MemoryMappedFile.cpp \
 			system/mm/DLAllocator.cpp \
 			system/thread/Thread.cpp \
+			system/thread/Process.cpp \
+			system/thread/ChildProcess.cpp \
 			system/thread/Lockable.cpp \
 			system/thread/Mutex.cpp \
 			system/thread/ReadWriteLock.cpp \
+			system/thread/gdb/GdbStub.cpp \
 			system/net/Socket.cpp \
 			system/net/SocketAddress.cpp \
 			system/net/InetAddress.cpp \
@@ -66,6 +69,7 @@ libengine3_a_SOURCES = \
 			system/io/UnicodeTokenizer.cpp \
 			system/io/PrintStream.cpp \
 			system/io/Serializable.cpp \
+			system/io/Pipe.cpp \
 			system/util/PriorityQueue.cpp \
 			engine/engine.h \
 			engine/core/Core.cpp \

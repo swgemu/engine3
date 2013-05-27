@@ -185,7 +185,6 @@ psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-subdirs = @subdirs@
 sysconfdir = @sysconfdir@
 target = @target@
 target_alias = @target_alias@
@@ -194,7 +193,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = src src/testsuite3
+SUBDIRS = src #src/testsuite3
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

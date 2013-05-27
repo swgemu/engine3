@@ -5,7 +5,7 @@ IDLC = bin/idlc
 
 INSTALL_PATH = /usr/local/engine3
 
-ENGINE_PUB_PATH = ../MMOEngine-Pub
+ENGINE_PUB_PATH = /home/oru/git/PublicEngine/MMOEngine
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/ManagedService.idl \
@@ -88,8 +88,8 @@ install-headers:
 
 install-lib:
 	cp build/unix/src/libengine3.a lib/unix
-	cp build/unix/src/testsuite3/testsuite3* bin
-	rm build/unix/src/testsuite3/testsuite3*	
+	#cp build/unix/src/testsuite3/testsuite3* bin
+	#rm build/unix/src/testsuite3/testsuite3*	
 
 install-public:	
 	strip --strip-debug lib/unix/libengine3.a

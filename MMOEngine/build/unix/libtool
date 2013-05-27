@@ -65,13 +65,13 @@ allow_libtool_libs_with_static_runtimes=no
 fast_install=yes
 
 # The host system.
-host_alias=
-host=x86_64-unknown-linux-gnu
+host_alias=i686-linux
+host=i686-pc-linux-gnu
 host_os=linux-gnu
 
 # The build system.
-build_alias=
-build=x86_64-unknown-linux-gnu
+build_alias=i686-linux
+build=i686-pc-linux-gnu
 build_os=linux-gnu
 
 # An echo program that does not interpret backslashes.
@@ -97,7 +97,7 @@ with_gcc=yes
 EGREP="/bin/grep -E"
 
 # The linker used to build libraries.
-LD="/usr/bin/ld -m elf_x86_64"
+LD="/usr/bin/ld"
 
 # Whether we need hard or soft links.
 LN_S="ln -s"
@@ -7341,13 +7341,13 @@ allow_libtool_libs_with_static_runtimes=no
 fast_install=yes
 
 # The host system.
-host_alias=
-host=x86_64-unknown-linux-gnu
+host_alias=i686-linux
+host=i686-pc-linux-gnu
 host_os=linux-gnu
 
 # The build system.
-build_alias=
-build=x86_64-unknown-linux-gnu
+build_alias=i686-linux
+build=i686-pc-linux-gnu
 build_os=linux-gnu
 
 # An echo program that does not interpret backslashes.
@@ -7373,7 +7373,7 @@ with_gcc=yes
 EGREP="/bin/grep -E"
 
 # The linker used to build libraries.
-LD="/usr/bin/ld -m elf_x86_64"
+LD="/usr/bin/ld"
 
 # Whether we need hard or soft links.
 LN_S="ln -s"

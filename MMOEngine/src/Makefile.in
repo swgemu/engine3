@@ -45,111 +45,129 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)"
-libLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(lib_LTLIBRARIES)
-libengine3_la_LIBADD =
+LIBRARIES = $(noinst_LIBRARIES)
+ARFLAGS = cru
+libengine3_a_AR = $(AR) $(ARFLAGS)
+libengine3_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libengine3_la_OBJECTS = system/lang/System.lo \
-	system/lang/Exception.lo system/lang/Object.lo \
-	system/lang/String.lo system/lang/StringBuffer.lo \
-	system/lang/UnicodeString.lo system/lang/Math.lo \
-	system/lang/StackTrace.lo system/lang/types.lo \
-	system/lang/Integer.lo \
-	system/lang/ArrayIndexOutOfBoundsException.lo \
-	system/mm/MemoryManager.lo system/mm/AllocationHook.lo \
-	system/mm/AllocationReplacement.lo \
-	system/mm/AllocationTracker.lo \
-	system/mm/MultimapMemoryManager.lo system/mm/Heap.lo \
-	system/mm/ProtectedHeap.lo system/mm/ProcessHeap.lo \
-	system/mm/MemoryMappedFile.lo system/mm/DLAllocator.lo \
-	system/thread/Thread.lo system/thread/Lockable.lo \
-	system/thread/Mutex.lo system/thread/ReadWriteLock.lo \
-	system/net/Socket.lo system/net/SocketAddress.lo \
-	system/net/InetAddress.lo system/net/NetworkInterface.lo \
-	system/net/Packet.lo system/io/IOProcessor.lo \
-	system/io/Stream.lo system/io/File.lo \
-	system/io/BufferedReader.lo system/io/StringTokenizer.lo \
-	system/io/UnicodeTokenizer.lo system/io/PrintStream.lo \
-	system/io/Serializable.lo system/util/PriorityQueue.lo \
-	engine/core/Core.lo engine/core/Task.lo \
-	engine/core/TaskManagerImpl.lo engine/core/TaskScheduler.lo \
-	engine/core/TaskQueue.lo engine/core/TimedTaskQueue.lo \
-	engine/core/TaskWorkerThread.lo \
-	engine/core/ObjectUpdateToDatabaseTask.lo \
-	engine/core/ManagedObject.lo engine/core/ManagedService.lo \
-	engine/core/ManagedObjectImplementation.lo \
-	engine/core/ManagedProcess.lo engine/service/ServiceClient.lo \
-	engine/service/ServiceThread.lo \
-	engine/service/ServiceMessageHandlerThread.lo \
-	engine/service/DatagramServiceClient.lo \
-	engine/service/DatagramServiceClientProxy.lo \
-	engine/service/DatagramServiceThread.lo \
-	engine/service/StreamServiceClient.lo \
-	engine/service/StreamServiceThread.lo \
-	engine/service/MessageQueue.lo \
-	engine/service/proto/BaseProtocol.lo \
-	engine/service/proto/BasePacket.lo \
-	engine/service/proto/BaseMultiPacket.lo \
-	engine/service/proto/BaseFragmentedPacket.lo \
-	engine/service/proto/BasePacketHandler.lo \
-	engine/service/proto/BaseClient.lo \
-	engine/service/proto/BaseClientProxy.lo \
-	engine/service/proto/events/BasePacketChekupEvent.lo \
-	engine/orb/DistributedObjectBroker.lo \
-	engine/orb/NamingDirectoryService.lo \
-	engine/orb/db/DistributedObjectDirectory.lo \
-	engine/orb/db/DOBObjectManager.lo \
-	engine/orb/db/CommitMasterTransactionThread.lo \
-	engine/orb/db/UpdateModifiedObjectsThread.lo \
-	engine/orb/object/DistributedObject.lo \
-	engine/orb/object/DistributedObjectServant.lo \
-	engine/orb/object/DistributedObjectStub.lo \
-	engine/orb/object/DistributedMethod.lo \
-	engine/orb/messages/RemoteObjectBroker.lo \
-	engine/orb/messages/DOBServiceClient.lo \
-	engine/orb/messages/DOBMessageFactory.lo \
-	engine/orb/control/ObjectBrokerDirector.lo \
-	engine/orb/control/ObjectBrokerAgent.lo \
-	engine/stm/Transaction.lo \
-	engine/stm/TransactionalMemoryManager.lo \
-	engine/stm/mm/KernelCall.lo \
-	engine/stm/task/TransactionalTaskManager.lo \
-	engine/stm/task/LocalTaskManager.lo \
-	engine/stm/orb/TransactionalObjectManager.lo \
-	engine/stm/orb/LocalObjectManager.lo \
-	engine/stm/service/TransactionalSocketManager.lo \
-	engine/stm/service/TransactionalBaseClientManager.lo \
-	engine/stm/algos/FraserSTM.lo engine/util/Observer.lo \
-	engine/util/ObserverImplementation.lo \
-	engine/util/ObserverEventMap.lo engine/util/Observable.lo \
-	engine/util/Facade.lo engine/util/u3d/QuadTree.lo \
-	engine/util/u3d/Segment.lo engine/util/u3d/QuadTreeEntry.lo \
-	engine/util/u3d/QuadTreeEntryImplementation.lo \
-	engine/util/u3d/TriangulationAStarAlgorithm.lo \
-	engine/util/u3d/AABBTree.lo engine/util/u3d/Sphere.lo \
-	engine/util/u3d/Triangle.lo engine/util/u3d/Matrix4.lo \
-	engine/util/u3d/Funnel.lo engine/util/iffstream/IffStream.lo \
-	engine/util/iffstream/chunks/Chunk.lo \
-	engine/util/iffstream/chunks/form/Form.lo \
-	engine/db/BinaryData.lo engine/db/ObjectDatabase.lo \
-	engine/db/DatabaseManager.lo \
-	engine/db/ObjectDatabaseManager.lo engine/db/LocalDatabase.lo \
-	engine/db/mysql/MySqlDatabase.lo \
-	engine/db/mysql/MysqlDatabaseManager.lo \
-	engine/db/berkley/BerkeleyDatabase.lo \
-	engine/db/berkley/BTransaction.lo \
-	engine/db/berkley/DatabaseEntry.lo \
-	engine/db/berkley/Environment.lo engine/db/berkley/Cursor.lo \
-	engine/log/Logger.lo engine/lua/Lua.lo \
-	engine/lua/LuaFunction.lo engine/lua/LuaObject.lo
-libengine3_la_OBJECTS = $(am_libengine3_la_OBJECTS)
+am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
+	system/lang/Exception.$(OBJEXT) system/lang/Object.$(OBJEXT) \
+	system/lang/String.$(OBJEXT) \
+	system/lang/StringBuffer.$(OBJEXT) \
+	system/lang/UnicodeString.$(OBJEXT) system/lang/Math.$(OBJEXT) \
+	system/lang/StackTrace.$(OBJEXT) system/lang/types.$(OBJEXT) \
+	system/lang/Integer.$(OBJEXT) \
+	system/lang/ArrayIndexOutOfBoundsException.$(OBJEXT) \
+	system/mm/MemoryManager.$(OBJEXT) \
+	system/mm/AllocationHook.$(OBJEXT) \
+	system/mm/AllocationReplacement.$(OBJEXT) \
+	system/mm/AllocationTracker.$(OBJEXT) \
+	system/mm/MultimapMemoryManager.$(OBJEXT) \
+	system/mm/Heap.$(OBJEXT) system/mm/ProtectedHeap.$(OBJEXT) \
+	system/mm/ProcessHeap.$(OBJEXT) \
+	system/mm/MemoryMappedFile.$(OBJEXT) \
+	system/mm/DLAllocator.$(OBJEXT) system/thread/Thread.$(OBJEXT) \
+	system/thread/Process.$(OBJEXT) \
+	system/thread/ChildProcess.$(OBJEXT) \
+	system/thread/Lockable.$(OBJEXT) system/thread/Mutex.$(OBJEXT) \
+	system/thread/ReadWriteLock.$(OBJEXT) \
+	system/thread/gdb/GdbStub.$(OBJEXT) \
+	system/net/Socket.$(OBJEXT) system/net/SocketAddress.$(OBJEXT) \
+	system/net/InetAddress.$(OBJEXT) \
+	system/net/NetworkInterface.$(OBJEXT) \
+	system/net/Packet.$(OBJEXT) system/io/IOProcessor.$(OBJEXT) \
+	system/io/Stream.$(OBJEXT) system/io/File.$(OBJEXT) \
+	system/io/BufferedReader.$(OBJEXT) \
+	system/io/StringTokenizer.$(OBJEXT) \
+	system/io/UnicodeTokenizer.$(OBJEXT) \
+	system/io/PrintStream.$(OBJEXT) \
+	system/io/Serializable.$(OBJEXT) system/io/Pipe.$(OBJEXT) \
+	system/util/PriorityQueue.$(OBJEXT) engine/core/Core.$(OBJEXT) \
+	engine/core/Task.$(OBJEXT) \
+	engine/core/TaskManagerImpl.$(OBJEXT) \
+	engine/core/TaskScheduler.$(OBJEXT) \
+	engine/core/TaskQueue.$(OBJEXT) \
+	engine/core/TimedTaskQueue.$(OBJEXT) \
+	engine/core/TaskWorkerThread.$(OBJEXT) \
+	engine/core/ObjectUpdateToDatabaseTask.$(OBJEXT) \
+	engine/core/ManagedObject.$(OBJEXT) \
+	engine/core/ManagedService.$(OBJEXT) \
+	engine/core/ManagedObjectImplementation.$(OBJEXT) \
+	engine/core/ManagedProcess.$(OBJEXT) \
+	engine/service/ServiceClient.$(OBJEXT) \
+	engine/service/ServiceThread.$(OBJEXT) \
+	engine/service/ServiceMessageHandlerThread.$(OBJEXT) \
+	engine/service/DatagramServiceClient.$(OBJEXT) \
+	engine/service/DatagramServiceClientProxy.$(OBJEXT) \
+	engine/service/DatagramServiceThread.$(OBJEXT) \
+	engine/service/StreamServiceClient.$(OBJEXT) \
+	engine/service/StreamServiceThread.$(OBJEXT) \
+	engine/service/MessageQueue.$(OBJEXT) \
+	engine/service/proto/BaseProtocol.$(OBJEXT) \
+	engine/service/proto/BasePacket.$(OBJEXT) \
+	engine/service/proto/BaseMultiPacket.$(OBJEXT) \
+	engine/service/proto/BaseFragmentedPacket.$(OBJEXT) \
+	engine/service/proto/BasePacketHandler.$(OBJEXT) \
+	engine/service/proto/BaseClient.$(OBJEXT) \
+	engine/service/proto/BaseClientProxy.$(OBJEXT) \
+	engine/service/proto/events/BasePacketChekupEvent.$(OBJEXT) \
+	engine/orb/DistributedObjectBroker.$(OBJEXT) \
+	engine/orb/NamingDirectoryService.$(OBJEXT) \
+	engine/orb/db/DistributedObjectDirectory.$(OBJEXT) \
+	engine/orb/db/DOBObjectManager.$(OBJEXT) \
+	engine/orb/db/CommitMasterTransactionThread.$(OBJEXT) \
+	engine/orb/db/UpdateModifiedObjectsThread.$(OBJEXT) \
+	engine/orb/object/DistributedObject.$(OBJEXT) \
+	engine/orb/object/DistributedObjectServant.$(OBJEXT) \
+	engine/orb/object/DistributedObjectStub.$(OBJEXT) \
+	engine/orb/object/DistributedMethod.$(OBJEXT) \
+	engine/orb/messages/RemoteObjectBroker.$(OBJEXT) \
+	engine/orb/messages/DOBServiceClient.$(OBJEXT) \
+	engine/orb/messages/DOBMessageFactory.$(OBJEXT) \
+	engine/orb/control/ObjectBrokerDirector.$(OBJEXT) \
+	engine/orb/control/ObjectBrokerAgent.$(OBJEXT) \
+	engine/stm/Transaction.$(OBJEXT) \
+	engine/stm/TransactionalMemoryManager.$(OBJEXT) \
+	engine/stm/mm/KernelCall.$(OBJEXT) \
+	engine/stm/task/TransactionalTaskManager.$(OBJEXT) \
+	engine/stm/task/LocalTaskManager.$(OBJEXT) \
+	engine/stm/orb/TransactionalObjectManager.$(OBJEXT) \
+	engine/stm/orb/LocalObjectManager.$(OBJEXT) \
+	engine/stm/service/TransactionalSocketManager.$(OBJEXT) \
+	engine/stm/service/TransactionalBaseClientManager.$(OBJEXT) \
+	engine/stm/algos/FraserSTM.$(OBJEXT) \
+	engine/util/Observer.$(OBJEXT) \
+	engine/util/ObserverImplementation.$(OBJEXT) \
+	engine/util/ObserverEventMap.$(OBJEXT) \
+	engine/util/Observable.$(OBJEXT) engine/util/Facade.$(OBJEXT) \
+	engine/util/u3d/QuadTree.$(OBJEXT) \
+	engine/util/u3d/Segment.$(OBJEXT) \
+	engine/util/u3d/QuadTreeEntry.$(OBJEXT) \
+	engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT) \
+	engine/util/u3d/TriangulationAStarAlgorithm.$(OBJEXT) \
+	engine/util/u3d/AABBTree.$(OBJEXT) \
+	engine/util/u3d/Sphere.$(OBJEXT) \
+	engine/util/u3d/Triangle.$(OBJEXT) \
+	engine/util/u3d/Matrix4.$(OBJEXT) \
+	engine/util/u3d/Funnel.$(OBJEXT) \
+	engine/util/iffstream/IffStream.$(OBJEXT) \
+	engine/util/iffstream/chunks/Chunk.$(OBJEXT) \
+	engine/util/iffstream/chunks/form/Form.$(OBJEXT) \
+	engine/db/BinaryData.$(OBJEXT) \
+	engine/db/ObjectDatabase.$(OBJEXT) \
+	engine/db/DatabaseManager.$(OBJEXT) \
+	engine/db/ObjectDatabaseManager.$(OBJEXT) \
+	engine/db/LocalDatabase.$(OBJEXT) \
+	engine/db/mysql/MySqlDatabase.$(OBJEXT) \
+	engine/db/mysql/MysqlDatabaseManager.$(OBJEXT) \
+	engine/db/berkley/BerkeleyDatabase.$(OBJEXT) \
+	engine/db/berkley/BTransaction.$(OBJEXT) \
+	engine/db/berkley/DatabaseEntry.$(OBJEXT) \
+	engine/db/berkley/Environment.$(OBJEXT) \
+	engine/db/berkley/Cursor.$(OBJEXT) engine/log/Logger.$(OBJEXT) \
+	engine/lua/Lua.$(OBJEXT) engine/lua/LuaFunction.$(OBJEXT) \
+	engine/lua/LuaObject.$(OBJEXT)
+libengine3_a_OBJECTS = $(am_libengine3_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build/unix/config/depcomp
 am__depfiles_maybe = depfiles
@@ -171,8 +189,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libengine3_la_SOURCES)
-DIST_SOURCES = $(libengine3_la_SOURCES)
+SOURCES = $(libengine3_a_SOURCES)
+DIST_SOURCES = $(libengine3_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -212,7 +230,11 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@
+LIBS = $(SYSTEM_LIBS) \
+		-L/usr/local/BerkeleyDB.5.0/lib \
+		-lmysqlclient -llua -lz -ldb \
+		-lengine3
+
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -284,7 +306,6 @@ psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-subdirs = @subdirs@
 sysconfdir = @sysconfdir@
 target = @target@
 target_alias = @target_alias@
@@ -307,15 +328,8 @@ INCLUDES = $(SYSTEM_INCLUDES) \
 	    	-I../../../external/dlmalloc \
 	    	-I../../../external/multimmap
 
-
-#LIBS =  $(SYSTEM_LIBS) \
-#		-L/usr/local/BerkeleyDB.5.0/lib \
-#		-lmysqlclient -llua -lz -ldb \
-#		-lengine3
-
-#noinst_LIBRARIES = libengine3.a
-lib_LTLIBRARIES = libengine3.la
-libengine3_la_SOURCES = \
+noinst_LIBRARIES = libengine3.a
+libengine3_a_SOURCES = \
 			system/lang.h \
 			system/lang/System.cpp \
 			system/lang/Exception.cpp \
@@ -339,9 +353,12 @@ libengine3_la_SOURCES = \
 			system/mm/MemoryMappedFile.cpp \
 			system/mm/DLAllocator.cpp \
 			system/thread/Thread.cpp \
+			system/thread/Process.cpp \
+			system/thread/ChildProcess.cpp \
 			system/thread/Lockable.cpp \
 			system/thread/Mutex.cpp \
 			system/thread/ReadWriteLock.cpp \
+			system/thread/gdb/GdbStub.cpp \
 			system/net/Socket.cpp \
 			system/net/SocketAddress.cpp \
 			system/net/InetAddress.cpp \
@@ -355,6 +372,7 @@ libengine3_la_SOURCES = \
 			system/io/UnicodeTokenizer.cpp \
 			system/io/PrintStream.cpp \
 			system/io/Serializable.cpp \
+			system/io/Pipe.cpp \
 			system/util/PriorityQueue.cpp \
 			engine/engine.h \
 			engine/core/Core.cpp \
@@ -479,60 +497,36 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-libLTLIBRARIES: $(lib_LTLIBRARIES)
-	@$(NORMAL_INSTALL)
-	test -z "$(libdir)" || $(MKDIR_P) "$(DESTDIR)$(libdir)"
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    f=$(am__strip_dir) \
-	    echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
-	    $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
-	  else :; fi; \
-	done
 
-uninstall-libLTLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  p=$(am__strip_dir) \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$p'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$p"; \
-	done
-
-clean-libLTLIBRARIES:
-	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
-	  test "$$dir" != "$$p" || dir=.; \
-	  echo "rm -f \"$${dir}/so_locations\""; \
-	  rm -f "$${dir}/so_locations"; \
-	done
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 system/lang/$(am__dirstamp):
 	@$(MKDIR_P) system/lang
 	@: > system/lang/$(am__dirstamp)
 system/lang/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/lang/$(DEPDIR)
 	@: > system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/System.lo: system/lang/$(am__dirstamp) \
+system/lang/System.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/Exception.lo: system/lang/$(am__dirstamp) \
+system/lang/Exception.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/Object.lo: system/lang/$(am__dirstamp) \
+system/lang/Object.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/String.lo: system/lang/$(am__dirstamp) \
+system/lang/String.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/StringBuffer.lo: system/lang/$(am__dirstamp) \
+system/lang/StringBuffer.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/UnicodeString.lo: system/lang/$(am__dirstamp) \
+system/lang/UnicodeString.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/Math.lo: system/lang/$(am__dirstamp) \
+system/lang/Math.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/StackTrace.lo: system/lang/$(am__dirstamp) \
+system/lang/StackTrace.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/types.lo: system/lang/$(am__dirstamp) \
+system/lang/types.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/Integer.lo: system/lang/$(am__dirstamp) \
+system/lang/Integer.$(OBJEXT): system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
-system/lang/ArrayIndexOutOfBoundsException.lo:  \
+system/lang/ArrayIndexOutOfBoundsException.$(OBJEXT):  \
 	system/lang/$(am__dirstamp) \
 	system/lang/$(DEPDIR)/$(am__dirstamp)
 system/mm/$(am__dirstamp):
@@ -541,25 +535,25 @@ system/mm/$(am__dirstamp):
 system/mm/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/mm/$(DEPDIR)
 	@: > system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/MemoryManager.lo: system/mm/$(am__dirstamp) \
+system/mm/MemoryManager.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/AllocationHook.lo: system/mm/$(am__dirstamp) \
+system/mm/AllocationHook.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/AllocationReplacement.lo: system/mm/$(am__dirstamp) \
+system/mm/AllocationReplacement.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/AllocationTracker.lo: system/mm/$(am__dirstamp) \
+system/mm/AllocationTracker.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/MultimapMemoryManager.lo: system/mm/$(am__dirstamp) \
+system/mm/MultimapMemoryManager.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/Heap.lo: system/mm/$(am__dirstamp) \
+system/mm/Heap.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/ProtectedHeap.lo: system/mm/$(am__dirstamp) \
+system/mm/ProtectedHeap.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/ProcessHeap.lo: system/mm/$(am__dirstamp) \
+system/mm/ProcessHeap.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/MemoryMappedFile.lo: system/mm/$(am__dirstamp) \
+system/mm/MemoryMappedFile.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
-system/mm/DLAllocator.lo: system/mm/$(am__dirstamp) \
+system/mm/DLAllocator.$(OBJEXT): system/mm/$(am__dirstamp) \
 	system/mm/$(DEPDIR)/$(am__dirstamp)
 system/thread/$(am__dirstamp):
 	@$(MKDIR_P) system/thread
@@ -567,29 +561,42 @@ system/thread/$(am__dirstamp):
 system/thread/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/thread/$(DEPDIR)
 	@: > system/thread/$(DEPDIR)/$(am__dirstamp)
-system/thread/Thread.lo: system/thread/$(am__dirstamp) \
+system/thread/Thread.$(OBJEXT): system/thread/$(am__dirstamp) \
 	system/thread/$(DEPDIR)/$(am__dirstamp)
-system/thread/Lockable.lo: system/thread/$(am__dirstamp) \
+system/thread/Process.$(OBJEXT): system/thread/$(am__dirstamp) \
 	system/thread/$(DEPDIR)/$(am__dirstamp)
-system/thread/Mutex.lo: system/thread/$(am__dirstamp) \
+system/thread/ChildProcess.$(OBJEXT): system/thread/$(am__dirstamp) \
 	system/thread/$(DEPDIR)/$(am__dirstamp)
-system/thread/ReadWriteLock.lo: system/thread/$(am__dirstamp) \
+system/thread/Lockable.$(OBJEXT): system/thread/$(am__dirstamp) \
 	system/thread/$(DEPDIR)/$(am__dirstamp)
+system/thread/Mutex.$(OBJEXT): system/thread/$(am__dirstamp) \
+	system/thread/$(DEPDIR)/$(am__dirstamp)
+system/thread/ReadWriteLock.$(OBJEXT): system/thread/$(am__dirstamp) \
+	system/thread/$(DEPDIR)/$(am__dirstamp)
+system/thread/gdb/$(am__dirstamp):
+	@$(MKDIR_P) system/thread/gdb
+	@: > system/thread/gdb/$(am__dirstamp)
+system/thread/gdb/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) system/thread/gdb/$(DEPDIR)
+	@: > system/thread/gdb/$(DEPDIR)/$(am__dirstamp)
+system/thread/gdb/GdbStub.$(OBJEXT):  \
+	system/thread/gdb/$(am__dirstamp) \
+	system/thread/gdb/$(DEPDIR)/$(am__dirstamp)
 system/net/$(am__dirstamp):
 	@$(MKDIR_P) system/net
 	@: > system/net/$(am__dirstamp)
 system/net/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/net/$(DEPDIR)
 	@: > system/net/$(DEPDIR)/$(am__dirstamp)
-system/net/Socket.lo: system/net/$(am__dirstamp) \
+system/net/Socket.$(OBJEXT): system/net/$(am__dirstamp) \
 	system/net/$(DEPDIR)/$(am__dirstamp)
-system/net/SocketAddress.lo: system/net/$(am__dirstamp) \
+system/net/SocketAddress.$(OBJEXT): system/net/$(am__dirstamp) \
 	system/net/$(DEPDIR)/$(am__dirstamp)
-system/net/InetAddress.lo: system/net/$(am__dirstamp) \
+system/net/InetAddress.$(OBJEXT): system/net/$(am__dirstamp) \
 	system/net/$(DEPDIR)/$(am__dirstamp)
-system/net/NetworkInterface.lo: system/net/$(am__dirstamp) \
+system/net/NetworkInterface.$(OBJEXT): system/net/$(am__dirstamp) \
 	system/net/$(DEPDIR)/$(am__dirstamp)
-system/net/Packet.lo: system/net/$(am__dirstamp) \
+system/net/Packet.$(OBJEXT): system/net/$(am__dirstamp) \
 	system/net/$(DEPDIR)/$(am__dirstamp)
 system/io/$(am__dirstamp):
 	@$(MKDIR_P) system/io
@@ -597,21 +604,23 @@ system/io/$(am__dirstamp):
 system/io/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/io/$(DEPDIR)
 	@: > system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/IOProcessor.lo: system/io/$(am__dirstamp) \
+system/io/IOProcessor.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/Stream.lo: system/io/$(am__dirstamp) \
+system/io/Stream.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/File.lo: system/io/$(am__dirstamp) \
+system/io/File.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/BufferedReader.lo: system/io/$(am__dirstamp) \
+system/io/BufferedReader.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/StringTokenizer.lo: system/io/$(am__dirstamp) \
+system/io/StringTokenizer.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/UnicodeTokenizer.lo: system/io/$(am__dirstamp) \
+system/io/UnicodeTokenizer.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/PrintStream.lo: system/io/$(am__dirstamp) \
+system/io/PrintStream.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
-system/io/Serializable.lo: system/io/$(am__dirstamp) \
+system/io/Serializable.$(OBJEXT): system/io/$(am__dirstamp) \
+	system/io/$(DEPDIR)/$(am__dirstamp)
+system/io/Pipe.$(OBJEXT): system/io/$(am__dirstamp) \
 	system/io/$(DEPDIR)/$(am__dirstamp)
 system/util/$(am__dirstamp):
 	@$(MKDIR_P) system/util
@@ -619,7 +628,7 @@ system/util/$(am__dirstamp):
 system/util/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) system/util/$(DEPDIR)
 	@: > system/util/$(DEPDIR)/$(am__dirstamp)
-system/util/PriorityQueue.lo: system/util/$(am__dirstamp) \
+system/util/PriorityQueue.$(OBJEXT): system/util/$(am__dirstamp) \
 	system/util/$(DEPDIR)/$(am__dirstamp)
 engine/core/$(am__dirstamp):
 	@$(MKDIR_P) engine/core
@@ -627,31 +636,31 @@ engine/core/$(am__dirstamp):
 engine/core/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/core/$(DEPDIR)
 	@: > engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/Core.lo: engine/core/$(am__dirstamp) \
+engine/core/Core.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/Task.lo: engine/core/$(am__dirstamp) \
+engine/core/Task.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/TaskManagerImpl.lo: engine/core/$(am__dirstamp) \
+engine/core/TaskManagerImpl.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/TaskScheduler.lo: engine/core/$(am__dirstamp) \
+engine/core/TaskScheduler.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/TaskQueue.lo: engine/core/$(am__dirstamp) \
+engine/core/TaskQueue.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/TimedTaskQueue.lo: engine/core/$(am__dirstamp) \
+engine/core/TimedTaskQueue.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/TaskWorkerThread.lo: engine/core/$(am__dirstamp) \
+engine/core/TaskWorkerThread.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/ObjectUpdateToDatabaseTask.lo:  \
+engine/core/ObjectUpdateToDatabaseTask.$(OBJEXT):  \
 	engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/ManagedObject.lo: engine/core/$(am__dirstamp) \
+engine/core/ManagedObject.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/ManagedService.lo: engine/core/$(am__dirstamp) \
+engine/core/ManagedService.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/ManagedObjectImplementation.lo:  \
+engine/core/ManagedObjectImplementation.$(OBJEXT):  \
 	engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
-engine/core/ManagedProcess.lo: engine/core/$(am__dirstamp) \
+engine/core/ManagedProcess.$(OBJEXT): engine/core/$(am__dirstamp) \
 	engine/core/$(DEPDIR)/$(am__dirstamp)
 engine/service/$(am__dirstamp):
 	@$(MKDIR_P) engine/service
@@ -659,27 +668,31 @@ engine/service/$(am__dirstamp):
 engine/service/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/service/$(DEPDIR)
 	@: > engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/ServiceClient.lo: engine/service/$(am__dirstamp) \
-	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/ServiceThread.lo: engine/service/$(am__dirstamp) \
-	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/ServiceMessageHandlerThread.lo:  \
+engine/service/ServiceClient.$(OBJEXT):  \
 	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/DatagramServiceClient.lo:  \
+engine/service/ServiceThread.$(OBJEXT):  \
 	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/DatagramServiceClientProxy.lo:  \
+engine/service/ServiceMessageHandlerThread.$(OBJEXT):  \
 	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/DatagramServiceThread.lo:  \
+engine/service/DatagramServiceClient.$(OBJEXT):  \
 	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/StreamServiceClient.lo: engine/service/$(am__dirstamp) \
+engine/service/DatagramServiceClientProxy.$(OBJEXT):  \
+	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/StreamServiceThread.lo: engine/service/$(am__dirstamp) \
+engine/service/DatagramServiceThread.$(OBJEXT):  \
+	engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
-engine/service/MessageQueue.lo: engine/service/$(am__dirstamp) \
+engine/service/StreamServiceClient.$(OBJEXT):  \
+	engine/service/$(am__dirstamp) \
+	engine/service/$(DEPDIR)/$(am__dirstamp)
+engine/service/StreamServiceThread.$(OBJEXT):  \
+	engine/service/$(am__dirstamp) \
+	engine/service/$(DEPDIR)/$(am__dirstamp)
+engine/service/MessageQueue.$(OBJEXT): engine/service/$(am__dirstamp) \
 	engine/service/$(DEPDIR)/$(am__dirstamp)
 engine/service/proto/$(am__dirstamp):
 	@$(MKDIR_P) engine/service/proto
@@ -687,25 +700,25 @@ engine/service/proto/$(am__dirstamp):
 engine/service/proto/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/service/proto/$(DEPDIR)
 	@: > engine/service/proto/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/BaseProtocol.lo:  \
+engine/service/proto/BaseProtocol.$(OBJEXT):  \
 	engine/service/proto/$(am__dirstamp) \
 	engine/service/proto/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/BasePacket.lo:  \
+engine/service/proto/BasePacket.$(OBJEXT):  \
 	engine/service/proto/$(am__dirstamp) \
 	engine/service/proto/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/BaseMultiPacket.lo:  \
+engine/service/proto/BaseMultiPacket.$(OBJEXT):  \
 	engine/service/proto/$(am__dirstamp) \
 	engine/service/proto/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/BaseFragmentedPacket.lo:  \
+engine/service/proto/BaseFragmentedPacket.$(OBJEXT):  \
 	engine/service/proto/$(am__dirstamp) \
 	engine/service/proto/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/BasePacketHandler.lo:  \
+engine/service/proto/BasePacketHandler.$(OBJEXT):  \
 	engine/service/proto/$(am__dirstamp) \
 	engine/service/proto/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/BaseClient.lo:  \
+engine/service/proto/BaseClient.$(OBJEXT):  \
 	engine/service/proto/$(am__dirstamp) \
 	engine/service/proto/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/BaseClientProxy.lo:  \
+engine/service/proto/BaseClientProxy.$(OBJEXT):  \
 	engine/service/proto/$(am__dirstamp) \
 	engine/service/proto/$(DEPDIR)/$(am__dirstamp)
 engine/service/proto/events/$(am__dirstamp):
@@ -714,7 +727,7 @@ engine/service/proto/events/$(am__dirstamp):
 engine/service/proto/events/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/service/proto/events/$(DEPDIR)
 	@: > engine/service/proto/events/$(DEPDIR)/$(am__dirstamp)
-engine/service/proto/events/BasePacketChekupEvent.lo:  \
+engine/service/proto/events/BasePacketChekupEvent.$(OBJEXT):  \
 	engine/service/proto/events/$(am__dirstamp) \
 	engine/service/proto/events/$(DEPDIR)/$(am__dirstamp)
 engine/orb/$(am__dirstamp):
@@ -723,9 +736,11 @@ engine/orb/$(am__dirstamp):
 engine/orb/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/$(DEPDIR)
 	@: > engine/orb/$(DEPDIR)/$(am__dirstamp)
-engine/orb/DistributedObjectBroker.lo: engine/orb/$(am__dirstamp) \
+engine/orb/DistributedObjectBroker.$(OBJEXT):  \
+	engine/orb/$(am__dirstamp) \
 	engine/orb/$(DEPDIR)/$(am__dirstamp)
-engine/orb/NamingDirectoryService.lo: engine/orb/$(am__dirstamp) \
+engine/orb/NamingDirectoryService.$(OBJEXT):  \
+	engine/orb/$(am__dirstamp) \
 	engine/orb/$(DEPDIR)/$(am__dirstamp)
 engine/orb/db/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/db
@@ -733,15 +748,16 @@ engine/orb/db/$(am__dirstamp):
 engine/orb/db/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/db/$(DEPDIR)
 	@: > engine/orb/db/$(DEPDIR)/$(am__dirstamp)
-engine/orb/db/DistributedObjectDirectory.lo:  \
+engine/orb/db/DistributedObjectDirectory.$(OBJEXT):  \
 	engine/orb/db/$(am__dirstamp) \
 	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
-engine/orb/db/DOBObjectManager.lo: engine/orb/db/$(am__dirstamp) \
-	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
-engine/orb/db/CommitMasterTransactionThread.lo:  \
+engine/orb/db/DOBObjectManager.$(OBJEXT):  \
 	engine/orb/db/$(am__dirstamp) \
 	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
-engine/orb/db/UpdateModifiedObjectsThread.lo:  \
+engine/orb/db/CommitMasterTransactionThread.$(OBJEXT):  \
+	engine/orb/db/$(am__dirstamp) \
+	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
+engine/orb/db/UpdateModifiedObjectsThread.$(OBJEXT):  \
 	engine/orb/db/$(am__dirstamp) \
 	engine/orb/db/$(DEPDIR)/$(am__dirstamp)
 engine/orb/object/$(am__dirstamp):
@@ -750,16 +766,16 @@ engine/orb/object/$(am__dirstamp):
 engine/orb/object/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/object/$(DEPDIR)
 	@: > engine/orb/object/$(DEPDIR)/$(am__dirstamp)
-engine/orb/object/DistributedObject.lo:  \
+engine/orb/object/DistributedObject.$(OBJEXT):  \
 	engine/orb/object/$(am__dirstamp) \
 	engine/orb/object/$(DEPDIR)/$(am__dirstamp)
-engine/orb/object/DistributedObjectServant.lo:  \
+engine/orb/object/DistributedObjectServant.$(OBJEXT):  \
 	engine/orb/object/$(am__dirstamp) \
 	engine/orb/object/$(DEPDIR)/$(am__dirstamp)
-engine/orb/object/DistributedObjectStub.lo:  \
+engine/orb/object/DistributedObjectStub.$(OBJEXT):  \
 	engine/orb/object/$(am__dirstamp) \
 	engine/orb/object/$(DEPDIR)/$(am__dirstamp)
-engine/orb/object/DistributedMethod.lo:  \
+engine/orb/object/DistributedMethod.$(OBJEXT):  \
 	engine/orb/object/$(am__dirstamp) \
 	engine/orb/object/$(DEPDIR)/$(am__dirstamp)
 engine/orb/messages/$(am__dirstamp):
@@ -768,13 +784,13 @@ engine/orb/messages/$(am__dirstamp):
 engine/orb/messages/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/messages/$(DEPDIR)
 	@: > engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
-engine/orb/messages/RemoteObjectBroker.lo:  \
+engine/orb/messages/RemoteObjectBroker.$(OBJEXT):  \
 	engine/orb/messages/$(am__dirstamp) \
 	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
-engine/orb/messages/DOBServiceClient.lo:  \
+engine/orb/messages/DOBServiceClient.$(OBJEXT):  \
 	engine/orb/messages/$(am__dirstamp) \
 	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
-engine/orb/messages/DOBMessageFactory.lo:  \
+engine/orb/messages/DOBMessageFactory.$(OBJEXT):  \
 	engine/orb/messages/$(am__dirstamp) \
 	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
 engine/orb/control/$(am__dirstamp):
@@ -783,10 +799,10 @@ engine/orb/control/$(am__dirstamp):
 engine/orb/control/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/control/$(DEPDIR)
 	@: > engine/orb/control/$(DEPDIR)/$(am__dirstamp)
-engine/orb/control/ObjectBrokerDirector.lo:  \
+engine/orb/control/ObjectBrokerDirector.$(OBJEXT):  \
 	engine/orb/control/$(am__dirstamp) \
 	engine/orb/control/$(DEPDIR)/$(am__dirstamp)
-engine/orb/control/ObjectBrokerAgent.lo:  \
+engine/orb/control/ObjectBrokerAgent.$(OBJEXT):  \
 	engine/orb/control/$(am__dirstamp) \
 	engine/orb/control/$(DEPDIR)/$(am__dirstamp)
 engine/stm/$(am__dirstamp):
@@ -795,9 +811,10 @@ engine/stm/$(am__dirstamp):
 engine/stm/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/$(DEPDIR)
 	@: > engine/stm/$(DEPDIR)/$(am__dirstamp)
-engine/stm/Transaction.lo: engine/stm/$(am__dirstamp) \
+engine/stm/Transaction.$(OBJEXT): engine/stm/$(am__dirstamp) \
 	engine/stm/$(DEPDIR)/$(am__dirstamp)
-engine/stm/TransactionalMemoryManager.lo: engine/stm/$(am__dirstamp) \
+engine/stm/TransactionalMemoryManager.$(OBJEXT):  \
+	engine/stm/$(am__dirstamp) \
 	engine/stm/$(DEPDIR)/$(am__dirstamp)
 engine/stm/mm/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/mm
@@ -805,7 +822,7 @@ engine/stm/mm/$(am__dirstamp):
 engine/stm/mm/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/mm/$(DEPDIR)
 	@: > engine/stm/mm/$(DEPDIR)/$(am__dirstamp)
-engine/stm/mm/KernelCall.lo: engine/stm/mm/$(am__dirstamp) \
+engine/stm/mm/KernelCall.$(OBJEXT): engine/stm/mm/$(am__dirstamp) \
 	engine/stm/mm/$(DEPDIR)/$(am__dirstamp)
 engine/stm/task/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/task
@@ -813,10 +830,11 @@ engine/stm/task/$(am__dirstamp):
 engine/stm/task/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/task/$(DEPDIR)
 	@: > engine/stm/task/$(DEPDIR)/$(am__dirstamp)
-engine/stm/task/TransactionalTaskManager.lo:  \
+engine/stm/task/TransactionalTaskManager.$(OBJEXT):  \
 	engine/stm/task/$(am__dirstamp) \
 	engine/stm/task/$(DEPDIR)/$(am__dirstamp)
-engine/stm/task/LocalTaskManager.lo: engine/stm/task/$(am__dirstamp) \
+engine/stm/task/LocalTaskManager.$(OBJEXT):  \
+	engine/stm/task/$(am__dirstamp) \
 	engine/stm/task/$(DEPDIR)/$(am__dirstamp)
 engine/stm/orb/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/orb
@@ -824,10 +842,11 @@ engine/stm/orb/$(am__dirstamp):
 engine/stm/orb/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/orb/$(DEPDIR)
 	@: > engine/stm/orb/$(DEPDIR)/$(am__dirstamp)
-engine/stm/orb/TransactionalObjectManager.lo:  \
+engine/stm/orb/TransactionalObjectManager.$(OBJEXT):  \
 	engine/stm/orb/$(am__dirstamp) \
 	engine/stm/orb/$(DEPDIR)/$(am__dirstamp)
-engine/stm/orb/LocalObjectManager.lo: engine/stm/orb/$(am__dirstamp) \
+engine/stm/orb/LocalObjectManager.$(OBJEXT):  \
+	engine/stm/orb/$(am__dirstamp) \
 	engine/stm/orb/$(DEPDIR)/$(am__dirstamp)
 engine/stm/service/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/service
@@ -835,10 +854,10 @@ engine/stm/service/$(am__dirstamp):
 engine/stm/service/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/service/$(DEPDIR)
 	@: > engine/stm/service/$(DEPDIR)/$(am__dirstamp)
-engine/stm/service/TransactionalSocketManager.lo:  \
+engine/stm/service/TransactionalSocketManager.$(OBJEXT):  \
 	engine/stm/service/$(am__dirstamp) \
 	engine/stm/service/$(DEPDIR)/$(am__dirstamp)
-engine/stm/service/TransactionalBaseClientManager.lo:  \
+engine/stm/service/TransactionalBaseClientManager.$(OBJEXT):  \
 	engine/stm/service/$(am__dirstamp) \
 	engine/stm/service/$(DEPDIR)/$(am__dirstamp)
 engine/stm/algos/$(am__dirstamp):
@@ -847,7 +866,8 @@ engine/stm/algos/$(am__dirstamp):
 engine/stm/algos/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/stm/algos/$(DEPDIR)
 	@: > engine/stm/algos/$(DEPDIR)/$(am__dirstamp)
-engine/stm/algos/FraserSTM.lo: engine/stm/algos/$(am__dirstamp) \
+engine/stm/algos/FraserSTM.$(OBJEXT):  \
+	engine/stm/algos/$(am__dirstamp) \
 	engine/stm/algos/$(DEPDIR)/$(am__dirstamp)
 engine/util/$(am__dirstamp):
 	@$(MKDIR_P) engine/util
@@ -855,15 +875,16 @@ engine/util/$(am__dirstamp):
 engine/util/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/$(DEPDIR)
 	@: > engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/Observer.lo: engine/util/$(am__dirstamp) \
+engine/util/Observer.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/ObserverImplementation.lo: engine/util/$(am__dirstamp) \
+engine/util/ObserverImplementation.$(OBJEXT):  \
+	engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/ObserverEventMap.lo: engine/util/$(am__dirstamp) \
+engine/util/ObserverEventMap.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/Observable.lo: engine/util/$(am__dirstamp) \
+engine/util/Observable.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
-engine/util/Facade.lo: engine/util/$(am__dirstamp) \
+engine/util/Facade.$(OBJEXT): engine/util/$(am__dirstamp) \
 	engine/util/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/u3d
@@ -871,27 +892,28 @@ engine/util/u3d/$(am__dirstamp):
 engine/util/u3d/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/u3d/$(DEPDIR)
 	@: > engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/QuadTree.lo: engine/util/u3d/$(am__dirstamp) \
+engine/util/u3d/QuadTree.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/Segment.lo: engine/util/u3d/$(am__dirstamp) \
+engine/util/u3d/Segment.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/QuadTreeEntry.lo: engine/util/u3d/$(am__dirstamp) \
-	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/QuadTreeEntryImplementation.lo:  \
+engine/util/u3d/QuadTreeEntry.$(OBJEXT):  \
 	engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/TriangulationAStarAlgorithm.lo:  \
+engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT):  \
 	engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/AABBTree.lo: engine/util/u3d/$(am__dirstamp) \
+engine/util/u3d/TriangulationAStarAlgorithm.$(OBJEXT):  \
+	engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/Sphere.lo: engine/util/u3d/$(am__dirstamp) \
+engine/util/u3d/AABBTree.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/Triangle.lo: engine/util/u3d/$(am__dirstamp) \
+engine/util/u3d/Sphere.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/Matrix4.lo: engine/util/u3d/$(am__dirstamp) \
+engine/util/u3d/Triangle.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
-engine/util/u3d/Funnel.lo: engine/util/u3d/$(am__dirstamp) \
+engine/util/u3d/Matrix4.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/Funnel.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/iffstream/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/iffstream
@@ -899,7 +921,7 @@ engine/util/iffstream/$(am__dirstamp):
 engine/util/iffstream/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/iffstream/$(DEPDIR)
 	@: > engine/util/iffstream/$(DEPDIR)/$(am__dirstamp)
-engine/util/iffstream/IffStream.lo:  \
+engine/util/iffstream/IffStream.$(OBJEXT):  \
 	engine/util/iffstream/$(am__dirstamp) \
 	engine/util/iffstream/$(DEPDIR)/$(am__dirstamp)
 engine/util/iffstream/chunks/$(am__dirstamp):
@@ -908,7 +930,7 @@ engine/util/iffstream/chunks/$(am__dirstamp):
 engine/util/iffstream/chunks/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/iffstream/chunks/$(DEPDIR)
 	@: > engine/util/iffstream/chunks/$(DEPDIR)/$(am__dirstamp)
-engine/util/iffstream/chunks/Chunk.lo:  \
+engine/util/iffstream/chunks/Chunk.$(OBJEXT):  \
 	engine/util/iffstream/chunks/$(am__dirstamp) \
 	engine/util/iffstream/chunks/$(DEPDIR)/$(am__dirstamp)
 engine/util/iffstream/chunks/form/$(am__dirstamp):
@@ -917,7 +939,7 @@ engine/util/iffstream/chunks/form/$(am__dirstamp):
 engine/util/iffstream/chunks/form/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/iffstream/chunks/form/$(DEPDIR)
 	@: > engine/util/iffstream/chunks/form/$(DEPDIR)/$(am__dirstamp)
-engine/util/iffstream/chunks/form/Form.lo:  \
+engine/util/iffstream/chunks/form/Form.$(OBJEXT):  \
 	engine/util/iffstream/chunks/form/$(am__dirstamp) \
 	engine/util/iffstream/chunks/form/$(DEPDIR)/$(am__dirstamp)
 engine/db/$(am__dirstamp):
@@ -926,15 +948,15 @@ engine/db/$(am__dirstamp):
 engine/db/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/db/$(DEPDIR)
 	@: > engine/db/$(DEPDIR)/$(am__dirstamp)
-engine/db/BinaryData.lo: engine/db/$(am__dirstamp) \
+engine/db/BinaryData.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
-engine/db/ObjectDatabase.lo: engine/db/$(am__dirstamp) \
+engine/db/ObjectDatabase.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
-engine/db/DatabaseManager.lo: engine/db/$(am__dirstamp) \
+engine/db/DatabaseManager.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
-engine/db/ObjectDatabaseManager.lo: engine/db/$(am__dirstamp) \
+engine/db/ObjectDatabaseManager.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
-engine/db/LocalDatabase.lo: engine/db/$(am__dirstamp) \
+engine/db/LocalDatabase.$(OBJEXT): engine/db/$(am__dirstamp) \
 	engine/db/$(DEPDIR)/$(am__dirstamp)
 engine/db/mysql/$(am__dirstamp):
 	@$(MKDIR_P) engine/db/mysql
@@ -942,9 +964,10 @@ engine/db/mysql/$(am__dirstamp):
 engine/db/mysql/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/db/mysql/$(DEPDIR)
 	@: > engine/db/mysql/$(DEPDIR)/$(am__dirstamp)
-engine/db/mysql/MySqlDatabase.lo: engine/db/mysql/$(am__dirstamp) \
+engine/db/mysql/MySqlDatabase.$(OBJEXT):  \
+	engine/db/mysql/$(am__dirstamp) \
 	engine/db/mysql/$(DEPDIR)/$(am__dirstamp)
-engine/db/mysql/MysqlDatabaseManager.lo:  \
+engine/db/mysql/MysqlDatabaseManager.$(OBJEXT):  \
 	engine/db/mysql/$(am__dirstamp) \
 	engine/db/mysql/$(DEPDIR)/$(am__dirstamp)
 engine/db/berkley/$(am__dirstamp):
@@ -953,16 +976,19 @@ engine/db/berkley/$(am__dirstamp):
 engine/db/berkley/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/db/berkley/$(DEPDIR)
 	@: > engine/db/berkley/$(DEPDIR)/$(am__dirstamp)
-engine/db/berkley/BerkeleyDatabase.lo:  \
+engine/db/berkley/BerkeleyDatabase.$(OBJEXT):  \
 	engine/db/berkley/$(am__dirstamp) \
 	engine/db/berkley/$(DEPDIR)/$(am__dirstamp)
-engine/db/berkley/BTransaction.lo: engine/db/berkley/$(am__dirstamp) \
+engine/db/berkley/BTransaction.$(OBJEXT):  \
+	engine/db/berkley/$(am__dirstamp) \
 	engine/db/berkley/$(DEPDIR)/$(am__dirstamp)
-engine/db/berkley/DatabaseEntry.lo: engine/db/berkley/$(am__dirstamp) \
+engine/db/berkley/DatabaseEntry.$(OBJEXT):  \
+	engine/db/berkley/$(am__dirstamp) \
 	engine/db/berkley/$(DEPDIR)/$(am__dirstamp)
-engine/db/berkley/Environment.lo: engine/db/berkley/$(am__dirstamp) \
+engine/db/berkley/Environment.$(OBJEXT):  \
+	engine/db/berkley/$(am__dirstamp) \
 	engine/db/berkley/$(DEPDIR)/$(am__dirstamp)
-engine/db/berkley/Cursor.lo: engine/db/berkley/$(am__dirstamp) \
+engine/db/berkley/Cursor.$(OBJEXT): engine/db/berkley/$(am__dirstamp) \
 	engine/db/berkley/$(DEPDIR)/$(am__dirstamp)
 engine/log/$(am__dirstamp):
 	@$(MKDIR_P) engine/log
@@ -970,7 +996,7 @@ engine/log/$(am__dirstamp):
 engine/log/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/log/$(DEPDIR)
 	@: > engine/log/$(DEPDIR)/$(am__dirstamp)
-engine/log/Logger.lo: engine/log/$(am__dirstamp) \
+engine/log/Logger.$(OBJEXT): engine/log/$(am__dirstamp) \
 	engine/log/$(DEPDIR)/$(am__dirstamp)
 engine/lua/$(am__dirstamp):
 	@$(MKDIR_P) engine/lua
@@ -978,402 +1004,285 @@ engine/lua/$(am__dirstamp):
 engine/lua/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/lua/$(DEPDIR)
 	@: > engine/lua/$(DEPDIR)/$(am__dirstamp)
-engine/lua/Lua.lo: engine/lua/$(am__dirstamp) \
+engine/lua/Lua.$(OBJEXT): engine/lua/$(am__dirstamp) \
 	engine/lua/$(DEPDIR)/$(am__dirstamp)
-engine/lua/LuaFunction.lo: engine/lua/$(am__dirstamp) \
+engine/lua/LuaFunction.$(OBJEXT): engine/lua/$(am__dirstamp) \
 	engine/lua/$(DEPDIR)/$(am__dirstamp)
-engine/lua/LuaObject.lo: engine/lua/$(am__dirstamp) \
+engine/lua/LuaObject.$(OBJEXT): engine/lua/$(am__dirstamp) \
 	engine/lua/$(DEPDIR)/$(am__dirstamp)
-libengine3.la: $(libengine3_la_OBJECTS) $(libengine3_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libengine3_la_OBJECTS) $(libengine3_la_LIBADD) $(LIBS)
+libengine3.a: $(libengine3_a_OBJECTS) $(libengine3_a_DEPENDENCIES) 
+	-rm -f libengine3.a
+	$(libengine3_a_AR) libengine3.a $(libengine3_a_OBJECTS) $(libengine3_a_LIBADD)
+	$(RANLIB) libengine3.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f engine/core/Core.$(OBJEXT)
-	-rm -f engine/core/Core.lo
 	-rm -f engine/core/ManagedObject.$(OBJEXT)
-	-rm -f engine/core/ManagedObject.lo
 	-rm -f engine/core/ManagedObjectImplementation.$(OBJEXT)
-	-rm -f engine/core/ManagedObjectImplementation.lo
 	-rm -f engine/core/ManagedProcess.$(OBJEXT)
-	-rm -f engine/core/ManagedProcess.lo
 	-rm -f engine/core/ManagedService.$(OBJEXT)
-	-rm -f engine/core/ManagedService.lo
 	-rm -f engine/core/ObjectUpdateToDatabaseTask.$(OBJEXT)
-	-rm -f engine/core/ObjectUpdateToDatabaseTask.lo
 	-rm -f engine/core/Task.$(OBJEXT)
-	-rm -f engine/core/Task.lo
 	-rm -f engine/core/TaskManagerImpl.$(OBJEXT)
-	-rm -f engine/core/TaskManagerImpl.lo
 	-rm -f engine/core/TaskQueue.$(OBJEXT)
-	-rm -f engine/core/TaskQueue.lo
 	-rm -f engine/core/TaskScheduler.$(OBJEXT)
-	-rm -f engine/core/TaskScheduler.lo
 	-rm -f engine/core/TaskWorkerThread.$(OBJEXT)
-	-rm -f engine/core/TaskWorkerThread.lo
 	-rm -f engine/core/TimedTaskQueue.$(OBJEXT)
-	-rm -f engine/core/TimedTaskQueue.lo
 	-rm -f engine/db/BinaryData.$(OBJEXT)
-	-rm -f engine/db/BinaryData.lo
 	-rm -f engine/db/DatabaseManager.$(OBJEXT)
-	-rm -f engine/db/DatabaseManager.lo
 	-rm -f engine/db/LocalDatabase.$(OBJEXT)
-	-rm -f engine/db/LocalDatabase.lo
 	-rm -f engine/db/ObjectDatabase.$(OBJEXT)
-	-rm -f engine/db/ObjectDatabase.lo
 	-rm -f engine/db/ObjectDatabaseManager.$(OBJEXT)
-	-rm -f engine/db/ObjectDatabaseManager.lo
 	-rm -f engine/db/berkley/BTransaction.$(OBJEXT)
-	-rm -f engine/db/berkley/BTransaction.lo
 	-rm -f engine/db/berkley/BerkeleyDatabase.$(OBJEXT)
-	-rm -f engine/db/berkley/BerkeleyDatabase.lo
 	-rm -f engine/db/berkley/Cursor.$(OBJEXT)
-	-rm -f engine/db/berkley/Cursor.lo
 	-rm -f engine/db/berkley/DatabaseEntry.$(OBJEXT)
-	-rm -f engine/db/berkley/DatabaseEntry.lo
 	-rm -f engine/db/berkley/Environment.$(OBJEXT)
-	-rm -f engine/db/berkley/Environment.lo
 	-rm -f engine/db/mysql/MySqlDatabase.$(OBJEXT)
-	-rm -f engine/db/mysql/MySqlDatabase.lo
 	-rm -f engine/db/mysql/MysqlDatabaseManager.$(OBJEXT)
-	-rm -f engine/db/mysql/MysqlDatabaseManager.lo
 	-rm -f engine/log/Logger.$(OBJEXT)
-	-rm -f engine/log/Logger.lo
 	-rm -f engine/lua/Lua.$(OBJEXT)
-	-rm -f engine/lua/Lua.lo
 	-rm -f engine/lua/LuaFunction.$(OBJEXT)
-	-rm -f engine/lua/LuaFunction.lo
 	-rm -f engine/lua/LuaObject.$(OBJEXT)
-	-rm -f engine/lua/LuaObject.lo
 	-rm -f engine/orb/DistributedObjectBroker.$(OBJEXT)
-	-rm -f engine/orb/DistributedObjectBroker.lo
 	-rm -f engine/orb/NamingDirectoryService.$(OBJEXT)
-	-rm -f engine/orb/NamingDirectoryService.lo
 	-rm -f engine/orb/control/ObjectBrokerAgent.$(OBJEXT)
-	-rm -f engine/orb/control/ObjectBrokerAgent.lo
 	-rm -f engine/orb/control/ObjectBrokerDirector.$(OBJEXT)
-	-rm -f engine/orb/control/ObjectBrokerDirector.lo
 	-rm -f engine/orb/db/CommitMasterTransactionThread.$(OBJEXT)
-	-rm -f engine/orb/db/CommitMasterTransactionThread.lo
 	-rm -f engine/orb/db/DOBObjectManager.$(OBJEXT)
-	-rm -f engine/orb/db/DOBObjectManager.lo
 	-rm -f engine/orb/db/DistributedObjectDirectory.$(OBJEXT)
-	-rm -f engine/orb/db/DistributedObjectDirectory.lo
 	-rm -f engine/orb/db/UpdateModifiedObjectsThread.$(OBJEXT)
-	-rm -f engine/orb/db/UpdateModifiedObjectsThread.lo
 	-rm -f engine/orb/messages/DOBMessageFactory.$(OBJEXT)
-	-rm -f engine/orb/messages/DOBMessageFactory.lo
 	-rm -f engine/orb/messages/DOBServiceClient.$(OBJEXT)
-	-rm -f engine/orb/messages/DOBServiceClient.lo
 	-rm -f engine/orb/messages/RemoteObjectBroker.$(OBJEXT)
-	-rm -f engine/orb/messages/RemoteObjectBroker.lo
 	-rm -f engine/orb/object/DistributedMethod.$(OBJEXT)
-	-rm -f engine/orb/object/DistributedMethod.lo
 	-rm -f engine/orb/object/DistributedObject.$(OBJEXT)
-	-rm -f engine/orb/object/DistributedObject.lo
 	-rm -f engine/orb/object/DistributedObjectServant.$(OBJEXT)
-	-rm -f engine/orb/object/DistributedObjectServant.lo
 	-rm -f engine/orb/object/DistributedObjectStub.$(OBJEXT)
-	-rm -f engine/orb/object/DistributedObjectStub.lo
 	-rm -f engine/service/DatagramServiceClient.$(OBJEXT)
-	-rm -f engine/service/DatagramServiceClient.lo
 	-rm -f engine/service/DatagramServiceClientProxy.$(OBJEXT)
-	-rm -f engine/service/DatagramServiceClientProxy.lo
 	-rm -f engine/service/DatagramServiceThread.$(OBJEXT)
-	-rm -f engine/service/DatagramServiceThread.lo
 	-rm -f engine/service/MessageQueue.$(OBJEXT)
-	-rm -f engine/service/MessageQueue.lo
 	-rm -f engine/service/ServiceClient.$(OBJEXT)
-	-rm -f engine/service/ServiceClient.lo
 	-rm -f engine/service/ServiceMessageHandlerThread.$(OBJEXT)
-	-rm -f engine/service/ServiceMessageHandlerThread.lo
 	-rm -f engine/service/ServiceThread.$(OBJEXT)
-	-rm -f engine/service/ServiceThread.lo
 	-rm -f engine/service/StreamServiceClient.$(OBJEXT)
-	-rm -f engine/service/StreamServiceClient.lo
 	-rm -f engine/service/StreamServiceThread.$(OBJEXT)
-	-rm -f engine/service/StreamServiceThread.lo
 	-rm -f engine/service/proto/BaseClient.$(OBJEXT)
-	-rm -f engine/service/proto/BaseClient.lo
 	-rm -f engine/service/proto/BaseClientProxy.$(OBJEXT)
-	-rm -f engine/service/proto/BaseClientProxy.lo
 	-rm -f engine/service/proto/BaseFragmentedPacket.$(OBJEXT)
-	-rm -f engine/service/proto/BaseFragmentedPacket.lo
 	-rm -f engine/service/proto/BaseMultiPacket.$(OBJEXT)
-	-rm -f engine/service/proto/BaseMultiPacket.lo
 	-rm -f engine/service/proto/BasePacket.$(OBJEXT)
-	-rm -f engine/service/proto/BasePacket.lo
 	-rm -f engine/service/proto/BasePacketHandler.$(OBJEXT)
-	-rm -f engine/service/proto/BasePacketHandler.lo
 	-rm -f engine/service/proto/BaseProtocol.$(OBJEXT)
-	-rm -f engine/service/proto/BaseProtocol.lo
 	-rm -f engine/service/proto/events/BasePacketChekupEvent.$(OBJEXT)
-	-rm -f engine/service/proto/events/BasePacketChekupEvent.lo
 	-rm -f engine/stm/Transaction.$(OBJEXT)
-	-rm -f engine/stm/Transaction.lo
 	-rm -f engine/stm/TransactionalMemoryManager.$(OBJEXT)
-	-rm -f engine/stm/TransactionalMemoryManager.lo
 	-rm -f engine/stm/algos/FraserSTM.$(OBJEXT)
-	-rm -f engine/stm/algos/FraserSTM.lo
 	-rm -f engine/stm/mm/KernelCall.$(OBJEXT)
-	-rm -f engine/stm/mm/KernelCall.lo
 	-rm -f engine/stm/orb/LocalObjectManager.$(OBJEXT)
-	-rm -f engine/stm/orb/LocalObjectManager.lo
 	-rm -f engine/stm/orb/TransactionalObjectManager.$(OBJEXT)
-	-rm -f engine/stm/orb/TransactionalObjectManager.lo
 	-rm -f engine/stm/service/TransactionalBaseClientManager.$(OBJEXT)
-	-rm -f engine/stm/service/TransactionalBaseClientManager.lo
 	-rm -f engine/stm/service/TransactionalSocketManager.$(OBJEXT)
-	-rm -f engine/stm/service/TransactionalSocketManager.lo
 	-rm -f engine/stm/task/LocalTaskManager.$(OBJEXT)
-	-rm -f engine/stm/task/LocalTaskManager.lo
 	-rm -f engine/stm/task/TransactionalTaskManager.$(OBJEXT)
-	-rm -f engine/stm/task/TransactionalTaskManager.lo
 	-rm -f engine/util/Facade.$(OBJEXT)
-	-rm -f engine/util/Facade.lo
 	-rm -f engine/util/Observable.$(OBJEXT)
-	-rm -f engine/util/Observable.lo
 	-rm -f engine/util/Observer.$(OBJEXT)
-	-rm -f engine/util/Observer.lo
 	-rm -f engine/util/ObserverEventMap.$(OBJEXT)
-	-rm -f engine/util/ObserverEventMap.lo
 	-rm -f engine/util/ObserverImplementation.$(OBJEXT)
-	-rm -f engine/util/ObserverImplementation.lo
 	-rm -f engine/util/iffstream/IffStream.$(OBJEXT)
-	-rm -f engine/util/iffstream/IffStream.lo
 	-rm -f engine/util/iffstream/chunks/Chunk.$(OBJEXT)
-	-rm -f engine/util/iffstream/chunks/Chunk.lo
 	-rm -f engine/util/iffstream/chunks/form/Form.$(OBJEXT)
-	-rm -f engine/util/iffstream/chunks/form/Form.lo
 	-rm -f engine/util/u3d/AABBTree.$(OBJEXT)
-	-rm -f engine/util/u3d/AABBTree.lo
 	-rm -f engine/util/u3d/Funnel.$(OBJEXT)
-	-rm -f engine/util/u3d/Funnel.lo
 	-rm -f engine/util/u3d/Matrix4.$(OBJEXT)
-	-rm -f engine/util/u3d/Matrix4.lo
 	-rm -f engine/util/u3d/QuadTree.$(OBJEXT)
-	-rm -f engine/util/u3d/QuadTree.lo
 	-rm -f engine/util/u3d/QuadTreeEntry.$(OBJEXT)
-	-rm -f engine/util/u3d/QuadTreeEntry.lo
 	-rm -f engine/util/u3d/QuadTreeEntryImplementation.$(OBJEXT)
-	-rm -f engine/util/u3d/QuadTreeEntryImplementation.lo
 	-rm -f engine/util/u3d/Segment.$(OBJEXT)
-	-rm -f engine/util/u3d/Segment.lo
 	-rm -f engine/util/u3d/Sphere.$(OBJEXT)
-	-rm -f engine/util/u3d/Sphere.lo
 	-rm -f engine/util/u3d/Triangle.$(OBJEXT)
-	-rm -f engine/util/u3d/Triangle.lo
 	-rm -f engine/util/u3d/TriangulationAStarAlgorithm.$(OBJEXT)
-	-rm -f engine/util/u3d/TriangulationAStarAlgorithm.lo
 	-rm -f system/io/BufferedReader.$(OBJEXT)
-	-rm -f system/io/BufferedReader.lo
 	-rm -f system/io/File.$(OBJEXT)
-	-rm -f system/io/File.lo
 	-rm -f system/io/IOProcessor.$(OBJEXT)
-	-rm -f system/io/IOProcessor.lo
+	-rm -f system/io/Pipe.$(OBJEXT)
 	-rm -f system/io/PrintStream.$(OBJEXT)
-	-rm -f system/io/PrintStream.lo
 	-rm -f system/io/Serializable.$(OBJEXT)
-	-rm -f system/io/Serializable.lo
 	-rm -f system/io/Stream.$(OBJEXT)
-	-rm -f system/io/Stream.lo
 	-rm -f system/io/StringTokenizer.$(OBJEXT)
-	-rm -f system/io/StringTokenizer.lo
 	-rm -f system/io/UnicodeTokenizer.$(OBJEXT)
-	-rm -f system/io/UnicodeTokenizer.lo
 	-rm -f system/lang/ArrayIndexOutOfBoundsException.$(OBJEXT)
-	-rm -f system/lang/ArrayIndexOutOfBoundsException.lo
 	-rm -f system/lang/Exception.$(OBJEXT)
-	-rm -f system/lang/Exception.lo
 	-rm -f system/lang/Integer.$(OBJEXT)
-	-rm -f system/lang/Integer.lo
 	-rm -f system/lang/Math.$(OBJEXT)
-	-rm -f system/lang/Math.lo
 	-rm -f system/lang/Object.$(OBJEXT)
-	-rm -f system/lang/Object.lo
 	-rm -f system/lang/StackTrace.$(OBJEXT)
-	-rm -f system/lang/StackTrace.lo
 	-rm -f system/lang/String.$(OBJEXT)
-	-rm -f system/lang/String.lo
 	-rm -f system/lang/StringBuffer.$(OBJEXT)
-	-rm -f system/lang/StringBuffer.lo
 	-rm -f system/lang/System.$(OBJEXT)
-	-rm -f system/lang/System.lo
 	-rm -f system/lang/UnicodeString.$(OBJEXT)
-	-rm -f system/lang/UnicodeString.lo
 	-rm -f system/lang/types.$(OBJEXT)
-	-rm -f system/lang/types.lo
 	-rm -f system/mm/AllocationHook.$(OBJEXT)
-	-rm -f system/mm/AllocationHook.lo
 	-rm -f system/mm/AllocationReplacement.$(OBJEXT)
-	-rm -f system/mm/AllocationReplacement.lo
 	-rm -f system/mm/AllocationTracker.$(OBJEXT)
-	-rm -f system/mm/AllocationTracker.lo
 	-rm -f system/mm/DLAllocator.$(OBJEXT)
-	-rm -f system/mm/DLAllocator.lo
 	-rm -f system/mm/Heap.$(OBJEXT)
-	-rm -f system/mm/Heap.lo
 	-rm -f system/mm/MemoryManager.$(OBJEXT)
-	-rm -f system/mm/MemoryManager.lo
 	-rm -f system/mm/MemoryMappedFile.$(OBJEXT)
-	-rm -f system/mm/MemoryMappedFile.lo
 	-rm -f system/mm/MultimapMemoryManager.$(OBJEXT)
-	-rm -f system/mm/MultimapMemoryManager.lo
 	-rm -f system/mm/ProcessHeap.$(OBJEXT)
-	-rm -f system/mm/ProcessHeap.lo
 	-rm -f system/mm/ProtectedHeap.$(OBJEXT)
-	-rm -f system/mm/ProtectedHeap.lo
 	-rm -f system/net/InetAddress.$(OBJEXT)
-	-rm -f system/net/InetAddress.lo
 	-rm -f system/net/NetworkInterface.$(OBJEXT)
-	-rm -f system/net/NetworkInterface.lo
 	-rm -f system/net/Packet.$(OBJEXT)
-	-rm -f system/net/Packet.lo
 	-rm -f system/net/Socket.$(OBJEXT)
-	-rm -f system/net/Socket.lo
 	-rm -f system/net/SocketAddress.$(OBJEXT)
-	-rm -f system/net/SocketAddress.lo
+	-rm -f system/thread/ChildProcess.$(OBJEXT)
 	-rm -f system/thread/Lockable.$(OBJEXT)
-	-rm -f system/thread/Lockable.lo
 	-rm -f system/thread/Mutex.$(OBJEXT)
-	-rm -f system/thread/Mutex.lo
+	-rm -f system/thread/Process.$(OBJEXT)
 	-rm -f system/thread/ReadWriteLock.$(OBJEXT)
-	-rm -f system/thread/ReadWriteLock.lo
 	-rm -f system/thread/Thread.$(OBJEXT)
-	-rm -f system/thread/Thread.lo
+	-rm -f system/thread/gdb/GdbStub.$(OBJEXT)
 	-rm -f system/util/PriorityQueue.$(OBJEXT)
-	-rm -f system/util/PriorityQueue.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/Core.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObject.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObjectImplementation.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedProcess.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedService.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ObjectUpdateToDatabaseTask.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/Task.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskManagerImpl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskQueue.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskScheduler.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskWorkerThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TimedTaskQueue.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/BinaryData.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/DatabaseManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/LocalDatabase.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabase.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabaseManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/BTransaction.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/BerkeleyDatabase.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/Cursor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/DatabaseEntry.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/Environment.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/mysql/$(DEPDIR)/MySqlDatabase.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/db/mysql/$(DEPDIR)/MysqlDatabaseManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/log/$(DEPDIR)/Logger.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/Lua.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/LuaFunction.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/LuaObject.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/$(DEPDIR)/DistributedObjectBroker.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/$(DEPDIR)/NamingDirectoryService.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/control/$(DEPDIR)/ObjectBrokerAgent.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/control/$(DEPDIR)/ObjectBrokerDirector.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/CommitMasterTransactionThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DOBObjectManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DistributedObjectDirectory.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/UpdateModifiedObjectsThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBMessageFactory.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBServiceClient.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/RemoteObjectBroker.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedMethod.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObject.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObjectServant.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObjectStub.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/DatagramServiceClient.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/DatagramServiceClientProxy.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/DatagramServiceThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/MessageQueue.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceClient.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceMessageHandlerThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/StreamServiceClient.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/StreamServiceThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseClient.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseClientProxy.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseFragmentedPacket.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseMultiPacket.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BasePacket.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BasePacketHandler.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseProtocol.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/events/$(DEPDIR)/BasePacketChekupEvent.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/Transaction.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/TransactionalMemoryManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/algos/$(DEPDIR)/FraserSTM.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/mm/$(DEPDIR)/KernelCall.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/orb/$(DEPDIR)/LocalObjectManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/orb/$(DEPDIR)/TransactionalObjectManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/service/$(DEPDIR)/TransactionalBaseClientManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/service/$(DEPDIR)/TransactionalSocketManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/LocalTaskManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/TransactionalTaskManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Facade.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observable.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/ObserverEventMap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/ObserverImplementation.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/$(DEPDIR)/IffStream.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/$(DEPDIR)/Chunk.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/form/$(DEPDIR)/Form.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/AABBTree.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Funnel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Matrix4.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTree.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntry.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntryImplementation.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Segment.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Sphere.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Triangle.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/TriangulationAStarAlgorithm.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/BufferedReader.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/File.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/IOProcessor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/PrintStream.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/Serializable.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/Stream.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/StringTokenizer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/UnicodeTokenizer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/ArrayIndexOutOfBoundsException.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Exception.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Integer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Math.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Object.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/StackTrace.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/String.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/StringBuffer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/System.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/UnicodeString.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/types.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationHook.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationReplacement.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationTracker.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/DLAllocator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/Heap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MemoryManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MemoryMappedFile.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MultimapMemoryManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/ProcessHeap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/ProtectedHeap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/InetAddress.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/NetworkInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/Packet.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/Socket.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/SocketAddress.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/Lockable.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/Mutex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/ReadWriteLock.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/Thread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@system/util/$(DEPDIR)/PriorityQueue.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/Core.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObject.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedObjectImplementation.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedProcess.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ManagedService.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/ObjectUpdateToDatabaseTask.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/Task.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskManagerImpl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskQueue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskScheduler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TaskWorkerThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/core/$(DEPDIR)/TimedTaskQueue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/BinaryData.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/DatabaseManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/LocalDatabase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/$(DEPDIR)/ObjectDatabaseManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/BTransaction.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/BerkeleyDatabase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/Cursor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/DatabaseEntry.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/berkley/$(DEPDIR)/Environment.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/mysql/$(DEPDIR)/MySqlDatabase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/db/mysql/$(DEPDIR)/MysqlDatabaseManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/log/$(DEPDIR)/Logger.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/Lua.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/LuaFunction.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/lua/$(DEPDIR)/LuaObject.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/$(DEPDIR)/DistributedObjectBroker.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/$(DEPDIR)/NamingDirectoryService.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/control/$(DEPDIR)/ObjectBrokerAgent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/control/$(DEPDIR)/ObjectBrokerDirector.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/CommitMasterTransactionThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DOBObjectManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DistributedObjectDirectory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/UpdateModifiedObjectsThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBMessageFactory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBServiceClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/RemoteObjectBroker.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedMethod.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObject.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObjectServant.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObjectStub.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/DatagramServiceClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/DatagramServiceClientProxy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/DatagramServiceThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/MessageQueue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceMessageHandlerThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/ServiceThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/StreamServiceClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/StreamServiceThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseClientProxy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseFragmentedPacket.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseMultiPacket.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BasePacket.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BasePacketHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/$(DEPDIR)/BaseProtocol.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/service/proto/events/$(DEPDIR)/BasePacketChekupEvent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/Transaction.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/$(DEPDIR)/TransactionalMemoryManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/algos/$(DEPDIR)/FraserSTM.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/mm/$(DEPDIR)/KernelCall.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/orb/$(DEPDIR)/LocalObjectManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/orb/$(DEPDIR)/TransactionalObjectManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/service/$(DEPDIR)/TransactionalBaseClientManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/service/$(DEPDIR)/TransactionalSocketManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/LocalTaskManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/stm/task/$(DEPDIR)/TransactionalTaskManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Facade.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/Observer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/ObserverEventMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/$(DEPDIR)/ObserverImplementation.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/$(DEPDIR)/IffStream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/$(DEPDIR)/Chunk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/form/$(DEPDIR)/Form.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/AABBTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Funnel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Matrix4.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntry.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTreeEntryImplementation.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Segment.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Sphere.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Triangle.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/TriangulationAStarAlgorithm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/BufferedReader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/File.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/IOProcessor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/Pipe.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/PrintStream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/Serializable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/Stream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/StringTokenizer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/io/$(DEPDIR)/UnicodeTokenizer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/ArrayIndexOutOfBoundsException.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Exception.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Integer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Math.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/Object.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/StackTrace.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/String.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/StringBuffer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/System.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/UnicodeString.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/lang/$(DEPDIR)/types.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationHook.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationReplacement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/AllocationTracker.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/DLAllocator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/Heap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MemoryManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MemoryMappedFile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/MultimapMemoryManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/ProcessHeap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/mm/$(DEPDIR)/ProtectedHeap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/InetAddress.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/NetworkInterface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/Packet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/Socket.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/net/$(DEPDIR)/SocketAddress.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/ChildProcess.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/Lockable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/Mutex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/Process.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/ReadWriteLock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/thread/$(DEPDIR)/Thread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/thread/gdb/$(DEPDIR)/GdbStub.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@system/util/$(DEPDIR)/PriorityQueue.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1404,37 +1313,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-	-rm -rf engine/core/.libs engine/core/_libs
-	-rm -rf engine/db/.libs engine/db/_libs
-	-rm -rf engine/db/berkley/.libs engine/db/berkley/_libs
-	-rm -rf engine/db/mysql/.libs engine/db/mysql/_libs
-	-rm -rf engine/log/.libs engine/log/_libs
-	-rm -rf engine/lua/.libs engine/lua/_libs
-	-rm -rf engine/orb/.libs engine/orb/_libs
-	-rm -rf engine/orb/control/.libs engine/orb/control/_libs
-	-rm -rf engine/orb/db/.libs engine/orb/db/_libs
-	-rm -rf engine/orb/messages/.libs engine/orb/messages/_libs
-	-rm -rf engine/orb/object/.libs engine/orb/object/_libs
-	-rm -rf engine/service/.libs engine/service/_libs
-	-rm -rf engine/service/proto/.libs engine/service/proto/_libs
-	-rm -rf engine/service/proto/events/.libs engine/service/proto/events/_libs
-	-rm -rf engine/stm/.libs engine/stm/_libs
-	-rm -rf engine/stm/algos/.libs engine/stm/algos/_libs
-	-rm -rf engine/stm/mm/.libs engine/stm/mm/_libs
-	-rm -rf engine/stm/orb/.libs engine/stm/orb/_libs
-	-rm -rf engine/stm/service/.libs engine/stm/service/_libs
-	-rm -rf engine/stm/task/.libs engine/stm/task/_libs
-	-rm -rf engine/util/.libs engine/util/_libs
-	-rm -rf engine/util/iffstream/.libs engine/util/iffstream/_libs
-	-rm -rf engine/util/iffstream/chunks/.libs engine/util/iffstream/chunks/_libs
-	-rm -rf engine/util/iffstream/chunks/form/.libs engine/util/iffstream/chunks/form/_libs
-	-rm -rf engine/util/u3d/.libs engine/util/u3d/_libs
-	-rm -rf system/io/.libs system/io/_libs
-	-rm -rf system/lang/.libs system/lang/_libs
-	-rm -rf system/mm/.libs system/mm/_libs
-	-rm -rf system/net/.libs system/net/_libs
-	-rm -rf system/thread/.libs system/thread/_libs
-	-rm -rf system/util/.libs system/util/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -1511,11 +1389,8 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -1596,6 +1471,8 @@ distclean-generic:
 	-rm -f system/net/$(am__dirstamp)
 	-rm -f system/thread/$(DEPDIR)/$(am__dirstamp)
 	-rm -f system/thread/$(am__dirstamp)
+	-rm -f system/thread/gdb/$(DEPDIR)/$(am__dirstamp)
+	-rm -f system/thread/gdb/$(am__dirstamp)
 	-rm -f system/util/$(DEPDIR)/$(am__dirstamp)
 	-rm -f system/util/$(am__dirstamp)
 
@@ -1604,11 +1481,11 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/control/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/control/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/thread/gdb/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1627,7 +1504,7 @@ install-data-am:
 
 install-dvi: install-dvi-am
 
-install-exec-am: install-libLTLIBRARIES
+install-exec-am:
 
 install-html: install-html-am
 
@@ -1642,7 +1519,7 @@ install-ps: install-ps-am
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/control/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/util/$(DEPDIR)
+	-rm -rf engine/core/$(DEPDIR) engine/db/$(DEPDIR) engine/db/berkley/$(DEPDIR) engine/db/mysql/$(DEPDIR) engine/log/$(DEPDIR) engine/lua/$(DEPDIR) engine/orb/$(DEPDIR) engine/orb/control/$(DEPDIR) engine/orb/db/$(DEPDIR) engine/orb/messages/$(DEPDIR) engine/orb/object/$(DEPDIR) engine/service/$(DEPDIR) engine/service/proto/$(DEPDIR) engine/service/proto/events/$(DEPDIR) engine/stm/$(DEPDIR) engine/stm/algos/$(DEPDIR) engine/stm/mm/$(DEPDIR) engine/stm/orb/$(DEPDIR) engine/stm/service/$(DEPDIR) engine/stm/task/$(DEPDIR) engine/util/$(DEPDIR) engine/util/iffstream/$(DEPDIR) engine/util/iffstream/chunks/$(DEPDIR) engine/util/iffstream/chunks/form/$(DEPDIR) engine/util/u3d/$(DEPDIR) system/io/$(DEPDIR) system/lang/$(DEPDIR) system/mm/$(DEPDIR) system/net/$(DEPDIR) system/thread/$(DEPDIR) system/thread/gdb/$(DEPDIR) system/util/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1659,26 +1536,23 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-libLTLIBRARIES
+uninstall-am:
 
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool ctags distclean \
+	clean-libtool clean-noinstLIBRARIES ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-libLTLIBRARIES
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
-
-#libengine3_la_SOURCES = libengine3_a_SOURCES
 
 .h.gch:
 	$(CXXCOMPILE) $<
