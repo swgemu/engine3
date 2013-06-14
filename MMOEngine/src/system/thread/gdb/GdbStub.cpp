@@ -143,7 +143,7 @@ void GdbStub::printThread(String threadInfo) {
 
 	pid = fork();
 
-	if (!pid) {
+	if (pid == 0) {
 		pipe.redirectFile(fileno(stdout));
 
 		char threadCommand[100];

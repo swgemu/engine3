@@ -6,30 +6,33 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef IOPROCESSOR_H_
 #define IOPROCESSOR_H_
 
+#include "system/util/Vector.h"
+
 #include "FileDescriptor.h"
 
 namespace sys {
   namespace io {
 
 	class IOProcessor {
+	#ifdef PLATFORM_LINUX
 		int epollFileDescritptor;
-
 		int epollQueueLength;
+	#else
+		Vector<FileDescriptor*> descriptors;
+	#endif
 
-		static const int EPOLL_QUEUE_LENGTH = 10000;
+		static const int QUEUE_LIMIT = 10000;
 
 	public:
 		IOProcessor();
 
 		~IOProcessor();
 
-		void initialize(int queueLength = EPOLL_QUEUE_LENGTH);
+		void initialize(int queueLength = QUEUE_LIMIT);
 
 		void shutdown();
 
-		void pollEvents(int timeout = 0);
-
-		IOEvent getEvents(FileDescriptor* descriptor, int timeout);
+		int pollEvents(int timeout = 0);
 
 		void addFileDescriptor(FileDescriptor* descriptor, bool edgeTriggered = false);
 		void removeFileDescriptor(FileDescriptor* descriptor);

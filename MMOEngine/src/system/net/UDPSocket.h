@@ -18,8 +18,6 @@ namespace sys {
 			
 			if (fileDescriptor < 0)
 				throw SocketException("unable to create socket");
-			
-			setTimeOut(10);
 		}
 		
 	};

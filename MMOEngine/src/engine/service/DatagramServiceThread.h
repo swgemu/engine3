@@ -28,6 +28,8 @@ namespace engine {
 		// message methods
 		void receiveMessages();
 
+		void processMessage(Packet* packet, SocketAddress& addr);
+
 		void receiveMessage(Packet* packet, SocketAddress& addr);
 
 		//friend class MessageReceiverTask;

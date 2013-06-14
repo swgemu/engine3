@@ -18,10 +18,6 @@ namespace sys {
 	class Packet; 
 	
 	class Socket : public FileDescriptor {
-	protected:
-		uint64 timeout;
-		struct timeval tv;
-	
 	public:
 		Socket();
 		Socket(int handle);
@@ -38,10 +34,6 @@ namespace sys {
 		
 		void connect(SocketAddress* bindpoint);
 	
-		bool recieve(Packet* pack);
-
-		bool recieveFrom(Packet* pack, SocketAddress* addr);
-	
 		bool read(Packet* pack);
 	
 		int readFrom(Packet* pack, SocketAddress* addr);
@@ -52,20 +44,9 @@ namespace sys {
 		
 		void close();
 		
-		bool hasData();
-
-		// setters
-		void setBlocking(bool b);
-
 		void setLingering(int time);
 
 		void disableLingering();
-
-		void updateTimeOut();
-		
-		inline void setTimeOut(uint64 time) {
-			timeout = time;
-		}
 
 #ifdef PLATFORM_WIN
 	private:

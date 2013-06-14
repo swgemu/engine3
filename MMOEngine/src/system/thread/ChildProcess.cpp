@@ -5,17 +5,20 @@
 #include "gdb/GdbStub.h"
 
 #include "system/io/IOProcessor.h"
+#include "system/io/IOHandler.h"
 
 #include "ChildProcess.h"
 
-class ChildHandler
+class ChildHandler : public IOHandler
 {
 	static ChildProcess* process;
+
+	bool crashed;
 
 public:
 	enum {SEGFAULT, PING};
 
-	ChildHandler(ChildProcess* proc) {
+	ChildHandler(ChildProcess* proc) : crashed(false) {
 		process = proc;
 	}
 
@@ -53,6 +56,8 @@ public:
 		IOProcessor processor;
 
 		try {
+			pipe.setHandler(this);
+
 			processor.initialize(1);
 			processor.addFileDescriptor(&pipe, false);
 		} catch (const IOException& e) {
@@ -60,22 +65,31 @@ public:
 			throw Exception(e.getMessage());
 		}
 
-		while (processor.getEvents(&pipe, 60000).hasInEvent()) {
-			int event = pipe.readInt();
-			switch  (event) {
-			case ChildHandler::SEGFAULT:
-				handleCrash();
-
+		while (processor.pollEvents(60000) > 0) {
+			if (crashed)
 				return;
-			case ChildHandler::PING:
-				break;
-			default:
-				assert(0);
-			}
 		}
 
 		handleDeadlock();
 	#endif
+	}
+
+	void handleInput(FileDescriptor* descriptor) {
+		Pipe* pipe = (Pipe*) descriptor;
+
+		int event = pipe->readInt();
+		switch  (event) {
+		case ChildHandler::SEGFAULT:
+			handleCrash();
+
+			crashed = true;
+
+			break;
+		case ChildHandler::PING:
+			break;
+		default:
+			assert(0);
+		}
 	}
 
 	static void sendPing() {

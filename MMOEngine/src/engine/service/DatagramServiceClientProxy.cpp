@@ -28,7 +28,7 @@ bool DatagramServiceClientProxy::read(Packet* pack) {
 		return false;
 
 	SocketAddress addr;
-	socket->recieveFrom(pack, &addr);
+	socket->readFrom(pack, &addr);
 
 	return true;
 }

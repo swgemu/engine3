@@ -6,30 +6,24 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef IOHANDLER_H_
 #define IOHANDLER_H_
 
-#include "IOEvent.h"
-
 namespace sys {
   namespace io {
 
+  	class FileDescriptor;
+
   	class IOHandler {
   	public:
-		virtual ServiceClient* createConnection(Socket* sock, SocketAddress& addr) = 0;
+  		virtual void handleInput(FileDescriptor* descriptor) {
+  		}
 
-		virtual bool deleteConnection(ServiceClient* client) {
-			return false;
-		}
+  		virtual void handleOutput(FileDescriptor* descriptor) {
+  		}
 
-		virtual void handleMessage(ServiceClient* client, Packet* message) = 0;
+  		virtual void handleHangup(FileDescriptor* descriptor) {
+  		}
 
-		virtual void processMessage(Message* message) = 0;
-
-		virtual void handleReject(Packet* message) {
-		}
-
-		virtual void messageSent(Packet* message) {
-		}
-
-		virtual bool handleError(ServiceClient* client, Exception& e) = 0;
+  		virtual void handleError(FileDescriptor* descriptor) {
+  		}
 
   	};
 

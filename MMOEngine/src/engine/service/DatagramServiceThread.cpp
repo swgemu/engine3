@@ -4,6 +4,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "system/io/IOProcessor.h"
+#include "system/io/IOHandler.h"
 
 #include "engine/core/Core.h"
 
@@ -99,9 +100,41 @@ public:
 	}
 };
 
+class DatagramMessageHandler : public IOHandler {
+	DatagramServiceThread* service;
+
+public:
+	DatagramMessageHandler(DatagramServiceThread* service) : service(service) {
+	}
+
+	void handleInput(FileDescriptor* descriptor) {
+		Socket* socket = (Socket*) descriptor;
+
+		SocketAddress addr;
+		Packet packet;
+
+		while (socket->readFrom(&packet, &addr) != 0) {
+			service->processMessage(&packet, addr);
+		}
+	}
+
+	void handleOutput(FileDescriptor* descriptor) {
+	}
+
+	void handleHangup(FileDescriptor* descriptor) {
+	}
+
+	void handleError(FileDescriptor* descriptor) {
+	}
+
+};
+
 void DatagramServiceThread::receiveMessages() {
 #ifdef PLATFORM_LINUX
 	IOProcessor processor;
+	DatagramMessageHandler handler(this);
+
+	socket->setHandler(&handler);
 
 	try {
 		processor.initialize(1);
@@ -112,8 +145,6 @@ void DatagramServiceThread::receiveMessages() {
 	}
 #endif
 
-	Packet packet;
-
 	#ifdef VERSION_PUBLIC
 		int time = (3600 * TIME_LIMIT + System::random(100)) * 100;
 		taskManager->scheduleTask(new BaseClientCleanUpEvent(this), time);
@@ -121,22 +152,8 @@ void DatagramServiceThread::receiveMessages() {
 
 	while (doRun) {
 		try	{
-			SocketAddress addr;
+			processor.pollEvents(1000);
 
-#ifdef PLATFORM_LINUX
-			if (processor.getEvents(socket, 1000).hasInEvent()) {
-				while (socket->readFrom(&packet, &addr) != 0) {
-					Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
-					receiverTask->doExecute();
-				}
-			}
-#else
-			if (!socket->recieveFrom(&packet, &addr))
-				continue;
-
-			Reference<Task*> receiverTask = new MessageReceiverTask(this, &packet, addr);
-			receiverTask->doExecute();
-#endif
 		} catch (SocketException& e) {
 			debug(e.getMessage());
 		} catch (Exception& e) {
@@ -152,6 +169,12 @@ void DatagramServiceThread::receiveMessages() {
 			assert(0);
 		}
 	}
+}
+
+void DatagramServiceThread::processMessage(Packet* packet, SocketAddress& addr) {
+	Reference<Task*> receiverTask = new MessageReceiverTask(this, packet, addr);
+
+	receiverTask->doExecute();
 }
 
 void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) {

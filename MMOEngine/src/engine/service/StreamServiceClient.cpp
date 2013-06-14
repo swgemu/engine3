@@ -59,8 +59,6 @@ void StreamServiceClient::stop() {
 void StreamServiceClient::receiveMessages() {
 	Packet packet;
 
-	socket->setTimeOut(1000);
-
 	assert(serviceHandler);
 
 	while (doRun) {
@@ -102,7 +100,7 @@ bool StreamServiceClient::read(Packet* pack) {
 
 bool StreamServiceClient::recieve(Packet* pack) {
 	if (socket != NULL) {
-		return socket->recieve(pack);
+		return socket->read(pack);
 	} else {
 		doRun = false;
 

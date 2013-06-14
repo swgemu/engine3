@@ -21,13 +21,10 @@ bool Socket::winsockInitialized = false;
 #endif
 
 Socket::Socket() {
-	setTimeOut(10);
 }
 
 Socket::Socket(int handle) {
 	fileDescriptor = handle;
-		
-	setTimeOut(10);
 }
 
 void Socket::initialize() {
@@ -86,26 +83,6 @@ void Socket::connect(SocketAddress* address) {
 
 		throw SocketException(msg.toString());
 	}
-}
-
-bool Socket::recieve(Packet* pack) {
-	if (hasData()) {
-		read(pack);
-
-		return true;
-	}
-
-	return false;		
-}
-
-bool Socket::recieveFrom(Packet* pack, SocketAddress* addr) {
-	if (hasData()) {
-		readFrom(pack, addr);
-			
-		return true;
-	}
-
-	return false;		
 }
 
 bool Socket::read(Packet* pack) {
@@ -196,34 +173,6 @@ void Socket::close() {
 	#endif
 }
 
-bool Socket::hasData() {
-	fd_set readSet;
-
-	FD_ZERO(&readSet);
-	FD_SET(fileDescriptor, &readSet);
-
-	updateTimeOut();
-	
-	if (select(fileDescriptor + 1, &readSet, NULL, NULL, &tv) < 0) {
-		StringBuffer msg;
-		msg << "select error";
-
-		throw SocketException(msg.toString());
-	}
-
-	return FD_ISSET(fileDescriptor, &readSet) != 0;
-}
-
-void Socket::setBlocking(bool b) {
-	#ifndef PLATFORM_WIN
-		unsigned long mode = !b;
-
-		int ret = ioctl(fileDescriptor, FIONBIO, &mode );
-		if (ret < 0)
-			throw SocketException("unable to set blocking mode");					
-	#endif
-}
-
 void Socket::setLingering(int time) {
 	int result;
 
@@ -244,9 +193,4 @@ void Socket::setLingering(int time) {
 
 void Socket::disableLingering() {
 	setLingering(0);
-}
-
-void Socket::updateTimeOut() {
-	tv.tv_sec = (uint32) timeout / 1000;
-	tv.tv_usec = (uint32) (timeout % 1000) * 1000;
 }

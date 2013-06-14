@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2007 <SWGEmu>. All rights reserved.
+Copyright (C) 2013 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
@@ -8,29 +8,36 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/platform.h"
 
-#include "IOEvent.h"
-
 namespace sys {
   namespace io {
+
+  	class IOHandler;
 
 	class FileDescriptor {
 	protected:
 		int fileDescriptor;
 
-	public:
-		FileDescriptor() {
-			fileDescriptor = -1;
-		}
+		IOHandler* handler;
 
-		virtual void handleEvent(const IOEvent& event) {
+	public:
+		FileDescriptor() : fileDescriptor(-1), handler(NULL) {
 		}
 
 		virtual ~FileDescriptor() {
-
 		}
+
+		void setBlocking(bool b);
 
 		int getFileDescriptor() {
 			return fileDescriptor;
+		}
+
+		IOHandler* getHandler() const {
+			return handler;
+		}
+
+		void setHandler(IOHandler* hand) {
+			handler = hand;
 		}
 	};
 

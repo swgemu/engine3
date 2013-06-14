@@ -20,8 +20,6 @@ namespace sys {
 				throw SocketException("unable to create server socket");
 	
 			bindTo(addr);
-			
-			setTimeOut(10);
 		}
 		
 	};

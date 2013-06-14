@@ -112,6 +112,6 @@ bool DatagramServiceClient::read(Packet* pack) {
 
 	SocketAddress addr;
 
-	return socket->recieveFrom(pack, &addr);
+	return socket->readFrom(pack, &addr);
 }
 
