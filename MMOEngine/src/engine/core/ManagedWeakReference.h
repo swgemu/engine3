@@ -109,11 +109,11 @@ namespace engine {
 		}
 
 		inline ManagedReference<O> get() {
-		        Locker locker(Core::getObjectBroker()->getObjectManager());
+		        //Locker locker(Core::getObjectBroker()->getObjectManager());
 		        
 			ManagedReference<O> strongRef = WeakReference<O>::get();
 			
-			locker.release();
+			//locker.release();
 
 			if (savedObjectID != 0 && strongRef == NULL) {
 				strongRef = dynamic_cast<O>(Core::getObjectBroker()->lookUp(savedObjectID));
@@ -125,11 +125,11 @@ namespace engine {
 		}
 
 		inline ManagedReference<O> getForUpdate() {
-		        Locker locker(Core::getObjectBroker()->getObjectManager());
+		        //Locker locker(Core::getObjectBroker()->getObjectManager());
 		        
 			ManagedReference<O> strongRef = WeakReference<O>::get();
 			
-			locker.release();
+			//locker.release();
 
 			if (savedObjectID != 0 && strongRef == NULL) {
 				strongRef = dynamic_cast<O>(Core::getObjectBroker()->lookUp(savedObjectID));
