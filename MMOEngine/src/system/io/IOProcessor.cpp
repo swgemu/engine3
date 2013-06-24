@@ -17,9 +17,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "IOProcessor.h"
 
 IOProcessor::IOProcessor() {
+#ifdef PLATFORM_LINUX
 	epollFileDescritptor = -1;
 
 	epollQueueLength = 0;
+#endif
 }
 
 IOProcessor::~IOProcessor() {
@@ -27,11 +29,11 @@ IOProcessor::~IOProcessor() {
 }
 
 void IOProcessor::initialize(int queueLength) {
+#ifdef PLATFORM_LINUX
 	assert(epollFileDescritptor == -1);
 
 	epollQueueLength = queueLength;
 
-#ifdef PLATFORM_LINUX
 	epollFileDescritptor = epoll_create(epollQueueLength);
 	if (epollFileDescritptor < 0)
 		throw IOException("epoll create failed");
@@ -39,8 +41,10 @@ void IOProcessor::initialize(int queueLength) {
 }
 
 void IOProcessor::shutdown() {
+#ifdef PLATFORM_LINUX
 	if (epollFileDescritptor != -1)
 		close(epollFileDescritptor);
+#endif
 }
 
 int IOProcessor::pollEvents(int timeout) {
@@ -156,6 +160,6 @@ void IOProcessor::removeFileDescriptor(FileDescriptor* descriptor) {
 	if (res < 0)
 		throw IOException("epoll file descriptor removal failed");
 #else
-	descriptors.remove(descriptor);
+	descriptors.removeElement(descriptor);
 #endif
 }

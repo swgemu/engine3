@@ -130,7 +130,6 @@ public:
 };
 
 void DatagramServiceThread::receiveMessages() {
-#ifdef PLATFORM_LINUX
 	IOProcessor processor;
 	DatagramMessageHandler handler(this);
 
@@ -143,9 +142,6 @@ void DatagramServiceThread::receiveMessages() {
 		e.printStackTrace();
 		throw ServiceException(e.getMessage());
 	}
-#else
-	Packet packet;
-#endif
 
 	#ifdef VERSION_PUBLIC
 		int time = (3600 * TIME_LIMIT + System::random(100)) * 100;
@@ -154,17 +150,7 @@ void DatagramServiceThread::receiveMessages() {
 
 	while (doRun) {
 		try	{
-#ifdef PLATFORM_LINUX
 			processor.pollEvents(1000);
-#else
-			SocketAddress addr;
-
-			if (!socket->readFrom(&packet, &addr))
-				continue;
-
-			processMessage(&packet, addr);
-#endif
-
 		} catch (SocketException& e) {
 			debug(e.getMessage());
 		} catch (Exception& e) {
