@@ -143,6 +143,8 @@ void DatagramServiceThread::receiveMessages() {
 		e.printStackTrace();
 		throw ServiceException(e.getMessage());
 	}
+#else
+	Packet packet;
 #endif
 
 	#ifdef VERSION_PUBLIC
@@ -152,7 +154,16 @@ void DatagramServiceThread::receiveMessages() {
 
 	while (doRun) {
 		try	{
+#ifdef PLATFORM_LINUX
 			processor.pollEvents(1000);
+#else
+			SocketAddress addr;
+
+			if (!socket->readFrom(&packet, &addr))
+				continue;
+
+			processMessage(&packet, addr);
+#endif
 
 		} catch (SocketException& e) {
 			debug(e.getMessage());
