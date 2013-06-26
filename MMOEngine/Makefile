@@ -125,7 +125,7 @@ install-cmake-pub:
 	cd build/unix && make install/strip
 	cd build/unix32 && make install/strip
 
-clean-cmake:
+clean-cmake: recompile-idlc
 	cd build/unix && make clean
 	cd build/unix32 && make clean
 		

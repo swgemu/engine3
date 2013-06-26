@@ -205,7 +205,7 @@ void BaseClient::close() {
 
 	closeFileLogger();
 
-	ServiceClient::close();
+	//ServiceClient::close();
 
 	debug("client resources closed");
 }
