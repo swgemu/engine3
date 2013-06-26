@@ -53,7 +53,7 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 
 	reentrantTask = new BaseClientEvent(this);
 
-	setInfoLogLevel();
+	setDebugLogLevel();
    	setGlobalLogging(true);
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -204,6 +204,10 @@ void BaseClient::close() {
 	reportStats();
 
 	closeFileLogger();
+
+	ServiceClient::close();
+
+	debug("client resources closed");
 }
 
 void BaseClient::send(Packet* pack, bool doLock) {

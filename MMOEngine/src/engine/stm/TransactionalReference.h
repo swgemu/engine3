@@ -154,6 +154,10 @@ public:
 				return NULL;
 		}
 
+		bool compareAndSet(O oldval, O newval) {
+			return header.compareAndSet(getHeader(oldval), getHeader(newval));
+		}
+
 		bool toBinaryStream(ObjectOutputStream* stream) {
 			return getForDirty()->toBinaryStream(stream);
 		}

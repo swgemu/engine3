@@ -128,7 +128,7 @@ namespace sys {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			return false;
 		}
-
+		
 		inline bool _isGettingDestroyed() const {
 #ifdef MEMORY_PROTECTION
 			return _destroying->get();
@@ -149,30 +149,9 @@ namespace sys {
 			referenceCounters->increaseStrongCount();
 		}
 
-		inline void release() {
-		/*	if (getReferenceCount() == 0)
-				assert(0 && "Object already delted");*/
+		void release();
 
-			if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
-				if (notifyDestroy()) {
-		#ifdef WITH_STM
-					MemoryManager::getInstance()->reclaim(this);
-		#else
-					destroy();
-		#endif
-				}
-			}
-		}
-
-		inline void _destroyIgnoringCount() {
-			if (notifyDestroy()) {
-#ifdef WITH_STM
-				MemoryManager::getInstance()->reclaim(this);
-#else
-				destroy();
-#endif
-			}
-		}
+		void _destroyIgnoringCount();
 
 		inline void _markAsDestroyed() {
 			if (referenceCounters != NULL)

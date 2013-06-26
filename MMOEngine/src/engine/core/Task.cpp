@@ -55,6 +55,10 @@ void Task::execute() {
 	taskManager->executeTask(this);
 }
 
+void Task::executeInThread() {
+	doExecute();
+}
+
 void Task::doExecute() {
 #ifdef WITH_STM
 

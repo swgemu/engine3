@@ -30,10 +30,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTree.h"
 
-#ifndef WITH_STM
-#define OUTPUTQTERRORS
-#endif
-
 QuadTreeNode::QuadTreeNode() {
 	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
 
@@ -552,11 +548,12 @@ bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 
     // Here is the right spot for the object, so lets drop it in.
     // May result in another squaring frenzy.
-    if (cur.get() != NULL){
+    if (cur.get() != NULL) {
             TransactionalReference<QuadTreeNode*> c = cur.get();
         _insert(c, obj);
+    }
 #ifdef OUTPUTQTERRORS
-}	else
+	else
 		System::out << "[QuadTree] error on update() - invalid Node\n";
 #endif
 
@@ -701,7 +698,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 
 }
 
-void QuadTree::copyObjects(Reference<QuadTreeNode*> node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects) {
+void QuadTree::copyObjects(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects) {
 //	ReadLocker locker(&mutex);
 
 	objects.addAll(node->objects);

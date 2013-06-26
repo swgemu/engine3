@@ -19,10 +19,15 @@ SocketAddress::SocketAddress(int port) {
 
 SocketAddress::SocketAddress(const String& host, int port) {
 #ifndef PLATFORM_WIN
-	struct hostent *hp = gethostbyname(host.toCharArray());
+	struct hostent* hp = 0;
 
-	if (hp == 0)
-		throw SocketException("unknown host " + host);
+	do
+	{
+		hp = gethostbyname(host.toCharArray());
+	} while (!hp && h_errno == TRY_AGAIN);
+
+	if (!hp)
+		throw SocketException("unknown host " + host + " (herrno " + h_errno  + ") ");
 
 	bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);
 #else

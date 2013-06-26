@@ -228,7 +228,9 @@ uint64 DistributedObjectBroker::getNextFreeObjectID() {
 void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectStub* obj) {
 	Locker locker(objectManager);
 
+#ifndef WITH_STM
 	assert(!obj->isDeplyoed());
+#endif
 
 	objectManager->createObjectID(name, obj);
 

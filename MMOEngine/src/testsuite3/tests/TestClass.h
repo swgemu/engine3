@@ -97,60 +97,6 @@ public:
 	}
 };
 
-class TestStmTask : public Task {
-	Vector<TransactionalReference<TestClass*> >* references;
-
-public:
-	TestStmTask(Vector<TransactionalReference<TestClass*> >* refs) {
-		references = refs;
-
-		/*for (int i = 0; i < references->size(); ++i) {
-			assert(references->get(i) != NULL);
-		}*/
-	}
-
-	void run() {
-		//Task* task = new TestTask(references);
-
-		for (int i = 0; i < 10; ++i) {
-			int index = System::random(references->size() - 1);
-			TransactionalReference<TestClass*>& reference = references->get(index);
-			//TransactionalReference<TestClass*>& reference2 = references->get(System::random(references->size() - 1));
-
-			//TestClass* objectToRead = reference2.get();
-			/*TestClass* obj = reference.get();
-			obj = reference.get();*/
-			TestClass* object = reference.getForUpdate();
-
-			/*if (System::random(2) == 0) {
-				objectToRead = reference.getForUpdate();
-				objectToRead->increment();
-			}*/
-			/*char str[80];
-			sprintf(str, "values %i\n", object->getz());
-
-			Transaction::currentTransaction()->log(str);*/
-
-			/*for (int i = 0; i < 25; ++i) {
-				int index = System::random(references->size() - 1);
-				int index2 = System::random(references->size() - 1);
-
-				TransactionalReference<TestClass*>& reference = references->get(index);
-				TransactionalReference<TestClass*>& reference2 = references->get(index2);
-
-				TestClass* object = reference.getForUpdate();
-				TestClass* object2 = reference2.get();
-
-
-				for (int j = 0; j < object2->get(); ++j)
-					object->increment();
-			}*/
-
-			object->increment();
-		}
-	}
-};
-
 #endif
 
 #endif /* TESTCLASS_H_ */

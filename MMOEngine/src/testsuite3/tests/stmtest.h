@@ -46,6 +46,39 @@ which carries forward this exception.
 
 #include "TestClass.h"
 
+#ifdef WITH_STM
+
+class TestStmTask : public Task {
+	Vector<TransactionalReference<TestClass*> >* references;
+
+public:
+	TestStmTask(Vector<TransactionalReference<TestClass*> >* refs) {
+		references = refs;
+
+		/*for (int i = 0; i < references->size(); ++i) {
+			assert(references->get(i) != NULL);
+		}*/
+	}
+
+	void run() {
+		Reference<Task*> task = new TestStmTask(references);
+		if (System::random(1) == 0)
+			task->schedule(System::random(10000));
+		else
+			task->execute();
+
+		for (int i = 0; i < 10; ++i) {
+			int index = System::random(references->size() - 1);
+			TransactionalReference<TestClass*>& reference = references->get(index);
+
+			TestClass* object = reference.getForUpdate();
+			object->increment();
+		}
+	}
+};
+
+#endif
+
 void testTransactions() {
 #ifdef WITH_STM
 	Reference<Transaction*> transaction = TransactionalMemoryManager::instance()->startTransaction();
@@ -63,9 +96,9 @@ void testTransactions() {
 
 	for (int i = 0; i < 300000; ++i) {
 		Reference<Task*> task = new TestStmTask(&references);
+		task->execute();
 		++totalTasks;
 		//Core::getTaskManager()->scheduleTask(task, 1000);
-		Core::getTaskManager()->executeTask(task);
 	}
 
 	TransactionalMemoryManager::commitPureTransaction(transaction);

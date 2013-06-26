@@ -18,6 +18,7 @@ include_directories(${MYSQL_INCLUDE_DIR})
 # Find berkeley includes
 find_package(Berkeley REQUIRED)
 include_directories(${DB_INCLUDE_DIR})
+link_directories(${DB_LIBRARIES})
 
 # Define build flags for public or private engine builds
 if (ENGINE_TYPE EQUAL 2)
@@ -29,3 +30,4 @@ else ()
 endif ()
 
 add_subdirectory(src)
+add_subdirectory(src/testsuite3)

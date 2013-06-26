@@ -76,7 +76,7 @@ void DatagramServiceClient::recieveMessages() {
 				return;
 
 			Reference<Task*> receiverTask = new ClientMessageReceiverTask(this, &packet);
-			receiverTask->execute();
+			receiverTask->executeInThread();
 		} catch (SocketException& e) {
 			System::out << e.getMessage() << "\n";
 
@@ -99,6 +99,8 @@ int DatagramServiceClient::send(Packet* pack) {
 		Message* message = new Message(pack, this);
 
 		TransactionalMemoryManager::instance()->getSocketManager()->sendMessage(message);
+
+		return pack->size();
 	#else
 		return socket->sendTo(pack, &addr);
 	#endif
@@ -112,6 +114,9 @@ bool DatagramServiceClient::read(Packet* pack) {
 
 	SocketAddress addr;
 
-	return socket->readFrom(pack, &addr);
+	if (socket)
+		return socket->readFrom(pack, &addr);
+	else
+		return false;
 }
 

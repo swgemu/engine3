@@ -492,18 +492,18 @@ int TaskManagerImpl::getIoScheduledTaskSize() {
 }
 
 int TaskManagerImpl::getExecutingTaskSize() {
-#ifdef WITH_STM
-	return tasks.size() + serialTaskQueue.size();
-#else
 //	return tasks.size();
 
 	int count = 0;
 	for (int i = 0; i < taskQueues.size(); ++i) {
 		count += taskQueues.get(i)->size();
 	}
+
+#ifdef WITH_STM
+	count += serialTaskQueue.size();
+#endif
 	
 	return count;
-#endif
 }
 
 #ifdef WITH_STM

@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "mm/KernelCall.h"
 
+#define transaction_cast dynamic_cast
+
 namespace engine {
   namespace stm {
 
@@ -163,7 +165,7 @@ namespace engine {
 
 			assert(object != NULL);
 
-			objectCopy = static_cast<O>(object->clone());
+			objectCopy = transaction_cast<O>(object->clone());
 
 #ifdef MEMORY_PROTECTION
 			ptrdiff_t rel = (ptrdiff_t)objectCopy.get() - (ptrdiff_t)0x8000000000;

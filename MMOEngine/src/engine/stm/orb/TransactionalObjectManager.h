@@ -67,6 +67,14 @@ namespace engine {
 
 		ObjectsToSaveMap* getModifiedObjectsToSave();
 
+		uint64 getNextFreeObjectID() {
+			return objectBroker->getNextFreeObjectID();
+		}
+
+		DOBObjectManager* getObjectManager() {
+			return objectBroker->getObjectManager();
+		}
+
   	protected:
 		LocalObjectManager* getLocalObjectManager();
   	};

@@ -764,6 +764,7 @@ MMOEngine/src/system/util/Vector.h -text
 MMOEngine/src/system/util/VectorMap.h -text
 MMOEngine/src/system/util/VectorSet.h -text
 MMOEngine/src/testsuite3/AUTHORS -text
+MMOEngine/src/testsuite3/CMakeLists.txt -text
 MMOEngine/src/testsuite3/COPYING -text
 MMOEngine/src/testsuite3/ChangeLog -text
 MMOEngine/src/testsuite3/INSTALL -text

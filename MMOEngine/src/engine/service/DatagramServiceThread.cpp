@@ -171,7 +171,7 @@ void DatagramServiceThread::receiveMessages() {
 void DatagramServiceThread::processMessage(Packet* packet, SocketAddress& addr) {
 	Reference<Task*> receiverTask = new MessageReceiverTask(this, packet, addr);
 
-	receiverTask->doExecute();
+	receiverTask->executeInThread();
 }
 
 void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) {
