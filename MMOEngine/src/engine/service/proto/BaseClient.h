@@ -73,6 +73,8 @@ namespace engine {
 		int acknowledgedServerSequence, realServerSequence;
 		int resentPackets;
 
+		bool keepSocket;
+
 	public:
 		static const int NETSTATUSCHECKUP_TIMEOUT = 50000;
 		static const int NETSTATUSREQUEST_TIME = 5000;
