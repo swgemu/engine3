@@ -113,17 +113,10 @@ int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 	int len = -1;
 	do {
 		len = recvfrom(fileDescriptor, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0, addr->getAddress(), &addr_len);
-	} while (len < 0 && errno == EINTR);
+	} while (len < 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
 
-	if (len < 0) {
-		if (errno == EAGAIN)
-			return 0;
-
-		StringBuffer msg;
-		msg << "error reading from socket";
-			
-		throw SocketException(msg.toString());
-	}
+	if (len < 0)
+		throw SocketException("error reading from socket");
 			
 	pack->setSize(len);
 	pack->reset();
@@ -149,20 +142,20 @@ int Socket::send(Packet* pack) {
 }
 
 int Socket::sendTo(Packet* pack, SocketAddress* addr) {
+	int len = -1;
+
+	do {
 #ifndef PLATFORM_MAC
-	int res = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize());
+		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize());
 #else
-	int res = sendto(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE, addr->getAddress(), addr->getAddressSize());
+		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE, addr->getAddress(), addr->getAddressSize());
 #endif
+	} while (len < 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
 		
-	if (res < 0/* && errno != EAGAIN*/) {
-		StringBuffer msg;
-		msg << "unable to send data to socket";
+	if (len < 0)
+		throw SocketException("unable to send data to socket");
 
-		throw SocketException(msg.toString());
-	}
-
-	return res;
+	return len;
 }
 	
 void Socket::close() {
