@@ -177,6 +177,8 @@ namespace sys {
 				else
 					release(old);
 			}
+
+			return NULL;
 		}
 
 		inline void release(StrongAndWeakReferenceCount* old) const {
@@ -189,7 +191,7 @@ namespace sys {
 			delete old;
 		}
 
-		inline void newref(StrongAndWeakReferenceCount* newRef) {
+		inline StrongAndWeakReferenceCount* newref(StrongAndWeakReferenceCount* newRef) {
 			if (newRef != NULL)
 				newRef->increaseWeakCount();
 
@@ -197,24 +199,14 @@ namespace sys {
 				StrongAndWeakReferenceCount* p = safeRead();
 
 				if (weakReference.compareAndSet(p, newRef)) {
-
 					release(p);
 
-					return;
+					return p;
 				} else
 					release(p);
 			}
-		}
 
-	public:
-
-		inline void updateObject(O obj) {
-			StrongAndWeakReferenceCount* newRef = NULL;
-
-			if (obj != NULL)
-				newRef = obj->requestWeak();
-
-			newref(newRef);
+			return NULL;
 		}
 
 		inline void initializeObject(O obj) {
@@ -225,8 +217,20 @@ namespace sys {
 			newref(count);
 		}
 
-		void releaseObject() {
-			newref(NULL);
+		inline void releaseObject() {
+			updateObject(NULL);
+		}
+
+	public:
+		inline void updateObject(O obj) {
+			StrongAndWeakReferenceCount* newRef = NULL;
+
+			if (obj != NULL)
+				newRef = obj->requestWeak();
+
+			StrongAndWeakReferenceCount* old = newref(newRef);
+
+			release(old);
 		}
 
 		friend class Object;

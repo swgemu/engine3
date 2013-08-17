@@ -187,6 +187,13 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 	/*Locker locker(this);
 
 	Locker clocker(objectManager, this);*/
+	if (objectManager == NULL) {
+		obj->_setDestroying();
+
+		obj->undeploy();
+
+		return true;
+	}
 
 	Locker clocker(objectManager);
 
