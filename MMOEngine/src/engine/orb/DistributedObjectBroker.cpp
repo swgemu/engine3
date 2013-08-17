@@ -29,6 +29,8 @@ DistributedObjectBroker::DistributedObjectBroker()
 
 	objectManager = NULL;
 
+	port = 0;
+
 	//setDebugLogLevel();
 	setInfoLogLevel();
 }
@@ -134,10 +136,10 @@ void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* 
 	deployLocal(name, obj);
 }
 
-DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
+Reference<DistributedObject*> DistributedObjectBroker::lookUp(const String& name) {
 	Locker locker(objectManager);
 
-	DistributedObject* object = namingDirectoryService->lookup(name);
+	Reference<DistributedObject*> object = namingDirectoryService->lookup(name);
 	if (object != NULL)
 		return object;
 
@@ -152,10 +154,10 @@ DistributedObject* DistributedObjectBroker::lookUp(const String& name) {
 	return object;
 }
 
-DistributedObject* DistributedObjectBroker::lookUp(uint64 objid) {
+Reference<DistributedObject*> DistributedObjectBroker::lookUp(uint64 objid) {
 	//Locker locker(objectManager);
 
-	DistributedObject* object = NULL;
+	Reference<DistributedObject*> object = NULL;
 
 	object = objectManager->getObject(objid);
 

@@ -8,7 +8,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/orb/db/DOBObjectManager.h"
 
 #include "engine/stm/TransactionAbortedException.h"
-
 #include "LocalObjectManager.h"
 
 LocalObjectManager::LocalObjectManager() : Logger("LocalObjectManager"),
@@ -77,7 +76,7 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 
 	assert(!objectName.isEmpty());
 
-	if (lookUp(objectName) != NULL) {
+	if (lookUp(objectName).get() != NULL) {
 		warning("object \'" + objectName + "\' (0x" + String::valueOf(obj) + ") already deployed");
 
 		/*traces.get(obj->_getObjectID())->print();
@@ -110,23 +109,27 @@ DistributedObjectStub* LocalObjectManager::undeploy(const String& name) {
 	return object;
 }
 
-DistributedObject* LocalObjectManager::lookUp(const String& name) {
-	DistributedObject* object = localNamingDirectory.get(name);
+Reference<DistributedObject*> LocalObjectManager::lookUp(const String& name) {
+	Reference<DistributedObject*> object;
+
+	object = localNamingDirectory.get(name);
 	if (object == NULL)
 		object = objectBroker->lookUp(name);
 
-	if (object != NULL && !undeployedObjects.contains((DistributedObjectStub*) object))
+	if (object != NULL && !undeployedObjects.contains((DistributedObjectStub*) object.get()))
 		return object;
 	else
 		return NULL;
 }
 
-DistributedObject* LocalObjectManager::lookUp(uint64 objid) {
-	DistributedObject* object = localObjectDirectory.get(objid);
+Reference<DistributedObject*> LocalObjectManager::lookUp(uint64 objid) {
+	Reference<DistributedObject*> object;
+
+	object = localObjectDirectory.get(objid);
 	if (object == NULL)
 		object = objectBroker->lookUp(objid);
 
-	if (object != NULL && undeployedObjects.contains((DistributedObjectStub*) object))
+	if (object != NULL && undeployedObjects.contains((DistributedObjectStub*) object.get()))
 		return NULL;
 
 	return object;

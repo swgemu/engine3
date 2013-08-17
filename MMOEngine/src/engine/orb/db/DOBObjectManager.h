@@ -59,9 +59,7 @@ namespace engine {
 			//localObjectDirectory.destroyContainingObjects();
 		}
 
-		virtual DistributedObject* loadPersistentObject(uint64 objid) {
-			return NULL;
-		}
+		virtual Reference<DistributedObjectStub*> loadPersistentObject(uint64 objid);
 
 		void createBackup();
 
@@ -86,7 +84,7 @@ namespace engine {
 
 		virtual DistributedObjectAdapter* addObject(DistributedObjectStub* object);
 
-		virtual DistributedObject* getObject(uint64 objectID);
+		virtual Reference<DistributedObject*> getObject(uint64 objectID);
 
 		virtual DistributedObjectAdapter* getAdapter(uint64 objectID);
 

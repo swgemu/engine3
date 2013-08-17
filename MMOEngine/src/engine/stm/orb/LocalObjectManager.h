@@ -42,8 +42,8 @@ namespace engine {
 
 		DistributedObjectStub* undeploy(const String& name);
 
-		DistributedObject* lookUp(const String& name);
-		DistributedObject* lookUp(uint64 objid);
+		Reference<DistributedObject*> lookUp(const String& name);
+		Reference<DistributedObject*> lookUp(uint64 objid);
 		
 		DOBObjectManager* getObjectManager() {
                     return objectManager;

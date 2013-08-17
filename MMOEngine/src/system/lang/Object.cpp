@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ref/Reference.h"
 #include "ref/WeakReference.h"
 
+#include "engine/core/ManagedReference.h"
+
 #include "system/thread/Locker.h"
 #include "system/mm/MemoryManager.h"
 

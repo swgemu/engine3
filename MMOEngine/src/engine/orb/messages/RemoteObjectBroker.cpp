@@ -58,7 +58,7 @@ DistributedObjectStub* RemoteObjectBroker::undeploy(const String& name) {
 	return NULL;
 }
 
-DistributedObject* RemoteObjectBroker::lookUp(const String& name) {
+Reference<DistributedObject*> RemoteObjectBroker::lookUp(const String& name) {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
 	LookUpObjectMessage lookupMessage(name);
@@ -81,7 +81,7 @@ DistributedObject* RemoteObjectBroker::lookUp(const String& name) {
 	return obj;
 }
 
-DistributedObject* RemoteObjectBroker::lookUp(uint64 objid) {
+Reference<DistributedObject*> RemoteObjectBroker::lookUp(uint64 objid) {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
 	LookUpObjectByIDMessage lookupMessage(objid);

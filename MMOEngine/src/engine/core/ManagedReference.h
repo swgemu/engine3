@@ -52,6 +52,12 @@ namespace engine {
 			return *this;
 		}
 
+		ManagedReference& operator=(const Reference<O>& ref) {
+			updateObject(ref.get());
+
+			return *this;
+		}
+
 		ManagedReference& operator=(ManagedWeakReference<O> ref) {
 			updateObject(ref.get());
 
@@ -132,14 +138,14 @@ namespace engine {
 	}
 
 	template<class O> bool ManagedReference<O>::parseFromString(const String& str, int version) {
-		O obj = dynamic_cast<O>(Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)));
+		Reference<O> obj = Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)).castTo<O>();
 
 		if (obj == NULL) {
 			updateObject(NULL);
 			return false;
 		}
 
-		updateObject(obj);
+		updateObject(obj.get());
 
 		return true;
 	}
@@ -158,7 +164,7 @@ namespace engine {
 	template<class O> bool ManagedReference<O>::parseFromBinaryStream(ObjectInputStream* stream) {
 		uint64 oid = stream->readLong();
 
-		O obj = (O)(Core::getObjectBroker()->lookUp(oid));
+		Reference<DistributedObject*> obj = Core::lookupObject(oid);
 
 
 		if (obj == NULL) {
@@ -166,7 +172,7 @@ namespace engine {
 			return false;
 		}
 
-		updateObject((O)obj);
+		updateObject((O)obj.get());
 
 		return true;
 	}

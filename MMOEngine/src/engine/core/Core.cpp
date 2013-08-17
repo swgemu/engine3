@@ -3,6 +3,7 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "ManagedReference.h"
 #include "system/lang/SignalException.h"
 
 #include "TaskManagerImpl.h"
@@ -14,7 +15,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/db/mysql/MySqlDatabase.h"
 
+#include "engine/core/ManagedReference.h"
+
 #include "Core.h"
+
 
 TaskManager* Core::taskManager;
 ObjectBroker* Core::objectBroker;
@@ -126,3 +130,6 @@ void Core::outOfMemoryHandler() {
 	exit(1);
 }
 
+Reference<DistributedObject*> Core::lookupObject(uint64 id) {
+	return Core::getObjectBroker()->lookUp(id);
+}

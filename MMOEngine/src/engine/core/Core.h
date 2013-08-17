@@ -10,15 +10,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
-#include "engine/orb/ObjectBroker.h"
-
 #include "TaskManager.h"
+
+#include "engine/orb/ObjectBroker.h"
 
 #include <new>
 
 namespace engine {
-  namespace core {
+  namespace ORB {
+  	  class ObjectBroker;
+  	  class DistributedObject;
+  }
+}
 
+using namespace engine::ORB;
+
+namespace engine {
+  namespace core {
 	class Core : public Thread {
 		static TaskManager* taskManager;
 
@@ -34,7 +42,8 @@ namespace engine {
 
 		virtual void initialize() = 0;
 
-		template<class T> static T* lookupObject(const String& name);
+		template<class T> static Reference<T*> lookupObject(const String& name);
+		static Reference<DistributedObject*> lookupObject(uint64 id);
 
 		/*static void scheduleTask(Task* task, uint64 time = 0);
 		static void scheduleTask(Task* task, Time& time);*/
@@ -64,8 +73,13 @@ namespace engine {
 		}
 	};
 
-	template<class T> T* Core::lookupObject(const String& name) {
-		return dynamic_cast<T*>(Core::getObjectBroker()->lookUp(name));
+	template<class T> Reference<T*> Core::lookupObject(const String& name) {
+		Reference<DistributedObject*> obj = Core::getObjectBroker()->lookUp(name);
+
+		if (obj == NULL)
+			return NULL;
+		else
+			return obj.castTo<T*>();
 	}
 
   } // namespace core

@@ -86,13 +86,13 @@ DistributedObjectStub* TransactionalObjectManager::undeploy(const String& name) 
 	return manager->undeploy(name);
 }
 
-DistributedObject* TransactionalObjectManager::lookUp(const String& name) {
+Reference<DistributedObject*> TransactionalObjectManager::lookUp(const String& name) {
 	LocalObjectManager* manager = getLocalObjectManager();
 
 	return manager->lookUp(name);
 }
 
-DistributedObject* TransactionalObjectManager::lookUp(uint64 objid) {
+Reference<DistributedObject*> TransactionalObjectManager::lookUp(uint64 objid) {
 	LocalObjectManager* manager = getLocalObjectManager();
 
 	return manager->lookUp(objid);

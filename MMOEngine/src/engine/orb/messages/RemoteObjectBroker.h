@@ -41,16 +41,16 @@ namespace engine {
 
 		DistributedObjectStub* undeploy(const String& name);
 
-		DistributedObject* lookUp(const String& name);
-		DistributedObject* lookUp(uint64 objid);
+		Reference<DistributedObject*> lookUp(const String& name);
+		Reference<DistributedObject*> lookUp(uint64 objid);
 
 		bool destroyObject(DistributedObjectStub* obj);
 
 		void invokeMethod(DistributedMethod& method);
 		
 		DOBObjectManager* getObjectManager() {
-		        return NULL;
-                }
+			return NULL;
+		}
 
 		uint64 getNextFreeObjectID();
 

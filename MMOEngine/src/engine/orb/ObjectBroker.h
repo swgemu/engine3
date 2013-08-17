@@ -36,8 +36,8 @@ namespace engine {
 
 		virtual DistributedObjectStub* undeploy(const String& name) = 0;
 
-		virtual DistributedObject* lookUp(const String& name) = 0;
-		virtual DistributedObject* lookUp(uint64 objid) = 0;
+		virtual Reference<DistributedObject*> lookUp(const String& name) = 0;
+		virtual Reference<DistributedObject*> lookUp(uint64 objid) = 0;
 
 		virtual bool destroyObject(DistributedObjectStub* obj) = 0;
 		

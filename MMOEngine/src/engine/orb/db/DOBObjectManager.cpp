@@ -78,8 +78,8 @@ DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* obj
 	return localObjectDirectory.add(object->_getObjectID(), adapter);
 }
 
-DistributedObject* DOBObjectManager::getObject(uint64 objectID) {
-	DistributedObject* obj = NULL;
+Reference<DistributedObject*> DOBObjectManager::getObject(uint64 objectID) {
+	Reference<DistributedObject*> obj = NULL;
 
 	Locker _locker(this);
 
@@ -452,6 +452,12 @@ void DOBObjectManager::cancelUpdateModifiedObjectsTask() {
 
 	if (updateModifiedObjectsTask->isScheduled())
 		updateModifiedObjectsTask->cancel();
+}
+
+Reference<DistributedObjectStub*> DOBObjectManager::loadPersistentObject(uint64 objid) {
+	Reference<DistributedObjectStub*> obj;
+
+	return obj;
 }
 
 #endif /* DOBOBJECTMANAGER_CPP_ */

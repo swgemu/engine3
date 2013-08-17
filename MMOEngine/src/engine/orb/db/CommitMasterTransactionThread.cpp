@@ -20,6 +20,8 @@ CommitMasterTransactionThread::CommitMasterTransactionThread() {
 	objectsToDeleteFromRam = NULL;
 
 	doRun = true;
+
+	numberOfThreads = 0;
 }
 
 void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
@@ -56,27 +58,27 @@ void CommitMasterTransactionThread::run() {
 }
 
 int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
-int i = 0;
+	int i = 0;
 
-//      while (objectsToDeleteFromRam->size() != 0) {
-        for (int j = 0; j < objectsToDeleteFromRam->size(); ++j) {
-        	DistributedObject* object = objectsToDeleteFromRam->get(j);
-                       
-                Locker locker(objectManager);
-                                        
-                //printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
-                                                        
-                if (object->getReferenceCount() == 2 && (!object->_isUpdated() || object->_isDeletedFromDatabase())) {
-                	objectManager->localObjectDirectory.removeHelper(object->_getObjectID());
-                                                                                                                        //localObjectDirectory.removeHelper(object->_getObjectID());
-                                                                                                                 
-                         ++i;
-                         
-                         object = NULL;
+	//      while (objectsToDeleteFromRam->size() != 0) {
+	for (int j = 0; j < objectsToDeleteFromRam->size(); ++j) {
+		DistributedObject* object = objectsToDeleteFromRam->get(j);
+
+		Locker locker(objectManager);
+
+		//printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
+
+		if (object->getReferenceCount() == 2 && (!object->_isUpdated() || object->_isDeletedFromDatabase())) {
+			objectManager->localObjectDirectory.removeHelper(object->_getObjectID());
+			//localObjectDirectory.removeHelper(object->_getObjectID());
+
+			++i;
+
+			object = NULL;
 		} else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
-                        printf("%s\n", TypeInfo<DistributedObject>::getClassName(object).toCharArray());		
+			printf("%s\n", TypeInfo<DistributedObject>::getClassName(object).toCharArray());
 		}
-		
+
 		if ((((j + 1) % 10000) == 0) || ((i + 1) % 100) == 0) {
 			locker.release();
 
@@ -86,7 +88,7 @@ int i = 0;
 
 	delete objectsToDeleteFromRam;
 	objectsToDeleteFromRam = NULL;
-        
+
 	return i;
 }
 
