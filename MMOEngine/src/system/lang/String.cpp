@@ -394,10 +394,10 @@ String String::replaceFirst(const String& regexString, const String& replacement
 		if (reti) {
 			regfree(&regex);
 
-			return regexString;
+			return *this;
 		}
 	} else
-		return regexString;
+		return *this;
 
 	regfree(&regex);
 
