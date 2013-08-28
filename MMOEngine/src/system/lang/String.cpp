@@ -13,6 +13,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "IllegalArgumentException.h"
 #include "NumberFormatException.h"
 
+#include <regex.h>
+
 static const unsigned int crctable[256] = {
     0x0000000,
     0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
@@ -189,6 +191,9 @@ int String::indexOf(const char* str) const {
 }
 
 int String::indexOf(const char* str, int fromIndex) const {
+	if (fromIndex >= count)
+		throw ArrayIndexOutOfBoundsException(fromIndex);
+
 	char* position = strstr(value + fromIndex, str);
 
 	if (position != NULL)
@@ -202,12 +207,10 @@ int String::indexOf(const String& str) const {
 }
 
 int String::indexOf(const String& str, int fromIndex) const {
-	char* position = strstr(value + fromIndex, str.toCharArray());
+	if (fromIndex >= count)
+		throw ArrayIndexOutOfBoundsException(fromIndex);
 
-	if (position != NULL)
-		return position - value;
-	else
-		return -1;
+	return indexOf(str.toCharArray(), fromIndex);
 }
 
 int String::lastIndexOf(char ch) const  {
@@ -379,10 +382,28 @@ String String::hexvalueOf(int64 val) {
 	return String(buf);
 }
 
-String String::replaceFirst(const String& regex, const String& replacement) const {
-	int rlen = regex.count;
+String String::replaceFirst(const String& regexString, const String& replacement) const {
+	regex_t regex;
+	regmatch_t pmatch[1];
 
-	int i = indexOf(regex);
+	int reti = regcomp(&regex, regexString.toCharArray(), REG_EXTENDED);
+
+	if (!reti) {
+		reti = regexec(&regex, value, 1, pmatch, 0);
+
+		if (reti) {
+			regfree(&regex);
+
+			return regexString;
+		}
+	} else
+		return regexString;
+
+	regfree(&regex);
+
+	int rlen = pmatch[0].rm_eo - pmatch[0].rm_so;
+
+	int i = pmatch[0].rm_so;
 
 	if (i != -1) {
 		if (i > 0 && i + rlen < count)
@@ -392,7 +413,7 @@ String String::replaceFirst(const String& regex, const String& replacement) cons
 		else if (i > 0 && i + rlen == count)
 			return subString(0, i) + replacement;
 		else
-			return regex;
+			return regexString;
 	} else
 		return *this;
 }
@@ -400,8 +421,16 @@ String String::replaceFirst(const String& regex, const String& replacement) cons
 String String::replaceAll(const String& regex, const String& replacement) const {
 	StringBuffer str(*this);
 
-	for (int pos = 0; (pos = str.indexOf(regex, pos)) != -1; ++pos)
-		str.replace(pos, pos + regex.length(), replacement);
+	int pos = -1;
+	int start = 0;
+	int end = -1;
+
+	for (int pos = 0; (pos = str.indexOf(regex, start, end) != -1); ++pos) {
+		str.replace(start, end, replacement);
+
+		if (str.toString() == replacement)
+			break;
+	}
 
 	return str.toString();
 }

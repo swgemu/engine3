@@ -53,6 +53,7 @@ namespace sys {
 		int indexOf(char ch, int fromIndex) const ;
 		int indexOf(const String& str) const ;
 		int indexOf(const String& str, int fromIndex) const ;
+		int indexOf(const String& regexString, int& resultStart, int& resultEnd, int fromIndex = 0) const;
 
 		StringBuffer& insert(int offset, char ch);
 		StringBuffer& insert(int offset, int val);

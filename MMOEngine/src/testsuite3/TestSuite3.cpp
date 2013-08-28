@@ -21,6 +21,7 @@
 #include "tests/sizeoftest.h"
 #include "tests/hashtableiterator.h"
 #include "tests/weakreftest.h"
+#include "tests/regexptest.h"
 
 class TestCore : public Core {
 public:
@@ -77,6 +78,8 @@ int main(int argc, char* argv[]) {
 				testHashTableIterator();
 			} else if (arguments.contains("weakreftest")) {
 				weakreftest();
+			} else if (arguments.contains("regexptest")) {
+				regexptest();
 			}
 		}
 

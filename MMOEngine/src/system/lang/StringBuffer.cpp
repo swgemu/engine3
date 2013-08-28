@@ -2,6 +2,8 @@
 
 #include "StringBuffer.h"
 
+#include <regex.h>
+
 StringBuffer::StringBuffer() : ArrayList<char>() {
 	streamFlags = SF_none;
 }
@@ -130,6 +132,36 @@ int StringBuffer::indexOf(char ch, int fromIndex) const {
 
 int StringBuffer::indexOf(const String& str) const {
 	return indexOf(str, 0);
+}
+
+int StringBuffer::indexOf(const String& regexString, int& resultStart, int& resultEnd, int fromIndex) const {
+	String val = toString();
+
+	if (fromIndex >= val.length())
+		throw ArrayIndexOutOfBoundsException(fromIndex);
+
+	regex_t regex;
+	regmatch_t pmatch[1];
+
+	int reti = regcomp(&regex, regexString.toCharArray(), REG_EXTENDED);
+
+	if (!reti) {
+		reti = regexec(&regex, val.toCharArray() + fromIndex, 1, pmatch, 0);
+
+		if (reti) {
+			regfree(&regex);
+
+			return -1;
+		}
+	} else
+		return -1;
+
+	regfree(&regex);
+
+	resultStart = pmatch[0].rm_so;
+	resultEnd = pmatch[0].rm_eo;
+
+	return reti;
 }
 
 int StringBuffer::indexOf(const String& str, int fromIndex) const {
