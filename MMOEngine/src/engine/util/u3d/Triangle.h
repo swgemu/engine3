@@ -96,7 +96,7 @@ namespace engine {
 
 		inline Vector3 getVertex(int i) const {
 			if (i > 2)
-				ArrayIndexOutOfBoundsException(i);
+				throw ArrayIndexOutOfBoundsException(i);
 
 			Vector3 vert(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
 
