@@ -20,6 +20,7 @@
 #include "tests/udptest.h"
 #include "tests/sizeoftest.h"
 #include "tests/hashtableiterator.h"
+#include "tests/weakreftest.h"
 
 class TestCore : public Core {
 public:
@@ -74,6 +75,8 @@ int main(int argc, char* argv[]) {
 				testObjectSizes();
 			} else if (arguments.contains("hashtableiterator")) {
 				testHashTableIterator();
+			} else if (arguments.contains("weakreftest")) {
+				weakreftest();
 			}
 		}
 
