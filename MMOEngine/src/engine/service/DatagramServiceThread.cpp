@@ -113,7 +113,7 @@ public:
 		SocketAddress addr;
 		Packet packet;
 
-		while (socket->readFrom(&packet, &addr) != 0) {
+		if (socket->readFrom(&packet, &addr) != 0) {
 			service->processMessage(&packet, addr);
 		}
 	}
@@ -137,7 +137,7 @@ void DatagramServiceThread::receiveMessages() {
 
 	try {
 		processor.initialize(1);
-		processor.addFileDescriptor(socket, true);
+		processor.addFileDescriptor(socket/*, true*/);
 	} catch (const IOException& e) {
 		e.printStackTrace();
 		throw ServiceException(e.getMessage());
