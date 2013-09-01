@@ -161,7 +161,7 @@ namespace sys {
 		  }
 
 		  bool parseFromString(const String& str, int version = 0) {
-			  *this = UnsignedLong::valueOf(str);
+			  *this = valueOf(str);
 
 			  return true;
 		  }

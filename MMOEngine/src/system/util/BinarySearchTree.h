@@ -81,7 +81,7 @@ public:
 		removeAll(root);
 	}
 
-	const BinarySearchTree& operator=(const BinarySearchTree& tree) {
+	BinarySearchTree& operator=(const BinarySearchTree& tree) {
 		if (this != &tree) {
 			removeAll();
 			root = clone(tree.root);

@@ -22,7 +22,7 @@ namespace engine {
 		float radiusSquared;
 
 	public:
-		Sphere(const Vector3 orig, float rad) : origin(orig), radiusSquared(rad * rad) {
+		Sphere(const Vector3& orig, float rad) : origin(orig), radiusSquared(rad * rad) {
 		}
 
 		bool intersects(const Triangle& tri) const;/* {

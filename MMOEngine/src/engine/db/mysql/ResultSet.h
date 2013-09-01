@@ -26,8 +26,6 @@ namespace engine {
 		MYSQL_RES *result;
 		MYSQL_ROW row;
 
-		int lastAffectedRow;
-
 	public:
 		ResultSet(MYSQL* db, MYSQL_RES *res) {
 			mysql = db;

@@ -99,7 +99,7 @@ namespace sys {
 			heap.root = NULL;
 		}
 	
-		const BinaryHeap& operator=(const BinaryHeap& heap) {
+		BinaryHeap& operator=(const BinaryHeap& heap) {
 			if (this != &heap) {
 				removeAll();
 				root = clone(heap.root);
