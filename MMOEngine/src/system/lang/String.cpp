@@ -178,6 +178,9 @@ int String::indexOf(char ch) const  {
 }
 
 int String::indexOf(char ch, int fromIndex) const {
+	if (fromIndex < 0 || fromIndex >= count)
+		return -1;
+
 	char* position = strchr(value + fromIndex, ch);
 
 	if (position != NULL)
@@ -191,8 +194,8 @@ int String::indexOf(const char* str) const {
 }
 
 int String::indexOf(const char* str, int fromIndex) const {
-	if (fromIndex >= count)
-		throw ArrayIndexOutOfBoundsException(fromIndex);
+	if (fromIndex < 0 || fromIndex >= count)
+		return -1;
 
 	char* position = strstr(value + fromIndex, str);
 
@@ -207,9 +210,6 @@ int String::indexOf(const String& str) const {
 }
 
 int String::indexOf(const String& str, int fromIndex) const {
-	if (fromIndex >= count)
-		throw ArrayIndexOutOfBoundsException(fromIndex);
-
 	return indexOf(str.toCharArray(), fromIndex);
 }
 
@@ -218,6 +218,9 @@ int String::lastIndexOf(char ch) const  {
 }
 
 int String::lastIndexOf(char ch, int fromIndex) const {
+	if (fromIndex < 0 || fromIndex >= count)
+		return -1;
+
 	char* position = strrchr(value + fromIndex, ch);
 
 	if (position != NULL)
@@ -231,6 +234,9 @@ int String::lastIndexOf(const char* str) const {
 }
 
 int String::lastIndexOf(const char* str, int fromIndex) const {
+	if (fromIndex < 0 || fromIndex >= count)
+		return -1;
+
 	char* position = strrstr(value + fromIndex, count - fromIndex, str, strlen(str));
 
 	if (position != NULL)
@@ -244,6 +250,9 @@ int String::lastIndexOf(const String& str) const {
 }
 
 int String::lastIndexOf(const String& str, int fromIndex) const {
+	if (fromIndex < 0 || fromIndex >= count)
+		return -1;
+
 	char* position = strrstr(value + fromIndex, count - fromIndex, str.value, str.count);
 
 	if (position != NULL)

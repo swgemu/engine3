@@ -225,7 +225,7 @@ int UnicodeString::indexOf(unsigned short chr) const {
 }
 
 int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
-	if (str.isEmpty())
+	if (str.isEmpty() || startPos >= count)
 		return -1;
 
 	for (int i = startPos; i <= count - str.length(); ++i) {
