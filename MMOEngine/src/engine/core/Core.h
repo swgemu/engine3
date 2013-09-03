@@ -33,8 +33,8 @@ namespace engine {
 		static ObjectBroker* objectBroker;
 
 	public:
-		Core();
-		Core(const char* globallogfile);
+		Core(int logLevel = Logger::INFO);
+		Core(const char* globallogfile, int logLevel = Logger::INFO);
 
 		virtual ~Core();
 
@@ -53,7 +53,7 @@ namespace engine {
 		static ObjectBroker* getObjectBroker();
 
 	protected:
-		void initializeContext();
+		void initializeContext(int logLevel);
 
 		void finalizeContext();
 

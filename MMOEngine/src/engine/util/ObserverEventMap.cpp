@@ -93,7 +93,7 @@ void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
 		remove(eventType);
 }
 
-SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint32 eventType) {
+SortedVector<ManagedReference<Observer*> > ObserverEventMap::getObservers(uint32 eventType) {
 	Locker locker(&observerMutex);
 
 	/*if (!containsKey(eventType))
@@ -104,9 +104,9 @@ SortedVector<ManagedReference<Observer*> >* ObserverEventMap::getObservers(uint3
 	sys::util::Entry<uint32, SortedVector<ManagedReference<Observer*> > >* entry = getEntry(eventType);
 
 	if (entry == NULL)
-		return NULL;
+		return SortedVector<ManagedReference<Observer*> >();
 
-	SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
+	SortedVector<ManagedReference<Observer*> > observers(entry->getValue());
 
 	return observers;
 }

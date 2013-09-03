@@ -19,6 +19,21 @@ StackTrace::StackTrace() {
 	#endif
 }
 
+StackTrace::StackTrace(const StackTrace& c) {
+	count = c.count;
+	memcpy(symbols, c.symbols, sizeof(void*) * c.count);
+}
+
+StackTrace& StackTrace::operator=(const StackTrace& c) {
+	if (this == &c)
+		return *this;
+
+	count = c.count;
+	memcpy(symbols, c.symbols, sizeof(void*) * c.count);
+
+	return *this;
+}
+
 StackTrace::~StackTrace() {
 
 }

@@ -29,6 +29,37 @@ namespace engine {
 namespace sys {
   namespace thread {
 
+  	 class Lockable;
+
+  	 class LockableTrace {
+  	 public:
+  		 Lockable* lockable;
+  		 byte locked;
+  		 Lockable* crossedTo;
+  		 StackTrace trace;
+  		 bool monitorLike;
+
+  		 LockableTrace(Lockable* l, byte value, Lockable* cross = NULL, bool monitor = false) :
+  			lockable(l), locked(value), crossedTo(cross), monitorLike(monitor) {
+  		 }
+
+  		 LockableTrace(const LockableTrace& l) : lockable(l.lockable), locked(l.locked),
+  				 crossedTo(l.crossedTo), monitorLike(l.monitorLike) {
+  		 }
+
+  		LockableTrace& operator=(const LockableTrace& l) {
+  			if (this == &l)
+  				return *this;
+
+  			lockable = l.lockable;
+  			locked = l.locked;
+  			crossedTo = l.crossedTo;
+  			monitorLike = l.monitorLike;
+
+  			return *this;
+  		}
+  	 };
+
 	/*!
 	 * thread wrapper class. the inheriting classes must implement a run() method that have to contain the code to be executed
 	 */
@@ -44,6 +75,10 @@ namespace sys {
 		static pthread_once_t initThread;
 
 		static ThreadLocal<Thread*> currentThread;
+
+		//only used in testing
+		ArrayList<Lockable*> acquiredLockables;
+		ArrayList<LockableTrace> lockableTrace;
 
 	public:
 		//! allocates a new Thread
@@ -85,6 +120,27 @@ namespace sys {
 
 		const String& getName() {
 			return name;
+		}
+
+		ArrayList<Lockable*>* getAcquiredLockables() {
+			return &acquiredLockables;
+		}
+
+		ArrayList<LockableTrace>* getLockableTrace() {
+			return &lockableTrace;
+		}
+
+		void addAcquiredLockable(Lockable* lockable, Lockable* cross = NULL, bool monitorLike = false, bool addToTrace = true) {
+			acquiredLockables.add(lockable);
+
+			if (addToTrace)
+				lockableTrace.add(LockableTrace(lockable, 1, cross, monitorLike));
+		}
+
+		void removeAcquiredLockable(Lockable* lockable) {
+			acquiredLockables.removeElement(lockable);
+
+			lockableTrace.add(LockableTrace(lockable, 0));
 		}
 
 	protected:

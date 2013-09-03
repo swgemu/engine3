@@ -111,6 +111,10 @@ namespace engine {
 			return logFile;
 		}
 
+		inline int getLogLevel() {
+			return logLevel;
+		}
+
 	};
 
   } // namespace log

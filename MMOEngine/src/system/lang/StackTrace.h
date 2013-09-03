@@ -34,6 +34,9 @@ namespace sys {
 
 	public:
 		StackTrace();
+		StackTrace(const StackTrace& c);
+
+		StackTrace& operator=(const StackTrace& c);
 
 		~StackTrace();
 

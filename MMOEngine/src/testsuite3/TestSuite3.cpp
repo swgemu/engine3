@@ -25,6 +25,10 @@
 
 class TestCore : public Core {
 public:
+	TestCore(int log) : Core(log) {
+
+	}
+
 	void initialize() {
 	}
 
@@ -41,7 +45,7 @@ int main(int argc, char* argv[]) {
 			arguments.put(argv[i]);
 		}
 
-		TestCore core;
+		TestCore core(Logger::INFO);
 
 		StackTrace::setBinaryName("testsuite3");
 

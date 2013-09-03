@@ -25,12 +25,12 @@ ObjectBroker* Core::objectBroker;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 
-Core::Core() {
-	initializeContext();
+Core::Core(int logLevel) {
+	initializeContext(logLevel);
 }
 
-Core::Core(const char* globallogfile) {
-	initializeContext();
+Core::Core(const char* globallogfile, int logLevel) {
+	initializeContext(logLevel);
 
 	Logger::setGlobalFileLogger(globallogfile);
 }
@@ -39,7 +39,7 @@ Core::~Core() {
 	finalizeContext();
 }
 
-void Core::initializeContext() {
+void Core::initializeContext(int logLevel) {
 	taskManager = NULL;
 
 	std::set_new_handler(outOfMemoryHandler);
@@ -52,6 +52,7 @@ void Core::initializeContext() {
 	Socket::initialize();
 
 	TaskManager* taskManager = getTaskManager();
+	taskManager->setLogLevel(logLevel);
 	taskManager->initialize();
 
 	taskManager->start();

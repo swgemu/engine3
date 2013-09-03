@@ -31,18 +31,18 @@ void TaskManagerImpl::initialize() {
 }
 
 void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCount) {
-	ObjectDatabaseManager::instance();
+	ObjectDatabaseManager::instance()->setLogLevel(getLogLevel());
 
 	Locker locker(this);
 
 	for (int j = 0; j < DEFAULT_TASK_QUEUES; ++j) {
 		TaskQueue* queue = new TaskQueue();
-		
+		queue->setLogLevel(getLogLevel());
 		taskQueues.add(queue);
 		
 		for (int i = 0; i < workerCount; ++i) {
 			TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(i), queue);
-
+			worker->setLogLevel(getLogLevel());
 			workers.add(worker);
 		}
 		
@@ -58,6 +58,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 	for (int i = 0; i < schedulerCount; ++i) {
 		TaskScheduler* scheduler = new TaskScheduler("TaskScheduler" + String::valueOf(i));
 		scheduler->setTaskManager(this);
+		scheduler->setLogLevel(getLogLevel());
 
 		schedulers.add(scheduler);
 	}
@@ -65,6 +66,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 	for (int i = 0; i < ioCount; ++i) {
 		TaskScheduler* scheduler = new TaskScheduler("IoTaskScheduler" + String::valueOf(i));
 		scheduler->setTaskManager(this);
+		scheduler->setLogLevel(getLogLevel());
 
 		ioSchedulers.add(scheduler);
 	}
@@ -95,6 +97,10 @@ void TaskManagerImpl::start() {
 	StringBuffer msg;
 	msg << "started";
 	debug(msg);
+}
+
+void TaskManagerImpl::setLogLevel(int level) {
+	Logger::setLogLevel(level);
 }
 
 void TaskManagerImpl::shutdown() {

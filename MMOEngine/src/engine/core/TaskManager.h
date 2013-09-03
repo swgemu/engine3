@@ -25,6 +25,10 @@ namespace engine {
 
 		virtual void shutdown() = 0;
 
+		virtual void setLogLevel(int level) {
+
+		}
+
 		virtual Vector<Locker*>* blockTaskManager() {
 			return NULL;
 		}

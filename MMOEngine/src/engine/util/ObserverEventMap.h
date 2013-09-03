@@ -23,6 +23,7 @@ using namespace engine::util;
 
 class ObserverEventMap : public HashTable<uint32, SortedVector<ManagedReference<Observer*> > > {
 	Mutex observerMutex;
+
 public:
 	ObserverEventMap() {
 		//setNoDuplicateInsertPlan();
@@ -38,7 +39,7 @@ public:
 
 	void dropObserver(uint32 eventType, Observer* observer);
 
-	SortedVector<ManagedReference<Observer*> >* getObservers(uint32 eventType);
+	SortedVector<ManagedReference<Observer*> > getObservers(uint32 eventType);
 
 	int getObserverCount(uint32 eventType);
 };
