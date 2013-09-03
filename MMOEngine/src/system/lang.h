@@ -79,6 +79,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "thread/atomic/AtomicInteger.h"
 #include "thread/atomic/AtomicLong.h"
 #include "thread/atomic/AtomicReference.h"
+#include "thread/DeadlockException.h"
 
 #include "net/InetAddress.h"
 #include "net/NetworkInterface.h"
