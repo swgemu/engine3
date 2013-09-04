@@ -14,23 +14,38 @@ namespace sys {
   namespace thread {
   	  class Lockable;
 
-  	  class DeadlockException : public Exception {
+  	  class DeadlockException {
   		  Lockable* lockable;
+  		  String message;
+  		  StackTrace trace;
+
   	  public:
-  		  DeadlockException() : Exception(), lockable(NULL) {
+  		  DeadlockException() : lockable(NULL) {
 
   		  }
 
-  		  DeadlockException(const String& message) : Exception(message), lockable(NULL) {
+  		  DeadlockException(const String& msg) : lockable(NULL), message(msg) {
 
   		  }
 
-  		  DeadlockException(Lockable* lock, const String& message = "") : Exception(message), lockable(lock) {
+  		  DeadlockException(Lockable* lock, const String& msg = "") : lockable(lock), message(msg) {
 
+  		  }
+
+  		  inline StackTrace* getStackTrace() {
+  			  return &trace;
+  		  }
+
+  		  inline void printStackTrace() {
+  			  trace.print();
   		  }
 
   		  inline Lockable* getLockable() {
   			  return lockable;
+  		  }
+
+  		  inline String getMessage() {
+  			  return message;
   		  }
   	  };
   }
