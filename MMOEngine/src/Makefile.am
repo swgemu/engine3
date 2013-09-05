@@ -14,7 +14,7 @@ endif
 #CXX = clang++
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua \
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I/usr/include/mysql \
 	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) \
 	    	-I../../../external/dlmalloc \
 	    	-I../../../external/multimmap
