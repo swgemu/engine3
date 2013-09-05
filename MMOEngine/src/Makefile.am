@@ -64,6 +64,7 @@ libengine3_a_SOURCES = \
 			system/io/IOProcessor.cpp \
 			system/io/Stream.cpp \
 			system/io/File.cpp \
+			system/io/FileDescriptor.cpp \
 			system/io/BufferedReader.cpp \
 			system/io/StringTokenizer.cpp \
 			system/io/UnicodeTokenizer.cpp \
