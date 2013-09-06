@@ -139,9 +139,9 @@ void IOProcessor::addFileDescriptor(FileDescriptor* descriptor, bool edgeTrigger
 
 	struct epoll_event ev;
 	if (edgeTriggered)
-		ev.events = EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP | EPOLLET;
+		ev.events = EPOLLIN | /*EPOLLOUT |*/ EPOLLERR | EPOLLHUP | EPOLLET;
 	else
-		ev.events = EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP;
+		ev.events = EPOLLIN | /*EPOLLOUT |*/ EPOLLERR | EPOLLHUP;
 	ev.data.fd = fileDescriptor;
 	ev.data.ptr = descriptor;
 
