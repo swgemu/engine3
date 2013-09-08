@@ -233,7 +233,7 @@ namespace sys {
        int numMoved = elementCount - index - 1;
        if (numMoved > 0) {
            E* indexOffset = elementData + index;
-           memcpy((void*)indexOffset, (void*)(indexOffset + 1), numMoved * sizeof(E));
+           memmove((void*)indexOffset, (void*)(indexOffset + 1), numMoved * sizeof(E));
        }
 
        --elementCount;
@@ -314,7 +314,7 @@ namespace sys {
        if (numMoved > 0) {
            E* indexOffset = elementData + fromIndex;
 
-           memcpy((void*)indexOffset, (void*)(indexOffset + toIndex - fromIndex), numMoved * sizeof(E));
+           memmove((void*)indexOffset, (void*)(indexOffset + toIndex - fromIndex), numMoved * sizeof(E));
        }
 
        elementCount -= toIndex - fromIndex;
