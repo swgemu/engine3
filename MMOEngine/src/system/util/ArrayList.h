@@ -142,7 +142,7 @@ namespace sys {
    }
 
    template<class E> void ArrayList<E>::init(int initsize, int incr) {
-       elementCapacity = initsize;
+       elementCapacity = MAX(1, initsize);
        elementData = (E*) malloc(elementCapacity * sizeof(E));
 
        elementCount = 0;

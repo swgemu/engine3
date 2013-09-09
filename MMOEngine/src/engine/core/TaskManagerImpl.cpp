@@ -126,10 +126,22 @@ void TaskManagerImpl::shutdown() {
 		scheduler->stop();
 	}
 
+	while (!taskQueues.isEmpty()) {
+		lock();
+
+		TaskQueue* taskQueue = taskQueues.remove(0);
+		taskQueue->flush();
+
+		//delete taskQueue;
+
+		unlock();
+
+	}
+	/*
 	for(int i = 0; i < taskQueues.size(); ++i) {
 		taskQueues.get(i)->flush();
 	}
-
+	*/
 	while (!workers.isEmpty()) {
 		lock();
 

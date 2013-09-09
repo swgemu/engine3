@@ -20,6 +20,7 @@ TaskQueue::TaskQueue() : Condition(), Logger("TaskQueue") {
 
 TaskQueue::~TaskQueue() {
 	delete condMutex;
+	condMutex = NULL;
 }
 
 void TaskQueue::pushRandom(Task* task) {

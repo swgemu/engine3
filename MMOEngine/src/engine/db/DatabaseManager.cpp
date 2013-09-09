@@ -48,7 +48,7 @@ DatabaseManager::~DatabaseManager() {
 	delete databaseEnvironment;
 	databaseEnvironment = NULL;
 
-	checkpointTask->cancel();
+	//checkpointTask->cancel();
 
 	info("closed");
 }
