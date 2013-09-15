@@ -81,12 +81,12 @@ namespace engine {
 		virtual void setGlobalFloat(const String& name, const float value);
 
 		//statics
-		inline static bool checkStack(lua_State* lState, int num);
-		inline static int checkStack(lua_State* lState);
+		static bool checkStack(lua_State* lState, int num);
+		static int checkStack(lua_State* lState);
 
 		virtual lua_State* getLuaState();
-		inline virtual int checkStack();
-		inline virtual bool checkStack(int num);
+		virtual int checkStack();
+		virtual bool checkStack(int num);
 
 	};
 
