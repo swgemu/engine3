@@ -26,38 +26,42 @@ namespace lua {
 			L = lState;
 		}
 
-		void operator=(lua_State* lState) {
-			L = lState;
+		virtual ~LuaObject() {
+
 		}
 
-		String getStringField(const String& key);
-		sys::uint32 getIntField(const String& key);
-		sys::uint16 getShortField(const String& key);
-		sys::uint8 getByteField(const String& key);
-		float getFloatField(const String& key);
-		uint64 getLongField(const String& key);
-		LuaObject getObjectField(const String& key);
-		bool getBooleanField(const String& key);
+		virtual String getStringField(const String& key);
+		virtual sys::uint32 getIntField(const String& key);
+		virtual sys::uint16 getShortField(const String& key);
+		virtual sys::uint8 getByteField(const String& key);
+		virtual float getFloatField(const String& key);
+		virtual uint64 getLongField(const String& key);
+		virtual LuaObject getObjectField(const String& key);
+		virtual bool getBooleanField(const String& key);
 
-		void setField(const String& key, sys::uint64 value);
-		void setField(const String& key, const String& value);
+		virtual void setField(const String& key, sys::uint64 value);
+		virtual void setField(const String& key, const String& value);
 
-		String getStringAt(int idx);
-		sys::uint32 getIntAt(int idx);
-		float getFloatAt(int idx);
-		LuaObject getObjectAt(int idx);
-		sys::uint64 getLongAt(int idx);
-		bool getBooleanAt(int idx);
+		virtual String getStringAt(int idx);
+		virtual sys::uint32 getIntAt(int idx);
+		virtual float getFloatAt(int idx);
+		virtual LuaObject getObjectAt(int idx);
+		virtual sys::uint64 getLongAt(int idx);
+		virtual bool getBooleanAt(int idx);
 
 
-		int getTableSize();
+		virtual int getTableSize();
 
-		bool isValidTable();
+		virtual bool isValidTable();
 
-		void pop();
+		virtual void pop();
 
 		inline lua_State* getLuaState() {
 			return L;
+		}
+
+		inline void operator=(lua_State* lState) {
+			L = lState;
 		}
 
 	};

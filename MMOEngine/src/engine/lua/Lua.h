@@ -37,8 +37,8 @@ namespace engine {
 
 		void deinit();
 
-		bool runFile(const String& filename);
-		bool runString(const String& str);
+		virtual bool runFile(const String& filename);
+		virtual bool runString(const String& str);
 
 		//static
 		static bool runFile(const String& filename, lua_State* lState);
@@ -50,14 +50,14 @@ namespace engine {
 		// getters
 
 		// globals
-		bool getGlobalBoolean(const String& name);
-		String getGlobalString(const String& name);
-		sys::uint32 getGlobalInt(const String& name);
-		uint64 getGlobalLong(const String& name);
-		sys::uint16 getGlobalShort(const String& name);
-		sys::uint8 getGlobalByte(const String& name);
-		float getGlobalFloat(const String& name);
-		LuaObject getGlobalObject(const String& name);
+		virtual bool getGlobalBoolean(const String& name);
+		virtual String getGlobalString(const String& name);
+		virtual sys::uint32 getGlobalInt(const String& name);
+		virtual uint64 getGlobalLong(const String& name);
+		virtual sys::uint16 getGlobalShort(const String& name);
+		virtual sys::uint8 getGlobalByte(const String& name);
+		virtual float getGlobalFloat(const String& name);
+		virtual LuaObject getGlobalObject(const String& name);
 
 		// static params
 		static String getStringParameter(lua_State* lState);
@@ -73,20 +73,20 @@ namespace engine {
 		static bool getBooleanParameter(lua_State* lState);
 
 		// setters
-		void setGlobalString(const String& name, const String& value);
-		void setGlobalInt(const String& name, const int value);
-		void setGlobalLong(const String& name, const uint64 value);
-		void setGlobalShort(const String& name, const short value);
-		void setGlobalByte(const String& name, const char value);
-		void setGlobalFloat(const String& name, const float value);
+		virtual void setGlobalString(const String& name, const String& value);
+		virtual void setGlobalInt(const String& name, const int value);
+		virtual void setGlobalLong(const String& name, const uint64 value);
+		virtual void setGlobalShort(const String& name, const short value);
+		virtual void setGlobalByte(const String& name, const char value);
+		virtual void setGlobalFloat(const String& name, const float value);
 
 		//statics
 		inline static bool checkStack(lua_State* lState, int num);
 		inline static int checkStack(lua_State* lState);
 
-		lua_State* getLuaState();
-		inline int checkStack();
-		inline bool checkStack(int num);
+		virtual lua_State* getLuaState();
+		inline virtual int checkStack();
+		inline virtual bool checkStack(int num);
 
 	};
 
