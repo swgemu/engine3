@@ -17,10 +17,19 @@ extern "C" {
 
 Lua::Lua() : Logger("Lua") {
 	L = NULL;
+
+	deinitOnDestruction = true;
+}
+
+Lua::Lua(lua_State* L) : Logger("Lua") {
+	this->L = L;
+
+	deinitOnDestruction = false;
 }
 
 Lua::~Lua() {
-	deinit();
+	if (deinitOnDestruction)
+		deinit();
 }
 
 void Lua::init() {
@@ -520,6 +529,11 @@ void Lua::setGlobalByte(const String& name, const char value) {
 
 void Lua::setGlobalFloat(const String& name, const float value) {
 	lua_pushnumber(L, value);
+	lua_setglobal(L, name.toCharArray());
+}
+
+void Lua::setGlobalBoolean(const String& name, const bool value) {
+	lua_pushboolean(L, value);
 	lua_setglobal(L, name.toCharArray());
 }
 
