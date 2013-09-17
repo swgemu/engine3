@@ -30,6 +30,9 @@ namespace engine {
 			insertInt(invid);
 
 			packet = NULL;
+			objectID = 0;
+			methodID = 0;
+			invocationID = 0;
 		}
 		
 		InvokeMethodMessage(Packet* message) : DOBMessage(message) {
