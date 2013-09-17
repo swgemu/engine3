@@ -61,6 +61,10 @@ namespace engine {
 		void error(const String& msg);
 		void error(const StringBuffer& msg);
 
+		void fatal(const char* msg);
+		void fatal(const String& msg);
+		void fatal(const StringBuffer& msg);
+
 		void debug(const char* msg);
 		void debug(const String& msg);
 		void debug(const StringBuffer& msg);
