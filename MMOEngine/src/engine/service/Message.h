@@ -24,16 +24,19 @@ namespace engine {
 	public:
 		Message() : Packet(), DistributedObject() {
 			client = NULL;
+			timestampMili = 0;
 		}
 	
 		Message(int size) : Packet(size), DistributedObject() {
 			client = NULL;
+			timestampMili = 0;
 		}
 	
 		Message(Packet* packet, ServiceClient* clt) {
 			packet->copy(this, 0);
 
 			client = clt;
+			timestampMili = 0;
 		}
 
 		virtual ~Message() {

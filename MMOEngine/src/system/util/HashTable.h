@@ -30,6 +30,7 @@ namespace sys {
 	public:
 		Entry() {
 			next = NULL;
+			hash = 0;
 		}
 
 		Entry(const Entry<K, V>& e) {

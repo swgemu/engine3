@@ -35,6 +35,7 @@ namespace sys {
 	
 	public:	
 		LinkedList();
+		virtual ~LinkedList();
 		
 		virtual void add(O& obj);
 		virtual void add(int index, O& obj);
@@ -61,7 +62,7 @@ namespace sys {
 
 	template<class O> class LinkedListIterator {
 		LinkedList<O>* linkedList;
-		LinkedList<O>* current;
+		ListEntry<O>* current;
 
 	public:
 		LinkedListIterator(LinkedList<O>* list) {
@@ -87,6 +88,19 @@ namespace sys {
 		head = new ListEntry<O>();
 	}
 	
+	template<class O> LinkedList<O>::~LinkedList() {
+		ListEntry<O>* currentObject = head;
+
+		while (currentObject->next != NULL) {
+			ListEntry<O>* old = currentObject;
+			currentObject = currentObject->next;
+
+			delete old;
+		}
+
+		delete currentObject;
+	}
+
 	template<class O> void LinkedList<O>::add(O& obj) {
 		ListEntry<O>* e = new ListEntry<O>(obj, NULL);
 		

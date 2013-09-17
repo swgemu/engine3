@@ -29,17 +29,17 @@ namespace engine {
 							GETNEXTFREEOBJECTIDMESSAGE };
 
 	public:	
-		DOBMessage(uint32 messageType) : Packet(20) {
+		DOBMessage(uint32 messageType) : Packet(20), client(NULL), sequence(0) {
 			insertInt(messageType);
 			insertInt(0); // sequence
 		}
 
-		DOBMessage(uint32 messageType, uint32 initialBufferSize) : Packet(initialBufferSize) {
+		DOBMessage(uint32 messageType, uint32 initialBufferSize) : Packet(initialBufferSize), client(NULL), sequence(0) {
 			insertInt(messageType);
 			insertInt(0); // sequence
 		}
 
-		DOBMessage(Packet* packet) : Packet(40) {
+		DOBMessage(Packet* packet) : Packet(40), client(NULL) {
 			sequence = packet->parseInt();
 
 			insertInt(REPLYMESSAGE); // messageType

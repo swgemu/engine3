@@ -27,7 +27,7 @@ namespace engine {
 		MYSQL_ROW row;
 
 	public:
-		ResultSet(MYSQL* db, MYSQL_RES *res) {
+		ResultSet(MYSQL* db, MYSQL_RES *res) : row(NULL) {
 			mysql = db;
 			result = res;
 		}

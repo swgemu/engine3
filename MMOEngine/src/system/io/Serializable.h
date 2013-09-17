@@ -178,6 +178,7 @@ namespace sys {
 			VariableName() : Variable() {
 				version = 0;
 				type = 0;
+				name = NULL;
 			}
 
 			VariableName(const char* name, int version) : Variable() {
