@@ -154,6 +154,25 @@ void Logger::error(const StringBuffer& msg) {
 	error(s);
 }
 
+void Logger::fatal(const char* msg) {
+	printTime(false);
+
+	System::out << " [" << name << "] FATAL - " << msg << "\n";
+
+	log(msg);
+
+	abort();
+}
+
+void Logger::fatal(const String& msg) {
+	fatal(msg.toCharArray());
+}
+
+void Logger::fatal(const StringBuffer& msg) {
+	String s = msg.toString();
+	fatal(s);
+}
+
 void Logger::debug(const char* msg) {
 	if (logLevel >= DEBUG) {
 		printTime(true);
