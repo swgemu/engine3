@@ -235,6 +235,9 @@ uint64 DistributedObjectBroker::getNextFreeObjectID() {
 }
 
 void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectStub* obj) {
+	if (objectManager == NULL)
+		return;
+
 	Locker locker(objectManager);
 
 #ifndef WITH_STM
@@ -273,6 +276,9 @@ void DistributedObjectBroker::deployRemote(const String& name, DistributedObject
 }
 
 DistributedObjectStub* DistributedObjectBroker::undeployLocal(const String& name) {
+	if (objectManager == NULL)
+		return NULL;
+
 	Locker locker(objectManager); //Locker locker(this);
 
 	DistributedObjectStub* obj = (DistributedObjectStub*) namingDirectoryService->unbind(name);
