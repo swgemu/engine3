@@ -542,7 +542,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 		debug(msg3);*/
 
 		BasePacket* oor = new OutOfOrderMessage(seq);
-		sendPacket(oor);
+		sendPacket(oor, false);
 
 		#ifdef TRACE_CLIENTS
 			StringBuffer msg;
