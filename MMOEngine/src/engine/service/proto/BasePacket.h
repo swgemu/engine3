@@ -29,7 +29,7 @@ namespace engine {
 	public:
 		BasePacket();	
 		BasePacket(int size);	
-		BasePacket(Packet* pack, int seq);
+		BasePacket(Packet* pack, uint32 seq);
 	
 		virtual ~BasePacket() {
 		}

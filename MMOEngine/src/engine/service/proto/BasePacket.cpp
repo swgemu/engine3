@@ -28,7 +28,7 @@ BasePacket::BasePacket(int size) : Message(size) {
 	outOfOrderCount = 0;
 }
 
-BasePacket::BasePacket(Packet* pack, int seq) : Message(pack->size()) {
+BasePacket::BasePacket(Packet* pack, uint32 seq) : Message(pack->size()) {
 	pack->copy(this);
 	
 	setOffset(pack->getOffset());
