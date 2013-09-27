@@ -522,13 +522,20 @@ bool BaseClient::validatePacket(Packet* pack) {
 		info("current sequence " + String::valueOf((uint64) clientSequence), true);
 	}*/
 
-	if (seq < (clientSequence & 0xFFFF)) {
+#ifdef VERSION_PUBLIC
+		if (seq < clientSequence) {
+#else
+		if (seq < (clientSequence & 0xFFFF)) {
+#endif
 		//acknowledgeClientPackets(seq);
 		Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, seq), 9);
-		
 
 		return false;
-	} else if (seq > (clientSequence & 0xFFFF)) {
+#ifdef VERSION_PUBLIC
+		} else if (seq > clientSequence) {
+#else
+		} else if (seq > (clientSequence & 0xFFFF)) {
+#endif
 		BasePacket* packet = new BasePacket(pack, seq);
 		receiveBuffer.put(packet);
 
