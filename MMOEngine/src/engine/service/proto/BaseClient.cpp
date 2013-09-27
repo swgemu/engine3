@@ -516,13 +516,19 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 bool BaseClient::validatePacket(Packet* pack) {
 	uint16 seq = pack->parseNetShort();
 
-	if (seq < clientSequence) {
+	Locker locker(this);
+
+	/*if (clientSequence % 0xFF == 0) {
+		info("current sequence " + String::valueOf((uint64) clientSequence), true);
+	}*/
+
+	if (seq < (clientSequence & 0xFFFF)) {
 		//acknowledgeClientPackets(seq);
 		Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, seq), 9);
 		
 
 		return false;
-	} else if (seq > clientSequence) {
+	} else if (seq > (clientSequence & 0xFFFF)) {
 		BasePacket* packet = new BasePacket(pack, seq);
 		receiveBuffer.put(packet);
 
