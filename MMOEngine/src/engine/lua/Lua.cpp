@@ -88,7 +88,7 @@ bool Lua::runFile(const String& filename, lua_State* lState) {
 				const char* err = lua_tostring(lState, -1);
 				lua_pop(lState,1);
 
-				System::out << "file:" << filename << " ERROR " << err << "\n";
+				System::out << "file:" << filename << " ERROR " << String(err) << "\n";
 
 				return false;
 			}
@@ -137,11 +137,11 @@ bool Lua::runString(const String& str) {
 lua_State* Lua::callFunction(LuaFunction* func) {
 	try {
 		if (lua_pcall(func->getLuaState(), func->getNumberOfArgs(), func->getNumberOfReturnArgs(), 0) != 0) {
-			Logger::console.error("Error running function " + func->getFunctionName() + " " + lua_tostring(func->getLuaState(), -1));
+			Logger::console.error("Error running function " + func->getFunctionName() + " " + String(lua_tostring(func->getLuaState(), -1)));
 			return NULL;
 		}
 	} catch (LuaPanicException& e) {
-		Logger::console.error("LuaPanicException running function " + func->getFunctionName() + " " + lua_tostring(func->getLuaState(), -1));
+		Logger::console.error("LuaPanicException running function " + func->getFunctionName() + " " + String(lua_tostring(func->getLuaState(), -1)));
 
 		return NULL;
 	}
