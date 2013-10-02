@@ -5,6 +5,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "LuaFunction.h"
 
+#include "LuaPanicException.h"
+
 LuaFunction::LuaFunction(lua_State* l, const String& funcName, int argsToReturn) {
 	L = l;
 	functionName = funcName;
@@ -48,6 +50,16 @@ void LuaFunction::operator<<(uint64 number) {
 	lua_pushinteger(L, number);
 }
 
+void LuaFunction::operator<<(float number) {
+	numberOfArgs++;
+	lua_pushnumber(L, number);
+}
+
+void LuaFunction::operator<<(double number) {
+	numberOfArgs++;
+	lua_pushnumber(L, number);
+}
+
 void LuaFunction::operator<<(bool boolean) {
 	numberOfArgs++;
 	lua_pushboolean(L, boolean);
@@ -72,4 +84,18 @@ void LuaFunction::operator<<(void* ptr) {
 		lua_pushnil(L);
 }
 
+lua_State* LuaFunction::callFunction() {
+	try {
+		if (lua_pcall(getLuaState(), getNumberOfArgs(), getNumberOfReturnArgs(), 0) != 0) {
+			Logger::console.error("Error running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
+			return NULL;
+		}
+	} catch (LuaPanicException& e) {
+		Logger::console.error("LuaPanicException running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
+
+		return NULL;
+	}
+
+	return getLuaState();
+}
 

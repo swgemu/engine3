@@ -47,8 +47,6 @@ namespace engine {
 
 		static int atPanic(lua_State* L);
 
-		static lua_State* callFunction(LuaFunction* func);
-
 		// getters
 
 		// globals

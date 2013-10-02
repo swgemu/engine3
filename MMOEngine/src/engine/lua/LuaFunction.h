@@ -23,14 +23,20 @@ namespace lua {
 
 		LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn);
 
-		void operator<<(int number);
-		void operator<<(sys::uint32 number);
-		void operator<<(int64 number);
-		void operator<<(uint64 number);
-		void operator<<(bool boolean);
-		void operator<<(String& str);
-		void operator<<(const char* str);
-		void operator<<(void* pointer);
+		virtual ~LuaFunction();
+
+		virtual void operator<<(int number);
+		virtual void operator<<(sys::uint32 number);
+		virtual void operator<<(float number);
+		virtual void operator<<(double number);
+		virtual void operator<<(int64 number);
+		virtual void operator<<(uint64 number);
+		virtual void operator<<(bool boolean);
+		virtual void operator<<(String& str);
+		virtual void operator<<(const char* str);
+		virtual void operator<<(void* pointer);
+
+		virtual lua_State* callFunction();
 
 		inline lua_State* getLuaState() {
 			return L;

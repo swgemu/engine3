@@ -134,21 +134,6 @@ bool Lua::runString(const String& str) {
 	return true;
 }
 
-lua_State* Lua::callFunction(LuaFunction* func) {
-	try {
-		if (lua_pcall(func->getLuaState(), func->getNumberOfArgs(), func->getNumberOfReturnArgs(), 0) != 0) {
-			Logger::console.error("Error running function " + func->getFunctionName() + " " + String(lua_tostring(func->getLuaState(), -1)));
-			return NULL;
-		}
-	} catch (LuaPanicException& e) {
-		Logger::console.error("LuaPanicException running function " + func->getFunctionName() + " " + String(lua_tostring(func->getLuaState(), -1)));
-
-		return NULL;
-	}
-
-	return func->getLuaState();
-}
-
 int Lua::atPanic(lua_State* L) {
 	const char* msg = lua_tostring(L, -1);
 
