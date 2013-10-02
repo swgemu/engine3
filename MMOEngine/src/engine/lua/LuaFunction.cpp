@@ -30,6 +30,10 @@ LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func,
 	lua_insert(L, -2);  /* and swap with func... */
 }
 
+LuaFunction::~LuaFunction() {
+
+}
+
 void LuaFunction::operator<<(int number) {
 	numberOfArgs++;
 	lua_pushnumber(L, number);
