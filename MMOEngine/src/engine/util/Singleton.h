@@ -51,6 +51,12 @@ namespace engine {
 			return inst;
 		}
 
+		void setInstance(O* instance) {
+			inst = instance;
+
+			finalized = false;
+		}
+
 		void finalize() {
 			//pthread_rwlock_wrlock(rwlock);//;rwlock.wlock();
 
@@ -82,6 +88,10 @@ namespace engine {
 
 		static void finalizeInstance() {
 			getWrapper()->finalize();
+		}
+
+		static void setSingletonInstance(O* inst) {
+			getWrapper()->setInstance(inst);
 		}
 
 	};
