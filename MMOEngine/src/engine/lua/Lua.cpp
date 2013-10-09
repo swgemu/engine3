@@ -542,4 +542,16 @@ bool Lua::checkStack(int num) {
 	return (lua_gettop(L) == num);
 }
 
+LuaFunction* Lua::createFunction(const String& funcname, int argsThatWillReturn) {
+	LuaFunction* function = new LuaFunction(L, funcname, argsThatWillReturn);
+
+	return function;
+}
+
+LuaFunction* Lua::createFunction(const String& object, const String& func, int argsThatWillReturn) {
+	LuaFunction* function = new LuaFunction(L, object, func, argsThatWillReturn);
+
+	return function;
+}
+
 //Field
