@@ -30,6 +30,26 @@ LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func,
 	lua_insert(L, -2);  /* and swap with func... */
 }
 
+LuaFunction::LuaFunction(const LuaFunction& func) {
+	L = func.L;
+	numberOfArgs = func.numberOfArgs;
+	numberOfArgsToReturn = func.numberOfArgsToReturn;
+	functionName = func.functionName;
+}
+
+LuaFunction& LuaFunction::operator=(const LuaFunction& func) {
+	if (this == &func)
+		return *this;
+
+	L = func.L;
+	numberOfArgs = func.numberOfArgs;
+	numberOfArgsToReturn = func.numberOfArgsToReturn;
+	functionName = func.functionName;
+
+	return *this;
+}
+
+
 LuaFunction::~LuaFunction() {
 
 }

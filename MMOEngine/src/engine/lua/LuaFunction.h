@@ -20,10 +20,12 @@ namespace lua {
 
 	public:
 		LuaFunction(lua_State* l, const String& funcName, int argsToReturn);
-
 		LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn);
+		LuaFunction(const LuaFunction& func);
 
 		virtual ~LuaFunction();
+
+		LuaFunction& operator=(const LuaFunction& func);
 
 		virtual void operator<<(int number);
 		virtual void operator<<(sys::uint32 number);
