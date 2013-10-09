@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
 namespace lua {
 
-	class LuaFunction {
+	class LuaFunction : public Object {
 		lua_State* L;
 
 		int numberOfArgs;

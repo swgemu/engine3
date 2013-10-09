@@ -89,9 +89,6 @@ namespace engine {
 		virtual int checkStack();
 		virtual bool checkStack(int num);
 
-		/**
-		 * returns a new LuaFunction, needs to be deleted manually or it will leak
-		 */
 		virtual LuaFunction* createFunction(const String& funcname, int argsThatWillReturn);
 		virtual LuaFunction* createFunction(const String& object, const String& func, int argsThatWillReturn);
 
