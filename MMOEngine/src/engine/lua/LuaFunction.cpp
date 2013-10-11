@@ -7,6 +7,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "LuaPanicException.h"
 
+LuaFunction::LuaFunction() {
+	L = NULL;
+	numberOfArgs = 0;
+	numberOfArgsToReturn = 0;
+}
+
 LuaFunction::LuaFunction(lua_State* l, const String& funcName, int argsToReturn) {
 	L = l;
 	functionName = funcName;
@@ -30,7 +36,7 @@ LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func,
 	lua_insert(L, -2);  /* and swap with func... */
 }
 
-LuaFunction::LuaFunction(const LuaFunction& func) {
+LuaFunction::LuaFunction(const LuaFunction& func) : Object() {
 	L = func.L;
 	numberOfArgs = func.numberOfArgs;
 	numberOfArgsToReturn = func.numberOfArgsToReturn;

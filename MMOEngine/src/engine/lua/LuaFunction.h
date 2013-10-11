@@ -19,6 +19,9 @@ namespace lua {
 		String functionName;
 
 	public:
+		//Empty constructor, only to use in testing
+		LuaFunction();
+
 		LuaFunction(lua_State* l, const String& funcName, int argsToReturn);
 		LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn);
 		LuaFunction(const LuaFunction& func);
