@@ -43,6 +43,8 @@ namespace sys {
 			Locker::lockable = lockable;
 
 			if (doLock && lockable != cross) {
+				assert(cross->isLockedByCurrentThread());
+
 				lockable->lock(cross);
 			} else {
 				doLock = false;
