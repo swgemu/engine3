@@ -14,6 +14,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "NumberFormatException.h"
 
 #include <regex.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 static const unsigned int crctable[256] = {
     0x0000000,
@@ -640,6 +642,25 @@ bool String::toString(String& str) {
 	buffer.toString(str);
 
 	return true;
+}
+
+String String::format(const String& format, ...) {
+	char* buffer = (char*) malloc(format.length() + 512);
+
+	memcpy(buffer, format.value, format.length() + 1);
+
+	va_list args;
+	va_start (args, format);
+
+	vsnprintf (buffer, format.length() + 512, format.value, args);
+
+	va_end (args);
+
+	String returnString(buffer);
+
+	free(buffer);
+
+	return returnString;
 }
 
 bool String::parseFromString(const String& str, int version) {

@@ -53,6 +53,8 @@ namespace sys {
 		int lastIndexOf(const String& str) const ;
 		int lastIndexOf(const String& str, int fromIndex) const ;
 
+		static String format(const String& format, ...);
+
 		bool beginsWith(const char* str) const ;
 		bool beginsWith(const String& str) const ;
 
