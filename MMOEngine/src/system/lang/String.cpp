@@ -652,7 +652,20 @@ String String::format(const String& format, ...) {
 	va_list args;
 	va_start (args, format);
 
-	vsnprintf (buffer, format.length() + 512, format.value, args);
+	//Notice that only when this returned value is non-negative and less than n, the string has been completely written.
+	int res = vsnprintf (buffer, format.length() + 512, format.value, args);
+
+
+	if (res < 0 || res >= format.length() + 512) {
+		va_end (args);
+
+		free(buffer);
+
+		if (res < 0)
+			throw Exception("Encoding error while trying to format string");
+		else
+			throw Exception("Maximum length of format.length() + 512 exceeded");
+	}
 
 	va_end (args);
 
