@@ -29,6 +29,7 @@ namespace sys {
 	public:
 		StringBuffer();
 		StringBuffer(const String& str);
+		StringBuffer(const StringBuffer& str);
 
 		virtual ~StringBuffer();
 

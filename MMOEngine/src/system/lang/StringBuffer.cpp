@@ -14,6 +14,10 @@ StringBuffer::StringBuffer(const String& str) : ArrayList<char>(str.length()) {
 	append(str);
 }
 
+StringBuffer::StringBuffer(const StringBuffer& s) : ArrayList<char>(s) {
+	streamFlags = s.streamFlags;
+}
+
 StringBuffer::~StringBuffer() {
 }
 
