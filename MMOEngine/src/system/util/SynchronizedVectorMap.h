@@ -47,10 +47,12 @@ namespace sys {
  	 }
 
  	 template<class K, class V> SynchronizedVectorMap<K, V>::SynchronizedVectorMap(const SynchronizedVectorMap<K, V>& vector)
- 						: VectorMap<K, V>(vector) {
+		: VectorMap<K, V>(vector) {
  	 }
 
  	 template<class K, class V> SynchronizedVectorMap<K, V>& SynchronizedVectorMap<K, V>::operator=(const SynchronizedVectorMap<K, V>& vector) {
+ 		 Locker locker(&guard);
+
  		 if (this == &vector)
  			 return *this;
 
@@ -60,6 +62,8 @@ namespace sys {
  	 }
 
  	 template<class K, class V> Object* SynchronizedVectorMap<K, V>::clone() {
+ 		 ReadLocker locker(&guard);
+
  		 return new SynchronizedVectorMap<K, V>(*this);
  	 }
 

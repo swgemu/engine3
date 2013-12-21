@@ -13,8 +13,6 @@ namespace sys {
   	class FileWriter : public Writer {
   		File* file;
 
-  		char buf[256];
-
   	public:
   		FileWriter(File* file, bool append = false) {
   			file->mkdirs();
@@ -56,42 +54,56 @@ namespace sys {
   		}
 
   		int write(char ch) {
+  			char buf[256];
+
 			buf[0] = ch;
 
 			return write(buf, 1);
 		}
 
   		int write(int val) {
+  			char buf[256];
+
 			sprintf(buf, "%i", val);
 
 			return write(buf, strlen(buf));
 		}
 
   		int write(uint32 val) {
+  			char buf[256];
+
 			sprintf(buf, "%u", val);
 
 			return write(buf, strlen(buf));
 		}
 
   		int write(long val) {
+  			char buf[256];
+
 			sprintf(buf, "%ld", val);
 
 			return write(buf, strlen(buf));
 		}
 
   		int write(int64 val) {
+  			char buf[256];
+
 			sprintf(buf, "%ld", (long) val);
 
 			return write(buf, strlen(buf));
 		}
 
   		int write(uint64 val) {
+  			char buf[256];
+
 			sprintf(buf, "%lu", (unsigned long) val);
 
 			return write(buf, strlen(buf));
 		}
 
   		int write(float val) {
+  			char buf[256];
+
 			sprintf(buf, "%f", val);
 
 			return write(buf, strlen(buf));
