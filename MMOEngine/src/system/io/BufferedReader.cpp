@@ -2,6 +2,8 @@
 
 BufferedReader::BufferedReader(Reader* reader) {
 	BufferedReader::reader = reader;
+
+	buffer = NULL;
 }
 
 void BufferedReader::close() {
