@@ -267,7 +267,7 @@ namespace engine {
 		inline Vector3& operator /= (const Vector3& v) {
 			x /= v.x;
 			y /= v.y;
-			z /= v.y;
+			z /= v.z;
 
 			return *this;
 		}
