@@ -50,6 +50,7 @@ namespace engine {
 		unsigned long long executeWithUnsignedLongReturn();
 
 		float executeWithFloatReturn();
+		double executeWithDoubleReturn();
 
 		short executeWithSignedShortReturn();
 		unsigned short executeWithUnsignedShortReturn();
@@ -77,6 +78,7 @@ namespace engine {
 		void addUnsignedLongParameter(unsigned long long val);
 
 		void addFloatParameter(float val);
+		void addDoubleParameter(double val);
 
 		void addAsciiParameter(const String& ascii);
 		void addUnicodeParameter(const UnicodeString& str);
@@ -101,6 +103,7 @@ namespace engine {
 		unsigned long long getUnsignedLongParameter();
 
 		float getFloatParameter();
+		double getDoubleParameter();
 
 		String& getAsciiParameter(String& ascii);
 		UnicodeString& getUnicodeParameter(UnicodeString& str);

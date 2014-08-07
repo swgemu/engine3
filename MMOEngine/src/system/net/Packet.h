@@ -105,6 +105,10 @@ namespace sys {
 			writeFloat(val);
 		}
 
+		inline void insertDouble(double val) {
+			writeDouble(val);
+		}
+
 		void insertAscii(const char *ascii) {
 			int len = strlen(ascii);
 
@@ -230,6 +234,10 @@ namespace sys {
 
 		inline float parseFloat() {
 			return readFloat();
+		}
+
+		inline double parseDouble() {
+			return readDouble();
 		}
 
 		inline float parseFloat(int offs) {

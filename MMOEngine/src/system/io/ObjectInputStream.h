@@ -172,6 +172,11 @@ namespace sys {
 			return *(float*)(elementOffset);
 		}
 
+		inline double readDouble() {
+			shiftOffset(sizeof(double));
+
+			return *(double*)(offset-sizeof(double));
+		}
 	};
 
   } // namespace io

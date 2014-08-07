@@ -644,19 +644,20 @@ bool String::toString(String& str) {
 	return true;
 }
 
-String String::format(const String& format, ...) {
-	char* buffer = (char*) malloc(format.length() + 512);
+String String::format(const char* format, ...) {
+	int formatLength = strlen(format);
 
-	memcpy(buffer, format.value, format.length() + 1);
+	char* buffer = (char*) malloc(formatLength + 512);
+
+	memcpy(buffer, format, formatLength + 1);
 
 	va_list args;
 	va_start (args, format);
 
 	//Notice that only when this returned value is non-negative and less than n, the string has been completely written.
-	int res = vsnprintf (buffer, format.length() + 512, format.value, args);
+	int res = vsnprintf (buffer, formatLength + 512, format, args);
 
-
-	if (res < 0 || res >= format.length() + 512) {
+	if (res < 0 || res >= formatLength + 512) {
 		va_end (args);
 
 		free(buffer);

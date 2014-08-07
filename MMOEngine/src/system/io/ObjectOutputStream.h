@@ -119,6 +119,12 @@ namespace sys {
 			*(float*)(offset-4) = val;
 		}
 		
+		inline void writeDouble(double val) {
+			extendSize(sizeof(double));
+
+			*(double*)(offset-sizeof(double)) = val;
+		}
+
 	};
 
   } // namespace io

@@ -117,6 +117,10 @@ namespace engine {
 			return packet->parseFloat();
 		}
 
+		double getDoubleParameter() {
+			return packet->parseDouble();
+		}
+
 		String& getAsciiParameter(String& ascii) {
 			packet->parseAscii(ascii);
 

@@ -47,6 +47,12 @@ void ObjectBrokerDirector::handleStateUpdate(ObjectBroker* broker, int state) {
 
 	debug("received state update " + String(ObjectBrokerAgent::stateToString((int) state)) + " from agent");
 
+	if (agentStates.get(broker) == state) {
+		debug("agent is already performing this action");
+
+		return;
+	}
+
 	assert(!(agentStates.contains(broker) && agentStates.get(broker) == state));
 
 	int minState = state;

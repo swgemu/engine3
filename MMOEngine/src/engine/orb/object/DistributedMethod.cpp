@@ -101,6 +101,12 @@ float DistributedMethod::executeWithFloatReturn() {
 	return response->parseFloat();
 }
 
+double DistributedMethod::executeWithDoubleReturn() {
+	execute();
+
+	return response->parseDouble();
+}
+
 void DistributedMethod::executeWithAsciiReturn(String& value) {
 	execute();
 
@@ -188,6 +194,10 @@ void DistributedMethod::addFloatParameter(float val) {
 	invocationMessgage->insertFloat(val);
 }
 
+void DistributedMethod::addDoubleParameter(double val) {
+	invocationMessgage->insertDouble(val);
+}
+
 void DistributedMethod::addAsciiParameter(const String& ascii) {
 	invocationMessgage->insertAscii(ascii);
 }
@@ -245,6 +255,10 @@ unsigned short DistributedMethod::getUnsignedShortParameter() {
 
 float DistributedMethod::getFloatParameter() {
 	return invocationMessgage->getFloatParameter();
+}
+
+double DistributedMethod::getDoubleParameter() {
+	return invocationMessgage->getDoubleParameter();
 }
 
 String& DistributedMethod::getAsciiParameter(String& ascii) {

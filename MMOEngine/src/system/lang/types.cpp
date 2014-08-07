@@ -247,7 +247,7 @@ template<> bool TypeInfoAtomicBase<float>::toBinaryStream(const void* address, O
 }
 
 template<> bool TypeInfoAtomicBase<double>::toBinaryStream(const void* address, ObjectOutputStream* stream) {
-	stream->writeFloat(*(float*)address);
+	stream->writeDouble(*(double*)address);
 
 	return true;
 }
@@ -409,7 +409,7 @@ template<> bool TypeInfoAtomicBase<float>::parseFromBinaryStream(void* address, 
 }
 
 template<> bool TypeInfoAtomicBase<double>::parseFromBinaryStream(void* address, ObjectInputStream* stream) {
-	*(double*)address = stream->readFloat();
+	*(double*)address = stream->readDouble();
 
 	return true;
 }
