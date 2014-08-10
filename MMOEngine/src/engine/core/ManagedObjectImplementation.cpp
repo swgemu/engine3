@@ -25,7 +25,7 @@ void ManagedObject::lock(bool doLock) {
 
 void ManagedObject::lock(ManagedObject* obj) {
 #ifndef WITH_STM
-DistributedObjectStub::wlock(obj);
+	DistributedObjectStub::wlock(obj);
 
 	if (_getImplementation() == NULL)
 		_wlock(obj);
@@ -70,9 +70,6 @@ void ManagedObject::lock(Lockable* obj) {
 
 void ManagedObject::unlock(bool doLock) {
 #ifndef WITH_STM
-	if (getPersistenceLevel() == 3) // change to 3
-		updateToDatabase();
-
 	DistributedObjectStub::unlock(doLock);
 
 	if (_getImplementation() == NULL)
