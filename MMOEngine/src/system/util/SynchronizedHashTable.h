@@ -29,7 +29,7 @@ namespace sys {
 
   		}
 
-  		SynchronizedHashTable(const SynchronizedHashTable<K, V>& table) : hashTable(table) {
+  		SynchronizedHashTable(const SynchronizedHashTable<K, V>& table) : Object(), hashTable(table.hashTable) {
 
   		}
 
@@ -60,7 +60,7 @@ namespace sys {
   		Entry<K, V>* getEntry(const K& key) {
   			ReadLocker locker(this);
 
-  			Entry<K, V>* entry = HashTable<K, V>::getEntry(key);
+  			Entry<K, V>* entry = hashTable.getEntry(key);
 
   			return entry;
   		}
@@ -68,7 +68,7 @@ namespace sys {
   		bool containsKey(const K& key) {
   			ReadLocker locker(this);
 
-  			bool val = HashTable<K, V>::containsKey(key);
+  			bool val = hashTable.containsKey(key);
 
   			return val;
   		}
@@ -76,7 +76,7 @@ namespace sys {
   		void copyFrom(HashTable<K, V>* htable) {
   			Locker locker(this);
 
-  			HashTable<K, V>::copyFrom(htable);
+  			hashTable.copyFrom(htable);
   		}
 
   		SynchronizedHashTable<K, V>& operator=(const HashTable<K, V>& htable) {
@@ -90,7 +90,7 @@ namespace sys {
   		V remove(const K& key) {
   			Locker locker(this);
 
-  			V obj = HashTable<K, V>::remove(key);
+  			V obj = hashTable.remove(key);
 
   			return obj;
   		}
@@ -98,7 +98,7 @@ namespace sys {
   		void removeAll() {
   			Locker locker(this);
 
-  			HashTable<K, V>::removeAll();
+  			hashTable.removeAll();
   		}
   	  };
   }
