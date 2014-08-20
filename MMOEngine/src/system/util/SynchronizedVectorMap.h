@@ -64,7 +64,7 @@ namespace sys {
  		 }
 
  		 inline void setNullValue(V val) {
- 			 vectorMap.setNullValue();
+ 			 vectorMap.setNullValue(val);
  		 }
 
  		 inline int getInsertPlan() const {
