@@ -164,7 +164,7 @@ namespace sys {
    bool SynchronizedVector<E>::removeElement(const E& element) {
 	   Locker locker(&guard);
 
-	   E obj = vector.removeElement(element);
+	   bool obj = vector.removeElement(element);
 
 	   return obj;
    }

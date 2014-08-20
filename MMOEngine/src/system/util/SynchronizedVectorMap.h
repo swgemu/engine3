@@ -106,13 +106,17 @@ namespace sys {
  	 template<class K, class V> Object* SynchronizedVectorMap<K, V>::clone() {
  		 ReadLocker locker(&guard);
 
- 		 return new SynchronizedVectorMap<K, V>(*this);
+ 		 SynchronizedVectorMap<K, V>* val = new SynchronizedVectorMap<K, V>(*this);
+
+ 		 return val;
  	 }
 
  	 template<class K, class V> int SynchronizedVectorMap<K, V>::put(const K& key, const V& value) {
  		 Locker locker(&guard);
 
- 		 return vectorMap.put(key, value);
+ 		 int ret = vectorMap.put(key, value);
+
+ 		 return ret;
  	 }
 
  	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(int index) {
@@ -134,7 +138,7 @@ namespace sys {
  	 template<class K, class V> int SynchronizedVectorMap<K, V>::find(const K& key) {
  		 ReadLocker locker(&guard);
 
- 		 bool ret = vectorMap.find(key);
+ 		 int ret = vectorMap.find(key);
 
  		 return ret;
  	 }
@@ -150,7 +154,9 @@ namespace sys {
  	 template<class K, class V> bool SynchronizedVectorMap<K, V>::drop(const K& key) {
  		 Locker locker(&guard);
 
- 		 return vectorMap.drop(key);
+ 		 bool val = vectorMap.drop(key);
+
+ 		 return val;
  	 }
  }
 }
