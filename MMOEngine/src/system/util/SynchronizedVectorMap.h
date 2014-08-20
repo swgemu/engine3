@@ -46,6 +46,30 @@ namespace sys {
  		 int size() const {
  			 return vectorMap.size();
  		 }
+
+ 		 inline void setInsertPlan(int plan) {
+ 			 vectorMap.setInsertPlan(plan);
+ 		 }
+
+ 		 inline void setNoDuplicateInsertPlan() {
+ 			 vectorMap.setNoDuplicateInsertPlan();
+ 		 }
+
+ 		 inline void setAllowDuplicateInsertPlan() {
+ 			 vectorMap.setAllowDuplicateInsertPlan();
+ 		 }
+
+ 		 inline void setAllowOverwriteInsertPlan() {
+ 			 vectorMap.setAllowOverwriteInsertPlan();
+ 		 }
+
+ 		 inline void setNullValue(V val) {
+ 			 vectorMap.setNullValue();
+ 		 }
+
+ 		 inline int getInsertPlan() const {
+ 			 return vectorMap.getInsertPlan();
+ 		 }
  	 };
 
  	 template<class K, class V> SynchronizedVectorMap<K, V>::SynchronizedVectorMap()
