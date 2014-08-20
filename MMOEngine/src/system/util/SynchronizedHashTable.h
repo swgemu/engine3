@@ -14,46 +14,63 @@ namespace sys {
   namespace util {
 
   	  template<class K, class V>
-  	  class SynchronizedHashTable : public HashTable<K, V>, public ReadWriteLock {
+  	  class SynchronizedHashTable : public ReadWriteLock, public Object {
+  		 HashTable<K, V> hashTable;
   	  public:
-  		SynchronizedHashTable() : HashTable<K, V>() {
+  		SynchronizedHashTable() : hashTable() {
 
   		}
 
-  		SynchronizedHashTable(int initialCapacity) : HashTable<K, V>(initialCapacity) {
+  		SynchronizedHashTable(int initialCapacity) : hashTable(initialCapacity) {
 
   		}
 
-  		SynchronizedHashTable(int initialCapacity, float loadFactor) : HashTable<K, V>(initialCapacity, loadFactor) {
+  		SynchronizedHashTable(int initialCapacity, float loadFactor) : hashTable(initialCapacity, loadFactor) {
 
   		}
 
-  		SynchronizedHashTable(const SynchronizedHashTable<K, V>& table) : HashTable<K, V>(table) {
+  		SynchronizedHashTable(const SynchronizedHashTable<K, V>& table) : hashTable(table) {
 
   		}
 
-  		V& put(const K& key, const V& value) {
+  		V put(const K& key, const V& value) {
   			Locker locker(this);
 
-  			return HashTable<K, V>::put(key, value);
+  			V obj = hashTable.put(key, value);
+
+  			return obj;
   		}
 
-  		V& get(const K& key) {
+  		V get(const K& key) {
   			ReadLocker locker(this);
 
-  			return HashTable<K, V>::get(key);
+  			V obj = hashTable.get(key);
+
+  			return obj;
+  		}
+
+  		bool toBinaryStream(ObjectOutputStream* stream) {
+  			return hashTable.toBinaryStream(stream);
+  		}
+
+  		bool parseFromBinaryStream(ObjectInputStream* stream) {
+  			return hashTable.parseFromBinaryStream(stream);
   		}
 
   		Entry<K, V>* getEntry(const K& key) {
   			ReadLocker locker(this);
 
-  			return HashTable<K, V>::getEntry(key);
+  			Entry<K, V>* entry = HashTable<K, V>::getEntry(key);
+
+  			return entry;
   		}
 
   		bool containsKey(const K& key) {
   			ReadLocker locker(this);
 
-  			return HashTable<K, V>::containsKey(key);
+  			bool val = HashTable<K, V>::containsKey(key);
+
+  			return val;
   		}
 
   		void copyFrom(HashTable<K, V>* htable) {
@@ -65,7 +82,7 @@ namespace sys {
   		SynchronizedHashTable<K, V>& operator=(const HashTable<K, V>& htable) {
   			Locker locker(this);
 
-  			HashTable<K, V>::operator=(htable);
+  			hashTable.operator=(htable);
 
   			return *this;
   		}
@@ -73,7 +90,9 @@ namespace sys {
   		V remove(const K& key) {
   			Locker locker(this);
 
-  			return HashTable<K, V>::remove(key);
+  			V obj = HashTable<K, V>::remove(key);
+
+  			return obj;
   		}
 
   		void removeAll() {

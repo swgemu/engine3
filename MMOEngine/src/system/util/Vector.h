@@ -13,6 +13,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
  namespace util {
 
+   template<class E> class SynchronizedVector;
+   template<class E> class SynchronizedSortedVector;
+
    template<class E> class Vector : public ArrayList<E>, public Object {
    public:
        Vector();
@@ -35,6 +38,9 @@ namespace sys {
        Object* clone();
 
        static int getObjectData(const String& str, String& obj);
+
+       friend class SynchronizedVector<E>;
+       friend class SynchronizedSortedVector<E>;
 
    };
 

@@ -13,10 +13,17 @@
 namespace sys {
  namespace util {
 
-   template<class E> class SynchronizedVector : public Vector<E> {
+   template<class E> class SynchronizedVector : public Object {
    protected:
 	   mutable ReadWriteLock guard;
+	   Vector<E> vector;
    public:
+	   SynchronizedVector();
+
+	   SynchronizedVector(const SynchronizedVector<E>& array);
+
+	   SynchronizedVector(const Vector<E>& array);
+
 	   SynchronizedVector<E>& operator=(const SynchronizedVector<E>& array);
 
 	   bool add(const E& element);
@@ -28,9 +35,9 @@ namespace sys {
 
 	   void insertElementAt(const E& element, int index);
 
-	   E& get(int index) const;
+	   E get(int index) const;
 
-	   E& elementAt(int index) const;
+	   E elementAt(int index) const;
 
 	   E remove(int index);
 
@@ -44,13 +51,43 @@ namespace sys {
 
 	   E set(int index, const E& element);
 	   void setElementAt(int index, const E& element);
+
+	   bool toBinaryStream(ObjectOutputStream* stream) {
+		   return vector.toBinaryStream(stream);
+	   }
+
+	   bool parseFromBinaryStream(ObjectInputStream* stream) {
+		   return vector.parseFromBinaryStream(stream);
+	   }
+
+	   int size() const {
+		   return vector.size();
+	   }
+
+	   inline bool isEmpty() const {
+		   return vector.size() == 0;
+	   }
    };
+   template<class E>
+   SynchronizedVector<E>::SynchronizedVector() : vector() {
+
+   }
+
+   template<class E>
+   SynchronizedVector<E>::SynchronizedVector(const SynchronizedVector<E>& array) : Object(), vector(array.vector) {
+
+   }
+
+   template<class E>
+   SynchronizedVector<E>::SynchronizedVector(const Vector<E>& array) : vector(array) {
+
+   }
 
    template<class E>
    SynchronizedVector<E>& SynchronizedVector<E>::operator=(const SynchronizedVector<E>& array) {
 	   Locker locker(&guard);
 
-	   Vector<E>::operator=(array);
+	   vector.operator=(array);
 
 	   return *this;
    }
@@ -59,98 +96,114 @@ namespace sys {
    bool SynchronizedVector<E>::add(const E& element) {
 	   Locker locker(&guard);
 
-	   return Vector<E>::add(element);
+	   bool ret = vector.add(element);
+
+	   return ret;
    }
 
    template<class E>
    bool SynchronizedVector<E>::add(int index, const E& element) {
 	   Locker locker(&guard);
 
-	   return Vector<E>::add(index, element);
+	   bool ret = vector.add(index, element);
+
+	   return ret;
    }
 
    template<class E>
    void SynchronizedVector<E>::addAll(const ArrayList<E>& array) {
 	   Locker locker(&guard);
 
-	   Vector<E>::addAll(array);
+	   vector.addAll(array);
    }
 
    template<class E>
    bool SynchronizedVector<E>::contains(const E& element) {
 	   ReadLocker locker(&guard);
 
-	   return Vector<E>::contains(element);
+	   bool ret = vector.contains(element);
+
+	   return ret;
    }
 
    template<class E>
    void SynchronizedVector<E>::insertElementAt(const E& element, int index) {
 	   Locker locker(&guard);
 
-	   Vector<E>::insertElementAt(element, index);
+	   vector.insertElementAt(element, index);
    }
 
    template<class E>
-   E& SynchronizedVector<E>::get(int index) const {
+   E SynchronizedVector<E>::get(int index) const {
 	   ReadLocker locker(&guard);
 
-	   return Vector<E>::get(index);
+	   E ret = vector.get(index);
+
+	   return ret;
    }
 
    template<class E>
-   E& SynchronizedVector<E>::elementAt(int index) const {
+   E SynchronizedVector<E>::elementAt(int index) const {
 	   ReadLocker locker(&guard);
 
-	   return Vector<E>::elementAt(index);
+	   E ret = vector.elementAt(index);
+
+	   return ret;
    }
 
    template<class E>
    E SynchronizedVector<E>::remove(int index) {
 	   Locker locker(&guard);
 
-	   return Vector<E>::remove(index);
+	   E obj = vector.remove(index);
+
+	   return obj;
    }
 
    template<class E>
    bool SynchronizedVector<E>::removeElement(const E& element) {
 	   Locker locker(&guard);
 
-	   return Vector<E>::removeElement(element);
+	   E obj = vector.removeElement(element);
+
+	   return obj;
    }
 
    template<class E>
    void SynchronizedVector<E>::removeElementAt(int index) {
 	   Locker locker(&guard);
 
-	   Vector<E>::removeElementAt(index);
+	   vector.removeElementAt(index);
    }
 
    template<class E>
    void SynchronizedVector<E>::removeRange(int fromIndex, int toIndex) {
 	   Locker locker(&guard);
 
-	   Vector<E>::removeRange(fromIndex, toIndex);
+	   vector.removeRange(fromIndex, toIndex);
    }
 
    template<class E>
    void SynchronizedVector<E>::removeAll(int newSize, int newIncrement) {
 	   Locker locker(&guard);
 
-	   Vector<E>::removeAll(newSize, newIncrement);
+	   vector.removeAll(newSize, newIncrement);
    }
 
    template<class E>
    E SynchronizedVector<E>::set(int index, const E& element) {
 	   Locker locker(&guard);
 
-	   return Vector<E>::set(index, element);
+	   E obj = vector.set(index, element);
+
+	   return obj;
    }
 
    template<class E>
    void SynchronizedVector<E>::setElementAt(int index, const E& element) {
 	   Locker locker(&guard);
 
-	   Vector<E>::setElementAt(index, element);
+	   vector.setElementAt(index, element);
    }
 
  }

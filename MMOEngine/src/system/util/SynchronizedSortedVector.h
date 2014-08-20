@@ -99,23 +99,23 @@ namespace sys {
  	 template<class E> int SynchronizedSortedVector<E>::lowerBound(const E& o) const {
  		 ReadLocker locker(&this->guard);
 
- 		 if (ArrayList<E>::size() == 0)
+ 		 if (SynchronizedVector<E>::vector.size() == 0)
  			 return -1;
 
- 		 int l = 0, r = SynchronizedVector<E>::elementCount - 1;
+ 		 int l = 0, r = SynchronizedVector<E>::vector.elementCount - 1;
  		 int m = 0, cmp = 0;
 
  		 while (l <= r) {
  			 m = (l + r) / 2;
 
- 			 E& obj = SynchronizedVector<E>::elementData[m];
+ 			 E& obj = SynchronizedVector<E>::vector.elementData[m];
  			 cmp = compare(obj, o);
 
  			 if (cmp > 0) {
  				 l = m + 1;
 
  				 if (r < l)
- 					 return m < ArrayList<E>::size() - 1 ? m + 1 : -1;
+ 					 return m < SynchronizedVector<E>::vector.size() - 1 ? m + 1 : -1;
  			 } else {
  				 r = m - 1;
 
@@ -130,23 +130,23 @@ namespace sys {
  	 template<class E> int SynchronizedSortedVector<E>::upperBound(const E& o) const {
  		 ReadLocker locker(&this->guard);
 
- 		 if (ArrayList<E>::size() == 0)
+ 		 if (SynchronizedVector<E>::vector.size() == 0)
  			 return -1;
 
- 		 int l = 0, r = SynchronizedVector<E>::elementCount - 1;
+ 		 int l = 0, r = SynchronizedVector<E>::vector.elementCount - 1;
  		 int m = 0, cmp = 0;
 
  		 while (l <= r) {
  			 m = (l + r) / 2;
 
- 			 E& obj = SynchronizedVector<E>::elementData[m];
+ 			 E& obj = SynchronizedVector<E>::vector.elementData[m];
  			 cmp = compare(obj, o);
 
  			 if (cmp == 0 || cmp > 0) {
  				 l = m + 1;
 
  				 if (r < l)
- 					 return m < ArrayList<E>::size() - 1 ? m + 1 : -1;
+ 					 return m < SynchronizedVector<E>::size() - 1 ? m + 1 : -1;
  			 } else {
  				 r = m - 1;
 
@@ -162,21 +162,21 @@ namespace sys {
  		 Locker locker(&this->guard);
 
  		 int m = 0, l = 0;
- 		 int r = SynchronizedVector<E>::elementCount - 1;
+ 		 int r = SynchronizedVector<E>::vector.size() - 1;
 
  		 while (l <= r) {
  			 m = (l + r) / 2;
 
- 			 E& obj = SynchronizedVector<E>::elementData[m];
+ 			 E& obj = SynchronizedVector<E>::vector.elementData[m];
  			 int cmp = compare(obj, o);
 
  			 if (cmp == 0) {
  				 switch (insertPlan) {
  				 case ALLOW_DUPLICATE:
- 					 SynchronizedVector<E>::add(++m, o);
+ 					 SynchronizedVector<E>::vector.add(++m, o);
  					 break;
  				 case ALLOW_OVERWRITE:
- 					 SynchronizedVector<E>::set(m, o);
+ 					 SynchronizedVector<E>::vector.set(m, o);
  					 break;
  				 default:
  					 return -1;
@@ -192,7 +192,7 @@ namespace sys {
  		 if (r == m)
  			 m++;
 
- 		 SynchronizedVector<E>::add(m, o);
+ 		 SynchronizedVector<E>::vector.add(m, o);
 
  		 return m;
  	 }
@@ -204,16 +204,16 @@ namespace sys {
  	 template<class E> int SynchronizedSortedVector<E>::find(const E& o) const {
  		 ReadLocker locker(&this->guard);
 
- 		 if (ArrayList<E>::size() == 0)
+ 		 if (SynchronizedVector<E>::vector.size() == 0)
  			 return -1;
 
- 		 int l = 0, r = SynchronizedVector<E>::elementCount - 1;
+ 		 int l = 0, r = SynchronizedVector<E>::vector.elementCount - 1;
  		 int m = 0, cmp = 0;
 
  		 while (l <= r) {
  			 m = (l + r) / 2;
 
- 			 E& obj = SynchronizedVector<E>::elementData[m];
+ 			 E& obj = SynchronizedVector<E>::vector.elementData[m];
  			 cmp = compare(obj, o);
 
  			 if (cmp == 0)
@@ -240,7 +240,7 @@ namespace sys {
 
  		 //E& oldValue = Vector<E>::elementData[index];
 
- 		 SynchronizedVector<E>::remove(index);
+ 		 SynchronizedVector<E>::vector.remove(index);
  		 return true;
  	 }
  }
