@@ -52,7 +52,7 @@ namespace engine {
 
 		//virtual void release();
 
-		void printReferenceTrace();
+		void printReferenceTrace() const;
 
 		// setters
 		inline void setDeployingName(const String& name) {

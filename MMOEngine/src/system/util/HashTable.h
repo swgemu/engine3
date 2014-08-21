@@ -71,7 +71,7 @@ namespace sys {
 
 	    int modCount;
 
-	    virtual int hash(const K& key) {
+	    virtual int hash(const K& key) const {
 	    	return TypeInfo<K>::hashCode(key);
 	    }
 
@@ -91,7 +91,7 @@ namespace sys {
 
 	    V& get(const K& key);
 
-	    Entry<K, V>* getEntry(const K& key);
+	    Entry<K, V>* getEntry(const K& key) const;
 
 	    bool containsKey(const K& key);
 
@@ -319,7 +319,7 @@ namespace sys {
 		return false;
 	}
 
-	template<class K, class V> Entry<K,V>* HashTable<K,V>::getEntry(const K& key) {
+	template<class K, class V> Entry<K,V>* HashTable<K,V>::getEntry(const K& key) const {
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 

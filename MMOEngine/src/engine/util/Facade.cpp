@@ -71,7 +71,7 @@ DistributedObjectServant* Facade::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* Facade::_getImplementationForRead() {
+DistributedObjectServant* Facade::_getImplementationForRead() const {
 	return _impl;
 }
 

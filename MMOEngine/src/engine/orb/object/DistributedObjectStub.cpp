@@ -166,7 +166,7 @@ void DistributedObjectStub::release() {
 	Object::release();
 }
 	*/
-void DistributedObjectStub::printReferenceTrace() {
+void DistributedObjectStub::printReferenceTrace() const {
 	System::out << "ERROR - reference count getting under zero\n";
 
 	#ifdef TRACE_REFERENCING

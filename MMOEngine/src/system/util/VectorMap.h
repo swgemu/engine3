@@ -130,11 +130,11 @@ namespace sys {
 		V& get(int index);
 		V& get(const K& key);
 
-		int find(const K& key);
+		int find(const K& key) const;
 
 		Object* clone();
 
-		bool contains(const K& key);
+		bool contains(const K& key) const;
 
 		bool drop(const K& key);
 
@@ -216,7 +216,7 @@ namespace sys {
 	 	return entry->value;
 	}
 
-	template<class K, class V> int VectorMap<K, V>::find(const K& key) {
+	template<class K, class V> int VectorMap<K, V>::find(const K& key) const {
 		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
 			return -1;
 
@@ -225,7 +225,7 @@ namespace sys {
 	 	return SortedVector<VectorMapEntry<K, V> >::find(e);
 	}
 
-	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) {
+	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) const {
 		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
 			return false;
 

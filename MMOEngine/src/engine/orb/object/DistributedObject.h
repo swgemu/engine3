@@ -68,31 +68,31 @@ namespace engine {
 		}
 
 		// getters
-		inline const String& _getClassName() {
+		inline const String& _getClassName() const {
 			return _className;
 		}
 		
-		inline bool _isDeletedFromDatabase() {
-		        return _deletedFromDatabase;
+		inline bool _isDeletedFromDatabase() const {
+			return _deletedFromDatabase;
 		}
 
-		inline const String& _getName() {
+		inline const String& _getName() const {
 			return _name;
 		}
 
-		inline uint64 _getObjectID() {
+		inline uint64 _getObjectID() const {
 			return _objectID;
 		}
 
-		inline ObjectBroker* _getObjectBroker() {
+		inline ObjectBroker* _getObjectBroker() const {
 			return _objectBroker;
 		}
 
-		inline bool _isUpdated() {
+		inline bool _isUpdated() const {
 			return _updated;
 		}
 
-		inline bool _isMarkedForDeletion() {
+		inline bool _isMarkedForDeletion() const {
 			return _markedForDeletion;
 		}
 	};

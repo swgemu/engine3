@@ -20,7 +20,7 @@ namespace util {
 class ManagedVector : public ManagedObject {
 public:
 	DistributedObjectServant* _getImplementation();
-	DistributedObjectServant* _getImplementationForRead();
+	DistributedObjectServant* _getImplementationForRead() const;
 
 	void _setImplementation(DistributedObjectServant* servant);
 

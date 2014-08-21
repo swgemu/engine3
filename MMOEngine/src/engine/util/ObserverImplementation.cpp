@@ -7,6 +7,6 @@
 
 #include "Observer.h"
 
-uint64 ObserverImplementation::getObjectID() {
+uint64 ObserverImplementation::getObjectID() const {
 	return _this.get()->_getObjectID();
 }

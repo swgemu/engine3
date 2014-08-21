@@ -15,7 +15,7 @@ namespace engine {
 
 	class ObjectNotLocalException : public sys::lang::Exception {
 	public:
-		ObjectNotLocalException(DistributedObjectStub* stub) : Exception() {
+		ObjectNotLocalException(const DistributedObjectStub* stub) : Exception() {
 			message = "\'" + stub->_getName() + "\' is not implemented locally";
 		}
 	};

@@ -111,7 +111,7 @@ SortedVector<ManagedReference<Observer*> > ObserverEventMap::getObservers(uint32
 	return observers;
 }
 
-int ObserverEventMap::getObserverCount(uint32 eventType) {
+int ObserverEventMap::getObserverCount(uint32 eventType) const {
 	Locker locker(&observerMutex);
 
 	/*if (!containsKey(eventType))

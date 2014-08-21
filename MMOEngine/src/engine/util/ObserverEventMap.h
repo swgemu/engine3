@@ -22,7 +22,7 @@ using namespace engine::util;
 #include "engine/core/ManagedReference.h"
 
 class ObserverEventMap : public HashTable<uint32, SortedVector<ManagedReference<Observer*> > > {
-	Mutex observerMutex;
+	mutable Mutex observerMutex;
 
 public:
 	ObserverEventMap() {
@@ -41,7 +41,7 @@ public:
 
 	SortedVector<ManagedReference<Observer*> > getObservers(uint32 eventType);
 
-	int getObserverCount(uint32 eventType);
+	int getObserverCount(uint32 eventType) const;
 };
 
 

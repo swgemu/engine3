@@ -107,15 +107,15 @@ namespace engine {
 		}
 
 		// getters
-		inline String& getLoggingName() {
+		inline String getLoggingName() const {
 			return name;
 		}
 
-		inline FileWriter* getFileLogger() {
+		inline FileWriter* getFileLogger() const {
 			return logFile;
 		}
 
-		inline int getLogLevel() {
+		inline int getLogLevel() const {
 			return logLevel;
 		}
 

@@ -91,7 +91,7 @@ class QuadTreeEntry extends Observable {
 		return closeobjects.contains(obj);
 	}*/
 
-	@read
+	@dirty
 	public abstract boolean isInRange(QuadTreeEntry obj, float range) {
 		return isInRange(obj.getPositionX(), obj.getPositionY(), range);
 	}
@@ -131,16 +131,16 @@ class QuadTreeEntry extends Observable {
 		return parent;
 	}
 	
-	@read
+	@dirty
 	public native QuadTreeEntry getParentUnsafe();
 	
-	@read
+	@dirty
 	public native QuadTreeEntry getRootParentUnsafe();
 	
-	@read
+	@dirty
 	public abstract native boolean containsPoint(float x, float y);
 	
-	@read
+	@dirty
 	@weakReference
 	public native QuadTreeEntry getRootParent();
 

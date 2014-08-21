@@ -176,7 +176,7 @@ bool ManagedObject::_notifyDestroy() {
 }
 
 void ManagedObject::_writeObject(ObjectOutputStream* stream) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -185,7 +185,7 @@ void ManagedObject::_writeObject(ObjectOutputStream* stream) {
 }
 
 void ManagedObject::readObject(ObjectInputStream* stream) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -285,7 +285,7 @@ void ManagedObject::clearUpdateToDatabaseTask() {
 		_implementation->clearUpdateToDatabaseTask();
 }
 
-unsigned int ManagedObject::getLastCRCSave() {
+unsigned int ManagedObject::getLastCRCSave() const {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -299,7 +299,7 @@ unsigned int ManagedObject::getLastCRCSave() {
 }
 
 void ManagedObject::setLastCRCSave(unsigned int crc) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -325,7 +325,7 @@ bool ManagedObject::isPersistent() {
 		return _implementation->isPersistent();
 }
 
-int ManagedObject::getPersistenceLevel() {
+int ManagedObject::getPersistenceLevel() const {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -353,7 +353,7 @@ DistributedObjectServant* ManagedObject::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* ManagedObject::_getImplementationForRead() {
+DistributedObjectServant* ManagedObject::_getImplementationForRead() const {
 	return _impl;
 }
 
@@ -499,7 +499,7 @@ void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
 	updateToDatabaseTask = NULL;
 }
 
-unsigned int ManagedObjectImplementation::getLastCRCSave() {
+unsigned int ManagedObjectImplementation::getLastCRCSave() const{
 	// engine/core/ManagedObject.idl():  		return lastCRCSave;
 	return lastCRCSave;
 }
@@ -514,7 +514,7 @@ bool ManagedObjectImplementation::isPersistent() {
 	return persistenceLevel != 0;
 }
 
-int ManagedObjectImplementation::getPersistenceLevel() {
+int ManagedObjectImplementation::getPersistenceLevel() const{
 	// engine/core/ManagedObject.idl():  		return persistenceLevel;
 	return persistenceLevel;
 }
@@ -700,7 +700,7 @@ void ManagedObjectAdapter::clearUpdateToDatabaseTask() {
 	(static_cast<ManagedObject*>(stub))->clearUpdateToDatabaseTask();
 }
 
-unsigned int ManagedObjectAdapter::getLastCRCSave() {
+unsigned int ManagedObjectAdapter::getLastCRCSave() const {
 	return (static_cast<ManagedObject*>(stub))->getLastCRCSave();
 }
 
@@ -712,7 +712,7 @@ bool ManagedObjectAdapter::isPersistent() {
 	return (static_cast<ManagedObject*>(stub))->isPersistent();
 }
 
-int ManagedObjectAdapter::getPersistenceLevel() {
+int ManagedObjectAdapter::getPersistenceLevel() const {
 	return (static_cast<ManagedObject*>(stub))->getPersistenceLevel();
 }
 

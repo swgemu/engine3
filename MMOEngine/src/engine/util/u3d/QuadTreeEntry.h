@@ -51,13 +51,13 @@ public:
 
 	bool isInRange(QuadTreeEntry* obj, float range);
 
-	bool isInRange(float x, float y, float range);
+	bool isInRange(float x, float y, float range) const;
 
-	float getDistanceTo(QuadTreeEntry* obj);
+	float getDistanceTo(QuadTreeEntry* obj) const;
 
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
-	ManagedWeakReference<QuadTreeEntry* > getParent();
+	ManagedWeakReference<QuadTreeEntry* > getParent() const;
 
 	QuadTreeEntry* getParentUnsafe();
 
@@ -67,13 +67,13 @@ public:
 
 	ManagedWeakReference<QuadTreeEntry* > getRootParent();
 
-	bool isInSWArea(QuadTreeNode* node);
+	bool isInSWArea(QuadTreeNode* node) const;
 
-	bool isInSEArea(QuadTreeNode* node);
+	bool isInSEArea(QuadTreeNode* node) const;
 
-	bool isInNWArea(QuadTreeNode* node);
+	bool isInNWArea(QuadTreeNode* node) const;
 
-	bool isInArea(QuadTreeNode* node);
+	bool isInArea(QuadTreeNode* node) const;
 
 	void notifyInsert(QuadTreeEntry* obj);
 
@@ -81,19 +81,19 @@ public:
 
 	void notifyDissapear(QuadTreeEntry* obj);
 
-	float getPositionX();
+	float getPositionX() const;
 
-	float getPositionZ();
+	float getPositionZ() const;
 
-	float getPositionY();
+	float getPositionY() const;
 
-	float getPreviousPositionX();
+	float getPreviousPositionX() const;
 
-	float getPreviousPositionZ();
+	float getPreviousPositionZ() const;
 
-	float getPreviousPositionY();
+	float getPreviousPositionY() const;
 
-	Vector3 getPosition();
+	Vector3 getPosition() const;
 
 	void setPosition(float x, float z, float y);
 
@@ -101,9 +101,9 @@ public:
 
 	int compareTo(QuadTreeEntry* obj);
 
-	bool isInQuadTree();
+	bool isInQuadTree() const;
 
-	TransactionalReference<QuadTreeNode*> getNode();
+	TransactionalReference<QuadTreeNode*> getNode() const;
 
 	void setCloseObjects(CloseObjectsVector* vec);
 
@@ -111,9 +111,9 @@ public:
 
 	unsigned long long getObjectID();
 
-	float getRadius();
+	float getRadius() const;
 
-	bool isBounding();
+	bool isBounding() const;
 
 	void setNode(QuadTreeNode* n);
 
@@ -126,7 +126,7 @@ public:
 	void setParent(QuadTreeEntry* par);
 
 	DistributedObjectServant* _getImplementation();
-	DistributedObjectServant* _getImplementationForRead();
+	DistributedObjectServant* _getImplementationForRead() const;
 
 	void _setImplementation(DistributedObjectServant* servant);
 
@@ -181,13 +181,13 @@ public:
 
 	virtual bool isInRange(QuadTreeEntry* obj, float range);
 
-	bool isInRange(float x, float y, float range);
+	bool isInRange(float x, float y, float range) const;
 
-	float getDistanceTo(QuadTreeEntry* obj);
+	float getDistanceTo(QuadTreeEntry* obj) const;
 
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
-	ManagedWeakReference<QuadTreeEntry* > getParent();
+	ManagedWeakReference<QuadTreeEntry* > getParent() const;
 
 	QuadTreeEntry* getParentUnsafe();
 
@@ -197,13 +197,13 @@ public:
 
 	ManagedWeakReference<QuadTreeEntry* > getRootParent();
 
-	bool isInSWArea(QuadTreeNode* node);
+	bool isInSWArea(QuadTreeNode* node) const;
 
-	bool isInSEArea(QuadTreeNode* node);
+	bool isInSEArea(QuadTreeNode* node) const;
 
-	bool isInNWArea(QuadTreeNode* node);
+	bool isInNWArea(QuadTreeNode* node) const;
 
-	bool isInArea(QuadTreeNode* node);
+	bool isInArea(QuadTreeNode* node) const;
 
 	virtual void notifyInsert(QuadTreeEntry* obj);
 
@@ -211,19 +211,19 @@ public:
 
 	virtual void notifyDissapear(QuadTreeEntry* obj);
 
-	float getPositionX();
+	float getPositionX() const;
 
-	float getPositionZ();
+	float getPositionZ() const;
 
-	float getPositionY();
+	float getPositionY() const;
 
-	float getPreviousPositionX();
+	float getPreviousPositionX() const;
 
-	float getPreviousPositionZ();
+	float getPreviousPositionZ() const;
 
-	float getPreviousPositionY();
+	float getPreviousPositionY() const;
 
-	Vector3 getPosition();
+	Vector3 getPosition() const;
 
 	void setPosition(float x, float z, float y);
 
@@ -231,9 +231,9 @@ public:
 
 	virtual int compareTo(QuadTreeEntry* obj);
 
-	bool isInQuadTree();
+	bool isInQuadTree() const;
 
-	TransactionalReference<QuadTreeNode*> getNode();
+	TransactionalReference<QuadTreeNode*> getNode() const;
 
 	void setCloseObjects(CloseObjectsVector* vec);
 
@@ -241,9 +241,9 @@ public:
 
 	virtual unsigned long long getObjectID();
 
-	float getRadius();
+	float getRadius() const;
 
-	bool isBounding();
+	bool isBounding() const;
 
 	void setNode(QuadTreeNode* n);
 
@@ -308,11 +308,11 @@ public:
 
 	bool isInRange(QuadTreeEntry* obj, float range);
 
-	bool isInRange(float x, float y, float range);
+	bool isInRange(float x, float y, float range) const;
 
-	float getDistanceTo(QuadTreeEntry* obj);
+	float getDistanceTo(QuadTreeEntry* obj) const;
 
-	ManagedWeakReference<QuadTreeEntry* > getParent();
+	ManagedWeakReference<QuadTreeEntry* > getParent() const;
 
 	QuadTreeEntry* getParentUnsafe();
 
@@ -328,17 +328,17 @@ public:
 
 	void notifyDissapear(QuadTreeEntry* obj);
 
-	float getPositionX();
+	float getPositionX() const;
 
-	float getPositionZ();
+	float getPositionZ() const;
 
-	float getPositionY();
+	float getPositionY() const;
 
-	float getPreviousPositionX();
+	float getPreviousPositionX() const;
 
-	float getPreviousPositionZ();
+	float getPreviousPositionZ() const;
 
-	float getPreviousPositionY();
+	float getPreviousPositionY() const;
 
 	void setPosition(float x, float z, float y);
 
@@ -346,15 +346,15 @@ public:
 
 	int compareTo(QuadTreeEntry* obj);
 
-	bool isInQuadTree();
+	bool isInQuadTree() const;
 
 	unsigned long long getDirtyObjectID();
 
 	unsigned long long getObjectID();
 
-	float getRadius();
+	float getRadius() const;
 
-	bool isBounding();
+	bool isBounding() const;
 
 	void setBounding();
 

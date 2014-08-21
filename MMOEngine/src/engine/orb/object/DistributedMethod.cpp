@@ -18,7 +18,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/orb/messages/DeployObjectMessage.h"
 #include "engine/orb/messages/InvokeMethodMessage.h"
 
-DistributedMethod::DistributedMethod(DistributedObject* obj, uint32 methid) {
+DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid) {
 	object = obj;
 	methodID = methid;
 

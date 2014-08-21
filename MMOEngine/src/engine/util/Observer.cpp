@@ -47,7 +47,7 @@ int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable
 		return _implementation->notifyObserverEvent(eventType, observable, arg1, arg2);
 }
 
-unsigned long long Observer::getObjectID() {
+unsigned long long Observer::getObjectID() const {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -60,7 +60,7 @@ unsigned long long Observer::getObjectID() {
 		return _implementation->getObjectID();
 }
 
-int Observer::compareTo(Observer* obj) {
+int Observer::compareTo(Observer* obj) const {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -88,7 +88,7 @@ void Observer::setObserverType(unsigned int type) {
 		_implementation->setObserverType(type);
 }
 
-bool Observer::isObserverType(unsigned int type) {
+bool Observer::isObserverType(unsigned int type) const {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -108,7 +108,7 @@ DistributedObjectServant* Observer::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* Observer::_getImplementationForRead() {
+DistributedObjectServant* Observer::_getImplementationForRead() const {
 	return _impl;
 }
 
@@ -257,7 +257,7 @@ ObserverImplementation::ObserverImplementation() {
 	observerType = 0;
 }
 
-int ObserverImplementation::compareTo(Observer* obj) {
+int ObserverImplementation::compareTo(Observer* obj) const{
 	// engine/util/Observer.idl():  			return 0;
 	if (getObjectID() < obj->getObjectID())	// engine/util/Observer.idl():  			return 1;
 	return 1;
@@ -275,7 +275,7 @@ void ObserverImplementation::setObserverType(unsigned int type) {
 	observerType = type;
 }
 
-bool ObserverImplementation::isObserverType(unsigned int type) {
+bool ObserverImplementation::isObserverType(unsigned int type) const{
 	// engine/util/Observer.idl():  		return observerType == type;
 	return observerType == type;
 }
@@ -329,11 +329,11 @@ int ObserverAdapter::notifyObserverEvent(unsigned int eventType, Observable* obs
 	return (static_cast<Observer*>(stub))->notifyObserverEvent(eventType, observable, arg1, arg2);
 }
 
-unsigned long long ObserverAdapter::getObjectID() {
+unsigned long long ObserverAdapter::getObjectID() const {
 	return (static_cast<Observer*>(stub))->getObjectID();
 }
 
-int ObserverAdapter::compareTo(Observer* obj) {
+int ObserverAdapter::compareTo(Observer* obj) const {
 	return (static_cast<Observer*>(stub))->compareTo(obj);
 }
 
@@ -341,7 +341,7 @@ void ObserverAdapter::setObserverType(unsigned int type) {
 	(static_cast<Observer*>(stub))->setObserverType(type);
 }
 
-bool ObserverAdapter::isObserverType(unsigned int type) {
+bool ObserverAdapter::isObserverType(unsigned int type) const {
 	return (static_cast<Observer*>(stub))->isObserverType(type);
 }
 

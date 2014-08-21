@@ -82,14 +82,14 @@ class ManagedObject {
 	@local
 	@nativeStub
 	@noImplementationDeclaration
+	@dirty
 	public native void writeObject(ObjectOutputStream stream);
 	
-	@read
 	@local
 	@noImplementationDeclaration
 	public native void readObject(ObjectInputStream stream);
 
-	@read	
+	@dirty	
 	@local
 	public boolean toBinaryStream(ObjectOutputStream stream) {
 		writeObject(stream);
@@ -141,14 +141,11 @@ class ManagedObject {
 		lastCRCSave = crc;
 	}
 	
-	@read
 	@dirty
-	@read
 	public boolean isPersistent() {
 		return persistenceLevel != 0;
 	}
 	
-	@read
 	@dirty
 	@read
 	public int getPersistenceLevel() {

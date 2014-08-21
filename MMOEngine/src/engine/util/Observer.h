@@ -42,16 +42,23 @@ public:
 
 	int notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2);
 
-	unsigned long long getObjectID();
+	unsigned long long getObjectID() const;
 
-	int compareTo(Observer* obj);
+	/**
+	 * Compares object ids of this object with obj
+	 * @pre { this object is locked, obj is not null }
+	 * @post {this object is locked }
+	 * @param obj SceneObject that will be compared to
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 */
+	int compareTo(Observer* obj) const;
 
 	void setObserverType(unsigned int type);
 
-	bool isObserverType(unsigned int type);
+	bool isObserverType(unsigned int type) const;
 
 	DistributedObjectServant* _getImplementation();
-	DistributedObjectServant* _getImplementationForRead();
+	DistributedObjectServant* _getImplementationForRead() const;
 
 	void _setImplementation(DistributedObjectServant* servant);
 
@@ -82,13 +89,20 @@ public:
 
 	virtual int notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2);
 
-	virtual unsigned long long getObjectID();
+	virtual unsigned long long getObjectID() const;
 
-	int compareTo(Observer* obj);
+	/**
+	 * Compares object ids of this object with obj
+	 * @pre { this object is locked, obj is not null }
+	 * @post {this object is locked }
+	 * @param obj SceneObject that will be compared to
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 */
+	int compareTo(Observer* obj) const;
 
 	void setObserverType(unsigned int type);
 
-	virtual bool isObserverType(unsigned int type);
+	virtual bool isObserverType(unsigned int type) const;
 
 	WeakReference<Observer*> _this;
 
@@ -135,13 +149,13 @@ public:
 
 	int notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2);
 
-	unsigned long long getObjectID();
+	unsigned long long getObjectID() const;
 
-	int compareTo(Observer* obj);
+	int compareTo(Observer* obj) const;
 
 	void setObserverType(unsigned int type);
 
-	bool isObserverType(unsigned int type);
+	bool isObserverType(unsigned int type) const;
 
 };
 

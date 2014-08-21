@@ -23,7 +23,7 @@ DistributedObjectServant* ManagedVector::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* ManagedVector::_getImplementationForRead() {
+DistributedObjectServant* ManagedVector::_getImplementationForRead() const {
 	return _impl;
 }
 

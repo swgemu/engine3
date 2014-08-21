@@ -74,7 +74,7 @@ void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 		_implementation->dropObserver(eventType, observer);
 }
 
-int Observable::getObserverCount(unsigned int eventType) {
+int Observable::getObserverCount(unsigned int eventType) const {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -122,7 +122,7 @@ DistributedObjectServant* Observable::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* Observable::_getImplementationForRead() {
+DistributedObjectServant* Observable::_getImplementationForRead() const {
 	return _impl;
 }
 
@@ -301,7 +301,7 @@ void ObservableImplementation::dropObserver(unsigned int eventType, Observer* ob
 	(&observerEventMap)->dropObserver(eventType, observer);
 }
 
-int ObservableImplementation::getObserverCount(unsigned int eventType) {
+int ObservableImplementation::getObserverCount(unsigned int eventType) const{
 	// engine/util/Observable.idl():  		return observerEventMap.getObserverCount(eventType);
 	return (&observerEventMap)->getObserverCount(eventType);
 }
@@ -378,7 +378,7 @@ void ObservableAdapter::dropObserver(unsigned int eventType, Observer* observer)
 	(static_cast<Observable*>(stub))->dropObserver(eventType, observer);
 }
 
-int ObservableAdapter::getObserverCount(unsigned int eventType) {
+int ObservableAdapter::getObserverCount(unsigned int eventType) const {
 	return (static_cast<Observable*>(stub))->getObserverCount(eventType);
 }
 

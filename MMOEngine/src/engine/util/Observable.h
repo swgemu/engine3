@@ -42,14 +42,14 @@ public:
 
 	void dropObserver(unsigned int eventType, Observer* observer);
 
-	int getObserverCount(unsigned int eventType);
+	int getObserverCount(unsigned int eventType) const;
 
 	void addObservableChild(Observable* observable);
 
 	void dropObserveableChild(Observable* observable);
 
 	DistributedObjectServant* _getImplementation();
-	DistributedObjectServant* _getImplementationForRead();
+	DistributedObjectServant* _getImplementationForRead() const;
 
 	void _setImplementation(DistributedObjectServant* servant);
 
@@ -86,7 +86,7 @@ public:
 
 	void dropObserver(unsigned int eventType, Observer* observer);
 
-	int getObserverCount(unsigned int eventType);
+	int getObserverCount(unsigned int eventType) const;
 
 	void addObservableChild(Observable* observable);
 
@@ -141,7 +141,7 @@ public:
 
 	void dropObserver(unsigned int eventType, Observer* observer);
 
-	int getObserverCount(unsigned int eventType);
+	int getObserverCount(unsigned int eventType) const;
 
 	void addObservableChild(Observable* observable);
 

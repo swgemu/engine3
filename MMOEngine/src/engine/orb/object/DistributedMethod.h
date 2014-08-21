@@ -17,7 +17,7 @@ namespace engine {
 	class InvokeMethodMessage;
 
 	class DistributedMethod {
-		DistributedObject* object;
+		const DistributedObject* object;
 
 		sys::uint32 methodID;
 		sys::uint32 invocationID;
@@ -28,7 +28,7 @@ namespace engine {
 		Packet* response;
 
 	public:
-		DistributedMethod(DistributedObject* obj, sys::uint32 methid);
+		DistributedMethod(const DistributedObject* obj, sys::uint32 methid);
 		DistributedMethod(DistributedObjectBroker* broker, InvokeMethodMessage* invmsg);
 
 		~DistributedMethod();
@@ -110,15 +110,15 @@ namespace engine {
 
 		DistributedObject* getObjectParameter();
 
-		DistributedObject* getObject() {
+		const DistributedObject* getObject() const {
 			return object;
 		}
 
-		InvokeMethodMessage* getInvocationMessage() {
+		InvokeMethodMessage* getInvocationMessage() const {
 			return invocationMessgage;
 		}
 
-		Packet* getResponseMessage() {
+		Packet* getResponseMessage() const {
 			return response;
 		}
 

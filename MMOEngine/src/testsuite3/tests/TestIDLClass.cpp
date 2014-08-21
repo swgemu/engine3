@@ -59,7 +59,7 @@ DistributedObjectServant* TestIDLClass::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* TestIDLClass::_getImplementationForRead() {
+DistributedObjectServant* TestIDLClass::_getImplementationForRead() const {
 	return _impl;
 }
 

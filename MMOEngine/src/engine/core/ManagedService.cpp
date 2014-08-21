@@ -23,7 +23,7 @@ DistributedObjectServant* ManagedService::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* ManagedService::_getImplementationForRead() {
+DistributedObjectServant* ManagedService::_getImplementationForRead() const {
 	return _impl;
 }
 
