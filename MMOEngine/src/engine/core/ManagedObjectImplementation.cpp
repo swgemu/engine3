@@ -9,7 +9,7 @@ void ManagedObject::lock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_wlock(doLock);
 #endif
 }
@@ -27,7 +27,7 @@ void ManagedObject::lock(ManagedObject* obj) {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_wlock(obj);
 #endif
 }
@@ -36,7 +36,7 @@ void ManagedObject::rlock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(doLock);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_rlock(doLock);
 #endif
 }
@@ -45,7 +45,7 @@ void ManagedObject::wlock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_wlock(doLock);
 #endif
 }
@@ -54,7 +54,7 @@ void ManagedObject::wlock(ManagedObject* obj) {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_wlock(obj);
 #endif
 }
@@ -63,7 +63,7 @@ void ManagedObject::lock(Lockable* obj) {
 #ifndef WITH_STM
 	DistributedObjectStub::lock(obj);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_lock(obj);
 #endif
 }
@@ -72,7 +72,7 @@ void ManagedObject::unlock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::unlock(doLock);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_unlock(doLock);
 #endif
 }
@@ -81,7 +81,7 @@ void ManagedObject::runlock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::runlock(doLock);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_runlock(doLock);
 #endif
 }
@@ -89,7 +89,7 @@ void ManagedObject::runlock(bool doLock) {
 void ManagedObject::setLockName(const String& name) {
 	DistributedObjectStub::setLockName(name);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementationForRead() == NULL)
 		_setLockName(name);
 }
 
@@ -107,7 +107,7 @@ void ManagedObject::writeObject(ObjectOutputStream* stream) {
 #ifdef WITH_STM
 	_implementation = header->getForDirty();
 #else
-	_implementation = (ManagedObjectImplementation*) _getImplementation();
+	_implementation = (ManagedObjectImplementation*) _getImplementationForRead();
 #endif
 
 	if (_implementation == NULL) {
@@ -120,7 +120,7 @@ DistributedObjectServant* ManagedObject::getServant() {
 #ifdef WITH_STM
 	return header->getForDirty();
 #else
-	return _getImplementation();
+	return _getImplementationForRead();
 #endif
 }
 
