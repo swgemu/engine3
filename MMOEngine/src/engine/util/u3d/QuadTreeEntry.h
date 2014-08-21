@@ -51,13 +51,13 @@ public:
 
 	bool isInRange(QuadTreeEntry* obj, float range);
 
-	bool isInRange(float x, float y, float range) const;
+	bool isInRange(float x, float y, float range);
 
-	float getDistanceTo(QuadTreeEntry* obj) const;
+	float getDistanceTo(QuadTreeEntry* obj);
 
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
-	ManagedWeakReference<QuadTreeEntry* > getParent() const;
+	ManagedWeakReference<QuadTreeEntry* > getParent();
 
 	QuadTreeEntry* getParentUnsafe();
 
@@ -181,13 +181,13 @@ public:
 
 	virtual bool isInRange(QuadTreeEntry* obj, float range);
 
-	bool isInRange(float x, float y, float range) const;
+	bool isInRange(float x, float y, float range);
 
-	float getDistanceTo(QuadTreeEntry* obj) const;
+	float getDistanceTo(QuadTreeEntry* obj);
 
 	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
 
-	ManagedWeakReference<QuadTreeEntry* > getParent() const;
+	ManagedWeakReference<QuadTreeEntry* > getParent();
 
 	QuadTreeEntry* getParentUnsafe();
 
@@ -308,11 +308,11 @@ public:
 
 	bool isInRange(QuadTreeEntry* obj, float range);
 
-	bool isInRange(float x, float y, float range) const;
+	bool isInRange(float x, float y, float range);
 
-	float getDistanceTo(QuadTreeEntry* obj) const;
+	float getDistanceTo(QuadTreeEntry* obj);
 
-	ManagedWeakReference<QuadTreeEntry* > getParent() const;
+	ManagedWeakReference<QuadTreeEntry* > getParent();
 
 	QuadTreeEntry* getParentUnsafe();
 

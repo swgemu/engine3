@@ -47,7 +47,7 @@ int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable
 		return _implementation->notifyObserverEvent(eventType, observable, arg1, arg2);
 }
 
-unsigned long long Observer::getObjectID() const {
+unsigned long long Observer::getObjectID() {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -60,7 +60,7 @@ unsigned long long Observer::getObjectID() const {
 		return _implementation->getObjectID();
 }
 
-int Observer::compareTo(Observer* obj) const {
+int Observer::compareTo(Observer* obj) {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -257,7 +257,7 @@ ObserverImplementation::ObserverImplementation() {
 	observerType = 0;
 }
 
-int ObserverImplementation::compareTo(Observer* obj) const{
+int ObserverImplementation::compareTo(Observer* obj) {
 	// engine/util/Observer.idl():  			return 0;
 	if (getObjectID() < obj->getObjectID())	// engine/util/Observer.idl():  			return 1;
 	return 1;
@@ -329,11 +329,11 @@ int ObserverAdapter::notifyObserverEvent(unsigned int eventType, Observable* obs
 	return (static_cast<Observer*>(stub))->notifyObserverEvent(eventType, observable, arg1, arg2);
 }
 
-unsigned long long ObserverAdapter::getObjectID() const {
+unsigned long long ObserverAdapter::getObjectID() {
 	return (static_cast<Observer*>(stub))->getObjectID();
 }
 
-int ObserverAdapter::compareTo(Observer* obj) const {
+int ObserverAdapter::compareTo(Observer* obj) {
 	return (static_cast<Observer*>(stub))->compareTo(obj);
 }
 

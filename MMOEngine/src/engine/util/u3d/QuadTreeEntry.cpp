@@ -97,7 +97,7 @@ bool QuadTreeEntry::isInRange(QuadTreeEntry* obj, float range) {
 		return _implementation->isInRange(obj, range);
 }
 
-bool QuadTreeEntry::isInRange(float x, float y, float range) const {
+bool QuadTreeEntry::isInRange(float x, float y, float range) {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -113,7 +113,7 @@ bool QuadTreeEntry::isInRange(float x, float y, float range) const {
 		return _implementation->isInRange(x, y, range);
 }
 
-float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) const {
+float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -136,7 +136,7 @@ SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntry::getCloseObjects
 		return _implementation->getCloseObjects();
 }
 
-ManagedWeakReference<QuadTreeEntry* > QuadTreeEntry::getParent() const {
+ManagedWeakReference<QuadTreeEntry* > QuadTreeEntry::getParent() {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -401,7 +401,7 @@ void QuadTreeEntry::initializePosition(float x, float z, float y) {
 }
 
 int QuadTreeEntry::_compareTo(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -777,7 +777,7 @@ bool QuadTreeEntryImplementation::isInRange(QuadTreeEntry* obj, float range) {
 	return isInRange(obj->getPositionX(), obj->getPositionY(), range);
 }
 
-bool QuadTreeEntryImplementation::isInRange(float x, float y, float range) const{
+bool QuadTreeEntryImplementation::isInRange(float x, float y, float range) {
 	// engine/util/u3d/QuadTreeEntry.idl():  	 	float rangesq = range * range;
 	float rangesq = range * range;
 	// engine/util/u3d/QuadTreeEntry.idl():  		float deltaX = x - coordinates.getPositionX();
@@ -792,7 +792,7 @@ bool QuadTreeEntryImplementation::isInRange(float x, float y, float range) const
 	return false;
 }
 
-float QuadTreeEntryImplementation::getDistanceTo(QuadTreeEntry* obj) const{
+float QuadTreeEntryImplementation::getDistanceTo(QuadTreeEntry* obj) {
 	// engine/util/u3d/QuadTreeEntry.idl():  		float x = obj.getPositionX();
 	float x = obj->getPositionX();
 	// engine/util/u3d/QuadTreeEntry.idl():  		float y = obj.getPositionY();
@@ -810,7 +810,7 @@ SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntryImplementation::g
 	return closeobjects;
 }
 
-ManagedWeakReference<QuadTreeEntry* > QuadTreeEntryImplementation::getParent() const{
+ManagedWeakReference<QuadTreeEntry* > QuadTreeEntryImplementation::getParent() {
 	// engine/util/u3d/QuadTreeEntry.idl():  		return parent;
 	return parent;
 }
@@ -1119,15 +1119,15 @@ bool QuadTreeEntryAdapter::isInRange(QuadTreeEntry* obj, float range) {
 	return (static_cast<QuadTreeEntry*>(stub))->isInRange(obj, range);
 }
 
-bool QuadTreeEntryAdapter::isInRange(float x, float y, float range) const {
+bool QuadTreeEntryAdapter::isInRange(float x, float y, float range) {
 	return (static_cast<QuadTreeEntry*>(stub))->isInRange(x, y, range);
 }
 
-float QuadTreeEntryAdapter::getDistanceTo(QuadTreeEntry* obj) const {
+float QuadTreeEntryAdapter::getDistanceTo(QuadTreeEntry* obj) {
 	return (static_cast<QuadTreeEntry*>(stub))->getDistanceTo(obj);
 }
 
-ManagedWeakReference<QuadTreeEntry* > QuadTreeEntryAdapter::getParent() const {
+ManagedWeakReference<QuadTreeEntry* > QuadTreeEntryAdapter::getParent() {
 	return (static_cast<QuadTreeEntry*>(stub))->getParent();
 }
 

@@ -25,7 +25,7 @@ class Observer extends ManagedObject {
 		observerType = 0;
 	}
 	
-	@read
+	@dirty
 	public abstract native unsigned long getObjectID();
 	
 	/**
@@ -35,7 +35,7 @@ class Observer extends ManagedObject {
 	 * @param obj SceneObject that will be compared to
 	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
 	 */
-	@read
+	@dirty
 	public int compareTo(Observer obj) {
 		if (getObjectID() < obj.getObjectID())
 			return 1;

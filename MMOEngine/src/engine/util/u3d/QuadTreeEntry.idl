@@ -96,7 +96,7 @@ class QuadTreeEntry extends Observable {
 		return isInRange(obj.getPositionX(), obj.getPositionY(), range);
 	}
 
-	@read
+	@dirty
 	public boolean isInRange(float x, float y, float range) {
 	 	float rangesq = range * range;
 
@@ -109,7 +109,7 @@ class QuadTreeEntry extends Observable {
 			return false;
 	}
 
-	@read
+	@dirty
 	public float getDistanceTo(QuadTreeEntry obj) {
 		float x = obj.getPositionX();
 		float y = obj.getPositionY();
@@ -125,7 +125,7 @@ class QuadTreeEntry extends Observable {
 		return closeobjects;
 	}
 	
-	@read
+	@dirty
 	@weakReference
 	public QuadTreeEntry getParent() {
 		return parent;
@@ -218,6 +218,7 @@ class QuadTreeEntry extends Observable {
 	}
 
 	@nativeStub
+	@dirty
 	public native abstract int compareTo(QuadTreeEntry obj);
 
 	@read
