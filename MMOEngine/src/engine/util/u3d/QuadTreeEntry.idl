@@ -39,6 +39,7 @@ class QuadTreeEntry extends Observable {
 
 	public native QuadTreeEntry(QuadTreeNode n = null);
 	
+	@dirty
 	public void addInRangeObject(QuadTreeEntry obj, boolean doNotifyUpdate = true) {
 		//System::out << "adding in range object:" << obj << "\n";
 
@@ -54,6 +55,7 @@ class QuadTreeEntry extends Observable {
 		return closeobjects.get(index);
 	}*/
 
+	@dirty
 	public void removeInRangeObject(QuadTreeEntry obj) {
 		//System::out << "droping in range object:" << obj << "\n";
 
@@ -70,12 +72,14 @@ class QuadTreeEntry extends Observable {
 		}*/
 	}
 
+	@dirty
 	public void removeInRangeObject(int index) {
 		//System::out << "droping in range object with index:" << index << "\n";
 
 		closeobjects.remove(index);		
 	}
 
+	@dirty
 	public void removeInRangeObjects() {
 		//System::out << "droping  all in range objects\n";
 
@@ -121,6 +125,7 @@ class QuadTreeEntry extends Observable {
 	}
 	
 	@local
+	@dirty
 	public SortedVector<QuadTreeEntry> getCloseObjects() {
 		return closeobjects;
 	}
@@ -244,6 +249,7 @@ class QuadTreeEntry extends Observable {
 	}
 	
 	@nativeStub
+	@dirty
 	public abstract native unsigned long getDirtyObjectID();
 	
 	@dirty

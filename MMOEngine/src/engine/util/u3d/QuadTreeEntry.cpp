@@ -27,7 +27,7 @@ QuadTreeEntry::~QuadTreeEntry() {
 
 
 void QuadTreeEntry::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
-	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -42,7 +42,7 @@ void QuadTreeEntry::addInRangeObject(QuadTreeEntry* obj, bool doNotifyUpdate) {
 }
 
 void QuadTreeEntry::removeInRangeObject(QuadTreeEntry* obj) {
-	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -56,7 +56,7 @@ void QuadTreeEntry::removeInRangeObject(QuadTreeEntry* obj) {
 }
 
 void QuadTreeEntry::removeInRangeObject(int index) {
-	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -70,7 +70,7 @@ void QuadTreeEntry::removeInRangeObject(int index) {
 }
 
 void QuadTreeEntry::removeInRangeObjects() {
-	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -128,7 +128,7 @@ float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) {
 }
 
 SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntry::getCloseObjects() {
-	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		throw ObjectNotLocalException(this);
 
@@ -446,7 +446,7 @@ void QuadTreeEntry::setCloseObjects(CloseObjectsVector* vec) {
 }
 
 unsigned long long QuadTreeEntry::_getDirtyObjectID() {
-	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementation());
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
