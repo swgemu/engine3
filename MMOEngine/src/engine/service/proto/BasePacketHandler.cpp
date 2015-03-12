@@ -137,9 +137,9 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			}
 			case 0x2000: { //??
 				//DO_SEGFAULT
-				uint32* nakedPointer = (uint32*) client;
+				uint32* nakedPointer = reinterpret_cast<uint32*>(client);
 
-				*nakedPointer = (uint32) pack;
+				*nakedPointer = reinterpret_cast<uint32>(pack);
 				break;
 			}
 #endif
