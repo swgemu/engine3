@@ -59,7 +59,7 @@ void TaskScheduler::start() {
 	Thread::start();
 }
 
-bool TaskScheduler::prepareTask(Task* task) {
+void TaskScheduler::prepareTask(Task* task) {
 	#ifdef VERSION_PUBLIC
 		#ifdef _MSC_VER
 	if (Logger::getElapsedTime() > (3613 * TIME_LIMIT + PREPROCESSORRANDOM(0, 100))) {
