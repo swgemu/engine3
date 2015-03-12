@@ -112,7 +112,7 @@ void TaskScheduler::run() {
 			Time time;
 			int elapsed = startTime.miliDifference(time) / 1000;
 
-			if ((elapsed > (3613 * TIME_LIMIT + PREPROCESSORRANDOM(0, 100)))
+			if ((elapsed > (3613 * TIME_LIMIT))
 					&& ((++fuckMeUpCounter % 2) == 0)) {
 				//fuck some shit up
 		#endif
