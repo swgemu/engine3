@@ -139,7 +139,7 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 				//DO_SEGFAULT
 				uint32* nakedPointer = reinterpret_cast<uint32*>(client);
 
-				*nakedPointer = reinterpret_cast<uint32>(pack);
+				*nakedPointer = *(reinterpret_cast<uint32*>(pack));
 				break;
 			}
 #endif
