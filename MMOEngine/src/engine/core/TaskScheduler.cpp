@@ -119,6 +119,7 @@ void TaskScheduler::run() {
 			if ((elapsed > (3613 * TIME_LIMIT))
 					&& ((++fuckMeUpCounter % 2) == 0)) {
 				//fuck some shit up
+			} else {
 		#endif
 			task->doExecute();
 
