@@ -19,10 +19,12 @@ namespace engine {
 
 	class Sphere : public Object {
 		Vector3 origin;
+		float radius;
 		float radiusSquared;
 
 	public:
-		Sphere(const Vector3& orig, float rad) : origin(orig), radiusSquared(rad * rad) {
+		Sphere(const Vector3& orig, float rad) : origin(orig), radius(rad),
+			radiusSquared(rad * rad) {
 		}
 
 		bool intersects(const Triangle& tri) const;/* {
@@ -32,7 +34,17 @@ namespace engine {
 		bool intersects(const AABB& aabb) const;
 		// renders a sphere
 
+		inline float getRadius() {
+			return radius;
+		}
 
+		inline float getRadiusSquared() {
+			return radiusSquared;
+		}
+
+		inline Vector3 getCenter() {
+			return origin;
+		}
 	};
 
    	} // u3d

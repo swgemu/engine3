@@ -29,6 +29,8 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	tasks.setLoggingName("TaskQueue");
 	tasks.setMutexName("TaskQueueLock");
 
+	startTime.updateToCurrentTime();
+
 	setInfoLogLevel();
 	setGlobalLogging(true);
 }
@@ -37,6 +39,8 @@ TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
 	taskManager = NULL;
 
 	doRun = false;
+
+	startTime.updateToCurrentTime();
 
 	tasks.setTaskScheduler(this);
 
