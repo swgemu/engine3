@@ -15,9 +15,9 @@
         { \
         class Param1##Param1 : public Task { \
                 typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
-                param1_type param1; \
+                param1_type Param1##_p; \
         public: \
-                Param1##Param1(param1_type param1) : param1(param1) {} \
+                Param1##Param1(param1_type param1) : Param1##_p(param1) {} \
                 void run() { \
                         Code; \
                 } \
@@ -31,12 +31,12 @@
         { \
         class Param1##Param2 : public Task { \
                 typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
-                param1_type param1; \
+                param1_type Param1##_p; \
 		\
 		typedef BOOST_TYPEOF_TPL(Param2) param2_type; \
-		param2_type param2; \
+		param2_type Param2##_p; \
         public: \
-                Param1##Param2(param1_type param1, param2_type param2) : param1(param1), param2(param2) {} \
+                Param1##Param2(param1_type param1, param2_type param2) : Param1##_p(param1), Param2##_p(param2) {} \
                 void run() { \
                         Code; \
                 } \
@@ -50,15 +50,15 @@
         { \
         class Param1##Param2##Param3 : public Task { \
                 typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
-                param1_type param1; \
+                param1_type Param1##_p; \
 		\
                 typedef BOOST_TYPEOF_TPL(Param2) param2_type; \
-                param2_type param2; \
+                param2_type Param2##_p; \
 		\
 		typedef BOOST_TYPEOF_TPL(Param3) param3_type; \
-		param3_type param3; \
+		param3_type Param3##_p; \
         public: \
-                Param1##Param2##Param3(param1_type param1, param2_type param2, param3_type param3) : param1(param1), param2(param2), param3(param3) {} \
+                Param1##Param2##Param3(param1_type param1, param2_type param2, param3_type param3) : Param1##_p(param1), Param2##_p(param2), Param3##_p(param3) {} \
                 void run() { \
                         Code; \
                 } \
@@ -72,18 +72,18 @@
         { \
         class Param1##Param2##Param3##Param4 : public Task { \
                 typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
-                param1_type param1; \
+                param1_type Param1##_p; \
 		\
                 typedef BOOST_TYPEOF_TPL(Param2) param2_type; \
-                param2_type param2; \
+                param2_type Param2##_p; \
 		\
                 typedef BOOST_TYPEOF_TPL(Param3) param3_type; \
-                param3_type param3; \
+                param3_type Param3##_p; \
 		\
 		typedef BOOST_TYPEOF_TPL(Param4) param4_type; \
-		param4_type param4; \
+		param4_type Param4##_p; \
         public: \
-                Param1##Param2##Param3##Param4(param1_type param1, param2_type param2, param3_type param3, param4_type param4) : param1(param1), param2(param2), param3(param3), param4(param4) {} \
+                Param1##Param2##Param3##Param4(param1_type param1, param2_type param2, param3_type param3, param4_type param4) : Param1##_p(param1), Param2##_p(param2), Param3##_p(param3), Param4##_p(param4) {} \
                 void run() { \
                         Code; \
                 } \
