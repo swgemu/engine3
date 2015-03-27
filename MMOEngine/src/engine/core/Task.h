@@ -88,7 +88,7 @@
                         Code; \
                 } \
         }; \
-        Task* task = new Param1##Param2(Param1, Param2, PAram3, Param4); \
+        Task* task = new Param1##Param2##Param3##Param4(Param1, Param2, Param3, Param4); \
         task->execute(); \
         }
 
