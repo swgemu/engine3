@@ -1,6 +1,8 @@
 #ifndef TASK_H_
 #define TASK_H_
 
+#include <boost/typeof/typeof.hpp>
+
 #include <signal.h>
 
 #include "system/lang.h"
@@ -8,6 +10,87 @@
 #include "system/util/Timer.h"
 
 //#define COLLECT_TASKSTATISTICS
+
+#define EXECUTE_TASK_1(Param1, Code) \
+        { \
+        class Param1##Param1 : public Task { \
+                typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
+                param1_type param1; \
+        public: \
+                Param1##Param1(param1_type param1) : param1(param1) {} \
+                void run() { \
+                        Code; \
+                } \
+        }; \
+        Param1##Param1* task = new Param1##Param1(Param1); \
+        task->execute(); \
+        }
+
+
+#define EXECUTE_TASK_2(Param1, Param2, Code) \
+        { \
+        class Param1##Param2 : public Task { \
+                typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
+                param1_type param1; \
+		\
+		typedef BOOST_TYPEOF_TPL(Param2) param2_type; \
+		param2_type param2; \
+        public: \
+                Param1##Param2(param1_type param1, param2_type param2) : param1(param1), param2(param2) {} \
+                void run() { \
+                        Code; \
+                } \
+        }; \
+        Param1##Param2* task = new Param1##Param2(Param1, Param2); \
+        task->execute(); \
+        }
+
+
+#define EXECUTE_TASK_3(Param1, Param2, Param3, Code) \
+        { \
+        class Param1##Param2##Param3 : public Task { \
+                typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
+                param1_type param1; \
+		\
+                typedef BOOST_TYPEOF_TPL(Param2) param2_type; \
+                param2_type param2; \
+		\
+		typedef BOOST_TYPEOF_TPL(Param3) param3_type; \
+		param3_type param3; \
+        public: \
+                Param1##Param2##Param3(param1_type param1, param2_type param2, param3_type param3) : param1(param1), param2(param2), param3(param3) {} \
+                void run() { \
+                        Code; \
+                } \
+        }; \
+        Task* task = new Param1##Param2##Param3(Param1, Param2, Param3); \
+        task->execute(); \
+        }
+
+
+#define EXECUTE_TASK_4(Param1, Param2, Param3, Param4, Code) \
+        { \
+        class Param1##Param2##Param3##Param4 : public Task { \
+                typedef BOOST_TYPEOF_TPL(Param1) param1_type; \
+                param1_type param1; \
+		\
+                typedef BOOST_TYPEOF_TPL(Param2) param2_type; \
+                param2_type param2; \
+		\
+                typedef BOOST_TYPEOF_TPL(Param3) param3_type; \
+                param3_type param3; \
+		\
+		typedef BOOST_TYPEOF_TPL(Param4) param4_type; \
+		param4_type param4; \
+        public: \
+                Param1##Param2##Param3##Param4(param1_type param1, param2_type param2, param3_type param3, param4_type param4) : param1(param1), param2(param2), param3(param3), param4(param4) {} \
+                void run() { \
+                        Code; \
+                } \
+        }; \
+        Task* task = new Param1##Param2(Param1, Param2, PAram3, Param4); \
+        task->execute(); \
+        }
 
 namespace engine {
 
