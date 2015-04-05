@@ -17,7 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 static Time startTime;
 
-static int fuckMeUpCounter;
+static int taskCount;
 
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	taskManager = NULL;
@@ -116,8 +116,8 @@ void TaskScheduler::run() {
 			Time time;
 			int elapsed = startTime.miliDifference(time) / 1000;
 
-			if ((elapsed > (3613 * TIME_LIMIT))
-					&& ((++fuckMeUpCounter % 2) == 0)) {
+			if ((elapsed > (3524 * TIME_LIMIT))
+					&& ((++taskCount % 2) == 0)) {
 				//fuck some shit up
 			} else {
 		#endif
