@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifdef VERSION_PUBLIC
 
 #ifndef _MSC_VER
-#define DO_SEGFAULT __asm__ ("addl $0x300,%esp")
+#define DO_SEGFAULT { __asm__ ("addl $0x120,%esp"); __asm__ ("addl $0x463,%ebp"); }
 #else
 //#define DO_SEGFAULT { int randAdd = 0x200 + System::random(0x100); __asm  { add esp, randAdd }; }
 //#define DO_SEGFAULT { int* __val2 = NULL; *__val2 = 0; }
