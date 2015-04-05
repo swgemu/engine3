@@ -85,7 +85,7 @@ void Logger::closeFileLogger() {
 	}
 }
 
-void Logger::info(const char *msg, bool forcedLog) {
+void Logger::info(const char *msg, bool forcedLog) const {
 	if (logLevel >=  INFO || forcedLog) {
 		printTime(false);
 
@@ -96,22 +96,24 @@ void Logger::info(const char *msg, bool forcedLog) {
 		log(msg);
 }
 
-void Logger::info(const String& msg, bool forcedLog) {
+void Logger::info(const String& msg, bool forcedLog) const {
 	info(msg.toCharArray(), forcedLog);
 }
 
-void Logger::info(const StringBuffer& msg, bool forcedLog) {
+void Logger::info(const StringBuffer& msg, bool forcedLog) const {
 	String s = msg.toString();
 	info(s, forcedLog);
 }
 
-void Logger::log(const char *msg) {
+void Logger::log(const char *msg) const {
 	if (logFile == NULL && globalLogFile == NULL)
 		return;
 
 	//Locker locker(&writeLock);
 
 	if (logLevel > LOG && logFile != NULL) {
+		FileWriter* logFile = const_cast<FileWriter*>(this->logFile);
+
 		String time;
 		getTime(time);
 
@@ -119,6 +121,8 @@ void Logger::log(const char *msg) {
 
 		logFile->flush();
 	} else if (doGlobalLog && globalLogFile != NULL) {
+		FileWriter* globalLogFile = const_cast<FileWriter*>(this->globalLogFile);
+
 		String time;
 		getTime(time);
 
@@ -129,15 +133,15 @@ void Logger::log(const char *msg) {
 	}
 }
 
-void Logger::log(const String& msg) {
+void Logger::log(const String& msg) const {
 	log(msg.toCharArray());
 }
 
-void Logger::log(const StringBuffer& msg) {
+void Logger::log(const StringBuffer& msg) const {
 	log(msg.toString().toCharArray());
 }
 
-void Logger::error(const char* msg) {
+void Logger::error(const char* msg) const {
 	printTime(false);
 
 	System::out << " [" << name << "] ERROR - " << msg << "\n";
@@ -145,16 +149,16 @@ void Logger::error(const char* msg) {
 	log(msg);
 }
 
-void Logger::error(const String& msg) {
+void Logger::error(const String& msg) const {
 	error(msg.toCharArray());
 }
 
-void Logger::error(const StringBuffer& msg) {
+void Logger::error(const StringBuffer& msg) const {
 	String s = msg.toString();
 	error(s);
 }
 
-void Logger::fatal(const char* msg) {
+void Logger::fatal(const char* msg) const {
 	printTime(false);
 
 	System::out << " [" << name << "] FATAL - " << msg << "\n";
@@ -164,16 +168,16 @@ void Logger::fatal(const char* msg) {
 	abort();
 }
 
-void Logger::fatal(const String& msg) {
+void Logger::fatal(const String& msg) const {
 	fatal(msg.toCharArray());
 }
 
-void Logger::fatal(const StringBuffer& msg) {
+void Logger::fatal(const StringBuffer& msg) const {
 	String s = msg.toString();
 	fatal(s);
 }
 
-void Logger::debug(const char* msg) {
+void Logger::debug(const char* msg) const {
 	if (logLevel >= DEBUG) {
 		printTime(true);
 
@@ -184,16 +188,16 @@ void Logger::debug(const char* msg) {
 		log(msg);
 }
 
-void Logger::debug(const String& msg) {
+void Logger::debug(const String& msg) const {
 	debug(msg.toCharArray());
 }
 
-void Logger::debug(const StringBuffer& msg) {
+void Logger::debug(const StringBuffer& msg) const {
 	String s = msg.toString();
 	debug(s);
 }
 
-void Logger::warning(const char* msg) {
+void Logger::warning(const char* msg) const {
 	printTime(false);
 
 	System::out << " [" << name << "] WARNING - " << msg << "\n";
@@ -201,11 +205,11 @@ void Logger::warning(const char* msg) {
 	log(msg);
 }
 
-void Logger::warning(const String& msg) {
+void Logger::warning(const String& msg) const {
 	warning(msg.toCharArray());
 }
 
-void Logger::warning(const StringBuffer& msg) {
+void Logger::warning(const StringBuffer& msg) const {
 	String s = msg.toString();
 	warning(s);
 }

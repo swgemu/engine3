@@ -49,29 +49,29 @@ namespace engine {
 
 		void closeFileLogger();
 
-		void info(const char *msg, bool forcedLog = false);
-		void info(const String& msg, bool forcedLog = false);
-		void info(const StringBuffer& msg, bool forcedLog = false);
+		void info(const char *msg, bool forcedLog = false) const;
+		void info(const String& msg, bool forcedLog = false) const;
+		void info(const StringBuffer& msg, bool forcedLog = false) const;
 
-		void log(const char *msg);
-		void log(const String& msg);
-		void log(const StringBuffer& msg);
+		void log(const char *msg) const;
+		void log(const String& msg) const;
+		void log(const StringBuffer& msg) const;
 
-		void error(const char* msg);
-		void error(const String& msg);
-		void error(const StringBuffer& msg);
+		void error(const char* msg) const;
+		void error(const String& msg) const;
+		void error(const StringBuffer& msg) const;
 
-		void fatal(const char* msg);
-		void fatal(const String& msg);
-		void fatal(const StringBuffer& msg);
+		void fatal(const char* msg) const;
+		void fatal(const String& msg) const;
+		void fatal(const StringBuffer& msg) const;
 
-		void debug(const char* msg);
-		void debug(const String& msg);
-		void debug(const StringBuffer& msg);
+		void debug(const char* msg) const;
+		void debug(const String& msg) const;
+		void debug(const StringBuffer& msg) const;
 
-		void warning(const char* msg);
-		void warning(const String& msg);
-		void warning(const StringBuffer& msg);
+		void warning(const char* msg) const;
+		void warning(const String& msg) const;
+		void warning(const StringBuffer& msg) const;
 
 		static void getTime(String& time, bool getFull = true);
 		static void printTime(bool getFull = true);
