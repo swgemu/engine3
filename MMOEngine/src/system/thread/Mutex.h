@@ -53,6 +53,8 @@ namespace sys {
 		}
 
 		Mutex& operator=(const Mutex& m) {
+			recursiveMutex = m.recursiveMutex;
+
 			return *this;
 		}
 
