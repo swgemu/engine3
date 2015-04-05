@@ -13,8 +13,6 @@ namespace sys {
   	class FileReader : public Reader {
   		File* file;
 
-  		char buf[4096];
-
   	public:
   		FileReader(File* file) {
   			file->setReadOnly();
@@ -44,6 +42,8 @@ namespace sys {
 
   		bool readLine(String& line) {
   			validateReadable();
+
+  			char buf[4096];
 
   			if (fgets(buf, 4096, file->getDescriptor()) != NULL) {
   				line = buf;

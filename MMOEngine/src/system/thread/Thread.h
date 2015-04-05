@@ -44,7 +44,7 @@ namespace sys {
   		 }
 
   		 LockableTrace(const LockableTrace& l) : lockable(l.lockable), locked(l.locked),
-  				 crossedTo(l.crossedTo), monitorLike(l.monitorLike) {
+  				 crossedTo(l.crossedTo), trace(l.trace), monitorLike(l.monitorLike) {
   		 }
 
   		LockableTrace& operator=(const LockableTrace& l) {
@@ -55,6 +55,7 @@ namespace sys {
   			locked = l.locked;
   			crossedTo = l.crossedTo;
   			monitorLike = l.monitorLike;
+  			trace = l.trace;
 
   			return *this;
   		}

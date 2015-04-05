@@ -61,8 +61,7 @@ namespace sys {
 		}
 
 		static uint32 hashCode(float value) {
-			//TODO
-			return (uint32) value;
+			return *(reinterpret_cast<uint32*>(&value));
 		}
 
 	};

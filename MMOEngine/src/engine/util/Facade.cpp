@@ -28,41 +28,44 @@ Facade::~Facade() {
 
 int Facade::initializeSession() {
 	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, RPC_INITIALIZESESSION__);
 
 		return method.executeWithSignedIntReturn();
-	} else
+	} else {
 		return _implementation->initializeSession();
+	}
 }
 
 int Facade::cancelSession() {
 	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, RPC_CANCELSESSION__);
 
 		return method.executeWithSignedIntReturn();
-	} else
+	} else {
 		return _implementation->cancelSession();
+	}
 }
 
 int Facade::clearSession() {
 	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, RPC_CLEARSESSION__);
 
 		return method.executeWithSignedIntReturn();
-	} else
+	} else {
 		return _implementation->clearSession();
+	}
 }
 
 DistributedObjectServant* Facade::_getImplementation() {

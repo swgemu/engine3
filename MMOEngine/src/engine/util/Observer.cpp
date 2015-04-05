@@ -32,7 +32,7 @@ Observer::~Observer() {
 
 int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -43,26 +43,28 @@ int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable
 		method.addSignedLongParameter(arg2);
 
 		return method.executeWithSignedIntReturn();
-	} else
+	} else {
 		return _implementation->notifyObserverEvent(eventType, observable, arg1, arg2);
+	}
 }
 
 unsigned long long Observer::getObjectID() {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, RPC_GETOBJECTID__);
 
 		return method.executeWithUnsignedLongReturn();
-	} else
+	} else {
 		return _implementation->getObjectID();
+	}
 }
 
 int Observer::compareTo(Observer* obj) {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -70,13 +72,14 @@ int Observer::compareTo(Observer* obj) {
 		method.addObjectParameter(obj);
 
 		return method.executeWithSignedIntReturn();
-	} else
+	} else {
 		return _implementation->compareTo(obj);
+	}
 }
 
 void Observer::setObserverType(unsigned int type) {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -84,13 +87,14 @@ void Observer::setObserverType(unsigned int type) {
 		method.addUnsignedIntParameter(type);
 
 		method.executeWithVoidReturn();
-	} else
+	} else {
 		_implementation->setObserverType(type);
+	}
 }
 
 bool Observer::isObserverType(unsigned int type) const {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -98,8 +102,9 @@ bool Observer::isObserverType(unsigned int type) const {
 		method.addUnsignedIntParameter(type);
 
 		return method.executeWithBooleanReturn();
-	} else
+	} else {
 		return _implementation->isObserverType(type);
+	}
 }
 
 DistributedObjectServant* Observer::_getImplementation() {

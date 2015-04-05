@@ -23,21 +23,21 @@ namespace sys {
 			pthread_mutex_init(&mutex, NULL);
 			recursiveMutex = false;
 		}
-		
-		Mutex(bool recursive) : Lockable() {
-		        if (recursive) {
-        		        pthread_mutexattr_init(&attr);
 
-                		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-                		
-                		pthread_mutex_init(&mutex, &attr);
-                		
-                		recursiveMutex = true;
-                        } else {
-                                pthread_mutex_init(&mutex, NULL);
-                                recursiveMutex = false;
-                        }
-                        
+		Mutex(bool recursive) : Lockable() {
+			if (recursive) {
+				pthread_mutexattr_init(&attr);
+
+				pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+				pthread_mutex_init(&mutex, &attr);
+
+				recursiveMutex = true;
+			} else {
+				pthread_mutex_init(&mutex, NULL);
+				recursiveMutex = false;
+			}
+
 		}
 
 		Mutex(const String& s) : Lockable(s) {
@@ -50,6 +50,10 @@ namespace sys {
 			pthread_mutex_init(&mutex, NULL);
 			
 			recursiveMutex = false;
+		}
+
+		Mutex& operator=(const Mutex& m) {
+			return *this;
 		}
 
 		virtual ~Mutex() {

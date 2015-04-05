@@ -117,8 +117,8 @@ namespace sys {
 					return __sync_bool_compare_and_swap (value, oldval, newval);
 		#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
 					//TODO: find appropriate method
-					if ( value == oldval ) {
-						value = newval;
+					if ( *value == *oldval ) {
+						*value = *newval;
 						return true;
 					} else {
 						return false;

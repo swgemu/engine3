@@ -166,16 +166,18 @@ namespace sys {
 		
 		ListEntry<O>* o = e->next;
 		
-		if (o != NULL) 
+		if (o != NULL) {
 			e->next = o->next;
-		else 
-			e->next = NULL;
+
+			O obj = o->obj;
+			delete o;
+
+			count.decrement();
+
+			return obj;
+		}
 		
-		O obj = o->obj;
-		delete o;
-		
-		count.decrement();
-		return obj;
+		return NULL;
 	}
 
   } // namespace util

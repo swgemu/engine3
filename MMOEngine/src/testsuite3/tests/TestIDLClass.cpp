@@ -28,20 +28,21 @@ TestIDLClass::~TestIDLClass() {
 
 int TestIDLClass::getValue() {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
 		DistributedMethod method(this, RPC_GETVALUE__);
 
 		return method.executeWithSignedIntReturn();
-	} else
+	} else {
 		return _implementation->getValue();
+	}
 }
 
 void TestIDLClass::setValue(int val) {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -49,8 +50,9 @@ void TestIDLClass::setValue(int val) {
 		method.addSignedIntParameter(val);
 
 		method.executeWithVoidReturn();
-	} else
+	} else {
 		_implementation->setValue(val);
+	}
 }
 
 DistributedObjectServant* TestIDLClass::_getImplementation() {

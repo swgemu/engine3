@@ -134,23 +134,23 @@ namespace engine {
 
 		String toString();
 
-		inline bool isInitial() {
+		inline bool isInitial() const {
 			return status == INITIAL;
 		}
 
-		inline bool isUndecided() {
+		inline bool isUndecided() const {
 			return status == UNDECIDED;
 		}
 
-		inline bool isReadChecking() {
+		inline bool isReadChecking() const {
 			return status == READ_CHECKING;
 		}
 
-		inline bool isAborted() {
+		inline bool isAborted() const {
 			return status == ABORTED;
 		}
 
-		inline bool isCommited() {
+		inline bool isCommited() const {
 			return status == COMMITTED;
 		}
 

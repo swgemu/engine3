@@ -194,7 +194,7 @@ namespace sys {
 		}
 
 	public:
-		inline bool isLockedByCurrentThread() {
+		inline bool isLockedByCurrentThread() const {
 			return threadLockHolder == Thread::getCurrentThread();
 		}
 

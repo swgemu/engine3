@@ -29,7 +29,7 @@ public:
 		//setNoDuplicateInsertPlan();
 	}
 
-	ObserverEventMap(const ObserverEventMap& map) : HashTable<uint32, SortedVector<ManagedReference<Observer*> > >(map) {
+	ObserverEventMap(const ObserverEventMap& map) : HashTable<uint32, SortedVector<ManagedReference<Observer*> > >(map), observerMutex() {
 		//setNoDuplicateInsertPlan();
 	}
 

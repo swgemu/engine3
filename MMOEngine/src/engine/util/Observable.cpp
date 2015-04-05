@@ -30,7 +30,7 @@ Observable::~Observable() {
 
 void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -40,13 +40,14 @@ void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, lo
 		method.addSignedLongParameter(arg2);
 
 		method.executeWithVoidReturn();
-	} else
+	} else {
 		_implementation->notifyObservers(eventType, arg1, arg2);
+	}
 }
 
 void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -55,13 +56,14 @@ void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 		method.addObjectParameter(observer);
 
 		method.executeWithVoidReturn();
-	} else
+	} else {
 		_implementation->registerObserver(eventType, observer);
+	}
 }
 
 void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -70,13 +72,14 @@ void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 		method.addObjectParameter(observer);
 
 		method.executeWithVoidReturn();
-	} else
+	} else {
 		_implementation->dropObserver(eventType, observer);
+	}
 }
 
 int Observable::getObserverCount(unsigned int eventType) const {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementationForRead());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -84,13 +87,14 @@ int Observable::getObserverCount(unsigned int eventType) const {
 		method.addUnsignedIntParameter(eventType);
 
 		return method.executeWithSignedIntReturn();
-	} else
+	} else {
 		return _implementation->getObserverCount(eventType);
+	}
 }
 
 void Observable::addObservableChild(Observable* observable) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -98,13 +102,14 @@ void Observable::addObservableChild(Observable* observable) {
 		method.addObjectParameter(observable);
 
 		method.executeWithVoidReturn();
-	} else
+	} else {
 		_implementation->addObservableChild(observable);
+	}
 }
 
 void Observable::dropObserveableChild(Observable* observable) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (_implementation == NULL) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -112,8 +117,9 @@ void Observable::dropObserveableChild(Observable* observable) {
 		method.addObjectParameter(observable);
 
 		method.executeWithVoidReturn();
-	} else
+	} else {
 		_implementation->dropObserveableChild(observable);
+	}
 }
 
 DistributedObjectServant* Observable::_getImplementation() {
