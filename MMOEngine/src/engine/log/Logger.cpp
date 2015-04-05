@@ -121,7 +121,7 @@ void Logger::log(const char *msg) const {
 
 		logFile->flush();
 	} else if (doGlobalLog && globalLogFile != NULL) {
-		FileWriter* globalLogFile = const_cast<FileWriter*>(this->globalLogFile);
+		FileWriter* globalLogFile = const_cast<FileWriter*>(this->globalLogFile.get());
 
 		String time;
 		getTime(time);
