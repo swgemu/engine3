@@ -122,8 +122,8 @@ String::~String() {
 void String::create(const char* str, int len) {
 #ifdef SSO_STRING
 	if (len < SSO_SIZE) {
-		memcpy(sso, str, len + 1);
-
+		memcpy(sso, str, len);
+		sso[len] = 0;
 		count = len;
 	} else {
 #endif
