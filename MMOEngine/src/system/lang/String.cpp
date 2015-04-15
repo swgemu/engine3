@@ -98,34 +98,61 @@ String::String(const char* str, int len) : Variable() {
 }
 
 String::String(const String& str) : Variable() {
-	create(str.value, str.count);
+	create(str.begin(), str.count);
 }
 
 String::~String() {
+#ifdef SSO_STRING
+	if (len >= SSO_SIZE) {
+		free(value);
+		value = NULL;
+	}
+
+	count = 0;
+#else
 	if (value != NULL) {
 		free(value);
 		value = NULL;
 
 		count = 0;
 	}
+#endif
 }
 
 void String::create(const char* str, int len) {
+#ifdef SSO_STRING
+	if (len < SSO_SIZE) {
+		memcpy(sso, str, len + 1);
+
+		count = len;
+	} else {
+#endif
 	value = (char*) malloc(len + 1);
 
 	memcpy(value, str, len);
 	value[len] = 0;
 
 	count = len;
+#ifdef SSO_STRING
+	}
+#endif
 }
 
 void String::clear() {
+#ifdef SSO_STRING
+	if (count < SSO_SIZE) {
+		count = 0;
+	} else {
+#endif
 	if (value != NULL) {
 		free(value);
 		value = NULL;
 
 		count = 0;
 	}
+#ifdef SSO_STRING
+	}
+#endif
 }
 
 String String::concat(char ch) const {
@@ -141,30 +168,48 @@ String String::concat(const char* str) const {
 }
 
 String String::concat(const char* str, int len) const {
-	String newstr(value, count);
+	String newstr(begin(), count);
 
 	int newlen = count + len;
 
+#ifdef SSO_STRING
+	if (newlen < SSO_SIZE) {
+		memcpy(newstr.sso + count, str, len);
+		newstr.sso[newlen] = 0;
+
+		newstr.count = newlen;
+	} else {
+		if (count < SSO_SIZE) {
+			newstr.value = (char*) malloc(newlen + 1);
+		} else {
+#endif
 	newstr.value = (char*) realloc(newstr.value, newlen + 1);
+
+#ifdef SSO_STRING
+		}
+#endif
 
 	memcpy(newstr.value + count, str, len);
 	newstr.value[newlen] = 0;
 
 	newstr.count = newlen;
+#ifdef SSO_STRING
+	}
+#endif
 
 	return newstr;
 }
 
 String String::concat(const String& str) const {
-	return concat(str.value, str.count);
+	return concat(str.begin(), str.count);
 }
 
 int String::compareTo(const char* str) const {
-	return strcmp(str, value);
+	return strcmp(str, begin());
 }
 
 int String::compareTo(const String& str) const {
-	return compareTo(str.value);
+	return compareTo(str.begin());
 }
 
 bool String::contains(const char* str) const {
@@ -183,10 +228,10 @@ int String::indexOf(char ch, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strchr(value + fromIndex, ch);
+	char* position = strchr(begin() + fromIndex, ch);
 
 	if (position != NULL)
-		return position - value;
+		return position - begin();
 	else
 		return -1;
 }
@@ -199,10 +244,10 @@ int String::indexOf(const char* str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strstr(value + fromIndex, str);
+	char* position = strstr(begin() + fromIndex, str);
 
 	if (position != NULL)
-		return position - value;
+		return position - begin();
 	else
 		return -1;
 }
@@ -223,10 +268,10 @@ int String::lastIndexOf(char ch, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strrchr(value + fromIndex, ch);
+	char* position = strrchr(begin() + fromIndex, ch);
 
 	if (position != NULL)
-		return position - value;
+		return position - begin();
 	else
 		return -1;
 }
@@ -239,10 +284,10 @@ int String::lastIndexOf(const char* str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strrstr(value + fromIndex, count - fromIndex, str, strlen(str));
+	char* position = strrstr(begin() + fromIndex, count - fromIndex, str, strlen(str));
 
 	if (position != NULL)
-		return position - value;
+		return position - begin();
 	else
 		return -1;
 }
@@ -255,10 +300,10 @@ int String::lastIndexOf(const String& str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strrstr(value + fromIndex, count - fromIndex, str.value, str.count);
+	char* position = strrstr(begin() + fromIndex, count - fromIndex, str.begin(), str.count);
 
 	if (position != NULL)
-		return position - value;
+		return position - begin();
 	else
 		return -1;
 }
@@ -283,10 +328,10 @@ uint32 String::hashCode() const {
 	uint32 CRC = 0xFFFFFFFF;
 
 	for (int counter = 0; counter < count; counter++) {
-		uint32 table = value[counter] ^ (CRC >> 24);
+		uint32 table = begin()[counter] ^ (CRC >> 24);
 
 		if (table > 255)
-			throw ArrayIndexOutOfBoundsException(value[counter]);
+			throw ArrayIndexOutOfBoundsException(begin()[counter]);
 
   		CRC = crctable[table] ^ (CRC << 8);
 	}
@@ -298,7 +343,7 @@ String String::subString(int beginIndex) const {
 	if (beginIndex < 0 || beginIndex >= count)
 		throw ArrayIndexOutOfBoundsException(beginIndex);
 
-	return String(value + beginIndex, count - beginIndex);
+	return String(begin() + beginIndex, count - beginIndex);
 }
 
 String String::subString(int beginIndex, int endIndex) const {
@@ -310,7 +355,7 @@ String String::subString(int beginIndex, int endIndex) const {
 		throw ArrayIndexOutOfBoundsException(beginIndex);
 
 	if (beginIndex != endIndex)
-		return String(value + beginIndex, endIndex - beginIndex);
+		return String(begin() + beginIndex, endIndex - beginIndex);
 	else
 		return String("");
 }
@@ -388,8 +433,6 @@ String String::hexvalueOf(int64 val) {
 	snprintf(buf, 32, "%llx", val);
 #endif
 
-
-
 	return String(buf);
 }
 
@@ -400,7 +443,7 @@ String String::replaceFirst(const String& regexString, const String& replacement
 	int reti = regcomp(&regex, regexString.toCharArray(), REG_EXTENDED);
 
 	if (!reti) {
-		reti = regexec(&regex, value, 1, pmatch, 0);
+		reti = regexec(&regex, begin(), 1, pmatch, 0);
 
 		if (reti) {
 			regfree(&regex);
@@ -447,26 +490,26 @@ String String::replaceAll(const String& regex, const String& replacement) const 
 }
 
 String String::toLowerCase() const {
-	String str(value);
+	String str(begin());
 
 	for (int i = 0; i < count; ++i) {
-		char ch = value[i];
+		char ch = begin()[i];
 
 		if (isupper(ch))
-			str.value[i] = tolower(ch);
+			str.begin()[i] = tolower(ch);
 	}
 
 	return str;
 }
 
 String String::toUpperCase() const {
-	String str(value);
+	String str(begin());
 
 	for (int i = 0; i < count; ++i) {
-		char ch = value[i];
+		char ch = begin()[i];
 
 		if (islower(ch))
-			str.value[i] = toupper(ch);
+			str.begin()[i] = toupper(ch);
 	}
 
 	return str;
@@ -478,7 +521,7 @@ String String::trim() const {
 	int firstIndex = -1, lastIndex = -1;
 
 	for (int i = 0; i < count; ++i) {
-		char ch = value[i];
+		char ch = begin()[i];
 
 		if (ch != ' ' && ch != '\n' && ch != '\t' && ch != '\r' && ch != '\f') {
 			firstIndex = i;
@@ -490,7 +533,7 @@ String String::trim() const {
 		return String("");
 
 	for (int i = count - 1; i >= 0; --i) {
-		char ch = value[i];
+		char ch = begin()[i];
 
 		if (ch != ' ' && ch != '\n' && ch != '\t' && ch != '\r' && ch != '\f') {
 			lastIndex = i + 1;
@@ -550,12 +593,12 @@ String& String::operator=(const char* str) {
 }
 
 String& String::operator=(const String& str) {
-	if (value == str.value)
+	if (begin() == str.begin())
 		return *this;
 
 	clear();
 
-	create(str.value, str.count);
+	create(str.begin(), str.count);
 
 	return *this;
 }
@@ -564,12 +607,29 @@ String& String::operator+=(const char* str) {
 	int len = strlen(str);
 	int newlen = count + len;
 
-	value = (char*) realloc(value, newlen + 1);
+#ifdef SSO_STRING
+	if (newlen < SSO_SIZE) {
+		memcpy(sso + count, str, len);
+		sso[newlen] = 0;
+
+		count = newlen;
+	} else {
+		if (count < SSO_SIZE) {
+			value = (char*) malloc(newlen + 1);
+		} else {
+#endif
+			value = (char*) realloc(value, newlen + 1);
+#ifdef SSO_STRING
+		}
+#endif
 
 	memcpy(value + count, str, len);
 	value[newlen] = 0;
 
 	count = newlen;
+#ifdef SSO_STRING
+	}
+#endif
 
 	return *this;
 }
@@ -577,12 +637,28 @@ String& String::operator+=(const char* str) {
 String& String::operator+=(char ch) {
 	int newlen = count + 1;
 
-	value = (char*) realloc(value, newlen + 1);
+#ifdef SSO_STRING
+	if (newlen < SSO_SIZE) {
+		sso[newlen - 1] = ch;
+		sso[newlen] = 0;
 
+		count = newlen;
+	} else {
+		if (count < SSO_SIZE) {
+			value = (char*) malloc(newlen + 1);
+		} else {
+#endif
+	value = (char*) realloc(value, newlen + 1);
+#ifdef SSO_STRING
+		}
+#endif
 	value[newlen - 1] = ch;
 	value[newlen] = 0;
 
 	count = newlen;
+#ifdef SSO_STRING
+	}
+#endif
 
 	return *this;
 }
@@ -590,12 +666,29 @@ String& String::operator+=(char ch) {
 String& String::operator+=(const String& str) {
 	int newlen = count + str.count;
 
-	value = (char*) realloc(value, newlen + 1);
+#ifdef SSO_STRING
+	if (newlen < SSO_SIZE) {
+		memcpy(sso + count, str.toCharArray(), str.count);
+		sso[newlen] = 0;
 
+		count = newlen;
+	} else {
+		if (count < SSO_SIZE) {
+			value = (char*) malloc(newlen + 1);
+		} else {
+#endif
+	value = (char*) realloc(value, newlen + 1);
+#ifdef SSO_STRING
+		}
+#endif
 	memcpy(value + count, str.toCharArray(), str.count);
 	value[newlen] = 0;
 
 	count = newlen;
+
+#ifdef SSO_STRING
+	}
+#endif
 
 	return *this;
 }
@@ -604,20 +697,20 @@ char& String::operator[](int i) {
 	if (i < 0 || i >= count)
 		throw ArrayIndexOutOfBoundsException(i);
 
-	return value[i];
+	return begin()[i];
 }
 
 char String::charAt(int index) const {
 	if (index < 0 || index >= count)
 		throw ArrayIndexOutOfBoundsException(index);
 
-	return value[index];
+	return begin()[index];
 }
 
 bool String::toBinaryStream(ObjectOutputStream* stream) {
 	stream->writeShort(count);
 
-	stream->writeStream(value, count);
+	stream->writeStream(begin(), count);
 
 	return true;
 }
@@ -675,6 +768,18 @@ String String::format(const char* format, ...) {
 	free(buffer);
 
 	return returnString;
+}
+
+char* String::begin() {
+#ifdef SSO_STRING
+	return count < SSO_SIZE ? sso : value;
+#else
+	return value;
+#endif
+}
+
+char* String::end() {
+	return begin() + count;
 }
 
 bool String::parseFromString(const String& str, int version) {
