@@ -181,7 +181,8 @@ String String::concat(const char* str, int len) const {
 	} else {
 		if (newstr.count < SSO_SIZE) {
 			char* newvalue = (char*) malloc(newlen + 1);
-			strcpy(newvalue, newstr.sso);
+			memcpy(newvalue, newstr.sso, newstr.count);
+			newvalue[newlen] = 0;
 			newstr.value = newvalue;
 		} else {
 #endif
@@ -618,7 +619,8 @@ String& String::operator+=(const char* str) {
 	} else {
 		if (count < SSO_SIZE) {
 			char* newvalue = (char*) malloc(newlen + 1);
-			strcpy(newvalue, sso);
+			memcpy(newvalue, sso, count);
+			newvalue[newlen] = 0;
 			value = newvalue;
 		} else {
 #endif
@@ -650,7 +652,8 @@ String& String::operator+=(char ch) {
 	} else {
 		if (count < SSO_SIZE) {
 			char* newvalue = (char*) malloc(newlen + 1);
-			strcpy(newvalue, sso);
+			memcpy(newvalue, sso, count);
+			newvalue[newlen] = 0;
 			value = newvalue;
 		} else {
 #endif
@@ -681,7 +684,8 @@ String& String::operator+=(const String& str) {
 	} else {
 		if (count < SSO_SIZE) {
 			char* newvalue = (char*) malloc(newlen + 1);
-			strcpy(newvalue, sso);
+			memcpy(newvalue, sso, count);
+			newvalue[newlen] = 0;
 			value = newvalue;
 		} else {
 #endif
