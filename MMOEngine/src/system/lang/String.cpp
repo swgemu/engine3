@@ -103,7 +103,7 @@ String::String(const String& str) : Variable() {
 
 String::~String() {
 #ifdef SSO_STRING
-	if (len >= SSO_SIZE) {
+	if (count >= SSO_SIZE) {
 		free(value);
 		value = NULL;
 	}
@@ -772,7 +772,7 @@ String String::format(const char* format, ...) {
 
 char* String::begin() const {
 #ifdef SSO_STRING
-	return count < SSO_SIZE ? sso : value;
+	return count < SSO_SIZE ? (char*) sso : (char*) value;
 #else
 	return value;
 #endif
