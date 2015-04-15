@@ -9,25 +9,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../platform.h"
 #include "Variable.h"
 
-#ifdef SSO_STRING
-#define SSO_SIZE 16
-#endif
-
 namespace sys {
   namespace lang {
 
 	class String : public Variable {
 	protected:
-		int count;
-
-#ifdef SSO_STRING
-		union {
-			char* value;
-			char sso[SSO_SIZE];
-		};
-#else
 		char* value;
-#endif
+
+		int count;
 
 	public:
 		String();
@@ -158,11 +147,7 @@ namespace sys {
 		char charAt(int index) const;
 
 		inline const char* toCharArray() const {
-#ifdef SSO_STRING
-			return count < SSO_SIZE ? sso : value;
-#else
 			return value;
-#endif
 		}
 
 		inline bool isEmpty() const {
@@ -175,9 +160,6 @@ namespace sys {
 		void clear();
 
 		static char* strrstr(const char* s, int slen, const char* t, int tlen);
-
-		char* begin();
-		char* end();
 
 	public:
 		// getters
