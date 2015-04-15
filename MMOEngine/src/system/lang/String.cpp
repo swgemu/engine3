@@ -179,7 +179,7 @@ String String::concat(const char* str, int len) const {
 
 		newstr.count = newlen;
 	} else {
-		if (count < SSO_SIZE) {
+		if (newstr.count < SSO_SIZE) {
 			newstr.value = (char*) malloc(newlen + 1);
 		} else {
 #endif
