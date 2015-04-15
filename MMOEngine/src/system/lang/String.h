@@ -176,8 +176,8 @@ namespace sys {
 
 		static char* strrstr(const char* s, int slen, const char* t, int tlen);
 
-		char* begin();
-		char* end();
+		char* begin() const;
+		char* end() const;
 
 	public:
 		// getters

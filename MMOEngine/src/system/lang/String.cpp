@@ -770,7 +770,7 @@ String String::format(const char* format, ...) {
 	return returnString;
 }
 
-char* String::begin() {
+char* String::begin() const {
 #ifdef SSO_STRING
 	return count < SSO_SIZE ? sso : value;
 #else
@@ -778,7 +778,7 @@ char* String::begin() {
 #endif
 }
 
-char* String::end() {
+char* String::end() const {
 	return begin() + count;
 }
 
