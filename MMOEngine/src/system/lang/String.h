@@ -158,11 +158,7 @@ namespace sys {
 		char charAt(int index) const;
 
 		inline const char* toCharArray() const {
-#ifdef SSO_STRING
-			return count < SSO_SIZE ? sso : value;
-#else
-			return value;
-#endif
+			return begin();
 		}
 
 		inline bool isEmpty() const {
