@@ -61,6 +61,7 @@ class ManagedObject {
 	public native void rlock(ManagedObject obj);
 	
 	@nativeStub 
+	@local
 	public native void rlock(Lockable obj);
 
 	@nativeStub 
