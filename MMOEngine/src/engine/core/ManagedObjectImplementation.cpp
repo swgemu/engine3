@@ -77,6 +77,25 @@ void ManagedObject::unlock(bool doLock) {
 #endif
 }
 
+
+void ManagedObject::rlock(ManagedObject* obj) {
+#ifndef WITH_STM
+	DistributedObjectStub::rlock(obj);
+
+	if (_getImplementationForRead() == NULL)
+		_rlock();
+#endif
+}
+
+void ManagedObject::rlock(Lockable* obj) {
+#ifndef WITH_STM
+	DistributedObjectStub::rlock(obj);
+
+	if (_getImplementationForRead() == NULL)
+		_rlock();
+#endif
+}
+
 void ManagedObject::runlock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::runlock(doLock);
