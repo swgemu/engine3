@@ -43,6 +43,7 @@ namespace sys {
 		void wlock(bool doLock = true);
 		void wlock(Mutex* lock);
 		void wlock(ReadWriteLock* lock);
+		void rlock(ReadWriteLock* lock);
 
 		void lock(Lockable* lockable);
 

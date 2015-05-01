@@ -35,6 +35,7 @@ namespace sys {
 		//String lockName;
 
 		Thread* threadLockHolder;
+		AtomicInteger readLockCount;
 
 #ifdef TRACE_LOCKS
 		StackTrace* trace;
@@ -195,7 +196,8 @@ namespace sys {
 
 	public:
 		inline bool isLockedByCurrentThread() const {
-			return threadLockHolder == Thread::getCurrentThread();
+			return threadLockHolder == Thread::getCurrentThread() ||
+					readLockCount > 0;
 		}
 
 		inline Thread* getLockHolderThread() {
