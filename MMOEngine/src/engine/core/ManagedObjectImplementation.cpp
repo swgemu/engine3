@@ -167,6 +167,14 @@ void ManagedObjectImplementation::lock(ManagedObject* obj) {
 	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
+void ManagedObjectImplementation::rlock(Lockable* obj) {
+	_this.getReferenceUnsafeStaticCast()->rlock(obj);
+}
+
+void ManagedObjectImplementation::rlock(ManagedObject* obj) {
+	_this.getReferenceUnsafeStaticCast()->rlock(obj);
+}
+
 void ManagedObjectImplementation::rlock(bool doLock) {
 	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
 }
