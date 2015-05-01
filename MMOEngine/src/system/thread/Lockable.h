@@ -196,8 +196,11 @@ namespace sys {
 
 	public:
 		inline bool isLockedByCurrentThread() const {
-			return threadLockHolder == Thread::getCurrentThread() ||
-					readLockCount > 0;
+			return threadLockHolder == Thread::getCurrentThread();
+		}
+
+		inline bool isReadLocked() const {
+			 return readLockCount > 0;
 		}
 
 		inline Thread* getLockHolderThread() {
