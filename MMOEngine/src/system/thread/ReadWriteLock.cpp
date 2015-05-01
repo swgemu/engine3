@@ -137,6 +137,8 @@ void ReadWriteLock::rlock(ReadWriteLock* lock) {
 		lock->lock();
 	}
 
+	readLockCount.increment();
+
 	lockAcquired(lock, "r");
 }
 
