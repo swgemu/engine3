@@ -77,6 +77,25 @@ void ManagedObject::unlock(bool doLock) {
 #endif
 }
 
+
+void ManagedObject::rlock(ManagedObject* obj) {
+#ifndef WITH_STM
+	DistributedObjectStub::rlock(obj);
+
+	if (_getImplementationForRead() == NULL)
+		_rlock();
+#endif
+}
+
+void ManagedObject::rlock(Lockable* obj) {
+#ifndef WITH_STM
+	DistributedObjectStub::rlock(obj);
+
+	if (_getImplementationForRead() == NULL)
+		_rlock();
+#endif
+}
+
 void ManagedObject::runlock(bool doLock) {
 #ifndef WITH_STM
 	DistributedObjectStub::runlock(doLock);
@@ -146,6 +165,14 @@ void ManagedObjectImplementation::lock(Lockable* obj) {
 
 void ManagedObjectImplementation::lock(ManagedObject* obj) {
 	_this.getReferenceUnsafeStaticCast()->wlock(obj);
+}
+
+void ManagedObjectImplementation::rlock(Lockable* obj) {
+	_this.getReferenceUnsafeStaticCast()->rlock(obj);
+}
+
+void ManagedObjectImplementation::rlock(ManagedObject* obj) {
+	_this.getReferenceUnsafeStaticCast()->rlock(obj);
 }
 
 void ManagedObjectImplementation::rlock(bool doLock) {

@@ -52,6 +52,8 @@ void ReadWriteLock::rlock(bool doLock) {
 		lockTime->updateToCurrentTime();
 	#endif
 
+	readLockCount.increment();
+
 	lockAcquired("r");
 }
 
@@ -122,6 +124,38 @@ void ReadWriteLock::wlock(Mutex* lock) {
 	}
 
 	lockAcquired(lock, "w");
+}
+
+void ReadWriteLock::rlock(Lockable* lock) {
+	lockAcquiring(lock, "r");
+
+	while (pthread_rwlock_tryrdlock(&rwlock)) {
+		lock->unlock();
+
+		Thread::yield();
+
+		lock->lock();
+	}
+
+	readLockCount.increment();
+
+	lockAcquired(lock, "r");
+}
+
+void ReadWriteLock::rlock(ReadWriteLock* lock) {
+	lockAcquiring(lock, "r");
+
+	while (pthread_rwlock_tryrdlock(&rwlock)) {
+		lock->unlock();
+
+		Thread::yield();
+
+		lock->lock();
+	}
+
+	readLockCount.increment();
+
+	lockAcquired(lock, "r");
 }
 
 void ReadWriteLock::wlock(ReadWriteLock* lock) {
@@ -251,6 +285,8 @@ void ReadWriteLock::runlock(bool doLock) {
 #endif
 
 	lockReleasing("r");
+
+	readLockCount.decrement();
 
 	int res = pthread_rwlock_unlock(&rwlock);
 	if (res != 0) {
