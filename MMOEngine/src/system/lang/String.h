@@ -262,6 +262,13 @@ namespace sys {
 #endif
 	};
 
+
+	template<unsigned int M>
+	class StringHelper {
+	public:
+		enum { value = M };
+	};
+
   } // namespace lang
 } // namespace sys
 
@@ -283,5 +290,8 @@ String operator+(const String& str1, const char* str2);
 String operator+(const String& str1, char ch);
 String operator+(char ch, const String& str2);
 String operator+(const String& str1, int i);
+
+//forces the hash code to be calculated at compile time of a const string
+#define STRING_HASHCODE(a) StringHelper<String::hashCode(a)>::value
 
 #endif /*STRING_H_*/
