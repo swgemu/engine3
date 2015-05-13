@@ -112,6 +112,10 @@ extern "C" int isinf (double);
 #define CLANG_COMPILER
 #endif
 
+#if __cplusplus >= 201103L
+#define	CXX11_COMPILER
+#endif
+
 namespace sys {
 	typedef unsigned long long uint64;
 	typedef unsigned int uint32;
