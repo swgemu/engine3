@@ -331,12 +331,14 @@ uint32 String::hashCode() const {
 	uint32 CRC = 0xFFFFFFFF;
 
 	for (int counter = 0; counter < count; counter++) {
-		uint32 table = begin()[counter] ^ (CRC >> 24);
+		/*uint32 table = begin()[counter] ^ (CRC >> 24);
 
 		if (table > 255)
 			throw ArrayIndexOutOfBoundsException(begin()[counter]);
 
-  		CRC = crctable[table] ^ (CRC << 8);
+  		CRC = crctable[table] ^ (CRC << 8);*/
+
+		CRC = crctable[((CRC>>24) ^ static_cast<byte>(begin()[counter])) & 0xFF] ^ (CRC << 8);
 	}
 
 	return ~CRC;
