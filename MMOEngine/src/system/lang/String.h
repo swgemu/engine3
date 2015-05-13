@@ -83,7 +83,15 @@ namespace sys {
 					: ~startCRC;
 		}
 #else
-		static uint32 hashCode(const char* string, uint32 startCRC = 0xFFFFFFFF);
+		static uint32 hashCode(const char* string, uint32 startCRC = 0xFFFFFFFF) {
+			uint32 CRC = startCRC;
+
+			for (; *string; ++string) {
+				CRC = crctable[((CRC >> 24) ^ static_cast<byte>(*string)) & 0xFF] ^ (CRC << 8);
+			}
+
+			return ~CRC;
+		}
 #endif
 
 		static uint32 hashCode(const String& str);
