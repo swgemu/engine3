@@ -86,6 +86,8 @@ namespace sys {
 		static uint32 hashCode(const char* string, uint32 startCRC = 0xFFFFFFFF);
 #endif
 
+		static uint32 hashCode(const String& str);
+
 		String subString(int beginIndex) const ;
 		String subString(int beginIndex, int endIndex) const ;
 

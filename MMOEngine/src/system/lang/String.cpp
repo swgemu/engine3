@@ -335,6 +335,10 @@ uint32 String::hashCode() const {
 	return hashCode(begin());
 }
 
+uint32 String::hashCode(const String& str) {
+	return str.hashCode();
+}
+
 #ifndef CXX11_COMPILER
 uint32 String::hashCode(const char* string, uint32 startCRC) {
 	uint32 CRC = startCRC;
