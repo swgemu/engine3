@@ -17,7 +17,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <stdarg.h>
 #include <stdio.h>
 
-const unsigned int String::crctable[256] = {
+#ifdef CXX11_COMPILER
+	constexpr unsigned int String::crctable[];
+#else
+	const unsigned int String::crctable[256] = {
     0x0000000,
     0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
     0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6,
@@ -71,6 +74,7 @@ const unsigned int String::crctable[256] = {
     0x933EB0BB, 0x97FFAD0C, 0xAFB010B1, 0xAB710D06, 0xA6322BDF,
     0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 };
+#endif
 
 String::String() : Variable() {
 	create("", 0);
@@ -331,24 +335,6 @@ uint32 String::hashCode() const {
 	return hashCode(begin());
 }
 
-#ifndef CXX11_COMPILER
-uint32 String::hashCode(const char* string, uint32 startCRC) {
-	uint32 CRC = startCRC;
-
-	for (; *string; ++string) {
-		/*uint32 table = begin()[counter] ^ (CRC >> 24);
-
-			if (table > 255)
-				throw ArrayIndexOutOfBoundsException(begin()[counter]);
-
-	  		CRC = crctable[table] ^ (CRC << 8);*/
-
-		CRC = crctable[((CRC>>24) ^ static_cast<byte>(*string)) & 0xFF] ^ (CRC << 8);
-	}
-
-	return ~CRC;
-}
-#endif
 
 String String::subString(int beginIndex) const {
 	if (beginIndex < 0 || beginIndex >= count)
