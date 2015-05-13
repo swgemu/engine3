@@ -332,7 +332,7 @@ uint32 String::hashCode() const {
 }
 
 #ifndef CXX11_COMPILER
-uint32 String::hashCode(const char* string, uint32_t startCRC) {
+uint32 String::hashCode(const char* string, uint32 startCRC) {
 	uint32 CRC = startCRC;
 
 	for (; *string; ++string) {
