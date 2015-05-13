@@ -335,6 +335,15 @@ uint32 String::hashCode() const {
 	return hashCode(begin());
 }
 
+#ifndef CXX11_COMPILER
+uint32 String::hashCode(const char* string, uint32 startCRC) {
+	for (uint32 CRC = startCRC; *string; ++string) {
+		CRC = crctable[((CRC>>24) ^ static_cast<byte>(*string)) & 0xFF] ^ (CRC << 8);
+	}
+
+	return ~CRC;
+}
+#endif
 
 String String::subString(int beginIndex) const {
 	if (beginIndex < 0 || beginIndex >= count)
