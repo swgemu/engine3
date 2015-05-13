@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../platform.h"
 #include "Variable.h"
 
+#define SSO_STRING
+
 #ifdef SSO_STRING
 #define SSO_SIZE 16
 #endif
