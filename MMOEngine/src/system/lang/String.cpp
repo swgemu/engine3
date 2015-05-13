@@ -328,17 +328,25 @@ bool String::endsWith(const String& str) const {
 }
 
 uint32 String::hashCode() const {
+	return hashCode(begin(), count);
+}
+
+uint32 String::hashCode(const char* string) {
+	return hashCode(string, strlen(string));
+}
+
+uint32 String::hashCode(const char* string, int count) {
 	uint32 CRC = 0xFFFFFFFF;
 
 	for (int counter = 0; counter < count; counter++) {
 		/*uint32 table = begin()[counter] ^ (CRC >> 24);
 
-		if (table > 255)
-			throw ArrayIndexOutOfBoundsException(begin()[counter]);
+			if (table > 255)
+				throw ArrayIndexOutOfBoundsException(begin()[counter]);
 
-  		CRC = crctable[table] ^ (CRC << 8);*/
+	  		CRC = crctable[table] ^ (CRC << 8);*/
 
-		CRC = crctable[((CRC>>24) ^ static_cast<byte>(begin()[counter])) & 0xFF] ^ (CRC << 8);
+		CRC = crctable[((CRC>>24) ^ static_cast<byte>(string[counter])) & 0xFF] ^ (CRC << 8);
 	}
 
 	return ~CRC;

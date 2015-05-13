@@ -76,6 +76,9 @@ namespace sys {
 
 		uint32 hashCode() const;
 
+		static uint32 hashCode(const char* string);
+		static uint32 hashCode(const char* string, int count);
+
 		String subString(int beginIndex) const ;
 		String subString(int beginIndex, int endIndex) const ;
 
