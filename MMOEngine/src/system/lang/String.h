@@ -203,7 +203,7 @@ namespace sys {
 			return count;
 		}
 #ifdef CXX11_COMPILER
-		static constexpr unsigned int crctable[256] = {
+		static constexpr uint32 crctable[256] = {
 				0x0000000,
 				0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
 				0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6,
@@ -258,16 +258,20 @@ namespace sys {
 				0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 		};
 #else
-		static const unsigned int crctable[256];
+		static const uint32 crctable[256];
 #endif
 	};
 
-
-	template<unsigned int M>
-	class StringHelper {
+#ifdef CXX11_COMPILER
+	template<uint32 M>
+	class StringHashCodeHelper {
 	public:
-		enum { value = M };
+		uint32 value;
+
+		constexpr StringHashCodeHelper() : value(M) {
+		}
 	};
+#endif
 
   } // namespace lang
 } // namespace sys
@@ -291,7 +295,11 @@ String operator+(const String& str1, char ch);
 String operator+(char ch, const String& str2);
 String operator+(const String& str1, int i);
 
+#ifdef CXX11_COMPILER
 //forces the hash code to be calculated at compile time of a const string
-#define STRING_HASHCODE(a) StringHelper<String::hashCode(a)>::value
+#define STRING_HASHCODE(a) StringHashCodeHelper<String::hashCode(a)>().value
+#else
+#define STRING_HASHCODE(a) String::hashCode(a)
+#endif
 
 #endif /*STRING_H_*/

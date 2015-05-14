@@ -18,9 +18,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <stdio.h>
 
 #ifdef CXX11_COMPILER
-	constexpr unsigned int String::crctable[];
+	constexpr uint32 String::crctable[];
 #else
-	const unsigned int String::crctable[256] = {
+	const uint32 String::crctable[256] = {
     0x0000000,
     0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
     0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6,
