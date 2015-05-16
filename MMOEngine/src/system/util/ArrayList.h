@@ -164,6 +164,12 @@ namespace sys {
    	   if (this == &array)
    		   return *this;
 
+   	   if (elementData != NULL) {
+   		   destroyElements();
+
+   		   free(elementData);
+   	   }
+
    	   elementData = array.elementData;
 
    	   elementCapacity = array.elementCapacity;
