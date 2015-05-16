@@ -39,6 +39,25 @@ namespace sys {
 			initializeObject(obj);
 		}
 
+#ifdef CXX11_COMPILER
+		WeakReference(WeakReference<O>&& ref) : Variable(), weakReference(ref.weakReference) {
+			ref.weakReference = NULL;
+		}
+
+		WeakReference<O>& operator=(WeakReference<O>&& ref) {
+			if (this == &ref)
+				return *this;
+
+			releaseObject();
+
+			weakReference = ref.weakReference;
+
+			ref.weakReference = NULL;
+
+			return *this;
+		}
+#endif
+
 		virtual ~WeakReference() {
 			releaseObject();
 		}

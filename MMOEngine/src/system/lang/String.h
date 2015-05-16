@@ -146,7 +146,7 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
 		String& operator=(String&& str) {
-			if (begin() == str.begin())
+			if (this == &str)
 				return *this;
 
 			clear();

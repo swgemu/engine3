@@ -26,6 +26,10 @@ namespace sys {
 			value = ref;
 		}
 
+		AtomicReference(const AtomicReference& r) : value(r.value) {
+
+		}
+
 		inline V compareAndSetReturnOld(volatile void* oldval, void* newval) {
 #ifdef CLANG_COMPILER
 #ifdef PLATFORM_64

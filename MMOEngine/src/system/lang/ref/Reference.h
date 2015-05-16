@@ -47,6 +47,12 @@ namespace sys {
 			initializeObject(ref.object.get());
 		}
 
+#ifdef CXX11_COMPILER
+		Reference(Reference<O>&& ref) : Variable(), object(ref.object) {
+			ref.object = NULL;
+		}
+#endif
+
 		Reference(O obj) : Variable() {
 #ifdef TRACE_REFERENCES
 			id = ReferenceIdCounter::nextID.increment();
@@ -76,6 +82,21 @@ namespace sys {
 
 			return *this;
 		}
+
+#ifdef CXX11_COMPILER
+		Reference& operator=(Reference&& ref) {
+			if (this == &ref)
+				return *this;
+
+			releaseObject();
+
+			object = ref.object;
+
+			ref.object = NULL;
+
+			return *this;
+		}
+#endif
 
 		int hashCode() const {
 			return UnsignedLong::hashCode((uint64)object.get());

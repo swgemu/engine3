@@ -34,6 +34,11 @@ namespace engine {
 		ManagedReference(const Reference<O>& r) : Reference<O>(r) {
 		}
 
+#ifdef CXX11_COMPILER
+		ManagedReference(ManagedReference<O>&& ref) : Variable(), Reference<O>(std::move(ref)) {
+		}
+#endif
+
 		ManagedReference(const ManagedWeakReference<O>& r) : Reference<O>() {
 			ManagedWeakReference<O>& nonconst = const_cast<ManagedWeakReference<O>&>(r);
 
@@ -51,6 +56,17 @@ namespace engine {
 
 			return *this;
 		}
+
+#ifdef CXX11_COMPILER
+		ManagedReference<O>& operator=(ManagedReference<O>&& ref) {
+			if (this == &ref)
+				return *this;
+
+			Reference<O>::operator=(std::move(ref));
+
+			return *this;
+		}
+#endif
 
 		ManagedReference& operator=(const Reference<O>& ref) {
 			updateObject(ref.get());

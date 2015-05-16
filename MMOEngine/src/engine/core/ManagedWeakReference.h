@@ -35,6 +35,13 @@ namespace engine {
 			savedObjectID = ref.savedObjectID;
 		}
 
+#ifdef CXX11_COMPILER
+		ManagedWeakReference(ManagedWeakReference<O>&& ref) : Variable(), WeakReference<O>(std::move(ref)),
+				savedObjectID(ref.savedObjectID) {
+			ref.savedObjectID = 0;
+		}
+#endif
+
 		ManagedWeakReference(O obj) : WeakReference<O>(obj) {
 			savedObjectID = 0;
 
@@ -46,13 +53,27 @@ namespace engine {
 			if (this == &ref)
 				return *this;
 
-
 			WeakReference<O>::operator=(ref);
 
 			savedObjectID = ref.savedObjectID;
 
 			return *this;
 		}
+
+#ifdef CXX11_COMPILER
+		ManagedWeakReference<O>& operator=(ManagedWeakReference<O>&& ref) {
+			if (this == &ref)
+				return *this;
+
+			WeakReference<O>::operator=(std::move(ref));
+
+			savedObjectID = ref.savedObjectID;
+
+			ref.savedObjectID = 0;
+
+			return *this;
+		}
+#endif
 
 		O operator=(O obj) {
 			WeakReference<O>::updateObject(obj);
