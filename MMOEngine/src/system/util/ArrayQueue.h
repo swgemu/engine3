@@ -41,7 +41,7 @@ namespace sys {
 	}
 #endif
 
-	template<class E> ArrayQueue& ArrayQueue<E>::operator=(const ArrayQueue& queue) {
+	template<class E> ArrayQueue<E>& ArrayQueue<E>::operator=(const ArrayQueue<E>& queue) {
 		if (this == &queue)
 			return *this;
 
@@ -51,7 +51,7 @@ namespace sys {
 	}
 
 #ifdef CXX11_COMPILER
-	template<class E> ArrayQueue& ArrayQueue<E>::operator=(ArrayQueue&& queue) {
+	template<class E> ArrayQueue<E>& ArrayQueue<E>::operator=(ArrayQueue<E>&& queue) {
 		if (this == &queue)
 			return *this;
 
