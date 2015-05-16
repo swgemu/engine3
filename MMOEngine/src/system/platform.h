@@ -114,6 +114,7 @@ extern "C" int isinf (double);
 
 #if __cplusplus >= 201103L
 #define	CXX11_COMPILER
+#include <utility>
 #endif
 
 namespace sys {
