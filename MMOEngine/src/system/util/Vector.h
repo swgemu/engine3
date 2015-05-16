@@ -23,7 +23,15 @@ namespace sys {
        Vector(int initsize, int incr);
        Vector(const Vector<E>& vector);
 
+#ifdef CXX11_COMPILER
+       Vector(Vector<E>&& vector);
+#endif
+
        Vector<E>& operator=(const Vector<E>& vector);
+
+#ifdef CXX11_COMPILER
+       Vector<E>& operator=(Vector<E>&& vector);
+#endif
 
        virtual ~Vector();
 
@@ -56,6 +64,11 @@ namespace sys {
    template<class E> Vector<E>::Vector(const Vector<E>& vector) : ArrayList<E>(vector), Object() {
    }
 
+#ifdef CXX11_COMPILER
+   template<class E> Vector<E>::Vector(Vector<E>&& vector) : ArrayList<E>(std::move(vector)), Object() {
+   }
+#endif
+
    template<class E> Vector<E>& Vector<E>::operator=(const Vector<E>& vector) {
 	   if (this == &vector)
 		   return *this;
@@ -64,6 +77,17 @@ namespace sys {
 
 	   return *this;
    }
+
+#ifdef CXX11_COMPILER
+   template<class E> Vector<E>& Vector<E>::operator=(Vector<E>&& vector) {
+	   if (this == &vector)
+		   return *this;
+
+	   ArrayList<E>::operator=(std::move(vector));
+
+	   return *this;
+   }
+#endif
 
    template<class E> Vector<E>::~Vector() {
    }

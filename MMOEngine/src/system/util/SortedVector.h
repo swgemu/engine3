@@ -31,7 +31,15 @@ namespace sys {
 		SortedVector(int initsize, int incr);
 		SortedVector(const SortedVector<E>& vector);
 
+#ifdef CXX11_COMPILER
+		SortedVector(SortedVector<E>&& vector);
+#endif
+
 		SortedVector<E>& operator=(const SortedVector<E>& vector);
+
+#ifdef CXX11_COMPILER
+		SortedVector<E>& operator=(SortedVector<E>&& vector);
+#endif
 
 		virtual int put(const E& o);
 
@@ -80,6 +88,12 @@ namespace sys {
 		insertPlan = vector.insertPlan;
 	}
 
+#ifdef CXX11_COMPILER
+	template<class E> SortedVector<E>::SortedVector(SortedVector<E>&& vector) : Vector<E>(std::move(vector)) {
+		insertPlan = vector.insertPlan;
+	}
+#endif
+
 	template<class E> SortedVector<E>& SortedVector<E>::operator=(const SortedVector<E>& vector) {
 		if (this == &vector)
 			return *this;
@@ -90,6 +104,19 @@ namespace sys {
 
 		return *this;
 	}
+
+#ifdef CXX11_COMPILER
+	template<class E> SortedVector<E>& SortedVector<E>::operator=(SortedVector<E>&& vector) {
+		if (this == &vector)
+			return *this;
+
+		insertPlan = vector.getInsertPlan();
+
+		Vector<E>::operator=(std::move(vector));
+
+		return *this;
+	}
+#endif
 
 	template<class E> int SortedVector<E>::lowerBound(const E& o) const {
 		if (ArrayList<E>::size() == 0)

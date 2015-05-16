@@ -38,6 +38,10 @@ namespace sys {
 		String(const char* str, int len);
 		String(const String& str);
 
+#ifdef CXX11_COMPILER
+		String(String&& str);
+#endif
+
 		virtual ~String();
 
 		String concat(char ch) const;
@@ -122,6 +126,10 @@ namespace sys {
 
 		String& operator= (const char* str);
 		String& operator= (const String& str);
+
+#ifdef CXX11_COMPILER
+		String& operator= (String&& str);
+#endif
 
 		bool operator== (const char* str) const {
 			return compareTo(str) == 0;
@@ -300,6 +308,53 @@ String operator+(const String& str1, int i);
 #define STRING_HASHCODE(a) StringHashCodeHelper<String::hashCode(a)>().value
 #else
 #define STRING_HASHCODE(a) String::hashCode(a)
+#endif
+
+#ifdef CXX11_COMPILER
+String::String(String&& str) : Variable() {
+	count = str.count;
+
+#ifdef SSO_STRING
+	if (count < SSO_SIZE) {
+		memcpy(sso, str.sso, count);
+		sso[count] = 0;
+	} else {
+		value = str.value;
+		str.value = NULL;
+		str.count = 0;
+	}
+#else
+	value = str.value;
+	str.value = NULL;
+	str.count = 0;
+#endif
+}
+
+String& String::operator=(String&& str) {
+	if (begin() == str.begin())
+		return *this;
+
+	clear();
+
+	count = str.count;
+
+#ifdef SSO_STRING
+	if (count < SSO_SIZE) {
+		memcpy(sso, str.sso, count);
+		sso[count] = 0;
+	} else {
+		value = str.value;
+		str.value = NULL;
+		str.count = 0;
+	}
+#else
+	value = str.value;
+	str.value = NULL;
+	str.count = 0;
+#endif
+
+	return *this;
+}
 #endif
 
 #endif /*STRING_H_*/

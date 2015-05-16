@@ -9,6 +9,17 @@ namespace sys {
 	template<class E> class ArrayQueue : public Vector<E> {
 	public:
 		ArrayQueue();
+		ArrayQueue(const ArrayQueue& queue);
+
+#ifdef CXX11_COMPILER
+		ArrayQueue(ArrayQueue&& queue);
+#endif
+
+		ArrayQueue& operator=(const ArrayQueue& queue);
+
+#ifdef CXX11_COMPILER
+		ArrayQueue& operator=(ArrayQueue&& queue);
+#endif
 	
 		bool add(E& o);
 		
@@ -21,6 +32,34 @@ namespace sys {
 
 	template<class E> ArrayQueue<E>::ArrayQueue() : Vector<E>() {
 	}
+
+	template<class E> ArrayQueue<E>::ArrayQueue(const ArrayQueue& queue) : Vector<E>(queue) {
+	}
+
+#ifdef CXX11_COMPILER
+	template<class E> ArrayQueue<E>::ArrayQueue(ArrayQueue&& queue) : Vector<E>(std::move(queue)) {
+	}
+#endif
+
+	template<class E> ArrayQueue& ArrayQueue<E>::operator=(const ArrayQueue& queue) {
+		if (this == &queue)
+			return *this;
+
+		Vector<E>::operator=(queue);
+
+		return *this;
+	}
+
+#ifdef CXX11_COMPILER
+	template<class E> ArrayQueue& ArrayQueue<E>::operator=(ArrayQueue&& queue) {
+		if (this == &queue)
+			return *this;
+
+		Vector<E>::operator=(std::move(queue));
+
+		return *this;
+	}
+#endif
 
 	template<class E> bool ArrayQueue<E>::add(E& o) {
 		Vector<E>::add(o);
