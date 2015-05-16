@@ -39,7 +39,24 @@ namespace sys {
 		String(const String& str);
 
 #ifdef CXX11_COMPILER
-		String(String&& str);
+		String(String&& str) : Variable() {
+			count = str.count;
+
+		#ifdef SSO_STRING
+			if (count < SSO_SIZE) {
+				memcpy(sso, str.sso, count);
+				sso[count] = 0;
+			} else {
+				value = str.value;
+				str.value = NULL;
+				str.count = 0;
+			}
+		#else
+			value = str.value;
+			str.value = NULL;
+			str.count = 0;
+		#endif
+		}
 #endif
 
 		virtual ~String();
@@ -128,7 +145,31 @@ namespace sys {
 		String& operator= (const String& str);
 
 #ifdef CXX11_COMPILER
-		String& operator= (String&& str);
+		String& operator=(String&& str) {
+			if (begin() == str.begin())
+				return *this;
+
+			clear();
+
+			count = str.count;
+
+		#ifdef SSO_STRING
+			if (count < SSO_SIZE) {
+				memcpy(sso, str.sso, count);
+				sso[count] = 0;
+			} else {
+				value = str.value;
+				str.value = NULL;
+				str.count = 0;
+			}
+		#else
+			value = str.value;
+			str.value = NULL;
+			str.count = 0;
+		#endif
+
+			return *this;
+		}
 #endif
 
 		bool operator== (const char* str) const {
@@ -308,53 +349,6 @@ String operator+(const String& str1, int i);
 #define STRING_HASHCODE(a) StringHashCodeHelper<String::hashCode(a)>().value
 #else
 #define STRING_HASHCODE(a) String::hashCode(a)
-#endif
-
-#ifdef CXX11_COMPILER
-String::String(String&& str) : Variable() {
-	count = str.count;
-
-#ifdef SSO_STRING
-	if (count < SSO_SIZE) {
-		memcpy(sso, str.sso, count);
-		sso[count] = 0;
-	} else {
-		value = str.value;
-		str.value = NULL;
-		str.count = 0;
-	}
-#else
-	value = str.value;
-	str.value = NULL;
-	str.count = 0;
-#endif
-}
-
-String& String::operator=(String&& str) {
-	if (begin() == str.begin())
-		return *this;
-
-	clear();
-
-	count = str.count;
-
-#ifdef SSO_STRING
-	if (count < SSO_SIZE) {
-		memcpy(sso, str.sso, count);
-		sso[count] = 0;
-	} else {
-		value = str.value;
-		str.value = NULL;
-		str.count = 0;
-	}
-#else
-	value = str.value;
-	str.value = NULL;
-	str.count = 0;
-#endif
-
-	return *this;
-}
 #endif
 
 #endif /*STRING_H_*/
