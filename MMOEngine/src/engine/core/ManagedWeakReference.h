@@ -36,7 +36,7 @@ namespace engine {
 		}
 
 #ifdef CXX11_COMPILER
-		ManagedWeakReference(ManagedWeakReference<O>&& ref) : Variable(), WeakReference<O>(std::move(ref)),
+		ManagedWeakReference(ManagedWeakReference<O>&& ref) : WeakReference<O>(std::move(ref)),
 				savedObjectID(ref.savedObjectID) {
 			ref.savedObjectID = 0;
 		}
