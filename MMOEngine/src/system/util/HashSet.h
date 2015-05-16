@@ -31,6 +31,12 @@ namespace sys {
 			PRESENT = h.PRESENT;
 		}
 
+#ifdef CXX11_COMPILER
+		HashSet(HashSet<E>&& h) : HashTable<E, uint8>(std::move(h)) {
+			PRESENT = h.PRESENT;
+		}
+#endif
+
 		virtual ~HashSet() {
 			//delete PRESENT;
 		}

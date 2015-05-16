@@ -47,6 +47,19 @@ namespace sys {
 			next = e;
 		}
 
+#ifdef CXX11_COMPILER
+		Entry(Entry&& e) {
+			Entry::hash = e.hash;
+			Entry::key = std::move(e.key);
+			Entry::value = std::move(e.value);
+
+			next = e.next;
+
+			e.next = NULL;
+			e.hash = 0;
+		}
+#endif
+
 		V& getValue() {
 			return value;
 		}
@@ -85,6 +98,10 @@ namespace sys {
 
 	    HashTable(const HashTable<K, V>& table);
 
+#ifdef CXX11_COMPILER
+	    HashTable(HashTable<K, V>&& table);
+#endif
+
 		virtual ~HashTable();
 
 	    V& put(const K& key, const V& value);
@@ -98,6 +115,10 @@ namespace sys {
 	    void copyFrom(HashTable<K, V>* htable);
 
 	    HashTable<K, V>& operator=(const HashTable<K, V>& htable);
+
+#ifdef CXX11_COMPILER
+	    HashTable<K, V>& operator=(HashTable<K, V>&& htable);
+#endif
 
 	    HashTableIterator<K, V> iterator();
 
@@ -187,6 +208,16 @@ namespace sys {
 		copyFrom(const_cast<HashTable<K,V>* >(&htable));
 	}
 
+#ifdef CXX11_COMPILER
+	template<class K, class V> HashTable<K,V>::HashTable(HashTable<K,V>&& htable) : Variable(),
+			table(htable.table), tableLength(htable.tableLength), count(htable.count),
+			initialCapacity(htable.initialCapacity), threshold(htable.threshold),
+			loadFactor(htable.loadFactor), modCount(htable.modCount), nullValue(htable.nullValue) {
+
+		htable.table = NULL;
+	}
+#endif
+
 	template<class K, class V> HashTable<K,V>& HashTable<K,V>::operator=(const HashTable<K,V>& htable) {
 		if (this == &htable)
 			return *this;
@@ -197,6 +228,36 @@ namespace sys {
 
 		return *this;
 	}
+
+#ifdef CXX11_COMPILER
+	template<class K, class V> HashTable<K,V>& HashTable<K,V>::operator=(HashTable<K,V>&& htable) {
+		if (this == &htable)
+			return *this;
+
+		removeAll();
+
+		free(table);
+
+		table = htable.table;
+		htable.table = NULL;
+
+		tableLength = htable.tableLength;
+
+		count = htable.count;
+
+		htable.count = 0;
+
+		initialCapacity = htable.initialCapacity;
+		threshold = htable.threshold;
+		loadFactor = htable.loadFactor;
+
+		modCount = htable.modCount;
+
+		nullValue = htable.nullValue;
+
+		return *this;
+	}
+#endif
 
 	template<class K, class V> void HashTable<K,V>::copyFrom(HashTable<K,V>* htable) {
 		nullValue = htable->nullValue;
@@ -214,9 +275,11 @@ namespace sys {
 	}
 
 	template<class K, class V> HashTable<K,V>::~HashTable() {
-		removeAll();
+		if (table != NULL) {
+			removeAll();
 
-		free(table);
+			free(table);
+		}
 	}
 
 	template<class K, class V> void HashTable<K,V>::init(int initialCapacity, float loadFactor) {
