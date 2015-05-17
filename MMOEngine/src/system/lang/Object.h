@@ -97,7 +97,6 @@ namespace sys {
 				return -1;
 		}
 
-
 		virtual bool notifyDestroy() {
 			return true;
 		}
@@ -149,7 +148,17 @@ namespace sys {
 			referenceCounters->increaseStrongCount();
 		}
 
-		void release();
+		inline void release() {
+			if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
+				if (notifyDestroy()) {
+#ifdef WITH_STM
+					MemoryManager::getInstance()->reclaim(this);
+#else
+					destroy();
+#endif
+				}
+			}
+		}
 
 		void _destroyIgnoringCount();
 

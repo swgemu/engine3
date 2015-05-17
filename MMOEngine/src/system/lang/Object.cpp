@@ -137,22 +137,6 @@ void Object::release() {
 	}
 }
 */
-
-void Object::release() {
-/*	if (getReferenceCount() == 0)
-		assert(0 && "Object already delted");*/
-
-	if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
-		if (notifyDestroy()) {
-#ifdef WITH_STM
-			MemoryManager::getInstance()->reclaim(this);
-#else
-			destroy();
-#endif
-		}
-	}
-}
-
 void Object::_destroyIgnoringCount() {
 	if (notifyDestroy()) {
 #ifdef WITH_STM
