@@ -33,7 +33,7 @@ namespace sys {
 #ifdef CXX11_COMPILER
 		UnicodeString(UnicodeString&& str) : Variable(), uString(str.uString), count(str.count) {
 			str.uString = NULL;
-			str.count = NULL;
+			str.count = 0;
 		}
 #endif
 
