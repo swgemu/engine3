@@ -40,7 +40,9 @@ UnicodeString::UnicodeString(const UnicodeString& str) : Variable() {
 }
 
 UnicodeString::~UnicodeString() {
-	delete[] uString;
+	if (uString != NULL) {
+		delete[] uString;
+	}
 }
 
 void UnicodeString::create(const char* ascii, int len) {

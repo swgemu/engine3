@@ -30,9 +30,36 @@ namespace sys {
 		UnicodeString(const char* ascii, int len);
 		UnicodeString(const UnicodeString& str);
 
+#ifdef CXX11_COMPILER
+		UnicodeString(UnicodeString&& str) : Variable(), uString(str.uString), count(str.count) {
+			str.uString = NULL;
+			str.count = NULL;
+		}
+#endif
+
 		~UnicodeString();
 
 		UnicodeString& operator=(const UnicodeString& str);
+
+#ifdef CXX11_COMPILER
+		UnicodeString& operator=(UnicodeString&& str) {
+			if (this == &str) {
+				return *this;
+			}
+
+			if (uString != NULL) {
+				delete [] uString;
+			}
+
+			uString = str.uString;
+			count = str.count;
+
+			str.uString = NULL;
+			str.count = 0;
+
+			return *this;
+		}
+#endif
 		UnicodeString& operator=(const String& ascii);
 		UnicodeString& operator=(const char* ascii);
 
