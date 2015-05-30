@@ -42,7 +42,7 @@ namespace sys {
 			return (V) __sync_val_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
 #endif
 #elif GCC_VERSION >= 40100
-			return __sync_val_compare_and_swap(&(volatile void*)value, oldval, newval);
+			return __sync_val_compare_and_swap(&((volatile void*)value), oldval, newval);
 #else
 			PVOID* oldVal = (PVOID*)value;
 			InterlockedCompareExchangePointer((volatile PVOID*)&oldVal, newval, (PVOID*) oldval);
@@ -65,7 +65,7 @@ namespace sys {
 			return __sync_bool_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
 #endif
 #elif GCC_VERSION >= 40100 || defined(__MINGW32__)
-			return __sync_bool_compare_and_swap (&(volatile void*)value, oldval, newval);
+			return __sync_bool_compare_and_swap (&((volatile void*)value), oldval, newval);
 #elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
 			//TODO: find appropriate method
 			if ( value == oldval ) {
