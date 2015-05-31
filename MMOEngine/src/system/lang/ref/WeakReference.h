@@ -200,14 +200,16 @@ namespace sys {
 			return NULL;
 		}
 
-		inline void release(StrongAndWeakReferenceCount* old) const {
+		inline bool release(StrongAndWeakReferenceCount* old) const {
 			if (old == NULL)
-				return;
+				return false;
 
 			if (old->decrementAndTestAndSetWeakCount() == 0)
-				return;
+				return false;
 
 			delete old;
+
+			return true;
 		}
 
 		inline StrongAndWeakReferenceCount* newref(StrongAndWeakReferenceCount* newRef) {
@@ -218,9 +220,12 @@ namespace sys {
 				StrongAndWeakReferenceCount* p = safeRead();
 
 				if (weakReference.compareAndSet(p, newRef)) {
-					release(p);
+					bool deleted = release(p);
 
-					return p;
+					if (!deleted)
+						return p;
+					else
+						return NULL;
 				} else
 					release(p);
 			}
