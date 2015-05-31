@@ -69,6 +69,15 @@ namespace engine {
 
 			return *this;
 		}
+
+		ManagedReference<O>& operator=(Reference<O>&& ref) {
+			if (this == &ref)
+				return *this;
+
+			Reference<O>::operator=(std::move(ref));
+
+			return *this;
+		}
 #endif
 
 		ManagedReference& operator=(const Reference<O>& ref) {
