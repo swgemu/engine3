@@ -19,7 +19,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 Serializable::Serializable() : Object() {
 	_variables.setInsertPlan(SortedVector<VectorMapEntry<VariableName, Variable*> >::NO_DUPLICATE);
-	_variables.setNullValue(NULL);
+	_variables.setNullValue(0);
 
 	addSerializableVariable("_className", &_className);
 }

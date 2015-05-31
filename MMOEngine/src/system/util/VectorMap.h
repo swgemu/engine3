@@ -23,18 +23,13 @@ namespace sys {
 		VectorMapEntry() : Variable() {
 		}
 
-		VectorMapEntry(K key) : Variable() {
-			VectorMapEntry::key = key;
+		VectorMapEntry(const K& key) : Variable(), key(key) {
 		}
 
-		VectorMapEntry(K key, V value) : Variable() {
-			VectorMapEntry::key = key;
-			VectorMapEntry::value = value;
+		VectorMapEntry(const K& key, const V& value) : Variable(), key(key), value(value) {
 		}
 
-		VectorMapEntry(const VectorMapEntry& entry) : Variable() {
-			key = entry.key;
-			value = entry.value;
+		VectorMapEntry(const VectorMapEntry& entry) : Variable(), key(entry.key), value(entry.value) {
 		}
 
 #ifdef CXX11_COMPILER
@@ -163,7 +158,7 @@ namespace sys {
 
 		bool drop(const K& key);
 
-		inline void setNullValue(V val) {
+		inline void setNullValue(const V& val) {
 			nullValue = val;
 		}
 

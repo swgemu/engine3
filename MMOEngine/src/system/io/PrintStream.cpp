@@ -210,7 +210,7 @@ PrintStream& PrintStream::operator<< (const StreamFlags flags) {
 	case dec:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) hex);
 		break;
-	case endl:
+	case ::endl:
 		println("");
 		break;
 	default:
