@@ -106,10 +106,8 @@ namespace sys {
 
 		template<class B>
 		Reference<B> castTo() {
-			Reference<B> stored;
-			Reference<O> strong = get();
+			Reference<B> stored = get().castTo<B>();
 
-			stored = dynamic_cast<B>(strong.get());
 			return stored;
 		}
 
@@ -139,13 +137,10 @@ namespace sys {
 		inline Object* getReferenceUnsafe() const {
 			Object* object = NULL;
 
-//			StrongAndWeakReferenceCount* old = safeRead();
-                        StrongAndWeakReferenceCount* old = weakReference;
+			StrongAndWeakReferenceCount* old = weakReference;
 
 			if (old != NULL) {
 				object = old->getObject();
-
-//				release(old);
 			}
 
 			return object;

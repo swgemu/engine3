@@ -202,10 +202,8 @@ namespace sys {
 		}
 
 	protected:
+		//lock free
 		inline void updateObject(O obj) {
-			//This needs to be an atomic operation, 2 threads updating/reading this messes shit up
-			//Thread A reading while thread B updating, thread A reads NULL cause it releases and then acquires
-
 			if (obj != NULL) {
 				obj->acquire();
 
