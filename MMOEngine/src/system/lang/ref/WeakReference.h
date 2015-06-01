@@ -106,7 +106,7 @@ namespace sys {
 
 		template<class B>
 		Reference<B> castTo() {
-			Reference<B> stored = get().castTo<B>();
+			Reference<B> stored = get().template castTo<B>();
 
 			return stored;
 		}
