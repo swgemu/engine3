@@ -67,7 +67,7 @@ public:
 	SortedVector<ManagedReference<QuadTreeEntry*> > getSafeCopy() {
 		ReadLocker locker(&mutex);
 
-		return SortedVector<ManagedReference<QuadTreeEntry*> >(this);
+		return SortedVector<ManagedReference<QuadTreeEntry*> >(*this);
 	}
 
 	int put(const ManagedReference<QuadTreeEntry*>& o) {
