@@ -40,11 +40,8 @@ namespace sys {
 			next = e.next;
 		}
 
-		Entry(int hash, K key, V value, Entry* e) {
-			Entry::hash = hash;
-			Entry::key = key;
-			Entry::value = value;
-			next = e;
+		Entry(int hash, const K& key, const V& value, Entry* e) : hash(hash), key(key),
+				value(value), next(e) {
 		}
 
 #ifdef CXX11_COMPILER
