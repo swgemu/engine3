@@ -215,7 +215,7 @@ namespace sys {
    }
 
    template<class E> void ArrayList<E>::addAll(const ArrayList<E>& array) {
-	   for (int i= 0; i < array.size(); ++i) {
+	   for (int i = 0; i < array.size(); ++i) {
 		   const E& element = array.get(i);
 
 		   add(element);
@@ -223,9 +223,10 @@ namespace sys {
    }
 
    template<class E> bool ArrayList<E>::contains(const E& element) const {
-	   for (int i= 0; i < size(); ++i) {
-		   if (element == get(i))
+	   for (int i = 0; i < size(); ++i) {
+		   if (TypeInfo<E>::compare(element, get(i)) == 0) {
 			   return true;
+		   }
 	   }
 
 	   return false;
