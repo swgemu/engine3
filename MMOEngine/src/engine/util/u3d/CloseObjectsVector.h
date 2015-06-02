@@ -51,8 +51,6 @@ public:
 	}
 
 	void safeCopyTo(Vector<QuadTreeEntry*>& vec) {
-		vec.removeAll(size(), 5);
-
 		ReadLocker locker(&mutex);
 
 		for (int i = 0; i < size(); ++i) {
@@ -61,11 +59,15 @@ public:
 	}
 
 	void safeCopyTo(Vector<ManagedReference<QuadTreeEntry*> >& vec) {
-		vec.removeAll(size(), 5);
-
 		ReadLocker locker(&mutex);
 
 		vec.addAll(*this);
+	}
+
+	SortedVector<ManagedReference<QuadTreeEntry*> > getSafeCopy() {
+		ReadLocker locker(&mutex);
+
+		return SortedVector<ManagedReference<QuadTreeEntry*> >(this);
 	}
 
 	int put(const ManagedReference<QuadTreeEntry*>& o) {
