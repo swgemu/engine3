@@ -55,7 +55,7 @@ namespace sys {
 
        void addAll(const ArrayList<E>& array);
 
-       virtual bool contains(const E& element) const;
+       bool contains(const E& element);
 
        void insertElementAt(const E& element, int index);
 
@@ -222,9 +222,9 @@ namespace sys {
 	   }
    }
 
-   template<class E> bool ArrayList<E>::contains(const E& element) const {
+   template<class E> bool ArrayList<E>::contains(const E& element) {
 	   for (int i = 0; i < size(); ++i) {
-		   if (TypeInfo<E>::compare(element, get(i)) == 0) {
+		   if (element == get(i)) {
 			   return true;
 		   }
 	   }

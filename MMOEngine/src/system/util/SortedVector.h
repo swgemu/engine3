@@ -45,7 +45,7 @@ namespace sys {
 
 		virtual int find(const E& o) const;
 
-		bool contains(const E& o) const;
+		virtual bool contains(const E& o) const;
 
 		int lowerBound(const E& o) const;
 		int upperBound(const E& o) const;
