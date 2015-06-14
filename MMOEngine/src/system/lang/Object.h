@@ -68,6 +68,7 @@ namespace sys {
 #endif
 
 	#ifdef TRACE_REFERENCES
+		Mutex referenceMutex;
 		sys::util::VectorMap<uint64, StackTrace*>* referenceHolders;
 	#endif
 

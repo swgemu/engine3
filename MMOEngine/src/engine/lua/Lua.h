@@ -35,7 +35,7 @@ namespace engine {
 
 		virtual ~Lua();
 
-		void init();
+		virtual void init();
 
 		void deinit();
 
