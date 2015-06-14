@@ -50,6 +50,11 @@ namespace sys {
 #ifdef CXX11_COMPILER
 		Reference(Reference<O>&& ref) : Variable(), object(ref.object) {
 			ref.object = NULL;
+
+#ifdef TRACE_REFERENCES
+			id = ref.id;
+			ref.id = 0;
+#endif
 		}
 #endif
 
@@ -94,6 +99,11 @@ namespace sys {
 
 			ref.object = NULL;
 
+#ifdef TRACE_REFERENCES
+			id = ref.id;
+			ref.id = 0;
+#endif
+
 			return *this;
 		}
 #endif
@@ -129,9 +139,7 @@ namespace sys {
 
 		template<class B>
 		Reference<B> castTo() {
-			Reference<B> stored;
-
-			stored = dynamic_cast<B>(get());
+			Reference<B> stored = dynamic_cast<B>(get());
 			return stored;
 		}
 
