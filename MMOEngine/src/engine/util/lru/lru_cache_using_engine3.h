@@ -14,7 +14,7 @@ template<typename A, typename B>
 class LRUCacheEntry {
 	A key;
 	B value;
-	AtomicInteger accessCount;
+	volatile uint32 accessCount;
 public:
 	LRUCacheEntry() {
 
@@ -52,12 +52,12 @@ public:
 	}
 
 	bool incrementAccessCount(int max) {
-		int old, newCount;
+		uint32 old, newCount;
 		bool result;
 
 		do {
 			result = false;
-			old = accessCount.get();
+			old = accessCount;
 
 			newCount = old + 1;
 
@@ -66,21 +66,13 @@ public:
 
 				result = true;
 			}
-		} while (!accessCount.compareAndSet(old, newCount));
+		} while (!AtomicInteger::compareAndSet(&accessCount, old, newCount));
 
 		return result;
 	}
 
-	int getAccessCount() {
-		return accessCount.get();
-	}
-
-	void clearAccessCount() {
-		int old = 0;
-
-		do {
-			old = accessCount.get();
-		} while (accessCount.compareAndSet(old, 0));
+	uint32 getAccessCount() {
+		return accessCount;
 	}
 
 	bool toBinaryStream(ObjectOutputStream* stream) {
