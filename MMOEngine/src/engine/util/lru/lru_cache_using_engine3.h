@@ -10,6 +10,17 @@
 // LRU-replacement cache of a function with signature
 // V f(K).
 
+
+template<typename K, typename V>
+class LRUFunction {
+public:
+	virtual ~LRUFunction() {
+
+	}
+
+	virtual V run(const K& k) = 0;
+};
+
 template<typename A, typename B>
 class LRUCacheEntry {
 	A key;
@@ -97,6 +108,8 @@ public:
   typedef K key_type;
   typedef V value_type;
 
+  typedef LRUFunction<key_type, value_type>* function_type;
+
   // Key access history, most recent at back
   typedef std::list<key_type> key_tracker_type;
   typedef typename key_tracker_type::iterator key_traker_iterator_type;
@@ -110,10 +123,14 @@ public:
 
   // Constuctor specifies the cached function and
   // the maximum number of records to be stored
-  lru_cache_using_engine3(value_type (*f)(const key_type&), size_t c, int accessCountToPromote = 5)
-    	:_fn(f), _capacity(c), minAccessCountForPromoting(accessCountToPromote) {
+  lru_cache_using_engine3(function_type func, size_t c, int accessCountToPromote = 5)
+    	:_fn(func), _capacity(c), minAccessCountForPromoting(accessCountToPromote) {
     assert(_capacity != 0);
     assert(minAccessCountForPromoting > 0);
+  }
+
+  ~lru_cache_using_engine3() {
+	  delete _fn;
   }
 
   void clear() {
@@ -139,7 +156,7 @@ public:
 
 		  missCount.increment();
 
-		  const value_type v = _fn(k);
+		  const value_type v = _fn->run(k);
 
 		  insert(k,v);
 
@@ -225,7 +242,8 @@ private:
   }
 
   // The function to be cached
-  value_type (*_fn)(const key_type&);
+  //value_type (*_fn)(const key_type&);
+  function_type _fn;
 
   // Maximum number of key-value pairs to be retained
   const size_t _capacity;
@@ -240,3 +258,4 @@ private:
 
   AtomicInteger hitCount, missCount;
 };
+

@@ -13,7 +13,7 @@
 template <typename K,typename V> class SynchronizedLRUCache :
 		public lru_cache_using_engine3<K,V> {
 public:
-	SynchronizedLRUCache(V (*function)(const K&), size_t capacity, int minAccessCountForPromotion = 5)
+	SynchronizedLRUCache(LRUFunction<K, V>* function, size_t capacity, int minAccessCountForPromotion = 5)
 		: lru_cache_using_engine3<K,V>(function, capacity, minAccessCountForPromotion) {
 	}
 };
