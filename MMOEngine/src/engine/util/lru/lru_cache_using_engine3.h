@@ -121,6 +121,9 @@ public:
 
 	  _key_to_value.clear();
 	  _key_tracker.clear();
+
+	  hitCount = 0;
+	  missCount = 0;
   }
 
   // Obtain value of the cached function for k
@@ -134,6 +137,8 @@ public:
 		  // Evaluate function and create new record
 		  readLocker.release();
 
+		  missCount.increment();
+
 		  const value_type v = _fn(k);
 
 		  insert(k,v);
@@ -141,6 +146,8 @@ public:
 		  // Return the freshly computed value
 		  return v;
 	  } else { // We do have it:
+		  hitCount.increment();
+
 		  value_type value = entry->getValue().first();
 
 		  // Update access record by moving
@@ -171,6 +178,14 @@ public:
 			  return value;
 		  }
 	  }
+  }
+
+  int getHitCount() {
+	  return hitCount.get();
+  }
+
+  int getMissCount() {
+	  return missCount.get();
   }
 
 private:
@@ -222,4 +237,6 @@ private:
   key_to_value_type _key_to_value;
 
   const int minAccessCountForPromoting;
+
+  AtomicInteger hitCount, missCount;
 };

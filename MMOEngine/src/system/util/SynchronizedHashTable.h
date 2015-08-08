@@ -33,6 +33,10 @@ namespace sys {
 
   		}
 
+  		V getNullValue() {
+  			return hashTable.getNullValue();
+  		}
+
   		V put(const K& key, const V& value) {
   			Locker locker(this);
 
@@ -49,6 +53,10 @@ namespace sys {
   			return obj;
   		}
 
+  		V& getUnsafe(const K& key) {
+  			return hashTable.get(key);
+  		}
+
   		bool toBinaryStream(ObjectOutputStream* stream) {
   			return hashTable.toBinaryStream(stream);
   		}
@@ -57,12 +65,8 @@ namespace sys {
   			return hashTable.parseFromBinaryStream(stream);
   		}
 
-  		Entry<K, V>* getEntry(const K& key) {
-  			ReadLocker locker(this);
-
-  			Entry<K, V>* entry = hashTable.getEntry(key);
-
-  			return entry;
+  		Entry<K, V>* getEntryUnsafe(const K& key) {
+  			return hashTable.getEntry(key);
   		}
 
   		bool containsKey(const K& key) {
@@ -99,6 +103,10 @@ namespace sys {
   			Locker locker(this);
 
   			hashTable.removeAll();
+  		}
+
+  		int size() {
+  			return hashTable.size();
   		}
   	  };
   }
