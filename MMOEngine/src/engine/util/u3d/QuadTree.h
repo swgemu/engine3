@@ -126,8 +126,10 @@ namespace engine {
 		 * Searches for entries that contain x, y point
 		 */
 		int inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+		int inRange(float x, float y, SortedVector<QuadTreeEntry*>& objects);
 
 		int inRange(float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+		int inRange(float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
 
 	 	/**
 		 * Update object's position in the quad tree.
@@ -149,7 +151,9 @@ namespace engine {
 
 		void _inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
 		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry* >& objects);
 		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<QuadTreeEntry*>& objects);
 
 		void copyObjects(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects);
 
