@@ -320,7 +320,7 @@ public:
   }
 
   // Obtain value of the cached function for k
-  value_type operator()(const K& k, const K& k2) {
+  value_type operator()(const Arg1& k, const Arg2& k2) {
 	  // Attempt to find existing record
 	  key_type hash = _fn->hash(k, k2);
 
@@ -385,7 +385,7 @@ public:
 
 private:
   // Record a fresh key-value pair in the cache
-  void insert(const K& k, const K& k2, const value_type& v) {
+  void insert(const Arg1& k, const Arg2& k2, const value_type& v) {
 	  Locker locker(&_key_to_value);
 
 	  // Method is only called on cache misses
