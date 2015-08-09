@@ -18,11 +18,11 @@ public:
 	}
 };
 
-template <typename K, typename K2, typename V> class SynchronizedLRUCache2 :
-		public lru_cache_using_engine3_2args<K, K2, V> {
+template <typename KeyType, typename Arg1, typename Arg2, typename V> class SynchronizedLRUCache2 :
+		public lru_cache_using_engine3_2args<KeyType, Arg1, Arg2, V> {
 public:
-	SynchronizedLRUCache2(LRUFunction2<K, K2, V>* function, size_t capacity, int minAccessCountForPromotion = 5)
-		: lru_cache_using_engine3_2args<K, K2, V>(function, capacity, minAccessCountForPromotion) {
+	SynchronizedLRUCache2(LRUFunction2<KeyType, Arg1, Arg2, V>* function, size_t capacity, int minAccessCountForPromotion = 5)
+		: lru_cache_using_engine3_2args<KeyType, Arg1, Arg2, V>(function, capacity, minAccessCountForPromotion) {
 	}
 };
 

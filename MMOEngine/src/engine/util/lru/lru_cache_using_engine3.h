@@ -20,16 +20,16 @@ public:
 	virtual V run(const K& k) = 0;
 };
 
-template<typename K, typename K2, typename V>
+template<typename K, typename Arg1, typename Arg2, typename V>
 class LRUFunction2 {
 public:
 	virtual ~LRUFunction2() {
 
 	}
 
-	virtual V run(const K& k, const K2& k2) = 0;
+	virtual V run(const Arg1& k, const Arg2& k2) = 0;
 
-	virtual int hash(const K& k, const K2& k2) = 0;
+	virtual K hash(const Arg1& k, const Arg2& k2) = 0;
 };
 
 template<typename A, typename B>
@@ -277,14 +277,14 @@ private:
 };
 
 
-template <typename K, typename K2, typename V>
+template <typename K, typename Arg1, typename Arg2, typename V>
 class lru_cache_using_engine3_2args {
 public:
 
-  typedef int key_type;
+  typedef K key_type;
   typedef V value_type;
 
-  typedef LRUFunction2<K, K2, value_type>* function_type;
+  typedef LRUFunction2<K, Arg1, Arg2, value_type>* function_type;
 
   // Key access history, most recent at back
   typedef std::list<key_type> key_tracker_type;
@@ -322,7 +322,7 @@ public:
   // Obtain value of the cached function for k
   value_type operator()(const K& k, const K& k2) {
 	  // Attempt to find existing record
-	  int hash = _fn->hash(k, k2);
+	  key_type hash = _fn->hash(k, k2);
 
 	  ReadLocker readLocker(&_key_to_value);
 
@@ -391,7 +391,7 @@ private:
 	  // Method is only called on cache misses
 	  //assert(_key_to_value.find(k) == _key_to_value.end());
 
-	  int hash = _fn->hash(k, k2);
+	  key_type hash = _fn->hash(k, k2);
 
 	  if (_key_to_value.containsKey(hash))
 		  return;
