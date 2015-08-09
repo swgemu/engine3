@@ -348,6 +348,20 @@ int QuadTree::inRange(float x, float y, float range, SortedVector<ManagedReferen
 	return 0;
 }
 
+int QuadTree::inRange(float x, float y, float range,
+		SortedVector<QuadTreeEntry*>& objects) {
+	ReadLocker locker(&mutex);
+
+	try {
+		return _inRange(root, x, y, range, objects);
+	} catch (Exception& e) {
+		System::out << "[QuadTree] " << e.getMessage() << "\n";
+		e.printStackTrace();
+	}
+
+	return 0;
+}
+
 void QuadTree::remove(QuadTreeEntry *obj) {
 	/*if (!isLocked()) {
 		System::out << "remove on unlocked quad tree\n";
