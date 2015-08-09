@@ -18,4 +18,12 @@ public:
 	}
 };
 
+template <typename K, typename K2, typename V> class SynchronizedLRUCache2 :
+		public lru_cache_using_engine3_2args<K, K2, V> {
+public:
+	SynchronizedLRUCache2(LRUFunction2<K, K2, V>* function, size_t capacity, int minAccessCountForPromotion = 5)
+		: lru_cache_using_engine3_2args<K, K2, V>(function, capacity, minAccessCountForPromotion) {
+	}
+};
+
 #endif /* SYNCHRONIZEDLRUCACHE_H_ */

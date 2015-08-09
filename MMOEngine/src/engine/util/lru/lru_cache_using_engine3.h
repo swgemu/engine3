@@ -10,7 +10,6 @@
 // LRU-replacement cache of a function with signature
 // V f(K).
 
-
 template<typename K, typename V>
 class LRUFunction {
 public:
@@ -19,6 +18,18 @@ public:
 	}
 
 	virtual V run(const K& k) = 0;
+};
+
+template<typename K, typename K2, typename V>
+class LRUFunction2 {
+public:
+	virtual ~LRUFunction2() {
+
+	}
+
+	virtual V run(const K& k, const K2& k2) = 0;
+
+	virtual int hash(const K& k, const K2& k2) = 0;
 };
 
 template<typename A, typename B>
@@ -100,6 +111,12 @@ template<typename A, typename B>
 LRUCacheEntry<A, B> custom_make_pair(const A& a, const B& b) {
 	return LRUCacheEntry<A, B>(a, b);
 }
+
+/*
+template<typename ReturnValue, typename Argument> ReturnValue CreateLRUKey(const Argument& arg) {
+	return arg;
+}
+*/
 
 template <typename K, typename V>
 class lru_cache_using_engine3 {
@@ -259,3 +276,165 @@ private:
   AtomicInteger hitCount, missCount;
 };
 
+
+template <typename K, typename K2, typename V>
+class lru_cache_using_engine3_2args {
+public:
+
+  typedef int key_type;
+  typedef V value_type;
+
+  typedef LRUFunction2<K, K2, value_type>* function_type;
+
+  // Key access history, most recent at back
+  typedef std::list<key_type> key_tracker_type;
+  typedef typename key_tracker_type::iterator key_traker_iterator_type;
+
+  typedef LRUCacheEntry<value_type,
+		  key_traker_iterator_type> map_value_type;
+
+  // Key to value and key history iterator
+  typedef SynchronizedHashTable<key_type,
+		  map_value_type> key_to_value_type;
+
+  // Constuctor specifies the cached function and
+  // the maximum number of records to be stored
+  lru_cache_using_engine3_2args(function_type func, size_t c, int accessCountToPromote = 5)
+    	:_fn(func), _capacity(c), minAccessCountForPromoting(accessCountToPromote) {
+    assert(_capacity != 0);
+    assert(minAccessCountForPromoting > 0);
+  }
+
+  ~lru_cache_using_engine3_2args() {
+	  delete _fn;
+  }
+
+  void clear() {
+	  Locker locker(&_key_to_value);
+
+	  _key_to_value.clear();
+	  _key_tracker.clear();
+
+	  hitCount = 0;
+	  missCount = 0;
+  }
+
+  // Obtain value of the cached function for k
+  value_type operator()(const K& k, const K& k2) {
+	  // Attempt to find existing record
+	  int hash = _fn->hash(k, k2);
+
+	  ReadLocker readLocker(&_key_to_value);
+
+	  Entry<key_type, map_value_type>* entry = _key_to_value.getEntryUnsafe(hash);
+
+	  if (entry == NULL) {// We don't have it:
+		  // Evaluate function and create new record
+		  readLocker.release();
+
+		  missCount.increment();
+
+		  const value_type v = _fn->run(k, k2);
+
+		  insert(k, k2, v);
+
+		  // Return the freshly computed value
+		  return v;
+	  } else { // We do have it:
+		  hitCount.increment();
+
+		  value_type value = entry->getValue().first();
+
+		  // Update access record by moving
+		  // accessed key to back of list
+		  const bool promote = entry->getValue().incrementAccessCount(minAccessCountForPromoting);
+
+		  //const key_traker_iterator_type it = entry->getValue().second();
+
+		  if (promote) { //promote only once(when hitting count)
+			  readLocker.release();
+
+			  Locker writeLocker(&_key_to_value);
+
+			  //We need to search for the entry again because a different thread might have updated
+			  //it while we were releasing the read lock and acquiring the write lock
+			  entry = _key_to_value.getEntryUnsafe(hash);
+
+			  if (entry != NULL) {
+				  //safe by the write lock to the map
+				  const key_traker_iterator_type it = entry->getValue().second();
+
+				  _key_tracker.splice(_key_tracker.end(), _key_tracker, it);
+			  }
+
+			  return value;
+		  } else {
+			  // Return the retrieved value
+			  return value;
+		  }
+	  }
+  }
+
+  int getHitCount() {
+	  return hitCount.get();
+  }
+
+  int getMissCount() {
+	  return missCount.get();
+  }
+
+private:
+  // Record a fresh key-value pair in the cache
+  void insert(const K& k, const K& k2, const value_type& v) {
+	  Locker locker(&_key_to_value);
+
+	  // Method is only called on cache misses
+	  //assert(_key_to_value.find(k) == _key_to_value.end());
+
+	  int hash = _fn->hash(k, k2);
+
+	  if (_key_to_value.containsKey(hash))
+		  return;
+
+	  // Make space if necessary
+	  if (_key_to_value.size() >= _capacity)
+		  evict();
+
+	  // Record k as most-recently-used key
+	  key_traker_iterator_type it = _key_tracker.insert(_key_tracker.end(), hash);
+
+	  // Create the key-value entry,
+	  // linked to the usage record.
+	  _key_to_value.put(hash, custom_make_pair(v, it));
+	  // No need to check return,
+	  // given previous assert.
+  }
+
+  // Purge the least-recently-used element in the cache
+  void evict() {
+	  // Assert method is never called when cache is empty
+	  assert(!_key_tracker.empty());
+
+	  // Identify least recently used key
+	  // Erase both elements to completely purge record
+	  _key_to_value.remove(_key_tracker.front());
+	  _key_tracker.pop_front();
+  }
+
+  // The function to be cached
+  //value_type (*_fn)(const key_type&);
+  function_type _fn;
+
+  // Maximum number of key-value pairs to be retained
+  const size_t _capacity;
+
+  // Key access history
+  key_tracker_type _key_tracker;
+
+  // Key-to-value lookup
+  key_to_value_type _key_to_value;
+
+  const int minAccessCountForPromoting;
+
+  AtomicInteger hitCount, missCount;
+};
