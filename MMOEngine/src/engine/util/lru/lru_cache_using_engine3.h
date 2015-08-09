@@ -45,7 +45,7 @@ public:
 	LRUCacheEntry(const A& a, const B& b) : key(a), value(b) {
 
 	}
-
+/*
 #ifdef CXX11_COMPILER
 	LRUCacheEntry(LRUCacheEntry&& a) : key(std::move(a.key)),
 			value(std::move(a.value)), accessCount(a.accessCount) {
@@ -64,7 +64,7 @@ public:
 		return *this;
 	}
 #endif
-
+*/
 	A& first() {
 		return key;
 	}
