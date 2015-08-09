@@ -153,7 +153,7 @@ public:
   void clear() {
 	  Locker locker(&_key_to_value);
 
-	  _key_to_value.clear();
+	  _key_to_value.removeAll();
 	  _key_tracker.clear();
 
 	  hitCount = 0;
@@ -312,7 +312,7 @@ public:
   void clear() {
 	  Locker locker(&_key_to_value);
 
-	  _key_to_value.clear();
+	  _key_to_value.removeAll();
 	  _key_tracker.clear();
 
 	  hitCount = 0;
