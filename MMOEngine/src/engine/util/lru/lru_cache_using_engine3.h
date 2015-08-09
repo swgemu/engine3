@@ -38,11 +38,11 @@ class LRUCacheEntry {
 	B value;
 	volatile uint32 accessCount;
 public:
-	LRUCacheEntry() {
+	LRUCacheEntry() : accessCount(0) {
 
 	}
 
-	LRUCacheEntry(const A& a, const B& b) : key(a), value(b) {
+	LRUCacheEntry(const A& a, const B& b) : key(a), value(b), accessCount(0) {
 
 	}
 /*
