@@ -24,7 +24,7 @@ namespace sys {
     	void start() {
     		assert(startTime == 0);
 
-    		startTime = Time::currentNanoTime();
+    		startTime = Time::currentNanoTime(Time::THREAD_TIME);
     	}
 
     	uint64 stop() {
@@ -40,7 +40,7 @@ namespace sys {
 
     	uint64 elapsed() {
     		if (startTime != 0)
-    			return Time::currentNanoTime() - startTime;
+    			return Time::currentNanoTime(Time::THREAD_TIME) - startTime;
     		else
     			return 0;
     	}

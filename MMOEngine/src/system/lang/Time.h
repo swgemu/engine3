@@ -30,17 +30,18 @@ namespace sys {
 
 	class Time : public Variable {
 	public:
-#ifdef PLATFORM_MAC
-		typedef int TimeType;
+#if defined(PLATFORM_MAC) || defined(PLATFORM_WIN)
+		typedef int ClockType;
 
-		const static TimeType REAL_TIME = 0;
-		const static TimeType THREAD_TIME = 0;
-		const static TimeType PROCESS_TIME = 0;
+		const static ClockType REAL_TIME = 0;
+		const static ClockType THREAD_TIME = 0;
+		const static ClockType PROCESS_TIME = 0;
 #else
-		typedef clockid_t TimeType;
-		const static TimeType REAL_TIME = CLOCK_REALTIME;
-		const static TimeType THREAD_TIME = CLOCK_THREAD_CPUTIME_ID;
-		const static TimeType PROCESS_TIME = CLOCK_PROCESS_CPUTIME_ID;
+		typedef clockid_t ClockType;
+
+		const static ClockType REAL_TIME = CLOCK_REALTIME;
+		const static ClockType THREAD_TIME = CLOCK_THREAD_CPUTIME_ID;
+		const static ClockType PROCESS_TIME = CLOCK_PROCESS_CPUTIME_ID;
 #endif
 	private:
 		struct timespec ts;
@@ -55,15 +56,10 @@ namespace sys {
 	#endif
 
 	public:
-#if defined(PLATFORM_MAC) || defined(PLATFORM_WIN)
-		Time() {
-			updateToCurrentTime();
-		}
-#else
-		Time(TimeType type = REAL_TIME) {
+		Time(ClockType type = REAL_TIME) {
 			updateToCurrentTime(type);
 		}
-#endif
+
 		Time(uint32 seconds) {
 			ts.tv_sec = seconds;
 			ts.tv_nsec = 0;
@@ -110,27 +106,29 @@ namespace sys {
 
 			return true;
 		}
-#if defined(PLATFORM_MAC) || defined(PLATFORM_WIN)
-		inline void updateToCurrentTime(int type = 0) {
-#ifdef PLATFORM_MAC
-			struct timeval tv;
-			gettimeofday(&tv, NULL);
-			TIMEVAL_TO_TIMESPEC(&tv, &ts);
-#else
-			FILETIME ft;
-			SYSTEMTIME st;
 
-			GetSystemTime(&st);
-			SystemTimeToFileTime(&st, &ft);
+		inline void updateToCurrentTime(ClockType type = REAL_TIME) {
+			#ifdef PLATFORM_MAC
+				//assert(type == 0);
 
-			filetime_to_timespec(&ft, &ts);
-#endif
+				struct timeval tv;
+				gettimeofday(&tv, NULL);
+				TIMEVAL_TO_TIMESPEC(&tv, &ts);
+
+			#elif !defined(PLATFORM_WIN)
+				clock_gettime(type, &ts);
+			#else
+				assert(type == 0);
+
+				FILETIME ft;
+				SYSTEMTIME st;
+
+				GetSystemTime(&st);
+				SystemTimeToFileTime(&st, &ft);
+
+				filetime_to_timespec(&ft, &ts);
+			#endif
 		}
-#else
-		inline void updateToCurrentTime(TimeType type = REAL_TIME) {
-			clock_gettime(type, &ts);
-		}
-#endif
 
 		inline void addMiliTime(uint64 mtime) {
 			ts.tv_sec += (long) (mtime / 1000);
@@ -202,8 +200,9 @@ namespace sys {
 				return 0;
 		}
 
-		inline static uint64 currentNanoTime(TimeType type = REAL_TIME) {
+		inline static uint64 currentNanoTime(ClockType type = REAL_TIME) {
 			#ifdef PLATFORM_MAC
+				//assert(type == 0);
 				struct timeval tv;
 				gettimeofday(&tv, NULL);
 
