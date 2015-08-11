@@ -17,9 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <stdarg.h>
 #include <stdio.h>
 
-#ifdef CXX11_COMPILER
-	constexpr uint32 String::crctable[];
-#else
+#ifndef CXX11_COMPILER
 	const uint32 String::crctable[256] = {
     0x0000000,
     0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
@@ -74,6 +72,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
     0x933EB0BB, 0x97FFAD0C, 0xAFB010B1, 0xAB710D06, 0xA6322BDF,
     0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 };
+#else
+	constexpr uint32 String::crctable[];
 #endif
 
 String::String() : Variable() {

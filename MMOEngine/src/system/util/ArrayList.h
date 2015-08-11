@@ -53,6 +53,10 @@ namespace sys {
        bool add(const E& element);
        bool add(int index, const E& element);
 
+#ifdef CXX11_COMPILER
+       bool add(E&& element);
+#endif
+
        void addAll(const ArrayList<E>& array);
 
        bool contains(const E& element);
@@ -86,6 +90,10 @@ namespace sys {
        void setSize(int newSize, bool copyContent = true);
 
        inline void createElementAt(const E& o, int index);
+
+#ifdef CXX11_COMPILER
+       inline void createElementAt(E&& o, int index);
+#endif
 
        inline void destroyElementAt(int index);
 
@@ -208,6 +216,15 @@ namespace sys {
        createElementAt(element, elementCount++);
        return true;
    }
+
+#ifdef CXX11_COMPILER
+   template<class E> bool ArrayList<E>::add(E&& element) {
+	   ensureCapacity(elementCount + 1);
+
+	   createElementAt(std::move(element), elementCount++);
+	   return true;
+   }
+#endif
 
    template<class E> bool ArrayList<E>::add(int index, const E& element) {
        insertElementAt(element, index);
@@ -387,6 +404,15 @@ namespace sys {
        else
     	   elementData[index] = o;
    }
+
+#ifdef CXX11_COMPILER
+   template<class E> void ArrayList<E>::createElementAt(E&& o, int index) {
+	   if (TypeInfo<E>::needConstructor)
+		   new (&(elementData[index])) E(std::move(o));
+	   else
+		   elementData[index] = std::move(o);
+   }
+#endif
 
    template<class E> void ArrayList<E>::destroyElementAt(int index) {
        if (TypeInfo<E>::needConstructor)
