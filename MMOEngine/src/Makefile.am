@@ -134,6 +134,7 @@ libengine3_a_SOURCES = \
 			engine/util/Observable.cpp \
 .			engine/util/Facade.cpp \
 			engine/util/u3d/QuadTree.cpp \
+			engine/util/u3d/BasicQuadTree.cpp \
 			engine/util/u3d/Segment.cpp \
 			engine/util/u3d/QuadTreeEntry.cpp \
 			engine/util/u3d/QuadTreeEntryImplementation.cpp \
