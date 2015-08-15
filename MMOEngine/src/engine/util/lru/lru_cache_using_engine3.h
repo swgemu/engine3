@@ -272,14 +272,16 @@ private:
   }
 
   // Purge the least-recently-used element in the cache
-  virtual void evict() {
+  virtual value_type evict() {
 	  // Assert method is never called when cache is empty
 	  assert(!_key_tracker.empty());
 
 	  // Identify least recently used key
 	  // Erase both elements to completely purge record
-	  _key_to_value.remove(_key_tracker.front());
+	  value_type ret = _key_to_value.remove(_key_tracker.front());
 	  _key_tracker.pop_front();
+
+	  return ret;
   }
 
 protected:
@@ -464,14 +466,16 @@ private:
   }
 
   // Purge the least-recently-used element in the cache
-  virtual void evict() {
+  virtual value_type evict() {
 	  // Assert method is never called when cache is empty
 	  assert(!_key_tracker.empty());
 
 	  // Identify least recently used key
 	  // Erase both elements to completely purge record
-	  _key_to_value.remove(_key_tracker.front());
+	  value_type ret = _key_to_value.remove(_key_tracker.front());
 	  _key_tracker.pop_front();
+
+	  return ret;
   }
 
 protected:
