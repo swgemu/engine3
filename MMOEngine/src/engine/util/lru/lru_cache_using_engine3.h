@@ -223,7 +223,7 @@ public:
   }
 
   ReadWriteLock* getLock() {
-	  return &_key_tracker;
+	  return &_key_to_value;
   }
 
   virtual void remove(const key_type& hash) {
@@ -426,7 +426,7 @@ public:
   }
 
   ReadWriteLock* getLock() {
-	  return &_key_tracker;
+	  return &_key_to_value;
   }
 
   int getSize() {
