@@ -278,10 +278,10 @@ private:
 
 	  // Identify least recently used key
 	  // Erase both elements to completely purge record
-	  value_type ret = _key_to_value.remove(_key_tracker.front());
+	  map_value_type ret = _key_to_value.remove(_key_tracker.front());
 	  _key_tracker.pop_front();
 
-	  return ret;
+	  return ret.first;
   }
 
 protected:
@@ -472,10 +472,10 @@ private:
 
 	  // Identify least recently used key
 	  // Erase both elements to completely purge record
-	  value_type ret = _key_to_value.remove(_key_tracker.front());
+	  map_value_type ret = _key_to_value.remove(_key_tracker.front());
 	  _key_tracker.pop_front();
 
-	  return ret;
+	  return ret.first;
   }
 
 protected:
