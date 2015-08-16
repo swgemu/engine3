@@ -281,7 +281,7 @@ private:
 	  map_value_type ret = _key_to_value.remove(_key_tracker.front());
 	  _key_tracker.pop_front();
 
-	  return ret.first;
+	  return ret.first();
   }
 
 protected:
@@ -475,7 +475,7 @@ private:
 	  map_value_type ret = _key_to_value.remove(_key_tracker.front());
 	  _key_tracker.pop_front();
 
-	  return ret.first;
+	  return ret.first();
   }
 
 protected:
