@@ -244,7 +244,7 @@ public:
   }
 
 
-private:
+protected:
   // Record a fresh key-value pair in the cache
   virtual bool insert(const key_type& k,const value_type& v) {
 	  Locker locker(&_key_to_value);
@@ -437,7 +437,7 @@ public:
 	  return _key_to_value.size();
   }
 
-private:
+protected:
   // Record a fresh key-value pair in the cache
   virtual bool insert(const Arg1& k, const Arg2& k2, const value_type& v) {
 	  // Method is only called on cache misses
