@@ -156,6 +156,7 @@ namespace engine {
 		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<QuadTreeEntry*>& objects);
 
 		void copyObjects(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects);
+		void copyObjects(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects);
 
 	public:
 		static void setLogging(bool doLog) {
