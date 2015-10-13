@@ -161,11 +161,6 @@ namespace sys {
 
 	//#define TRACE_TASKS
 
-	#ifdef VERSION_PUBLIC
-	#define CONNECTION_LIMIT 2000000000
-	#define TIME_LIMIT 24
-	#endif
-
 	//#define WITH_STM
 	//#define MEMORY_PROTECTION
 

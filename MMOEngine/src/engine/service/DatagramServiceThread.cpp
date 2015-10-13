@@ -10,10 +10,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DatagramServiceThread.h"
 
-#ifdef VERSION_PUBLIC
-#include "proto/events/BaseClientCleanUpEvent.hpp"
-#endif
-
 #include "../db/ObjectDatabaseManager.h"
 
 DatagramServiceThread::DatagramServiceThread() : ServiceMessageHandlerThread("") {
@@ -143,11 +139,6 @@ void DatagramServiceThread::receiveMessages() {
 		throw ServiceException(e.getMessage());
 	}
 
-	#ifdef VERSION_PUBLIC
-		int time = (3600 * TIME_LIMIT + System::random(100)) * 100;
-		taskManager->scheduleTask(new BaseClientCleanUpEvent(this), time);
-	#endif
-
 	while (doRun) {
 		try	{
 			processor.pollEvents(1000);
@@ -156,10 +147,6 @@ void DatagramServiceThread::receiveMessages() {
 		} catch (Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();
-
-			#ifdef VERSION_PUBLIC
-				return;
-			#endif
 		} catch (...) {
 			error("unreported Exception caught");
 
@@ -189,13 +176,6 @@ void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) 
 				return;
 
 			clients->add(client);
-
-			#ifdef VERSION_PUBLIC
-				if (clients->size() > CONNECTION_LIMIT) {
-					unlock();
-					return;
-				}
-			#endif
 		}
 
 		locker.release();

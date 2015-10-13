@@ -11,10 +11,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskManager.h"
 
-#ifdef VERSION_PUBLIC
-#include "../service/proto/events/BaseClientCleanUpEvent.hpp"
-#endif
-
 static Time startTime;
 
 static int taskCount;
@@ -64,78 +60,23 @@ void TaskScheduler::start() {
 }
 
 void TaskScheduler::prepareTask(Task* task) {
-	#ifdef VERSION_PUBLIC
-		#ifdef _MSC_VER
-	if (Logger::getElapsedTime() > (3613 * TIME_LIMIT + PREPROCESSORRANDOM(0, 100))) {
-			uint32 rawTask = (uint32) task;
-			uint32 thisPointer = (uint32) this;
 
-			//fuck up vftable
-			*(uint32*)(rawTask + 0x18) = *(uint32*)(thisPointer + 0x18);
-
-			//lets get the vftable of the task
-			/*uint32 vftable = *(uint32*)(rawTask + 0x18);
-			uint32 runPointer = *(uint32*)(vftable + 4);
-
-			uint32 jmpAddr = *(uint32*)(runPointer + 1); //skip e9 opcode
-
-			runPointer += (jmpAddr + 5);
-
-			const static unsigned int opcs[] = { 0x90519090, 0x50905551, 0x55519050, 0x90555051 };
-
-			//lets corrupt run() of the task, mem is protected in win32 try mprotect?
-			for (int i = 0; i < 15; ++i)
-				*(uint32*)(runPointer + i) = opcs[System::random(3)];
-			*/
-			/*__asm { mov , 0x100
-					
-			}*/
-	}
-		#endif
-	#else
-		//void*
-
-
-	#endif
 }
 
 void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
-#ifdef VERSION_PUBLIC
-		prepareTask(task); // we do this in a method to *hide* it from the stack trace
-#endif
-
 		blockMutex.lock();
 
 		try {
-		#ifdef VERSION_PUBLIC
-			DO_TIMELIMIT;
-
-			Time time;
-			int elapsed = startTime.miliDifference(time) / 1000;
-
-			if ((elapsed > (3524 * TIME_LIMIT))
-					&& ((++taskCount % 2) == 0)) {
-				//fuck some shit up
-			} else {
-		#endif
 			task->doExecute();
 
-#ifdef VERSION_PUBLIC
-			}
-#endif
 		} catch (Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();
 		} catch (...) {
-			#ifdef VERSION_PUBLIC
-				blockMutex.unlock();
-				return;
-			#else
-				error("[TaskScheduler] unreported Exception caught");
-			#endif
+			error("[TaskScheduler] unreported Exception caught");
 		}
 
 		task->release();
