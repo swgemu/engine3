@@ -725,7 +725,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 
 }
 
-void QuadTree::copyObjects(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects) {
+void QuadTree::copyObjects(const TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects) {
 	//	ReadLocker locker(&mutex);
 
 	objects.addAll(node->objects);
@@ -742,7 +742,7 @@ void QuadTree::copyObjects(TransactionalReference<QuadTreeNode*> node, float x, 
 	}
 }
 
-void QuadTree::copyObjects(TransactionalReference<QuadTreeNode*> node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects) {
+void QuadTree::copyObjects(const TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects) {
 	//	ReadLocker locker(&mutex);
 
 	//objects.addAll(node->objects);
