@@ -64,8 +64,11 @@ namespace sys {
        void insertElementAt(const E& element, int index);
 
        virtual E& get(int index) const;
+       virtual E& getUnsafe(int index) const;
 
        E& elementAt(int index) const;
+
+       E& elementAtUnsafe(int index) const;
 
        virtual E remove(int index);
 
@@ -274,6 +277,14 @@ namespace sys {
            throw ArrayIndexOutOfBoundsException(index);
 
        return elementData[index];
+   }
+
+   template<class E> E& ArrayList<E>::getUnsafe(int index) const {
+	   return elementAtUnsafe(index);
+   }
+
+   template<class E> E& ArrayList<E>::elementAtUnsafe(int index) const {
+	   return elementData[index];
    }
 
    template<class E> E ArrayList<E>::remove(int index) {
