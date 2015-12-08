@@ -67,7 +67,7 @@ const PriorityQueueEntry* PriorityQueue::poll() {
 
 	assert (--count >= 0);
 
-	--poppedEntries;
+	++poppedEntries;
 
 	return oldRoot;
 }
@@ -104,7 +104,7 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 
 	assert(--count >= 0);
 
-	--removedEntries;
+	++removedEntries;
 
 	return true;
 }
