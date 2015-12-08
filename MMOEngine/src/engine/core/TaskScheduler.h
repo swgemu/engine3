@@ -64,6 +64,18 @@ namespace engine {
 			return tasks.size();
 		}
 
+		inline uint64 getPushedTasks() {
+			return tasks.getPushedEntries();
+		}
+
+		inline uint64 getPoppedTasks() {
+			return tasks.getPoppedEntries();
+		}
+
+		inline uint64 getRemovedTasks() {
+			return tasks.getRemovedEntries();
+		}
+
 		inline void printTasks() {
 			tasks.printQueue();
 		}

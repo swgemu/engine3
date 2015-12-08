@@ -439,7 +439,14 @@ String TaskManagerImpl::getInfo(bool print) {
 		info(msg);
 
 	StringBuffer msg2;
-	msg2 << "scheduled tasks - " << getScheduledTaskSize();
+	//msg2 << "scheduled tasks - " << getScheduledTaskSize();
+
+	for (int i = 0; i < schedulers.size(); ++i) {
+		TaskScheduler* scheduler = schedulers.get(i);
+
+		msg2 << "scheduled tasks in scheduler " << i << " - " << scheduler->getQueueSize();
+		msg2 << " pushed - " << scheduler->getPushedTasks() << " popped - " << scheduler->getPoppedTasks() << " removed - " << scheduler->getRemovedTasks() << endl;
+	}
 
 	if (print)
 		info(msg2);

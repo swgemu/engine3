@@ -19,6 +19,10 @@ PriorityQueueEntry::PriorityQueueEntry(PriorityQueueEntry* parent,
 PriorityQueue::PriorityQueue() {
 	root = NULL;
 	count = 0;
+
+	pushedEntries = 0;
+	poppedEntries = 0;
+	removedEntries = 0;
 }
 
 PriorityQueue::PriorityQueue(const PriorityQueue& heap) {
@@ -37,6 +41,8 @@ void PriorityQueue::add(PriorityQueueEntry* node) {
 	node->setQueued();
 
 	++count;
+
+	++pushedEntries;
 }
 
 const PriorityQueueEntry* PriorityQueue::peak() const {
@@ -60,6 +66,8 @@ const PriorityQueueEntry* PriorityQueue::poll() {
 	oldRoot->setUnqueued();
 
 	assert (--count >= 0);
+
+	--poppedEntries;
 
 	return oldRoot;
 }
@@ -95,6 +103,8 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 	oldNode->setUnqueued();
 
 	assert(--count >= 0);
+
+	--removedEntries;
 
 	return true;
 }

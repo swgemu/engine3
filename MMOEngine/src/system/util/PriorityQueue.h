@@ -65,6 +65,10 @@ namespace sys {
 
 		int count;
 
+		uint64 pushedEntries;
+		uint64 poppedEntries;
+		uint64 removedEntries;
+
 	public:
 		PriorityQueue();
 		PriorityQueue(const PriorityQueue& heap);
@@ -92,6 +96,18 @@ namespace sys {
 
 		inline int size() {
 			return count;
+		}
+
+		inline uint64 getPushedEntries() const {
+			return pushedEntries;
+		}
+
+		inline uint64 getPoppedEntries() const {
+			return poppedEntries;
+		}
+
+		inline uint64 getRemovedEntries() const {
+			return removedEntries;
 		}
 
 	private:

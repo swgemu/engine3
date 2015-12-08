@@ -81,6 +81,8 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 	if (!task->setTaskScheduler(taskScheduler)) {
 		task->release();
 
+		condMutex->unlock(doLock);
+
 		return true;
 	}
 
@@ -241,6 +243,8 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 		#endif
 
 		task->cancel();
+
+		condMutex->unlock(doLock);
 
 		return true;
 	}
