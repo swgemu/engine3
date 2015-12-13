@@ -16,6 +16,8 @@ class MTRand;
 
 #include "../thread/ThreadLocal.h"
 
+#include "mersenne/MersenneTwister.h"
+
 namespace sys {
   namespace lang {
 
@@ -68,6 +70,18 @@ namespace sys {
 	#endif
 
 		static uint32 random(unsigned int bucket = 0xFFFFFFFF);
+
+		static MTRand* getMTRand() {
+			MTRand* localMT = mtrand.get();
+
+			if (localMT == NULL) {
+				localMT = new MTRand();
+
+				mtrand.set(localMT);
+			}
+
+			return localMT;
+		}
 	};
 
   } // namespace lang
