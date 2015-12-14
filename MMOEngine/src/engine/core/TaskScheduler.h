@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "system/util/SynchronizedHashTable.h"
+
 #include "engine/log/Logger.h"
 
 #include "Task.h"
@@ -25,6 +27,9 @@ namespace engine {
 		bool doRun;
 
 		Mutex blockMutex;
+
+		HashTable<String, uint64> tasksCount;
+		ReadWriteLock tasksCountGuard;
 
 	protected:
 		void prepareTask(Task* task);
@@ -47,6 +52,8 @@ namespace engine {
 		bool cancelTask(Task* task);
 
 		void addSchedulerTasks(TaskScheduler* scheduler);
+
+		HashTable<String, uint64> getTasksCount();
 
 		void flushTasks() {
 			tasks.flush();

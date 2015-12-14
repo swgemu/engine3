@@ -11,9 +11,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskManager.h"
 
-static Time startTime;
+#define COUNT_SCHEDULER_TASKS
 
-static int taskCount;
+static Time startTime;
 
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	taskManager = NULL;
@@ -88,6 +88,20 @@ void TaskScheduler::run() {
 
 			//assert(task->isScheduled());
 		}
+
+#ifdef COUNT_SCHEDULER_TASKS
+		String name = TypeInfo<Task>::getClassName(task);
+
+		Locker guard(&tasksCountGuard);
+
+		Entry<String, uint64>* entry = tasksCount.getEntry(name);
+
+		if (entry == NULL) {
+			tasksCount.put(name, 1);
+		} else {
+			++(entry->getValue());
+		}
+#endif
 	}
 }
 
@@ -132,4 +146,12 @@ void TaskScheduler::addSchedulerTasks(TaskScheduler* scheduler) {
 			tasks.add(task);
 
 	//tasks.addAll(scheduler->tasks);
+}
+
+HashTable<String, uint64> TaskScheduler::getTasksCount() {
+	ReadLocker guard(&tasksCountGuard);
+
+	HashTable<String, uint64> copy = tasksCount;
+
+	return copy;
 }

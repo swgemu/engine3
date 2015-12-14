@@ -444,8 +444,30 @@ String TaskManagerImpl::getInfo(bool print) {
 	for (int i = 0; i < schedulers.size(); ++i) {
 		TaskScheduler* scheduler = schedulers.get(i);
 
+		HashTable<String, uint64> tasksCount = scheduler->getTasksCount();
+
+		//lets order them
+		VectorMap<uint64, String> ordered;
+
+		HashTableIterator<String, uint64> iterator = tasksCount.iterator();
+
+		while (iterator.hasNext()) {
+			String name;
+			uint64 count;
+
+			iterator.getNextKeyAndValue(name, count);
+
+			ordered.put(count, name);
+		}
+
 		msg2 << "scheduled tasks in scheduler " << i << " - " << scheduler->getQueueSize();
 		msg2 << " pushed - " << scheduler->getPushedTasks() << " popped - " << scheduler->getPoppedTasks() << " removed - " << scheduler->getRemovedTasks() << endl;
+
+		//lets print top 5
+		for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
+			int index = j - i;
+			msg2 << ordered.elementAt(index).getValue() << ":" << ordered.elementAt(index).getKey() << endl;
+		}
 	}
 
 	if (print)
