@@ -28,7 +28,7 @@ namespace engine {
 
 		Mutex blockMutex;
 
-		HashTable<String, uint64> tasksCount;
+		HashTable<const char*, uint64> tasksCount;
 		ReadWriteLock tasksCountGuard;
 
 	protected:
@@ -53,7 +53,7 @@ namespace engine {
 
 		void addSchedulerTasks(TaskScheduler* scheduler);
 
-		HashTable<String, uint64> getTasksCount();
+		HashTable<const char*, uint64> getTasksCount();
 
 		void flushTasks() {
 			tasks.flush();

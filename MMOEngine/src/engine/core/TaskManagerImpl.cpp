@@ -444,15 +444,15 @@ String TaskManagerImpl::getInfo(bool print) {
 	for (int i = 0; i < schedulers.size(); ++i) {
 		TaskScheduler* scheduler = schedulers.get(i);
 
-		HashTable<String, uint64> tasksCount = scheduler->getTasksCount();
+		HashTable<const char*, uint64> tasksCount = scheduler->getTasksCount();
 
 		//lets order them
-		VectorMap<uint64, String> ordered;
+		VectorMap<uint64, const char*> ordered;
 
-		HashTableIterator<String, uint64> iterator = tasksCount.iterator();
+		HashTableIterator<const char*, uint64> iterator = tasksCount.iterator();
 
 		while (iterator.hasNext()) {
-			String name;
+			const char* name;
 			uint64 count;
 
 			iterator.getNextKeyAndValue(name, count);

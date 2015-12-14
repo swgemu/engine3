@@ -90,14 +90,14 @@ void TaskScheduler::run() {
 		}
 
 #ifdef COUNT_SCHEDULER_TASKS
-		String name = TypeInfo<Task>::getClassName(task);
+		const char* taskName = typeid(*task).name();
 
 		Locker guard(&tasksCountGuard);
 
-		Entry<String, uint64>* entry = tasksCount.getEntry(name);
+		Entry<String, uint64>* entry = tasksCount.getEntry(taskName);
 
 		if (entry == NULL) {
-			tasksCount.put(name, 1);
+			tasksCount.put(taskName, 1);
 		} else {
 			++(entry->getValue());
 		}
@@ -148,10 +148,10 @@ void TaskScheduler::addSchedulerTasks(TaskScheduler* scheduler) {
 	//tasks.addAll(scheduler->tasks);
 }
 
-HashTable<String, uint64> TaskScheduler::getTasksCount() {
+HashTable<const char*, uint64> TaskScheduler::getTasksCount() {
 	ReadLocker guard(&tasksCountGuard);
 
-	HashTable<String, uint64> copy = tasksCount;
+	HashTable<const char*, uint64> copy = tasksCount;
 
 	return copy;
 }
