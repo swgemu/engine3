@@ -94,7 +94,7 @@ void TaskScheduler::run() {
 
 		Locker guard(&tasksCountGuard);
 
-		Entry<String, uint64>* entry = tasksCount.getEntry(taskName);
+		Entry<const char*, uint64>* entry = tasksCount.getEntry(taskName);
 
 		if (entry == NULL) {
 			tasksCount.put(taskName, 1);
