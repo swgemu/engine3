@@ -118,12 +118,12 @@ namespace engine {
 
 		  virtual void scheduleTask(std::function<void()>&& function, uint64 delay = 0) {
 			  auto taskObject = new LambdaTask<decltype(function)>(std::move(function));
-			  taskObject->execute();
+			  taskObject->schedule(delay);
 		  }
 
 		  virtual void scheduleTask(const std::function<void()>& function, uint64 delay = 0) {
 			  auto taskObject = new LambdaTask<decltype(function)>(function);
-			  taskObject->execute();
+			  taskObject->schedule(delay);
 		  }
 #endif
 
