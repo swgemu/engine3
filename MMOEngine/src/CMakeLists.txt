@@ -31,6 +31,13 @@ else ()
 	# Create library
 	add_library(engine3 SHARED ${system3_sources} ${engine3_sources})
 
+	TARGET_LINK_LIBRARIES(engine3
+			db-5.3
+			lua
+			mysqlclient_r
+			z
+			)
+
 	# Install headers and library
 	install(TARGETS engine3 DESTINATION lib)
 	install(DIRECTORY . DESTINATION include

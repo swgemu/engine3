@@ -40,7 +40,12 @@ namespace engine {
 		virtual bool getNextExecutionTime(Task* task, Time& nextExecutionTime) = 0;
 
 		virtual void executeTask(Task* task) = 0;
-		
+
+#ifdef CXX11_COMPILER
+		virtual void executeTask(std::function<void()>&& function) = 0;
+		virtual void executeTask(const std::function<void()>& task) = 0;
+#endif
+
 		virtual void executeTask(Task* task, int taskqueue) {
 		        executeTask(task);
 		}
@@ -59,6 +64,11 @@ namespace engine {
 
 		virtual void scheduleTask(Task* task, uint64 delay = 0) = 0;
 		virtual void scheduleTask(Task* task, Time& time) = 0;
+
+#ifdef CXX11_COMPILER
+		virtual void scheduleTask(std::function<void()>&& function, uint64 delay = 0) = 0;
+		virtual void scheduleTask(const std::function<void()>& function, uint64 delay = 0) = 0;
+#endif
 
 		virtual void scheduleIoTask(Task* task, uint64 delay = 0) {
 			scheduleTask(task, delay);

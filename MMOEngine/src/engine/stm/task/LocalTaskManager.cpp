@@ -57,6 +57,76 @@ void LocalTaskManager::executeTask(Task* task) {
 
 }
 
+#ifdef CXX11_COMPILER
+void LocalTaskManager::executeTask(const std::function<void()>& function) {
+	class LambdaTask : public Task {
+		std::function<void()> lambda;
+
+	public:
+		LambdaTask(const std::function<void()>& lam) : lambda(lam) {
+		}
+
+		void run() {
+			lambda();
+		}
+	};
+
+	LambdaTask* lambdaTask = new LambdaTask(function);
+	lambdaTask->execute();
+}
+
+void LocalTaskManager::executeTask(std::function<void()>&& function) {
+	class LambdaTask : public Task {
+		std::function<void()> lambda;
+
+	public:
+		LambdaTask(std::function<void()>&& lam) : lambda(lam) {
+		}
+
+		void run() {
+			lambda();
+		}
+	};
+
+	LambdaTask* lambdaTask = new LambdaTask(std::move(function));
+	lambdaTask->execute();
+}
+
+void LocalTaskManager::scheduleTask(std::function<void()>&& function, uint64 delay) {
+	class LambdaTask : public Task {
+		std::function<void()> lambda;
+
+	public:
+		LambdaTask(std::function<void()>&& lam) : lambda(lam) {
+		}
+
+		void run() {
+			lambda();
+		}
+	};
+
+	LambdaTask* lambdaTask = new LambdaTask(std::move(function));
+	lambdaTask->schedule(delay);
+}
+
+void LocalTaskManager::scheduleTask(const std::function<void()>& function, uint64 delay) {
+	class LambdaTask : public Task {
+		std::function<void()> lambda;
+
+	public:
+		LambdaTask(const std::function<void()>& lam) : lambda(lam) {
+		}
+
+		void run() {
+			lambda();
+		}
+	};
+
+	LambdaTask* lambdaTask = new LambdaTask(function);
+	lambdaTask->schedule(delay);
+}
+#endif
+
 bool LocalTaskManager::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
 	TaskAction* action = lastTaskAction.get(task);
 

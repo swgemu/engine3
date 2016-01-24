@@ -146,6 +146,14 @@ namespace engine {
 
   		void executeTask(Task* task);
 
+#ifdef CXX11_COMPILER
+		void executeTask(const std::function<void()>& task);
+		void executeTask(std::function<void()>&& task);
+
+		void scheduleTask(std::function<void()>&& function, uint64 delay = 0);
+		void scheduleTask(const std::function<void()>& function, uint64 delay = 0);
+#endif
+
   		void scheduleTask(Task* task, uint64 delay);
   		void scheduleTask(Task* task, Time& time);
 
