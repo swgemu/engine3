@@ -40,7 +40,11 @@ SocketAddress::SocketAddress(const String& host, int port) {
 		Logger::console.error("getaddrinfo failed");
 
 		addr.sin_family = 0;
-		return;
+
+		if (result)
+			freeaddrinfo(result);
+
+		throw SocketException("unknown host " + host + " (error: " + error  + ") ");
 	}
 
 	memmove(&addr, result->ai_addr, result->ai_addrlen);
