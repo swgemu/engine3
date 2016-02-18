@@ -22,7 +22,7 @@ bool File::open(int access) {
 	else
 		fileDescriptor = freopen(name.toCharArray(), modestr.toCharArray(), fileDescriptor);
 
-	File::mode = mode;
+//	File::mode = mode;
 
 	return fileDescriptor != NULL;
 }
