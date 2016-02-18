@@ -57,7 +57,8 @@ namespace engine {
 		int r = Vector<ManagedReference<O> >::elementCount - 1;
 
     	while (l <= r) {
-        	m = (l + r) / 2;
+        	//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
         	O* temp = Vector<ManagedReference<O> >::elementData[m];
         	int cmp = compare(temp, obj);
@@ -92,7 +93,8 @@ namespace engine {
 	    int m = 0, cmp = 0;
 
 	    while (l <= r) {
-        	m = (l + r) / 2;
+        	//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
         	O* temp = Vector<ManagedReference<O> >::elementData[m];
         	int cmp = compare(temp, obj);

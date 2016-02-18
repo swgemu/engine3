@@ -77,7 +77,8 @@ public:
 		int r = Vector<ManagedReference<QuadTreeEntry*> >::elementCount - 1;
 
 		while (l <= r) {
-			m = (l + r) / 2;
+			//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
 			/*E& obj = Vector<E>::elementData[m];
 			int cmp = compare(obj, o);*/
@@ -119,7 +120,8 @@ public:
 		int m = 0, cmp = 0;
 
 		while (l <= r) {
-			m = (l + r) / 2;
+			//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
 			cmp = Vector<ManagedReference<QuadTreeEntry*> >::elementData[m].compareTo(o);
 

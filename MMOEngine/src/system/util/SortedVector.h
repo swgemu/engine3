@@ -126,7 +126,8 @@ namespace sys {
 		int m = 0, cmp = 0;
 
 		while (l <= r) {
-			m = (l + r) / 2;
+			//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
 			E& obj = Vector<E>::elementData[m];
 			cmp = compare(obj, o);
@@ -155,7 +156,8 @@ namespace sys {
 		int m = 0, cmp = 0;
 
 		while (l <= r) {
-			m = (l + r) / 2;
+			//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
 			E& obj = Vector<E>::elementData[m];
 			cmp = compare(obj, o);
@@ -181,7 +183,8 @@ namespace sys {
 		int r = Vector<E>::elementCount - 1;
 
     	while (l <= r) {
-        	m = (l + r) / 2;
+        	//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
         	E& obj = Vector<E>::elementData[m];
         	int cmp = compare(obj, o);
@@ -225,7 +228,8 @@ namespace sys {
 	    int m = 0, cmp = 0;
 
 	    while (l <= r) {
-        	m = (l + r) / 2;
+        	//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
         	E& obj = Vector<E>::elementData[m];
         	cmp = compare(obj, o);
