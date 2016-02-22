@@ -10,6 +10,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Task.h"
 
+#ifdef CXX11_COMPILER
+#include "LambdaFunction.h"
+#endif
+
 namespace engine {
   namespace core {
 
@@ -93,36 +97,23 @@ namespace engine {
 
 
 #ifdef CXX11_COMPILER
-		  template<class Lambda>
-		  class LambdaTask : public Task {
-			  Lambda lambda;
-		  public:
-			  template<class L>
-			  LambdaTask(L&& l) : lambda(std::forward<L>(l)) {
-			  }
-
-			  void run() {
-				  lambda();
-			  }
-		  };
-
-		  virtual void executeTask(std::function<void()>&& function) {
-			  auto taskObject = new LambdaTask<decltype(function)>(std::move(function));
+		  virtual void executeTask(std::function<void()>&& function, const char* name) {
+			  auto taskObject = new LambdaTask(std::move(function), name);
 			  taskObject->execute();
 		  }
 
-		  virtual void executeTask(const std::function<void()>& function) {
-			  auto taskObject = new LambdaTask<decltype(function)>(function);
+		  virtual void executeTask(const std::function<void()>& function, const char* name) {
+			  auto taskObject = new LambdaTask(function, name);
 			  taskObject->execute();
 		  }
 
-		  virtual void scheduleTask(std::function<void()>&& function, uint64 delay = 0) {
-			  auto taskObject = new LambdaTask<decltype(function)>(std::move(function));
+		  virtual void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay) {
+			  auto taskObject = new LambdaTask(std::move(function), name);
 			  taskObject->schedule(delay);
 		  }
 
-		  virtual void scheduleTask(const std::function<void()>& function, uint64 delay = 0) {
-			  auto taskObject = new LambdaTask<decltype(function)>(function);
+		  virtual void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
+			  auto taskObject = new LambdaTask(function, name);
 			  taskObject->schedule(delay);
 		  }
 #endif

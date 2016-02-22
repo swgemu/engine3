@@ -90,7 +90,7 @@ void TaskScheduler::run() {
 		}
 
 #ifdef COUNT_SCHEDULER_TASKS
-		const char* taskName = typeid(*task).name();
+		const char* taskName = task->getTaskName();
 
 		Locker guard(&tasksCountGuard);
 

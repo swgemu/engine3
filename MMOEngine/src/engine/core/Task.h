@@ -220,6 +220,10 @@ namespace engine {
 		void execute();
 		void executeInThread();
 
+		  virtual const char* getTaskName() {
+			  return typeid(*this).name();
+		  }
+
 		int compareTo(PriorityQueueEntry* node) {
 			Task* task = (Task*) node;
 
