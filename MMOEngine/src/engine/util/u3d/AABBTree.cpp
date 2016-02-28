@@ -11,11 +11,6 @@
 
 #include "AABBTree.h"
 
-#include "Quaternion.h"
-
-#include "Vector3.h"
-#include "Matrix4.h"
-
 using namespace sys::lang;
 
 // construct an AABB from a list of triangles.

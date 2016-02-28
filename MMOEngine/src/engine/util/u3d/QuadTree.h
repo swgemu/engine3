@@ -31,10 +31,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
-#ifdef WITH_STM
-#include "engine/stm/TransactionalReference.h"
-#endif
-
 /**
  * A quad tree is a 2D data structure that keeps lots of objects nicely
  * sorted in a tree with four children in every node, so that queries like
@@ -51,12 +47,8 @@ namespace engine {
   	namespace u3d {
 
 	class QuadTree : public Object {
-	//#ifdef WITH_STM
-		TransactionalReference<QuadTreeNode*> root;
-	/*#else
 		Reference<QuadTreeNode*> root;
-	#endif*/
-
+	
 		static bool logTree;
 
 		ReadWriteLock mutex;
@@ -146,17 +138,17 @@ namespace engine {
 		bool update(QuadTreeEntry *obj);
 
 	private:
-		void _insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj);
-		bool _update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj);
+		void _insert(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj);
+		bool _update(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj);
 
-		void _inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
-		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
-		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry* >& objects);
-		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
-		int _inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, SortedVector<QuadTreeEntry*>& objects);
+		void _inRange(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
+		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry* >& objects);
+		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
+		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, SortedVector<QuadTreeEntry*>& objects);
 
-		void copyObjects(const TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects);
-		void copyObjects(const TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects);
+		void copyObjects(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects);
+		void copyObjects(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects);
 
 	public:
 		static void setLogging(bool doLog) {

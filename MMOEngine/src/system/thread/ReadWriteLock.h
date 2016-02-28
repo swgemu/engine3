@@ -38,13 +38,13 @@ namespace sys {
 			wlock(doLock);
 		}
 
-		void rlock(bool doLock = true);
+		virtual void rlock(bool doLock = true);
 
-		void wlock(bool doLock = true);
-		void wlock(Mutex* lock);
-		void wlock(ReadWriteLock* lock);
-		void rlock(ReadWriteLock* lock);
-		void rlock(Lockable* lock);
+		virtual void wlock(bool doLock = true);
+		virtual void wlock(Mutex* lock);
+		virtual void wlock(ReadWriteLock* lock);
+		virtual void rlock(ReadWriteLock* lock);
+		virtual void rlock(Lockable* lock);
 
 		void lock(Lockable* lockable);
 
@@ -54,7 +54,7 @@ namespace sys {
 
 		void unlock(bool doLock = true);
 
-		void runlock(bool doLock = true);
+		virtual void runlock(bool doLock = true);
 
 		inline bool destroy() {
 			pthread_rwlock_wrlock(&rwlock);

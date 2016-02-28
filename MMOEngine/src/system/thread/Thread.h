@@ -89,7 +89,7 @@ namespace sys {
 		static pid_t getProcessID();
 
 		//! causes this thread to begin execution
-		void start();
+		virtual void start();
 
 		//! causes this thread to be cancelled
 		void cancel();

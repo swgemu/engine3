@@ -49,19 +49,11 @@ class QuadTreeEntry;
 class QuadTreeNode: public Object {
 	SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> > objects;
 
-//#ifdef WITH_STM
-	TransactionalWeakReference<QuadTreeNode*> parentNode;
-	TransactionalReference<QuadTreeNode*> nwNode;
-	TransactionalReference<QuadTreeNode*> neNode;
-	TransactionalReference<QuadTreeNode*> swNode;
-	TransactionalReference<QuadTreeNode*> seNode;
-//#else
-/*	Reference<QuadTreeNode*> parentNode;
+	WeakReference<QuadTreeNode*> parentNode;
 	Reference<QuadTreeNode*> nwNode;
 	Reference<QuadTreeNode*> neNode;
 	Reference<QuadTreeNode*> swNode;
-	Reference<QuadTreeNode*> seNode;*/
-//#endif
+	Reference<QuadTreeNode*> seNode;
 
 	float minX, minY;
 	float maxX, maxY;

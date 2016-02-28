@@ -30,15 +30,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "QuadTree.h"
 
-#ifndef VERSION_PUBLIC
 #define NO_ENTRY_REF_COUNTING
-#endif
 
 QuadTreeNode::QuadTreeNode() {
 	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
 
-	parentNode = NULL;
-	nwNode = neNode = swNode = seNode = NULL;
+//  smart pointer classes automatically initialize to nullptr
+//	parentNode = NULL;
+//	nwNode = neNode = swNode = seNode = NULL;
 
 	minX = 0;
 	minY = 0;
@@ -53,7 +52,7 @@ QuadTreeNode::QuadTreeNode(float minx, float miny, float maxx, float maxy, QuadT
 	objects.setInsertPlan(SortedVector<QuadTreeEntry*>::NO_DUPLICATE);
 
 	parentNode = parent;
-	nwNode = neNode = swNode = seNode = NULL;
+//	nwNode = neNode = swNode = seNode = NULL;
 
 	minX = minx;
 	minY = miny;
@@ -139,15 +138,17 @@ bool QuadTreeNode::testInRange(float x, float y, float range) {
 }
 
 void QuadTreeNode::check () {
-	if (isEmpty() && !hasSubNodes() && parentNode.get() != NULL) {
-		if (parentNode.get()->nwNode.get() == this)
-			parentNode.get()->nwNode = NULL;
-		else if (parentNode.get()->neNode == this)
-			parentNode.get()->neNode = NULL;
-		else if (parentNode.get()->swNode == this)
-			parentNode.get()->swNode = NULL;
-		else if (parentNode.get()->seNode == this)
-			parentNode.get()->seNode = NULL;
+	Reference<QuadTreeNode*> parentNode = this->parentNode.get();
+
+	if (isEmpty() && !hasSubNodes() && parentNode != NULL) {
+		if (parentNode->nwNode == this)
+			parentNode->nwNode = NULL;
+		else if (parentNode->neNode == this)
+			parentNode->neNode = NULL;
+		else if (parentNode->swNode == this)
+			parentNode->swNode = NULL;
+		else if (parentNode->seNode == this)
+			parentNode->seNode = NULL;
 
 		if (QuadTree::doLog())
 			System::out << "deleteing node (" << this << ")\n";
@@ -214,7 +215,7 @@ void QuadTree::insert(QuadTreeEntry *obj) {
 			System::out << "(" << obj->getPositionX() << ", " << obj->getPositionY() << ")\n";
 		}
 
-		if (obj->getNode().get() != NULL)
+		if (obj->getNode() != NULL)
 			remove(obj);
 
 		_insert(root, obj);
@@ -245,14 +246,14 @@ bool QuadTree::update(QuadTreeEntry *obj) {
 					<< ", " << obj->getPositionY() << ")\n";
 		}
 
-		if (obj->getNode().get() == NULL) {
+		if (obj->getNode() == NULL) {
 #ifdef OUTPUTQTERRORS
 			System::out << hex << "object [" << obj->getObjectID() <<  "] updating error\n";
 #endif
 			return false;
 		}
 
-		TransactionalReference<QuadTreeNode*> node = obj->getNode();
+		Reference<QuadTreeNode*> node = obj->getNode();
 		bool res = _update(node, obj);
 
 		if (QuadTree::doLog())
@@ -378,10 +379,10 @@ void QuadTree::remove(QuadTreeEntry *obj) {
 	if (QuadTree::doLog())
 		System::out << hex << "object [" << obj->getObjectID() <<  "] removing\n";
 
-	TransactionalReference<QuadTreeNode*> node = obj->getNode();
+	Reference<QuadTreeNode*> node = obj->getNode();
 
-	if (node.get() != NULL) {
-		if (!node.get()->validateNode()) {
+	if (node != NULL) {
+		if (!node->validateNode()) {
 			System::out << "[QuadTree] " << obj->getObjectID() << " error on remove() - invalid Node"
 					<< node->toStringData() << "\n";
 		}
@@ -412,7 +413,7 @@ void QuadTree::removeAll() {
  * Every Node can have data and children. Every data must be completely
  * contained inside the Node, so boundary sphere is checked.
  */
-void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
+void QuadTree::_insert(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
 	/*
 	 * Logic:
 	 *
@@ -430,12 +431,12 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 	// Initially assume the object is not crossing any boundaries
 	obj->clearBounding();
 
-	if (!node.get()->isEmpty() && !node.get()->hasSubNodes()) {
+	if (!node->isEmpty() && !node->hasSubNodes()) {
 		/*
 		 * We want to Insert another object, so we square this Node up and move
 		 * all the Objects that arent locked (cause they cross a boundary) down.
 		 */
-		if ((node.get()->maxX - node.get()->minX <= 8) && (node.get()->maxY - node.get()->minY <= 8)) {
+		if ((node->maxX - node->minX <= 8) && (node->maxY - node->minY <= 8)) {
 			/*
 			 * This protects from killing the stack. If something is messed up it may
 			 * blow the stack because the recursion runs forever. Stop squaring when
@@ -451,8 +452,8 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 		 * Proceed objects in node in reverse direction since this
 		 * makes handling deletions from the vector easier.
 		 */
-		for (int i = node.get()->objects.size() - 1; i >= 0; i--) {
-			QuadTreeEntry* existing = node.get()->getObject(i);
+		for (int i = node->objects.size() - 1; i >= 0; i--) {
+			QuadTreeEntry* existing = node->getObject(i);
 
 			// We remove the Object from the Node if its not locked
 			// for crossing boundaries to add it to another Node
@@ -467,26 +468,26 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 			// First find out which square it needs, then Insert it into it
 			// We divide the Node area into 4 squares, reusing existing children
 
-			if (existing->isInSWArea(node.get())) {
-				if (node.get()->swNode.get() == NULL)
+			if (existing->isInSWArea(node)) {
+				if (node->swNode == NULL)
 					node->swNode = new QuadTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
-				_insert(node.get()->swNode, existing);
-			} else if (existing->isInSEArea(node.get())) {
-				if (node.get()->seNode.get() == NULL)
+				_insert(node->swNode, existing);
+			} else if (existing->isInSEArea(node)) {
+				if (node->seNode == NULL)
 					node->seNode = new QuadTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
-				_insert(node.get()->seNode, existing);
-			} else if (existing->isInNWArea(node.get())) {
-				if (node.get()->nwNode.get() == NULL)
-					node.get()->nwNode = new QuadTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
+				_insert(node->seNode, existing);
+			} else if (existing->isInNWArea(node)) {
+				if (node->nwNode == NULL)
+					node->nwNode = new QuadTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
-				_insert(node.get()->nwNode, existing);
+				_insert(node->nwNode, existing);
 			} else {
-				if (node.get()->neNode.get() == NULL)
+				if (node->neNode == NULL)
 					node->neNode = new QuadTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
-				_insert(node.get()->neNode, existing);
+				_insert(node->neNode, existing);
 			}
 
 			// Okay, we don't need this reference anymore
@@ -500,7 +501,7 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 	 * placed in this one regardless and locked.
 	 */
 
-	if (obj->isInArea(node.get())) {
+	if (obj->isInArea(node)) {
 		obj->setBounding();
 		node->addObject(obj);
 
@@ -512,27 +513,27 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 	 * Also, the new object is contained in one of those new squares.
 	 * So we search for the right one and insert the object there.
 	 */
-	if (node.get()->hasSubNodes()) {
-		if (obj->isInSWArea(node.get())) {
-			if (node.get()->swNode.get() == NULL)
+	if (node->hasSubNodes()) {
+		if (obj->isInSWArea(node)) {
+			if (node->swNode == NULL)
 				node->swNode = new QuadTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
-			_insert(node.get()->swNode, obj);
-		} else if (obj->isInSEArea(node.get())) {
-			if (node.get()->seNode.get() == NULL)
+			_insert(node->swNode, obj);
+		} else if (obj->isInSEArea(node)) {
+			if (node->seNode == NULL)
 				node->seNode = new QuadTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
-			_insert(node.get()->seNode, obj);
-		} else if (obj->isInNWArea(node.get())) {
-			if (node.get()->nwNode.get() == NULL)
+			_insert(node->seNode, obj);
+		} else if (obj->isInNWArea(node)) {
+			if (node->nwNode == NULL)
 				node->nwNode = new QuadTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
-			_insert(node.get()->nwNode, obj);
+			_insert(node->nwNode, obj);
 		} else {
-			if (node.get()->neNode.get() == NULL)
+			if (node->neNode == NULL)
 				node->neNode = new QuadTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
-			_insert(node.get()->neNode, obj);
+			_insert(node->neNode, obj);
 		}
 
 		return;
@@ -546,11 +547,11 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 /* The difference to the Insert is that it starts at the current node
  * and tries to find the right place to be now that the position changed.
  */
-bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
+bool QuadTree::_update(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
 	// Whew, still in the same square. Lucky bastards we are.
 	//System::out << "(" << obj->positionX << "," << obj->positionY << ")\n";
 
-	if (node.get()->testInside(obj))
+	if (node->testInside(obj))
 		return true;
 
 	// Since we'll have to temporarily remove the object from the Quad Tree,
@@ -558,16 +559,16 @@ bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 	//data->IncRef ();
 
 	// Go upwards til the object is inside the square.
-	Reference<QuadTreeNode*> cur = node.get()->parentNode.get();
-	while (cur.get() != NULL && !cur.get()->testInside(obj))
-		cur = cur.get()->parentNode.get();
+	Reference<QuadTreeNode*> cur = node->parentNode.get();
+	while (cur != NULL && !cur->testInside(obj))
+		cur = cur->parentNode.get();
 
 	remove(obj);
 
 	// Here is the right spot for the object, so lets drop it in.
 	// May result in another squaring frenzy.
-	if (cur.get() != NULL) {
-		TransactionalReference<QuadTreeNode*> c = cur.get();
+	if (cur != NULL) {
+		Reference<QuadTreeNode*> c = cur;
 		_insert(c, obj);
 	}
 #ifdef OUTPUTQTERRORS
@@ -578,7 +579,7 @@ bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 	// We don't need the reference anymore. If the object goes out of the
 	// quadtree and there aren't any references left... well... goodbye
 	//data->DecRef ();
-	return cur.get() != NULL;
+	return cur != NULL;
 }
 
 void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
@@ -725,7 +726,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 
 }
 
-void QuadTree::copyObjects(const TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects) {
+void QuadTree::copyObjects(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects) {
 	//	ReadLocker locker(&mutex);
 
 	objects.addAll(node->objects);
@@ -733,38 +734,38 @@ void QuadTree::copyObjects(const TransactionalReference<QuadTreeNode*>& node, fl
 	if (node->hasSubNodes()) {
 		if (node->nwNode != NULL && node->nwNode->testInRange(x, y, range))
 			copyObjects(node->nwNode, x, y, range, objects);
-		if (node->neNode.get() != NULL && node->neNode.get()->testInRange(x, y, range))
+		if (node->neNode != NULL && node->neNode->testInRange(x, y, range))
 			copyObjects(node->neNode, x, y, range, objects);
-		if (node->swNode.get() != NULL && node->swNode.get()->testInRange(x, y, range))
+		if (node->swNode != NULL && node->swNode->testInRange(x, y, range))
 			copyObjects(node->swNode, x, y, range, objects);
-		if (node->seNode.get() != NULL && node->seNode.get()->testInRange(x, y, range))
+		if (node->seNode != NULL && node->seNode->testInRange(x, y, range))
 			copyObjects(node->seNode, x, y, range, objects);
 	}
 }
 
-void QuadTree::copyObjects(const TransactionalReference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects) {
+void QuadTree::copyObjects(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects) {
 	//	ReadLocker locker(&mutex);
 
 	//objects.addAll(node->objects);
 
 	for (int i = 0; i < node->objects.size(); ++i) {
-		objects.add(node->objects.get(i));
+		objects.add(node->objects.get(i).get());
 	}
 
 	if (node->hasSubNodes()) {
 		if (node->nwNode != NULL && node->nwNode->testInRange(x, y, range))
 			copyObjects(node->nwNode, x, y, range, objects);
-		if (node->neNode.get() != NULL && node->neNode.get()->testInRange(x, y, range))
+		if (node->neNode != NULL && node->neNode->testInRange(x, y, range))
 			copyObjects(node->neNode, x, y, range, objects);
-		if (node->swNode.get() != NULL && node->swNode.get()->testInRange(x, y, range))
+		if (node->swNode != NULL && node->swNode->testInRange(x, y, range))
 			copyObjects(node->swNode, x, y, range, objects);
-		if (node->seNode.get() != NULL && node->seNode.get()->testInRange(x, y, range))
+		if (node->seNode != NULL && node->seNode->testInRange(x, y, range))
 			copyObjects(node->seNode, x, y, range, objects);
 	}
 }
 
-void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range) {
-	Reference<QuadTreeNode*> refNode = node.get();
+void QuadTree::_inRange(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range) {
+	Reference<QuadTreeNode*> refNode = node;
 
 	float rangesq = range * range;
 
@@ -824,11 +825,11 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEnt
 	if (refNode->hasSubNodes()) {
 		if (refNode->nwNode != NULL && refNode->nwNode->testInRange(x, y, range))
 			_inRange(refNode->nwNode, obj, range);
-		if (refNode->neNode.get() != NULL && refNode->neNode.get()->testInRange(x, y, range))
+		if (refNode->neNode != NULL && refNode->neNode->testInRange(x, y, range))
 			_inRange(refNode->neNode, obj, range);
-		if (refNode->swNode.get() != NULL && refNode->swNode.get()->testInRange(x, y, range))
+		if (refNode->swNode != NULL && refNode->swNode->testInRange(x, y, range))
 			_inRange(refNode->swNode, obj, range);
-		if (refNode->seNode.get() != NULL && refNode->seNode.get()->testInRange(x, y, range))
+		if (refNode->seNode != NULL && refNode->seNode->testInRange(x, y, range))
 			_inRange(refNode->seNode, obj, range);
 	}
 }
@@ -859,12 +860,12 @@ int QuadTree::inRange(float x, float y, SortedVector<QuadTreeEntry*>& objects) {
 	return 0;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y,
+int QuadTree::_inRange(Reference<QuadTreeNode*>& node, float x, float y,
 		SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
 	int count = 0;
 
-	for (int i = 0; i < node.get()->objects.size(); i++) {
-		QuadTreeEntry *o = node.get()->objects.get(i);
+	for (int i = 0; i < node->objects.size(); i++) {
+		QuadTreeEntry *o = node->objects.get(i);
 
 		if (o->containsPoint(x, y)) {
 			++count;
@@ -872,26 +873,26 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 		}
 	}
 
-	if (node.get()->hasSubNodes()) {
-		if (node.get()->nwNode.get() != NULL && node.get()->nwNode.get()->testInside(x, y))
-			count += _inRange(node.get()->nwNode, x, y, objects);
-		if (node.get()->neNode.get() != NULL && node.get()->neNode.get()->testInside(x, y))
-			count += _inRange(node.get()->neNode, x, y, objects);
-		if (node.get()->swNode.get() != NULL && node.get()->swNode.get()->testInside(x, y))
-			count += _inRange(node.get()->swNode, x, y, objects);
-		if (node.get()->seNode.get() != NULL && node.get()->seNode.get()->testInside(x, y))
-			count += _inRange(node.get()->seNode, x, y, objects);
+	if (node->hasSubNodes()) {
+		if (node->nwNode != NULL && node->nwNode->testInside(x, y))
+			count += _inRange(node->nwNode, x, y, objects);
+		if (node->neNode != NULL && node->neNode->testInside(x, y))
+			count += _inRange(node->neNode, x, y, objects);
+		if (node->swNode != NULL && node->swNode->testInside(x, y))
+			count += _inRange(node->swNode, x, y, objects);
+		if (node->seNode != NULL && node->seNode->testInside(x, y))
+			count += _inRange(node->seNode, x, y, objects);
 	}
 
 	return count;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y,
+int QuadTree::_inRange(Reference<QuadTreeNode*>& node, float x, float y,
 		SortedVector<QuadTreeEntry* >& objects) {
 	int count = 0;
 
-	for (int i = 0; i < node.get()->objects.size(); i++) {
-		QuadTreeEntry *o = node.get()->objects.get(i);
+	for (int i = 0; i < node->objects.size(); i++) {
+		QuadTreeEntry *o = node->objects.get(i);
 
 		if (o->containsPoint(x, y)) {
 			++count;
@@ -899,26 +900,26 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 		}
 	}
 
-	if (node.get()->hasSubNodes()) {
-		if (node.get()->nwNode.get() != NULL && node.get()->nwNode.get()->testInside(x, y))
-			count += _inRange(node.get()->nwNode, x, y, objects);
-		if (node.get()->neNode.get() != NULL && node.get()->neNode.get()->testInside(x, y))
-			count += _inRange(node.get()->neNode, x, y, objects);
-		if (node.get()->swNode.get() != NULL && node.get()->swNode.get()->testInside(x, y))
-			count += _inRange(node.get()->swNode, x, y, objects);
-		if (node.get()->seNode.get() != NULL && node.get()->seNode.get()->testInside(x, y))
-			count += _inRange(node.get()->seNode, x, y, objects);
+	if (node->hasSubNodes()) {
+		if (node->nwNode != NULL && node->nwNode->testInside(x, y))
+			count += _inRange(node->nwNode, x, y, objects);
+		if (node->neNode != NULL && node->neNode->testInside(x, y))
+			count += _inRange(node->neNode, x, y, objects);
+		if (node->swNode != NULL && node->swNode->testInside(x, y))
+			count += _inRange(node->swNode, x, y, objects);
+		if (node->seNode != NULL && node->seNode->testInside(x, y))
+			count += _inRange(node->seNode, x, y, objects);
 	}
 
 	return count;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range,
+int QuadTree::_inRange(Reference<QuadTreeNode*>& node, float x, float y, float range,
 		SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
 	int count = 0;
 
-	for (int i = 0; i < node.get()->objects.size(); i++) {
-		QuadTreeEntry *o = node.get()->objects.get(i);
+	for (int i = 0; i < node->objects.size(); i++) {
+		QuadTreeEntry *o = node->objects.get(i);
 
 		if (o->isInRange(x, y, range)) {
 			++count;
@@ -926,26 +927,26 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 		}
 	}
 
-	if (node.get()->hasSubNodes()) {
-		if (node.get()->nwNode.get() != NULL && node.get()->nwNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->nwNode, x, y, range, objects);
-		if (node.get()->neNode.get() != NULL && node.get()->neNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->neNode, x, y, range, objects);
-		if (node.get()->swNode.get() != NULL && node.get()->swNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->swNode, x, y, range, objects);
-		if (node.get()->seNode.get() != NULL && node.get()->seNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->seNode, x, y, range, objects);
+	if (node->hasSubNodes()) {
+		if (node->nwNode != NULL && node->nwNode->testInRange(x, y, range))
+			count += _inRange(node->nwNode, x, y, range, objects);
+		if (node->neNode != NULL && node->neNode->testInRange(x, y, range))
+			count += _inRange(node->neNode, x, y, range, objects);
+		if (node->swNode != NULL && node->swNode->testInRange(x, y, range))
+			count += _inRange(node->swNode, x, y, range, objects);
+		if (node->seNode != NULL && node->seNode->testInRange(x, y, range))
+			count += _inRange(node->seNode, x, y, range, objects);
 	}
 
 	return count;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range,
+int QuadTree::_inRange(Reference<QuadTreeNode*>& node, float x, float y, float range,
 		SortedVector<QuadTreeEntry* >& objects) {
 	int count = 0;
 
-	for (int i = 0; i < node.get()->objects.size(); i++) {
-		QuadTreeEntry *o = node.get()->objects.get(i);
+	for (int i = 0; i < node->objects.size(); i++) {
+		QuadTreeEntry *o = node->objects.get(i);
 
 		if (o->isInRange(x, y, range)) {
 			++count;
@@ -953,15 +954,15 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 		}
 	}
 
-	if (node.get()->hasSubNodes()) {
-		if (node.get()->nwNode.get() != NULL && node.get()->nwNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->nwNode, x, y, range, objects);
-		if (node.get()->neNode.get() != NULL && node.get()->neNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->neNode, x, y, range, objects);
-		if (node.get()->swNode.get() != NULL && node.get()->swNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->swNode, x, y, range, objects);
-		if (node.get()->seNode.get() != NULL && node.get()->seNode.get()->testInRange(x, y, range))
-			count += _inRange(node.get()->seNode, x, y, range, objects);
+	if (node->hasSubNodes()) {
+		if (node->nwNode != NULL && node->nwNode->testInRange(x, y, range))
+			count += _inRange(node->nwNode, x, y, range, objects);
+		if (node->neNode != NULL && node->neNode->testInRange(x, y, range))
+			count += _inRange(node->neNode, x, y, range, objects);
+		if (node->swNode != NULL && node->swNode->testInRange(x, y, range))
+			count += _inRange(node->swNode, x, y, range, objects);
+		if (node->seNode != NULL && node->seNode->testInRange(x, y, range))
+			count += _inRange(node->seNode, x, y, range, objects);
 	}
 
 	return count;
