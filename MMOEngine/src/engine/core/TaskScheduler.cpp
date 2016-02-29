@@ -11,7 +11,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskManager.h"
 
+#ifndef VERSION_PUBLIC
 #define COUNT_SCHEDULER_TASKS
+#endif
 
 static Time startTime;
 
