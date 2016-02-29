@@ -317,11 +317,11 @@ bool String::beginsWith(const String& str) const {
 }
 
 bool String::endsWith(const char* str) const {
-	return lastIndexOf(str) == count - (int) strlen(str) - 1;
+	return lastIndexOf(str) == count - (int) strlen(str);
 }
 
 bool String::endsWith(const String& str) const {
-	return lastIndexOf(str) == count - str.count - 1;
+	return lastIndexOf(str) == count - str.count;
 }
 
 uint32 String::hashCode() const {

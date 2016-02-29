@@ -97,25 +97,25 @@ namespace engine {
 
 
 #ifdef CXX11_COMPILER
-		  virtual void executeTask(std::function<void()>&& function, const char* name) {
-			  auto taskObject = new LambdaTask(std::move(function), name);
-			  taskObject->execute();
-		  }
+		void executeTask(std::function<void()>&& function, const char* name) {
+			auto taskObject = new LambdaTask(std::move(function), name);
+			taskObject->execute();
+		}
 
-		  virtual void executeTask(const std::function<void()>& function, const char* name) {
-			  auto taskObject = new LambdaTask(function, name);
-			  taskObject->execute();
-		  }
+		void executeTask(const std::function<void()>& function, const char* name) {
+			auto taskObject = new LambdaTask(function, name);
+			taskObject->execute();
+		}
 
-		  virtual void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay) {
-			  auto taskObject = new LambdaTask(std::move(function), name);
-			  taskObject->schedule(delay);
-		  }
+		void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay) {
+			auto taskObject = new LambdaTask(std::move(function), name);
+			taskObject->schedule(delay);
+		}
 
-		  virtual void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
-			  auto taskObject = new LambdaTask(function, name);
-			  taskObject->schedule(delay);
-		  }
+		void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
+			auto taskObject = new LambdaTask(function, name);
+			taskObject->schedule(delay);
+		}
 #endif
 
 
