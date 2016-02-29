@@ -33,7 +33,7 @@ Lua::~Lua() {
 }
 
 void Lua::init() {
-	L = lua_open();
+	L = luaL_newstate();
 	luaL_openlibs(L);
 
 	lua_atpanic(L, Lua::atPanic);
