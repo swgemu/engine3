@@ -28,8 +28,12 @@
 
 //#define PRINT_OBJECT_COUNT
 
+#define MAX_UPDATE_THREADS 20
+#define MIN_UPDATE_THREADS 4
+#define INITIAL_OBJECT_ID 0x1000000 // reserving first ids for snapshot objects
+
 DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
-	nextObjectID = 0x1000000; // reserving first ids
+	nextObjectID = INITIAL_OBJECT_ID;
 
 	objectUpdateInProcess = false;
 	totalUpdatedObjects = 0;
@@ -371,7 +375,7 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 
 	totalUpdatedObjects = 0;
 
-	Time start;
+	//Time start;
 
 	int numberOfObjects = objectsToUpdate->size();
 
@@ -380,7 +384,7 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 
 	int numberOfThreads = numberOfObjects / MAXOBJECTSTOUPDATEPERTHREAD;
 	
-	numberOfThreads = MIN(numberOfThreads, 20);
+	numberOfThreads = MIN(numberOfThreads, MAX_UPDATE_THREADS);
 	int rest = numberOfThreads > 0 ? numberOfObjects % numberOfThreads : 0;
 
 	if (rest != 0)
@@ -389,8 +393,8 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 	while (numberOfThreads > updateModifiedObjectsThreads.size())
 		createUpdateModifiedObjectsThread();
 
-	if (numberOfThreads < 4)
-		numberOfThreads = 4;
+	if (numberOfThreads < MIN_UPDATE_THREADS)
+		numberOfThreads = MIN_UPDATE_THREADS;
 
 	int numberPerThread  = numberOfObjects / numberOfThreads;
 

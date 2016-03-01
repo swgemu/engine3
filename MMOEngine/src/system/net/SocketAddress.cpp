@@ -62,6 +62,7 @@ SocketAddress::SocketAddress(const String& host, int port) {
 	addr.sin_addr.S_un.S_un_b.s_b4 = (unsigned char)hp->h_addr_list[0][3];
 #endif
 
+
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
 }

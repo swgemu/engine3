@@ -44,8 +44,8 @@ namespace sys {
 		bool mkdir();
 		bool mkdirs();
 
-  		int seek(uint32 offset, int origin = SEEK_SET);
-  		int size();
+		int seek(long offset, int origin = SEEK_SET);
+		long size();
 
   		bool setReadOnly();
 

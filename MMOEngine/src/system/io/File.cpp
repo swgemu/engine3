@@ -113,16 +113,16 @@ bool File::mkdirs() {
 	return (status);
 }
 
-int File::seek(uint32 offset, int origin) {
+int File::seek(long offset, int origin) {
 	return fseek(fileDescriptor, offset, origin);
 }
 
-int File::size() {
-	int currentOffset = ftell(fileDescriptor);
+long File::size() {
+	long currentOffset = ftell(fileDescriptor);
 
 	fseek(fileDescriptor, 0L, SEEK_END);
 
-	int size = ftell(fileDescriptor);
+	long size = ftell(fileDescriptor);
 
 	fseek(fileDescriptor, currentOffset, SEEK_SET);
 

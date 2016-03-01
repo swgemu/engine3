@@ -3,13 +3,11 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "engine//core/ManagedObject.h"
+#include "DistributedObjectDirectory.h"
 
 #include "engine/db/ObjectDatabaseManager.h"
 
-#include "engine/log/Logger.h"
-
-#include "DistributedObjectDirectory.h"
+#include "engine/core/ManagedObject.h"
 
 class DirectoryKeyHandler : public KeyHandler<uint64> {
 	AtomicLong id;

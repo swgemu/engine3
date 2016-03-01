@@ -24,9 +24,9 @@ namespace sys {
   	public:
   		Process();
 
-  		void initialize();
+  		virtual void initialize();
 
-  		void start();
+  		virtual void start();
 
   		void wait();
 

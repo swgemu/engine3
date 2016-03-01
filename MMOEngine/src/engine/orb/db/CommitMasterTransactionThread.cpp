@@ -19,6 +19,8 @@ CommitMasterTransactionThread::CommitMasterTransactionThread() {
 
 	objectsToDeleteFromRam = NULL;
 
+	numberOfThreads = 0;
+
 	doRun = true;
 }
 

@@ -61,7 +61,7 @@ void TaskScheduler::start() {
 	Thread::start();
 }
 
-void TaskScheduler::prepareTask(Task* task) {
+void TaskScheduler::prepareTask(Task*) {
 
 }
 

@@ -453,11 +453,15 @@ String String::replaceFirst(const String& regexString, const String& replacement
 
 	int i = pmatch[0].rm_so;
 
+	printf("i:%d\n", i);
+
 	if (i != -1) {
 		if (i > 0 && i + rlen < count)
 			return subString(0, i) + replacement + subString(i + rlen, count);
 		else if (i == 0 && i + rlen < count)
 			return replacement + subString(i + rlen, count);
+		else if (i == 0 && i + rlen == count)
+			return replacement;
 		else if (i > 0 && i + rlen == count)
 			return subString(0, i) + replacement;
 		else
