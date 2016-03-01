@@ -142,18 +142,24 @@ void BaseProtocol::decrypt(Packet* pack) {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
+	if (nLength < 3)
+		return;
+
 	unsigned int nCrcSeed = crcSeed;
     unsigned int *data;
 
     if (pData[0] == 0x00) {
 		nLength -= 4;
-    	data = (unsigned int*) (pData+2);
+    	data = (unsigned int*) (pData + 2);
     } else {
      	nLength -= 3;
-     	data = (unsigned int*) (pData+1);
+     	data = (unsigned int*) (pData + 1);
     }
 
-    short block_count = (nLength / 4);
+	if (nLength <= 0)
+		return;
+
+	short block_count = (nLength / 4);
     short byte_count = (nLength % 4);
     unsigned int itemp;
 
@@ -175,8 +181,11 @@ void BaseProtocol::decompress(Packet* pack) {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
+	if (nLength < 3)
+		return;
+
 	uint16 opcode = *(uint16*)pData;
-	uint16 crc = *(uint16*)(pData+nLength-2);
+	uint16 crc = *(uint16*)(pData + nLength - 2);
 
     char output[COMPRESSION_BUFFER_MAX];
     char* outputPtr = output;
@@ -193,12 +202,12 @@ void BaseProtocol::decompress(Packet* pack) {
     packet.avail_in = 0;
     packet.next_in = Z_NULL;
     inflateInit(&packet);
-    packet.next_in = (Bytef* )(pData+offset);
-    packet.avail_in = (nLength-offset-3);
+    packet.next_in = (Bytef* )(pData + offset);
+    packet.avail_in = (nLength - offset - 3);
     //System::out << "WTF - " << offset << " - " << (nLength-offset-2) << "\n";
     packet.next_out = (Bytef* )output;
     packet.avail_out = COMPRESSION_BUFFER_MAX;
-    inflate(&packet,Z_FINISH);
+    inflate(&packet, Z_FINISH);
     newLength = packet.total_out;
     inflateEnd(&packet); //close buffer*/
 

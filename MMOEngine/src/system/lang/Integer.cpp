@@ -35,7 +35,7 @@ uint32 Integer::hexvalueOf(const String& str) {
 		mul *= 16;
 	}
 
-	return val;
+	return (uint32) (val);
 }
 
 bool Integer::toString(String& str) {
