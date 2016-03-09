@@ -371,8 +371,8 @@ CurrentTransaction* DatabaseManager::getCurrentTransaction() {
 }
 
 void DatabaseManager::addTemporaryObject(Object* object) {
-	if (this == NULL)
-		return;
+//	if (this == NULL)
+//		return;
 
 	if (!loaded)
 		return;
@@ -442,8 +442,8 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 
 void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* masterTransaction) {
 	//printf("commiting local transaction\n");
-	if (this == NULL)
-		return;
+//	if (this == NULL)
+//		return;
 
 	if (!loaded)
 		return;

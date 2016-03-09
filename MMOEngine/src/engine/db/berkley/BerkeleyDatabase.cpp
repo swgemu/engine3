@@ -241,7 +241,6 @@ uint64 BerkeleyDatabase::count(bool forceCalculation, Transaction* txn) {
 	}
 	default:
 		throw DatabaseException("error in BerkeleyDatabase::count unknown database type");
-		break;
 	}
 
 	if (ret != 0) {

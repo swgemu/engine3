@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "UpdateModifiedObjectsThread.h"
 
-void UpdateModifiedObjectsThread::run() {
+void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 	while (doRun) {
 		blockMutex.lock();
 
@@ -31,7 +31,7 @@ void UpdateModifiedObjectsThread::run() {
 	}
 }
 
-void UpdateModifiedObjectsThread::commitTransaction() {
+void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS {
 	if (transaction != NULL) {
 		waitingToCommit = true;
 

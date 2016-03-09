@@ -11,48 +11,42 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace thread {
 
-	class Locker  {
+	class SCOPED_CAPABILITY Locker  {
 		Lockable* lockable;
 
 		bool doLock;
 
 	public:
-		Locker(Lockable* lockable) {
-			acquire(lockable);
+		Locker(Lockable* lock) ACQUIRE(lock) {
+			Locker::doLock = !lock->isLockedByCurrentThread();
+
+			Locker::lockable = lock;
+			lock->lock(doLock);
 		}
 
-		Locker(Lockable* lockable, Lockable* cross) {
-			acquire(lockable, cross);
-		}
+		Locker(Lockable* lock, Lockable* cross) ACQUIRE(lock) {
+			Locker::doLock = !lock->isLockedByCurrentThread();
 
-		virtual ~Locker() {
-			release();
-		}
+			Locker::lockable = lock;
 
-	protected:
-		inline void acquire(Lockable* lockable) {
-			Locker::doLock = !lockable->isLockedByCurrentThread();
-
-			Locker::lockable = lockable;
-			lockable->lock(doLock);
-		}
-
-		inline void acquire(Lockable* lockable, Lockable* cross) {
-			Locker::doLock = !lockable->isLockedByCurrentThread();
-
-			Locker::lockable = lockable;
-
-			if (doLock && lockable != cross) {
+			if (doLock && lock != cross) {
 				assert(cross->isLockedByCurrentThread());
 
-				lockable->lock(cross);
+				lock->lock(cross);
 			} else {
 				doLock = false;
 			}
 		}
 
+		virtual ~Locker() RELEASE() {
+			if (lockable != NULL) {
+				lockable->unlock(doLock);
+				lockable = NULL;
+			}
+		}
+
 	public:
-		inline void release() {
+		inline void release() RELEASE() {
 			if (lockable != NULL) {
 				lockable->unlock(doLock);
 				lockable = NULL;

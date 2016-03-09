@@ -13,7 +13,7 @@ namespace sys {
 
 	class Mutex;
 
-	class ReadWriteLock : public Lockable  {
+	class CAPABILITY("mutex") ReadWriteLock : public Lockable  {
 	protected:
 		pthread_rwlock_t rwlock;
 
@@ -34,27 +34,27 @@ namespace sys {
 			pthread_rwlock_destroy(&rwlock);
 		}
 
-		inline void lock(bool doLock = true) {
+		inline void lock(bool doLock = true) ACQUIRE() {
 			wlock(doLock);
 		}
 
-		virtual void rlock(bool doLock = true);
+		virtual void rlock(bool doLock = true) ACQUIRE_SHARED();
 
-		virtual void wlock(bool doLock = true);
-		virtual void wlock(Mutex* lock);
-		virtual void wlock(ReadWriteLock* lock);
-		virtual void rlock(ReadWriteLock* lock);
-		virtual void rlock(Lockable* lock);
+		virtual void wlock(bool doLock = true) ACQUIRE();
+		virtual void wlock(Mutex* lock) ACQUIRE();
+		virtual void wlock(ReadWriteLock* lock) ACQUIRE();
+		virtual void rlock(ReadWriteLock* lock) ACQUIRE_SHARED();
+		virtual void rlock(Lockable* lock)  ACQUIRE_SHARED();
 
-		void lock(Lockable* lockable);
+		void lock(Lockable* lockable) ACQUIRE();
 
-		inline bool tryWLock() {
+		inline bool tryWLock() TRY_ACQUIRE(true) {
 			return pthread_rwlock_trywrlock(&rwlock) == 0;
 		}
 
-		void unlock(bool doLock = true);
+		void unlock(bool doLock = true) RELEASE();
 
-		virtual void runlock(bool doLock = true);
+		virtual void runlock(bool doLock = true) RELEASE_SHARED();
 
 		inline bool destroy() {
 			pthread_rwlock_wrlock(&rwlock);

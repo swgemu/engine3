@@ -14,7 +14,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ReadWriteLock.h"
 
-void ReadWriteLock::rlock(bool doLock) {
+void ReadWriteLock::rlock(bool doLock) ACQUIRE_SHARED() {
 	if (!doLock)
 		return;
 
@@ -57,7 +57,7 @@ void ReadWriteLock::rlock(bool doLock) {
 	lockAcquired("r");
 }
 
-void ReadWriteLock::wlock(bool doLock) {
+void ReadWriteLock::wlock(bool doLock) ACQUIRE() {
 	if (!doLock)
 		return;
 
@@ -100,7 +100,7 @@ void ReadWriteLock::wlock(bool doLock) {
 	lockAcquired("w");
 }
 
-void ReadWriteLock::wlock(Mutex* lock) {
+void ReadWriteLock::wlock(Mutex* lock) ACQUIRE() {
 	lockAcquiring(lock, "w");
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
@@ -126,7 +126,7 @@ void ReadWriteLock::wlock(Mutex* lock) {
 	lockAcquired(lock, "w");
 }
 
-void ReadWriteLock::rlock(Lockable* lock) {
+void ReadWriteLock::rlock(Lockable* lock) ACQUIRE_SHARED() {
 	lockAcquiring(lock, "r");
 
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
@@ -142,7 +142,7 @@ void ReadWriteLock::rlock(Lockable* lock) {
 	lockAcquired(lock, "r");
 }
 
-void ReadWriteLock::rlock(ReadWriteLock* lock) {
+void ReadWriteLock::rlock(ReadWriteLock* lock) ACQUIRE_SHARED() {
 	lockAcquiring(lock, "r");
 
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
@@ -158,7 +158,7 @@ void ReadWriteLock::rlock(ReadWriteLock* lock) {
 	lockAcquired(lock, "r");
 }
 
-void ReadWriteLock::wlock(ReadWriteLock* lock) {
+void ReadWriteLock::wlock(ReadWriteLock* lock) ACQUIRE() {
 	if (this == lock) {
 #ifdef TRACE_LOCKS
 		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking itself [" << lockName << "]\n";
@@ -199,7 +199,7 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
 	lockAcquired(lock, "w");
 }
 
-void ReadWriteLock::lock(Lockable* lockable) {
+void ReadWriteLock::lock(Lockable* lockable) ACQUIRE() {
 	lockAcquiring(lockable, "w");
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
@@ -213,7 +213,7 @@ void ReadWriteLock::lock(Lockable* lockable) {
 	lockAcquired(lockable, "w");
 }
 
-void ReadWriteLock::unlock(bool doLock) {
+void ReadWriteLock::unlock(bool doLock) RELEASE() {
 	if (!doLock)
 		return;
 
@@ -259,7 +259,7 @@ void ReadWriteLock::unlock(bool doLock) {
 	lockReleased();
 }
 
-void ReadWriteLock::runlock(bool doLock) {
+void ReadWriteLock::runlock(bool doLock) RELEASE_SHARED() {
 	if (!doLock)
 		return;
 

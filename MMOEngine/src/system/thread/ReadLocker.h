@@ -13,30 +13,28 @@
 namespace sys {
   namespace thread {
 
-	class ReadLocker  {
+	class SCOPED_CAPABILITY ReadLocker  {
 		ReadWriteLock* lockable;
 
 		bool doLock;
 
 	public:
-		ReadLocker(ReadWriteLock* lockable) {
-			acquire(lockable);
+		ReadLocker(ReadWriteLock* lock) ACQUIRE_SHARED(lock) {
+			ReadLocker::doLock = !lock->isLockedByCurrentThread();
+
+			ReadLocker::lockable = lock;
+			lock->rlock(doLock);
 		}
 
-		virtual ~ReadLocker() {
-			release();
-		}
-
-	protected:
-		inline void acquire(ReadWriteLock* lockable) {
-			ReadLocker::doLock = !lockable->isLockedByCurrentThread();
-
-			ReadLocker::lockable = lockable;
-			lockable->rlock(doLock);
+		virtual ~ReadLocker() RELEASE() {
+			if (lockable != NULL) {
+				lockable->runlock(doLock);
+				lockable = NULL;
+			}
 		}
 
 	public:
-		inline void release() {
+		inline void release() RELEASE() {
 			if (lockable != NULL) {
 				lockable->runlock(doLock);
 				lockable = NULL;

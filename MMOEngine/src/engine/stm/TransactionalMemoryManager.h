@@ -97,7 +97,7 @@ namespace engine {
 			return baseClientManager;
 		}
 
-		inline void blockTransactions() {
+		inline void blockTransactions() ACQUIRE(Transaction::blockLock) {
 			Transaction::blockLock.wlock();
 		}
 
@@ -121,7 +121,7 @@ namespace engine {
 			failedCompetingCommited.increment();
 		}
 
-		inline void unblockTransactions() {
+		inline void unblockTransactions() RELEASE(Transaction::blockLock) {
 			Transaction::blockLock.unlock();
 		}
 

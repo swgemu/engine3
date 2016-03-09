@@ -38,8 +38,6 @@
 
 #include "engine/util/u3d/Vector3.h"
 
-#include "engine/util/u3d/QuadTree.h"
-
 #include "engine/util/u3d/QuadTreeNode.h"
 
 namespace engine {

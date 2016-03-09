@@ -1,6 +1,6 @@
-#include "Character.h"
-
 #include "StringBuffer.h"
+
+#include "Character.h"
 
 #include <regex.h>
 

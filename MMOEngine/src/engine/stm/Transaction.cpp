@@ -65,7 +65,7 @@ bool Transaction::start() {
 	return start(task);
 }
 
-bool Transaction::start(Task* task) {
+bool Transaction::start(Task* task) NO_THREAD_SAFETY_ANALYSIS {
 	assert(setState(INITIAL, UNDECIDED));
 	assert(task != NULL);
 
@@ -106,7 +106,7 @@ bool Transaction::start(Task* task) {
 	return successFullStart;
 }
 
-bool Transaction::commit() {
+bool Transaction::commit() NO_THREAD_SAFETY_ANALYSIS {
 	//debug("commiting..");
 
 	uint64 startTime = System::getMikroTime();

@@ -18,7 +18,6 @@ import engine.util.Observable;
 
 import engine.util.u3d.Vector3;
 include engine.util.u3d.Coordinate;
-import engine.util.u3d.QuadTree;
 import engine.util.u3d.QuadTreeNode;
 
 class QuadTreeEntry extends Observable {

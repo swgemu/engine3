@@ -13,7 +13,7 @@ namespace sys {
 
 	class ReadWriteLock;
 
-	class Mutex : public Lockable {
+	class CAPABILITY("mutex") Mutex : public Lockable {
 		pthread_mutex_t mutex;
 		pthread_mutexattr_t attr;
 		bool recursiveMutex;
@@ -65,14 +65,15 @@ namespace sys {
 				pthread_mutexattr_destroy(&attr);
 		}
 
-		void lock(bool doLock = true);
-		void lock(Mutex* m);
-		void lock(Lockable* lockable);
+		void lock(bool doLock = true) ACQUIRE();
+		void lock(Mutex* m) ACQUIRE();
+		void lock(Lockable* lockable) ACQUIRE();
 
-		bool tryLock();
-		bool tryLock(uint64 time);
+		bool tryLock() TRY_ACQUIRE(true);
 
-		void unlock(bool doLock = true);
+		bool tryLock(uint64 time) TRY_ACQUIRE(true);
+
+		void unlock(bool doLock = true) RELEASE();
 
 		friend class Condition;
 		friend class ReadWriteLock;
