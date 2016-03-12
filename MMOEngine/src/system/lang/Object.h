@@ -77,9 +77,39 @@ namespace sys {
 
 		Object(const Object& obj);
 
+#ifdef CXX11_COMPILER
+		Object(Object&& o) : referenceCounters(NULL), _destroying(o._destroying) {
+			assert(o.referenceCounters == NULL); // We cant move objects that are referenced
+
+#ifdef TRACE_REFERENCES
+			referenceHolders = NULL;
+#endif
+		}
+#endif
+
 		virtual ~Object();
 
-		virtual Object* clone() {
+		Object& operator=(const Object& o) {
+			if (this == &o)
+				return *this;
+
+			_destroying = o._destroying;
+			return *this;
+		}
+
+#ifdef CXX11_COMPILER
+	    Object& operator=(Object&& o) {
+		    if (this == &o)
+			    return *this;
+
+		    assert(o.referenceCounters == NULL);
+
+		    _destroying = o._destroying;
+		    return *this;
+	    }
+#endif
+
+		  virtual Object* clone() {
 			assert(0 && "clone method not declared");
 
 			return NULL;

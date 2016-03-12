@@ -5,7 +5,7 @@
 void ManagedObject::updateForWrite() {
 }
 
-void ManagedObject::lock(bool doLock) {
+void ManagedObject::lock(bool doLock) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
@@ -23,7 +23,7 @@ void ManagedObject::lock(bool doLock) {
 #endif
 }*/
 
-void ManagedObject::lock(ManagedObject* obj) {
+void ManagedObject::lock(ManagedObject* obj) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
@@ -32,7 +32,7 @@ void ManagedObject::lock(ManagedObject* obj) {
 #endif
 }
 
-void ManagedObject::rlock(bool doLock) {
+void ManagedObject::rlock(bool doLock) ACQUIRE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(doLock);
 
@@ -41,7 +41,7 @@ void ManagedObject::rlock(bool doLock) {
 #endif
 }
 
-void ManagedObject::wlock(bool doLock) {
+void ManagedObject::wlock(bool doLock) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
@@ -50,7 +50,7 @@ void ManagedObject::wlock(bool doLock) {
 #endif
 }
 
-void ManagedObject::wlock(ManagedObject* obj) {
+void ManagedObject::wlock(ManagedObject* obj) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
@@ -59,7 +59,7 @@ void ManagedObject::wlock(ManagedObject* obj) {
 #endif
 }
 
-void ManagedObject::lock(Lockable* obj) {
+void ManagedObject::lock(Lockable* obj) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::lock(obj);
 
@@ -68,7 +68,7 @@ void ManagedObject::lock(Lockable* obj) {
 #endif
 }
 
-void ManagedObject::unlock(bool doLock) {
+void ManagedObject::unlock(bool doLock) RELEASE() {
 #ifndef WITH_STM
 	DistributedObjectStub::unlock(doLock);
 
@@ -78,7 +78,7 @@ void ManagedObject::unlock(bool doLock) {
 }
 
 
-void ManagedObject::rlock(ManagedObject* obj) {
+void ManagedObject::rlock(ManagedObject* obj) ACQUIRE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(obj);
 
@@ -87,7 +87,7 @@ void ManagedObject::rlock(ManagedObject* obj) {
 #endif
 }
 
-void ManagedObject::rlock(Lockable* obj) {
+void ManagedObject::rlock(Lockable* obj) ACQUIRE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(obj);
 
@@ -96,7 +96,7 @@ void ManagedObject::rlock(Lockable* obj) {
 #endif
 }
 
-void ManagedObject::runlock(bool doLock) {
+void ManagedObject::runlock(bool doLock) RELEASE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::runlock(doLock);
 
@@ -155,43 +155,43 @@ bool ManagedObjectImplementation::notifyDestroy() {
 void ManagedObjectImplementation::updateForWrite() {
 }
 
-void ManagedObjectImplementation::lock(bool doLock) {
+void ManagedObjectImplementation::lock(bool doLock) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
 }
 
-void ManagedObjectImplementation::lock(Lockable* obj) {
+void ManagedObjectImplementation::lock(Lockable* obj) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
-void ManagedObjectImplementation::lock(ManagedObject* obj) {
+void ManagedObjectImplementation::lock(ManagedObject* obj) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
-void ManagedObjectImplementation::rlock(Lockable* obj) {
+void ManagedObjectImplementation::rlock(Lockable* obj) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->rlock(obj);
 }
 
-void ManagedObjectImplementation::rlock(ManagedObject* obj) {
+void ManagedObjectImplementation::rlock(ManagedObject* obj) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->rlock(obj);
 }
 
-void ManagedObjectImplementation::rlock(bool doLock) {
+void ManagedObjectImplementation::rlock(bool doLock) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
 }
 
-void ManagedObjectImplementation::wlock(bool doLock) {
+void ManagedObjectImplementation::wlock(bool doLock) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
 }
 
-void ManagedObjectImplementation::wlock(ManagedObject* obj) {
+void ManagedObjectImplementation::wlock(ManagedObject* obj) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->wlock(obj);
 }
 
-void ManagedObjectImplementation::unlock(bool doLock) {
+void ManagedObjectImplementation::unlock(bool doLock) NO_THREAD_SAFETY_ANALYSIS {
 	_this.getReferenceUnsafeStaticCast()->unlock(doLock);
 }
 
-void ManagedObjectImplementation::runlock(bool doLock) {
+void ManagedObjectImplementation::runlock(bool doLock) NO_THREAD_SAFETY_ANALYSIS {
 	//_this->runlock(doLock);
 	_this.getReferenceUnsafeStaticCast()->runlock(doLock);
 }

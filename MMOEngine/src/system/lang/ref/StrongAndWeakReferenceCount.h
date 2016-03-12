@@ -70,6 +70,10 @@ public:
 		return strongReferenceCount.getReferenceCount();
 	}
 
+	void setObject(Object* obj) {
+		object = obj;
+	}
+
 	Object* getObject() {
 		return object;
 	}
