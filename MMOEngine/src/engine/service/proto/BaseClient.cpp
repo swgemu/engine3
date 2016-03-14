@@ -376,78 +376,78 @@ void BaseClient::run() {
 	lock();
 
 	try {
-	        for (int i = 0; i < 8; ++i) {
-		if (isAvailable()) {
-			BasePacket* pack = getNextSequencedPacket();
-			if (pack == NULL) {
-			
-				//if (!reentrantTask->isScheduled()) {
+		for (int i = 0; i < 8; ++i) {
+			if (isAvailable()) {
+				BasePacket* pack = getNextSequencedPacket();
+				if (pack == NULL) {
+
+					//if (!reentrantTask->isScheduled()) {
+					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
+						try {
+							reentrantTask->scheduleInIoScheduler(10);
+						} catch (Exception& e) {
+
+						}
+					}
+
+					unlock();
+					return;
+				}
+
+				if (sequenceBuffer.isEmpty()) {
+					((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
+					pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
+
+					if (!checkupEvent->isScheduled())
+						checkupEvent->scheduleInIoScheduler(pack->getTimeout());
+				}
+
+#ifdef TRACE_CLIENTS
+				StringBuffer msg;
+				msg << "SEND(" << serverSequence << ") - " << pack->toString();
+				debug(msg);
+#endif
+
+				pack->setTimestamp();
+
+				//prepareSend(pack);
+
+				prepareSequence(pack);
+				if (pack->getSequence() != (uint32) realServerSequence++) {
+					StringBuffer msg;
+					msg << "invalid server Packet " << pack->getSequence() << " sent (" << realServerSequence - 1 << ")";
+					error(msg);
+				}
+
+				unlock();
+
+				prepareEncryptionAndCompression(pack);
+
+				lock();
+
+				if (!DatagramServiceClient::send(pack)) {
+					StringBuffer msg;
+					msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
+					debug(msg);
+				}
+
+				//lock();
+
+				sequenceBuffer.add(pack);
+
 				if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
+					reentrantTask->scheduleInIoScheduler(10);
+				}
+
+				/*
+				if (!reentrantTask->isScheduled()) {
 					try {
 						reentrantTask->scheduleInIoScheduler(10);
 					} catch (Exception& e) {
 
 					}
-				}
-
-				unlock();
-				return;
+				}*/
 			}
-
-			if (sequenceBuffer.isEmpty()) {
-				((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
-				pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
-
-				if (!checkupEvent->isScheduled())
-					checkupEvent->scheduleInIoScheduler(pack->getTimeout());
-			}
-
-			#ifdef TRACE_CLIENTS
-				StringBuffer msg;
-				msg << "SEND(" << serverSequence << ") - " << pack->toString();
-				debug(msg);
-			#endif
-
-			pack->setTimestamp();
-
-			//prepareSend(pack);
-			
-			prepareSequence(pack);
-			if (pack->getSequence() != (uint32) realServerSequence++) {
-				StringBuffer msg;
-				msg << "invalid server Packet " << pack->getSequence() << " sent (" << realServerSequence - 1 << ")";
-				error(msg);
-			}
-			
-			unlock();
-
-			prepareEncryptionAndCompression(pack);
-			
-			lock();
-			
-			if (!DatagramServiceClient::send(pack)) {
-				StringBuffer msg;
-				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
-				debug(msg);
-			}
-			
-			//lock();
-			
-			sequenceBuffer.add(pack);
-
-			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
-				reentrantTask->scheduleInIoScheduler(10);
-			}
-
-			/*
-			if (!reentrantTask->isScheduled()) {
-				try {
-					reentrantTask->scheduleInIoScheduler(10);
-				} catch (Exception& e) {
-
-				}
-			}*/
-		}
 		}
 	} catch (SocketException& e) {
 		disconnect("on activate() - " + e.getMessage(), false);
@@ -476,20 +476,15 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 	if (serverSequence - acknowledgedServerSequence > 50) { //originally 25
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
-			
-                try {
-                        if (!checkupEvent->isScheduled()) {
-                                checkupEvent->schedule(5);
-                        }
-                } catch (...) {
-                }
 
-        
-        
-//                resendPackets();
+		try {
+			if (!checkupEvent->isScheduled()) {
+				checkupEvent->scheduleInIoScheduler(5);
+			}
+		} catch (...) {
+		}
 
-        
-                
+//      resendPackets();
 
 		if (sendBuffer.size() > 6000) {
 			StringBuffer msg;
@@ -885,17 +880,16 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			return;
 		}
 
-		int32 realseq = seq;
-		if (realseq < acknowledgedServerSequence) {
-			realseq = (seq & 0xFFFF);
+		uint32 realseq = seq & 0xFFFF;
 
-			uint16 lastAckedOverflow = (uint16) ((acknowledgedServerSequence & 0xFFFF0000) >> 16);
-			uint16 lastAckedSeqRaw = (uint16) (acknowledgedServerSequence & 0x0000FFFF);
+		if (realseq < (uint32)acknowledgedServerSequence) {
+			uint32 lastAckedOverflow = ((uint32)acknowledgedServerSequence >> 16) & 0xFFFF;
+			uint32 lastAckedSeqRaw = (uint32) (acknowledgedServerSequence & 0xFFFF);
 
 			if (realseq < lastAckedSeqRaw) {
 				realseq = (lastAckedOverflow + 1) << 16 | realseq;
 			} else {
-				realseq = (lastAckedOverflow) << 16 | realseq;
+				realseq = (lastAckedOverflow << 16) | realseq;
 			}
 		}
 
@@ -905,7 +899,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			debug(msg);
 		#endif
 		
-		if (realseq < acknowledgedServerSequence) {
+		if (realseq < (uint32) acknowledgedServerSequence) {
 		        unlock();
 		        return;
 		}
@@ -1051,7 +1045,9 @@ void BaseClient::requestNetStatus() {
 }
 
 bool BaseClient::checkNetStatus() {
+#ifdef VERSION_PUBLIC
 	return false;
+#endif
 
 	lock();
 
