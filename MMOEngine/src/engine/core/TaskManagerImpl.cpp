@@ -181,7 +181,8 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		lockers->add(locker);
 	}
 
-/* dont block base clients for db update
+#ifdef VERSION_PUBLIC
+// dont block base clients for db update(causing issues)
 	for (int i = 0; i < ioSchedulers.size(); ++i) {
 		TaskScheduler* scheduler = ioSchedulers.get(i);
 
@@ -190,7 +191,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		Locker* locker = new Locker(blockMutex);
 		lockers->add(locker);
 	}
-	*/
+#endif
 
 	return lockers;
 }
