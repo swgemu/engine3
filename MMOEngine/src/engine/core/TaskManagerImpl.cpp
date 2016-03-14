@@ -181,7 +181,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		lockers->add(locker);
 	}
 
-#ifdef VERSION_PUBLIC
+#ifndef VERSION_PUBLIC
 // dont block base clients for db update(causing issues)
 	for (int i = 0; i < ioSchedulers.size(); ++i) {
 		TaskScheduler* scheduler = ioSchedulers.get(i);
