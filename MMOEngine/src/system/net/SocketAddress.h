@@ -29,6 +29,9 @@ namespace sys {
 		SocketAddress();
 		SocketAddress(int port);
 		SocketAddress(const String& host, int port);
+		SocketAddress(const SocketAddress& add);
+
+		SocketAddress& operator=(const SocketAddress& add);
 
 		void clear();
 
