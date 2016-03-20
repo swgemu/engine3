@@ -45,10 +45,13 @@ SocketAddress::SocketAddress(const String& host, int port) {
 		if (result)
 			freeaddrinfo(result);
 
-		throw SocketException("unknown host " + host + " (error: " + error  + ") ");
+		throw SocketException("unknown host " + host + " (error: " + String::valueOf(error)  + ") ");
 	}
 
-	memmove(&addr, result->ai_addr, result->ai_addrlen);
+	//TODO fix this shit cause IPv6 ai_addrlen is 28 bytes vs sizeof(addr) that is 16
+	uint32 moveSize = MIN(result->ai_addrlen, sizeof(addr));
+
+	memmove(&addr, result->ai_addr, moveSize);
 
 	freeaddrinfo(result);
 #else
