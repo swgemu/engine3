@@ -33,7 +33,7 @@ SocketAddress::SocketAddress(const String& host, int port) {
 
 	bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);*/
 
-	struct addrinfo *result;
+	struct addrinfo *result = NULL;
 
 	int error = getaddrinfo(host.toCharArray(), NULL, NULL, &result);
 

@@ -139,7 +139,7 @@ void BaseClient::initialize() {
 	SocketAddress addr = ServiceClient::getAddress();
 	uint16 port = addr.getPort();
 
-	ServiceClient::setAddress("localhost", port);
+	ServiceClient::setAddress("127.0.0.1", port);
 	#endif
 
 	crcSeed = 0;
@@ -1094,7 +1094,7 @@ bool BaseClient::connect() {
 		SocketAddress addr = ServiceClient::getAddress();
 		uint16 port = addr.getPort();
 
-		ServiceClient::setAddress("localhost", port);
+		ServiceClient::setAddress("127.0.0.1", port);
 		#endif
 
 		debug("sending session request");
