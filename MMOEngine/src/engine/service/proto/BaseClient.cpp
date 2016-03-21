@@ -265,7 +265,7 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 	#endif*/
 
 	try {
-		if (pack->doSequencing())
+		if (pack->doSequencing()) {
 			if (pack->size() >= 490) {
 				if (bufferedPacket != NULL) {
 					sendSequenced(bufferedPacket->getPacket());
@@ -275,8 +275,9 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 				sendFragmented(pack);
 			} else
 				bufferMultiPacket(pack);
-		else
+		} else {
 			sendSequenceLess(pack);
+		}
 	} catch (...) {
 		disconnect("unreported exception on sendPacket()", false);
 	}
@@ -317,6 +318,7 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 		#endif
 
 		prepareSend(pack);
+
 		if (!DatagramServiceClient::send(pack))
 			debug("LOSING " + pack->toString());
 
@@ -522,8 +524,8 @@ bool BaseClient::validatePacket(Packet* pack) {
 #else
 		if (seq < (clientSequence & 0xFFFF)) {
 #endif
-		//acknowledgeClientPackets(seq);
-		Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, seq), 9);
+		acknowledgeClientPackets(seq);
+		//Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, seq), 9);
 
 		return false;
 #ifdef VERSION_PUBLIC
@@ -556,8 +558,8 @@ bool BaseClient::validatePacket(Packet* pack) {
 	} /*else
 		throw Exception("received same packet sequence");*/
 
-	//acknowledgeClientPackets(clientSequence++);
-	Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, clientSequence++), 9);
+	acknowledgeClientPackets(clientSequence++);
+	//Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, clientSequence++), 9);
 		
 
 	#ifdef TRACE_CLIENTS
