@@ -17,99 +17,132 @@ void LuaObject::setField(const String& key, const String& value) {
 	lua_settable(L, -3);
 }
 
-String LuaObject::getStringField(const String& key) {
+String LuaObject::getStringField(const String& key, const char* defaultValue) {
 	const char* result = NULL;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = lua_tostring(L, -1);
+	if (lua_isnil(L, -1))
+		result = defaultValue;
+	else
+		result = lua_tostring(L, -1);
+
 	lua_pop(L, 1);
 
 	if (result != NULL)
 		return String(result);
 	else
-		return String("");
+		return String(defaultValue);
 }
 
-bool LuaObject::getBooleanField(const String& key) {
+bool LuaObject::getBooleanField(const String& key, bool defaultValue) {
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	bool res = lua_toboolean(L, -1);
+	bool res = defaultValue;
+
+	if (!lua_isnil(L, -1))
+		res = lua_toboolean(L, -1);
 
 	lua_pop(L, 1);
 
 	return res;
 }
 
-uint32 LuaObject::getIntField(const String& key) {
-	uint32 result = 0;
+uint32 LuaObject::getIntField(const String& key, uint32 defaultValue) {
+	uint32 result = defaultValue;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (uint32)lua_tointeger(L, -1);
+	if (!lua_isnil(L, -1))
+		result = (uint32)lua_tointeger(L, -1);
+
 	lua_pop(L, 1);
 
 	return result;
 }
 
-int32 LuaObject::getSignedIntField(const String& key) {
-	int32 result = 0;
+int32 LuaObject::getSignedIntField(const String& key, int32 defaultValue) {
+	int32 result = defaultValue;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (int32)lua_tointeger(L, -1);
+	if (!lua_isnil(L, -1))
+		result = (int32)lua_tointeger(L, -1);
+
 	lua_pop(L, 1);
 
 	return result;
 }
 
-uint16 LuaObject::getShortField(const String& key) {
-	uint16 result = 0;
+uint16 LuaObject::getShortField(const String& key, uint16 defaultValue) {
+	uint16 result = defaultValue;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (uint16)lua_tonumber(L, -1);
+	if (!lua_isnil(L, -1))
+		result = (uint16)lua_tointeger(L, -1);
+
 	lua_pop(L, 1);
 
 	return result;
 }
 
-uint8 LuaObject::getByteField(const String& key) {
-	uint8 result = 0;
+uint8 LuaObject::getByteField(const String& key, uint8 defaultValue) {
+	uint8 result = defaultValue;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (uint8)lua_tointeger(L, -1);
+	if (!lua_isnil(L, -1))
+		result = (uint8)lua_tointeger(L, -1);
+
 	lua_pop(L, 1);
 
 	return result;
 }
 
-float LuaObject::getFloatField(const String& key) {
-	float result = 0;
+float LuaObject::getFloatField(const String& key, float defaultValue) {
+	float result = defaultValue;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (float)lua_tonumber(L, -1);
+	if (!lua_isnil(L, -1))
+		result = (float)lua_tonumber(L, -1);
+
 	lua_pop(L, 1);
 
 	return result;
 }
 
-uint64 LuaObject::getLongField(const String& key) {
-	uint64 result = 0;
+double LuaObject::getDoubleField(const String& key, double defaultValue) {
+	double result = defaultValue;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (uint64)lua_tointeger(L, -1);
+	if (!lua_isnil(L, -1))
+		result = (double)lua_tonumber(L, -1);
+
+	lua_pop(L, 1);
+
+	return result;
+}
+
+uint64 LuaObject::getLongField(const String& key, uint64 defaultValue) {
+	uint64 result = defaultValue;
+
+	lua_pushstring(L, key.toCharArray());
+	lua_gettable(L, -2);
+
+	if (!lua_isnil(L, -1))
+		result = (uint64)lua_tointeger(L, -1);
+
 	lua_pop(L, 1);
 
 	return result;
@@ -201,13 +234,26 @@ String LuaObject::getStringAt(int idx) {
 }
 
 float LuaObject::getFloatAt(int idx) {
-	float result = 0.f;
+	float result = 0;
 
 	if (idx > getTableSize() || idx < 1)
 		throw ArrayIndexOutOfBoundsException(idx);
 
 	lua_rawgeti(L, -1, idx);
 	result = (float)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	return result;
+}
+
+double LuaObject::getDoubleAt(int idx) {
+	double result = 0;
+
+	if (idx > getTableSize() || idx < 1)
+		throw ArrayIndexOutOfBoundsException(idx);
+
+	lua_rawgeti(L, -1, idx);
+	result = (double)lua_tonumber(L, -1);
 	lua_pop(L, 1);
 
 	return result;
