@@ -192,7 +192,7 @@ uint32 Lua::getGlobalInt(const String& name) {
 		return 0;
 	}
 
-	result = (uint32)(lua_tonumber(L, -1));
+	result = (uint32)(lua_tointeger(L, -1));
 	lua_pop(L, 1);
 
 	return result;
@@ -234,7 +234,7 @@ uint16 Lua::getGlobalShort(const String& name) {
 		return 0;
 	}
 
-	result = (uint16)(lua_tonumber(L, -1));
+	result = (uint16)(lua_tointeger(L, -1));
 	lua_pop(L, 1);
 
 	return result;
@@ -254,7 +254,7 @@ uint8 Lua::getGlobalByte(const String& name) {
 		return 0;
 	}
 
-	result = (uint8)(lua_tonumber(L, -1));
+	result = (uint8)(lua_tointeger(L, -1));
 	lua_pop(L, 1);
 
 	return result;
@@ -319,7 +319,7 @@ int32 Lua::getIntParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int32)lua_tonumber(lState, -1);
+	result = (int32)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;
@@ -337,7 +337,7 @@ uint32 Lua::getUnsignedIntParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint32)lua_tonumber(lState, -1);
+	result = (uint32)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;
@@ -391,7 +391,7 @@ int16 Lua::getShortParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int16)lua_tonumber(lState, -1);
+	result = (int16)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;
@@ -409,7 +409,7 @@ uint16 Lua::getUnsignedShortParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint16)lua_tonumber(lState, -1);
+	result = (uint16)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;
@@ -427,7 +427,7 @@ int8 Lua::getByteParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int8)lua_tonumber(lState, -1);
+	result = (int8)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;
@@ -445,7 +445,7 @@ uint8 Lua::getUnsignedByteParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint8)lua_tonumber(lState, -1);
+	result = (uint8)lua_tointeger(lState, -1);
 	lua_pop(lState, 1);
 
 	return result;

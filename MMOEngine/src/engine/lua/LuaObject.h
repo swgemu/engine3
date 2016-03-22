@@ -32,6 +32,7 @@ namespace lua {
 
 		virtual String getStringField(const String& key);
 		virtual sys::uint32 getIntField(const String& key);
+		virtual sys::int32 getSignedIntField(const String& key);
 		virtual sys::uint16 getShortField(const String& key);
 		virtual sys::uint8 getByteField(const String& key);
 		virtual float getFloatField(const String& key);
@@ -44,6 +45,7 @@ namespace lua {
 
 		virtual String getStringAt(int idx);
 		virtual sys::uint32 getIntAt(int idx);
+		virtual sys::int32 getSignedIntAt(int idx);
 		virtual float getFloatAt(int idx);
 		virtual LuaObject getObjectAt(int idx);
 		virtual sys::uint64 getLongAt(int idx);

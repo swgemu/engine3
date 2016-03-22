@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 void LuaObject::setField(const String& key, uint64 value) {
 	lua_pushstring(L, key.toCharArray());
-	lua_pushinteger(L, (double)value);
+	lua_pushinteger(L, value);
 	lua_settable(L, -3);
 }
 
@@ -49,7 +49,19 @@ uint32 LuaObject::getIntField(const String& key) {
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (uint32)lua_tonumber(L, -1);
+	result = (uint32)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+
+	return result;
+}
+
+int32 LuaObject::getSignedIntField(const String& key) {
+	int32 result = 0;
+
+	lua_pushstring(L, key.toCharArray());
+	lua_gettable(L, -2);
+
+	result = (int32)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 
 	return result;
@@ -73,7 +85,7 @@ uint8 LuaObject::getByteField(const String& key) {
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
 
-	result = (uint8)lua_tonumber(L, -1);
+	result = (uint8)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 
 	return result;
@@ -128,6 +140,19 @@ sys::uint32 LuaObject::getIntAt(int idx) {
 
 	lua_rawgeti(L, -1, idx);
 	result = (uint32)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+
+	return result;
+}
+
+sys::int32 LuaObject::getSignedIntAt(int idx) {
+	int32 result = 0;
+
+	if (idx > (int)getTableSize() || idx < 1)
+		throw ArrayIndexOutOfBoundsException(idx);
+
+	lua_rawgeti(L, -1, idx);
+	result = (int32)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 
 	return result;
