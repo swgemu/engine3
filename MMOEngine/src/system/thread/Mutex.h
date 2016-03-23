@@ -40,6 +40,12 @@ namespace sys {
 
 		}
 
+		Mutex(const char* s) : Lockable(s) {
+			pthread_mutex_init(&mutex, NULL);
+
+			recursiveMutex = false;
+		}
+
 		Mutex(const String& s) : Lockable(s) {
 			pthread_mutex_init(&mutex, NULL);
 			

@@ -12,13 +12,5 @@ ThreadLocal<MTRand*> System::mtrand;
 PrintStream System::out;
 
 uint32 System::random(unsigned int bucket) {
-	MTRand* localMT = mtrand.get();
-
-	if (localMT == NULL) {
-		localMT = new MTRand();
-
-		mtrand.set(localMT);
-	}
-
-   	return localMT->randInt(bucket);
+   	return getMTRand()->randInt(bucket);
 }
