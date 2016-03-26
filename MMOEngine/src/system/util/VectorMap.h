@@ -163,7 +163,7 @@ namespace sys {
 		}
 
 	protected:
-		virtual int compare(const VectorMapEntry<K, V>& e1, const VectorMapEntry<K, V>& e2);
+		virtual int compare(const VectorMapEntry<K, V>& e1, const VectorMapEntry<K, V>& e2) const;
 
 	};
 
