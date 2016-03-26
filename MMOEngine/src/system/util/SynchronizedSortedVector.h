@@ -18,7 +18,7 @@ namespace sys {
  	 protected:
  		 int insertPlan;
 
- 		 virtual int compare(E& o1, const E& o2) const {
+ 		 virtual int compare(const E& o1, const E& o2) const {
  			 return TypeInfo<E>::compare(o1, o2);
  		 }
 
