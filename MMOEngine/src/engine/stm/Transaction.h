@@ -44,7 +44,7 @@ namespace engine {
 	};
 
 	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandleBase* > {
-		int compare(TransactionalObjectHandleBase*& o1, const TransactionalObjectHandleBase*& o2) const {
+		int compare(const TransactionalObjectHandleBase*& o1, const TransactionalObjectHandleBase*& o2) const {
 			//this needs a specific order based on the header to not create cycle helps
 			return o1->compareTo(o2);
 		}

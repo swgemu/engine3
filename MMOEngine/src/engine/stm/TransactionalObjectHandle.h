@@ -37,7 +37,7 @@ namespace engine {
 
 		virtual bool isCopyEqualToObject() = 0;
 
-		virtual int compareTo(const TransactionalObjectHandleBase* handle) = 0;
+		virtual int compareTo(const TransactionalObjectHandleBase* handle) const = 0;
 
 		virtual Transaction* getCompetingTransaction() = 0;
 
@@ -114,7 +114,7 @@ namespace engine {
 			return compareToHeaders(otherHandle);
 		}
 
-		int compareTo(const TransactionalObjectHandleBase* handle) {
+		int compareTo(const TransactionalObjectHandleBase* handle) const {
 			/*if ((TransactionalObjectHandle*) this == handle)
 				return 0;
 			else if ((TransactionalObjectHandle*) this < handle)
@@ -124,7 +124,7 @@ namespace engine {
 			return compareToHeaders((TransactionalObjectHandle*) handle);
 		}
 
-		int compareToHeaders(TransactionalObjectHandle<O>* handle);
+		int compareToHeaders(const TransactionalObjectHandle<O>* handle) const;
 
 		//uint64 getHeaderID();
 
@@ -274,7 +274,7 @@ namespace engine {
 	}*/
 
 
-	template<class O> int TransactionalObjectHandle<O>::compareToHeaders(TransactionalObjectHandle<O>* handle) {
+	template<class O> int TransactionalObjectHandle<O>::compareToHeaders(const TransactionalObjectHandle<O>* handle) const {
 		if (header == handle->header)
 			return 0;
 		else if (header < handle->header)
