@@ -289,7 +289,7 @@ namespace sys {
 	 	return true;
 	}
 
-	template<class K, class V> int VectorMap<K, V>::compare(const VectorMapEntry<K, V>& e1, const VectorMapEntry<K, V>& e2) {
+	template<class K, class V> int VectorMap<K, V>::compare(const VectorMapEntry<K, V>& e1, const VectorMapEntry<K, V>& e2) const {
 		return TypeInfo<K>::compare(e1.key, e2.key);
 	}
 
