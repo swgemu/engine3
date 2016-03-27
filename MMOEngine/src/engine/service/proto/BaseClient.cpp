@@ -41,7 +41,7 @@ public:
 };
 
 BaseClient::BaseClient() : DatagramServiceClient(),
-		BaseProtocol(), Mutex("Client") {
+		BaseProtocol(), Mutex(true) {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
@@ -62,7 +62,7 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 }
 
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
-		BaseProtocol(), Mutex("Client") {
+		BaseProtocol(), Mutex(true) {
 	bufferedPacket = NULL;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
@@ -83,7 +83,7 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 }
 
 BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClient(sock, addr),
-		BaseProtocol(), Mutex("Client") {
+		BaseProtocol(), Mutex(true) {
 	bufferedPacket = NULL;
 
 	fragmentedPacket = NULL;
