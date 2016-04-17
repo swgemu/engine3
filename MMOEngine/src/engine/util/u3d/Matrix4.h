@@ -16,6 +16,7 @@ namespace engine {
   namespace u3d {
 
  class Matrix3;
+ class Vector3;
 
  class Matrix4 : public Object {
 	 Vector4 matrix[4];
@@ -57,6 +58,7 @@ namespace engine {
 	 void setRotationMatrix(const Matrix3& rot);
 
 	 Matrix4 operator*(const Matrix4& mat) const;
+	 Vector3 operator*(const Vector3& mat) const;
 
  };
 
