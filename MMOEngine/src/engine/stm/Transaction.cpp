@@ -25,7 +25,7 @@ ReadWriteLock Transaction::blockLock;
 AtomicInteger HandleCounter::createdHandles;
 AtomicInteger HandleCounter::deletedHandles;
 
-volatile int ArrayCloneCounter::totalCount = 0;
+//volatile int ArrayCloneCounter::totalCount = 0;
 
 STMAlgorithm* Transaction::commitAlgorithm = new FraserSTM();
 
