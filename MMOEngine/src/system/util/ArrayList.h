@@ -19,11 +19,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace sys {
  namespace util {
-
-   class ArrayCloneCounter {
-   public:
-	   static volatile int totalCount;
-   };
+   template<typename E> class ArrayListReverseIterator;
 
    template<class E> class ArrayList {
    protected:
@@ -37,6 +33,13 @@ namespace sys {
        ArrayList(int incr);
        ArrayList(int initsize, int incr);
        ArrayList(const ArrayList<E>& array);
+
+
+	   typedef E* iterator;
+	   typedef const E* const_iterator;
+
+	   typedef ArrayListReverseIterator<E> reverse_iterator;
+	   typedef ArrayListReverseIterator<const E> const_reverse_iterator;
 
 #ifdef CXX11_COMPILER
        ArrayList(ArrayList<E>&& array);
@@ -85,6 +88,54 @@ namespace sys {
 
        void clone(ArrayList<E>& array) const ;
 
+	   iterator begin() {
+		   return elementData;
+	   }
+
+	   const_iterator begin() const {
+		   return elementData;
+	   }
+
+	   reverse_iterator rbegin() {
+		   return reverse_iterator(elementData + elementCount - 1);
+	   }
+
+	   const_reverse_iterator rbegin() const {
+		   return const_reverse_iterator(elementData + elementCount - 1);
+	   }
+
+	   iterator end() {
+		   return elementData + elementCount;
+	   }
+
+	   const_iterator end() const {
+		   return elementData + elementCount;
+	   }
+
+	   reverse_iterator rend() {
+		   return reverse_iterator(elementData - 1);
+	   }
+
+	   const_reverse_iterator rend() const {
+		   return const_reverse_iterator(elementData - 1);
+	   }
+
+	   const E& back() const {
+		   return get(elementCount - 1);
+	   }
+
+	   E& back() {
+		   return get(elementCount - 1);
+	   }
+
+	   const E& front() const {
+		   return get(0);
+	   }
+
+	   E& front() {
+		   return get(0);
+	   }
+
    protected:
        void init(int initsize, int incr);
 
@@ -119,6 +170,83 @@ namespace sys {
 
    };
 
+	template<typename E>
+	class ArrayListReverseIterator {
+	 E* iterator;
+
+	public:
+	 ArrayListReverseIterator() : iterator() {
+
+	 }
+
+	 ArrayListReverseIterator(E* address) : iterator(address) {
+
+	 }
+
+	 template<typename T>
+	 ArrayListReverseIterator(const ArrayListReverseIterator<T>& it) : iterator(it.getCurrent()) {
+
+	 }
+
+	 ArrayListReverseIterator<E>& operator=(const ArrayListReverseIterator<E>& it) {
+		 if (this == &it)
+			 return *this;
+
+		 iterator = it.iterator;
+
+		 return *this;
+	 }
+
+	 bool operator ==(const ArrayListReverseIterator<E>& b) const {
+		 return b.iterator == iterator;
+	 }
+
+	 bool operator !=(const ArrayListReverseIterator<E>& b) const {
+		 return b.iterator != iterator;
+	 }
+
+	 ArrayListReverseIterator<E>& operator++() {
+		 --iterator;
+
+		 return *this;
+	 }
+
+	 ArrayListReverseIterator<E> operator++(int) {
+		 return ArrayListReverseIterator<E>(iterator--);
+	 }
+
+	 ArrayListReverseIterator<E>& operator--() {
+		 ++iterator;
+
+		 return *this;
+	 }
+
+	 ArrayListReverseIterator<E> operator--(int) {
+		 return ArrayListReverseIterator<E>(iterator++);
+	 }
+
+	 E& operator*() {
+		 return *iterator;
+	 }
+
+	 const E& operator*() const {
+		 return *iterator;
+	 }
+
+	 E* operator->() {
+		 return &(operator*());
+	 }
+
+	 const E* operator->() const {
+	    return &(operator*());
+	 }
+
+	 E* getCurrent() const {
+		 return iterator;
+	 }
+
+   };
+
    template<class E> ArrayList<E>::ArrayList() {
        init(1, 0);
    }
@@ -132,8 +260,6 @@ namespace sys {
    }
 
    template<class E> ArrayList<E>::ArrayList(const ArrayList<E>& array) {
-	   //__sync_add_and_fetch(&ArrayCloneCounter::totalCount, 1);
-
 	   init(array.elementCapacity, array.capacityIncrement);
 
 	   elementCount = array.elementCount;

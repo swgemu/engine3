@@ -23,6 +23,9 @@ namespace engine {
 		float radiusSquared;
 
 	public:
+		Sphere() : radius(0), radiusSquared(0) {
+		}
+
 		Sphere(const Vector3& orig, float rad) : origin(orig), radius(rad),
 			radiusSquared(rad * rad) {
 		}
