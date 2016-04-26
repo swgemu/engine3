@@ -21,6 +21,11 @@ namespace sys {
  namespace util {
    template<typename E> class ArrayListReverseIterator;
 
+	class ArrayCloneCounter {
+	public:
+	    static volatile int totalCount;
+	};
+
    template<class E> class ArrayList {
    protected:
        E* elementData;
