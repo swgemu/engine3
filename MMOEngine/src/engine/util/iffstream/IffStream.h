@@ -81,6 +81,10 @@ namespace engine {
 
 		 void getBytes(int bytes, void* dest);
 
+		 Matrix4 getMatrix3x4Transform();
+		 Vector3 getVector3();
+		 Vector4 getVector4();
+
 		 //void close();
 
 	 private:

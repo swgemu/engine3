@@ -285,3 +285,24 @@ void IffStream::getBytes(int bytes, void* dest) {
 
 	openedChunk->readStream((char*)dest, bytes);
 }
+
+Matrix4 IffStream::getMatrix3x4Transform() {
+	if (openedChunk == NULL)
+		throw NoOpenedChunkException(this);
+
+	return openedChunk->readMatrix3x4Transform();
+}
+
+Vector3 IffStream::getVector3() {
+	if (openedChunk == NULL)
+		throw NoOpenedChunkException(this);
+
+	return openedChunk->readVector3();
+}
+
+Vector4 IffStream::getVector4() {
+	if (openedChunk == NULL)
+		throw NoOpenedChunkException(this);
+
+	return openedChunk->readVector4();
+}

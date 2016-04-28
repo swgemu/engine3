@@ -8,6 +8,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "engine/util/u3d/Matrix4.h"
+#include "engine/util/u3d/Vector3.h"
+#include "engine/util/u3d/Vector4.h"
+
 namespace engine {
  namespace util {
 
@@ -100,6 +104,38 @@ namespace engine {
 				stream << byte;
 
 			str = stream.toString();
+		}
+
+		Matrix4 readMatrix3x4Transform() {
+			Matrix4 mat;
+
+			for (int x = 0; x < 3; ++x) {
+				for (int y = 0; y < 4; ++y) {
+					mat[x][y] = readFloat();
+				}
+			}
+
+			return mat;
+		}
+
+		Vector3 readVector3() {
+			Vector3 vec;
+
+			for (int i = 0; i < 3; ++i) {
+				vec[i] = readFloat();
+			}
+
+			return vec;
+		}
+
+		Vector4 readVector4() {
+			Vector4 vec;
+
+			for (int i = 0; i < 4; ++i) {
+				vec[i] = readFloat();
+			}
+
+			return vec;
 		}
 
 	};
