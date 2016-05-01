@@ -75,6 +75,14 @@ namespace sys {
 			return value;
 		}
 
+		const K& getKey() const {
+			return key;
+		}
+
+		const V& getValue() const {
+			return value;
+		}
+
 		/*bool toString(String& str) {
 			// structure key=value
 			String stringKey, stringValue;

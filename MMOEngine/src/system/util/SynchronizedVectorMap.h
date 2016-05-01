@@ -31,6 +31,8 @@ namespace sys {
  		 V get(int index);
  		 V get(const K& key);
 
+		 K getKey(int index);
+
  		 int find(const K& key);
 
  		 bool toBinaryStream(ObjectOutputStream* stream);
@@ -126,6 +128,12 @@ namespace sys {
 
  		 return obj;
  	 }
+
+	 template<class K, class V> K SynchronizedVectorMap<K, V>::getKey(int index) {
+		 ReadLocker locker(&guard);
+
+		 return vectorMap.elementAt(index).getKey();
+	 }
 
  	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(const K& key) {
  		 ReadLocker locker(&guard);
