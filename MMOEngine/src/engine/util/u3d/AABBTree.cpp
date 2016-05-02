@@ -165,7 +165,7 @@ AABBNode::~AABBNode() {
 	}
 }
 
-int AABBNode::intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result) {
+int AABBNode::intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result) const {
 	float intersectionDistance;
 
 	if (mBox.intersects(ray, 0.f, maxDistance)) {
@@ -189,7 +189,7 @@ int AABBNode::intersects(const Ray& ray, float maxDistance, SortedVector<Interse
 }
 
 //bool intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives = false);
-bool AABBNode::intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives) {
+bool AABBNode::intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives) const {
 	if (mBox.intersects(ray, 0.f, distance)) {
 		if (mChildren[0]) {
 			// recurse to children

@@ -18,7 +18,7 @@ namespace engine {
 
 	class Vector3 : public Variable {
 	protected:
-		float x, y, z;
+		float values[3];
 
 	public:
 		static const Vector3 ZERO;
@@ -30,85 +30,61 @@ namespace engine {
 
 	public:
 		inline Vector3() {
-			x = 0;
-			y = 0;
-			z = 0;
-
-			//addSerializableVariables();
+			memset(values, 0, sizeof(values));
 		}
 
 		Vector3(const Vector3& vec) : Variable() {
-			x = vec.x;
-			y = vec.y;
-			z = vec.z;
-
-			//addSerializableVariables();
+			memcpy(values, vec.values, sizeof(values));
 		}
 
 		inline Vector3(const float fx, const float fy, const float fz) {
-			x = fx;
-			y = fy;
-			z = fz;
-
-			//addSerializableVariables();
+			values[0] = fx;
+			values[1] = fy;
+			values[2] = fz;
 		}
 
 		/**
 		 * Converts a 3 dimensional float array into a Vector3.
 		 */
 		inline explicit Vector3(const float coord[3]) {
-			x = coord[0];
-			y = coord[1];
-			z = coord[2];
-
-			//addSerializableVariables();
+			memcpy(values, coord, sizeof(values));
 		}
 
 		/**
 		 * Converts a 3 dimensional int array into a Vector3.
 		 */
 		inline explicit Vector3(const int coord[3]) {
-			x = (float) coord[0];
-			y = (float) coord[1];
-			z = (float) coord[2];
-
-			//addSerializableVariables();
+			values[0] = (float) coord[0];
+			values[1] = (float) coord[1];
+			values[2] = (float) coord[2];
 		}
 
 		/**
 		 * Converts a float scalar to a Vector3.
 		 */
 		inline explicit Vector3(const float scalar) {
-			x = scalar;
-			y = scalar;
-			z = scalar;;
-
-			//addSerializableVariables();
+			values[0] = scalar;
+			values[1] = scalar;
+			values[2] = scalar;
 		}
 
 		virtual ~Vector3() {
 		}
 
-		/*inline void addSerializableVariables() {
-			addSerializableVariable("x", &x);
-			addSerializableVariable("y", &y);
-			addSerializableVariable("z", &z);
-		}*/
-
 	public:
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			stream->writeFloat(x);
-			stream->writeFloat(z);
-			stream->writeFloat(y);
+			stream->writeFloat(values[0]);
+			stream->writeFloat(values[2]);
+			stream->writeFloat(values[1]);
 
 			return true;
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			x = stream->readFloat();
-			z = stream->readFloat();
-			y = stream->readFloat();
+			values[0] = stream->readFloat();
+			values[2] = stream->readFloat();
+			values[1] = stream->readFloat();
 
 			return true;
 		}
@@ -118,14 +94,14 @@ namespace engine {
 		 * uses much CPU power. Use squaredLength for comparing lengths.
 		 */
 		inline float length() const {
-			return Math::sqrt(x * x + y * y + z * z);
+			return Math::sqrt(values[0] * values[0] + values[1] * values[1] + values[2] * values[2]);
 		}
 
 		/**
 		 * Returns the length before being squared. Good for comparing lengths.
 		 */
 		inline float squaredLength() const {
-			return (x * x + y * y + z * z);
+			return (values[0] * values[0] + values[1] * values[1] + values[2] * values[2]);
 		}
 
 		/**
@@ -153,7 +129,7 @@ namespace engine {
 		 * \return Returns a vector half way in between this vector and the passed in vector.
 		 */
 		inline Vector3 midPoint(const Vector3& v) const {
-			return Vector3((x + v.x) * 0.5f, (y + v.y) * 0.5f, (z + v.z) * 0.5f);
+			return Vector3((values[0] + v.values[0]) * 0.5f, (values[1] + v.values[1]) * 0.5f, (values[2] + v.values[2]) * 0.5f);
 		}
 
 		/**
@@ -162,11 +138,11 @@ namespace engine {
 		 * the dot product must be divided by the product of the length
 		 */
 		inline float dotProduct(const Vector3& v) const {
-			return (x * v.x + y * v.y + z * v.z);
+			return (values[0] * v.values[0] + values[1] * v.values[1] + values[2] * v.values[2]);
 		}
 
 		inline float product() {
-			return dotProduct(Vector3(x, y, z));
+			return dotProduct(Vector3(values));
 		}
 
 		/**
@@ -176,7 +152,7 @@ namespace engine {
 		 * plane, and the vector perpendicular to the two vectors. Imagine a 3D o
 		 */
 		inline Vector3 crossProduct(const Vector3& v) const {
-			return Vector3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
+			return Vector3(values[1] * v.values[2] - values[2] * v.values[1], values[2] * v.values[0] - values[0] * v.values[2], values[0] * v.values[1] - values[1] * v.values[0]);
 		}
 
 		/**
@@ -184,147 +160,159 @@ namespace engine {
 		 */
 		inline String toString() {
 			StringBuffer sb;
-			sb <<"(x:" << x << ", y:" << y << ", z:" << z << ")";
+			sb <<"(x:" << values[0] << ", y:" << values[1] << ", z:" << values[2] << ")";
 			return sb.toString();
+		}
+
+		inline operator float*() {
+			return values;
 		}
 
 		inline float operator [] (uint32 index) const {
 			if (index > 2)
 				throw ArrayIndexOutOfBoundsException(index);
 
-			return *(&x+index);
+			return values[index];
 		}
 
 		inline float& operator [] (uint32 index) {
 			if (index > 2)
 				throw ArrayIndexOutOfBoundsException(index);
 
-			return *(&x+index);
+			return values[index];
+		}
+
+		inline float* toFloatArray() {
+			return values;
+		}
+
+		inline const float* toFloatArray() const {
+			return values;
 		}
 
 		inline Vector3& operator = (const Vector3& v) {
-			x = v.x;
-			y = v.y;
-			z = v.z;
+			values[0] = v.values[0];
+			values[1] = v.values[1];
+			values[2] = v.values[2];
 
 			return *this;
 		}
 
 		inline Vector3& operator = (const float scalar) {
-			x = scalar;
-			y = scalar;
-			z = scalar;
+			values[0] = scalar;
+			values[1] = scalar;
+			values[2] = scalar;
 
 			return *this;
 		}
 
 		inline Vector3 operator + (const Vector3& v) const {
-			return Vector3(x + v.x, y + v.y, z + v.z);
+			return Vector3(values[0] + v.values[0], values[1] + v.values[1], values[2] + v.values[2]);
 		}
 
 		inline Vector3 operator - (const Vector3& v) const {
-			return Vector3(x - v.x, y - v.y, z - v.z);
+			return Vector3(values[0] - v.values[0], values[1] - v.values[1], values[2] - v.values[2]);
 		}
 
 		inline Vector3 operator * (const Vector3& v) const {
-			return Vector3(x * v.x, y * v.y, z * v.z);
+			return Vector3(values[0] * v.values[0], values[1] * v.values[1], values[2] * v.values[2]);
 		}
 
 		Vector3 operator*(const Matrix4& mat) const {
-			return Vector3(x * mat[0][0] + y * mat[1][0] + z * mat[2][0] + mat[3][0],
-					x * mat[0][1] + y * mat[1][1] + z * mat[2][1] + mat[3][1],
-					x * mat[0][2] + y * mat[1][2] + z * mat[2][2] + mat[3][2]);
+			return Vector3(values[0] * mat[0][0] + values[1] * mat[1][0] + values[2] * mat[2][0] + mat[3][0],
+					values[0] * mat[0][1] + values[1] * mat[1][1] + values[2] * mat[2][1] + mat[3][1],
+					values[0] * mat[0][2] + values[1] * mat[1][2] + values[2] * mat[2][2] + mat[3][2]);
 		}
 
 		inline Vector3 operator / (const Vector3& v) const {
-			return Vector3(x / v.x, y / v.y, z / v.z);
+			return Vector3(values[0] / v.values[0], values[1] / v.values[1], values[2] / v.values[2]);
 		}
 
 		inline Vector3& operator += (const Vector3& v) {
-			x += v.x;
-			y += v.y;
-			z += v.z;
+			values[0] += v.values[0];
+			values[1] += v.values[1];
+			values[2] += v.values[2];
 
 			return *this;
 		}
 
 		inline Vector3& operator -= (const Vector3& v) {
-			x -= v.x;
-			y -= v.y;
-			z -= v.z;
+			values[0] -= v.values[0];
+			values[1] -= v.values[1];
+			values[2] -= v.values[2];
 
 			return *this;
 		}
 
 		inline Vector3& operator *= (const Vector3& v) {
-			x *= v.x;
-			y *= v.y;
-			z *= v.z;
+			values[0] *= v.values[0];
+			values[1] *= v.values[1];
+			values[2] *= v.values[2];
 
 			return *this;
 		}
 
 		inline Vector3& operator /= (const Vector3& v) {
-			x /= v.x;
-			y /= v.y;
-			z /= v.z;
+			values[0] /= v.values[0];
+			values[1] /= v.values[1];
+			values[2] /= v.values[2];
 
 			return *this;
 		}
 
 		inline friend Vector3 operator + (const Vector3& v, const float scalar) {
-			return Vector3(v.x + scalar, v.y + scalar, v.z + scalar);
+			return Vector3(v.values[0] + scalar, v.values[1] + scalar, v.values[2] + scalar);
 		}
 
 		inline friend Vector3 operator + (const float scalar, const Vector3& v) {
-			return Vector3(scalar + v.x, scalar + v.y, scalar + v.z);
+			return Vector3(scalar + v.values[0], scalar + v.values[1], scalar + v.values[2]);
 		}
 
 		inline friend Vector3 operator - (const Vector3& v, const float scalar) {
-			return Vector3(v.x - scalar, v.y - scalar, v.z - scalar);
+			return Vector3(v.values[0] - scalar, v.values[1] - scalar, v.values[2] - scalar);
 		}
 
 		inline friend Vector3 operator - (const float scalar, const Vector3& v) {
-			return Vector3(scalar - v.x, scalar - v.y, scalar - v.z);
+			return Vector3(scalar - v.values[0], scalar - v.values[1], scalar - v.values[2]);
 		}
 
 		inline friend Vector3 operator * (const Vector3& v, const float scalar) {
-			return Vector3(v.x * scalar, v.y * scalar, v.z * scalar);
+			return Vector3(v.values[0] * scalar, v.values[1] * scalar, v.values[2] * scalar);
 		}
 
 		inline friend Vector3 operator * (const float scalar, const Vector3& v) {
-			return Vector3(scalar * v.x, scalar * v.y, scalar * v.z);
+			return Vector3(scalar * v.values[0], scalar * v.values[1], scalar * v.values[2]);
 		}
 
 		inline friend Vector3 operator / (const Vector3& v, const float scalar) {
 			if (scalar == 0.0f)
 				throw DivisionByZeroException();
 
-			return Vector3(v.x / scalar, v.y / scalar, v.z / scalar);
+			return Vector3(v.values[0] / scalar, v.values[1] / scalar, v.values[2] / scalar);
 		}
 
 		inline friend Vector3 operator / (const float scalar, const Vector3& v) {
-			return Vector3(scalar / v.x, scalar / v.y, scalar / v.z);
+			return Vector3(scalar / v.values[0], scalar / v.values[1], scalar / v.values[2]);
 		}
 
 		//Boolean operators
 		inline bool operator == (const Vector3& v) const {
-			return (x == v.x && y == v.y && z == v.z);
+			return (values[0] == v.values[0] && values[1] == v.values[1] && values[2] == v.values[2]);
 		}
 
 		inline bool operator != (const Vector3& v) const {
-			return (x != v.x || y != v.y || z != v.z);
+			return (values[0] != v.values[0] || values[1] != v.values[1] || values[2] != v.values[2]);
 		}
 
 		inline bool operator < (const Vector3& v) const {
-			if (x < v.x && y < v.y && z < v.z)
+			if (values[0] < v.values[0] && values[1] < v.values[1] && values[2] < v.values[2])
 				return true;
 
 			return false;
 		}
 
 		inline bool operator > (const Vector3& v) const {
-			if (x > v.x && y > v.y && z > v.z)
+			if (values[0] > v.values[0] && values[1] > v.values[1] && values[2] > v.values[2])
 				return true;
 
 			return false;
@@ -333,20 +321,20 @@ namespace engine {
 		Vector3 getMin(const Vector3& vec) const {
 			Vector3 minVector;
 
-			if (x < vec.x)
-				minVector.setX(x);
+			if (values[0] < vec.values[0])
+				minVector.setX(values[0]);
 			else
-				minVector.setX(vec.x);
+				minVector.setX(vec.values[0]);
 
-			if (y < vec.y)
-				minVector.setY(y);
+			if (values[1] < vec.values[1])
+				minVector.setY(values[1]);
 			else
-				minVector.setY(vec.y);
+				minVector.setY(vec.values[1]);
 
-			if (z < vec.z)
-				minVector.setZ(z);
+			if (values[2] < vec.values[2])
+				minVector.setZ(values[2]);
 			else
-				minVector.setZ(vec.z);
+				minVector.setZ(vec.values[2]);
 
 			return minVector;
 		}
@@ -354,20 +342,20 @@ namespace engine {
 		inline Vector3 getMax(const Vector3& vec) const {
 			Vector3 maxVector;
 
-			if (x > vec.x)
-				maxVector.setX(x);
+			if (values[0] > vec.values[0])
+				maxVector.setX(values[0]);
 			else
-				maxVector.setX(vec.x);
+				maxVector.setX(vec.values[0]);
 
-			if (y > vec.y)
-				maxVector.setY(y);
+			if (values[1] > vec.values[1])
+				maxVector.setY(values[1]);
 			else
-				maxVector.setY(vec.y);
+				maxVector.setY(vec.values[1]);
 
-			if (z > vec.z)
-				maxVector.setZ(z);
+			if (values[2] > vec.values[2])
+				maxVector.setZ(values[2]);
 			else
-				maxVector.setZ(vec.z);
+				maxVector.setZ(vec.values[2]);
 
 			return maxVector;
 		}
@@ -375,43 +363,43 @@ namespace engine {
 		inline float normalize() {
 			float magnitude = length();
 
-			x /= magnitude;
-			y /= magnitude;
-			z /= magnitude;
+			values[0] /= magnitude;
+			values[1] /= magnitude;
+			values[2] /= magnitude;
 
 			return magnitude;
 		}
 
 		//Getters
 		inline float getX() const {
-			return x;
+			return values[0];
 		}
 
 		inline float getY() const {
-			return y;
+			return values[1];
 		}
 
 		inline float getZ() const {
-			return z;
+			return values[2];
 		}
 
 		//Setters
 		inline void setX(float xv) {
-			x = xv;
+			values[0] = xv;
 		}
 
 		inline void setY(float yv) {
-			y = yv;
+			values[1] = yv;
 		}
 
 		inline void setZ(float zv) {
-			z = zv;
+			values[2] = zv;
 		}
 
 		inline void set(float x, float z, float y) {
-			this->x = x;
-			this->y = y;
-			this->z = z;
+			this->values[0] = x;
+			this->values[1] = y;
+			this->values[2] = z;
 		}
 
 		friend class Quaternion;

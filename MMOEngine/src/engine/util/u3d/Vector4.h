@@ -16,59 +16,69 @@ namespace u3d {
 
 class Vector4 {
 protected:
-	float x, y, z, w;
+	float v[4];
 
 public:
 	Vector4() {
-		x = 0, y = 0, z = 0, w = 0;
+		memset(v, 0, sizeof(v));
 	}
 
 	Vector4(float px, float py, float pz, float pw) {
-		x = px;
-		y = py;
-		z = pz;
-		w = pw;
+		v[0] = px;
+		v[1] = py;
+		v[2] = pz;
+		v[3] = pw;
 	}
 
-	Vector4(const Vector4& v) {
-		x = v.x;
-		y = v.y;
-		z = v.z;
-		w = v.w;
+	Vector4(const float values[4]) {
+		memcpy(v, values, sizeof(v));
 	}
 
-	Vector4& operator=(const Vector4& v) {
-		if (this == &v)
+	Vector4(const Vector4& vector) {
+		memcpy(v, vector.v, sizeof(v));
+	}
+
+	Vector4& operator=(const Vector4& vector) {
+		if (this == &vector)
 			return *this;
 
-		x = v.x;
-		y = v.y;
-		z = v.z;
-		w = v.w;
+		memcpy(v, vector.v, sizeof(v));
 
 		return *this;
 	}
 
+	inline operator float*() {
+		return v;
+	}
+
 	void setZero() {
-		x = 0, y = 0, z = 0, w = 0;
+		memset(v, 0, sizeof(v));
 	}
 
 	bool isZero() {
-		return x == 0 && y == 0 && z == 0 && w == 0;
+		return v[0] == 0 && v[1] == 0 && v[2] == 0 && v[3] == 0;
 	}
 
 	inline float& operator[](uint32 index) {
 		if (index > 3)
 			throw ArrayIndexOutOfBoundsException(index);
 
-		return *(&x + index);
+		return v[index];
 	}
 
 	inline float operator[](uint32 index) const {
 		if (index > 3)
 			throw ArrayIndexOutOfBoundsException(index);
 
-		return *(&x + index);
+		return v[index];
+	}
+
+	inline float* toFloatArray() {
+		return v;
+	}
+
+	inline const float* toFloatArray() const {
+		return v;
 	}
 
 };

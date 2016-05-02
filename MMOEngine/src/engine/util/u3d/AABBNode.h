@@ -91,15 +91,15 @@ namespace engine {
 		 * Checks for intersection against ray, stops on any intersection
 		 * @return intersectionDistance, triangle which it intersects
 		 */
-		bool intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives = false);
+		bool intersects(const Ray& ray, float distance, float& intersectionDistance, Triangle*& triangle, bool checkPrimitives = false) const;
 
 		/**
 		 * Checks for all intersections
 		 */
-		int intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result);
+		int intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result) const;
 
 		//returns all the triangles from the mesh
-		void getTriangles(Vector<Triangle*>& triangles) {
+		void getTriangles(Vector<Triangle*>& triangles) const {
 			triangles.addAll(mTriangles);
 
 			if (mChildren[0] != NULL) {
@@ -112,11 +112,23 @@ namespace engine {
 			return mBox;
 		}
 
+		inline const AABB& getBoundingBox() const {
+			return mBox;
+		}
+
 		inline AABBNode* getLeftChild() {
 			return mChildren[0];
 		}
 
+		inline const AABBNode* getLeftChild() const {
+			return mChildren[0];
+		}
+
 		inline AABBNode* getRightChild() {
+			return mChildren[1];
+		}
+
+		inline const AABBNode* getRightChild() const {
 			return mChildren[1];
 		}
 

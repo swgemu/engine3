@@ -78,35 +78,43 @@ namespace engine {
 
 	 bool intersects(const Ray &r, float t0, float t1) const;
 
+	 inline const Vector3* getMinBound() const {
+		 return &mBounds[0];
+	 }
+
 	 inline Vector3* getMinBound() {
 		 return &mBounds[0];
 	 }
 
-	 inline float getXMin() {
+	 inline float getXMin() const {
 		 return mBounds[0].getX();
 	 }
 
-	 inline float getYMin() {
+	 inline float getYMin() const {
 		 return mBounds[0].getY();
 	 }
 
-	 inline float getZMin() {
+	 inline float getZMin() const {
 		 return mBounds[0].getZ();
 	 }
 
-	 inline float getXMax() {
+	 inline float getXMax() const {
 		 return mBounds[1].getX();
 	 }
 
-	 inline float getYMax() {
+	 inline float getYMax() const {
 		 return mBounds[1].getY();
 	 }
 
-	 inline float getZMax() {
+	 inline float getZMax() const {
 		 return mBounds[1].getZ();
 	 }
 
 	 inline Vector3* getMaxBound() {
+		 return &mBounds[1];
+	 }
+
+	 inline const Vector3* getMaxBound() const {
 		 return &mBounds[1];
 	 }
 
