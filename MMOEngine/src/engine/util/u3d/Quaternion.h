@@ -68,9 +68,9 @@ public:
 		float fsin = Math::sin(halfangle);
 
 		w = Math::cos(halfangle);
-		x = axis.x * fsin;
-		y = axis.y * fsin;
-		z = axis.z * fsin;
+		x = axis.getX() * fsin;
+		y = axis.getY() * fsin;
+		z = axis.getZ() * fsin;
 	}
 
 	//inline explicit Quaternion(const Matrix4& matrix) {
