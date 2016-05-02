@@ -47,10 +47,6 @@ public:
 		return *this;
 	}
 
-	inline operator float*() {
-		return v;
-	}
-
 	void setZero() {
 		memset(v, 0, sizeof(v));
 	}

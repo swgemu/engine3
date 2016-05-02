@@ -164,10 +164,6 @@ namespace engine {
 			return sb.toString();
 		}
 
-		inline operator float*() {
-			return values;
-		}
-
 		inline float operator [] (uint32 index) const {
 			if (index > 2)
 				throw ArrayIndexOutOfBoundsException(index);
