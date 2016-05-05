@@ -51,19 +51,19 @@ namespace engine {
 		//             2 = are in the same plane
 		//int intersects(const Ray& ray, Vector3& intersectionPoint);
 
-		bool intersects(const Ray& ray, float maxDistance, float& intersectionDistance);
+		bool intersects(const Ray& ray, float maxDistance, float& intersectionDistance) const;
 
 		Vector3 getNormal() const;
 
 		/**
 		 * returns 0 on success
 		 */
-		int getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertexB);
+		int getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertexB) const;
 
-		Vector3 getLeftSharedVertex(Triangle* tri);
-		Vector3 getRightSharedVertex(Triangle* tri);
+		Vector3 getLeftSharedVertex(Triangle* tri) const;
+		Vector3 getRightSharedVertex(Triangle* tri) const;
 
-		Vector3 getBarycenter();
+		Vector3 getBarycenter() const;
 
 		float area() const;
 
@@ -94,7 +94,7 @@ namespace engine {
 			vertices[8] = vert[2].getZ();
 		}
 
-		inline Vector3 getVertex(int i) const {
+		inline Vector3 getVertex(uint32 i) const {
 			if (i > 2)
 				throw ArrayIndexOutOfBoundsException(i);
 

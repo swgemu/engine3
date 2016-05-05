@@ -176,7 +176,7 @@ AABB Triangle::triAABB() const {
 	return test;
 }*/
 
-bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersectionDistance) {
+bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersectionDistance) const {
 	intersectionDistance = 0;
 
 	/*
@@ -309,7 +309,7 @@ bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersection
 
 }
 
-int Triangle::getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertexB) {
+int Triangle::getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertexB) const {
 	int count = 0;
 
 	for (int i = 0; i < 3; ++i) {
@@ -328,7 +328,7 @@ int Triangle::getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertex
 	return 1;
 }
 
-Vector3 Triangle::getLeftSharedVertex(Triangle* tri) {
+Vector3 Triangle::getLeftSharedVertex(Triangle* tri) const {
 	int firstCommon = -1, secondCommon = -1;
 	int apexID = -1;
 
@@ -366,7 +366,7 @@ Vector3 Triangle::getLeftSharedVertex(Triangle* tri) {
 
 }
 
-Vector3 Triangle::getRightSharedVertex(Triangle* tri) {
+Vector3 Triangle::getRightSharedVertex(Triangle* tri) const {
 	int firstCommon = -1, secondCommon = -1;
 	int apexID = -1;
 
@@ -403,7 +403,7 @@ Vector3 Triangle::getRightSharedVertex(Triangle* tri) {
 		return pointB;
 }
 
-Vector3 Triangle::getBarycenter() {
+Vector3 Triangle::getBarycenter() const {
 	float x = (vertices[0] + vertices[3] + vertices[6]) / 3.f;
 	float y = (vertices[1] + vertices[4] + vertices[7])  / 3.f;
 	float z = (vertices[2] + vertices[5] + vertices[8])  / 3.f;

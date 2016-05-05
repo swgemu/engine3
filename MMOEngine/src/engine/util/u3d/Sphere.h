@@ -37,15 +37,19 @@ namespace engine {
 		bool intersects(const AABB& aabb) const;
 		// renders a sphere
 
-		inline float getRadius() {
+		inline float getRadius() const {
 			return radius;
 		}
 
-		inline float getRadiusSquared() {
+		inline float getRadiusSquared() const {
 			return radiusSquared;
 		}
 
-		inline Vector3 getCenter() {
+		inline Vector3& getCenter() {
+			return origin;
+		}
+
+		inline const Vector3& getCenter() const {
 			return origin;
 		}
 	};
