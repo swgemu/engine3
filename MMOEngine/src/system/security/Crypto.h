@@ -58,7 +58,7 @@ namespace sys {
 			static String randomSalt(uint8 length = 16) {
 				unsigned char buffer[256];
 
-				for(int i = 0; i < length; i++) {
+				for(int i = 0; i < length && i < 256; i++) {
 					buffer[i] = System::random();
 				}
 

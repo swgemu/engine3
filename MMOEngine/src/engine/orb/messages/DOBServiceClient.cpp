@@ -8,7 +8,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "RemoteObjectBroker.h"
 
 #include "DOBServiceHandler.h"
-#include "DOBServiceClient.h"
 
 DOBServiceClient::DOBServiceClient(Socket* sock)
 		: StreamServiceClient(sock), Logger("DistributedObjectBroker") {

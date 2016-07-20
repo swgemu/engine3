@@ -35,7 +35,7 @@ Triangle& Triangle::operator=(const Triangle& tri) {
 void Triangle::transform(const Matrix4& worldMatrix) {
 	for (int i = 0; i < 9; i += 3) {
 		Vector3 vertex(vertices[i], vertices[i + 1], vertices[i + 2]);
-		vertex = vertex * worldMatrix;
+		vertex = worldMatrix * vertex;
 
 		vertices[i] = vertex.getX();
 		vertices[i + 1] = vertex.getY();

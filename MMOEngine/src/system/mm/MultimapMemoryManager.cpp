@@ -5,12 +5,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MultimapMemoryManager.h"
 
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-
-#include <errno.h>
-
 #ifdef PLATFORM_LINUX
 #include <multimmap.h>
 #endif

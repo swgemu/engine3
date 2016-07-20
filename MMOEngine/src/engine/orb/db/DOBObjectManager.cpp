@@ -22,10 +22,6 @@
 
 #include "CommitMasterTransactionThread.h"
 
-#include "DestroyFromRamObjectsTask.h"
-
-#include "DOBObjectManager.h"
-
 //#define PRINT_OBJECT_COUNT
 
 #define MAX_UPDATE_THREADS 20

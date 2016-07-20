@@ -8,9 +8,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Lua.h"
 
 extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
 }
 
 #include "LuaPanicException.h"
@@ -119,9 +116,9 @@ bool Lua::runString(const String& str) {
 			const char* err = lua_tostring(L, -1);
 			lua_pop(L,1);
 
-			StringBuffer msg;
-			msg << "ERROR " << err;
-			info(msg);
+			StringBuffer msg2;
+			msg2 << "ERROR " << err;
+			info(msg2);
 
 			return false;
 		}

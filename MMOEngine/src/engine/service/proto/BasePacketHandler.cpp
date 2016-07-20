@@ -8,17 +8,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/core/Core.h"
 #include "packets/SessionIDRequestMessage.h"
 #include "packets/SessionIDResponseMessage.h"
-#include "packets/ConnectionServerMessage.h"
 #include "packets/NetStatusRequestMessage.h"
-#include "packets/NetStatusResponseMessage.h"
 #include "packets/OutOfOrderMessage.h"
 #include "packets/AcknowledgeMessage.h"
 #include "packets/AcknowledgeOkMessage.h"
-
-#include "events/BaseClientNetStatusCheckupEvent.h"
-#include "events/BaseClientCleanupEvent.h"
-#include "events/BaseClientNetStatusRequestEvent.h"
-#include "events/BaseClientEvent.h"
 
 #include "events/SessionStartTask.h"
 #include "events/SessionResponseTask.h"
@@ -363,6 +356,8 @@ void BasePacketHandler::handleDataChannelPacket(BaseClient* client, Packet* pack
 
 		// semi-worst case waiting time 50 ms
 		// TODO implement preprocess to set this time correctly according to priority
+
+
 
 		message->setClient(client);
 		message->setTimeStampMili(System::getMiliTime() + 50);

@@ -9,7 +9,6 @@
 #include "system/platform.h"
 
 #include "Funnel.h"
-#include "Triangle.h"
 
 Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPoint, Vector<Triangle*>* triangleChannel) {
 	Vector<Vector3>* path = new Vector<Vector3>();

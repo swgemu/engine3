@@ -61,7 +61,7 @@ namespace engine {
  				return 0;
  		}
 
- 		inline float getIntersectionDistance() {
+ 		inline float getIntersectionDistance() const {
  			return intersectionDistance;
  		}
 
@@ -69,6 +69,9 @@ namespace engine {
  			return triangle;
  		}
 
+		inline const Triangle* getTriangle() const {
+			return triangle;
+		}
 
  	};
 

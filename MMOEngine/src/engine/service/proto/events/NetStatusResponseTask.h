@@ -8,6 +8,8 @@
 #ifndef NETSTATUSRESPONSETASK_H_
 #define NETSTATUSRESPONSETASK_H_
 
+#include "engine/service/proto/packets/NetStatusResponseMessage.h"
+
 class NetStatusResponseTask : public Task {
 	Reference<BaseClient*> client;
 	uint16 tick;

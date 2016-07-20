@@ -3,8 +3,6 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "SynchronizedMessageQueue.h"
-
 /*SynchronizedMessageQueue::SynchronizedMessageQueue(int capacity) : ArrayList<Message*>(capacity, 0), Logger("SynchronizedMessageQueue") {
 	blocked = false;
 

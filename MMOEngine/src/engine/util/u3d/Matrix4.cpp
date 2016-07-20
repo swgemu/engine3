@@ -7,8 +7,6 @@
 
 #include "Matrix4.h"
 #include "Matrix3.h"
-#include "Vector3.h"
-#include "Vector4.h"
 
 Matrix4::Matrix4(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
 	matrix[0] = a;

@@ -4,11 +4,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "engine/stm/TransactionalObjectHeader.h"
-#include "engine/orb/DistributedObjectBroker.h"
 #include "engine/orb/db/DOBObjectManager.h"
-
-#include "engine/stm/TransactionAbortedException.h"
-#include "LocalObjectManager.h"
 
 LocalObjectManager::LocalObjectManager() : Logger("LocalObjectManager"),
 		localObjectDirectory(1000), localNamingDirectory(1000) {

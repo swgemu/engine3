@@ -50,6 +50,6 @@ Vector3 Segment::getClosestPoint(const Vector3& segmentA, const Vector3& segment
 	return segmentA + b * v;
 }
 
-Vector3 Segment::getClosestPointTo(const Vector3& point) {
+Vector3 Segment::getClosestPointTo(const Vector3& point) const {
 	return getClosestPoint(pointA, pointB, point);
 }

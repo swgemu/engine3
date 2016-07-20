@@ -9,8 +9,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <sys/epoll.h>
 #endif
 
-#include <errno.h>
-
 #include "IOHandler.h"
 #include "IOException.h"
 

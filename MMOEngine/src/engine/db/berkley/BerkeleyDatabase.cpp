@@ -8,7 +8,6 @@
 #include "../DatabaseException.h"
 
 #include "BerkeleyDatabase.h"
-#include "Cursor.h"
 #include "../ObjectDatabaseManager.h"
 
 using namespace engine::db::berkley;

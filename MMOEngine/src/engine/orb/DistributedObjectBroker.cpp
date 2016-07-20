@@ -11,15 +11,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "control/ObjectBrokerAgent.h"
 
 #include "messages/DOBServiceHandler.h"
-#include "messages/DOBServiceClient.h"
-
-#include "messages/RemoteObjectBroker.h"
 
 #include "db/DOBObjectManager.h"
-
-#include "engine/service/proto/events/BaseClientNetStatusRequestEvent.h"
-#include "engine/service/proto/events/BaseClientNetStatusCheckupEvent.h"
-#include "engine/service/proto/events/BaseClientEvent.h"
 
 DistributedObjectBroker::DistributedObjectBroker()
 		: StreamServiceThread("DistributedObjectBroker") {

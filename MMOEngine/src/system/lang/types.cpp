@@ -14,14 +14,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Bool.h"
 #include "Byte.h"
-#include "Character.h"
 #include "Short.h"
 #include "Long.h"
-#include "Integer.h"
 #include "Float.h"
 #include "Double.h"
-
-#include "system/platform.h"
 
 template<> unsigned int TypeInfoAtomicBase<const char*>::hashCode(const char* const& val) {
 	return Long::hashCode(reinterpret_cast<uint64>(val));

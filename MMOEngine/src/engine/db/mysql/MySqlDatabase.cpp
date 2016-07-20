@@ -5,8 +5,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MysqlDatabaseManager.h"
 
-#include "MySqlDatabase.h"
-
 #include "engine/engine.h"
 
 class MysqlTask : public Task {

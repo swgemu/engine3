@@ -9,21 +9,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DLAllocator.h"
 
-#include "MultimapMemoryManager.h"
-
-#include "Heap.h"
-
 #include <sys/mman.h>
-#include <limits.h>
-
-#include <errno.h>
 
 #ifndef PAGESIZE
 #define PAGESIZE 4096
 #endif
-
-#include "system/thread/Mutex.h"
-#include "system/thread/Locker.h"
 
 Heap::Heap() {
 	mmapManager = MultimapMemoryManager::getInstance();

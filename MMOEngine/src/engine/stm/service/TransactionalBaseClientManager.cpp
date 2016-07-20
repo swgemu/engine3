@@ -9,9 +9,6 @@
 
 #include "engine/service/proto/BasePacket.h"
 #include "engine/service/proto/BaseClient.h"
-#include "engine/service/proto/events/BaseClientNetStatusRequestEvent.h"
-#include "engine/service/proto/events/BaseClientNetStatusCheckupEvent.h"
-#include "engine/service/proto/events/BaseClientEvent.h"
 
 #include "TransactionalBaseClientManager.h"
 

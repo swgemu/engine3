@@ -4,12 +4,6 @@
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
-#include "TaskScheduler.h"
-
-#include "Task.h"
-
-#include "TaskManager.h"
-
 Task::Task() : PriorityQueueEntry() {
 	initialize();
 }

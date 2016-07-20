@@ -9,7 +9,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Long.h"
 
 #include <regex.h>
-#include <cstdarg>
 
 #ifndef CXX11_COMPILER
 	const uint32 String::crctable[256] = {

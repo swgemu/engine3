@@ -7,8 +7,6 @@
 
 #include "AllocationHook.h"
 
-#include "system/platform.h"
-
 #ifdef PLATFORM_MAC
 
 void *(*system_malloc)(malloc_zone_t *zone, size_t size);

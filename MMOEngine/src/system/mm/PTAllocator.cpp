@@ -43,8 +43,6 @@ void PTAllocator::destroy() {
 #endif
 }
 
-#include "system/lang/Time.h"
-
 Time nextPrint;
 
 void* PTAllocator::allocate(size_t size) {

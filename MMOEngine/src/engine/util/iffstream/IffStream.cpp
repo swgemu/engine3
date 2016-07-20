@@ -1,7 +1,5 @@
 #include "IffStream.h"
 
-#include "chunks/Chunk.h"
-
 #include "chunks/form/Form.h"
 #include "chunks/data/Data.h"
 

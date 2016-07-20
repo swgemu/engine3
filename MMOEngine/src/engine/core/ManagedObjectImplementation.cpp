@@ -1,5 +1,4 @@
 #include "ManagedObject.h"
-#include "system/platform.h"
 #include "ObjectUpdateToDatabaseTask.h"
 
 void ManagedObject::updateForWrite() {

@@ -15,13 +15,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "events/BaseClientEvent.h"
 
 #include "packets/SessionIDRequestMessage.h"
-#include "packets/SessionIDResponseMessage.h"
 #include "packets/AcknowledgeMessage.h"
 #include "packets/OutOfOrderMessage.h"
 #include "packets/DisconnectMessage.h"
 #include "packets/NetStatusRequestMessage.h"
-
-#include "system/platform.h"
 
 #include "engine/stm/TransactionalMemoryManager.h"
 

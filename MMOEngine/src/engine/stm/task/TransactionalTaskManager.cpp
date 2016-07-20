@@ -4,9 +4,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "engine/stm/TransactionalObjectHeader.h"
-#include "engine/stm/Transaction.h"
-
-#include "TransactionalTaskManager.h"
 
 void TransactionalTaskManager::initialize() {
 	taskManager = new TaskManagerImpl();

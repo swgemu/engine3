@@ -1,7 +1,5 @@
 #include "../lang/Character.h"
 
-#include "PrintStream.h"
-
 PrintStream::PrintStream() {
 	streamFlags = SF_none;
 	setbuf(stdout, 0);

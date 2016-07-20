@@ -9,7 +9,6 @@
 
 #include "TriangulationAStarAlgorithm.h"
 #include "Segment.h"
-#include "Funnel.h"
 
 Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint, const Vector3& goalPoint, TriangleNode* source, TriangleNode* target) {
 	HashTable<uint32, Reference<AStarNode<TriangleNode, uint32>* > > visited;

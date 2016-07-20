@@ -1,7 +1,5 @@
 #include "StringBuffer.h"
 
-#include "ArrayIndexOutOfBoundsException.h"
-
 ArrayIndexOutOfBoundsException::ArrayIndexOutOfBoundsException() : Exception("ArrayIndexOutOfBoundsException\n") {
 }
 

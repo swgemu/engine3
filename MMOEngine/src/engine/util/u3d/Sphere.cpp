@@ -7,7 +7,6 @@
 
 #include "Sphere.h"
 #include "AABBTree.h"
-#include "Triangle.h"
 
 bool Sphere::intersects(const AABB& aabb) const {
 	float distSqrtToOrigin = aabb.distSqrd(origin);

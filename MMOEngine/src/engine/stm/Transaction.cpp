@@ -7,15 +7,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TransactionalMemoryManager.h"
 
-#include "task/TransactionalTaskManager.h"
-
-#include "TransactionalObjectHandle.h"
-#include "TransactionalObjectHeader.h"
-
-#include "mm/KernelCall.h"
-
-#include "Transaction.h"
-
 #include "algos/FraserSTM.h"
 
 using namespace engine::stm;

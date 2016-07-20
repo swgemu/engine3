@@ -10,8 +10,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "UnicodeString.h"
 
-#include "ArrayIndexOutOfBoundsException.h"
-
 #include "../io/ObjectOutputStream.h"
 #include "../io/ObjectInputStream.h"
 

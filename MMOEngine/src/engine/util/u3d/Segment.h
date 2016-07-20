@@ -43,7 +43,7 @@ namespace engine {
 	  /**
 	   * returns closest point on the segment to point
 	   */
-	  Vector3 getClosestPointTo(const Vector3& point);
+	  Vector3 getClosestPointTo(const Vector3& point) const;
 
 	  static Vector3 getClosestPoint(const Vector3& segmentA, const Vector3& segmentB, const Vector3& point);
   };

@@ -4,24 +4,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "ref/Reference.h"
-#include "ref/WeakReference.h"
 
 #include "engine/core/ManagedReference.h"
-
-#include "system/thread/Locker.h"
-#include "system/mm/MemoryManager.h"
-
-#include "Object.h"
-
-#include "system/util/SortedVector.h"
-#include "system/util/HashSet.h"
-
-#include "engine/stm/TransactionalReference.h"
-#include "engine/stm/TransactionalObjectHeader.h"
-
-#include "StackTrace.h"
-
-#include "system/util/VectorMap.h"
 
 #ifdef TRACE_REFERENCES
 AtomicInteger ReferenceIdCounter::nextID;

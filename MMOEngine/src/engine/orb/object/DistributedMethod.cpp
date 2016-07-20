@@ -7,15 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/orb/DistributedObjectBroker.h"
 
-#include "DistributedObject.h"
-
-#include "DistributedMethod.h"
-
-#include "engine/orb/messages/DOBServiceClient.h"
-
 #include "engine/orb/messages/RemoteObjectBroker.h"
 
-#include "engine/orb/messages/DeployObjectMessage.h"
 #include "engine/orb/messages/InvokeMethodMessage.h"
 
 DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid) {

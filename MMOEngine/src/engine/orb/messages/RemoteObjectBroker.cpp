@@ -15,10 +15,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "GetNextFreeObjectIDMessage.h"
 
-#include "engine/orb/object/DistributedMethod.h"
-
-#include "RemoteObjectBroker.h"
-
 void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 	const String& className = obj->_getClassName();
 	assert(!className.isEmpty());

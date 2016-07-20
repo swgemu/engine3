@@ -6,8 +6,6 @@
  */
 
 #include "ObjectUpdateToDatabaseTask.h"
-#include "ManagedObject.h"
-#include "ManagedReference.h"
 
 ObjectUpdateToDatabaseTask::ObjectUpdateToDatabaseTask(ManagedObject* object) : Task(300000) {
 	ObjectUpdateToDatabaseTask::objectRef = object;

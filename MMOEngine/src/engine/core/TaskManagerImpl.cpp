@@ -11,8 +11,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskScheduler.h"
 
-#include "Task.h"
-
 TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager") {
 	shuttingDown = false;
 

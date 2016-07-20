@@ -10,8 +10,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DatagramServiceThread.h"
 
-#include "../db/ObjectDatabaseManager.h"
-
 DatagramServiceThread::DatagramServiceThread() : ServiceMessageHandlerThread("") {
 	setInfoLogLevel();
 }

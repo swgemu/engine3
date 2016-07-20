@@ -4,20 +4,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "ManagedReference.h"
-#include "system/lang/SignalException.h"
-
-#include "TaskManagerImpl.h"
-
-#include "engine/stm/TransactionalMemoryManager.h"
-#include "engine/stm/task/TransactionalTaskManager.h"
-
-#include "engine/orb/DistributedObjectBroker.h"
 
 #include "engine/db/mysql/MySqlDatabase.h"
-
-#include "engine/core/ManagedReference.h"
-
-#include "Core.h"
 
 
 TaskManager* Core::taskManager;

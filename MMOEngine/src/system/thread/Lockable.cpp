@@ -4,7 +4,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 */
 
 #include "system/lang/Time.h"
-#include "system/lang/System.h"
 
 #include "Thread.h"
 

@@ -3,14 +3,7 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include <errno.h>
-
 #include "Mutex.h"
-
-#include "../lang/Time.h"
-
-#include "../lang/System.h"
-#include "../lang/StackTrace.h"
 
 #include "ReadWriteLock.h"
 

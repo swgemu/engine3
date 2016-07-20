@@ -5,11 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "../lang/System.h"
 
-#include "../io/StringTokenizer.h"
-
 #include "../thread/Thread.h"
-
-#include "StackTrace.h"
 
 String StackTrace::binaryName = "core3";
 

@@ -1,7 +1,5 @@
 #include "System.h"
 
-#include "Exception.h"
-
 #include "SignalException.h"
 
 SignalTranslator<AbortedException> g_objAbortedExceptionTranslator;

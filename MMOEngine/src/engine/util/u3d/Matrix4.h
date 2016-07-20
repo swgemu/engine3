@@ -41,7 +41,7 @@ namespace engine {
 		 return matrix[index];
 	 }
 
-	 inline Vector4 operator [] (uint32 index) const {
+	 inline const Vector4& operator [] (uint32 index) const {
 		 if (index > 3)
 			 throw ArrayIndexOutOfBoundsException(index);
 

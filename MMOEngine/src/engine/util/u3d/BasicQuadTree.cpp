@@ -8,9 +8,6 @@
 #include "engine/log/Logger.h"
 
 #include "engine/util/u3d/BasicQuadTree.h"
-#include "engine/util/u3d/BasicQuadTreeNode.h"
-
-#include <math.h>
 
 
 BasicQuadTreeNode::BasicQuadTreeNode() {

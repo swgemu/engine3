@@ -28,12 +28,12 @@ namespace sys {
 
  		 int put(const K& key, const V& value);
 
- 		 V get(int index);
- 		 V get(const K& key);
+ 		 V get(int index) const;
+ 		 V get(const K& key) const;
 
-		 K getKey(int index);
+		 K getKey(int index) const;
 
- 		 int find(const K& key);
+ 		 int find(const K& key) const;
 
  		 bool toBinaryStream(ObjectOutputStream* stream);
 
@@ -41,7 +41,7 @@ namespace sys {
 
  		 Object* clone();
 
- 		 bool contains(const K& key);
+ 		 bool contains(const K& key) const;
 
  		 bool drop(const K& key);
 
@@ -121,7 +121,7 @@ namespace sys {
  		 return ret;
  	 }
 
- 	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(int index) {
+ 	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(int index) const {
  		 ReadLocker locker(&guard);
 
  		 V obj = vectorMap.get(index);
@@ -129,13 +129,13 @@ namespace sys {
  		 return obj;
  	 }
 
-	 template<class K, class V> K SynchronizedVectorMap<K, V>::getKey(int index) {
+	 template<class K, class V> K SynchronizedVectorMap<K, V>::getKey(int index) const {
 		 ReadLocker locker(&guard);
 
 		 return vectorMap.elementAt(index).getKey();
 	 }
 
- 	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(const K& key) {
+ 	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(const K& key) const {
  		 ReadLocker locker(&guard);
 
  		 V obj = vectorMap.get(key);
@@ -143,7 +143,7 @@ namespace sys {
  		 return obj;
  	 }
 
- 	 template<class K, class V> int SynchronizedVectorMap<K, V>::find(const K& key) {
+ 	 template<class K, class V> int SynchronizedVectorMap<K, V>::find(const K& key) const {
  		 ReadLocker locker(&guard);
 
  		 int ret = vectorMap.find(key);
@@ -151,7 +151,7 @@ namespace sys {
  		 return ret;
  	 }
 
- 	 template<class K, class V> bool SynchronizedVectorMap<K, V>::contains(const K& key) {
+ 	 template<class K, class V> bool SynchronizedVectorMap<K, V>::contains(const K& key) const {
  		ReadLocker locker(&guard);
 
  		bool ret = vectorMap.contains(key);
