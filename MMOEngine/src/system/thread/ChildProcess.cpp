@@ -4,6 +4,7 @@
 
 #include "gdb/GdbStub.h"
 
+#include "system/io/IOProcessor.h"
 #include "system/io/IOHandler.h"
 
 #include "ChildProcess.h"

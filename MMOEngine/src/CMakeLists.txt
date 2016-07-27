@@ -17,6 +17,9 @@ include_directories(../external/multimmap)
 
 message("Compiling for ${ARCH}-bit architecture")
 
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
+
 if (ARCH EQUAL 32)
 	# Create library
 	add_library(engine3_32 SHARED ${system3_sources} ${engine3_sources})
@@ -29,7 +32,7 @@ if (ARCH EQUAL 32)
 
 else ()
 	# Create library
-	add_library(engine3 SHARED ${system3_sources} ${engine3_sources})
+	add_library(engine3 STATIC ${system3_sources} ${engine3_sources})
 
 	TARGET_LINK_LIBRARIES(engine3
 			db-5.3

@@ -6,6 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "MemoryMappedFile.h"
 
 #include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+
+#include <errno.h>
 
 MemoryMappedFile::MemoryMappedFile(const char* name, uint32 size) {
 	fileName = name;
