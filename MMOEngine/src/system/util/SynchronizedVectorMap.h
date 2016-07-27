@@ -124,7 +124,7 @@ namespace sys {
  	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(int index) const {
  		 ReadLocker locker(&guard);
 
- 		 V obj = vectorMap.get(index);
+ 		 V obj = const_cast<VectorMap<K,V>&>(vectorMap).get(index);
 
  		 return obj;
  	 }
@@ -138,7 +138,7 @@ namespace sys {
  	 template<class K, class V> V SynchronizedVectorMap<K, V>::get(const K& key) const {
  		 ReadLocker locker(&guard);
 
- 		 V obj = vectorMap.get(key);
+ 		 V obj = const_cast<VectorMap<K,V>&>(vectorMap).get(key);
 
  		 return obj;
  	 }
