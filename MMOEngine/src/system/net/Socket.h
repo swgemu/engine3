@@ -43,6 +43,8 @@ namespace sys {
 		int sendTo(Packet* pack, SocketAddress* addr);
 		
 		void close();
+
+		int shutdown(int how);
 		
 		void setLingering(int time);
 

@@ -6,8 +6,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Socket.h"
 
 #ifndef PLATFORM_WIN
-#include <sys/socket.h>
-#include <sys/ioctl.h>
 #else
 #include <winsock2.h>
 #endif
@@ -165,6 +163,15 @@ void Socket::close() {
 		closesocket(fileDescriptor);
 	#endif
 }
+
+int Socket::shutdown(int how) {
+#ifndef PLATFORM_WIN
+	::shutdown(fileDescriptor, how);
+#else
+	shutdown(fileDescriptor, how);
+#endif
+}
+
 
 void Socket::setLingering(int time) {
 	int result;

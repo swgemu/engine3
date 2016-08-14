@@ -46,9 +46,12 @@ void StreamServiceThread::start(int p, int mconn) {
 
 void StreamServiceThread::stop() {
 	if (socket != NULL) {
+		setRunning(false);
+
+		socket->shutdown(SHUT_RDWR);
 		socket->close();
 
-		ServiceThread::stop();
+		ServiceThread::stop(true);
 		
 		info("stopped");
 	}

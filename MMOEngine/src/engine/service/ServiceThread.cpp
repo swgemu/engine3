@@ -42,13 +42,14 @@ void ServiceThread::run() {
 void ServiceThread::stop(bool doJoin) {
 	if (isRunning()) {
 		setRunning(false);
+	}
 
-		if (doJoin) {
-			join();
-		} else {
-			kill(0);
-			Thread::sleep(10);
-		}
-	} else
-		throw ServiceException("unable to stop not running service");
+	if (doJoin) {
+		join();
+	} else {
+		kill(0);
+		Thread::sleep(10);
+	}
+	 /*else
+		throw ServiceException("unable to stop not running service");*/
 }
