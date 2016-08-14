@@ -166,12 +166,11 @@ void Socket::close() {
 
 int Socket::shutdown(int how) {
 #ifndef PLATFORM_WIN
-	::shutdown(fileDescriptor, how);
+	return ::shutdown(fileDescriptor, how);
 #else
-	shutdown(fileDescriptor, how);
+	return shutdown(fileDescriptor, how);
 #endif
 }
-
 
 void Socket::setLingering(int time) {
 	int result;
