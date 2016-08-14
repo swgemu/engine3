@@ -101,7 +101,7 @@ namespace engine {
 
 		bool validatePacket(Packet* pack);
 
-		void checkupServerPackets(BasePacket* pack);
+		void checkupServerPackets(sys::uint32 seq);
 
 		void resendPackets(int seq);
 		void resendPackets();

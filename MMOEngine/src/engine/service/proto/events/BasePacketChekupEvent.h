@@ -25,7 +25,8 @@ namespace engine {
 
 	class BasePacketChekupEvent : public Task {
 		BaseClient* client;
-		BasePacket* packet;
+		sys::uint32 sequence;
+		sys::lang::Time timeout;
 
 		sys::uint32 checkupTime;
 
@@ -36,7 +37,12 @@ namespace engine {
 
 		// setters and getters
 		inline void update(BasePacket* pack) {
-			packet = pack;
+			sequence = pack->getSequence();
+			timeout = pack->getTimeout();
+		}
+
+		inline void update(sys::uint32 seq) {
+			sequence = seq;
 		}
 
 		inline void setCheckupTime(sys::uint32 time) {
@@ -55,6 +61,10 @@ namespace engine {
 
 		inline sys::uint32 getCheckupTime() {
 			return checkupTime;
+		}
+
+		inline Time& getPacketTimeout() {
+			return timeout;
 		}
 
 	};
