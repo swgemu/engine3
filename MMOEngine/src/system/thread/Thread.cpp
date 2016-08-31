@@ -23,7 +23,11 @@ AtomicInteger Thread::threadCounter;
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
 
-ThreadLocal<Thread*> Thread::currentThread;
+void threadDtor(void*) {
+
+}
+
+ThreadLocal<Thread*> Thread::currentThread(threadDtor);
 
 volatile uint64 AtomicInteger::totalDecrementCount = 0;
 volatile uint64 AtomicInteger::totalIncrementCount = 0;
