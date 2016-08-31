@@ -28,7 +28,11 @@ TimedTaskQueue::~TimedTaskQueue() {
 	delete condMutex;
 
 	while (size()) {
-		Reference<Task*> task = (Task*) poll();
+		Task* task = (Task*) poll();
+
+		if (task) {
+			task->release();
+		}
 	}
 }
 
