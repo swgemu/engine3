@@ -26,6 +26,10 @@ TimedTaskQueue::TimedTaskQueue() : PriorityQueue(), Condition(), Logger("TaskQue
 
 TimedTaskQueue::~TimedTaskQueue() {
 	delete condMutex;
+
+	while (size()) {
+		Reference<Task*> task = (Task*) poll();
+	}
 }
 
 bool TimedTaskQueue::add(Task* task, uint64 delay) {

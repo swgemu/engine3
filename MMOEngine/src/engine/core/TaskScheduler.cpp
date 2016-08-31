@@ -62,7 +62,7 @@ void TaskScheduler::prepareTask(Task*) {
 void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
-	while ((task = tasks.get()) != NULL) {
+	while (doRun && ((task = tasks.get()) != NULL)) {
 		blockMutex.lock();
 
 		try {

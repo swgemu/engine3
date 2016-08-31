@@ -16,11 +16,38 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
  namespace thread {
 
+	template<typename T>
+	class DefaultThreadLocalDestructor {
+	public:
+		const static int hasDestructor = false;
+
+		void run(void* value) {
+		}
+	};
+
+	template<typename T>
+	class DefaultThreadLocalDestructor<T*> {
+	public:
+		const static int hasDestructor = true;
+
+		void run(void* value) {
+			if (value) {
+				delete reinterpret_cast<T*>(value);
+			}
+		}
+	};
+
 	template<class T> class ThreadLocal {
 		pthread_key_t dataKey;
-
+		void (*keyDestructor)(void*);
 	public:
 		ThreadLocal();
+
+		/**
+		 *  If a destructor is specified, key_delete is not called in ThreadLocal dtor
+		 * @param keyDestructor
+		 */
+		ThreadLocal(void (*keyDestructor)(void*));
 
 		virtual ~ThreadLocal();
 
@@ -31,9 +58,14 @@ namespace sys {
 		void set(const T& value);
 
 	protected:
-		void createKey();
+		void createKey(void (*keyDestructor)(void*) = NULL);
 
-		void deleteKey();
+		static void defaultThreadLocalDeleteDtor(void* value) {
+			DefaultThreadLocalDestructor<T> destructor;
+			destructor.run(value);
+		}
+
+		virtual void deleteKey();
 
 		virtual T initValue() {
 			return TypeInfo<T>::nullValue();
@@ -42,12 +74,17 @@ namespace sys {
 		T getValue();
 	};
 
-	template<class T> ThreadLocal<T>::ThreadLocal() {
-		createKey();
+	template<class T> ThreadLocal<T>::ThreadLocal() : keyDestructor(NULL) {
+		createKey(NULL);
+	}
+
+	template<class T> ThreadLocal<T>::ThreadLocal(void (*keyDtor)(void*) ) : keyDestructor(NULL) {
+		createKey(keyDtor);
 	}
 
 	template<class T> ThreadLocal<T>::~ThreadLocal() {
-		deleteKey();
+		if (!keyDestructor)
+			deleteKey();
 	}
 
 	template<class T> T ThreadLocal<T>::get() {
@@ -67,11 +104,17 @@ namespace sys {
 	}
 
 	template <class T> void ThreadLocal<T>::set(const T& value) {
-		pthread_setspecific(dataKey, (void*) value);
+		pthread_setspecific(dataKey, reinterpret_cast<void*>(value));
 	}
 
-	template<class T> void ThreadLocal<T>::createKey() {
-		if (pthread_key_create(&dataKey, NULL) != 0) {
+	template<class T> void ThreadLocal<T>::createKey(void (*dtor)(void*)) {
+		if (dtor == NULL && TypeInfo<T>::type == TypeInfoAtomicBase<T>::POINTER) {
+			keyDestructor = defaultThreadLocalDeleteDtor;
+		} else {
+			keyDestructor = dtor;
+		}
+
+		if (pthread_key_create(&dataKey, keyDestructor) != 0) {
 			raise(SIGSEGV);
 		}
 	}
