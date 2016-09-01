@@ -22,6 +22,9 @@ TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager")
 }
 
 TaskManagerImpl::~TaskManagerImpl() {
+	for (int i = 0; i < taskQueues.size(); ++i) {
+		delete taskQueues.get(i);
+	}
 }
 
 void TaskManagerImpl::initialize() {
