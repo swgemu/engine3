@@ -104,16 +104,6 @@ void TaskManagerImpl::setLogLevel(int level) {
 void TaskManagerImpl::shutdown() {
 	shuttingDown = true;
 
-	while (!workers.isEmpty()) {
-		lock();
-
-		Reference<TaskWorkerThread*> worker = workers.remove(0);
-
-		unlock();
-
-		worker->stop();
-	}
-
 	while (!schedulers.isEmpty()) {
 		lock();
 
@@ -134,16 +124,27 @@ void TaskManagerImpl::shutdown() {
 		scheduler->stop();
 	}
 
-	while (!taskQueues.isEmpty()) {
-		lock();
+	Vector<TaskQueue*> queues;
 
+	while (!taskQueues.isEmpty()) {
 		TaskQueue* taskQueue = taskQueues.remove(0);
 		taskQueue->flush();
 
-		delete taskQueue;
+		queues.add(taskQueue);
+	}
+
+	while (!workers.isEmpty()) {
+		lock();
+
+		Reference<TaskWorkerThread*> worker = workers.remove(0);
 
 		unlock();
 
+		worker->stop();
+	}
+
+	for (int i = 0; i < queues.size(); ++i) {
+		delete queues.get(i);
 	}
 
 	debug("stopped");
