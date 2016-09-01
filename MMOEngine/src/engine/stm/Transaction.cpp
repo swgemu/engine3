@@ -18,7 +18,7 @@ AtomicInteger HandleCounter::deletedHandles;
 
 volatile int ArrayCloneCounter::totalCount = 0;
 
-STMAlgorithm* Transaction::commitAlgorithm = new FraserSTM();
+UniqueReference<STMAlgorithm*> Transaction::commitAlgorithm(new FraserSTM());
 
 Transaction::Transaction(uint64 id) : Logger(), task(NULL) {
 	status = INITIAL;

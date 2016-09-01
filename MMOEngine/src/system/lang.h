@@ -15,6 +15,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "mm/MemoryManager.h"
 
 #include "lang/ref/Reference.h"
+#include "lang/ref/UniqueReference.h"
 #include "lang/ref/WeakReference.h"
 
 #include "lang/Exception.h"

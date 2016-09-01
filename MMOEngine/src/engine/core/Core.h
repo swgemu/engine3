@@ -28,7 +28,7 @@ using namespace engine::ORB;
 namespace engine {
   namespace core {
 	class Core : public Thread {
-		static TaskManager* taskManager;
+		static UniqueReference<TaskManager*> taskManager;
 
 		static ObjectBroker* objectBroker;
 

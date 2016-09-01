@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/db/mysql/MySqlDatabase.h"
 
 
-TaskManager* Core::taskManager;
+UniqueReference<TaskManager*> Core::taskManager;
 ObjectBroker* Core::objectBroker;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
@@ -89,14 +89,14 @@ void Core::scheduleTask(Task* task, Time& time) {
 }*/
 
 TaskManager* Core::getTaskManager() {
-	if (taskManager == NULL)
+	if (taskManager.get() == NULL)
 	#ifdef WITH_STM
 		taskManager = new TransactionalTaskManager();
 	#else
-		taskManager= new TaskManagerImpl();
+		taskManager = new TaskManagerImpl();
 	#endif
 
-	return taskManager;
+	return taskManager.get();
 }
 
 ObjectBroker* Core::getObjectBroker() {

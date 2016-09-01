@@ -107,7 +107,7 @@ namespace engine {
 		uint64 commitTime;
 		uint64 runTime;
 
-		static STMAlgorithm* commitAlgorithm;
+		static UniqueReference<STMAlgorithm*> commitAlgorithm;
 
 	public:
 		static ReadWriteLock blockLock;
