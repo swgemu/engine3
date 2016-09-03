@@ -3,15 +3,15 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include "String.h"
 #include "StringBuffer.h"
 
 #include "UnicodeString.h"
 
-#include "../io/ObjectOutputStream.h"
-#include "../io/ObjectInputStream.h"
+#include "system/io/ObjectOutputStream.h"
+#include "system/io/ObjectInputStream.h"
 
 UnicodeString::UnicodeString() : Variable() {
 	create("", 0);

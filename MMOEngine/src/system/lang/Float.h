@@ -12,8 +12,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "NumberFormatException.h"
 
-#include "../io/ObjectOutputStream.h"
-#include "../io/ObjectInputStream.h"
+#include "system/io/ObjectOutputStream.h"
+#include "system/io/ObjectInputStream.h"
 
 namespace sys {
   namespace lang {

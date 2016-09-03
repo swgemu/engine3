@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef WEAKREFERENCE_H_
 #define WEAKREFERENCE_H_
 
-#include "../Variable.h"
+#include "system/lang/Variable.h"
 
 #include "system/thread/ReadWriteLock.h"
 #include "system/thread/Locker.h"

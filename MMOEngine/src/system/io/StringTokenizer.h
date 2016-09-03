@@ -6,12 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef STRINGTOKENIZER_H_
 #define STRINGTOKENIZER_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../lang/Exception.h"
+#include "system/lang/Exception.h"
 
-#include "../lang/String.h"
-#include "../lang/StringBuffer.h"
+#include "system/lang/String.h"
+#include "system/lang/StringBuffer.h"
 
 namespace sys {
   namespace io {

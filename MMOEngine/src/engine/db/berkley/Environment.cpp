@@ -5,7 +5,7 @@
  *      Author: victor
  */
 
-#include "../DatabaseException.h"
+#include "engine/db/DatabaseException.h"
 
 #include "Environment.h"
 #include "BTransaction.h"

@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "../IffStream.h"
+#include "engine/util/iffstream/IffStream.h"
 
 class IffStreamException : public Exception {
 protected:

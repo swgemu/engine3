@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef BASEMESSAGE_H_
 #define BASEMESSAGE_H_
 
-#include "../DatagramServiceClient.h"
+#include "engine/service/DatagramServiceClient.h"
 
 #include "BasePacket.h"
 

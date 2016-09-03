@@ -8,9 +8,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 //#define TRACE_MESSAGES
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
-#include "../log/Logger.h"
+#include "engine/log/Logger.h"
 
 #include "Message.h"
 

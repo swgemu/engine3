@@ -16,7 +16,7 @@ namespace engine {
   } // namespace service
 } // namespace engine
 
-#include "../BaseClient.h"
+#include "engine/service/proto/BaseClient.h"
 
 namespace engine {
   namespace service {

@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define TASKWORKERTHREAD_H_
 
 
-#include "../service/ServiceThread.h"
+#include "engine/service/ServiceThread.h"
 
 namespace engine {
   namespace core {

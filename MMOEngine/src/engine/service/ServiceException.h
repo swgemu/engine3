@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SERVICEEXCEPTION_H_
 #define SERVICEEXCEPTION_H_
 
-#include "../../system/lang/Exception.h"
+#include "system/lang/Exception.h"
 
 namespace engine {
   namespace service {

@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SOCKETEXCEPTION_H_
 #define SOCKETEXCEPTION_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #ifndef PLATFORM_WIN
 #include <errno.h>
@@ -15,9 +15,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <windows.h>
 #endif
 
-#include "../lang/Exception.h"
+#include "system/lang/Exception.h"
 
-#include "../lang/StringBuffer.h"
+#include "system/lang/StringBuffer.h"
 
 namespace sys {
   namespace net {

@@ -14,7 +14,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang/Long.h"
 
-#include "../ResultSet.h"
+#include "engine/db/ResultSet.h"
 
 namespace engine {
   namespace db {

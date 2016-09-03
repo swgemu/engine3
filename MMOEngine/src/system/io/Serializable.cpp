@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Serializable.h"
 
-#include "../lang.h"
+#include "system/lang.h"
 
 #include "engine/log/Logger.h"
 

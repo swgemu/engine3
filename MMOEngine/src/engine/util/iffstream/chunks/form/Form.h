@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "../Chunk.h"
+#include "engine/util/iffstream/chunks/Chunk.h"
 
 namespace engine {
  namespace util {

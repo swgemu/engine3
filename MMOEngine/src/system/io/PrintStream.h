@@ -6,10 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PRINTSTREAM_H_
 #define PRINTSTREAM_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../lang/String.h"
-#include "../lang/StringBuffer.h"
+#include "system/lang/String.h"
+#include "system/lang/StringBuffer.h"
 
 namespace sys {
   namespace io {

@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef STREAMSERVICECLIENT_H_
 #define STREAMSERVICECLIENT_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 #include "ServiceClient.h"
 

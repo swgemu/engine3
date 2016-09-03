@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef NETSTATUSRESPONSEMESSAGE_H_
 #define NETSTATUSRESPONSEMESSAGE_H_
 
-#include "../BaseProtocol.h"
+#include "engine/service/proto/BaseProtocol.h"
 
 namespace engine {
   namespace service {

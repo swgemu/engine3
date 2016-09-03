@@ -3,7 +3,7 @@
 
 #include "system/lang.h"
 
-#include "../BaseClient.h"
+#include "engine/service/proto/BaseClient.h"
 
 class BaseClientCleanupEvent : public Task {
 	Reference<BaseClient*> client;

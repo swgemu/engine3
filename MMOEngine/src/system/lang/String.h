@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef STRING_H_
 #define STRING_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 #include "Variable.h"
 
 #define SSO_STRING

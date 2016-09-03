@@ -73,14 +73,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define NO_THREAD_SAFETY_ANALYSIS \
   THREAD_ANNOTATION_ATTRIBUTE__(no_thread_safety_analysis)
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include <pthread.h>
 
-#include "../lang/String.h"
+#include "system/lang/String.h"
 
-#include "../lang/StackTrace.h"
-#include "../lang/Time.h"
+#include "system/lang/StackTrace.h"
+#include "system/lang/Time.h"
 
 #include "atomic/AtomicInteger.h"
 

@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PACKET_H_
 #define PACKET_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #ifndef PLATFORM_WIN
 #include <arpa/inet.h>
@@ -14,12 +14,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <winsock2.h>
 #endif
 
-#include "../lang/String.h"
-#include "../lang/UnicodeString.h"
-#include "../lang/Object.h"
+#include "system/lang/String.h"
+#include "system/lang/UnicodeString.h"
+#include "system/lang/Object.h"
 
-#include "../io/ObjectInputStream.h"
-#include "../io/ObjectOutputStream.h"
+#include "system/io/ObjectInputStream.h"
+#include "system/io/ObjectOutputStream.h"
 
 #include "PacketIndexOutOfBoundsException.h"
 

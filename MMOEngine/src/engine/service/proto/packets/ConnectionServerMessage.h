@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef CONNECTIONSERVERMESSAGE_H_
 #define CONNECTIONSERVERMESSAGE_H_
 
-#include "../BaseProtocol.h"
+#include "engine/service/proto/BaseProtocol.h"
 
 namespace engine {
   namespace service {

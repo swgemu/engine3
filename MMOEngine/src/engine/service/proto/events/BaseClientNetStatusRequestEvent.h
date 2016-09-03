@@ -8,8 +8,8 @@
 #ifndef BASECLIENTNETSTATUSREQUESTEVENT_H_
 #define BASECLIENTNETSTATUSREQUESTEVENT_H_
 
-#include "../BasePacket.h"
-#include "../BaseClient.h"
+#include "engine/service/proto/BasePacket.h"
+#include "engine/service/proto/BaseClient.h"
 
 namespace engine {
   namespace service {

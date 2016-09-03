@@ -8,10 +8,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "../../log/Logger.h"
+#include "engine/log/Logger.h"
 
-#include "../ServiceClient.h"
-#include "../ServiceHandler.h"
+#include "engine/service/ServiceClient.h"
+#include "engine/service/ServiceHandler.h"
 
 #include "BaseClient.h"
 

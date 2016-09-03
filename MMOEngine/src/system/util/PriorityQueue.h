@@ -6,9 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PRIORITYQUEUE_H_
 #define PRIORITYQUEUE_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../lang/Exception.h"
+#include "system/lang/Exception.h"
 
 namespace sys {
   namespace util {

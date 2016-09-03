@@ -6,13 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef UNICODETOKENIZER_H_
 #define UNICODETOKENIZER_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../lang/Exception.h"
+#include "system/lang/Exception.h"
 
-#include "../lang/UnicodeString.h"
+#include "system/lang/UnicodeString.h"
 
-#include "../lang/StringBuffer.h"
+#include "system/lang/StringBuffer.h"
 
 namespace sys {
   namespace io {

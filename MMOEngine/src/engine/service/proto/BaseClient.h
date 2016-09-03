@@ -8,8 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "../DatagramServiceClient.h"
-#include "../DatagramServiceThread.h"
+#include "engine/service/DatagramServiceClient.h"
+#include "engine/service/DatagramServiceThread.h"
 
 #include "engine/core/TaskManager.h"
 

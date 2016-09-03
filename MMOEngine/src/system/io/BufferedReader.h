@@ -1,7 +1,7 @@
 #ifndef BUFFEREDREADER_H_
 #define BUFFEREDREADER_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include "Reader.h"
 

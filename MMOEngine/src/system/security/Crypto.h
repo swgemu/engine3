@@ -1,11 +1,10 @@
 #ifndef CRYPTO_H_
 #define CRYPTO_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
-
 
 namespace sys {
 	namespace security {

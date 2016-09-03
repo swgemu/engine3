@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SOCKETADDRESS_H_
 #define SOCKETADDRESS_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #ifndef PLATFORM_WIN
 #include <sys/socket.h>
@@ -17,7 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <winsock2.h>
 #endif
 
-#include "../lang/String.h"
+#include "system/lang/String.h"
 
 namespace sys {
   namespace net {

@@ -6,9 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ABSTRACTPROTOCOL_H_
 #define ABSTRACTPROTOCOL_H_
 
-#include "../../../system/lang.h"
+#include "system/lang.h"
 
-#include "../Message.h"
+#include "engine/service/Message.h"
 
 namespace engine {
   namespace service {

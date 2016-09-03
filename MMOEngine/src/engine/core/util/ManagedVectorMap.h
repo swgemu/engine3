@@ -7,7 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define MANAGEDVECTORMAP_H_
 
 #include "system/lang.h"
-#include "../ManagedReference.h"
+
+#include "engine/core/ManagedReference.h"
 
 namespace engine {
   namespace core {

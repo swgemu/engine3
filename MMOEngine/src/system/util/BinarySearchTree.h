@@ -6,9 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef BINARYSEARCHTREE_H_
 #define BINARYSEARCHTREE_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
-#include "../lang/System.h"
+#include "system/lang/System.h"
 
 template <class O> class BinarySearchTree;
 

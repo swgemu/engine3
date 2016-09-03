@@ -6,11 +6,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SERVICETHREAD_H_
 #define SERVICETHREAD_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
-#include "../log/Logger.h"
+#include "engine/log/Logger.h"
 
-#include "../core/TaskManager.h"
+#include "engine/core/TaskManager.h"
 
 #include "ServiceException.h"
 

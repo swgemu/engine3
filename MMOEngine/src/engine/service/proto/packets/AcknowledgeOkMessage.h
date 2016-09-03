@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ACKNOWLEDGEOKMESSAGE_H_
 #define ACKNOWLEDGEOKMESSAGE_H_
 
-#include "../BaseProtocol.h"
+#include "engine/service/proto/BaseProtocol.h"
 
 namespace engine {
   namespace service {

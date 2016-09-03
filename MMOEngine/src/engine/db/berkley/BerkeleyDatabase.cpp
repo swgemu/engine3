@@ -5,10 +5,11 @@
  *      Author: victor
  */
 
-#include "../DatabaseException.h"
+#include "engine/db/DatabaseException.h"
 
 #include "BerkeleyDatabase.h"
-#include "../ObjectDatabaseManager.h"
+
+#include "engine/db/ObjectDatabaseManager.h"
 
 using namespace engine::db::berkley;
 

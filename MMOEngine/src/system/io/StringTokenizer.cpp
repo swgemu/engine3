@@ -3,8 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../lang/Integer.h"
-#include "../lang/Long.h"
+#include "system/lang/Integer.h"
+#include "system/lang/Long.h"
 
 #include "StringTokenizer.h"
 

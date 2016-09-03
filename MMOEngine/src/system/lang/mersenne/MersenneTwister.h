@@ -66,7 +66,7 @@
 #include <time.h>
 #include <math.h>
 
-#include "../../thread/ThreadLocal.h"
+#include "system/thread/ThreadLocal.h"
 
 class MTRand {
 	// Data

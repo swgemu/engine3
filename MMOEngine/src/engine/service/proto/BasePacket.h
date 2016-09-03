@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef BASEPACKET_H_
 #define BASEPACKET_H_
 
-#include "../Message.h"
+#include "engine/service/Message.h"
 
 namespace engine {
   namespace service {

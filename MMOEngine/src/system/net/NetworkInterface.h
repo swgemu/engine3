@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef NETWORKINTERFACE_H_
 #define NETWORKINTERFACE_H_
 
-#include "../util/Vector.h"
+#include "system/util/Vector.h"
 
 #include "InetAddress.h"
 

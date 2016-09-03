@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef DATAGRAMSERVICECLIENTPROXY_H_
 #define DATAGRAMSERVICECLIENTPROXY_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 #include "ServiceClient.h"
 

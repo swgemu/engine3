@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef EXCEPTION_H_
 #define EXCEPTION_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #include "String.h"
 

@@ -1,4 +1,4 @@
-#include "../lang/Character.h"
+#include "system/lang/Character.h"
 
 PrintStream::PrintStream() {
 	streamFlags = SF_none;

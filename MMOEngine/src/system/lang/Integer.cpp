@@ -1,7 +1,7 @@
 #include "Integer.h"
 
-#include "../io/ObjectOutputStream.h"
-#include "../io/ObjectInputStream.h"
+#include "system/io/ObjectOutputStream.h"
+#include "system/io/ObjectInputStream.h"
 
 #include "NumberFormatException.h"
 

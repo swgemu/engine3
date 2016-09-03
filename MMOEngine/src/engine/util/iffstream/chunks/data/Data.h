@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef DATA_H_
 #define DATA_H_
 
-#include "../Chunk.h"
+#include "engine/util/iffstream/chunks/Chunk.h"
 
 namespace engine {
  namespace util {

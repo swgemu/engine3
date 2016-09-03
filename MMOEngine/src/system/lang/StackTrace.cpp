@@ -3,9 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
-#include "../lang/System.h"
+#include "system/lang/System.h"
 
-#include "../thread/Thread.h"
+#include "system/thread/Thread.h"
 
 String StackTrace::binaryName = "core3";
 

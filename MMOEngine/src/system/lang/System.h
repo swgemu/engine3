@@ -6,15 +6,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 typedef time_t utime;
 
 class MTRand;
 
-#include "../io/PrintStream.h"
+#include "system/io/PrintStream.h"
 
-#include "../thread/ThreadLocal.h"
+#include "system/thread/ThreadLocal.h"
 
 #include "mersenne/MersenneTwister.h"
 

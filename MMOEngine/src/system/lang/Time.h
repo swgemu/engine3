@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef TIME_H_
 #define TIME_H_
 
-#include "../platform.h"
+#include "system/platform.h"
 
 #ifndef PLATFORM_WIN
 #include <unistd.h>

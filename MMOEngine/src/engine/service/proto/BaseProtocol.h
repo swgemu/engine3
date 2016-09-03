@@ -6,8 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef BASEPROTOCOL_H_
 #define BASEPROTOCOL_H_
 
-#include "../../../system/lang.h"
-#include "../../log/Logger.h"
+#include "system/lang.h"
+#include "engine/log/Logger.h"
 
 #include "BasePacket.h"
 

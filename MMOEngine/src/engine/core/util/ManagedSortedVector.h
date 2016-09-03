@@ -6,8 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef MANAGEDSORTEDVECTOR_H_
 #define MANAGEDSORTEDVECTOR_H_
 
-#include "../../../system/lang.h"
-#include "../ManagedReference.h"
+#include "system/lang.h"
+
+#include "engine/core/ManagedReference.h"
 
 namespace engine {
   namespace core {

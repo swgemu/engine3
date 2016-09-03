@@ -1,5 +1,6 @@
 #include "Form.h"
-#include "../../IffStream.h"
+
+#include "engine/util/iffstream/IffStream.h"
 
 Form::Form(Chunk* parent, uint32 type, uint32 size, char* data) : Chunk(parent, type, size, data) {
 

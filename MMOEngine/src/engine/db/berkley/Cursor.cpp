@@ -5,7 +5,7 @@
  *      Author: victor
  */
 
-#include "../DatabaseException.h"
+#include "engine/db/DatabaseException.h"
 
 #include "Cursor.h"
 #include "DatabaseEntry.h"

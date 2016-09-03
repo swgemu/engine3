@@ -6,8 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef BASECLIENTNETSTATUSCHECKUPEVENT_H_
 #define BASECLIENTNETSTATUSCHECKUPEVENT_H_
 
-#include "../BasePacket.h"
-#include "../BaseClient.h"
+#include "engine/service/proto/BasePacket.h"
+#include "engine/service/proto/BaseClient.h"
 
 namespace engine {
   namespace service {

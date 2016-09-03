@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef DATABASEEXCEPTION_H_
 #define DATABASEEXCEPTION_H_
 
-#include "../../system/lang.h"
+#include "system/lang.h"
 
 namespace engine {
   namespace db {

@@ -29,10 +29,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #define DO_TIMELIMIT if (Logger::getElapsedTime() > TIME_LIMIT * 3600 + System::random(100)) DO_SEGFAULT
 
-#include "../BasePacket.h"
-#include "../BaseClient.h"
+#include "engine/service/proto/BasePacket.h"
+#include "engine/service/proto/BaseClient.h"
 
-#include "../../DatagramServiceThread.h"
+#include "engine/service/DatagramServiceThread.h"
 
 class BaseClientCleanUpEvent : public Task {
 	DatagramServiceThread* service;
