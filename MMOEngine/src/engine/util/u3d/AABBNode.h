@@ -80,10 +80,11 @@ namespace engine {
 		AABB mBox; // node's bounding box
 		AABBNode* mChildren[2]; // child nodes of this node
 		Vector<Triangle*> mTriangles; // triangles in this node
+		bool trianglesOwner;
 
 	public:
 		// constructs this aabb tree node from a triangle list and creates its children recursively
-		AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata);
+		AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner = true);
 		// destructs this node
 		~AABBNode();
 		// renders tris that collide with the sphere

@@ -35,7 +35,7 @@ namespace engine {
 
 	class AABBTree : public AABBNode {
 	public:
-		AABBTree(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata) : AABBNode(trilist, depth, heurdata) {
+		AABBTree(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner = true) : AABBNode(trilist, depth, heurdata, triangleOwner) {
 
 		}
 	};

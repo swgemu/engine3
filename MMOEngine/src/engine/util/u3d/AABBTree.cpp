@@ -115,7 +115,7 @@ bool AABB::intersects(const Ray &r, float t0, float t1) const {
 
 // constructs this aabb tree node from a triangle list and creates its children recursively
 // note node box is initialised to the first triangle's box
-AABBNode::AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata) : mBox(trilist) {
+AABBNode::AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner) : mBox(trilist), trianglesOwner(triangleOwner) {
 	// test our build heuristic - if passes, make children
 	if (depth < (int)heurdata.maxdepth && trilist.size() > (int)heurdata.mintricnt &&
 		(trilist.size() > (int)heurdata.tartricnt || mBox.errorMetric() > heurdata.minerror)) {
@@ -162,6 +162,12 @@ AABBNode::~AABBNode() {
 	if (mChildren[0]) {
 		delete mChildren[0];
 		delete mChildren[1];
+	}
+
+	if (trianglesOwner) {
+		for (int i = 0; i < mTriangles.size(); ++i) {
+			delete mTriangles.get(i);
+		}
 	}
 }
 
