@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 
 UniqueReference<TaskManager*> Core::taskManager;
-ObjectBroker* Core::objectBroker;
+//ObjectBroker* Core::objectBroker;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 
@@ -100,6 +100,8 @@ TaskManager* Core::getTaskManager() {
 }
 
 ObjectBroker* Core::getObjectBroker() {
+	return DistributedObjectBroker::instance();
+	/*
 	if (objectBroker == NULL)
 	#ifdef WITH_STM
 		objectBroker = new TransactionalObjectManager();
@@ -109,6 +111,7 @@ ObjectBroker* Core::getObjectBroker() {
 	#endif
 
 	return objectBroker;
+	 */
 }
 
 void Core::outOfMemoryHandler() {

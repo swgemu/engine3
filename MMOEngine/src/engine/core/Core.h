@@ -30,7 +30,7 @@ namespace engine {
 	class Core : public Thread {
 		static UniqueReference<TaskManager*> taskManager;
 
-		static ObjectBroker* objectBroker;
+		//static ObjectBroker* objectBroker;
 
 	public:
 		Core(int logLevel = Logger::INFO);
