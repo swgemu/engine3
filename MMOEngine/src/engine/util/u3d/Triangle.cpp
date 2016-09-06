@@ -25,11 +25,23 @@ Triangle::Triangle(const Vector3 vert[]) {
 }
 
 Triangle& Triangle::operator=(const Triangle& tri) {
+	if (this == &tri)
+		return *this;
+
 	for (int i = 0; i < 9; ++i) {
 		vertices[i] = tri.vertices[i];
 	}
 
 	return *this;
+}
+
+int Triangle::compareTo(const Triangle* object) const {
+	if (this == object)
+		return 0;
+	else if (this < object)
+		return 1;
+	else
+		return -1;
 }
 
 void Triangle::transform(const Matrix4& worldMatrix) {

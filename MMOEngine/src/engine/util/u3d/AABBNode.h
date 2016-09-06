@@ -80,13 +80,12 @@ namespace engine {
 		AABB mBox; // node's bounding box
 		AABBNode* mChildren[2]; // child nodes of this node
 		Vector<Triangle*> mTriangles; // triangles in this node
-		bool trianglesOwner;
 
 	public:
 		// constructs this aabb tree node from a triangle list and creates its children recursively
-		AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner = true);
+		AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata);
 		// destructs this node
-		~AABBNode();
+		virtual ~AABBNode();
 		// renders tris that collide with the sphere
 
 		bool testCollide(const Sphere& testsphere) const;
@@ -105,6 +104,18 @@ namespace engine {
 		//returns all the triangles from the mesh
 		void getTriangles(Vector<Triangle*>& triangles) const {
 			triangles.addAll(mTriangles);
+
+			if (mChildren[0] != NULL) {
+				mChildren[0]->getTriangles(triangles);
+				mChildren[1]->getTriangles(triangles);
+			}
+		}
+
+		//returns all unique triangles from the mesh
+		void getTriangles(SortedVector<Triangle*>& triangles) const {
+			for (int i = 0; i < mTriangles.size(); ++i) {
+				triangles.put(mTriangles.get(i));
+			}
 
 			if (mChildren[0] != NULL) {
 				mChildren[0]->getTriangles(triangles);

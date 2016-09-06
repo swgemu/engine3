@@ -13,6 +13,22 @@
 
 using namespace sys::lang;
 
+AABBTree::AABBTree(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner) : AABBNode(trilist, depth, heurdata), trianglesOwner(triangleOwner) {
+
+}
+
+AABBTree::~AABBTree() {
+	if (trianglesOwner) {
+		SortedVector<Triangle*> uniqueTriangles;
+
+		getTriangles(uniqueTriangles);
+
+		for (int i = 0; i < uniqueTriangles.size(); ++i) {
+			delete uniqueTriangles.get(i);
+		}
+	}
+}
+
 // construct an AABB from a list of triangles.
 AABB::AABB(const Vector<Triangle*>& triangles) {
 	// do nothing if no triangles in the list
@@ -115,7 +131,7 @@ bool AABB::intersects(const Ray &r, float t0, float t1) const {
 
 // constructs this aabb tree node from a triangle list and creates its children recursively
 // note node box is initialised to the first triangle's box
-AABBNode::AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner) : mBox(trilist), trianglesOwner(triangleOwner) {
+AABBNode::AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata) : mBox(trilist) {
 	// test our build heuristic - if passes, make children
 	if (depth < (int)heurdata.maxdepth && trilist.size() > (int)heurdata.mintricnt &&
 		(trilist.size() > (int)heurdata.tartricnt || mBox.errorMetric() > heurdata.minerror)) {
@@ -162,12 +178,6 @@ AABBNode::~AABBNode() {
 	if (mChildren[0]) {
 		delete mChildren[0];
 		delete mChildren[1];
-	}
-
-	if (trianglesOwner) {
-		for (int i = 0; i < mTriangles.size(); ++i) {
-			delete mTriangles.get(i);
-		}
 	}
 }
 

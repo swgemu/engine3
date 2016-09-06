@@ -38,6 +38,8 @@ namespace engine {
 
 		bool parseFromBinaryStream(ObjectInputStream* stream);
 
+		virtual int compareTo(const Triangle* triangle) const;
+
 		// calculate the midpoint
 		Vector3 midPoint() const;
 

@@ -34,10 +34,12 @@ namespace engine {
  };
 
 	class AABBTree : public AABBNode {
-	public:
-		AABBTree(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner = true) : AABBNode(trilist, depth, heurdata, triangleOwner) {
+		bool trianglesOwner;
 
-		}
+	public:
+		AABBTree(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner = true);
+
+		~AABBTree();
 	};
 
 	} // u3d
