@@ -96,6 +96,10 @@ namespace engine {
 
 		//virtual void savePersistentObjects();
 
+		DistributedObjectDirectory* getLocalObjectDirectory() {
+			return &localObjectDirectory;
+		}
+
 	protected:
 		void finishObjectUpdate();
 

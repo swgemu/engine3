@@ -41,6 +41,10 @@ namespace engine {
 		inline int getSize() {
 			return objectMap.size();
 		}
+
+		HashTable<uint64, Reference<DistributedObject*> >* getDistributedObjectMap() {
+			return helperObjectMap.getMap();
+		}
 	};
 
   } // namespace ORB
