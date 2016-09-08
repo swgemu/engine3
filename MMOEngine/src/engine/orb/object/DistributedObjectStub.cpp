@@ -94,7 +94,11 @@ bool DistributedObjectStub::undeploy() {
 
 		//this is called when the object is deleted from RAM (MemoryManager deletes it)
 		//so object broker is long gone as command
-		DistributedObjectBroker::instance()->undeploy(_name);
+		ObjectBroker* broker = Core::getObjectBroker();
+
+		if (broker) {
+			broker->undeploy(_name);
+		}
 
 		deployed = false; 
 	} else {
