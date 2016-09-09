@@ -22,6 +22,11 @@ DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000){
 }
 
 DistributedObjectDirectory::~DistributedObjectDirectory() {
+	HashTableIterator<uint64, DistributedObjectAdapter*> iterator = objectMap.iterator();
+
+	while (iterator.hasNext()) {
+		delete iterator.getNextValue();
+	}
 }
 
 DistributedObjectAdapter* DistributedObjectDirectory::add(uint64 objid, DistributedObjectAdapter* adapter) {
