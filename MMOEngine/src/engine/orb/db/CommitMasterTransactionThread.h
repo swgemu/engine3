@@ -28,8 +28,11 @@ namespace engine {
 
 	public:
 		CommitMasterTransactionThread();
+		~CommitMasterTransactionThread();
 
 		void run();
+
+		void shutdown();
 
 		void startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect);
 

@@ -24,6 +24,12 @@ CommitMasterTransactionThread::CommitMasterTransactionThread() {
 	doRun = true;
 }
 
+CommitMasterTransactionThread::~CommitMasterTransactionThread() {
+	if (doRun) {
+		shutdown();
+	}
+}
+
 void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
 	assert(trans != NULL);
 	assert(workers != NULL);
@@ -47,7 +53,9 @@ void CommitMasterTransactionThread::run() {
 
 		waitCondition.wait(&blockMutex);
 
-		commitData();
+		if (doRun) {
+			commitData();
+		}
 
 		transaction = NULL;
 		threads = NULL;
@@ -55,6 +63,18 @@ void CommitMasterTransactionThread::run() {
 
 		blockMutex.unlock();
 	}
+}
+
+void CommitMasterTransactionThread::shutdown() {
+	doRun = false;
+
+	blockMutex.lock();
+
+	waitCondition.broadcast(&blockMutex);
+
+	blockMutex.unlock();
+
+	join();
 }
 
 int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
