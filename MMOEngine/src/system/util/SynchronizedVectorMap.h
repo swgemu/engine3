@@ -92,7 +92,7 @@ namespace sys {
  		 if (this == &vector)
  			 return *this;
 
- 		 vectorMap.operator=(vector);
+ 		 vectorMap = vector.vectorMap;
 
  		 return *this;
  	 }
