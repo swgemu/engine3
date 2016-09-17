@@ -26,6 +26,16 @@ namespace sys {
 
 		//static float fabs(float f);
 
+		template<typename T>
+		static T clamp(const T& min, const T& value, const T& max) {
+			return (value < min) ? min : ((value > max) ? max : value);
+		}
+
+		template<class T>
+		static T linearInterpolate(const T& start, const T& end, float t) {
+			return ((end - start) * t) + start;
+		}
+
 		static float getPrecision(float num, int digits) {
 			float power = pow((float)10, digits);
 			return float(floor(num * power + .05f) / power);
