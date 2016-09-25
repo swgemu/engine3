@@ -650,7 +650,7 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 	return packet;
 }
 
-void BaseClient::checkupServerPackets(uint32 seq) {
+void BaseClient::checkupServerPackets(BasePacket* pack) {
 //        return;
         
 	lock();
@@ -660,6 +660,8 @@ void BaseClient::checkupServerPackets(uint32 seq) {
 			unlock();
 			return;
 		}
+
+		uint32 seq = pack->getSequence();
 
 		#ifdef TRACE_CLIENTS
 			StringBuffer msg;
@@ -672,7 +674,7 @@ void BaseClient::checkupServerPackets(uint32 seq) {
 			resendPackets();
 
 			((BasePacketChekupEvent*)(checkupEvent.get()))->increaseCheckupTime(250);
-			((BasePacketChekupEvent*)(checkupEvent.get()))->update(seq);
+			((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
 
 			#ifdef TRACE_CLIENTS
 				StringBuffer msg;
@@ -681,7 +683,7 @@ void BaseClient::checkupServerPackets(uint32 seq) {
 			#endif
 
 			if (!checkupEvent->isScheduled())
-				checkupEvent->scheduleInIoScheduler(((BasePacketChekupEvent*)(checkupEvent.get()))->getPacketTimeout());
+				checkupEvent->scheduleInIoScheduler(pack->getTimeout());
 		}
 	} catch (SocketException& e) {
 		disconnect("on checkupServerPackets() - " + e.getMessage(), false);
