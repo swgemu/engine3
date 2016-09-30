@@ -36,6 +36,20 @@ namespace engine {
 		 mBounds[1] = aab.mBounds[1];
 	 }
 
+	 bool toBinaryStream(ObjectOutputStream* stream) {
+		 mBounds[0].toBinaryStream(stream);
+		 mBounds[1].toBinaryStream(stream);
+
+		 return true;
+	 }
+
+	 bool parseFromBinaryStream(ObjectInputStream* stream) {
+		 mBounds[0].parseFromBinaryStream(stream);
+		 mBounds[1].parseFromBinaryStream(stream);
+
+		 return true;
+	 }
+
 	 // returns a sub box of the octant specified, with the partition as the new corner.
 	 float distSqrd(const Vector3& point) const;
 
