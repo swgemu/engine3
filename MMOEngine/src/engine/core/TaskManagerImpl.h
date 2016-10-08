@@ -91,7 +91,7 @@ namespace engine {
 		  }
 
 		  void executeTask(const std::function<void()>& function, const char* name, const char* customQueueName) {
-			  TaskManager::executeTask(function, name);
+			  TaskManager::executeTask(function, name, customQueueName);
 		  }
 
 		  void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay) {
@@ -99,7 +99,7 @@ namespace engine {
 		  }
 
 		  void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay, const char* customQueueName) {
-			  TaskManager::scheduleTask(std::move(function), name, delay);
+			  TaskManager::scheduleTask(std::move(function), name, delay, customQueueName);
 		  }
 
 		  void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
@@ -107,7 +107,7 @@ namespace engine {
 		  }
 
 		  void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay, const char* customQueueName) {
-			  TaskManager::scheduleTask(function, name, delay);
+			  TaskManager::scheduleTask(function, name, delay, customQueueName);
 		  }
 #endif
 
