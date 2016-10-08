@@ -55,6 +55,14 @@ namespace engine {
 		 matrix[3][3] = 1.f;
 	 }
 
+	 inline void swapLtoR() {
+		 matrix[0][2] = -matrix[0][2];
+		 matrix[1][2] = -matrix[1][2];
+		 matrix[2][0] = -matrix[2][0];
+		 matrix[2][1] = -matrix[2][1];
+		 matrix[3][2] = -matrix[3][2];
+	 }
+
 	 void setRotationMatrix(const Matrix3& rot);
 
 	 Matrix4 operator*(const Matrix4& mat) const;

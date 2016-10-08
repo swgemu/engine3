@@ -41,6 +41,8 @@ void TaskManagerImpl::initialize() {
 void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads) {
 	Locker locker(this);
 
+	int maxCpus = MAX(1, sysconf(_SC_NPROCESSORS_ONLN));
+
 	TaskQueue* queue = new TaskQueue();
 	queue->setLogLevel(getLogLevel());
 	taskQueues.add(queue);
@@ -48,7 +50,7 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 	Vector<TaskWorkerThread*> localWorkers;
 
 	for (int i = 0; i < numberOfThreads; ++i) {
-		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + queueName + String::valueOf(i), queue);
+		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + queueName + String::valueOf(i), queue, workers.size() % maxCpus);
 		worker->setLogLevel(getLogLevel());
 		workers.add(worker);
 		localWorkers.add(worker);
