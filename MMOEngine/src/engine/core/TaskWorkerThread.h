@@ -20,7 +20,7 @@ namespace engine {
 		TaskQueue* queue;
 
 	public:
-		TaskWorkerThread(const String& s, TaskQueue* queue);
+		TaskWorkerThread(const String& s, TaskQueue* queue, int cpu = 0);
 
 		virtual ~TaskWorkerThread();
 

@@ -119,6 +119,9 @@ namespace sys {
 
 		void setSchedulingPolicy(int policy);
 
+		//does nothing on osx
+		void assignToCPU(int cpu);
+
 		const String& getName() {
 			return name;
 		}

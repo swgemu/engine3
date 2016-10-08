@@ -111,7 +111,7 @@ namespace engine {
 			}
 		}
 
-		//returns all unique triangles from the mesh
+		//returns all triangles from the mesh sorted
 		void getTriangles(SortedVector<Triangle*>& triangles) const {
 			for (int i = 0; i < mTriangles.size(); ++i) {
 				triangles.put(mTriangles.get(i));
@@ -121,6 +121,7 @@ namespace engine {
 				mChildren[0]->getTriangles(triangles);
 				mChildren[1]->getTriangles(triangles);
 			}
+
 		}
 
 		inline AABB& getBoundingBox() {

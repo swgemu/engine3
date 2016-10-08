@@ -3,6 +3,8 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include <unistd.h>
+
 #include "engine/db/ObjectDatabaseManager.h"
 
 #include "TaskWorkerThread.h"
@@ -10,6 +12,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskManagerImpl.h"
 
 #include "TaskScheduler.h"
+
+int TaskManagerImpl::DEFAULT_WORKER_QUEUES = 0;
+int TaskManagerImpl::DEFAULT_WORKER_THREADS_PER_QUEUE = 0; //
+int TaskManagerImpl::DEFAULT_SCHEDULER_THREADS = 0;
+int TaskManagerImpl::DEFAULT_IO_SCHEDULERS = 0;
 
 TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager") {
 	shuttingDown = false;
@@ -28,7 +35,7 @@ TaskManagerImpl::~TaskManagerImpl() {
 }
 
 void TaskManagerImpl::initialize() {
-	initialize(DEFAULT_WORKER_THREADS, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULER_THREADS);
+	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 }
 
 void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCount) {
@@ -36,18 +43,35 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 
 	Locker locker(this);
 
-	for (int j = 0; j < DEFAULT_TASK_QUEUES; ++j) {
+	int maxCpus = MAX(1, sysconf(_SC_NPROCESSORS_ONLN));
+
+	if (workerCount == 0) {
+		workerCount = MAX(8, maxCpus + 2);
+	}
+
+	if (DEFAULT_WORKER_THREADS_PER_QUEUE < 1) {
+		DEFAULT_WORKER_THREADS_PER_QUEUE = 1;
+	}
+
+	if (schedulerCount == 0) {
+		schedulerCount = workerCount / 2;
+	}
+
+	if (ioCount == 0) {
+		ioCount = schedulerCount;
+	}
+
+	for (int j = 0; j < workerCount; ++j) {
 		TaskQueue* queue = new TaskQueue();
 		queue->setLogLevel(getLogLevel());
 		taskQueues.add(queue);
-		
-		for (int i = 0; i < workerCount; ++i) {
-			TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(i), queue);
+
+		for (int i = 0; i < DEFAULT_WORKER_THREADS_PER_QUEUE; ++i) {
+			TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(j), queue,
+															(j + i) % maxCpus);
 			worker->setLogLevel(getLogLevel());
 			workers.add(worker);
 		}
-		
-		
 	}
 
 #ifdef WITH_STM
@@ -236,7 +260,7 @@ void TaskManagerImpl::setTaskScheduler(Task* task, TaskScheduler* scheduler) {
 }
 
 void TaskManagerImpl::executeTask(Task* task) {
-	taskQueues.get(0)->push(task);
+	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->push(task);
 }
 
 void TaskManagerImpl::executeTask(Task* task, int taskqueue) {
@@ -244,15 +268,15 @@ void TaskManagerImpl::executeTask(Task* task, int taskqueue) {
 }
 
 void TaskManagerImpl::executeTaskFront(Task* task) {
-	taskQueues.get(0)->pushFront(task);
+	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->pushFront(task);
 }
 
 void TaskManagerImpl::executeTaskRandom(Task* task) {
-	taskQueues.get(0)->pushRandom(task);
+	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->pushRandom(task);
 }
 
 void TaskManagerImpl::executeTasks(const Vector<Task*>& taskList) {
-	taskQueues.get(0)->pushAll(taskList);
+	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->pushAll(taskList);
 }
 
 bool TaskManagerImpl::getNextExecutionTime(Task* task, Time& nextExecutionTime) {

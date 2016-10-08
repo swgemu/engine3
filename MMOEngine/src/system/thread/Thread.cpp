@@ -17,7 +17,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <process.h>
 #endif
 
+#ifdef PLATFORM_MAC
+#include "mysql56/mysql/mysql.h"
+#else
 #include <mysql.h>
+#endif
 
 AtomicInteger Thread::threadCounter;
 
@@ -160,4 +164,17 @@ void Thread::setJoinable() {
 
 void Thread::setSchedulingPolicy(int policy) {
 	pthread_attr_setschedpolicy(&attributes, policy);
+}
+
+void Thread::assignToCPU(int cpu) {
+#ifdef PLATFORM_LINUX
+	cpu_set_t cpuSet;
+
+	CPU_ZERO(&cpuSet);
+	CPU_SET(cpu, &cpuSet);
+
+	if (sched_setaffinity(0, sizeof(cpuSet), &cpuSet) < 0) {
+		perror("sched_setaffinity");
+	}
+#endif
 }

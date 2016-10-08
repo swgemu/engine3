@@ -20,7 +20,6 @@ namespace engine {
 	 Vector3 mBounds[2]; // box bounds - min followed by max
  public:
 	 AABB() {
-		mBounds[0] = mBounds[1] = Vector3(0, 0, 0);
 	 }
 
 	 AABB(const Vector3& boxmin, const Vector3& boxmax) {

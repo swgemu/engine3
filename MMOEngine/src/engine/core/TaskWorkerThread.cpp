@@ -7,9 +7,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskWorkerThread.h"
 
-TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue) : ServiceThread(s) {
+TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu) : ServiceThread(s) {
 	setInfoLogLevel();
 	setGlobalLogging(true);
+
+	if (cpu) {
+		assignToCPU(cpu);
+	}
 
 	this->queue = queue;
 }

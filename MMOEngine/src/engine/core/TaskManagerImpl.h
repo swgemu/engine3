@@ -38,14 +38,15 @@ namespace engine {
 		int schedulerThreads;
 
 		AtomicInteger currentTaskScheduler;
+        AtomicInteger currentTaskQueue;
 
 		bool shuttingDown;
 
 	public:
-		static const int DEFAULT_WORKER_THREADS = 8;
-		static const int DEFAULT_SCHEDULER_THREADS = 20;
-		static const int DEFAULT_IO_SCHEDULER_THREADS = 10;
-		static const int DEFAULT_TASK_QUEUES = 10;
+	    static int DEFAULT_WORKER_QUEUES;
+		static int DEFAULT_WORKER_THREADS_PER_QUEUE;
+		static int DEFAULT_SCHEDULER_THREADS;
+		static int DEFAULT_IO_SCHEDULERS;
 
 		TaskManagerImpl();
 
@@ -53,7 +54,7 @@ namespace engine {
 
 		void initialize();
 
-		void initialize(int workerCount, int schedulerCount, int ioCount = DEFAULT_IO_SCHEDULER_THREADS);
+		void initialize(int workerCount, int schedulerCount, int ioCount);
 
 		void start();
 

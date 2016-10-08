@@ -66,7 +66,7 @@ void TaskScheduler::run() {
 		blockMutex.lock();
 
 		try {
-			task->doExecute();
+			task->execute();
 
 		} catch (Exception& e) {
 			error(e.getMessage());
