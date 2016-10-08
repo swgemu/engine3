@@ -20,7 +20,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "events/OutOfOrderTask.h"
 #include "events/AcknowledgeTask.h"
 
-#define BASE_PACKET_HANDLER_TASK_QUEUE 9
+#define BASE_PACKET_HANDLER_TASK_QUEUE 6
 
 #define MULTI_THREADED_BASE_PACKET_HANDLER
 
