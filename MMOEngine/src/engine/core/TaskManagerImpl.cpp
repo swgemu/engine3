@@ -56,8 +56,8 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 
 	customQueues.put(queueName, taskQueues.size() - 1);
 
-	for (auto worker : localWorkers) {
-		worker->start(this);
+	for (int i = 0; i < localWorkers.size(); ++i) {
+		localWorkers.get(i)->start(this);
 	}
 }
 
@@ -304,7 +304,7 @@ void TaskManagerImpl::executeTask(Task* task, const String& customTaskQueue) {
 		throw Exception("custom queue " + customTaskQueue + " not found");
 	}
 
-	const auto& val = customQueues.elementAt(find).getValue();
+	int val = customQueues.elementAt(find).getValue();
 
 	taskQueues.get(val)->push(task);
 }
