@@ -18,6 +18,7 @@ namespace engine {
 	class TaskWorkerThread : public ServiceThread {
 		Mutex blockMutex;
 		TaskQueue* queue;
+		int cpu;
 
 	public:
 		TaskWorkerThread(const String& s, TaskQueue* queue, int cpu = 0);

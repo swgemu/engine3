@@ -11,10 +11,7 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu) :
 	setInfoLogLevel();
 	setGlobalLogging(true);
 
-	if (cpu) {
-		assignToCPU(cpu);
-	}
-
+	this->cpu = cpu;
 	this->queue = queue;
 }
 
@@ -30,6 +27,10 @@ void TaskWorkerThread::start(TaskManager* manager) {
 }
 
 void TaskWorkerThread::run() {
+	if (cpu) {
+		assignToCPU(cpu);
+	}
+
 	Reference<Task*> task = NULL;
 
 	while ((task = queue->pop()) != NULL) {
