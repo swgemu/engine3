@@ -29,6 +29,8 @@ namespace engine {
 
 		Vector<Reference<TaskScheduler*> > ioSchedulers;
 
+		VectorMap<String, int> customQueues;
+
 #ifdef WITH_STM
 		TaskWorkerThread* serialWorker;
 		TaskQueue serialTaskQueue;
@@ -56,6 +58,8 @@ namespace engine {
 
 		void initialize(int workerCount, int schedulerCount, int ioCount);
 
+		void initializeCustomQueue(const String& queueName, int numberOfThreads);
+
 		void start();
 
 		void shutdown();
@@ -71,13 +75,22 @@ namespace engine {
 
 		void executeTask(Task* task);
 		void executeTask(Task* task, int taskQueue);
+		void executeTask(Task* task, const String& customTaskQueue);
 
 #ifdef CXX11_COMPILER
 		  void executeTask(std::function<void()>&& function, const char* name) {
 			  TaskManager::executeTask(std::move(function), name);
 		  }
 
+		  void executeTask(std::function<void()>&& function, const char* name, const char* customQueueName) {
+			  TaskManager::executeTask(std::move(function), name, customQueueName);
+		  }
+
 		  void executeTask(const std::function<void()>& function, const char* name) {
+			  TaskManager::executeTask(function, name);
+		  }
+
+		  void executeTask(const std::function<void()>& function, const char* name, const char* customQueueName) {
 			  TaskManager::executeTask(function, name);
 		  }
 
@@ -85,7 +98,15 @@ namespace engine {
 			  TaskManager::scheduleTask(std::move(function), name, delay);
 		  }
 
+		  void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay, const char* customQueueName) {
+			  TaskManager::scheduleTask(std::move(function), name, delay);
+		  }
+
 		  void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
+			  TaskManager::scheduleTask(function, name, delay);
+		  }
+
+		  void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay, const char* customQueueName) {
 			  TaskManager::scheduleTask(function, name, delay);
 		  }
 #endif

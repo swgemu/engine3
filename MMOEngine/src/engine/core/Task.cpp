@@ -37,6 +37,7 @@ Task::~Task() {
 void Task::initialize() {
 	taskManager = Core::getTaskManager();
 
+	customTaskQueue = NULL;
 	priority = 3;
 	period = 0;
 

@@ -177,6 +177,8 @@ namespace engine {
 
 		uint64 period;
 
+		const char* customTaskQueue;
+
 	#ifdef COLLECT_TASKSTATISTICS
 		Timer queuedTimer;
 		Timer executionTimer;
@@ -304,6 +306,14 @@ namespace engine {
 
 		inline void setPeriod(uint64 per) {
 			period = per;
+		}
+
+		inline void setCustomTaskQueue(const char* queue) {
+			customTaskQueue = queue;
+		}
+
+		inline const char* getCustomTaskQueue() const {
+			return customTaskQueue;
 		}
 
 	#ifdef TRACE_TASKS

@@ -38,6 +38,29 @@ void TaskManagerImpl::initialize() {
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 }
 
+void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads) {
+	Locker locker(this);
+
+	TaskQueue* queue = new TaskQueue();
+	queue->setLogLevel(getLogLevel());
+	taskQueues.add(queue);
+
+	Vector<TaskWorkerThread*> localWorkers;
+
+	for (int i = 0; i < numberOfThreads; ++i) {
+		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + queueName + String::valueOf(i), queue);
+		worker->setLogLevel(getLogLevel());
+		workers.add(worker);
+		localWorkers.add(worker);
+	}
+
+	customQueues.put(queueName, taskQueues.size() - 1);
+
+	for (auto worker : localWorkers) {
+		worker->start(this);
+	}
+}
+
 void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCount) {
 	ObjectDatabaseManager::instance()->setLogLevel(getLogLevel());
 
@@ -47,6 +70,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 
 	if (workerCount == 0) {
 		workerCount = MAX(8, maxCpus + 2);
+		DEFAULT_WORKER_QUEUES = workerCount;
 	}
 
 	if (DEFAULT_WORKER_THREADS_PER_QUEUE < 1) {
@@ -260,23 +284,53 @@ void TaskManagerImpl::setTaskScheduler(Task* task, TaskScheduler* scheduler) {
 }
 
 void TaskManagerImpl::executeTask(Task* task) {
-	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->push(task);
+	const char* custQueue = task->getCustomTaskQueue();
+
+	if (custQueue) {
+		executeTask(task, custQueue);
+	} else {
+		taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->push(task);
+	}
 }
 
 void TaskManagerImpl::executeTask(Task* task, int taskqueue) {
 	taskQueues.get(taskqueue)->push(task);
 }
 
+void TaskManagerImpl::executeTask(Task* task, const String& customTaskQueue) {
+	int find = customQueues.find(customTaskQueue);
+
+	if (find == -1) {
+		throw Exception("custom queue " + customTaskQueue + " not found");
+	}
+
+	const auto& val = customQueues.elementAt(find).getValue();
+
+	taskQueues.get(val)->push(task);
+}
+
 void TaskManagerImpl::executeTaskFront(Task* task) {
-	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->pushFront(task);
+	const char* custQueue = task->getCustomTaskQueue();
+
+	if (custQueue) {
+		executeTask(task, custQueue);
+	} else {
+		taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushFront(task);
+	}
 }
 
 void TaskManagerImpl::executeTaskRandom(Task* task) {
-	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->pushRandom(task);
+	const char* custQueue = task->getCustomTaskQueue();
+
+	if (custQueue) {
+		executeTask(task, custQueue);
+	} else {
+		taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushRandom(task);
+	}
 }
 
 void TaskManagerImpl::executeTasks(const Vector<Task*>& taskList) {
-	taskQueues.get(currentTaskQueue.increment() % taskQueues.size())->pushAll(taskList);
+	taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushAll(taskList);
 }
 
 bool TaskManagerImpl::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
