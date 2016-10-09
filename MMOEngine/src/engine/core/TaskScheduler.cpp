@@ -60,12 +60,13 @@ void TaskScheduler::prepareTask(Task*) {
 }
 
 void TaskScheduler::run() {
-	Reference<Task*> task = NULL;
+	Task* task = NULL;
 
 	while (doRun && ((task = tasks.get()) != NULL)) {
 		blockMutex.lock();
 
 		try {
+
 			task->execute();
 
 		} catch (Exception& e) {
@@ -75,29 +76,33 @@ void TaskScheduler::run() {
 			error("[TaskScheduler] unreported Exception caught");
 		}
 
-		task->release();
-
 		blockMutex.unlock();
 
-		if (task->isPeriodic()) {
-			taskManager->scheduleTask(task, task->getPeriod());
+		try {
+			if (task->isPeriodic()) {
+				taskManager->scheduleTask(task, task->getPeriod());
 
-			//assert(task->isScheduled());
-		}
+				//assert(task->isScheduled());
+			}
 
 #ifdef COUNT_SCHEDULER_TASKS
-		const char* taskName = task->getTaskName();
+			const char* taskName = task->getTaskName();
 
-		Locker guard(&tasksCountGuard);
+			Locker guard(&tasksCountGuard);
 
-		Entry<const char*, uint64>* entry = tasksCount.getEntry(taskName);
+			Entry<const char*, uint64>* entry = tasksCount.getEntry(taskName);
 
-		if (entry == NULL) {
-			tasksCount.put(taskName, 1);
-		} else {
-			++(entry->getValue());
-		}
+			if (entry == NULL) {
+				tasksCount.put(taskName, 1);
+			} else {
+				++(entry->getValue());
+			}
 #endif
+		} catch (...) {
+			error("[TaskScheduler] unreported Exception caught");
+		}
+
+		task->release();
 	}
 }
 

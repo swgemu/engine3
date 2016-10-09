@@ -31,7 +31,7 @@ void TaskWorkerThread::run() {
 		assignToCPU(cpu);
 	}
 
-	Reference<Task*> task = NULL;
+	Task* task = NULL;
 
 	while ((task = queue->pop()) != NULL) {
 		blockMutex.lock();
