@@ -99,6 +99,10 @@ namespace engine {
 
 		virtual int getExecutingTaskSize() = 0;
 
+		virtual void clearWorkersTaskStats() {
+
+		}
+
 
 #ifdef CXX11_COMPILER
 		void executeTask(std::function<void()>&& function, const char* name) {

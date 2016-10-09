@@ -588,9 +588,11 @@ String TaskManagerImpl::getInfo(bool print) {
 			TaskStatistics& stats = entry.getKey();
 			const char* name = entry.getValue();
 
-			msg4 << name << ": totalRunTime = " << stats.totalRunTime << " maxRunTime = " << stats.maxRunTime
+			msg4 << "\t" << name << ": totalRunTime = " << stats.totalRunTime << " maxRunTime = " << stats.maxRunTime
 				<< " totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << endl;
 		}
+
+		msg4 << endl;
 	}
 
 	if (print)
@@ -601,6 +603,16 @@ String TaskManagerImpl::getInfo(bool print) {
 
 	msg << endl << msg2.toString() << endl << msg3.toString() << endl << msg4.toString();
 	return msg.toString();
+}
+
+void TaskManagerImpl::clearWorkersTaskStats() {
+#ifdef COLLECT_TASKSTATISTICS
+	for (int i = 0; i < workers.size(); ++i) {
+		TaskWorkerThread* worker = workers.get(i);
+
+		worker->clearTaskStatistics();
+	}
+#endif
 }
 
 class TestTask : public Task {

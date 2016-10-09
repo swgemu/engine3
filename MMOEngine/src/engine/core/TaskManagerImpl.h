@@ -64,6 +64,8 @@ namespace engine {
 
 		void shutdown();
 
+		void clearWorkersTaskStats();
+
 		Vector<Locker*>* blockTaskManager();
 		void unblockTaskManager(Vector<Locker*>* lockers);
 
