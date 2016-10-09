@@ -61,7 +61,15 @@ namespace sys {
 			return value;
 		}
 
+		const V& getValue() const {
+			return value;
+		}
+
 		K& getKey() {
+			return key;
+		}
+
+		const K& getKey() const {
 			return key;
 		}
 

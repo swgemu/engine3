@@ -557,9 +557,49 @@ String TaskManagerImpl::getInfo(bool print) {
 	if (print)
 		info(msg3);
 
+	StringBuffer msg4;
+
+#ifdef COLLECT_TASKSTATISTICS
+	for (int i = 0; i < workers.size(); ++i) {
+		TaskWorkerThread* worker = workers.get(i);
+
+		HashTable<const char*, TaskStatistics> tasksCount = worker->getTasksStatistics();
+
+		//lets order them
+		VectorMap<TaskStatistics, const char*> ordered;
+
+		HashTableIterator<const char*, TaskStatistics> iterator = tasksCount.iterator();
+
+		while (iterator.hasNext()) {
+			const char* name;
+			TaskStatistics count;
+
+			iterator.getNextKeyAndValue(name, count);
+
+			ordered.put(count, name);
+		}
+
+		msg4 << "distinct tasks recorded in worker " << i << " - " << tasksCount.size() << endl;
+
+		//lets print top 5
+		for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
+			int index = j - i;
+			VectorMapEntry<TaskStatistics, const char*>& entry = ordered.elementAt(index);
+			TaskStatistics& stats = entry.getKey();
+			const char* name = entry.getValue();
+
+			msg4 << name << ": totalRunTime = " << stats.totalRunTime << " maxRunTime = " << stats.maxRunTime
+				<< " totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << endl;
+		}
+	}
+
+	if (print)
+		info(msg4);
+#endif
+
 	unlock();
 
-	msg << endl << msg2.toString() << endl << msg3.toString();
+	msg << endl << msg2.toString() << endl << msg3.toString() << endl << msg4.toString();
 	return msg.toString();
 }
 

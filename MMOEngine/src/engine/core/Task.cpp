@@ -116,7 +116,7 @@ void Task::doExecute() {
 	}
 
 #ifdef COLLECT_TASKSTATISTICS
-	uint64 executionTime = executionTimer.stop();
+	lastElapsedTime = executionTimer.stop();
 
 #endif
 

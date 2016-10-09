@@ -182,6 +182,7 @@ namespace engine {
 	#ifdef COLLECT_TASKSTATISTICS
 		Timer queuedTimer;
 		Timer executionTimer;
+		uint64 lastElapsedTime;
 		Timer blockedTimer;
 	#endif
 
@@ -315,6 +316,16 @@ namespace engine {
 		inline const char* getCustomTaskQueue() const {
 			return customTaskQueue;
 		}
+
+#ifdef COLLECT_TASKSTATISTICS
+	  	inline const Timer& getExecutionTimer() const {
+	  		return executionTimer;
+	  	}
+
+	  	inline uint64 getLastElapsedTime() const {
+	  		return lastElapsedTime;
+	  	}
+#endif
 
 	#ifdef TRACE_TASKS
 		void setScheduleTrace() {
