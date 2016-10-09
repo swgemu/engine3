@@ -103,6 +103,8 @@ void Task::doExecute() {
 	ObjectDatabaseManager::instance()->startLocalTransaction();
 
 #ifdef COLLECT_TASKSTATISTICS
+	Timer executionTimer;
+
 	executionTimer.start();
 #endif
 
