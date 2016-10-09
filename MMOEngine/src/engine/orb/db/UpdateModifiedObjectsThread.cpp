@@ -5,7 +5,27 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "UpdateModifiedObjectsThread.h"
 
+UpdateModifiedObjectsThread::UpdateModifiedObjectsThread(int id, DOBObjectManager* manager, int cpu) {
+	objectManager = manager;
+	objectsToUpdate = NULL;
+	objectsToDelete = NULL;
+	startOffset = 0;
+	endOffset = 0;
+	doRun = true;
+	waitingToStart = true;
+	threadId = id;
+	working = false;
+	finishedCommiting = false;
+	waitingToCommit = false;
+
+	transaction = NULL;
+
+	this->cpu = cpu;
+}
+
 void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
+	assignToCPU(cpu);
+
 	while (doRun) {
 		blockMutex.lock();
 

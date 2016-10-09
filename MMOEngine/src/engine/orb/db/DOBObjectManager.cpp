@@ -8,6 +8,8 @@
 #ifndef DOBOBJECTMANAGER_CPP_
 #define DOBOBJECTMANAGER_CPP_
 
+#include <unistd.h>
+
 #include "engine/orb/DistributedObjectBroker.h"
 
 #include "engine/service/proto/BaseProtocol.h"
@@ -357,7 +359,9 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 }
 
 UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread() {
-	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(), this);
+	int maxCpus = MAX(1, sysconf(_SC_NPROCESSORS_ONLN));
+
+	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(), this, updateModifiedObjectsThreads.size() % maxCpus);
 	thread->start();
 
 	updateModifiedObjectsThreads.add(thread);

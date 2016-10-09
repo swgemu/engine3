@@ -35,22 +35,10 @@ namespace engine {
 
 		engine::db::berkley::Transaction* transaction;
 
-	public:
-		UpdateModifiedObjectsThread(int id, DOBObjectManager* manager) {
-			objectManager = manager;
-			objectsToUpdate = NULL;
-			objectsToDelete = NULL;
-			startOffset = 0;
-			endOffset = 0;
-			doRun = true;
-			waitingToStart = true;
-			threadId = id;
-			working = false;
-			finishedCommiting = false;
-			waitingToCommit = false;
+		int cpu;
 
-			transaction = NULL;
-		}
+	public:
+		UpdateModifiedObjectsThread(int id, DOBObjectManager* manager, int cpu);
 
 		void run();
 
