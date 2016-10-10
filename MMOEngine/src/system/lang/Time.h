@@ -36,12 +36,14 @@ namespace sys {
 		const static ClockType REAL_TIME = 0;
 		const static ClockType THREAD_TIME = 0;
 		const static ClockType PROCESS_TIME = 0;
+		const static ClockType MONOTHONIC_TIME = 0;
 #else
 		typedef clockid_t ClockType;
 
 		const static ClockType REAL_TIME = CLOCK_REALTIME;
 		const static ClockType THREAD_TIME = CLOCK_THREAD_CPUTIME_ID;
 		const static ClockType PROCESS_TIME = CLOCK_PROCESS_CPUTIME_ID;
+		const static ClockType MONOTHONIC_TIME = CLOCK_MONOTONIC;
 #endif
 	private:
 		struct timespec ts;
