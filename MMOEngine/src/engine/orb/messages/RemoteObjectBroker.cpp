@@ -141,9 +141,13 @@ uint64 RemoteObjectBroker::getNextFreeObjectID() {
 
 }*/
 
-void RemoteObjectBroker::invokeMethod(DistributedMethod& method) {
+void RemoteObjectBroker::invokeMethod(DistributedMethod& method, bool asyncMethod) {
 	DOBMessage* invocationMessage = method.getInvocationMessage();
 
-	if (!brokerClient->sendAndAcceptReply(invocationMessage))
-		throw DistributionException(method.getObject()->_getName());
+	if (!asyncMethod) {
+		if (!brokerClient->sendAndAcceptReply(invocationMessage))
+			throw DistributionException(method.getObject()->_getName());
+	} else {
+		brokerClient->send(invocationMessage);
+	}
 }

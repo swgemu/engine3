@@ -8,7 +8,7 @@
  *	FacadeStub
  */
 
-enum {RPC_INITIALIZESESSION__ = 6,RPC_CANCELSESSION__,RPC_CLEARSESSION__};
+enum {RPC_INITIALIZESESSION__ = 2342040833,RPC_CANCELSESSION__,RPC_CLEARSESSION__};
 
 Facade::Facade() : ManagedObject(DummyConstructorParameter::instance()) {
 	FacadeImplementation* _implementation = new FacadeImplementation();
@@ -252,7 +252,7 @@ void FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		}
 		break;
 	default:
-		throw Exception("Method does not exists");
+		ManagedObjectAdapter::invokeMethod(methid, inv);
 	}
 }
 

@@ -6,53 +6,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef TASKWORKERTHREAD_H_
 #define TASKWORKERTHREAD_H_
 
-
 #include "engine/service/ServiceThread.h"
+
+#include "TaskStatistics.h"
 
 namespace engine {
   namespace core {
 
 	class TaskManager;
 	class TaskQueue;
-
-#ifdef COLLECT_TASKSTATISTICS
-		class TaskStatistics {
-		public:
-			uint64 totalRunTime;
-			uint64 maxRunTime;
-			uint64 totalRunCount;
-			uint64 minRunTime;
-
-			int compareTo(const TaskStatistics& t) const {
-				if (totalRunTime < t.totalRunTime)
-					return 1;
-				else if (totalRunTime > t.totalRunTime)
-					return -1;
-				else {
-					if (maxRunTime < t.maxRunTime)
-						return 1;
-					else if (maxRunTime > t.maxRunTime)
-						return -1;
-					else {
-						if (totalRunCount < t.totalRunCount)
-							return 1;
-						else if (totalRunCount > t.totalRunCount)
-							return -1;
-						else
-							return 0;
-					}
-				}
-			}
-
-			bool toBinaryStream(ObjectOutputStream* stream) {
-				return true;
-			}
-
-			bool parseFromBinaryStream(ObjectInputStream* stream) {
-				return true;
-			}
-		};
-#endif
 
 	class TaskWorkerThread : public ServiceThread {
 		Mutex blockMutex;

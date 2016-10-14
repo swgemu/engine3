@@ -8,7 +8,7 @@
  *	TestIDLClassStub
  */
 
-enum {RPC_GETVALUE__ = 6,RPC_SETVALUE__INT_};
+enum {RPC_GETVALUE__ = 1133365074,RPC_SETVALUE__INT_,RPC_ASYNCTEST__};
 
 TestIDLClass::TestIDLClass(int val) : ManagedObject(DummyConstructorParameter::instance()) {
 	TestIDLClassImplementation* _implementation = new TestIDLClassImplementation(val);
@@ -52,6 +52,20 @@ void TestIDLClass::setValue(int val) {
 		method.executeWithVoidReturn();
 	} else {
 		_implementation->setValue(val);
+	}
+}
+
+void TestIDLClass::asyncTest() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_ASYNCTEST__, true);
+
+		method.executeWithVoidReturn(true);
+	} else {
+		_implementation->asyncTest();
 	}
 }
 
@@ -215,6 +229,9 @@ void TestIDLClassImplementation::setValue(int val) {
 	value = val;
 }
 
+void TestIDLClassImplementation::asyncTest() {
+}
+
 /*
  *	TestIDLClassAdapter
  */
@@ -240,8 +257,13 @@ void TestIDLClassAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			setValue(inv->getSignedIntParameter());
 		}
 		break;
+	case RPC_ASYNCTEST__:
+		{
+			asyncTest();
+		}
+		break;
 	default:
-		throw Exception("Method does not exists");
+		ManagedObjectAdapter::invokeMethod(methid, inv);
 	}
 }
 
@@ -251,6 +273,10 @@ int TestIDLClassAdapter::getValue() {
 
 void TestIDLClassAdapter::setValue(int val) {
 	(static_cast<TestIDLClass*>(stub))->setValue(val);
+}
+
+void TestIDLClassAdapter::asyncTest() {
+	(static_cast<TestIDLClass*>(stub))->asyncTest();
 }
 
 /*
@@ -286,5 +312,81 @@ DistributedObjectAdapter* TestIDLClassHelper::createAdapter(DistributedObjectStu
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+const char LuaTestIDLClass::className[] = "LuaTestIDLClass";
+
+Luna<LuaTestIDLClass>::RegType LuaTestIDLClass::Register[] = {
+	{ "_setObject", &LuaTestIDLClass::_setObject },
+	{ "_getObject", &LuaTestIDLClass::_getObject },
+	{ "getValue", &LuaTestIDLClass::getValue },
+	{ "setValue", &LuaTestIDLClass::setValue },
+	{ "asyncTest", &LuaTestIDLClass::asyncTest },
+	{ 0, 0 }
+};
+
+LuaTestIDLClass::LuaTestIDLClass(lua_State *L) {
+	realObject = static_cast<TestIDLClass*>(lua_touserdata(L, 1));
+}
+
+LuaTestIDLClass::~LuaTestIDLClass() {
+}
+
+int LuaTestIDLClass::_setObject(lua_State* L) {
+	realObject = static_cast<TestIDLClass*>(lua_touserdata(L, -1));
+
+	return 0;
+}
+
+int LuaTestIDLClass::_getObject(lua_State* L) {
+	lua_pushlightuserdata(L, realObject.get());
+
+	return 1;
+}
+
+int LuaTestIDLClass::getValue(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		int result = realObject->getValue();
+
+		lua_pushinteger(L, result);
+		return 1;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:getValue()'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::setValue(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (lua_isnumber(L, -1)) {
+		if (parameterCount == 1) {
+			int val = lua_tointeger(L, -1);
+
+			realObject->setValue(val);
+
+			return 0;
+		} else {
+			throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:setValue(integer)'");
+		}
+	} else {
+		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestIDLClass:setValue(integer)'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::asyncTest(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		realObject->asyncTest();
+
+		return 0;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:asyncTest()'");
+	}
+	return 0;
 }
 

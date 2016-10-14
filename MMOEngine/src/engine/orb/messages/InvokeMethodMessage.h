@@ -22,48 +22,17 @@ namespace engine {
 
 		Packet* packet;
 
+		bool async;
+
 	public:	
-		InvokeMethodMessage(uint64 objectid, sys::uint32 methid, sys::uint32 invid) : DOBMessage(INVOKEMETHODMESSAGE, 40) {
-			insertLong(objectid);
+		InvokeMethodMessage(uint64 objectid, sys::uint32 methid, sys::uint32 invid, bool async);
+		InvokeMethodMessage(Packet* message);
 
-			insertInt(methid);
-			insertInt(invid);
+		~InvokeMethodMessage();
 
-			packet = NULL;
-			objectID = 0;
-			methodID = 0;
-			invocationID = 0;
-		}
-		
-		InvokeMethodMessage(Packet* message) : DOBMessage(message) {
-			objectID = message->parseLong();
+		void runMethod();
 
-			methodID = message->parseInt();
-			invocationID = message->parseInt();
-
-			packet = message->clone();
-		}
-
-		~InvokeMethodMessage() {
-			if (packet != NULL)
-				delete packet;
-		}
-
-		void execute() {
-			DistributedObjectBroker* orb = DistributedObjectBroker::instance();
-
-			DistributedObjectAdapter* adapter = orb->getObjectAdapter(objectID);
-			if (adapter == NULL) {
-				orb->error("object not found for method invocation");
-				return;
-			}
-
-			DistributedMethod invocation(orb, this);
-			adapter->invokeMethod(methodID, &invocation);
-
-			DOBMessage* response = (DOBMessage*) invocation.getResponseMessage();
-			client->sendReply(response);
-		}
+		void execute();
 
 		void handleReply(Packet* resp) {
 			packet = resp->clone();
@@ -131,6 +100,10 @@ namespace engine {
 			packet->parseUnicode(str);
 
 			return str;
+		}
+
+		bool isAsync() const {
+			return async;
 		}
 
 	};

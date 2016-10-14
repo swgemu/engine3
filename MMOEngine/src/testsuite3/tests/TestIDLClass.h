@@ -20,6 +20,8 @@
 #define unlikely(x)     (x)
 #endif
 #endif
+#include "engine/lua/Luna.h"
+
 #include "engine/core/ManagedObject.h"
 
 namespace testsuite3 {
@@ -32,6 +34,8 @@ public:
 	int getValue();
 
 	void setValue(int val);
+
+	void asyncTest();
 
 	DistributedObjectServant* _getImplementation();
 	DistributedObjectServant* _getImplementationForRead() const;
@@ -65,6 +69,8 @@ public:
 	int getValue();
 
 	void setValue(int val);
+
+	void asyncTest();
 
 	WeakReference<TestIDLClass*> _this;
 
@@ -113,6 +119,8 @@ public:
 
 	void setValue(int val);
 
+	void asyncTest();
+
 };
 
 class TestIDLClassHelper : public DistributedObjectClassHelper, public Singleton<TestIDLClassHelper> {
@@ -130,6 +138,23 @@ public:
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
 
 	friend class Singleton<TestIDLClassHelper>;
+};
+
+class LuaTestIDLClass {
+public:
+	static const char className[];
+	static Luna<LuaTestIDLClass>::RegType Register[];
+
+	LuaTestIDLClass(lua_State *L);
+	virtual ~LuaTestIDLClass();
+
+	int _setObject(lua_State *L);
+	int _getObject(lua_State *L);
+	int getValue(lua_State *L);
+	int setValue(lua_State *L);
+	int asyncTest(lua_State *L);
+
+	Reference<TestIDLClass*> realObject;
 };
 
 } // namespace tests

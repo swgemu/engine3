@@ -7,8 +7,10 @@ package testsuite3.tests;
 
 import engine.core.ManagedObject;
 
+@lua
 class TestIDLClass extends ManagedObject {
 	private int value;
+
 	
 	public TestIDLClass(int val) {
 		value = val;
@@ -20,5 +22,10 @@ class TestIDLClass extends ManagedObject {
 	
 	public void setValue(int val) {
 		value = val;
+	}
+
+    @async
+	public void asyncTest() {
+
 	}
 }

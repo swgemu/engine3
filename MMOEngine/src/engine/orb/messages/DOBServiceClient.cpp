@@ -17,6 +17,9 @@ DOBServiceClient::DOBServiceClient(Socket* sock)
 
 	serviceHandler = NULL;
 
+//	setLogging(true);
+//	setGlobalLogging(true);
+
 	info("client connected");
 }
 
@@ -25,6 +28,9 @@ DOBServiceClient::DOBServiceClient(const String& host, int port)
 	rob = NULL;
 
 	serviceHandler = new DOBServiceHandler();
+
+//	setLogging(true);
+//	setGlobalLogging(true);
 
 	try {
 		connect();
@@ -46,19 +52,78 @@ void DOBServiceClient::run() {
 	receiveMessages();
 }
 
+void DOBServiceClient::receiveMessages() {
+	Packet packet;
+
+	assert(serviceHandler);
+
+	int messageSize = 0;
+
+	while (doRun) {
+		try	{
+			if (recieve(&packet)) {
+				//printf("ran recieve with data:%s\n", packet.toStringData().toCharArray());
+
+				if (packet.size() == 0)
+					break;
+
+				while (packet.size() > 0) {
+					//printf("ran while loop with data:%s\n", packet.toStringData().toCharArray());
+
+					if (messageSize && (messageSize <= packet.size())) {
+						//printf("messageSize:%d packet.size() pre handle:%d\n", messageSize, packet.size());
+						packet.reset();
+
+						serviceHandler->handleMessage(this, &packet);
+
+						//printf("messageSize:%d packet.size() post handle:%d\n", messageSize, packet.size());
+						packet.removeRange(0, messageSize);
+						messageSize = 0;
+						//printf("messageSize:%d packet.size() post remove range:%d\n", messageSize, packet.size());
+					} else {
+						if (!messageSize) {
+							if (packet.size() >= 4) {
+								packet.reset();
+
+								messageSize = packet.parseInt() - 4;
+
+								packet.removeRange(0, 4);
+							} else {
+								break;
+							}
+						} else {
+							break;
+						}
+					}
+				}
+			}
+		} catch (SocketException& e) {
+			if (!serviceHandler->handleError(this, e))
+				break;
+		}
+	}
+
+	disconnect();
+}
+
+
 bool DOBServiceClient::send(DOBMessage* message) {
 	message->setSequence(sentMessageSequence.increment());
+	message->setSize();
 
-	//info("SEND " + pack->toString());
+	info("SEND " + message->toStringData());
 	StreamServiceClient::send(message);
-	
+
 	//delete message;
 	return true;
 }
 
 
 bool DOBServiceClient::sendReply(DOBMessage* message) {
-	//info("SEND " + pack->toString());
+	message->setSize();
+
+	info("SEND " + message->toStringData());
+
 	StreamServiceClient::send(message);
 
 	//delete message;
@@ -74,10 +139,11 @@ bool DOBServiceClient::sendAndAcceptReply(DOBMessage* message) {
 bool DOBServiceClient::sendWithReply(DOBMessage* message) {
 	uint32 sequence = sentMessageSequence.increment();
 	message->setSequence(sequence);
+	message->setSize();
 
 	sentMessageQueue.put(sequence, message);
 
-	//info("SEND " + pack->toString());
+	info("SEND " + message->toStringData());
 	return StreamServiceClient::send(message);
 }
 

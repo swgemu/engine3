@@ -12,7 +12,7 @@
  *	ObserverStub
  */
 
-enum {RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_ = 6,RPC_GETOBJECTID__,RPC_COMPARETO__OBSERVER_,RPC_SETOBSERVERTYPE__INT_,RPC_ISOBSERVERTYPE__INT_};
+enum {RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_ = 3437531614,RPC_GETOBJECTID__,RPC_COMPARETO__OBSERVER_,RPC_SETOBSERVERTYPE__INT_,RPC_ISOBSERVERTYPE__INT_};
 
 Observer::Observer() : ManagedObject(DummyConstructorParameter::instance()) {
 	ObserverImplementation* _implementation = new ObserverImplementation();
@@ -326,7 +326,7 @@ void ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		}
 		break;
 	default:
-		throw Exception("Method does not exists");
+		ManagedObjectAdapter::invokeMethod(methid, inv);
 	}
 }
 

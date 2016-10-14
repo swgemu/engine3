@@ -28,13 +28,13 @@ namespace engine {
 		Packet* response;
 
 	public:
-		DistributedMethod(const DistributedObject* obj, sys::uint32 methid);
+		DistributedMethod(const DistributedObject* obj, sys::uint32 methid, bool async = false);
 		DistributedMethod(DistributedObjectBroker* broker, InvokeMethodMessage* invmsg);
 
 		~DistributedMethod();
 
 		// exeuctor methods
-		void executeWithVoidReturn();
+		void executeWithVoidReturn(bool async = false);
 
 		bool executeWithBooleanReturn();
 
@@ -123,7 +123,7 @@ namespace engine {
 		}
 
 	private:
-		void execute();
+		void execute(bool asyncMethod = false);
 
 	};
 

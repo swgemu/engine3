@@ -38,10 +38,14 @@ public:
 };
 
 void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
+	//printf("received dob message:%s\n", message->toStringData().toCharArray());
+
 	try {
 		DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
 		uint32 messageType = message->parseInt();
+
+		//printf("messageType: %d\n", messageType);
 
 		if (messageType != DOBMessage::REPLYMESSAGE) {
 			DOBMessage* dobMessage = create(messageType, message);

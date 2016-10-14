@@ -169,7 +169,7 @@ void ManagedVectorAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 
 	switch (methid) {
 	default:
-		throw Exception("Method does not exists");
+		ManagedObjectAdapter::invokeMethod(methid, inv);
 	}
 }
 

@@ -11,13 +11,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/orb/messages/InvokeMethodMessage.h"
 
-DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid) {
+DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid, bool async) {
 	object = obj;
 	methodID = methid;
 
 	orb = NULL;
 
-	invocationMessgage = new InvokeMethodMessage(object->_getObjectID(), methid, 0);
+	invocationMessgage = new InvokeMethodMessage(object->_getObjectID(), methid, 0, async);
 	response = NULL;
 }
 
@@ -36,8 +36,8 @@ DistributedMethod::~DistributedMethod() {
 		delete response;*/
 }
 
-void DistributedMethod::executeWithVoidReturn() {
-	execute();
+void DistributedMethod::executeWithVoidReturn(bool async) {
+	execute(async);
 }
 
 bool DistributedMethod::executeWithBooleanReturn() {
@@ -134,13 +134,15 @@ DistributedObject* DistributedMethod::executeWithObjectReturn() {
 		return NULL;
 }
 
-void DistributedMethod::execute() {
+void DistributedMethod::execute(bool asyncMethod) {
 	RemoteObjectBroker* broker = dynamic_cast<RemoteObjectBroker*>(object->_getObjectBroker());
 	assert(broker != NULL);
 
-	broker->invokeMethod(*this);
+	broker->invokeMethod(*this, asyncMethod);
 
-	response = invocationMessgage->getResponseMessage();
+	if (!asyncMethod) {
+		response = invocationMessgage->getResponseMessage();
+	}
 }
 
 void DistributedMethod::addBooleanParameter(bool val) {

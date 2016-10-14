@@ -30,11 +30,13 @@ namespace engine {
 
 	public:	
 		DOBMessage(uint32 messageType) : Packet(20), client(NULL), sequence(0) {
+			insertInt(0); //size
 			insertInt(messageType);
 			insertInt(0); // sequence
 		}
 
 		DOBMessage(uint32 messageType, uint32 initialBufferSize) : Packet(initialBufferSize), client(NULL), sequence(0) {
+			insertInt(0); //size
 			insertInt(messageType);
 			insertInt(0); // sequence
 		}
@@ -42,6 +44,7 @@ namespace engine {
 		DOBMessage(Packet* packet) : Packet(40), client(NULL) {
 			sequence = packet->parseInt();
 
+			insertInt(0); //size
 			insertInt(REPLYMESSAGE); // messageType
 			insertInt(sequence); // sequence
 		}
@@ -76,7 +79,11 @@ namespace engine {
 
 		void setSequence(uint32 seq) {
 			sequence = seq;
-			insertInt(4, seq); // sequence
+			insertInt(8, seq); // sequence
+		}
+
+		void setSize() {
+			insertInt(0, size());
 		}
 	};
 

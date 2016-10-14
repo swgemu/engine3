@@ -53,8 +53,7 @@ public:
 	void handleMessage(ServiceClient* client, Packet* message) {
 		DOBServiceClient* dobClient = static_cast<DOBServiceClient*>(client);
 
-		while (message->hasData())
-			messageFactory.process(dobClient, message);
+		messageFactory.process(dobClient, message);
 	}
 
 	void processMessage(Message* message) {

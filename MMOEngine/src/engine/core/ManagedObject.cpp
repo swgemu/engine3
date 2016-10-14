@@ -10,7 +10,7 @@
  *	ManagedObjectStub
  */
 
-enum {RPC_UPDATEFORWRITE__ = 6,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_NOTIFYLOADFROMDATABASE__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
+enum {RPC_UPDATEFORWRITE__ = 3653780595,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_RLOCK__MANAGEDOBJECT_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_NOTIFYLOADFROMDATABASE__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
@@ -94,6 +94,31 @@ void ManagedObject::_rlock(bool doLock) {
 		method.executeWithVoidReturn();
 	} else {
 		_implementation->rlock(doLock);
+	}
+}
+
+void ManagedObject::_rlock(ManagedObject* obj) {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_RLOCK__MANAGEDOBJECT_);
+		method.addObjectParameter(obj);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->rlock(obj);
+	}
+}
+
+void ManagedObject::_rlock(Lockable* obj) {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		throw ObjectNotLocalException(this);
+
+	} else {
+		_implementation->rlock(obj);
 	}
 }
 
@@ -585,6 +610,11 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			rlock(inv->getBooleanParameter());
 		}
 		break;
+	case RPC_RLOCK__MANAGEDOBJECT_:
+		{
+			rlock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+		}
+		break;
 	case RPC_WLOCK__BOOL_:
 		{
 			wlock(inv->getBooleanParameter());
@@ -680,6 +710,10 @@ void ManagedObjectAdapter::lock(ManagedObject* obj) {
 
 void ManagedObjectAdapter::rlock(bool doLock) {
 	(static_cast<ManagedObject*>(stub))->rlock(doLock);
+}
+
+void ManagedObjectAdapter::rlock(ManagedObject* obj) {
+	(static_cast<ManagedObject*>(stub))->rlock(obj);
 }
 
 void ManagedObjectAdapter::wlock(bool doLock) {

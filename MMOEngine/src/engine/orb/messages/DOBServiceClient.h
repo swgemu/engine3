@@ -30,6 +30,8 @@ namespace engine {
 		~DOBServiceClient();
 		
 		void run();
+
+		void receiveMessages();
 		
 		bool send(DOBMessage* message);
 

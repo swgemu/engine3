@@ -10,7 +10,7 @@
  *	ObservableStub
  */
 
-enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 6,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_,RPC_ADDOBSERVABLECHILD__OBSERVABLE_,RPC_DROPOBSERVEABLECHILD__OBSERVABLE_};
+enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 3221949456,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_,RPC_ADDOBSERVABLECHILD__OBSERVABLE_,RPC_DROPOBSERVEABLECHILD__OBSERVABLE_};
 
 Observable::Observable() : ManagedObject(DummyConstructorParameter::instance()) {
 	ObservableImplementation* _implementation = new ObservableImplementation();
@@ -368,7 +368,7 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		}
 		break;
 	default:
-		throw Exception("Method does not exists");
+		ManagedObjectAdapter::invokeMethod(methid, inv);
 	}
 }
 
