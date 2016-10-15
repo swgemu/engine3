@@ -34,6 +34,8 @@ namespace engine {
 		virtual void deploy(DistributedObjectStub* obj) = 0;
 		virtual void deploy(const String& name, DistributedObjectStub* obj) = 0;
 
+		virtual void requestServant(DistributedObjectStub* obj) = 0;
+
 		virtual DistributedObjectStub* undeploy(const String& name) = 0;
 
 		virtual Reference<DistributedObject*> lookUp(const String& name) = 0;

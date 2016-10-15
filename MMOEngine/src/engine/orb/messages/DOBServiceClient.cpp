@@ -17,8 +17,8 @@ DOBServiceClient::DOBServiceClient(Socket* sock)
 
 	serviceHandler = NULL;
 
-//	setLogging(true);
-//	setGlobalLogging(true);
+	//setLogging(true);
+	//setGlobalLogging(true);
 
 	info("client connected");
 }
@@ -29,8 +29,8 @@ DOBServiceClient::DOBServiceClient(const String& host, int port)
 
 	serviceHandler = new DOBServiceHandler();
 
-//	setLogging(true);
-//	setGlobalLogging(true);
+	//setLogging(true);
+	//setGlobalLogging(true);
 
 	try {
 		connect();

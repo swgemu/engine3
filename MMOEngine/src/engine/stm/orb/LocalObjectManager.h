@@ -36,6 +36,10 @@ namespace engine {
 
 		void registerClass(const String& name, DistributedObjectClassHelper* helper);
 
+		void requestServant(DistributedObjectStub* obj) {
+
+		}
+
 		// deployment methods
 		void deploy(DistributedObjectStub* obj);
 		void deploy(const String& name, DistributedObjectStub* obj);

@@ -12,14 +12,14 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "LookUpObjectMessage.h"
 #include "LookUpObjectByIDMessage.h"
 #include "UndeployObjectMessage.h"
-
+#include "RequestServantMessage.h"
 #include "GetNextFreeObjectIDMessage.h"
 
 void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 	const String& className = obj->_getClassName();
 	assert(!className.isEmpty());
 
-	DeployObjectMessage deployMessage(obj->_getName(), className);
+	DeployObjectMessage deployMessage(obj->_getName(), className, obj->_getObjectID());
 
 	if (!brokerClient->sendAndAcceptReply(&deployMessage))
 		throw DistributionException(obj);
@@ -27,14 +27,14 @@ void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 	if (!deployMessage.isDeployed())
 		throw ObjectAlreadyDeployedException(obj);
 
-	//obj->_setObjectID(deployMessage.getObjectID());
+	obj->_setObjectID(deployMessage.getObjectID());
 }
 
 void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
 	const String& className = obj->_getClassName();
 	assert(!className.isEmpty());
 
-	DeployObjectMessage deployMessage(name, className);
+	DeployObjectMessage deployMessage(name, className, obj->_getObjectID());
 
 	if (!brokerClient->sendAndAcceptReply(&deployMessage))
 		throw DistributionException(obj);
@@ -42,7 +42,7 @@ void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) 
 	if (!deployMessage.isDeployed())
 		throw ObjectAlreadyDeployedException(obj);
 
-	//obj->_setObjectID(deployMessage.getObjectID());
+	obj->_setObjectID(deployMessage.getObjectID());
 }
 
 DistributedObjectStub* RemoteObjectBroker::undeploy(const String& name) {
@@ -75,6 +75,13 @@ Reference<DistributedObject*> RemoteObjectBroker::lookUp(const String& name) {
 	}
 
 	return obj;
+}
+
+void RemoteObjectBroker::requestServant(DistributedObjectStub* obj) {
+	RequestServantMessage message(obj->_getObjectID());
+
+	if (!brokerClient->sendAndAcceptReply(&message))
+		throw DistributionException("couldnt receive servant data");
 }
 
 Reference<DistributedObject*> RemoteObjectBroker::lookUp(uint64 objid) {

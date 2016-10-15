@@ -40,6 +40,13 @@ DistributedObjectStub::~DistributedObjectStub() {
 	return new DistributedObjectStub(*this);
 }*/
 
+void DistributedObjectStub::_requestServant() {
+	if (_getImplementation() != NULL)
+		return;
+
+	_getObjectBroker()->requestServant(this);
+}
+
 void DistributedObjectStub::deploy() {
 	if (_getImplementation() == NULL)
 		throw Exception("unable to deploy object");

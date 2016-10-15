@@ -23,62 +23,25 @@ namespace engine {
 		String name;
 		String className;
 
+		uint64 requestedObjectID;
+
 		bool deployed;
 		uint64 objectID;
 
 	public:	
-		DeployObjectMessage(const String& name, const String& classname) : DOBMessage(DEPLOYOBJECTMESSAGE, 40) {
-			insertAscii(name);
-			insertAscii(classname);
-		}
+		DeployObjectMessage(const String& name, const String& classname, uint64 requestedObjectID);
 	
-		DeployObjectMessage(Packet* message) : DOBMessage(message) {
-			message->parseAscii(name);
-			message->parseAscii(className);
-		}
+		DeployObjectMessage(Packet* message);
 
-		void execute() {
-			DistributedObjectBroker* broker = DistributedObjectBroker::instance();
-			ObjectBroker* remoteBroker = static_cast<ObjectBroker*>(client->getRemoteObjectBroker());
+		void execute();
 
-			DistributedObjectStub* obj = broker->createObjectStub(className, name);
-			if (obj != NULL) {
-				try {
-					broker->deployLocal(obj->_getName(), obj);
+		void handleReply(Packet* message);
 
-					obj->_setObjectBroker(remoteBroker);
-
-					insertBoolean(true);
-					insertLong(obj->_getObjectID());
-				} catch (const Exception& e) {
-					e.printStackTrace();
-
-					delete obj;
-
-					insertBoolean(false);
-				}
-			} else {
-				delete obj;
-
-				insertBoolean(false);
-			}
-
-			client->sendReply(this);
-
-		}
-
-		void handleReply(Packet* message) {
-			deployed = message->parseBoolean();
-
-			if (deployed)
-				objectID = message->parseLong();
-		}
-
-		bool isDeployed() {
+		bool isDeployed() const {
 			return deployed;
 		}
 
-		uint64 getObjectID() {
+		uint64 getObjectID() const {
 			return objectID;
 		}
 	};
