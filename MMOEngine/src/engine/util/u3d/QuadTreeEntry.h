@@ -188,7 +188,7 @@ public:
 
 	virtual bool isInRange(QuadTreeEntry* obj, float range);
 
-	bool isInRange(float x, float y, float range);
+	virtual bool isInRange(float x, float y, float range);
 
 	float getDistanceTo(QuadTreeEntry* obj);
 

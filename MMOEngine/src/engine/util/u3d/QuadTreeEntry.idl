@@ -100,7 +100,7 @@ class QuadTreeEntry extends Observable {
 	}
 
 	@dirty
-	public boolean isInRange(float x, float y, float range) {
+	public abstract boolean isInRange(float x, float y, float range) {
 	 	float rangesq = range * range;
 
 		float deltaX = x - coordinates.getPositionX();
