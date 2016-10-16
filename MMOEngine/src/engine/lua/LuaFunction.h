@@ -37,7 +37,7 @@ namespace lua {
 		virtual void operator<<(int64 number);
 		virtual void operator<<(uint64 number);
 		virtual void operator<<(bool boolean);
-		virtual void operator<<(String& str);
+		virtual void operator<<(const String& str);
 		virtual void operator<<(const char* str);
 		virtual void operator<<(void* pointer);
 

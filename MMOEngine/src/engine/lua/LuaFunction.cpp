@@ -95,7 +95,7 @@ void LuaFunction::operator<<(bool boolean) {
 	lua_pushboolean(L, boolean);
 }
 
-void LuaFunction::operator<<(String& str) {
+void LuaFunction::operator<<(const String& str) {
 	numberOfArgs++;
 	lua_pushstring(L, str.toCharArray());
 }

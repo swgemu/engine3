@@ -8,8 +8,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
-#include "engine/orb/DistributedObjectBroker.h"
-
 #include "DOBMessage.h"
 
 namespace engine {
@@ -100,6 +98,10 @@ namespace engine {
 			packet->parseUnicode(str);
 
 			return str;
+		}
+
+		Packet* getIncomingPacket() {
+			return packet;
 		}
 
 		bool isAsync() const {

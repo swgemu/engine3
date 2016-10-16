@@ -4,6 +4,9 @@
 
 #include "InvokeMethodMessage.h"
 
+#include "engine/orb/DistributedObjectBroker.h"
+
+
 InvokeMethodMessage::InvokeMethodMessage(uint64 objectid, sys::uint32 methid, sys::uint32 invid, bool async) : DOBMessage(INVOKEMETHODMESSAGE, 40) {
 	insertLong(objectid);
 

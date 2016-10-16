@@ -8,13 +8,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
 namespace engine {
   namespace ORB {
 
 	class DistributedObjectBroker;
 	class DistributedObject;
-
-	class InvokeMethodMessage;
 
 	class DistributedMethod {
 		const DistributedObject* object;
@@ -24,7 +24,7 @@ namespace engine {
 
 		DistributedObjectBroker* orb;
 
-		InvokeMethodMessage* invocationMessgage;
+		InvokeMethodMessage* invocationMessage;
 		Packet* response;
 
 	public:
@@ -83,6 +83,16 @@ namespace engine {
 		void addAsciiParameter(const String& ascii);
 		void addUnicodeParameter(const UnicodeString& str);
 
+		template<typename T>
+		void addDereferencedSerializableParameter(const T& array) {
+			TypeInfo<T>::toBinaryStream(&(const_cast<T&>(array)), invocationMessage);
+		}
+
+		template<typename T>
+		void addDereferencedSerializableParameter(T& array) {
+			TypeInfo<T>::toBinaryStream(&array, invocationMessage);
+		}
+
 		void addObjectParameter(DistributedObject* obj);
 
 		// parameter reader methods
@@ -110,12 +120,21 @@ namespace engine {
 
 		DistributedObject* getObjectParameter();
 
+		template<typename T>
+		T getDereferencedSerializableParameter() {
+			T object;
+
+			TypeInfo<T>::parseFromBinaryStream(&object, invocationMessage->getIncomingPacket());
+
+			return object;
+		}
+
 		const DistributedObject* getObject() const {
 			return object;
 		}
 
 		InvokeMethodMessage* getInvocationMessage() const {
-			return invocationMessgage;
+			return invocationMessage;
 		}
 
 		Packet* getResponseMessage() const {

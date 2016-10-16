@@ -270,7 +270,7 @@ void DistributedObjectBroker::deployRemote(const String& name, DistributedObject
 	if (!namingDirectoryService->bind(obj->_getName(), obj))
 		throw NameAlreadyBoundException(obj);
 
-	if (remoteObjectCache.add(obj->_getObjectID(), obj) != NULL) {
+	if (remoteObjectCache.add(obj->_getObjectID(), obj)) {
 		throw ObjectAlreadyDeployedException(obj);
 	} else
 		debug("remote object \'" + obj->_getName() + "\' deployed with ID 0x" + String::valueOf(obj->_getObjectID()));
