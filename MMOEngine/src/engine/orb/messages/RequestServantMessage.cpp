@@ -67,7 +67,7 @@ void RequestServantMessage::handleReply(Packet* message) {
 				objectID).castTo<ManagedObject*>();
 
 		if (obj != NULL) {
-			DistributedObjectBroker::instance()->createObjectServant(className, obj);
+			DistributedObjectBroker::instance()->createObjectServant(className, obj, true);
 
 			assert(obj->_getImplementation());
 

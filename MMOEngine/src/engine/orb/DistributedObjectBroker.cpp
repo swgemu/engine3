@@ -353,7 +353,7 @@ DistributedObjectStub* DistributedObjectBroker::createObjectStub(const String& c
 	return obj;
 }
 
-DistributedObjectServant* DistributedObjectBroker::createObjectServant(const String& className, DistributedObjectStub* stub) {
+DistributedObjectServant* DistributedObjectBroker::createObjectServant(const String& className, DistributedObjectStub* stub, bool addToObjectManager) {
 	DistributedObjectServant* servant = NULL;
 
 	DistributedObjectClassHelper* helper = classMap.get(className);
@@ -367,7 +367,9 @@ DistributedObjectServant* DistributedObjectBroker::createObjectServant(const Str
 
 		stub->_setImplementation(servant);
 
-		objectManager->addObject(stub);
+		if (addToObjectManager) {
+			objectManager->addObject(stub);
+		}
 	} else
 		warning("class \'" + className + "\' is not declared when creating servant");
 
