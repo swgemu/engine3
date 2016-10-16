@@ -109,7 +109,7 @@ namespace sys {
 
 		virtual ~HashTable();
 
-	    V put(const K& key, const V& value);
+	    V& put(const K& key, const V& value);
 
 	    V& get(const K& key);
 
@@ -335,13 +335,13 @@ namespace sys {
 		free(oldMap);
 	}
 
-	template<class K, class V> V HashTable<K,V>::put(const K& key, const V& value) {
+	template<class K, class V> V& HashTable<K,V>::put(const K& key, const V& value) {
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
 		for (Entry<K,V>* e = table[index]; e != NULL; e = e->next) {
 	    	if ((e->hash == hashCode) && e->key == key) {
-				V old = e->value;
+				V& old = e->value;
 				e->value = value;
 				return old;
 	    	}
