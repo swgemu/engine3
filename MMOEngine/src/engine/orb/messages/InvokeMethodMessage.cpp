@@ -43,7 +43,7 @@ void InvokeMethodMessage::runMethod() {
 
 	DistributedObjectAdapter* adapter = orb->getObjectAdapter(objectID);
 	if (adapter == NULL) {
-		orb->error("object not found for method invocation");
+		orb->error("object not found for method invocation for oid: " + String::valueOf(objectID));
 		return;
 	}
 
