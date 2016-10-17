@@ -70,6 +70,8 @@ void StreamServiceClient::receiveMessages() {
 					break;
 
 				serviceHandler->handleMessage(this, &packet);
+			} else {
+				break;
 			}
 		} catch (SocketException& e) {
 			if (!serviceHandler->handleError(this, e))
@@ -82,11 +84,18 @@ void StreamServiceClient::receiveMessages() {
 
 int StreamServiceClient::send(Packet* pack) {
 	if (socket != NULL) {
-		int res = socket->send(pack);
+		int res = 0;
+		try {
+			res = socket->send(pack);
 
-		serviceHandler->messageSent(pack);
+			serviceHandler->messageSent(pack);
 
-		return res;
+			return res;
+		} catch(SocketException& s) {
+			doRun = false;
+
+			throw;
+		}
 	} else {
 		doRun = false;
 
@@ -110,4 +119,6 @@ bool StreamServiceClient::recieve(Packet* pack) {
 
 void StreamServiceClient::disconnect() {
 	close();
+
+	serviceHandler->deleteConnection(this);
 }
