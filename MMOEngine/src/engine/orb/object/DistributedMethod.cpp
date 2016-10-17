@@ -136,7 +136,9 @@ DistributedObject* DistributedMethod::executeWithObjectReturn() {
 
 void DistributedMethod::execute(bool asyncMethod) {
 	RemoteObjectBroker* broker = dynamic_cast<RemoteObjectBroker*>(object->_getObjectBroker());
-	assert(broker != NULL);
+	if (broker == NULL) {
+		throw Exception("cannot do RPC beacuase remote agent died");
+	}
 
 	broker->invokeMethod(*this, asyncMethod);
 

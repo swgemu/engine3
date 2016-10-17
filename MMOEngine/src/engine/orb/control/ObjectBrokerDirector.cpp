@@ -105,7 +105,21 @@ void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 
 	info("broker disconnected", true);
 
+	RemoteObjectBroker* remote = dynamic_cast<RemoteObjectBroker*>(broker);
+
+	if (remote) {
+		SynchronizedSortedVector<DistributedObject*>& deployedObjects = remote->getDeployedObjects();
+
+		for (int i = 0; i < deployedObjects.size(); ++i) {
+			DistributedObject* obj = deployedObjects.get(i);
+
+			obj->_setObjectBroker(NULL);
+		}
+	}
+
 	objectBrokerTable.remove(broker);
+
+	agentStates.drop(broker);
 }
 
 

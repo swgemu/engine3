@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/orb/ObjectBroker.h"
 
+#include "system/util/SynchronizedSortedVector.h"
+
 namespace engine {
   namespace ORB {
 
@@ -17,6 +19,7 @@ namespace engine {
 
 	class RemoteObjectBroker : public ObjectBroker {
 		Reference<DOBServiceClient*> brokerClient;
+		SynchronizedSortedVector<DistributedObject*> deployedObjects;
 
 	public:
 		RemoteObjectBroker(const String& address, int port) {
@@ -49,6 +52,12 @@ namespace engine {
 		bool destroyObject(DistributedObjectStub* obj);
 
 		void invokeMethod(DistributedMethod& method, bool async);
+
+		void addDeployedObject(DistributedObject* obj);
+
+		SynchronizedSortedVector<DistributedObject*>& getDeployedObjects() {
+			return deployedObjects;
+		}
 		
 		DOBObjectManager* getObjectManager() {
 			return NULL;

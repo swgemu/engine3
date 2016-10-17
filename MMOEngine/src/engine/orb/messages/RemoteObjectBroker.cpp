@@ -54,6 +54,10 @@ DistributedObjectStub* RemoteObjectBroker::undeploy(const String& name) {
 	return NULL;
 }
 
+void RemoteObjectBroker::addDeployedObject(DistributedObject* obj) {
+	deployedObjects.put(obj);
+}
+
 Reference<DistributedObject*> RemoteObjectBroker::lookUp(const String& name) {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 

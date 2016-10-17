@@ -21,7 +21,7 @@ void DeployObjectMessage::execute() {
 	//printf("Received DeployObjectMessage\n");
 
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
-	ObjectBroker* remoteBroker = static_cast<ObjectBroker*>(client->getRemoteObjectBroker());
+	RemoteObjectBroker* remoteBroker = client->getRemoteObjectBroker();
 
 	DistributedObjectStub* obj = broker->createObjectStub(className, name);
 	if (obj != NULL) {
@@ -33,6 +33,8 @@ void DeployObjectMessage::execute() {
 
 			insertBoolean(true);
 			insertLong(obj->_getObjectID());
+
+			remoteBroker->addDeployedObject(obj);
 		} catch (const Exception& e) {
 			e.printStackTrace();
 
