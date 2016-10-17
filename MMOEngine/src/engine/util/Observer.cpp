@@ -302,27 +302,39 @@ void ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	switch (methid) {
 	case RPC_NOTIFYOBSERVEREVENT__INT_OBSERVABLE_MANAGEDOBJECT_LONG_:
 		{
-			resp->insertSignedInt(notifyObserverEvent(inv->getUnsignedIntParameter(), static_cast<Observable*>(inv->getObjectParameter()), static_cast<ManagedObject*>(inv->getObjectParameter()), inv->getSignedLongParameter()));
+			unsigned int eventType = inv->getUnsignedIntParameter();
+			Observable* observable = static_cast<Observable*>(inv->getObjectParameter());
+			ManagedObject* arg1 = static_cast<ManagedObject*>(inv->getObjectParameter());
+			long long arg2 = inv->getSignedLongParameter();
+			resp->insertSignedInt(
+			notifyObserverEvent(eventType, observable, arg1, arg2));
 		}
 		break;
 	case RPC_GETOBJECTID__:
 		{
-			resp->insertLong(getObjectID());
+			resp->insertLong(
+			getObjectID());
 		}
 		break;
 	case RPC_COMPARETO__OBSERVER_:
 		{
-			resp->insertSignedInt(compareTo(static_cast<Observer*>(inv->getObjectParameter())));
+			Observer* obj = static_cast<Observer*>(inv->getObjectParameter());
+			resp->insertSignedInt(
+			compareTo(obj));
 		}
 		break;
 	case RPC_SETOBSERVERTYPE__INT_:
 		{
-			setObserverType(inv->getUnsignedIntParameter());
+			unsigned int type = inv->getUnsignedIntParameter();
+			
+			setObserverType(type);
 		}
 		break;
 	case RPC_ISOBSERVERTYPE__INT_:
 		{
-			resp->insertBoolean(isObserverType(inv->getUnsignedIntParameter()));
+			unsigned int type = inv->getUnsignedIntParameter();
+			resp->insertBoolean(
+			isObserverType(type));
 		}
 		break;
 	default:

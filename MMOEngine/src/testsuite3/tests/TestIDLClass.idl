@@ -7,13 +7,23 @@ package testsuite3.tests;
 
 import engine.core.ManagedObject;
 
-@lua
+include system.util.Vector;
+
+//@lua
 class TestIDLClass extends ManagedObject {
 	private int value;
 
+	@dereferenced
+	Vector<int> testVector;
+
+	@weakReference
+	protected TestIDLClass parent;
 	
 	public TestIDLClass(int val) {
 		value = val;
+
+		testVector.add(-1);
+		testVector.add(5);
 	}
 	
 	public int getValue() {
@@ -22,6 +32,35 @@ class TestIDLClass extends ManagedObject {
 	
 	public void setValue(int val) {
 		value = val;
+	}
+
+	public void setValue2(int val1, int val2) {
+	    value = val2;
+	}
+
+	public void setParent(TestIDLClass val) {
+	    parent = val;
+	}
+
+	public void testShit(@dereferenced final Vector<int> val) {
+	    //testVector = val;
+/*
+        int valSize = (int) val.size();
+
+	    for (int i = 0; i < valSize; ++i) {
+	    //    testVector.add(val.get(i));
+	    }
+*/
+	}
+
+    @local
+	public Vector<int> getTestVector() {
+	    return testVector;
+	}
+
+    @weakReference
+	public TestIDLClass getParent() {
+	    return parent;
 	}
 
     @async

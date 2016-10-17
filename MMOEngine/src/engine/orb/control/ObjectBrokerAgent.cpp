@@ -38,7 +38,7 @@ void ObjectBrokerAgent::start() {
 
 void ObjectBrokerAgent::startBackup() {
 	info("creating backup");
-	
+
 	setState(BACKUP_STARTED);
 
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();

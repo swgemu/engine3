@@ -592,103 +592,132 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	switch (methid) {
 	case RPC_UPDATEFORWRITE__:
 		{
+			
 			updateForWrite();
 		}
 		break;
 	case RPC_LOCK__BOOL_:
 		{
-			lock(inv->getBooleanParameter());
+			bool doLock = inv->getBooleanParameter();
+			
+			lock(doLock);
 		}
 		break;
 	case RPC_LOCK__MANAGEDOBJECT_:
 		{
-			lock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+			ManagedObject* obj = static_cast<ManagedObject*>(inv->getObjectParameter());
+			
+			lock(obj);
 		}
 		break;
 	case RPC_RLOCK__BOOL_:
 		{
-			rlock(inv->getBooleanParameter());
+			bool doLock = inv->getBooleanParameter();
+			
+			rlock(doLock);
 		}
 		break;
 	case RPC_RLOCK__MANAGEDOBJECT_:
 		{
-			rlock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+			ManagedObject* obj = static_cast<ManagedObject*>(inv->getObjectParameter());
+			
+			rlock(obj);
 		}
 		break;
 	case RPC_WLOCK__BOOL_:
 		{
-			wlock(inv->getBooleanParameter());
+			bool doLock = inv->getBooleanParameter();
+			
+			wlock(doLock);
 		}
 		break;
 	case RPC_WLOCK__MANAGEDOBJECT_:
 		{
-			wlock(static_cast<ManagedObject*>(inv->getObjectParameter()));
+			ManagedObject* obj = static_cast<ManagedObject*>(inv->getObjectParameter());
+			
+			wlock(obj);
 		}
 		break;
 	case RPC_UNLOCK__BOOL_:
 		{
-			unlock(inv->getBooleanParameter());
+			bool doLock = inv->getBooleanParameter();
+			
+			unlock(doLock);
 		}
 		break;
 	case RPC_RUNLOCK__BOOL_:
 		{
-			runlock(inv->getBooleanParameter());
+			bool doLock = inv->getBooleanParameter();
+			
+			runlock(doLock);
 		}
 		break;
 	case RPC_SETLOCKNAME__STRING_:
 		{
-			String name; 
-			setLockName(inv->getAsciiParameter(name));
+			 String name; inv->getAsciiParameter(name);
+			
+			setLockName(name);
 		}
 		break;
 	case RPC_NOTIFYDESTROY__:
 		{
-			resp->insertBoolean(notifyDestroy());
+			resp->insertBoolean(
+			notifyDestroy());
 		}
 		break;
 	case RPC_NOTIFYLOADFROMDATABASE__:
 		{
+			
 			notifyLoadFromDatabase();
 		}
 		break;
 	case RPC_INITIALIZETRANSIENTMEMBERS__:
 		{
+			
 			initializeTransientMembers();
 		}
 		break;
 	case RPC_UPDATETODATABASE__:
 		{
+			
 			updateToDatabase();
 		}
 		break;
 	case RPC_QUEUEUPDATETODATABASETASK__:
 		{
+			
 			queueUpdateToDatabaseTask();
 		}
 		break;
 	case RPC_CLEARUPDATETODATABASETASK__:
 		{
+			
 			clearUpdateToDatabaseTask();
 		}
 		break;
 	case RPC_GETLASTCRCSAVE__:
 		{
-			resp->insertInt(getLastCRCSave());
+			resp->insertInt(
+			getLastCRCSave());
 		}
 		break;
 	case RPC_SETLASTCRCSAVE__INT_:
 		{
-			setLastCRCSave(inv->getUnsignedIntParameter());
+			unsigned int crc = inv->getUnsignedIntParameter();
+			
+			setLastCRCSave(crc);
 		}
 		break;
 	case RPC_ISPERSISTENT__:
 		{
-			resp->insertBoolean(isPersistent());
+			resp->insertBoolean(
+			isPersistent());
 		}
 		break;
 	case RPC_GETPERSISTENCELEVEL__:
 		{
-			resp->insertSignedInt(getPersistenceLevel());
+			resp->insertSignedInt(
+			getPersistenceLevel());
 		}
 		break;
 	default:
