@@ -31,8 +31,19 @@ void RequestServantMessage::execute() {
 
 		locker.release();
 
-		obj->_setObjectBroker(client->getRemoteObjectBroker());
+		RemoteObjectBroker* remoteBroker = client->getRemoteObjectBroker();
+		RemoteObjectBroker* oldBroker = dynamic_cast<RemoteObjectBroker*>(obj->_getObjectBroker());
+
+		obj->_setObjectBroker(remoteBroker);
 		obj->_setImplementation(NULL);
+
+		if (remoteBroker != NULL) {
+			remoteBroker->addDeployedObject(obj);
+		}
+
+		if (oldBroker != NULL) {
+			oldBroker->removeDeployedObject(obj);
+		}
 
 		insertBoolean(true);
 		insertAscii(obj->_getClassName());
@@ -48,12 +59,11 @@ void RequestServantMessage::execute() {
 void RequestServantMessage::handleReply(Packet* message) {
 	//printf("received servant data:%s\n", message->toStringData().toCharArray());
 
-	String className;
-
 	objectID = message->parseLong();
 	bool available = message->parseBoolean();
 
 	if (available) {
+		String className;
 		message->parseAscii(className);
 
 		int size = message->parseInt();

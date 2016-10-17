@@ -107,14 +107,17 @@ void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 
 	RemoteObjectBroker* remote = dynamic_cast<RemoteObjectBroker*>(broker);
 
-	if (remote) {
+	if (remote) { // this assumes no other deploy messaage will arrive while this is running
 		SynchronizedSortedVector<DistributedObject*>& deployedObjects = remote->getDeployedObjects();
 
 		for (int i = 0; i < deployedObjects.size(); ++i) {
 			DistributedObject* obj = deployedObjects.get(i);
 
-			obj->_setObjectBroker(NULL);
+			if (obj->_getObjectBroker() == remote)
+				obj->_setObjectBroker(NULL);
 		}
+
+		deployedObjects.removeAll();
 	}
 
 	objectBrokerTable.remove(broker);

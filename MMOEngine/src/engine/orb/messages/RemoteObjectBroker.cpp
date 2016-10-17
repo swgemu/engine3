@@ -58,6 +58,10 @@ void RemoteObjectBroker::addDeployedObject(DistributedObject* obj) {
 	deployedObjects.put(obj);
 }
 
+void RemoteObjectBroker::removeDeployedObject(DistributedObject* obj) {
+	deployedObjects.drop(obj);
+}
+
 Reference<DistributedObject*> RemoteObjectBroker::lookUp(const String& name) {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 

@@ -60,8 +60,14 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 			if (messageType == DOBMessage::CONTROLMESSAGE) {
 				Task* task = new ControlMessageProcessorTask(dobMessage);
 				task->execute();
-			} else
-				dobMessage->execute();
+			} else {
+				try {
+					dobMessage->execute();
+				} catch (Exception& e){
+					broker->error(e.getMessage());
+					e.printStackTrace();
+				}
+			}
 		} else {
 			DOBMessage* queuedMessage = client->getQueuedMessage(message->parseInt());
 

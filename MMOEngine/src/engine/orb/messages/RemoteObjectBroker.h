@@ -54,6 +54,7 @@ namespace engine {
 		void invokeMethod(DistributedMethod& method, bool async);
 
 		void addDeployedObject(DistributedObject* obj);
+		void removeDeployedObject(DistributedObject* obj);
 
 		SynchronizedSortedVector<DistributedObject*>& getDeployedObjects() {
 			return deployedObjects;
