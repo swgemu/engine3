@@ -41,9 +41,9 @@ public:
 
 	bool deleteConnection(ServiceClient* client) {
 		DOBServiceClient* dobClient = static_cast<DOBServiceClient*>(client);
-		dobClient->stop();
-
 		ObjectBroker* broker = dobClient->getRemoteObjectBroker();
+
+		dobClient->stop();
 
 		ObjectBrokerDirector::instance()->brokerDisconnected(broker);
 

@@ -269,7 +269,7 @@ UnicodeString& DistributedMethod::getUnicodeParameter(UnicodeString& str) {
 }
 
 DistributedObject* DistributedMethod::getObjectParameter() {
-	uint64 objid = invocationMessage->parseLong();
+	uint64 objid = invocationMessage->getIncomingPacket()->parseLong();
 
 	if (objid != 0)
 		return orb->lookUp(objid);

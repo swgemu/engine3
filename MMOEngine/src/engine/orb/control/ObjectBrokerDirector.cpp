@@ -103,6 +103,8 @@ void ObjectBrokerDirector::brokerConnected(ObjectBroker* broker) {
 void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 	Locker locker(this);
 
+	info("broker disconnected", true);
+
 	objectBrokerTable.remove(broker);
 }
 

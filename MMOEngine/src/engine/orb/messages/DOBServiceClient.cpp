@@ -96,10 +96,14 @@ void DOBServiceClient::receiveMessages() {
 						}
 					}
 				}
+			} else {
+				doRun = false;
 			}
 		} catch (SocketException& e) {
-			if (!serviceHandler->handleError(this, e))
+			if (!serviceHandler->handleError(this, e)) {
+				doRun = false;
 				break;
+			}
 		}
 	}
 
