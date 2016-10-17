@@ -38,13 +38,17 @@ void ObjectBrokerAgent::start() {
 
 void ObjectBrokerAgent::startBackup() {
 	info("creating backup");
-
+	
 	setState(BACKUP_STARTED);
 
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
-	DOBObjectManager* objectManager = broker->getObjectManager();
-	objectManager->updateModifiedObjectsToDatabase();
+	if (broker->isRootBroker()) {
+		DOBObjectManager* objectManager = broker->getObjectManager();
+		objectManager->updateModifiedObjectsToDatabase();
+	} else {
+		info("save events disabled on non root brokers", true);
+	}
 }
 
 void ObjectBrokerAgent::finishBackup() {

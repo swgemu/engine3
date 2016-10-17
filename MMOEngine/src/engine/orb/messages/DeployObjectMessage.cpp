@@ -41,8 +41,6 @@ void DeployObjectMessage::execute() {
 			insertBoolean(false);
 		}
 	} else {
-		delete obj;
-
 		insertBoolean(false);
 	}
 
