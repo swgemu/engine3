@@ -30,7 +30,6 @@ namespace engine {
 
 	public:	
 		DeployObjectMessage(const String& name, const String& classname, uint64 requestedObjectID);
-	
 		DeployObjectMessage(Packet* message);
 
 		void execute();

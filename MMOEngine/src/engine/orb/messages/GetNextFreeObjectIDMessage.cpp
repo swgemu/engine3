@@ -4,10 +4,10 @@
 
 #include "GetNextFreeObjectIDMessage.h"
 
-GetNextFreeObjectIDMessage::GetNextFreeObjectIDMessage() : DOBMessage(GETNEXTFREEOBJECTIDMESSAGE, 20) {
+GetNextFreeObjectIDMessage::GetNextFreeObjectIDMessage() : DOBMessage(GETNEXTFREEOBJECTIDMESSAGE, 20), doLock(false), objectID(0) {
 }
 
-GetNextFreeObjectIDMessage::GetNextFreeObjectIDMessage(Packet* message) : DOBMessage(message) {
+GetNextFreeObjectIDMessage::GetNextFreeObjectIDMessage(Packet* message) : DOBMessage(message), doLock(false), objectID(0) {
 }
 
 void GetNextFreeObjectIDMessage::execute() {

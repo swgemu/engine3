@@ -27,10 +27,14 @@ namespace engine {
 	public:	
 		UndeployObjectMessage(const String& name) : DOBMessage(UNDEPLOYOBJECTMESSAGE, 40) {
 			insertAscii(name);
+
+			objectID = 0;
 		}
 	
 		UndeployObjectMessage(Packet* message) : DOBMessage(message) {
 			message->parseAscii(name);
+
+			objectID = 0;
 		}
 
 		void execute() {

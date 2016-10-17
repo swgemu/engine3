@@ -24,7 +24,6 @@ namespace engine {
 
 	public:
 		GetNextFreeObjectIDMessage();
-
 		GetNextFreeObjectIDMessage(Packet* message);
 
 		void execute();

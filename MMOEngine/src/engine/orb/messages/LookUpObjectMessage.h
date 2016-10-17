@@ -25,10 +25,16 @@ namespace engine {
 	public:	
 		LookUpObjectMessage(const String& name) : DOBMessage(LOOKUPOBJECTMESSAGE, 40) {
 			insertAscii(name);
+
+			found = false;
+			objectID = 0;
 		}
 
 		LookUpObjectMessage(Packet* message) : DOBMessage(message) {
 			message->parseAscii(name);
+
+			found = false;
+			objectID = 0;
 		}
 
 		void execute() {

@@ -29,41 +29,20 @@ namespace engine {
 							GETNEXTFREEOBJECTIDMESSAGE, REQUESTSERVANT };
 
 	public:	
-		DOBMessage(uint32 messageType) : Packet(20), client(NULL), sequence(0) {
-			insertInt(0); //size
-			insertInt(messageType);
-			insertInt(0); // sequence
-		}
+		DOBMessage(uint32 messageType);
+		DOBMessage(uint32 messageType, uint32 initialBufferSize);
+		DOBMessage(Packet* packet);
 
-		DOBMessage(uint32 messageType, uint32 initialBufferSize) : Packet(initialBufferSize), client(NULL), sequence(0) {
-			insertInt(0); //size
-			insertInt(messageType);
-			insertInt(0); // sequence
-		}
-
-		DOBMessage(Packet* packet) : Packet(40), client(NULL) {
-			sequence = packet->parseInt();
-
-			insertInt(0); //size
-			insertInt(REPLYMESSAGE); // messageType
-			insertInt(sequence); // sequence
-		}
+		~DOBMessage();
 
 		virtual void execute() = 0;
 
 		virtual void handleReply(Packet* response) {
 		}
 
-		void signalReply() {
-			replyCondition.signal();
-		}
+		void signalReply();
 
-		bool waitForReply(uint32 timeout = 10000) {
-			Time time;
-			time.addMiliTime(timeout);
-
-			return replyCondition.timedWait(&time) == 0;
-		}
+		bool waitForReply(uint32 timeout = 10000);
 
 		DOBServiceClient* getClient() {
 			return client;

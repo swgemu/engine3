@@ -5,7 +5,8 @@
 #include "DeployObjectMessage.h"
 
 DeployObjectMessage::DeployObjectMessage(const String& name, const String& classname,
-										 uint64 requestedObjectID) : DOBMessage(DEPLOYOBJECTMESSAGE, 40), requestedObjectID(requestedObjectID) {
+										 uint64 requestedObjectID) : DOBMessage(DEPLOYOBJECTMESSAGE, 40),
+																	 requestedObjectID(requestedObjectID), deployed(false) {
 	insertAscii(name);
 	insertAscii(classname);
 	insertLong(requestedObjectID);
@@ -15,6 +16,9 @@ DeployObjectMessage::DeployObjectMessage(Packet* message) : DOBMessage(message) 
 	message->parseAscii(name);
 	message->parseAscii(className);
 	requestedObjectID = message->parseLong();
+
+	deployed = false;
+	objectID = 0;
 }
 
 void DeployObjectMessage::execute() {

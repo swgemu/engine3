@@ -22,21 +22,12 @@ namespace engine {
 		SynchronizedSortedVector<DistributedObject*> deployedObjects;
 
 	public:
-		RemoteObjectBroker(const String& address, int port) {
-			brokerClient = new DOBServiceClient(address, port);
-			brokerClient->start();
-		}
+		RemoteObjectBroker(const String& address, int port);
+		RemoteObjectBroker(DOBServiceClient* client);
 
-		RemoteObjectBroker(DOBServiceClient* client) {
-			brokerClient = client;
-		}
+		~RemoteObjectBroker();
 
-		~RemoteObjectBroker() {
-		}
-
-		void registerClass(const String& name, DistributedObjectClassHelper* helper) {
-			assert(0);
-		}
+		void registerClass(const String& name, DistributedObjectClassHelper* helper);
 
 		// deployment methods
 		void deploy(DistributedObjectStub* obj);

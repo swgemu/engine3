@@ -15,6 +15,22 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "RequestServantMessage.h"
 #include "GetNextFreeObjectIDMessage.h"
 
+RemoteObjectBroker::RemoteObjectBroker(const String& address, int port) {
+	brokerClient = new DOBServiceClient(address, port);
+	brokerClient->start();
+}
+
+RemoteObjectBroker::RemoteObjectBroker(DOBServiceClient* client) {
+	brokerClient = client;
+}
+
+RemoteObjectBroker::~RemoteObjectBroker() {
+}
+
+void RemoteObjectBroker::registerClass(const String& name, DistributedObjectClassHelper* helper) {
+	assert(0);
+}
+
 void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 	const String& className = obj->_getClassName();
 	assert(!className.isEmpty());

@@ -23,10 +23,14 @@ namespace engine {
 	  public:
 		  UpdatePersistentObjectMessage(DistributedObject* object) : DOBMessage(UPDATEPERSISTENTOBJECTMESSAGE, 40) {
 			  insertLong(object->_getObjectID());
+
+			  success = 0;
 		  }
 
 		  UpdatePersistentObjectMessage(Packet* message) : DOBMessage(message) {
 			  objectID = message->parseLong();
+
+			  success = 0;
 		  }
 
 		  void execute() {

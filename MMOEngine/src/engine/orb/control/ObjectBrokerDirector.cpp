@@ -125,7 +125,6 @@ void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 	agentStates.drop(broker);
 }
 
-
 const char* ObjectBrokerDirector::commandToString(int command) {
 	switch (command) {
 	case CREATE_BACKUP:
