@@ -306,21 +306,24 @@ void ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			Observable* observable = static_cast<Observable*>(inv->getObjectParameter());
 			ManagedObject* arg1 = static_cast<ManagedObject*>(inv->getObjectParameter());
 			long long arg2 = inv->getSignedLongParameter();
-			resp->insertSignedInt(
-			notifyObserverEvent(eventType, observable, arg1, arg2));
+			
+			int _m_res = notifyObserverEvent(eventType, observable, arg1, arg2);
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	case RPC_GETOBJECTID__:
 		{
-			resp->insertLong(
-			getObjectID());
+			
+			unsigned long long _m_res = getObjectID();
+			resp->insertLong(_m_res);
 		}
 		break;
 	case RPC_COMPARETO__OBSERVER_:
 		{
 			Observer* obj = static_cast<Observer*>(inv->getObjectParameter());
-			resp->insertSignedInt(
-			compareTo(obj));
+			
+			int _m_res = compareTo(obj);
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	case RPC_SETOBSERVERTYPE__INT_:
@@ -328,13 +331,15 @@ void ObserverAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			unsigned int type = inv->getUnsignedIntParameter();
 			
 			setObserverType(type);
+			
 		}
 		break;
 	case RPC_ISOBSERVERTYPE__INT_:
 		{
 			unsigned int type = inv->getUnsignedIntParameter();
-			resp->insertBoolean(
-			isObserverType(type));
+			
+			bool _m_res = isObserverType(type);
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	default:

@@ -238,20 +238,23 @@ void FacadeAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	switch (methid) {
 	case RPC_INITIALIZESESSION__:
 		{
-			resp->insertSignedInt(
-			initializeSession());
+			
+			int _m_res = initializeSession();
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	case RPC_CANCELSESSION__:
 		{
-			resp->insertSignedInt(
-			cancelSession());
+			
+			int _m_res = cancelSession();
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	case RPC_CLEARSESSION__:
 		{
-			resp->insertSignedInt(
-			clearSession());
+			
+			int _m_res = clearSession();
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	default:

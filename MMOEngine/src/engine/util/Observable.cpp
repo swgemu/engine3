@@ -344,6 +344,7 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			long long arg2 = inv->getSignedLongParameter();
 			
 			notifyObservers(eventType, arg1, arg2);
+			
 		}
 		break;
 	case RPC_REGISTEROBSERVER__INT_OBSERVER_:
@@ -352,6 +353,7 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			Observer* observer = static_cast<Observer*>(inv->getObjectParameter());
 			
 			registerObserver(eventType, observer);
+			
 		}
 		break;
 	case RPC_DROPOBSERVER__INT_OBSERVER_:
@@ -360,13 +362,15 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			Observer* observer = static_cast<Observer*>(inv->getObjectParameter());
 			
 			dropObserver(eventType, observer);
+			
 		}
 		break;
 	case RPC_GETOBSERVERCOUNT__INT_:
 		{
 			unsigned int eventType = inv->getUnsignedIntParameter();
-			resp->insertSignedInt(
-			getObserverCount(eventType));
+			
+			int _m_res = getObserverCount(eventType);
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	case RPC_ADDOBSERVABLECHILD__OBSERVABLE_:
@@ -374,6 +378,7 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			Observable* observable = static_cast<Observable*>(inv->getObjectParameter());
 			
 			addObservableChild(observable);
+			
 		}
 		break;
 	case RPC_DROPOBSERVEABLECHILD__OBSERVABLE_:
@@ -381,6 +386,7 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			Observable* observable = static_cast<Observable*>(inv->getObjectParameter());
 			
 			dropObserveableChild(observable);
+			
 		}
 		break;
 	default:

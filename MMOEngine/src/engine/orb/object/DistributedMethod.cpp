@@ -273,8 +273,11 @@ UnicodeString& DistributedMethod::getUnicodeParameter(UnicodeString& str) {
 DistributedObject* DistributedMethod::getObjectParameter() {
 	uint64 objid = invocationMessage->getIncomingPacket()->parseLong();
 
-	if (objid != 0)
-		return orb->lookUp(objid);
-	else
+	//printf("receiving oid:%d\n", (int)objid);
+
+	if (objid != 0) {
+		return DistributedObjectBroker::instance()->lookUp(objid);
+	} else {
 		return NULL;
+	}
 }

@@ -594,6 +594,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		{
 			
 			updateForWrite();
+			
 		}
 		break;
 	case RPC_LOCK__BOOL_:
@@ -601,6 +602,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			bool doLock = inv->getBooleanParameter();
 			
 			lock(doLock);
+			
 		}
 		break;
 	case RPC_LOCK__MANAGEDOBJECT_:
@@ -608,6 +610,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			ManagedObject* obj = static_cast<ManagedObject*>(inv->getObjectParameter());
 			
 			lock(obj);
+			
 		}
 		break;
 	case RPC_RLOCK__BOOL_:
@@ -615,6 +618,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			bool doLock = inv->getBooleanParameter();
 			
 			rlock(doLock);
+			
 		}
 		break;
 	case RPC_RLOCK__MANAGEDOBJECT_:
@@ -622,6 +626,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			ManagedObject* obj = static_cast<ManagedObject*>(inv->getObjectParameter());
 			
 			rlock(obj);
+			
 		}
 		break;
 	case RPC_WLOCK__BOOL_:
@@ -629,6 +634,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			bool doLock = inv->getBooleanParameter();
 			
 			wlock(doLock);
+			
 		}
 		break;
 	case RPC_WLOCK__MANAGEDOBJECT_:
@@ -636,6 +642,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			ManagedObject* obj = static_cast<ManagedObject*>(inv->getObjectParameter());
 			
 			wlock(obj);
+			
 		}
 		break;
 	case RPC_UNLOCK__BOOL_:
@@ -643,6 +650,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			bool doLock = inv->getBooleanParameter();
 			
 			unlock(doLock);
+			
 		}
 		break;
 	case RPC_RUNLOCK__BOOL_:
@@ -650,6 +658,7 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			bool doLock = inv->getBooleanParameter();
 			
 			runlock(doLock);
+			
 		}
 		break;
 	case RPC_SETLOCKNAME__STRING_:
@@ -657,48 +666,56 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			 String name; inv->getAsciiParameter(name);
 			
 			setLockName(name);
+			
 		}
 		break;
 	case RPC_NOTIFYDESTROY__:
 		{
-			resp->insertBoolean(
-			notifyDestroy());
+			
+			bool _m_res = notifyDestroy();
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	case RPC_NOTIFYLOADFROMDATABASE__:
 		{
 			
 			notifyLoadFromDatabase();
+			
 		}
 		break;
 	case RPC_INITIALIZETRANSIENTMEMBERS__:
 		{
 			
 			initializeTransientMembers();
+			
 		}
 		break;
 	case RPC_UPDATETODATABASE__:
 		{
 			
 			updateToDatabase();
+			
 		}
 		break;
 	case RPC_QUEUEUPDATETODATABASETASK__:
 		{
 			
 			queueUpdateToDatabaseTask();
+			
 		}
 		break;
 	case RPC_CLEARUPDATETODATABASETASK__:
 		{
 			
 			clearUpdateToDatabaseTask();
+			
 		}
 		break;
 	case RPC_GETLASTCRCSAVE__:
 		{
-			resp->insertInt(
-			getLastCRCSave());
+			
+			unsigned int _m_res = getLastCRCSave();
+			resp->insertInt(_m_res);
 		}
 		break;
 	case RPC_SETLASTCRCSAVE__INT_:
@@ -706,18 +723,21 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			unsigned int crc = inv->getUnsignedIntParameter();
 			
 			setLastCRCSave(crc);
+			
 		}
 		break;
 	case RPC_ISPERSISTENT__:
 		{
-			resp->insertBoolean(
-			isPersistent());
+			
+			bool _m_res = isPersistent();
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	case RPC_GETPERSISTENCELEVEL__:
 		{
-			resp->insertSignedInt(
-			getPersistenceLevel());
+			
+			int _m_res = getPersistenceLevel();
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	default:

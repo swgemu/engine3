@@ -977,6 +977,7 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			bool doNotifyUpdate = inv->getBooleanParameter();
 			
 			addInRangeObject(obj, doNotifyUpdate);
+			
 		}
 		break;
 	case RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_:
@@ -984,6 +985,7 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
 			
 			removeInRangeObject(obj);
+			
 		}
 		break;
 	case RPC_REMOVEINRANGEOBJECT__INT_:
@@ -991,20 +993,23 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			int index = inv->getSignedIntParameter();
 			
 			removeInRangeObject(index);
+			
 		}
 		break;
 	case RPC_REMOVEINRANGEOBJECTS__:
 		{
 			
 			removeInRangeObjects();
+			
 		}
 		break;
 	case RPC_ISINRANGE__QUADTREEENTRY_FLOAT_:
 		{
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
 			float range = inv->getFloatParameter();
-			resp->insertBoolean(
-			isInRange(obj, range));
+			
+			bool _m_res = isInRange(obj, range);
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	case RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_:
@@ -1012,47 +1017,54 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			float x = inv->getFloatParameter();
 			float y = inv->getFloatParameter();
 			float range = inv->getFloatParameter();
-			resp->insertBoolean(
-			isInRange(x, y, range));
+			
+			bool _m_res = isInRange(x, y, range);
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	case RPC_GETDISTANCETO__QUADTREEENTRY_:
 		{
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
-			resp->insertFloat(
-			getDistanceTo(obj));
+			
+			float _m_res = getDistanceTo(obj);
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_GETPARENT__:
 		{
-			resp->insertLong(
-			getParent().get()->_getObjectID());
+			
+			DistributedObject* _m_res = getParent().get();
+			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
 		}
 		break;
 	case RPC_GETPARENTUNSAFE__:
 		{
-			resp->insertLong(
-			getParentUnsafe()->_getObjectID());
+			
+			DistributedObject* _m_res = getParentUnsafe();
+			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
 		}
 		break;
 	case RPC_GETROOTPARENTUNSAFE__:
 		{
-			resp->insertLong(
-			getRootParentUnsafe()->_getObjectID());
+			
+			DistributedObject* _m_res = getRootParentUnsafe();
+			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
 		}
 		break;
 	case RPC_CONTAINSPOINT__FLOAT_FLOAT_:
 		{
 			float x = inv->getFloatParameter();
 			float y = inv->getFloatParameter();
-			resp->insertBoolean(
-			containsPoint(x, y));
+			
+			bool _m_res = containsPoint(x, y);
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	case RPC_GETROOTPARENT__:
 		{
-			resp->insertLong(
-			getRootParent().get()->_getObjectID());
+			
+			DistributedObject* _m_res = getRootParent().get();
+			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
 		}
 		break;
 	case RPC_NOTIFYINSERT__QUADTREEENTRY_:
@@ -1060,6 +1072,7 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
 			
 			notifyInsert(obj);
+			
 		}
 		break;
 	case RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_:
@@ -1067,6 +1080,7 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
 			
 			notifyPositionUpdate(obj);
+			
 		}
 		break;
 	case RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_:
@@ -1074,42 +1088,49 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
 			
 			notifyDissapear(obj);
+			
 		}
 		break;
 	case RPC_GETPOSITIONX__:
 		{
-			resp->insertFloat(
-			getPositionX());
+			
+			float _m_res = getPositionX();
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_GETPOSITIONZ__:
 		{
-			resp->insertFloat(
-			getPositionZ());
+			
+			float _m_res = getPositionZ();
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_GETPOSITIONY__:
 		{
-			resp->insertFloat(
-			getPositionY());
+			
+			float _m_res = getPositionY();
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_GETPREVIOUSPOSITIONX__:
 		{
-			resp->insertFloat(
-			getPreviousPositionX());
+			
+			float _m_res = getPreviousPositionX();
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_GETPREVIOUSPOSITIONZ__:
 		{
-			resp->insertFloat(
-			getPreviousPositionZ());
+			
+			float _m_res = getPreviousPositionZ();
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_GETPREVIOUSPOSITIONY__:
 		{
-			resp->insertFloat(
-			getPreviousPositionY());
+			
+			float _m_res = getPreviousPositionY();
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_:
@@ -1119,6 +1140,7 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			float y = inv->getFloatParameter();
 			
 			setPosition(x, z, y);
+			
 		}
 		break;
 	case RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_:
@@ -1128,49 +1150,57 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			float y = inv->getFloatParameter();
 			
 			initializePosition(x, z, y);
+			
 		}
 		break;
 	case RPC_COMPARETO__QUADTREEENTRY_:
 		{
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
-			resp->insertSignedInt(
-			compareTo(obj));
+			
+			int _m_res = compareTo(obj);
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	case RPC_ISINQUADTREE__:
 		{
-			resp->insertBoolean(
-			isInQuadTree());
+			
+			bool _m_res = isInQuadTree();
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	case RPC_GETDIRTYOBJECTID__:
 		{
-			resp->insertLong(
-			getDirtyObjectID());
+			
+			unsigned long long _m_res = getDirtyObjectID();
+			resp->insertLong(_m_res);
 		}
 		break;
 	case RPC_GETOBJECTID__:
 		{
-			resp->insertLong(
-			getObjectID());
+			
+			unsigned long long _m_res = getObjectID();
+			resp->insertLong(_m_res);
 		}
 		break;
 	case RPC_GETRADIUS__:
 		{
-			resp->insertFloat(
-			getRadius());
+			
+			float _m_res = getRadius();
+			resp->insertFloat(_m_res);
 		}
 		break;
 	case RPC_ISBOUNDING__:
 		{
-			resp->insertBoolean(
-			isBounding());
+			
+			bool _m_res = isBounding();
+			resp->insertBoolean(_m_res);
 		}
 		break;
 	case RPC_SETBOUNDING__:
 		{
 			
 			setBounding();
+			
 		}
 		break;
 	case RPC_SETRADIUS__FLOAT_:
@@ -1178,12 +1208,14 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			float rad = inv->getFloatParameter();
 			
 			setRadius(rad);
+			
 		}
 		break;
 	case RPC_CLEARBOUNDING__:
 		{
 			
 			clearBounding();
+			
 		}
 		break;
 	case RPC_SETPARENT__QUADTREEENTRY_:
@@ -1191,6 +1223,7 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			QuadTreeEntry* par = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
 			
 			setParent(par);
+			
 		}
 		break;
 	default:

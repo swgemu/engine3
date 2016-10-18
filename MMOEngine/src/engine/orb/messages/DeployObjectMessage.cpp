@@ -22,14 +22,17 @@ DeployObjectMessage::DeployObjectMessage(Packet* message) : DOBMessage(message) 
 }
 
 void DeployObjectMessage::execute() {
-	//printf("Received DeployObjectMessage\n");
+	//printf("Received DeployObjectMessage with oid:%d\n", (int) requestedObjectID);
 
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 	RemoteObjectBroker* remoteBroker = client->getRemoteObjectBroker();
 
 	DistributedObjectStub* obj = broker->createObjectStub(className, name);
+
 	if (obj != NULL) {
 		try {
+			//printf("Received DeployObjectMessage with name:%s\n", obj->_getName().toCharArray());
+
 			obj->_setObjectID(requestedObjectID);
 			broker->deployLocal(obj->_getName(), obj);
 
@@ -37,6 +40,8 @@ void DeployObjectMessage::execute() {
 
 			insertBoolean(true);
 			insertLong(obj->_getObjectID());
+
+			//printf("returning oid in DeployObjectMessage:%d\n", obj->_getObjectID());
 
 			remoteBroker->addDeployedObject(obj);
 		} catch (const Exception& e) {

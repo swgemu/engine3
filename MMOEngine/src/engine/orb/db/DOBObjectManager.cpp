@@ -69,6 +69,8 @@ DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* obj
 
 	if (servant == NULL) {
 		// object not local we add it to remote DOB <-> hosts map
+		remoteDeployedObjects.add(object->_getObjectID(), object);
+
 		return NULL;
 	}
 
@@ -93,6 +95,7 @@ Reference<DistributedObject*> DOBObjectManager::getObject(uint64 objectID) {
 		return obj;
 	else {
 		//get the object from the remote DOB map
+		obj = remoteDeployedObjects.get(objectID);
 	}
 
 	return obj;
