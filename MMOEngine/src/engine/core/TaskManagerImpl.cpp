@@ -38,7 +38,7 @@ void TaskManagerImpl::initialize() {
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 }
 
-void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads) {
+void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent) {
 	Locker locker(this);
 
 	int maxCpus = MAX(1, sysconf(_SC_NPROCESSORS_ONLN));
@@ -50,7 +50,7 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 	Vector<TaskWorkerThread*> localWorkers;
 
 	for (int i = 0; i < numberOfThreads; ++i) {
-		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + queueName + String::valueOf(i), queue, workers.size() % maxCpus);
+		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + queueName + String::valueOf(i), queue, workers.size() % maxCpus, blockDuringSaveEvent);
 		worker->setLogLevel(getLogLevel());
 		workers.add(worker);
 		localWorkers.add(worker);
@@ -94,7 +94,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 
 		for (int i = 0; i < DEFAULT_WORKER_THREADS_PER_QUEUE; ++i) {
 			TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + String::valueOf(j), queue,
-															(j + i) % maxCpus);
+															(j + i) % maxCpus, true);
 			worker->setLogLevel(getLogLevel());
 			workers.add(worker);
 		}
@@ -213,6 +213,9 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 //			continue;
 			
 		TaskWorkerThread* worker = workers.get(i);
+
+		if (!worker->doBlockWorkerDuringSave())
+			continue;
 
 		Mutex* blockMutex = worker->getBlockMutex();
 

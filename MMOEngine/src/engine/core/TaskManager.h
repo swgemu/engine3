@@ -29,7 +29,7 @@ namespace engine {
 
 		virtual void shutdown() = 0;
 
-		virtual void initializeCustomQueue(const String& queueName, int numberOfThreads) {
+		virtual void initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent = true) {
 
 		}
 

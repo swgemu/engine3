@@ -21,13 +21,15 @@ namespace engine {
 		TaskQueue* queue;
 		int cpu;
 
+		bool blockDuringSave;
+
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<const char*, TaskStatistics> tasksStatistics;
 		ReadWriteLock tasksStatsGuard;
 #endif
 
 	public:
-		TaskWorkerThread(const String& s, TaskQueue* queue, int cpu = 0);
+		TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, bool blockDuringSave);
 
 		virtual ~TaskWorkerThread();
 
@@ -47,6 +49,10 @@ namespace engine {
 
 		inline Mutex* getBlockMutex() {
 			return &blockMutex;
+		}
+
+		inline bool doBlockWorkerDuringSave() const {
+			return blockDuringSave;
 		}
 	};
 
