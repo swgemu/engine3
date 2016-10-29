@@ -26,6 +26,12 @@ namespace lua {
 			L = lState;
 		}
 
+#ifdef CXX11_COMPILER
+		LuaObject(LuaObject&& obj) : L(obj.L), objectName(std::move(obj.objectName)) {
+			obj.L = nullptr;
+		}
+#endif
+
 		virtual ~LuaObject() {
 
 		}
