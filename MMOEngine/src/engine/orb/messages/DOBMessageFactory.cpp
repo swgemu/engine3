@@ -16,6 +16,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "GetNextFreeObjectIDMessage.h"
 #include "UndeployObjectMessage.h"
 #include "RequestServantMessage.h"
+#include "SendObjectDataMessage.h"
 
 #include "engine/orb/control/ControlMessage.h"
 #include "engine/orb/control/StateUpdateMessage.h"
@@ -122,6 +123,9 @@ DOBMessage* DOBMessageFactory::create(uint32 messageType, Packet* message) {
 
 	case DOBMessage::REQUESTSERVANT:
 		return new RequestServantMessage(message);
+
+	case DOBMessage::SENDOBJECTDATA:
+		return new SendObjectDataMessage(message);
 
 	default:
 		return NULL;

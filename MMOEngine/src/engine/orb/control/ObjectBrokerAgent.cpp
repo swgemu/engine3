@@ -45,9 +45,12 @@ void ObjectBrokerAgent::startBackup() {
 
 	if (broker->isRootBroker()) {
 		DOBObjectManager* objectManager = broker->getObjectManager();
+		assert(objectManager);
 		objectManager->updateModifiedObjectsToDatabase();
 	} else {
 		info("save events disabled on non root brokers", true);
+
+		finishBackup();
 	}
 }
 

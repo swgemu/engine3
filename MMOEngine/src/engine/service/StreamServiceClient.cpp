@@ -117,6 +117,16 @@ bool StreamServiceClient::recieve(Packet* pack) {
 	}
 }
 
+bool StreamServiceClient::receiveAppend(Stream* stream) {
+	if (socket != NULL) {
+		return socket->readAppend(stream);
+	} else {
+		doRun = false;
+
+		throw SocketException();
+	}
+}
+
 void StreamServiceClient::disconnect() {
 	close();
 

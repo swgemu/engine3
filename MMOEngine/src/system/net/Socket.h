@@ -13,8 +13,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "SocketAddress.h"
 
 namespace sys {
+  namespace io {
+	  class Stream;
+  }
+
   namespace net {
-	
 	class Packet; 
 	
 	class Socket : public FileDescriptor {
@@ -35,6 +38,8 @@ namespace sys {
 		void connect(SocketAddress* bindpoint);
 	
 		bool read(Packet* pack);
+
+		bool readAppend(Stream* pack);
 	
 		int readFrom(Packet* pack, SocketAddress* addr);
 	

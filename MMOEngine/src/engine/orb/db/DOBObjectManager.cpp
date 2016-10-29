@@ -19,6 +19,10 @@
 #include "engine/orb/control/ObjectBrokerDirector.h"
 #include "engine/orb/control/ObjectBrokerAgent.h"
 
+#include "engine/orb/messages/DOBServiceClient.h"
+#include "engine/orb/messages/RemoteObjectBroker.h"
+#include "engine/orb/messages/SendObjectDataMessage.h"
+
 #include "UpdateModifiedObjectsTask.h"
 #include "UpdateModifiedObjectsThread.h"
 
@@ -183,35 +187,48 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 			return 1;
 		}
 
-		ObjectDatabase* database = getTable(oid);
+		DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
-		if (database != NULL) {
-			//StringBuffer msg;
-			String dbName;
+		if (!broker->isRootBroker()) {
+			SendObjectDataMessage message(oid, objectData);
 
-			database->getDatabaseName(dbName);
+			RemoteObjectBroker* remote = dynamic_cast<RemoteObjectBroker*>(broker->getRootBroker());
+			remote->getBrokerClient()->sendAndAcceptReply(&message);
 
-			/*msg << "saving to database with table " << dbName << " and object id 0x" << hex << oid;
-				info(msg.toString());*/
-
-			database->putData(oid, objectData, object);
-
-			managedObject->setLastCRCSave(currentCRC);
-
-			object->_setUpdated(false);
-		} else {
 			delete objectData;
 
-			StringBuffer err;
-			err << "unknown database id of objectID 0x" << hex << oid;
-			error(err.toString());
+			return 1;
+		} else {
+			ObjectDatabase* database = getTable(oid);
+
+			if (database != NULL) {
+				//StringBuffer msg;
+				String dbName;
+
+				database->getDatabaseName(dbName);
+
+				/*msg << "saving to database with table " << dbName << " and object id 0x" << hex << oid;
+					info(msg.toString());*/
+
+				database->putData(oid, objectData, object);
+
+				managedObject->setLastCRCSave(currentCRC);
+
+				object->_setUpdated(false);
+			} else {
+				delete objectData;
+
+				StringBuffer err;
+				err << "unknown database id of objectID 0x" << hex << oid;
+				error(err.toString());
+			}
+
+			/*objectData.escapeString();
+
+				StringBuffer query;
+				query << "UPDATE objects SET data = '" << objectData << "' WHERE objectid = " << object->_getObjectID() << ";";
+				ServerDatabase::instance()->executeStatement(query);*/
 		}
-
-		/*objectData.escapeString();
-
-			StringBuffer query;
-			query << "UPDATE objects SET data = '" << objectData << "' WHERE objectid = " << object->_getObjectID() << ";";
-			ServerDatabase::instance()->executeStatement(query);*/
 	} catch (...) {
 		error("unreported exception caught in ObjectManager::updateToDatabase(SceneObject* object)");
 
@@ -222,6 +239,9 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 }
 
 int DOBObjectManager::commitDestroyObjectToDB(uint64 objectID) {
+	if (!DistributedObjectBroker::instance()->isRootBroker())
+		return 1;
+
 	ObjectDatabase* table = getTable(objectID);
 
 	if (table != NULL) {
@@ -256,6 +276,7 @@ ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
 }
 
 void DOBObjectManager::updateModifiedObjectsToDatabase() {
+	bool rootBroker = DistributedObjectBroker::instance()->isRootBroker();
 	//ObjectDatabaseManager::instance()->checkpoint();
 
 	if (objectUpdateInProcess) {
@@ -263,23 +284,21 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 		return;
 	}
 
-//#ifndef WITH_STM
 	Vector<Locker*>* lockers = Core::getTaskManager()->blockTaskManager();
 
 	Locker _locker(this);
-//#endif
-
-#ifdef WITH_STM
-	TransactionalMemoryManager::instance()->blockTransactions();
-#endif
 
 	objectUpdateInProcess = true;
 
-	databaseManager->updateLastUsedObjectID(getNextFreeObjectID());
+	engine::db::berkley::Transaction* transaction = NULL;
 
-	ObjectDatabaseManager::instance()->commitLocalTransaction();
+	if (rootBroker) {
+		databaseManager->updateLastUsedObjectID(getNextFreeObjectID());
 
-	engine::db::berkley::Transaction* transaction = ObjectDatabaseManager::instance()->startTransaction();
+		ObjectDatabaseManager::instance()->commitLocalTransaction();
+
+		transaction = ObjectDatabaseManager::instance()->startTransaction();
+	}
 
 	if (updateModifiedObjectsTask->isScheduled())
 		updateModifiedObjectsTask->cancel();

@@ -139,7 +139,7 @@ Stream* LocalDatabase::compress(Stream* data) {
 
 		deflateEnd(&packet);
 	} catch (...) {
-		assert(0 && "LocalDatabase::decompress");
+		assert(0 && "LocalDatabase::compress");
 	}
 
 	//printf("%d uncompressed -> %d compressed\n", data->size(), outputStream->size());

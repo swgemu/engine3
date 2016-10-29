@@ -31,7 +31,6 @@ CommitMasterTransactionThread::~CommitMasterTransactionThread() {
 }
 
 void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
-	assert(trans != NULL);
 	assert(workers != NULL);
 	assert(objectsToCollect != NULL);
 
@@ -95,11 +94,11 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 			++i;
 
 			object = NULL;
-		} else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
+		} /*else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
 			String text = TypeInfo<DistributedObject>::getClassName(object) + " 0x" + String::hexvalueOf((int64)object->_getObjectID());
 
 			printf("%s refs:%d\n", text.toCharArray(), object->getReferenceCount());
-		}
+		}*/
 
 		if ((((j + 1) % 10000) == 0) || ((i + 1) % 100) == 0) {
 			locker.release();
@@ -126,10 +125,12 @@ void CommitMasterTransactionThread::commitData() {
 
 	DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
 
-	ObjectDatabaseManager::instance()->commitTransaction(transaction);
-	ObjectDatabaseManager::instance()->checkpoint();
+	if (DistributedObjectBroker::instance()->isRootBroker()) {
+		ObjectDatabaseManager::instance()->commitTransaction(transaction);
+		ObjectDatabaseManager::instance()->checkpoint();
 
-	objectManager->onCommitData();
+		objectManager->onCommitData();
+	}
 
 	objectManager->info("master transaction commited", true);
 

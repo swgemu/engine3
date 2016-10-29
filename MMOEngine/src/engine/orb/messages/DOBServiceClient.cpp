@@ -61,31 +61,44 @@ void DOBServiceClient::receiveMessages() {
 
 	while (doRun) {
 		try	{
-			if (recieve(&packet)) {
-				//printf("ran recieve with data:%s\n", packet.toStringData().toCharArray());
+			if (packet.size() > 0) {
+				packet.setOffset(packet.size() - 1);
+			} else {
+				packet.reset();
+			}
+
+			if (receiveAppend(&packet)) {
+				//printf("ran receive append with data:%s\n", packet.toStringData().toCharArray());
 
 				if (packet.size() == 0)
 					break;
 
 				while (packet.size() > 0) {
+					packet.reset();
 					//printf("ran while loop with data:%s\n", packet.toStringData().toCharArray());
 
 					if (messageSize && (messageSize <= packet.size())) {
 						//printf("messageSize:%d packet.size() pre handle:%d\n", messageSize, packet.size());
-						packet.reset();
 
-						serviceHandler->handleMessage(this, &packet);
+						Packet incomingData;
+						incomingData.writeStream(&packet, messageSize);
+						incomingData.reset();
+
+						serviceHandler->handleMessage(this, &incomingData);
 
 						//printf("messageSize:%d packet.size() post handle:%d\n", messageSize, packet.size());
 						packet.removeRange(0, messageSize);
 						messageSize = 0;
+						packet.reset();
+
 						//printf("messageSize:%d packet.size() post remove range:%d\n", messageSize, packet.size());
+						//printf("data post remove range:%s\n", packet.toStringData().toCharArray());
 					} else {
 						if (!messageSize) {
 							if (packet.size() >= 4) {
 								packet.reset();
 
-								messageSize = packet.parseInt() - 4;
+								messageSize = packet.parseInt(0) - 4;
 
 								packet.removeRange(0, 4);
 							} else {

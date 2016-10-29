@@ -42,6 +42,8 @@ namespace engine {
 
 		bool recieve(Packet* pack);
 
+		bool receiveAppend(Stream* stream);
+
 		void disconnect();
 
 	};

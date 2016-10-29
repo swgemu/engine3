@@ -65,15 +65,15 @@ namespace engine {
 			}
 		}
 
-		const String& getClassName() {
+		const String& getClassName() const {
 			return className;
 		}
 
-		const String& getName() {
+		const String& getName() const {
 			return name;
 		}
 
-		bool isFound() {
+		bool isFound() const {
 			return found;
 		}
 	};

@@ -83,6 +83,35 @@ void Socket::connect(SocketAddress* address) {
 	}
 }
 
+bool Socket::readAppend(Stream* pack) {
+	int offset = pack->getOffset();
+	int size = pack->size();
+
+	if (size - offset < Packet::RAW_MAX_SIZE) {
+		pack->extendSize(Packet::RAW_MAX_SIZE - offset + 1);
+	}
+
+	//char buffer[Packet::RAW_MAX_SIZE];
+
+	int len = recv(fileDescriptor, pack->getBuffer() + offset, Packet::RAW_MAX_SIZE, 0);
+	if (len < 0) {
+		StringBuffer msg;
+		msg << "error reading from socket";
+
+		throw SocketException(msg.toString());
+	} else if (len == 0)
+		return false;
+
+	pack->setSize(len + size);
+	pack->reset();
+	//printf("received buffer size:%d\n", len);
+
+	//pack->writeStream(buffer, len);
+	//pack->reset();
+
+	return true;
+}
+
 bool Socket::read(Packet* pack) {
 	int len = recv(fileDescriptor, pack->getBuffer(), Packet::RAW_MAX_SIZE, 0);
 	if (len < 0) {

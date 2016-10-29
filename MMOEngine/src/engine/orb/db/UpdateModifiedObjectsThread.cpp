@@ -52,6 +52,8 @@ void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 }
 
 void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS {
+	bool rootBroker = DistributedObjectBroker::instance()->isRootBroker();
+
 	if (transaction != NULL) {
 		waitingToCommit = true;
 
@@ -71,9 +73,13 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 
 		blockMutex.unlock();
 	} else {
+		finishedCommiting = true;
+
 		blockMutex.unlock();
 
-		ObjectDatabaseManager::instance()->commitLocalTransaction();
+		if (rootBroker) {
+			ObjectDatabaseManager::instance()->commitLocalTransaction();
+		}
 	}
 }
 
@@ -86,23 +92,18 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 
 			for (int i = startOffset; i <= endOffset; ++i) {
 				DistributedObject* object = objectsToUpdate->get(i);
-				
-				/*
-				if (object->_isDeletedFromDatabase()) {
-					object->_setDeletedFromDatabase(false);
-				}
-				*/
 
 				if (objectManager->commitUpdatePersistentObjectToDB(object) == 0)
 					++j;
 
-				Thread::yield();
+				//Thread::yield();
 			}
 
 			StringBuffer msg;
 			msg << "thread " << threadId << " copied " << j <<  " modified objects into ram in " << start.miliDifference() << " ms";
 			objectManager->info(msg.toString(), true);
 		}
+
 
 		start.updateToCurrentTime();
 

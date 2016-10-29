@@ -35,6 +35,10 @@ bool File::deleteFile() {
 	return remove(name.toCharArray()) == 0;
 }
 
+int File::deleteFile(const char* name) {
+	return remove(name);
+}
+
 void File::flush() {
 	fflush(fileDescriptor);
 }

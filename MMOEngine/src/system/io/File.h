@@ -39,6 +39,8 @@ namespace sys {
 
 		bool deleteFile();
 
+		static int deleteFile(const char* name);
+
 		FILE* getDescriptor() const;
 
 		bool mkdir();
