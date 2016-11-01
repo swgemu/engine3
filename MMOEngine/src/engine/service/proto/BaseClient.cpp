@@ -511,7 +511,7 @@ void BaseClient::run() {
 }
 
 BasePacket* BaseClient::getNextUnreliablePacket() {
-	if (!sendBuffer.isEmpty()) {
+	if (!sendUnreliableBuffer.isEmpty()) {
 		BasePacket* pack = sendUnreliableBuffer.remove(0);
 
 		return pack;
