@@ -59,6 +59,7 @@ namespace engine {
 		BaseFragmentedPacket* fragmentedPacket;
 
 		Vector<BasePacket*> sendBuffer;
+		Vector<BasePacket*> sendUnreliableBuffer;
 
 		SortedVector<BasePacket*> receiveBuffer;
 
@@ -98,6 +99,8 @@ namespace engine {
 		BasePacket* recieveFragmentedPacket(Packet* pack);
 
 		void run();
+		void sendReliablePackets();
+		void sendUnreliablePackets();
 
 		bool validatePacket(Packet* pack);
 
@@ -141,6 +144,7 @@ namespace engine {
 		void sendFragmented(BasePacket* pack);
 
 		BasePacket* getNextSequencedPacket();
+		BasePacket* getNextUnreliablePacket();
 
 		void flushSendBuffer(int seq);
 

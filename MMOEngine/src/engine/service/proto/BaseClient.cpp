@@ -195,6 +195,12 @@ void BaseClient::close() {
 
 	sequenceBuffer.removeAll();
 
+	for (int i = 0; i < sendUnreliableBuffer.size(); ++i) {
+		delete sendUnreliableBuffer.get(i);
+	}
+
+	sendUnreliableBuffer.removeAll();
+
 	if (fragmentedPacket != NULL) {
 		delete fragmentedPacket;
 		fragmentedPacket = NULL;
@@ -314,12 +320,10 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 			debug("SEND(NOSEQ) - " + pack->toString());
 		#endif
 
-		prepareSend(pack);
+		sendUnreliableBuffer.add(pack);
 
-		if (!DatagramServiceClient::send(pack))
-			debug("LOSING " + pack->toString());
-
-		delete pack;
+		if (!reentrantTask->isScheduled())
+			reentrantTask->scheduleInIoScheduler(10);
 	} catch (SocketException& e) {
 		delete pack;
 
@@ -369,18 +373,13 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 	}
 }
 
-void BaseClient::run() {
-	//info("run event", true);
-
-	lock();
-
+void BaseClient::sendReliablePackets() {
 	try {
 		for (int i = 0; i < 8; ++i) {
 			if (isAvailable()) {
 				BasePacket* pack = getNextSequencedPacket();
-				if (pack == NULL) {
 
-					//if (!reentrantTask->isScheduled()) {
+				if (pack == NULL) {
 					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 						try {
 							reentrantTask->scheduleInIoScheduler(10);
@@ -389,7 +388,6 @@ void BaseClient::run() {
 						}
 					}
 
-					unlock();
 					return;
 				}
 
@@ -409,9 +407,8 @@ void BaseClient::run() {
 
 				pack->setTimestamp();
 
-				//prepareSend(pack);
-
 				prepareSequence(pack);
+
 				if (pack->getSequence() != (uint32) realServerSequence++) {
 					StringBuffer msg;
 					msg << "invalid server Packet " << pack->getSequence() << " sent (" << realServerSequence - 1 << ")";
@@ -430,22 +427,11 @@ void BaseClient::run() {
 					debug(msg);
 				}
 
-				//lock();
-
 				sequenceBuffer.add(pack);
 
 				if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 					reentrantTask->scheduleInIoScheduler(10);
 				}
-
-				/*
-				if (!reentrantTask->isScheduled()) {
-					try {
-						reentrantTask->scheduleInIoScheduler(10);
-					} catch (Exception& e) {
-
-					}
-				}*/
 			}
 		}
 	} catch (SocketException& e) {
@@ -458,8 +444,78 @@ void BaseClient::run() {
 	} catch (...) {
 		disconnect("unreported exception on run()", false);
 	}
+}
+
+void BaseClient::sendUnreliablePackets() {
+	try {
+		for (int i = 0; i < 8; ++i) {
+			if (isAvailable()) {
+				BasePacket* pack = getNextUnreliablePacket();
+
+				if (pack == NULL) {
+					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
+						try {
+							reentrantTask->scheduleInIoScheduler(10);
+						} catch (Exception& e) {
+
+						}
+					}
+
+					return;
+				}
+
+				unlock();
+
+				pack->close();
+
+				prepareEncryptionAndCompression(pack);
+
+				lock();
+
+				if (!DatagramServiceClient::send(pack)) {
+					StringBuffer msg;
+					msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
+					debug(msg);
+				}
+
+				delete pack;
+
+				if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
+					reentrantTask->scheduleInIoScheduler(10);
+				}
+			}
+		}
+	} catch (SocketException& e) {
+		error("on activate() - " + e.getMessage());
+	} catch (Exception& e) {
+		error("exception on sendUnreliablePackets()");
+		error(e.getMessage());
+		e.printStackTrace();
+	} catch (...) {
+		error("unreported exception on sendUnreliablePackets()");
+	}
+}
+
+void BaseClient::run() {
+	//info("run event", true);
+
+	lock();
+
+	sendReliablePackets();
+
+	sendUnreliablePackets();
 
 	unlock();
+}
+
+BasePacket* BaseClient::getNextUnreliablePacket() {
+	if (!sendBuffer.isEmpty()) {
+		BasePacket* pack = sendUnreliableBuffer.remove(0);
+
+		return pack;
+	}
+
+	return NULL;
 }
 
 BasePacket* BaseClient::getNextSequencedPacket() {

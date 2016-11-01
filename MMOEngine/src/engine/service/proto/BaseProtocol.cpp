@@ -25,16 +25,23 @@ void BaseProtocol::prepareSequence(BasePacket* pack) {
 }
 
 void BaseProtocol::prepareEncryptionAndCompression(BasePacket* pack) {
-	if (pack->doCompression()) {
-		compress(pack);
-	}
+	try {
+		if (pack->doCompression()) {
+			compress(pack);
+		}
 
-	if (pack->doEncryption()) {
-		encrypt(pack, true);
-	}
+		if (pack->doEncryption()) {
+			encrypt(pack, true);
+		}
 
-	if (pack->doCRCChecking()) {
-		appendCRC(pack);
+		if (pack->doCRCChecking()) {
+			appendCRC(pack);
+		}
+	} catch (Exception& e) {
+		error("exception caught in BaseProtocol::prepareEncryptionAndCompression");
+		error(e.getMessage());
+	} catch (...) {
+		error("unreported exception caught in BaseProtocol::prepareEncryptionAndCompression");
 	}
 }
 
