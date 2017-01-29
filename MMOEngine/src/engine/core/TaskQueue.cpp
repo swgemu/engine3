@@ -169,6 +169,12 @@ void TaskQueue::flush() {
 	//if (waitingForTask)
 		broadcast(condMutex);
 
+	while (!isEmpty()) {
+		Task* task = remove(0);
+		task->setTaskScheduler(NULL);
+		task->release();
+	}
+
 	condMutex->unlock();
 }
 

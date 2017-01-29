@@ -9,6 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 
 UniqueReference<TaskManager*> Core::taskManager;
+bool Core::taskManagerShutDown = false;
 //ObjectBroker* Core::objectBroker;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
@@ -47,8 +48,7 @@ void Core::initializeContext(int logLevel) {
 }
 
 void Core::finalizeContext() {
-	TaskManager* taskManager = getTaskManager();
-	taskManager->shutdown();
+    shutdownTaskManager();
 
 	mysql_thread_end();
 	engine::db::mysql::MySqlDatabase::finalizeLibrary();
@@ -78,6 +78,17 @@ void Core::start() {
 	run();
 }
 
+void Core::shutdownTaskManager() {
+	TaskManager* taskMgr = getTaskManager();
+
+    taskManagerShutDown = true;
+
+    if (taskMgr != NULL)
+	    taskMgr->shutdown();
+
+    taskManager = NULL;
+}
+
 /*void Core::scheduleTask(Task* task, uint64 time) {
 	TaskManager* taskManager = getTaskManager();
 	taskManager->scheduleTask(task, time);
@@ -89,12 +100,16 @@ void Core::scheduleTask(Task* task, Time& time) {
 }*/
 
 TaskManager* Core::getTaskManager() {
-	if (taskManager.get() == NULL)
-	#ifdef WITH_STM
+	if (taskManager.get() == NULL) {
+		if (taskManagerShutDown)
+			return NULL;
+
+#ifdef WITH_STM
 		taskManager = new TransactionalTaskManager();
-	#else
+#else
 		taskManager = new TaskManagerImpl();
-	#endif
+#endif
+	}
 
 	return taskManager.get();
 }

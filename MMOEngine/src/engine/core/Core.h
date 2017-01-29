@@ -30,6 +30,8 @@ namespace engine {
 	class Core : public Thread {
 		static UniqueReference<TaskManager*> taskManager;
 
+		static bool taskManagerShutDown;
+
 		//static ObjectBroker* objectBroker;
 
 	public:
@@ -41,6 +43,8 @@ namespace engine {
 		void start();
 
 		virtual void initialize() = 0;
+
+		void shutdownTaskManager();
 
 		template<class T> static Reference<T*> lookupObject(const String& name);
 		static Reference<DistributedObject*> lookupObject(uint64 id);

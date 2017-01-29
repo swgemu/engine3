@@ -29,7 +29,7 @@ TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager")
 }
 
 TaskManagerImpl::~TaskManagerImpl() {
-	for (int i = 0; i < taskQueues.size(); ++i) {
+	for (int i = taskQueues.size() - 1; i >= 0 ; --i) {
 		delete taskQueues.get(i);
 	}
 }
@@ -289,6 +289,9 @@ void TaskManagerImpl::setTaskScheduler(Task* task, TaskScheduler* scheduler) {
 }
 
 void TaskManagerImpl::executeTask(Task* task) {
+	if (shuttingDown)
+		return;
+
 	const char* custQueue = task->getCustomTaskQueue();
 
 	if (custQueue) {
@@ -299,10 +302,16 @@ void TaskManagerImpl::executeTask(Task* task) {
 }
 
 void TaskManagerImpl::executeTask(Task* task, int taskqueue) {
+	if (shuttingDown)
+		return;
+
 	taskQueues.get(taskqueue)->push(task);
 }
 
 void TaskManagerImpl::executeTask(Task* task, const String& customTaskQueue) {
+	if (shuttingDown)
+		return;
+
 	int find = customQueues.find(customTaskQueue);
 
 	if (find == -1) {
@@ -315,6 +324,9 @@ void TaskManagerImpl::executeTask(Task* task, const String& customTaskQueue) {
 }
 
 void TaskManagerImpl::executeTaskFront(Task* task) {
+	if (shuttingDown)
+		return;
+
 	const char* custQueue = task->getCustomTaskQueue();
 
 	if (custQueue) {
@@ -325,6 +337,9 @@ void TaskManagerImpl::executeTaskFront(Task* task) {
 }
 
 void TaskManagerImpl::executeTaskRandom(Task* task) {
+	if (shuttingDown)
+		return;
+
 	const char* custQueue = task->getCustomTaskQueue();
 
 	if (custQueue) {
@@ -335,6 +350,9 @@ void TaskManagerImpl::executeTaskRandom(Task* task) {
 }
 
 void TaskManagerImpl::executeTasks(const Vector<Task*>& taskList) {
+	if (shuttingDown)
+		return;
+
 	taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushAll(taskList);
 }
 
@@ -349,6 +367,9 @@ bool TaskManagerImpl::isTaskScheduled(Task* task) {
 }
 
 void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
+	if (shuttingDown)
+		return;
+
 	Locker locker(this);
 
 	if (task->isScheduled()) {
@@ -370,6 +391,9 @@ void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
 }
 
 void TaskManagerImpl::scheduleIoTask(Task* task, Time& time) {
+	if (shuttingDown)
+		return;
+
 	Locker locker(this);
 
 	if (task->isScheduled()) {
@@ -391,6 +415,9 @@ void TaskManagerImpl::scheduleIoTask(Task* task, Time& time) {
 }
 
 void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
+	if (shuttingDown)
+		return;
+
 	Locker locker(this);
 
 	if (task->isScheduled()) {
@@ -412,6 +439,9 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 }
 
 void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
+	if (shuttingDown)
+		return;
+
 	Locker locker(this);
 
 	if (task->isScheduled()) {
