@@ -41,6 +41,11 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 		rootObjectBroker = NULL;
 	}
 
+	if (serviceHandler != NULL) {
+		delete serviceHandler;
+		serviceHandler = NULL;
+	}
+
 	/*if (objectManager != NULL) {
 		delete objectManager;
 		objectManager = NULL;

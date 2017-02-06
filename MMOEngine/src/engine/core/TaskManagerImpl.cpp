@@ -59,7 +59,7 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 	customQueues.put(queueName, taskQueues.size() - 1);
 
 	for (int i = 0; i < localWorkers.size(); ++i) {
-		localWorkers.get(i)->start(this);
+		localWorkers.get(i)->start();
 	}
 }
 
@@ -132,7 +132,7 @@ void TaskManagerImpl::start() {
 
 	for (int i = 0; i < workers.size(); ++i) {
 		TaskWorkerThread* worker = workers.get(i);
-		worker->start(this);
+		worker->start();
 	}
 
 	for (int i = 0; i < schedulers.size(); ++i) {

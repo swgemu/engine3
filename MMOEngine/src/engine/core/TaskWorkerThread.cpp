@@ -19,9 +19,7 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 TaskWorkerThread::~TaskWorkerThread() {
 }
 
-void TaskWorkerThread::start(TaskManager* manager) {
-	taskManager = manager;
-
+void TaskWorkerThread::start() {
 	debug("started");
 
 	ServiceThread::start(false);

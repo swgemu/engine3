@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DOBMessage.h"
 
+#include "engine/core/Task.h"
+
 namespace engine {
   namespace ORB {
 

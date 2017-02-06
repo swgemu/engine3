@@ -10,8 +10,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
-#include "engine/core/TaskManager.h"
-
 #include "ServiceException.h"
 
 namespace engine {
@@ -19,8 +17,6 @@ namespace engine {
   	
 	class ServiceThread : public Thread, public Mutex, public Logger, public Object {
 	protected:
-		TaskManager* taskManager;
-		
 		bool doRun, serviceReady;
 	
 	public:
@@ -35,15 +31,6 @@ namespace engine {
 		virtual void run();
 		
 		virtual void stop(bool doJoin = true);
-		
-		/*// scheduler methods
-		inline void scheduleTask(Task* task, uint64 delay = 0) {
-			taskManager->scheduleTask(task, delay);
-		}
-
-		inline void scheduleTask(Task* task, Time& time) {
-			taskManager->scheduleTask(task, time);
-		}*/
 
 		// setters and getters
 		inline void setRunning(bool val) {

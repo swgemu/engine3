@@ -8,8 +8,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ServiceThread.h"
 
 ServiceThread::ServiceThread(const String& s) : Thread(), Mutex(s + "Thread"), Logger(s) {
-	taskManager = Core::getTaskManager();
-
 	setRunning(false);
 }
 
