@@ -44,6 +44,10 @@ namespace sys {
 
 		virtual int put(const E& o);
 
+#ifdef CXX11_COMPILER
+		virtual int put(E&& o);
+#endif
+
 		virtual int find(const E& o) const;
 
 		virtual bool contains(const E& o) const;
@@ -224,6 +228,45 @@ namespace sys {
 
     	return m;
 	}
+#ifdef CXX11_COMPILER
+	template<class E> int SortedVector<E>::put(E&& o) {
+		int m = 0, l = 0;
+		int r = Vector<E>::elementCount - 1;
+
+		while (l <= r) {
+				//m = (l + r) / 2;
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
+
+			const E& obj = Vector<E>::elementData[m];
+			int cmp = compare(obj, o);
+
+			if (cmp == 0) {
+				switch (insertPlan) {
+					case ALLOW_DUPLICATE:
+						Vector<E>::add(++m, std::move(o));
+						break;
+					case ALLOW_OVERWRITE:
+						Vector<E>::set(m, std::move(o));
+						break;
+					default:
+						return -1;
+				}
+
+				return m;
+			} else if (cmp > 0)
+				l = m + 1;
+			else
+				r = m - 1;
+		}
+
+		if (r == m)
+			m++;
+
+		Vector<E>::add(m, std::move(o));
+
+		return m;
+	}
+#endif
 
 	template<class E> bool SortedVector<E>::contains(const E& o) const {
 		return find(o) != -1;

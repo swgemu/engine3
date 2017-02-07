@@ -16,7 +16,7 @@ namespace engine {
   namespace util {
   	namespace u3d {
 
-	class Vector3 : public Variable {
+	class Vector3 {
 	protected:
 		float values[3];
 
@@ -33,7 +33,7 @@ namespace engine {
 			memset(values, 0, sizeof(values));
 		}
 
-		Vector3(const Vector3& vec) : Variable() {
+		Vector3(const Vector3& vec) {
 			memcpy(values, vec.values, sizeof(values));
 		}
 

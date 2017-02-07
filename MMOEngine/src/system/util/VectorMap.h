@@ -29,6 +29,11 @@ namespace sys {
 		VectorMapEntry(const K& key, const V& value) : Variable(), key(key), value(value) {
 		}
 
+#ifdef CXX11_COMPILER
+		VectorMapEntry(K&& key, V&& value) : Variable(), key(std::move(key)), value(std::move(value)) {
+		}
+#endif
+
 		VectorMapEntry(const VectorMapEntry& entry) : Variable(), key(entry.key), value(entry.value) {
 		}
 
@@ -155,6 +160,10 @@ namespace sys {
 
 		int put(const K& key, const V& value);
 
+#ifdef CXX11_COMPILER
+		int put(K&& key, V&& value);
+#endif
+
 		V& get(int index);
 		V& get(const K& key);
 
@@ -236,14 +245,35 @@ namespace sys {
 	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
 	 	VectorMapEntry<K, V> e(key, value);
 
-	 	if ((SortedVector<VectorMapEntry<K, V> >::getInsertPlan() == (SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE)) && contains(key)) {
-			drop(key);
-	 	}
+		if ((SortedVector<VectorMapEntry<K, V> >::getInsertPlan() == (SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE))) {
+			int idx = find(key);
+
+			if (idx != -1) {
+				SortedVector<VectorMapEntry<K, V> >::remove(idx);
+			}
+		}
 
 	 	int res = SortedVector<VectorMapEntry<K, V> >::put(e);
 
 	 	return res;
 	}
+#ifdef CXX11_COMPILER
+	template<class K, class V> int VectorMap<K, V>::put(K&& key, V&& value) {
+		VectorMapEntry<K, V> e(std::move(key), std::move(value));
+
+		if ((SortedVector<VectorMapEntry<K, V> >::getInsertPlan() == (SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE))) {
+			int idx = find(key);
+
+			if (idx != -1) {
+				SortedVector<VectorMapEntry<K, V> >::remove(idx);
+			}
+		}
+
+		int res = SortedVector<VectorMapEntry<K, V> >::put(std::move(e));
+
+		return res;
+	}
+#endif
 
 	template<class K, class V> V& VectorMap<K, V>::get(int index) {
 		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(index);

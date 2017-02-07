@@ -67,6 +67,7 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
        bool add(E&& element);
+	   bool add(int index, E&& element);
 #endif
 
        void addAll(const ArrayList<E>& array);
@@ -74,6 +75,9 @@ namespace sys {
        bool contains(const E& element);
 
        void insertElementAt(const E& element, int index);
+#ifdef CXX11_COMPILER
+	   void insertElementAt(E&& element, int index);
+#endif
 
        virtual E& get(int index) const;
        virtual E& getUnsafe(int index) const;
@@ -93,6 +97,11 @@ namespace sys {
        virtual void removeAll(int newSize = 10, int newIncrement = 5);
 
        E set(int index, const E& element);
+
+#ifdef CXX11_COMPILER
+	   E set(int index, E&& element);
+	   void setElementAt(int index, E&& element);
+#endif
        void setElementAt(int index, const E& element);
 
        void clone(ArrayList<E>& array) const ;
@@ -373,6 +382,11 @@ namespace sys {
 	   createElementAt(std::move(element), elementCount++);
 	   return true;
    }
+
+	template<class E> bool ArrayList<E>::add(int index, E&& element) {
+		insertElementAt(std::move(element), index);
+		return true;
+	}
 #endif
 
    template<class E> bool ArrayList<E>::add(int index, const E& element) {
@@ -381,10 +395,18 @@ namespace sys {
    }
 
    template<class E> void ArrayList<E>::addAll(const ArrayList<E>& array) {
-	   for (int i = 0; i < array.size(); ++i) {
-		   const E& element = array.get(i);
+	   if (TypeInfo<E>::needConstructor) {
+		   for (int i = 0; i < array.size(); ++i) {
+			   const E& element = array.get(i);
 
-		   add(element);
+			   add(element);
+		   }
+	   } else {
+		   ensureCapacity(elementCount + array.size());
+
+		   memcpy(elementData + elementCount, array.elementData, array.size() * sizeof(E));
+
+		   elementCount += array.size();
 	   }
    }
 
@@ -413,6 +435,23 @@ namespace sys {
        createElementAt(element, index);
        elementCount++;
    }
+#ifdef CXX11_COMPILER
+	template<class E> void ArrayList<E>::insertElementAt(E&& element, int index) {
+		if (index > elementCount || index < 0)
+			throw ArrayIndexOutOfBoundsException(index);
+
+		ensureCapacity(elementCount + 1);
+
+		int numMoved = elementCount - index;
+		if (numMoved > 0) {
+			E* indexOffset = elementData + index;
+			memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
+		}
+
+		createElementAt(std::move(element), index);
+		elementCount++;
+	}
+#endif
 
    template<class E> E& ArrayList<E>::get(int index) const {
        return elementAt(index);
@@ -483,6 +522,23 @@ namespace sys {
        return oldValue;
    }
 
+#ifdef CXX11_COMPILER
+	template<class E> E ArrayList<E>::set(int index, E&& element) {
+		E oldValue = get(index);
+
+		setElementAt(index, std::move(element));
+
+		return oldValue;
+	}
+
+	template<class E> void ArrayList<E>::setElementAt(int index, E&& element) {
+		if (index >= elementCount || index < 0)
+			throw ArrayIndexOutOfBoundsException(index);
+
+		destroyElementAt(index);
+		createElementAt(std::move(element), index);
+	}
+#endif
    template<class E> void ArrayList<E>::setElementAt(int index, const E& element) {
        if (index >= elementCount || index < 0)
            throw ArrayIndexOutOfBoundsException(index);
