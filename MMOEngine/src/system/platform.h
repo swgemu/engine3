@@ -6,6 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
+//#define LOCKFREE_BCLIENT_BUFFERS
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+#include <boost/lockfree/queue.hpp>
+#endif
+
 #if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
 	#define PLATFORM_WIN
 #elif defined __CYGWIN__

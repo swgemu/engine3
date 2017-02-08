@@ -59,7 +59,14 @@ namespace engine {
 		BaseFragmentedPacket* fragmentedPacket;
 
 		Vector<BasePacket*> sendBuffer;
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+		typedef boost::lockfree::queue<BasePacket*> packet_buffer_t;
+		packet_buffer_t* sendUnreliableBuffer;
+
+		packet_buffer_t* sendReliableBuffer;
+#else
 		Vector<BasePacket*> sendUnreliableBuffer;
+#endif
 
 		SortedVector<BasePacket*> receiveBuffer;
 
