@@ -60,7 +60,11 @@ namespace engine {
 
 		Vector<BasePacket*> sendBuffer;
 #ifdef LOCKFREE_BCLIENT_BUFFERS
+#ifdef NDEBUG
 		typedef boost::lockfree::queue<BasePacket*> packet_buffer_t;
+#else
+		typedef boost::lockfree::queue<BasePacket*, boost::lockfree::capacity<30000>> packet_buffer_t;
+#endif
 		packet_buffer_t* sendUnreliableBuffer;
 
 		packet_buffer_t* sendReliableBuffer;

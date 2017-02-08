@@ -73,6 +73,14 @@ public:
 		return value;
 	}
 
+	const A& first() const {
+		return key;
+	}
+
+	const B& second() const {
+		return value;
+	}
+
 	bool incrementAccessCount(int max) {
 		uint32 old, newCount;
 		bool result;
@@ -93,7 +101,7 @@ public:
 		return result;
 	}
 
-	uint32 getAccessCount() {
+	uint32 getAccessCount() const {
 		return accessCount;
 	}
 

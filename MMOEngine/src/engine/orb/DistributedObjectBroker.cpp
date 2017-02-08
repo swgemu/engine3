@@ -260,7 +260,7 @@ void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectS
 	if (objectManager->addObject(obj) != NULL) {
 		throw ObjectAlreadyDeployedException(obj);
 	} else
-		debug("object \'" + obj->_getName() + "\' deployed with ID 0x" + String::valueOf(obj->_getObjectID()));
+		debug("object \'" + obj->_getName() + "\' deployed with ID 0x" + String::hexvalueOf((int64)obj->_getObjectID()));
 
 	obj->setDeployed(true);
 }
@@ -278,7 +278,7 @@ void DistributedObjectBroker::deployRemote(const String& name, DistributedObject
 	if (remoteObjectCache.add(obj->_getObjectID(), obj)) {
 		throw ObjectAlreadyDeployedException(obj);
 	} else
-		debug("remote object \'" + obj->_getName() + "\' deployed with ID 0x" + String::valueOf(obj->_getObjectID()));
+		debug("remote object \'" + obj->_getName() + "\' deployed with ID 0x" + String::hexvalueOf((int64)obj->_getObjectID()));
 
 	obj->setDeployed(true);
 }
