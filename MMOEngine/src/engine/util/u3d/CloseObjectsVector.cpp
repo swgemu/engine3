@@ -71,6 +71,7 @@ int CloseObjectsVector::put(const ManagedReference<QuadTreeEntry*>& o) {
 					receivers.put(o.get());
 				} else {
 					SortedVector<QuadTreeEntry*> vec;
+					vec.setNoDuplicateInsertPlan();
 
 					vec.put(o);
 
