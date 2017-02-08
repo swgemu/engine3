@@ -1,6 +1,6 @@
 #include "Stream.h"
 
-Stream::Stream() : ArrayList<char>() {
+Stream::Stream() : ArrayList<char>(5, 5) {
 	end = offset = elementData;
 }
 

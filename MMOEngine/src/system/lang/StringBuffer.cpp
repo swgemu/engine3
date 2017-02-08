@@ -4,7 +4,7 @@
 
 #include <regex.h>
 
-StringBuffer::StringBuffer() : ArrayList<char>() {
+StringBuffer::StringBuffer() : ArrayList<char>(5, 5) {
 	streamFlags = SF_none;
 }
 
