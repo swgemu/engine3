@@ -22,6 +22,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
+#define MAX_BUFFER_PACKETS_TICK_COUNT 1000
+
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;
         uint16 seq;
@@ -574,7 +576,7 @@ void BaseClient::run() {
 	int i = 0;
 	BasePacket* pack;
 
-	while (i < 20 && sendReliableBuffer->pop(pack)) {
+	while (i++ < MAX_BUFFER_PACKETS_TICK_COUNT && sendReliableBuffer->pop(pack)) {
 		try {
 			if (pack->size() >= 490) {
 				if (bufferedPacket != NULL) {
@@ -588,12 +590,10 @@ void BaseClient::run() {
 		} catch (...) {
 			disconnect("unreported exception on lockfree sendPacket()", false);
 		}
-
-		++i;
 	}
 
-	if (i >= 20) {
-		warning("more than 20 packets in sendReliableBuffer on BaseClient tick");
+	if (i >= MAX_BUFFER_PACKETS_TICK_COUNT) {
+		warning("more than " + String::valueOf(MAX_BUFFER_PACKETS_TICK_COUNT) + " packets in sendReliableBuffer on BaseClient tick");
 	}
 #endif
 
