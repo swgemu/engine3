@@ -1,12 +1,13 @@
-#ifdef CXX11_COMPILER
-#include <chrono>
-#endif
-
 #include "Core.h"
 
 #include "engine/db/ObjectDatabaseManager.h"
 
 #include "engine/stm/TransactionalMemoryManager.h"
+
+#ifdef CXX11_COMPILER
+#include <chrono>
+#endif
+
 
 Task::Task() : PriorityQueueEntry() {
 	initialize();
