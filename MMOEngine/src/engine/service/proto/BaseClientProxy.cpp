@@ -46,4 +46,8 @@ void BaseClientProxy::init(DatagramServiceThread* serv) {
    	balancePacketCheckupTime();
 
 	netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	reentrantTask->scheduleInIoScheduler(10);
+#endif
 }

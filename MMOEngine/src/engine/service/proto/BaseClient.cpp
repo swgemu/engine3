@@ -185,10 +185,6 @@ void BaseClient::initialize() {
    	//netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
 
    	netRequestEvent = new BaseClientNetStatusRequestEvent(this);
-
-#ifdef LOCKFREE_BCLIENT_BUFFERS
-	reentrantTask->scheduleInIoScheduler(10);
-#endif
 }
 
 void BaseClient::close() {
