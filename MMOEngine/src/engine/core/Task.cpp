@@ -1,3 +1,7 @@
+#ifdef CXX11_COMPILER
+#include <chrono>
+#endif
+
 #include "Core.h"
 
 #include "engine/db/ObjectDatabaseManager.h"
@@ -103,9 +107,13 @@ void Task::doExecute() {
 	ObjectDatabaseManager::instance()->startLocalTransaction();
 
 #ifdef COLLECT_TASKSTATISTICS
+#ifdef CXX11_COMPILER
+	auto start = std::chrono::high_resolution_clock::now();
+#else
 	Timer executionTimer;
 
 	executionTimer.start();
+#endif
 #endif
 
 	try {
@@ -118,8 +126,13 @@ void Task::doExecute() {
 	}
 
 #ifdef COLLECT_TASKSTATISTICS
-	lastElapsedTime = executionTimer.stop();
+#ifdef CXX11_COMPILER
+	auto end = std::chrono::high_resolution_clock::now();
 
+	lastElapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+#else
+	lastElapsedTime = executionTimer.stop();
+#endif
 #endif
 
 	ObjectDatabaseManager::instance()->commitLocalTransaction();
