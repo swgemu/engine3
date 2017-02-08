@@ -10,7 +10,9 @@
 #define MAX_COV_RECEIVER_TYPES 4
 
 CloseObjectsVector::CloseObjectsVector() : SortedVector<ManagedReference<QuadTreeEntry*> >(), messageReceivers() {
+	setNoDuplicateInsertPlan();
 
+	messageReceivers.setNoDuplicateInsertPlan();
 }
 
 bool CloseObjectsVector::drop(const ManagedReference<QuadTreeEntry*>& o) {
@@ -70,7 +72,7 @@ int CloseObjectsVector::put(const ManagedReference<QuadTreeEntry*>& o) {
 				} else {
 					SortedVector<QuadTreeEntry*> vec;
 
-					vec.put(o.get());
+					vec.put(o);
 
 					messageReceivers.put(type, std::move(vec));
 				}
