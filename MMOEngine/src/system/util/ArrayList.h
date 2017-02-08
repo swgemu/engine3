@@ -265,8 +265,7 @@ namespace sys {
 
    };
 
-   template<class E> ArrayList<E>::ArrayList() {
-       init(1, 0);
+   template<class E> ArrayList<E>::ArrayList() : elementData(NULL), elementCapacity(0), capacityIncrement(0), elementCount(0) {
    }
 
    template<class E> ArrayList<E>::ArrayList(int incr) {
@@ -507,9 +506,11 @@ namespace sys {
    }
 
    template<class E> void ArrayList<E>::removeAll(int newSize, int newIncrement) {
-       destroyElements();
+	   if (elementData) {
+		   destroyElements();
 
-       free(elementData);
+		   free(elementData);
+	   }
 
        init(newSize, newIncrement);
    }
@@ -575,11 +576,13 @@ namespace sys {
            if (newCapacity < minCapacity)
                newCapacity = minCapacity;
 
-           if (copyContent) {
+           if (copyContent && elementData) {
         	   elementData = (E*) realloc(elementData, (elementCapacity = newCapacity) * sizeof(E));
            } else {
                elementData = (E*) malloc((elementCapacity = newCapacity) * sizeof(E));
-               free(oldData);
+
+			   if (oldData)
+				   free(oldData);
            }
        }
    }

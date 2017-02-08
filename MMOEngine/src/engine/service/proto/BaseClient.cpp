@@ -23,6 +23,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/stm/TransactionalMemoryManager.h"
 
 #define MAX_BUFFER_PACKETS_TICK_COUNT 1000
+#define INITIAL_LOCKFREE_BUFFER_CAPACITY 500
 
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;
@@ -58,8 +59,8 @@ BaseClient::BaseClient() : DatagramServiceClient(),
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendUnreliableBuffer = new packet_buffer_t();
-	sendReliableBuffer = new packet_buffer_t();
+	sendUnreliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	sendReliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -84,8 +85,8 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendUnreliableBuffer = new packet_buffer_t();
-	sendReliableBuffer = new packet_buffer_t();
+	sendUnreliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	sendReliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -116,8 +117,8 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendUnreliableBuffer = new packet_buffer_t();
-	sendReliableBuffer = new packet_buffer_t();
+	sendUnreliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	sendReliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -303,13 +304,12 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 		sendSequenceLess(pack);
 	} else {
 		if (!sendReliableBuffer->push(pack)) {
-			error("losing message in BaseClient::sendPacket due to push");
+			error("losing message in BaseClient::sendPacket due to a failed push in sendReliableBuffer");
 		}
 	}
 
 	return;
-#endif
-
+#else
 	lock(doLock);
 
 	if (!isAvailable()) {
@@ -342,6 +342,7 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 	}
 
 	unlock(doLock);
+#endif
 }
 
 void BaseClient::bufferMultiPacket(BasePacket* pack) {

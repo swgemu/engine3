@@ -59,7 +59,7 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 		SortedVector<ManagedReference<Observer*> > observers;
 		observers.put(observer);
 
-		this->put(eventType, observers);
+		this->put(eventType, std::move(observers));
 	} else {
 		SortedVector<ManagedReference<Observer*> >* observers = &entry->getValue();
 		observers->setNoDuplicateInsertPlan();

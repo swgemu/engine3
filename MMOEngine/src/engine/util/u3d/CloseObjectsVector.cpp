@@ -9,7 +9,7 @@
 
 #define MAX_COV_RECEIVER_TYPES 4
 
-CloseObjectsVector::CloseObjectsVector() : SortedVector<ManagedReference<QuadTreeEntry*> >(), messageReceivers(1, 1) {
+CloseObjectsVector::CloseObjectsVector() : SortedVector<ManagedReference<QuadTreeEntry*> >(), messageReceivers() {
 
 }
 

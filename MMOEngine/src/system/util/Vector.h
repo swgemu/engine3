@@ -6,6 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef VECTOR_H_
 #define VECTOR_H_
 
+#ifdef CXX11_COMPILER
+#include <type_traits>
+#endif
+
 #include "system/lang/Object.h"
 
 #include "ArrayList.h"
@@ -124,8 +128,14 @@ namespace sys {
 	   for (int i = 0; i < size; ++i) {
 		   E object;
 
-		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream))
+		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream)) {
+#ifdef CXX11_COMPILER
+			   if (std::is_move_constructible<E>::value)
+			   		ArrayList<E>::add(std::move(object));
+			   else
+#endif
 			   ArrayList<E>::add(object);
+		   }
 	   }
 
 	   return true;

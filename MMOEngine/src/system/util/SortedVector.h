@@ -243,10 +243,16 @@ namespace sys {
 			if (cmp == 0) {
 				switch (insertPlan) {
 					case ALLOW_DUPLICATE:
-						Vector<E>::add(++m, std::move(o));
+						if (std::is_move_constructible<E>::value)
+							Vector<E>::add(++m, std::move(o));
+						else
+							Vector<E>::add(++m, o);
 						break;
 					case ALLOW_OVERWRITE:
-						Vector<E>::set(m, std::move(o));
+						if (std::is_move_constructible<E>::value)
+							Vector<E>::set(m, std::move(o));
+						else
+							Vector<E>::set(m, o);
 						break;
 					default:
 						return -1;
@@ -262,7 +268,10 @@ namespace sys {
 		if (r == m)
 			m++;
 
-		Vector<E>::add(m, std::move(o));
+		if (std::is_move_constructible<E>::value)
+			Vector<E>::add(m, std::move(o));
+		else
+			Vector<E>::add(m, o);
 
 		return m;
 	}

@@ -6,6 +6,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef HASHTABLE_H_
 #define HASHTABLE_H_
 
+#ifdef CXX11_COMPILER
+#include <type_traits>
+#endif
+
 #include "system/platform.h"
 
 #include "system/lang/StringBuffer.h"
@@ -45,6 +49,10 @@ namespace sys {
 		}
 
 #ifdef CXX11_COMPILER
+		Entry(int hash, K&& key, V&& value, Entry* e) : hash(hash), key(std::move(key)),
+																  value(std::move(value)), next(e) {
+		}
+
 		Entry(Entry&& e) {
 			Entry::hash = e.hash;
 			Entry::key = std::move(e.key);
@@ -110,6 +118,10 @@ namespace sys {
 		virtual ~HashTable();
 
 	    V put(const K& key, const V& value);
+
+#ifdef CXX11_COMPILER
+		V put(K&& key, V&& value);
+#endif
 
 	    V& get(const K& key);
 
@@ -180,6 +192,7 @@ namespace sys {
 		K& getNextKey();
 
 		void getNextKeyAndValue(K& key, V& value);
+		void getNextKeyAndValue(K*& key, V*& value);
 
 		V& next();
 
@@ -204,7 +217,7 @@ namespace sys {
 	}
 
 	template<class K, class V> HashTable<K,V>::HashTable() : Variable() {
-		init(11, 0.75f);
+		init(0, 0.75f);
 	}
 
 	template<class K, class V> HashTable<K,V>::HashTable(const HashTable<K,V>& htable) : Variable() {
@@ -270,12 +283,12 @@ namespace sys {
 		HashTableIterator<K, V> iterator(htable);
 
 		while (iterator.hasNext()) {
-			K key;
-			V value;
+			K* key = NULL;
+			V* value = NULL;
 
 			iterator.getNextKeyAndValue(key, value);
 
-			put(key, value);
+			put(*key, *value);
 		}
 	}
 
@@ -290,13 +303,15 @@ namespace sys {
 	template<class K, class V> void HashTable<K,V>::init(int initialCapacity, float loadFactor) {
 		setNullValue(TypeInfo<V>::nullValue());
 
-		if (initialCapacity == 0)
-			initialCapacity = 1;
-
 		HashTable::initialCapacity = initialCapacity;
 
-		table = (Entry<K, V>**) malloc(initialCapacity * sizeof(Entry<K, V>*));
-		memset(table, 0, initialCapacity * sizeof(Entry<K, V>*));
+		if (initialCapacity == 0) {
+			table = NULL;
+		} else {
+			table = (Entry<K, V>**) malloc(initialCapacity * sizeof(Entry<K, V>*));
+			memset(table, 0, initialCapacity * sizeof(Entry<K, V>*));
+		}
+
 		tableLength = initialCapacity;
 
 		HashTable::loadFactor = loadFactor;
@@ -311,6 +326,7 @@ namespace sys {
 		Entry<K,V>** oldMap = table;
 
 		int newCapacity = oldCapacity * 2 + 1;
+		newCapacity = MAX(5, newCapacity);
 
 		Entry<K,V>** newMap = (Entry<K, V>**) malloc(newCapacity * sizeof(Entry<K, V>*));
 		memset(newMap, 0, newCapacity * sizeof(Entry<K, V>*));
@@ -332,24 +348,30 @@ namespace sys {
 
 		tableLength = newCapacity;
 
-		free(oldMap);
+		if (oldMap) {
+			free(oldMap);
+		}
 	}
 
 	template<class K, class V> V HashTable<K,V>::put(const K& key, const V& value) {
 		int hashCode = hash(key);
-		int index = (hashCode & 0x7FFFFFFF) % tableLength;
+		int index = 0;
 
-		for (Entry<K,V>* e = table[index]; e != NULL; e = e->next) {
-	    	if ((e->hash == hashCode) && e->key == key) {
-				V old = e->value;
-				e->value = value;
-				return old;
-	    	}
+		if (tableLength) {
+			index = (hashCode & 0x7FFFFFFF) % tableLength;
+
+			for (Entry<K, V>* e = table[index]; e != NULL; e = e->next) {
+				if ((e->hash == hashCode) && e->key == key) {
+					V old = e->value;
+					e->value = value;
+					return old;
+				}
+			}
 		}
 
 		modCount++;
 		if (count >= threshold) {
-	    	rehash();
+			rehash();
 
 			index = (hashCode & 0x7FFFFFFF) % tableLength;
 		}
@@ -361,7 +383,43 @@ namespace sys {
 		return nullValue;
 	}
 
+#ifdef CXX11_COMPILER
+	template<class K, class V> V HashTable<K,V>::put(K&& key, V&& value) {
+		int hashCode = hash(key);
+		int index = 0;
+
+		if (tableLength) {
+			index = (hashCode & 0x7FFFFFFF) % tableLength;
+
+			for (Entry<K, V>* e = table[index]; e != NULL; e = e->next) {
+				if ((e->hash == hashCode) && e->key == key) {
+					V old = e->value;
+					e->value = std::move(value);
+
+					return old;
+				}
+			}
+		}
+
+		modCount++;
+		if (count >= threshold) {
+			rehash();
+
+			index = (hashCode & 0x7FFFFFFF) % tableLength;
+		}
+
+		Entry<K,V>* e = table[index];
+		table[index] = new Entry<K,V>(hashCode, std::move(key), std::move(value), e);
+		count++;
+
+		return nullValue;
+	}
+#endif
+
 	template<class K, class V> V& HashTable<K,V>::get(const K& key) {
+		if (!count)
+			return nullValue;
+
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
@@ -375,6 +433,9 @@ namespace sys {
 	}
 
 	template<class K, class V> bool HashTable<K,V>::containsKey(const K& key) {
+		if (!count)
+			return false;
+
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
@@ -388,6 +449,9 @@ namespace sys {
 	}
 
 	template<class K, class V> Entry<K,V>* HashTable<K,V>::getEntry(const K& key) const {
+		if (!count)
+			return NULL;
+
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
@@ -405,6 +469,9 @@ namespace sys {
 	}
 
 	template<class K, class V> V HashTable<K,V>::remove(const K& key) {
+		if (!count)
+			return nullValue;
+
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
@@ -511,13 +578,13 @@ namespace sys {
 		stream->writeInt(HashTable<K, V>::size());
 
 		while (iterator.hasNext()) {
-			K key;
-			V value;
+			K* key = NULL;
+			V* value = NULL;
 
 			iterator.getNextKeyAndValue(key, value);
 
-			TypeInfo<K>::toBinaryStream(&key, stream);
-			TypeInfo<V>::toBinaryStream(&value, stream);
+			TypeInfo<K>::toBinaryStream(key, stream);
+			TypeInfo<V>::toBinaryStream(value, stream);
 		}
 
 		return true;
@@ -532,8 +599,14 @@ namespace sys {
 			K key;
 			V value;
 
-			if (TypeInfo<K>::parseFromBinaryStream(&key, stream) && TypeInfo<V>::parseFromBinaryStream(&value, stream))
+			if (TypeInfo<K>::parseFromBinaryStream(&key, stream) && TypeInfo<V>::parseFromBinaryStream(&value, stream)) {
+#ifdef CXX11_COMPILER
+				if (std::is_move_constructible<K>::value && std::is_move_constructible<V>::value)
+					HashTable<K, V>::put(std::move(key), std::move(value));
+				else
+#endif
 				HashTable<K, V>::put(key, value);
+			}
 		}
 
 		return true;
@@ -595,6 +668,17 @@ namespace sys {
 
 		key = e->key;
 		value = e->value;
+
+		e = e->next;
+		position++;
+	}
+
+	template<class K, class V> void HashTableIterator<K,V>::getNextKeyAndValue(K*& key, V*& value) {
+		while (e == NULL)
+			e = htable->table[++eIndex];
+
+		key = &e->key;
+		value = &e->value;
 
 		e = e->next;
 		position++;
