@@ -12,5 +12,8 @@ BasePacketChekupEvent::BasePacketChekupEvent(BaseClient* cl, uint32 time) : Task
 }
 
 void BasePacketChekupEvent::run() {
-	client->checkupServerPackets(packet);
+	Reference<BaseClient*> client = this->client.get();
+
+	if (client != NULL)
+		client->checkupServerPackets(packet);
 }

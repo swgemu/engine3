@@ -201,7 +201,7 @@ void BaseClient::close() {
 	netcheckupEvent->cancel();
 	netcheckupEvent.castTo<BaseClientNetStatusCheckupEvent*>()->clearClient();
 
-	if (netRequestEvent) {
+	if (netRequestEvent != NULL) {
 		netRequestEvent->cancel();
 
 		netRequestEvent.castTo<BaseClientNetStatusRequestEvent*>()->clearClient();
@@ -228,8 +228,12 @@ void BaseClient::close() {
 	while (!sendLockFreeBuffer->empty()) {
 		BasePacket* pack;
 
-		if (sendLockFreeBuffer->pop(pack))
-			delete pack;
+		if (sendLockFreeBuffer->pop(pack)) {
+			if (pack->getReferenceCount())
+				pack->release();
+			else
+				delete pack;
+		}
 	}
 #else
 	for (int i = 0; i < sendUnreliableBuffer.size(); ++i) {
@@ -294,19 +298,13 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 	if (!isAvailable())
 		return;
 
-
 	if (!sendLockFreeBuffer->push(pack)) {
 		error("losing message in BaseClient::sendPacket due to a failed push in sendReliableBuffer");
-	}
-
-	/*
-	if (!pack->doSequencing()) {
-		sendSequenceLess(pack);
 	} else {
-		if (!sendReliableBuffer->push(pack)) {
-			error("losing message in BaseClient::sendPacket due to a failed push in sendReliableBuffer");
+		if (pack->getReferenceCount()) {
+			pack->acquire();
 		}
-	}*/
+	}
 
 	return;
 #else
@@ -605,7 +603,7 @@ void BaseClient::run() {
 	//info("run event", true);
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	int i = 0, j = 0;
-	BasePacket* pack;
+	BasePacket* incomingPack;
 #endif
 
 	lock();
@@ -613,10 +611,19 @@ void BaseClient::run() {
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	while ((i++ < MAX_BUFFER_PACKETS_TICK_COUNT)
 			&& (j < MAX_SENT_PACKETS_PER_TICK)
-			&& sendLockFreeBuffer->pop(pack)) {
+			&& sendLockFreeBuffer->pop(incomingPack)) {
 		try {
+			BasePacket* pack;
+
+			if (incomingPack->getReferenceCount()) {
+				pack = incomingPack->clone();
+				incomingPack->release();
+			} else {
+				pack = incomingPack;
+			}
+
 			if (!pack->doSequencing()) {
-				j += sendReliablePackets(1);
+				j += sendReliablePackets(2);
 
 				sendSequenceLess(pack);
 			} else {
