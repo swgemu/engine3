@@ -23,7 +23,7 @@ namespace engine {
     namespace proto {
 
 	class BaseClientEvent : public Task {
-		BaseClient* client;
+		WeakReference<BaseClient*> client;
 
 	public:
 		BaseClientEvent(BaseClient* cl) {
@@ -31,12 +31,12 @@ namespace engine {
 		}
 
 		void run() {
-			/*Reference<BaseClient*> strong = client.get();
+			Reference<BaseClient*> strong = client.get();
 
 			if (strong == NULL)
-				return;*/
+				return;
 
-			client->run();
+			strong->run();
 		}
 
 	};
