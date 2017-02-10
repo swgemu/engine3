@@ -62,12 +62,10 @@ namespace engine {
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 		typedef boost::lockfree::queue<BasePacket*, boost::lockfree::fixed_sized<false> > packet_buffer_t;
 
-		packet_buffer_t* sendUnreliableBuffer;
-		packet_buffer_t* sendReliableBuffer;
+		packet_buffer_t* sendLockFreeBuffer;
 #else
 		Vector<BasePacket*> sendUnreliableBuffer;
 #endif
-
 		SortedVector<BasePacket*> receiveBuffer;
 
 		String ip;
@@ -106,8 +104,10 @@ namespace engine {
 		BasePacket* recieveFragmentedPacket(Packet* pack);
 
 		void run();
-		void sendReliablePackets();
+		int sendReliablePackets(int count = 8);
 		void sendUnreliablePackets();
+
+		void sendUnreliablePacket(BasePacket* pack);
 
 		bool validatePacket(Packet* pack);
 

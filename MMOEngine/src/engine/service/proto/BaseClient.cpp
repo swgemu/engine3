@@ -22,8 +22,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
-#define MAX_BUFFER_PACKETS_TICK_COUNT 1000
+#define MAX_BUFFER_PACKETS_TICK_COUNT 500
 #define INITIAL_LOCKFREE_BUFFER_CAPACITY 500
+#define MAX_SENT_PACKETS_PER_TICK 20
 
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;
@@ -59,8 +60,9 @@ BaseClient::BaseClient() : DatagramServiceClient(),
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendUnreliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
-	sendReliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+
+	assert(sendLockFreeBuffer->is_lock_free());
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -85,8 +87,9 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendUnreliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
-	sendReliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+
+	assert(sendLockFreeBuffer->is_lock_free());
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -117,8 +120,9 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendUnreliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
-	sendReliableBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+
+	assert(sendLockFreeBuffer->is_lock_free());
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -146,12 +150,9 @@ BaseClient::~BaseClient() {
 	if (!keepSocket)
 		ServiceClient::close();
 
-#ifdef LOCKFREE_BCLIENT_BUFFERS
+#ifdef sendLockFreeBuffer
 	delete sendUnreliableBuffer;
-	sendUnreliableBuffer = NULL;
-
-	delete sendReliableBuffer;
-	sendReliableBuffer = NULL;
+	sendLockFreeBuffer = NULL;
 #endif
 
 	debug("deleted");
@@ -224,17 +225,10 @@ void BaseClient::close() {
 	sequenceBuffer.removeAll();
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	while (!sendUnreliableBuffer->empty()) {
+	while (!sendLockFreeBuffer->empty()) {
 		BasePacket* pack;
 
-		if (sendUnreliableBuffer->pop(pack))
-			delete pack;
-	}
-
-	while (!sendReliableBuffer->empty()) {
-		BasePacket* pack;
-
-		if (sendReliableBuffer->pop(pack))
+		if (sendLockFreeBuffer->pop(pack))
 			delete pack;
 	}
 #else
@@ -300,13 +294,19 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 	if (!isAvailable())
 		return;
 
+
+	if (!sendLockFreeBuffer->push(pack)) {
+		error("losing message in BaseClient::sendPacket due to a failed push in sendReliableBuffer");
+	}
+
+	/*
 	if (!pack->doSequencing()) {
 		sendSequenceLess(pack);
 	} else {
 		if (!sendReliableBuffer->push(pack)) {
 			error("losing message in BaseClient::sendPacket due to a failed push in sendReliableBuffer");
 		}
-	}
+	}*/
 
 	return;
 #else
@@ -379,9 +379,7 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 		#endif
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-		if (!sendUnreliableBuffer->push(pack)) {
-			warning("losing unreliable pack - push failed");
-		}
+		sendUnreliablePacket(pack);
 #else
 		sendUnreliableBuffer.add(pack);
 
@@ -438,9 +436,10 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 	}
 }
 
-void BaseClient::sendReliablePackets() {
+int BaseClient::sendReliablePackets(int count) {
+	int sentPackets = 0;
 	try {
-		for (int i = 0; i < 8; ++i) {
+		for (int i = 0; i < count; ++i) {
 			if (isAvailable()) {
 				BasePacket* pack = getNextSequencedPacket();
 
@@ -455,7 +454,7 @@ void BaseClient::sendReliablePackets() {
 					}
 #endif
 
-					return;
+					return sentPackets;
 				}
 
 				if (sequenceBuffer.isEmpty()) {
@@ -494,8 +493,9 @@ void BaseClient::sendReliablePackets() {
 					debug(msg);
 				}
 
-				sequenceBuffer.add(pack);
+				++sentPackets;
 
+				sequenceBuffer.add(pack);
 			}
 		}
 #ifndef LOCKFREE_BCLIENT_BUFFERS
@@ -513,6 +513,39 @@ void BaseClient::sendReliablePackets() {
 		disconnect("unreported exception on run()", false);
 	} catch (...) {
 		disconnect("unreported exception on run()", false);
+	}
+
+	return sentPackets;
+}
+
+void BaseClient::sendUnreliablePacket(BasePacket* pack) {
+	try {
+		if (isAvailable()) {
+			unlock();
+
+			pack->close();
+
+			prepareEncryptionAndCompression(pack);
+
+			lock();
+
+			if (!DatagramServiceClient::send(pack)) {
+				StringBuffer msg;
+				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
+				debug(msg);
+			}
+
+			delete pack;
+		}
+
+	} catch (SocketException& e) {
+		error("on activate() - " + e.getMessage());
+	} catch (Exception& e) {
+		error("exception on sendUnreliablePacket()");
+		error(e.getMessage());
+		e.printStackTrace();
+	} catch (...) {
+		error("unreported exception on sendUnreliablePacket()");
 	}
 }
 
@@ -570,37 +603,53 @@ void BaseClient::sendUnreliablePackets() {
 
 void BaseClient::run() {
 	//info("run event", true);
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	int i = 0, j = 0;
+	BasePacket* pack;
+#endif
 
 	lock();
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	int i = 0;
-	BasePacket* pack;
-
-	while (i++ < MAX_BUFFER_PACKETS_TICK_COUNT && sendReliableBuffer->pop(pack)) {
+	while ((i++ < MAX_BUFFER_PACKETS_TICK_COUNT)
+			&& (j < MAX_SENT_PACKETS_PER_TICK)
+			&& sendLockFreeBuffer->pop(pack)) {
 		try {
-			if (pack->size() >= 490) {
-				if (bufferedPacket != NULL) {
-					sendSequenced(bufferedPacket->getPacket());
-					bufferedPacket = NULL;
-				}
+			if (!pack->doSequencing()) {
+				j += sendReliablePackets(1);
 
-				sendFragmented(pack);
-			} else
-				bufferMultiPacket(pack);
+				sendSequenceLess(pack);
+			} else {
+				if (pack->size() >= 490) {
+					if (bufferedPacket != NULL) {
+						sendSequenced(bufferedPacket->getPacket());
+						bufferedPacket = NULL;
+					}
+
+					sendFragmented(pack);
+				} else {
+					bufferMultiPacket(pack);
+				}
+			}
 		} catch (...) {
 			disconnect("unreported exception on lockfree sendPacket()", false);
+
+			unlock();
+
+			return;
 		}
 	}
 
 	if (i >= MAX_BUFFER_PACKETS_TICK_COUNT) {
 		warning("more than " + String::valueOf(MAX_BUFFER_PACKETS_TICK_COUNT) + " packets in sendReliableBuffer on BaseClient tick");
 	}
-#endif
 
+	sendReliablePackets();
+#else
 	sendReliablePackets();
 
 	sendUnreliablePackets();
+#endif
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	if (isAvailable()) {
@@ -620,13 +669,7 @@ void BaseClient::run() {
 
 BasePacket* BaseClient::getNextUnreliablePacket() {
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	BasePacket* pack;
-
-	if (sendUnreliableBuffer->pop(pack)) {
-		return pack;
-	} else {
 		return NULL;
-	}
 #else
 	if (!sendUnreliableBuffer.isEmpty()) {
 		BasePacket* pack = sendUnreliableBuffer.remove(0);
