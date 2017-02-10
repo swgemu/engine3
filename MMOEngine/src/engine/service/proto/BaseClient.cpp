@@ -534,9 +534,9 @@ void BaseClient::sendUnreliablePacket(BasePacket* pack) {
 				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
 				debug(msg);
 			}
-
-			delete pack;
 		}
+
+		delete pack;
 
 	} catch (SocketException& e) {
 		error("on activate() - " + e.getMessage());
