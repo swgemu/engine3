@@ -296,9 +296,7 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	if (!isAvailable()) {
-		if (pack->getReferenceCount()) {
-			pack->release();
-		} else
+		if (!pack->getReferenceCount())
 			delete pack;
 
 		return;
@@ -309,10 +307,12 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 	}
 
 	if (!sendLockFreeBuffer->push(pack)) {
-		error("losing message in BaseClient::sendPacket due to a failed push in sendReliableBuffer");
+		error("losing message in BaseClient::sendPacket due to a failed push in sendLockFreeBuffer");
 
 		if (pack->getReferenceCount()) {
 			pack->release();
+		} else {
+			delete pack;
 		}
 	}
 
@@ -658,7 +658,7 @@ void BaseClient::run() {
 	}
 
 	if (i >= MAX_BUFFER_PACKETS_TICK_COUNT) {
-		warning("more than " + String::valueOf(MAX_BUFFER_PACKETS_TICK_COUNT) + " packets in sendReliableBuffer on BaseClient tick");
+		warning("more than " + String::valueOf(MAX_BUFFER_PACKETS_TICK_COUNT) + " packets in sendLockFreeBuffer on BaseClient tick");
 	}
 
 	sendReliablePackets();
