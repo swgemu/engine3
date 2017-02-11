@@ -295,14 +295,24 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 #endif
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	if (!isAvailable())
+	if (!isAvailable()) {
+		if (pack->getReferenceCount()) {
+			pack->release();
+		} else
+			delete pack;
+
 		return;
+	}
+
+	if (pack->getReferenceCount()) {
+		pack->acquire();
+	}
 
 	if (!sendLockFreeBuffer->push(pack)) {
 		error("losing message in BaseClient::sendPacket due to a failed push in sendReliableBuffer");
-	} else {
+
 		if (pack->getReferenceCount()) {
-			pack->acquire();
+			pack->release();
 		}
 	}
 
