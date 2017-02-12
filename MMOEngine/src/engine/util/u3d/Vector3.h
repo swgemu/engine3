@@ -68,7 +68,7 @@ namespace engine {
 			values[2] = scalar;
 		}
 
-		virtual ~Vector3() {
+		~Vector3() {
 		}
 
 	public:

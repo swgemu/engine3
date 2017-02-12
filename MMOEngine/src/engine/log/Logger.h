@@ -107,7 +107,11 @@ namespace engine {
 		}
 
 		// getters
-		inline String getLoggingName() const {
+		inline String& getLoggingName() {
+			return name;
+		}
+
+		inline const String& getLoggingName() const {
 			return name;
 		}
 
