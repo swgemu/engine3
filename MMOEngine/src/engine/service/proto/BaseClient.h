@@ -95,6 +95,7 @@ namespace engine {
 		void initialize();
 
 		void send(Packet* pack, bool doLock = true);
+		void send(BasePacket* pack, bool doLock = true);
 		void sendPacket(BasePacket* pack, bool doLock = true);
 
 		void read(Packet* pack, bool doLock = true);

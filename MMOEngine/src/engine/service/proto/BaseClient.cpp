@@ -212,14 +212,22 @@ void BaseClient::close() {
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
-		delete pack;
+
+		if (pack->getReferenceCount())
+			pack->release();
+		else
+			delete pack;
 	}
 
 	sendBuffer.removeAll();
 
 	for (int i = 0; i < sequenceBuffer.size(); ++i) {
 		BasePacket* pack = sequenceBuffer.get(i);
-		delete pack;
+
+		if (pack->getReferenceCount())
+			pack->release();
+		else
+			delete pack;
 	}
 
 	sequenceBuffer.removeAll();
@@ -244,7 +252,11 @@ void BaseClient::close() {
 #endif
 
 	if (fragmentedPacket != NULL) {
-		delete fragmentedPacket;
+		if (fragmentedPacket->getReferenceCount())
+			fragmentedPacket->release();
+		else
+			delete fragmentedPacket;
+
 		fragmentedPacket = NULL;
 	}
 
@@ -283,6 +295,34 @@ void BaseClient::send(Packet* pack, bool doLock) {
 	}
 
 	delete pack;
+
+	unlock(doLock);
+}
+
+void BaseClient::send(BasePacket* pack, bool doLock) {
+	//setDebugLogLevel();
+	lock(doLock);
+
+	try {
+		if (isAvailable()) {
+#ifdef TRACE_CLIENTS
+			debug("SEND(RAW) - " + pack->toString());
+#endif
+
+			if (!DatagramServiceClient::send(pack))
+				debug("LOSING " + pack->toStringData());
+		}
+	} catch (SocketException& e) {
+		error("on send()" + e.getMessage());
+
+		setError();
+		disconnect(false);
+	}
+
+	if (pack->getReferenceCount())
+		pack->release();
+	else
+		delete pack;
 
 	unlock(doLock);
 }
@@ -395,7 +435,10 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 			reentrantTask->scheduleInIoScheduler(10);
 #endif
 	} catch (SocketException& e) {
-		delete pack;
+		if (pack->getReferenceCount())
+			pack->release();
+		else
+			delete pack;
 
 		disconnect("on sendPacket()" + e.getMessage(), false);
 	}
@@ -436,7 +479,10 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 		while (frag->hasFragments())
 			sendSequenced(frag->getFragment());
 
-		delete frag;
+		if (frag->getReferenceCount())
+			frag->release();
+		else
+			delete frag;
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -503,6 +549,7 @@ int BaseClient::sendReliablePackets(int count) {
 
 				++sentPackets;
 
+				pack->acquire();
 				sequenceBuffer.add(pack);
 			}
 		}
@@ -544,7 +591,10 @@ void BaseClient::sendUnreliablePacket(BasePacket* pack) {
 			}
 		}
 
-		delete pack;
+		if (pack->getReferenceCount())
+			pack->release();
+		else
+			delete pack;
 
 	} catch (SocketException& e) {
 		error("on activate() - " + e.getMessage());
@@ -590,7 +640,10 @@ void BaseClient::sendUnreliablePackets() {
 					debug(msg);
 				}
 
-				delete pack;
+				if (pack->getReferenceCount())
+					pack->release();
+				else
+					delete pack;
 			}
 		}
 #ifndef LOCKFREE_BCLIENT_BUFFERS
@@ -840,7 +893,11 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 	}
 
 	if (!fragmentedPacket->addFragment(pack)) {
-		delete fragmentedPacket;
+		if (fragmentedPacket->getReferenceCount())
+			fragmentedPacket->release();
+		else
+			delete fragmentedPacket;
+
 		fragmentedPacket = NULL;
 
 		return NULL;
@@ -865,7 +922,11 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 			msg << "current fragmented packet.." << fragmentedPacket->toStringData();
 			Logger::console.error(msg.toString());
 
-			delete fragmentedPacket;
+			if (fragmentedPacket->getReferenceCount())
+				fragmentedPacket->release();
+			else
+				delete fragmentedPacket;
+
 			fragmentedPacket = NULL;
 			packet = NULL;
 		}
@@ -878,7 +939,11 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 			msg << "current fragmented packet.." << fragmentedPacket->toString();
 			Logger::console.error(msg.toString());
 
-			delete fragmentedPacket;
+			if (fragmentedPacket->getReferenceCount())
+				fragmentedPacket->release();
+			else
+				delete fragmentedPacket;
+
 			fragmentedPacket = NULL;
 			packet = NULL;
 		}
@@ -984,16 +1049,15 @@ void BaseClient::resendPackets(int seq) {
 	lock();
 	
 	int maxPackets = 5;
-	
-	
+
 	for (int i = 0; i < sequenceBuffer.size(); ++i) {
-	        BasePacket* packet = sequenceBuffer.get(i);
+		BasePacket* packet = sequenceBuffer.get(i);
 	        
-	        if (packet->getSequence() != (uint32)seq - 1) {
-	                continue;
-	        }
+	    if (packet->getSequence() != (uint32)seq - 1) {
+			continue;
+	    }
 	        
-	        if (!DatagramServiceClient::send(packet)) {
+	    if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
 			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
 			debug(msg);
@@ -1183,7 +1247,10 @@ void BaseClient::flushSendBuffer(int seq) {
 		#endif*/
 
 		sequenceBuffer.remove(0);
-		delete pack;
+		if (pack->getReferenceCount())
+			pack->release();
+		else
+			delete pack;
 	}
 
 	acknowledgedServerSequence = seq;
@@ -1398,8 +1465,12 @@ void BaseClient::disconnect(bool doLock) {
 		#endif
 
 		if (!hasError()) {
-			if (bufferedPacket != NULL)
-				delete bufferedPacket;
+			if (bufferedPacket != NULL) {
+				if (bufferedPacket->getReferenceCount())
+					bufferedPacket->release();
+				else
+					delete bufferedPacket;
+			}
 
 			if (!clientDisconnected) {
 				BasePacket* disc = new DisconnectMessage(this);

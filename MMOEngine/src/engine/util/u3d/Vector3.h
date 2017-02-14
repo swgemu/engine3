@@ -68,9 +68,6 @@ namespace engine {
 			values[2] = scalar;
 		}
 
-		~Vector3() {
-		}
-
 	public:
 
 		bool toBinaryStream(ObjectOutputStream* stream) {

@@ -25,7 +25,7 @@ namespace engine {
 
 	class BasePacketChekupEvent : public Task {
 		WeakReference<BaseClient*> client;
-		BasePacket* packet;
+		Reference<BasePacket*> packet;
 
 		sys::uint32 checkupTime;
 
