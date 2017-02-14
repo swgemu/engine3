@@ -511,6 +511,8 @@ int BaseClient::sendReliablePackets(int count) {
 					return sentPackets;
 				}
 
+				pack->acquire();
+
 				if (sequenceBuffer.isEmpty()) {
 					((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
 					pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
@@ -549,7 +551,6 @@ int BaseClient::sendReliablePackets(int count) {
 
 				++sentPackets;
 
-				pack->acquire();
 				sequenceBuffer.add(pack);
 			}
 		}
