@@ -13,7 +13,7 @@ namespace engine {
 
   	class ServiceHandler;
 
-	class ServiceClient : public virtual Object {
+	class ServiceClient : public Object {
 	protected:
 		ServiceHandler* serviceHandler;
 
