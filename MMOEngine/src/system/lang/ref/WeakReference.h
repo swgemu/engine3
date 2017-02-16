@@ -29,12 +29,16 @@ namespace sys {
 			weakReference = NULL;
 		}
 
-		WeakReference(const WeakReference<O>& ref) : Variable() {
+		WeakReference(const WeakReference& ref) : Variable() {
 			StrongAndWeakReferenceCount* p = ref.safeRead();
 
 			initializeObject(p);
 
 			release(p);
+		}
+
+		WeakReference(StrongAndWeakReferenceCount* p) : Variable() {
+			initializeObject(p);
 		}
 
 		WeakReference(O obj) : Variable() {
@@ -113,6 +117,17 @@ namespace sys {
 			return stored;
 		}
 
+		template<class B>
+		WeakReference<B> staticCastToWeak() {
+			StrongAndWeakReferenceCount* p = safeRead();
+
+			WeakReference<B> ref(p);
+
+			release(p);
+
+			return ref;
+		}
+
 		O operator=(O obj) {
 			updateObject(obj);
 
@@ -178,17 +193,17 @@ namespace sys {
 			return false;
 		}
 
-	private:
+	protected:
 		inline StrongAndWeakReferenceCount* safeRead() const {
 			for (;;) {
-				StrongAndWeakReferenceCount* old = weakReference;
+				StrongAndWeakReferenceCount* old = weakReference.get();
 
 				if (old == NULL)
 					return NULL;
 
 				old->increaseWeakCount();
 
-				if (old == weakReference)
+				if (old == weakReference.get())
 					return old;
 				else
 					release(old);

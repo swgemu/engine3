@@ -32,6 +32,10 @@ namespace engine {
 			savedObjectID = ref.savedObjectID;
 		}
 
+		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p), Variable() {
+			savedObjectID = oid;
+		}
+
 #ifdef CXX11_COMPILER
 		ManagedWeakReference(ManagedWeakReference<O>&& ref) : WeakReference<O>(std::move(ref)),
 				savedObjectID(ref.savedObjectID) {
@@ -90,6 +94,17 @@ namespace engine {
 
 			stored = dynamic_cast<B>(strong.get());
 			return stored;
+		}
+
+		template<class B>
+		ManagedWeakReference<B> staticCastToWeak() {
+			StrongAndWeakReferenceCount* p = WeakReference<O>::safeRead();
+
+			ManagedWeakReference<B> ref(p, savedObjectID);
+
+			WeakReference<O>::release(p);
+
+			return ref;
 		}
 
 		inline O getReferenceUnsafe() const {
