@@ -32,7 +32,7 @@ namespace engine {
 			savedObjectID = ref.savedObjectID;
 		}
 
-		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p), Variable() {
+		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p) {
 			savedObjectID = oid;
 		}
 
