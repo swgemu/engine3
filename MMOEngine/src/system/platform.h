@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define PLATFORM_H_
 
 #ifndef VERSION_PUBLIC
-#define LOCKFREE_BCLIENT_BUFFERS
+//#define LOCKFREE_BCLIENT_BUFFERS
 #endif
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
