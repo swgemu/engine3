@@ -73,6 +73,9 @@ namespace sys {
 	#endif
 
 	public:
+		const static bool is_virtual_object = false;
+	public:
+
 		Object();
 
 		Object(const Object& obj);

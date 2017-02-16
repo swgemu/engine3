@@ -8,6 +8,10 @@
 #ifndef STRONGANDWEAKREFERENCECOUNT_H_
 #define STRONGANDWEAKREFERENCECOUNT_H_
 
+#ifdef CXX11_COMPILER
+#include <type_traits>
+#endif
+
 #include "ReferenceCounter.h"
 
 namespace sys {
@@ -78,9 +82,38 @@ public:
 		return object;
 	}
 
+
+	template<class R, bool virt>
+	class Helper {
+	public:
+		R static convert(Object* o) {
+			return R();
+		}
+	};
+
+	template<class R>
+	class Helper<R, false> {
+	public:
+		R static convert(Object* o) {
+			return static_cast<R>(o);
+		}
+	};
+
+	template<class R>
+	class Helper<R, true> {
+	public:
+		R static convert(Object* o) {
+			return dynamic_cast<R>(o);
+		}
+	};
+
 	template <class O>
 	O getObjectReference() {
+#ifdef CXX11_COMPILER
+		return Helper<O, std::remove_pointer<O>::type::is_virtual_object>::convert(object);
+#else
 		return dynamic_cast<O>(object);
+#endif
 	}
 
 };

@@ -29,6 +29,8 @@ namespace sys {
 			VectorMap<VariableName, uint64> _variables;
 
 		public:
+			const static bool is_virtual_object = true;
+
 			Serializable();
 
 			virtual ~Serializable() {

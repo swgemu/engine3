@@ -19,6 +19,8 @@ namespace engine {
 		float previousPositionX, previousPositionZ, previousPositionY;
 
 	public:
+		const static bool is_virtual_object = true;
+
 		Coordinate() : positionX(0), positionZ(0), positionY(0),
 					previousPositionX(0), previousPositionZ(0), previousPositionY(0) {
 
