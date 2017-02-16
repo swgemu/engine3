@@ -19,7 +19,7 @@ namespace sys {
 
 	class String;
 
-	class UnicodeString : public virtual Variable {
+	class UnicodeString : public Variable {
 		unsigned short* uString;
 		int count;
 
@@ -96,7 +96,6 @@ namespace sys {
 		bool toString(String& str);
 
 		bool parseFromString(const String& str, int version = 0);
-
 
 		bool toBinaryStream(sys::io::ObjectOutputStream* stream);
 		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream);

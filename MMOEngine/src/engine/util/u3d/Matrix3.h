@@ -55,16 +55,18 @@ namespace engine {
 	 }
 
 	 inline Vector3& operator [] (uint32 index) {
+#ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 		 if (index > 2)
 			 throw ArrayIndexOutOfBoundsException(index);
-
+#endif
 		 return matrix[index];
 	 }
 
 	 inline const Vector3& operator [] (uint32 index) const {
+#ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 		 if (index > 2)
 			 throw ArrayIndexOutOfBoundsException(index);
-
+#endif
 		 return matrix[index];
 	 }
 

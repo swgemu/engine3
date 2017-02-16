@@ -35,16 +35,18 @@ namespace engine {
 	 void identity();
 
 	 inline Vector4& operator [] (uint32 index) {
+#ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 		 if (index > 3)
 			 throw ArrayIndexOutOfBoundsException(index);
-
+#endif
 		 return matrix[index];
 	 }
 
 	 inline const Vector4& operator [] (uint32 index) const {
+#ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 		 if (index > 3)
 			 throw ArrayIndexOutOfBoundsException(index);
-
+#endif
 		 return matrix[index];
 	 }
 

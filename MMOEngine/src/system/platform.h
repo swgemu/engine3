@@ -6,7 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
-//#define LOCKFREE_BCLIENT_BUFFERS
+#ifndef VERSION_PUBLIC
+#define LOCKFREE_BCLIENT_BUFFERS
+#endif
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 #include <boost/lockfree/queue.hpp>
@@ -151,7 +153,9 @@ namespace sys {
 
 	#define MAX_FLOAT FLT_MAX
 	#define SMALL_NUM  FLT_EPSILON
-	
+
+	//#define VECTORS_OUT_OF_BOUNDS_CHECK
+
 	#ifdef DEFAULT_DYNAMIC_CAST
 	#define cast dynamic_cast
 	#else

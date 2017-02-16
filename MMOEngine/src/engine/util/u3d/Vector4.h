@@ -8,6 +8,7 @@
 #ifndef VECTOR4_H_
 #define VECTOR4_H_
 
+#include "system/platform.h"
 #include "system/lang/ArrayIndexOutOfBoundsException.h"
 
 namespace engine {
@@ -61,16 +62,18 @@ public:
 	}
 
 	inline float& operator[](uint32 index) {
+#ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 		if (index > 3)
 			throw ArrayIndexOutOfBoundsException(index);
-
+#endif
 		return v[index];
 	}
 
 	inline float operator[](uint32 index) const {
+#ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 		if (index > 3)
 			throw ArrayIndexOutOfBoundsException(index);
-
+#endif
 		return v[index];
 	}
 
