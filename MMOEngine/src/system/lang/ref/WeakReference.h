@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef WEAKREFERENCE_H_
 #define WEAKREFERENCE_H_
 
+#include <functional>
+
 #include "system/lang/Variable.h"
 
 #include "system/thread/ReadWriteLock.h"
@@ -82,12 +84,12 @@ namespace sys {
 				release(valOld);
 			}
 
-			if (object < valObject) {
+			if (std::less<Object*>()(object, valObject)) {
 				return 1;
-			} else if (object > valObject) {
-				return -1;
-			} else {
+			} else if (object == valObject) {
 				return 0;
+			} else {
+				return -1;
 			}
 		}
 
