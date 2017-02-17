@@ -61,8 +61,9 @@ void Mutex::lock(Mutex* m) {
 			//pthread_mutex_unlock(&(m->mutex));
 			m->unlock();
 
+#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 			Thread::yield();
-
+#endif
 			//pthread_mutex_lock(&(m->mutex));
 
 			m->lock();
@@ -92,8 +93,9 @@ void Mutex::lock(Lockable* lockable) {
 	while (pthread_mutex_trylock(&mutex)) {
 		lockable->unlock();
 
+#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 		Thread::yield();
-
+#endif
 		lockable->lock();
 	}
 

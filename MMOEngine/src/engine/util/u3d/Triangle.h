@@ -8,6 +8,8 @@
 #ifndef TRIANGLE_H_
 #define TRIANGLE_H_
 
+#define TRIANGLE_INHERITS_VARIABLE
+
 #include "Vector3.h"
 #include "Matrix4.h"
 
@@ -18,8 +20,11 @@ namespace engine {
 	class AABB;
 	class Ray;
 
+#ifdef TRIANGLE_INHERITS_VARIABLE
 	class Triangle : public Variable {
-		//Vector3 vertices[3];
+#else
+	class Triangle {
+#endif
 	protected:
 		float vertices[9]; // optimizing for ram...
 
@@ -38,7 +43,7 @@ namespace engine {
 
 		bool parseFromBinaryStream(ObjectInputStream* stream);
 
-		virtual int compareTo(const Triangle* triangle) const;
+		int compareTo(const Triangle* triangle) const;
 
 		// calculate the midpoint
 		Vector3 midPoint() const;
@@ -97,8 +102,10 @@ namespace engine {
 		}
 
 		inline Vector3 getVertex(uint32 i) const {
+#ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 			if (i > 2)
 				throw ArrayIndexOutOfBoundsException(i);
+#endif
 
 			Vector3 vert(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
 

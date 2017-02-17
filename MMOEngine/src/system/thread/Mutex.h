@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef MUTEX_H_
 #define MUTEX_H_
 
+//#define ENABLE_YIELD_BETWEEN_CROSSLOCK
+
 #include "Lockable.h"
 
 namespace sys {

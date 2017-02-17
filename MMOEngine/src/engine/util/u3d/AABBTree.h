@@ -37,7 +37,7 @@ namespace engine {
 		bool trianglesOwner;
 
 	public:
-		AABBTree(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner = true);
+		AABBTree(const ArrayList<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner = true);
 
 		~AABBTree();
 	};

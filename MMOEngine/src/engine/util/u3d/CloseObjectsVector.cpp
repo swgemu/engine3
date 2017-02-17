@@ -15,52 +15,40 @@ CloseObjectsVector::CloseObjectsVector() : SortedVector<ManagedReference<QuadTre
 	messageReceivers.setNoDuplicateInsertPlan();
 }
 
+void CloseObjectsVector::dropReceiver(QuadTreeEntry* entry) {
+	uint32 receiverTypes = entry->registerToCloseObjectsReceivers();
+
+	if (receiverTypes && messageReceivers.size()) {
+		for (int i = 0; i < MAX_COV_RECEIVER_TYPES; ++i) {
+			uint32 type = 1 << i;
+
+			if (receiverTypes & type) {
+				int idx = messageReceivers.find(type);
+
+				if (idx != -1) {
+					auto& receivers = messageReceivers.elementAt(idx).getValue();
+
+					receivers.drop(entry);
+				}
+			}
+		}
+	}
+}
+
 ManagedReference<QuadTreeEntry*> CloseObjectsVector::remove(int index) {
 	Locker locker(&mutex);
 
 	const auto& ref = SortedVector<ManagedReference<QuadTreeEntry*> >::get(index);
 
-	uint32 receiverTypes = ref->registerToCloseObjectsReceivers();
-
-	if (receiverTypes) {
-		for (int i = 0; i < MAX_COV_RECEIVER_TYPES; ++i) {
-			uint32 type = 1 << i;
-
-			if (receiverTypes & type) {
-				int idx = messageReceivers.find(type);
-
-				if (idx != -1) {
-					auto& receivers = messageReceivers.elementAt(idx).getValue();
-
-					receivers.drop(ref.get());
-				}
-			}
-		}
-	}
+	dropReceiver(ref);
 
 	return SortedVector<ManagedReference<QuadTreeEntry*> >::remove(index);
 }
 
 bool CloseObjectsVector::drop(const ManagedReference<QuadTreeEntry*>& o) {
-	uint32 receiverTypes = o->registerToCloseObjectsReceivers();
-
 	Locker locker(&mutex);
 
-	if (receiverTypes) {
-		for (int i = 0; i < MAX_COV_RECEIVER_TYPES; ++i) {
-			uint32 type = 1 << i;
-
-			if (receiverTypes & type) {
-				int idx = messageReceivers.find(type);
-
-				if (idx != -1) {
-					auto& receivers = messageReceivers.elementAt(idx).getValue();
-
-					receivers.drop(o.get());
-				}
-			}
-		}
-	}
+	dropReceiver(o);
 
 	return SortedVector<ManagedReference<QuadTreeEntry*> >::drop(o);
 }

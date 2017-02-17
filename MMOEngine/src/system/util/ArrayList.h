@@ -360,8 +360,13 @@ namespace sys {
    }
 
    template<class E> void ArrayList<E>::init(int initsize, int incr) {
-       elementCapacity = MAX(1, initsize);
-       elementData = (E*) malloc(elementCapacity * sizeof(E));
+	   if (!initsize) {
+		   elementCapacity = 0;
+		   elementData = NULL;
+	   } else {
+		   elementCapacity = MAX(1, initsize);
+		   elementData = (E*) malloc(elementCapacity * sizeof(E));
+	   }
 
        elementCount = 0;
        capacityIncrement = incr;
@@ -565,7 +570,7 @@ namespace sys {
    }
 
    template<class E> void ArrayList<E>::clone(ArrayList<E>& array) const {
-       array.removeAll(elementCapacity, capacityIncrement);
+       array.removeAll(elementCount, capacityIncrement);
 
        array.elementCount = elementCount;
 

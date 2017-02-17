@@ -13,7 +13,7 @@
 
 using namespace sys::lang;
 
-AABBTree::AABBTree(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner) : AABBNode(trilist, depth, heurdata), trianglesOwner(triangleOwner) {
+AABBTree::AABBTree(const ArrayList<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata, bool triangleOwner) : AABBNode(trilist, depth, heurdata), trianglesOwner(triangleOwner) {
 
 }
 
@@ -30,7 +30,7 @@ AABBTree::~AABBTree() {
 }
 
 // construct an AABB from a list of triangles.
-AABB::AABB(const Vector<Triangle*>& triangles) {
+AABB::AABB(const ArrayList<Triangle*>& triangles) {
 	// do nothing if no triangles in the list
 	if (triangles.size() == 0)
 		return;
@@ -60,8 +60,8 @@ float AABB::distSqrd(const Vector3& point) const {
 
 	//for each component, find the point's relative position and the distance contribution
 	for (uint32 ii = 0; ii < 3; ++ii)
-		dst += (point[ii] < mBounds[0][ii]) ? SQR(point[ii] - mBounds[0][ii]) :
-			 (point[ii] > mBounds[1][ii]) ? SQR(point[ii] - mBounds[1][ii]) : 0.0f;
+		dst += (point[ii] < mBounds[0][ii]) ? Math::sqr(point[ii] - mBounds[0][ii]) :
+			 (point[ii] > mBounds[1][ii]) ? Math::sqr(point[ii] - mBounds[1][ii]) : 0.0f;
 
 	return dst;
 }
@@ -131,13 +131,13 @@ bool AABB::intersects(const Ray &r, float t0, float t1) const {
 
 // constructs this aabb tree node from a triangle list and creates its children recursively
 // note node box is initialised to the first triangle's box
-AABBNode::AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata) : mBox(trilist) {
+AABBNode::AABBNode(const ArrayList<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata) : mBox(trilist) {
 	// test our build heuristic - if passes, make children
 	if (depth < (int)heurdata.maxdepth && trilist.size() > (int)heurdata.mintricnt &&
 		(trilist.size() > (int)heurdata.tartricnt || mBox.errorMetric() > heurdata.minerror)) {
 
 		//list<CTriangle>::const_iterator triitr; // iterator for looping through trilist
-		Vector<Triangle*> tribuckets[2] = { Vector<Triangle*>(1, 1), Vector<Triangle*>(1, 1) }; // buckets of triangles
+		ArrayList<Triangle*> tribuckets[2] = { ArrayList<Triangle*>(1, 1), ArrayList<Triangle*>(1, 1) }; // buckets of triangles
 		uint32 longaxis = mBox.longestAxis(); // longest axis
 		Vector3 geoavg(0.f); // geometric average - midpoint of ALL the triangles
 
@@ -167,7 +167,7 @@ AABBNode::AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristi
 		if (heurdata.storePrimitives) {
 			mTriangles = trilist;
 		} else {
-			mTriangles.removeAll(1, 0);
+			mTriangles.removeAll(0, 1);
 		}
 	}
 }

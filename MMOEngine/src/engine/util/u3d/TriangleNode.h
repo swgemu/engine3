@@ -17,6 +17,9 @@ namespace engine {
 
   	  class TriangleNode : public Triangle {
   	  public:
+		  virtual ~TriangleNode() {
+
+		  }
 
   		  virtual uint32 getID() = 0;
   		  virtual Vector<TriangleNode*>* getNeighbors() = 0;

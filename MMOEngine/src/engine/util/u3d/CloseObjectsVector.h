@@ -22,7 +22,10 @@ using namespace engine::util::u3d;
 
 class CloseObjectsVector : public SortedVector<ManagedReference<QuadTreeEntry*> > {
 	mutable ReadWriteLock mutex;
-	VectorMap<uint32, SortedVector<QuadTreeEntry*>> messageReceivers;
+	VectorMap<uint32, SortedVector<QuadTreeEntry*> > messageReceivers;
+
+protected:
+	void dropReceiver(QuadTreeEntry* entry);
 
 public:
 	CloseObjectsVector();

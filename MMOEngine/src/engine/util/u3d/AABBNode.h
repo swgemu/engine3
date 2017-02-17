@@ -14,22 +14,22 @@ namespace engine {
 
  	struct AABBTreeHeuristic;
 
- 	class IntersectionResult : public Variable {
+ 	class IntersectionResult {
  		float intersectionDistance;
  		Triangle* triangle;
 
  	public:
- 		IntersectionResult() : Variable() {
+ 		IntersectionResult() {
  			intersectionDistance = 0;
  			triangle = NULL;
  		}
 
- 		IntersectionResult(float intersectionDistance, Triangle* triangle) : Variable() {
+ 		IntersectionResult(float intersectionDistance, Triangle* triangle) {
  			this->intersectionDistance = intersectionDistance;
  			this->triangle = triangle;
  		}
 
- 		IntersectionResult(const IntersectionResult& r)  : Variable() {
+ 		IntersectionResult(const IntersectionResult& r) {
  			intersectionDistance = r.intersectionDistance;
  			triangle = r.triangle;
  		}
@@ -79,11 +79,11 @@ namespace engine {
 	protected:
 		AABB mBox; // node's bounding box
 		AABBNode* mChildren[2]; // child nodes of this node
-		Vector<Triangle*> mTriangles; // triangles in this node
+		ArrayList<Triangle*> mTriangles; // triangles in this node
 
 	public:
 		// constructs this aabb tree node from a triangle list and creates its children recursively
-		AABBNode(Vector<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata);
+		AABBNode(const ArrayList<Triangle*>& trilist, int depth, const AABBTreeHeuristic& heurdata);
 		// destructs this node
 		virtual ~AABBNode();
 		// renders tris that collide with the sphere
@@ -102,7 +102,7 @@ namespace engine {
 		int intersects(const Ray& ray, float maxDistance, SortedVector<IntersectionResult>& result) const;
 
 		//returns all the triangles from the mesh
-		void getTriangles(Vector<Triangle*>& triangles) const {
+		void getTriangles(ArrayList<Triangle*>& triangles) const {
 			triangles.addAll(mTriangles);
 
 			if (mChildren[0] != NULL) {

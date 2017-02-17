@@ -28,7 +28,7 @@ namespace engine {
 	 }
 
 	 // calc aabb from trilist
-	 AABB(const Vector<Triangle*>& triangles);
+	 AABB(const ArrayList<Triangle*>& triangles);
 
 	 AABB(const AABB& aab) {
 		 mBounds[0] = aab.mBounds[0];

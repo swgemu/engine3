@@ -36,6 +36,21 @@ namespace sys {
 			return ((end - start) * t) + start;
 		}
 
+		template<typename T>
+		static T sqr(const T& val) {
+			return val * val;
+		}
+
+		template<typename T>
+		static T min(const T& val1, const T& val2) {
+			return val1 < val2 ? val1 : val2;
+		}
+
+		template<typename T>
+		static T max(const T& val1, const T& val2) {
+			return val1 > val2 ? val1 : val2;
+		}
+
 		static float getPrecision(float num, int digits) {
 			float power = pow((float)10, digits);
 			return float(floor(num * power + .05f) / power);

@@ -14,7 +14,11 @@ Triangle::Triangle() {
 
 }
 
+#ifdef TRIANGLE_INHERITS_VARIABLE
 Triangle::Triangle(const Triangle& tri) : Variable() {
+#else
+Triangle::Triangle(const Triangle& tri) {
+#endif
 	for (int i = 0; i < 9; ++i) {
 		vertices[i] = tri.vertices[i];
 	}
