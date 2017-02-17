@@ -27,11 +27,7 @@ class CloseObjectsVector : public SortedVector<ManagedReference<QuadTreeEntry*> 
 public:
 	CloseObjectsVector();
 
-	ManagedReference<QuadTreeEntry*> remove(int index) {
-		Locker locker(&mutex);
-
-		return SortedVector<ManagedReference<QuadTreeEntry*> >::remove(index);
-	}
+	ManagedReference<QuadTreeEntry*> remove(int index);
 
 	bool contains(const ManagedReference<QuadTreeEntry*>& o) const {
 		ReadLocker locker(&mutex);
@@ -62,6 +58,7 @@ public:
 	}
 
 	void safeCopyReceiversTo(Vector<QuadTreeEntry*>& vec, uint32 receiverType) const;
+	void safeCopyReceiversTo(Vector<ManagedReference<QuadTreeEntry*> >& vec, uint32 receiverType) const;
 
 	void safeCopyTo(Vector<ManagedReference<QuadTreeEntry*> >& vec) const {
 		vec.removeAll(size(), size() / 2);

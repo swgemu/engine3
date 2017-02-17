@@ -15,6 +15,32 @@ CloseObjectsVector::CloseObjectsVector() : SortedVector<ManagedReference<QuadTre
 	messageReceivers.setNoDuplicateInsertPlan();
 }
 
+ManagedReference<QuadTreeEntry*> CloseObjectsVector::remove(int index) {
+	Locker locker(&mutex);
+
+	const auto& ref = SortedVector<ManagedReference<QuadTreeEntry*> >::get(index);
+
+	uint32 receiverTypes = ref->registerToCloseObjectsReceivers();
+
+	if (receiverTypes) {
+		for (int i = 0; i < MAX_COV_RECEIVER_TYPES; ++i) {
+			uint32 type = 1 << i;
+
+			if (receiverTypes & type) {
+				int idx = messageReceivers.find(type);
+
+				if (idx != -1) {
+					auto& receivers = messageReceivers.elementAt(idx).getValue();
+
+					receivers.drop(ref.get());
+				}
+			}
+		}
+	}
+
+	return SortedVector<ManagedReference<QuadTreeEntry*> >::remove(index);
+}
+
 bool CloseObjectsVector::drop(const ManagedReference<QuadTreeEntry*>& o) {
 	uint32 receiverTypes = o->registerToCloseObjectsReceivers();
 
@@ -50,6 +76,21 @@ void CloseObjectsVector::safeCopyReceiversTo(Vector<QuadTreeEntry*>& vec, uint32
 		vec.removeAll(receivers.size(), receivers.size() / 2);
 
 		vec.addAll(receivers);
+	}
+}
+
+void CloseObjectsVector::safeCopyReceiversTo(Vector<ManagedReference<QuadTreeEntry*> >& vec, uint32 receiverType) const {
+	ReadLocker locker(&mutex);
+
+	int i = messageReceivers.find(receiverType);
+
+	if (i != -1) {
+		const auto& receivers = messageReceivers.elementAt(i).getValue();
+
+		vec.removeAll(receivers.size(), receivers.size() / 2);
+
+		for (int i = 0; i < receivers.size(); ++i)
+			vec.add(receivers.get(i));
 	}
 }
 
