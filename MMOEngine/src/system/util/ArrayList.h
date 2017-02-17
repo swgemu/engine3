@@ -472,11 +472,27 @@ namespace sys {
    }
 
    template<class E> E ArrayList<E>::remove(int index) {
+#ifdef CXX11_COMPILER
+	   if (std::is_move_constructible<E>::value) {
+		   E oldValue(std::move(get(index)));
+
+		   removeElementAt(index);
+
+		   return oldValue;
+	   } else {
+		   E oldValue = get(index);
+
+		   removeElementAt(index);
+
+		   return oldValue;
+	   }
+#else
        E oldValue = get(index);
 
        removeElementAt(index);
 
        return oldValue;
+#endif
    }
 
    template<class E> bool ArrayList<E>::removeElement(const E& element) {
