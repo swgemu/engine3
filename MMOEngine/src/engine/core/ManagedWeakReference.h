@@ -238,7 +238,7 @@ namespace engine {
 		uint64 oid = stream->readLong();
 		savedObjectID = oid;
 
-		WeakReference<O>::updateObject(NULL);
+		WeakReference<O>::updateObject((O)NULL);
 
 		return true;
 	}

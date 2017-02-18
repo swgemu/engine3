@@ -169,7 +169,7 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 		return 1;*/
 
 	try {
-		ManagedObject* managedObject = cast<ManagedObject*>(object);
+		ManagedObject* managedObject = static_cast<ManagedObject*>(object);
 		ObjectOutputStream* objectData = new ObjectOutputStream(8000);
 
 		managedObject->writeObject(objectData);
@@ -203,11 +203,11 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 
 			if (database != NULL) {
 				//StringBuffer msg;
-				String dbName;
+				/*String dbName;
 
 				database->getDatabaseName(dbName);
 
-				/*msg << "saving to database with table " << dbName << " and object id 0x" << hex << oid;
+				msg << "saving to database with table " << dbName << " and object id 0x" << hex << oid;
 					info(msg.toString());*/
 
 				database->putData(oid, objectData, object);

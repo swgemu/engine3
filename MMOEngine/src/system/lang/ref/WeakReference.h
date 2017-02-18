@@ -103,7 +103,7 @@ namespace sys {
 
 			StrongAndWeakReferenceCount* p = ref.safeRead();
 
-			newref(p);
+			updateObject(p);
 
 			release(p);
 
@@ -254,7 +254,7 @@ namespace sys {
 		}
 
 		inline void releaseObject() {
-			updateObject(NULL);
+			updateObject((O) NULL);
 		}
 
 	public:
@@ -264,6 +264,12 @@ namespace sys {
 			if (obj != NULL)
 				newRef = obj->requestWeak();
 
+			StrongAndWeakReferenceCount* old = newref(newRef);
+
+			release(old);
+		}
+
+		inline void updateObject(StrongAndWeakReferenceCount* newRef) {
 			StrongAndWeakReferenceCount* old = newref(newRef);
 
 			release(old);
