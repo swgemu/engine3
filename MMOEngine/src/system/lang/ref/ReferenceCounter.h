@@ -32,9 +32,6 @@ namespace sys {
 			_references = counter._references;
 		}
 
-		virtual ~ReferenceCounter() {
-		}
-
 	public:
 		inline uint32 increaseCount() volatile {
 			return AtomicInteger::add(&_references, 2);

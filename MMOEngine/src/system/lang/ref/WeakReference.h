@@ -21,15 +21,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace lang {
 
-	template<class O> class WeakReference : public Variable {
+	template<class O> class WeakReference {
 	protected:
 		AtomicReference<StrongAndWeakReferenceCount* > weakReference;
 	public:
-		WeakReference() : Variable() {
+		WeakReference() {
 			weakReference = NULL;
 		}
 
-		WeakReference(const WeakReference& ref) : Variable() {
+		WeakReference(const WeakReference& ref) {
 			StrongAndWeakReferenceCount* p = ref.safeRead();
 
 			initializeObject(p);
@@ -37,16 +37,16 @@ namespace sys {
 			release(p);
 		}
 
-		WeakReference(StrongAndWeakReferenceCount* p) : Variable() {
+		WeakReference(StrongAndWeakReferenceCount* p) {
 			initializeObject(p);
 		}
 
-		WeakReference(O obj) : Variable() {
+		WeakReference(O obj) {
 			initializeObject(obj);
 		}
 
 #ifdef CXX11_COMPILER
-		WeakReference(WeakReference<O>&& ref) : Variable(), weakReference(ref.weakReference) {
+		WeakReference(WeakReference<O>&& ref) : weakReference(ref.weakReference) {
 			ref.weakReference = NULL;
 		}
 
@@ -64,11 +64,11 @@ namespace sys {
 		}
 #endif
 
-		virtual ~WeakReference() {
+		~WeakReference() {
 			releaseObject();
 		}
 
-		virtual int compareTo(const WeakReference<O>& val) const {
+		int compareTo(const WeakReference<O>& val) const {
 			Object* object = NULL;
 			Object* valObject = NULL;
 

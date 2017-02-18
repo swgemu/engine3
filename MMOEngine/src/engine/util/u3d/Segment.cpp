@@ -16,7 +16,7 @@ Segment::Segment(const Vector3& pointA, const Vector3& pointB) {
 	this->pointB = pointB;
 }
 
-Segment::Segment(const Segment& s) : Variable() {
+Segment::Segment(const Segment& s) {
 	pointA = s.pointA;
 	pointB = s.pointB;
 }

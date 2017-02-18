@@ -20,30 +20,30 @@ namespace engine {
 
   	template<class O> class ManagedReference;
 
-	template<class O> class ManagedWeakReference : public WeakReference<O> {
+	template<class O> class ManagedWeakReference : public WeakReference<O>, public Variable {
 	protected:
 		mutable uint64 savedObjectID;
 	public:
-		ManagedWeakReference() : WeakReference<O>() {
+		ManagedWeakReference() : WeakReference<O>(), Variable() {
 			savedObjectID = 0;
 		}
 
-		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref) {
+		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref), Variable() {
 			savedObjectID = ref.savedObjectID;
 		}
 
-		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p) {
+		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p), Variable() {
 			savedObjectID = oid;
 		}
 
 #ifdef CXX11_COMPILER
-		ManagedWeakReference(ManagedWeakReference<O>&& ref) : WeakReference<O>(std::move(ref)),
+		ManagedWeakReference(ManagedWeakReference<O>&& ref) : WeakReference<O>(std::move(ref)), Variable(),
 				savedObjectID(ref.savedObjectID) {
 			ref.savedObjectID = 0;
 		}
 #endif
 
-		ManagedWeakReference(O obj) : WeakReference<O>(obj) {
+		ManagedWeakReference(O obj) : WeakReference<O>(obj), Variable() {
 			savedObjectID = 0;
 
 			if (obj != NULL)

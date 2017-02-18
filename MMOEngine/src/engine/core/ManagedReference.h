@@ -19,36 +19,36 @@ namespace engine {
 
     template<class O> class ManagedWeakReference;
 
-	template<class O> class ManagedReference : public Reference<O> {
+	template<class O> class ManagedReference : public Reference<O>, public Variable {
 
 	public:
-		ManagedReference() : Reference<O>() {
+		ManagedReference() : Reference<O>(), Variable() {
 		}
 
 		/*ManagedReference(ManagedReference& ref) : Reference<O>(ref) {
 		}*/
 
-		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
+		ManagedReference(const ManagedReference& ref) : Reference<O>(ref), Variable() {
 		}
 
-		ManagedReference(const Reference<O>& r) : Reference<O>(r) {
+		ManagedReference(const Reference<O>& r) : Reference<O>(r), Variable() {
 		}
 
 #ifdef CXX11_COMPILER
-		ManagedReference(ManagedReference<O>&& ref) : Reference<O>(std::move(ref)) {
+		ManagedReference(ManagedReference<O>&& ref) : Reference<O>(std::move(ref)), Variable() {
 		}
 
-		ManagedReference(Reference<O>&& ref) : Reference<O>(std::move(ref)) {
+		ManagedReference(Reference<O>&& ref) : Reference<O>(std::move(ref)), Variable() {
 		}
 #endif
 
-		ManagedReference(const ManagedWeakReference<O>& r) : Reference<O>() {
+		ManagedReference(const ManagedWeakReference<O>& r) : Reference<O>(), Variable() {
 			ManagedWeakReference<O>& nonconst = const_cast<ManagedWeakReference<O>&>(r);
 
 			updateObject(nonconst.get());
 		}
 
-		ManagedReference(O obj) : Reference<O>(obj) {
+		ManagedReference(O obj) : Reference<O>(obj), Variable() {
 		}
 
 		ManagedReference& operator=(const ManagedReference& ref) {

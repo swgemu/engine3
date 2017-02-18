@@ -14,7 +14,7 @@ namespace engine {
  namespace util {
   namespace u3d {
 
-  class Segment : public Variable {
+  class Segment {
   protected:
 	  Vector3 pointA, pointB;
 

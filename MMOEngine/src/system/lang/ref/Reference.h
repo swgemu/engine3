@@ -24,7 +24,7 @@ namespace sys {
 #endif
 
 
-	template<class O> class Reference : public Variable {
+	template<class O> class Reference {
 	protected:
 		AtomicReference<O> object;
 
@@ -33,14 +33,14 @@ namespace sys {
 #endif
 
 	public:
-		Reference() : Variable(), object() {
+		Reference() : object() {
 			//object = NULL;
 #ifdef TRACE_REFERENCES
 			id = ReferenceIdCounter::nextID.increment();
 #endif
 		}
 
-		Reference(const Reference& ref) : Variable() {
+		Reference(const Reference& ref)  {
 #ifdef TRACE_REFERENCES
 			id = ReferenceIdCounter::nextID.increment();
 #endif
@@ -48,7 +48,7 @@ namespace sys {
 		}
 
 #ifdef CXX11_COMPILER
-		Reference(Reference<O>&& ref) : Variable(), object(ref.object) {
+		Reference(Reference<O>&& ref) : object(ref.object) {
 			ref.object = NULL;
 
 #ifdef TRACE_REFERENCES
@@ -58,7 +58,7 @@ namespace sys {
 		}
 #endif
 
-		Reference(O obj) : Variable() {
+		Reference(O obj) {
 #ifdef TRACE_REFERENCES
 			id = ReferenceIdCounter::nextID.increment();
 #endif
@@ -66,11 +66,11 @@ namespace sys {
 			initializeObject(obj);
 		}
 
-		inline virtual ~Reference() {
+		inline ~Reference() {
 			releaseObject();
 		}
 
-		virtual int compareTo(const Reference& val) const {
+		int compareTo(const Reference& val) const {
 			if (std::less<Object*>()(object, val.object)) {
 				return 1;
 			} else if (object == val.object) {
