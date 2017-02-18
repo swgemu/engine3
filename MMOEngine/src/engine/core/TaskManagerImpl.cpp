@@ -599,7 +599,7 @@ String TaskManagerImpl::getInfo(bool print) {
 		HashTable<const char*, TaskStatistics> tasksCount = worker->getTasksStatistics();
 
 		//lets order them
-		VectorMap<TaskStatistics, const char*> ordered;
+		VectorMap<TaskStatistics, const char*> ordered(tasksCount.size(), 2);
 
 		HashTableIterator<const char*, TaskStatistics> iterator = tasksCount.iterator();
 
@@ -620,9 +620,15 @@ String TaskManagerImpl::getInfo(bool print) {
 			VectorMapEntry<TaskStatistics, const char*>& entry = ordered.elementAt(index);
 			TaskStatistics& stats = entry.getKey();
 			const char* name = entry.getValue();
+			uint64 averageTime = 0;
 
-			msg4 << "\t" << name << ": totalRunTime = " << stats.totalRunTime << " maxRunTime = " << stats.maxRunTime
-				<< " totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << endl;
+			if (stats.totalRunCount) {
+				averageTime = stats.totalRunTime / stats.totalRunCount;
+			}
+
+			msg4 << "\t" << name << ": totalRunTime = " << stats.totalRunTime <<  "ns averageTime = " << averageTime
+				 << "ns maxRunTime = " << stats.maxRunTime
+				 << "ns totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << "ns" << endl;
 		}
 
 		msg4 << endl;
