@@ -107,8 +107,17 @@ namespace engine {
 			return ref;
 		}
 
-		inline O getReferenceUnsafe() const {
-			return WeakReference<O>::getReferenceUnsafeStaticCast();
+		inline O getReferenceUnsafe() {
+			O ref = WeakReference<O>::getReferenceUnsafeStaticCast();
+
+			if (ref == NULL && savedObjectID != 0) {
+				Reference<DistributedObject*> tempObj = Core::lookupObject(savedObjectID);
+				ref = dynamic_cast<O>(tempObj.get());
+
+				WeakReference<O>::updateObject(ref);
+			}
+
+			return ref;
 		}
 
 		inline bool operator==(O obj) {
@@ -146,7 +155,7 @@ namespace engine {
 		inline ManagedReference<O> get() {
 			ManagedReference<O> strongRef = WeakReference<O>::get();
 
-			if (savedObjectID != 0 && strongRef == NULL) {
+			if (strongRef == NULL && savedObjectID != 0) {
 				Reference<DistributedObject*> tempObj = Core::lookupObject(savedObjectID);
 				strongRef = dynamic_cast<O>(tempObj.get());
 
