@@ -626,7 +626,19 @@ String TaskManagerImpl::getInfo(bool print) {
 				averageTime = stats.totalRunTime / stats.totalRunCount;
 			}
 
-			msg4 << "\t" << name << ": totalRunTime = " << stats.totalRunTime <<  "ns averageTime = " << averageTime
+			String taskName = name;
+
+#if GCC_VERSION >= 40100
+			int stat;
+			char* demangled = abi::__cxa_demangle(name, 0, 0, &stat);
+
+			if (stat == 0) {
+				taskName = demangled;
+
+				free(demangled);
+			}
+#endif
+			msg4 << "\t" << taskName << ": totalRunTime = " << stats.totalRunTime / 1000000000 <<  "s averageTime = " << averageTime
 				 << "ns maxRunTime = " << stats.maxRunTime
 				 << "ns totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << "ns" << endl;
 		}
