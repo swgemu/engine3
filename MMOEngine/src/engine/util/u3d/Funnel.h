@@ -17,7 +17,7 @@ namespace engine {
 
   class Funnel {
   public:
-  	static Vector<Vector3>* funnel(const Vector3& startPoint, const Vector3& goalPoint, Vector<Triangle*>* channel);
+  	static Vector<Vector3>* funnel(const Vector3& startPoint, const Vector3& goalPoint, const Vector<Triangle*>* channel);
   };
 
   }

@@ -10,31 +10,31 @@
 
 #include "Funnel.h"
 
-Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPoint, Vector<Triangle*>* triangleChannel) {
+Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPoint, const Vector<Triangle*>* triangleChannel) {
 	Vector<Vector3>* path = new Vector<Vector3>();
 
 	path->add(startPoint);
 
 	int apexIndex = 0, leftIndex = 0, rightIndex = 0;
 
-	Vector3 portalApex = startPoint;
-	Vector3 portalLeft = startPoint;
-	Vector3 portalRight = startPoint;
+	const Vector3* portalApex = &startPoint;
+	const Vector3* portalLeft = &startPoint;
+	const Vector3* portalRight = &startPoint;
 
 	for (int i = 0; i < triangleChannel->size(); ++i) {
-		Vector3 left;
-		Vector3 right;
+		const Vector3* left;
+		const Vector3* right;
 
 		if (i == triangleChannel->size() - 1) {
-			 left = goalPoint;
-			 right = goalPoint;
+			 left = &goalPoint;
+			 right = &goalPoint;
 		} else {
-			left = triangleChannel->get(i)->getLeftSharedVertex(triangleChannel->get(i + 1));
-			right = triangleChannel->get(i)->getRightSharedVertex(triangleChannel->get(i + 1));
+			left = &triangleChannel->getUnsafe(i)->getLeftSharedVertex(*triangleChannel->getUnsafe(i + 1));
+			right = &triangleChannel->getUnsafe(i)->getRightSharedVertex(*triangleChannel->getUnsafe(i + 1));
 		}
 
-		if (Triangle::area2D(portalApex, portalRight, right) <= 0.0f) {
-			if (portalApex == portalRight || Triangle::area2D(portalApex, portalLeft, right) > 0.0f) {
+		if (Triangle::area2D(*portalApex, *portalRight, *right) <= 0.0f) {
+			if (*portalApex == *portalRight || Triangle::area2D(*portalApex, *portalLeft, *right) > 0.0f) {
 				// Tighten the funnel.
 				portalRight = right;
 
@@ -42,7 +42,7 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 			} else {
 				// Right over left, insert left to path and restart scan from portal left point.
 
-				path->add(portalLeft);
+				path->add(*portalLeft);
 				// Make current left the new apex.
 				portalApex = portalLeft;
 
@@ -60,8 +60,8 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 		}
 
 		// Update left vertex.
-		if (Triangle::area2D(portalApex, portalLeft, left) >= 0.0f) {
-			if (portalApex == portalLeft || Triangle::area2D(portalApex, portalRight, left) < 0.0f) {
+		if (Triangle::area2D(*portalApex, *portalLeft, *left) >= 0.0f) {
+			if (*portalApex == *portalLeft || Triangle::area2D(*portalApex, *portalRight, *left) < 0.0f) {
 				// Tighten the funnel.
 
 				portalLeft = left;
@@ -69,7 +69,7 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 			} else {
 				// Left over right, insert right to path and restart scan from portal right point.
 
-				path->add(portalRight);
+				path->add(*portalRight);
 				// Make current right the new apex.
 
 				portalApex = portalRight;

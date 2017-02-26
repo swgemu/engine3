@@ -91,7 +91,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			int j = 0;
 
 			for (int i = startOffset; i <= endOffset; ++i) {
-				DistributedObject* object = objectsToUpdate->get(i);
+				DistributedObject* object = objectsToUpdate->getUnsafe(i);
 
 				if (objectManager->commitUpdatePersistentObjectToDB(object) == 0)
 					++j;
@@ -109,7 +109,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 
 		if (objectsToDelete != NULL) {
 			for (int i = 0; i < objectsToDelete->size(); ++i) {
-				DistributedObject* object = objectsToDelete->get(i);
+				DistributedObject* object = objectsToDelete->getUnsafe(i);
 
 				if (!object->_isDeletedFromDatabase()) {
 					objectManager->commitDestroyObjectToDB(object->_getObjectID());

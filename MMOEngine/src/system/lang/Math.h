@@ -42,12 +42,12 @@ namespace sys {
 		}
 
 		template<typename T>
-		static T min(const T& val1, const T& val2) {
+		static inline T min(const T& val1, const T& val2) {
 			return val1 < val2 ? val1 : val2;
 		}
 
 		template<typename T>
-		static T max(const T& val1, const T& val2) {
+		static inline T max(const T& val1, const T& val2) {
 			return val1 > val2 ? val1 : val2;
 		}
 

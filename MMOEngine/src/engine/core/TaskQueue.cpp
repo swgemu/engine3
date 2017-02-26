@@ -111,7 +111,7 @@ void TaskQueue::pushAll(const Vector<Task*>& tasks) {
 	}
 
 	for (int i = 0; i < tasks.size(); ++i) {
-		LinkedList<Task*>::add(tasks.get(i));
+		LinkedList<Task*>::add(tasks.getUnsafe(i));
 	}
 	//Vector<Task*>::addAll(tasks);
 

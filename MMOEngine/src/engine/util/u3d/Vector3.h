@@ -186,9 +186,10 @@ namespace engine {
 		}
 
 		inline Vector3& operator = (const Vector3& v) {
-			values[0] = v.values[0];
-			values[1] = v.values[1];
-			values[2] = v.values[2];
+			if (this == &v)
+				return *this;
+
+			memcpy(values, v.values, sizeof(values));
 
 			return *this;
 		}
@@ -292,11 +293,11 @@ namespace engine {
 
 		//Boolean operators
 		inline bool operator == (const Vector3& v) const {
-			return (values[0] == v.values[0] && values[1] == v.values[1] && values[2] == v.values[2]);
+			return memcmp(values, v.values, sizeof(values)) == 0;
 		}
 
 		inline bool operator != (const Vector3& v) const {
-			return (values[0] != v.values[0] || values[1] != v.values[1] || values[2] != v.values[2]);
+			return memcmp(values, v.values, sizeof(values)) != 0;
 		}
 
 		inline bool operator < (const Vector3& v) const {

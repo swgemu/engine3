@@ -19,12 +19,10 @@ Triangle::Triangle(const Triangle& tri) : Variable() {
 #else
 Triangle::Triangle(const Triangle& tri) {
 #endif
-	for (int i = 0; i < 9; ++i) {
-		vertices[i] = tri.vertices[i];
-	}
+	memcpy(verts, tri.verts, sizeof(verts));
 }
 
-Triangle::Triangle(const Vector3 vert[]) {
+Triangle::Triangle(const Vector3 vert[3]) {
 	set(vert);
 }
 
@@ -32,9 +30,7 @@ Triangle& Triangle::operator=(const Triangle& tri) {
 	if (this == &tri)
 		return *this;
 
-	for (int i = 0; i < 9; ++i) {
-		vertices[i] = tri.vertices[i];
-	}
+	memcpy(verts, tri.verts, sizeof(verts));
 
 	return *this;
 }
@@ -49,27 +45,24 @@ int Triangle::compareTo(const Triangle* object) const {
 }
 
 void Triangle::transform(const Matrix4& worldMatrix) {
-	for (int i = 0; i < 9; i += 3) {
-		Vector3 vertex(vertices[i], vertices[i + 1], vertices[i + 2]);
-		vertex = worldMatrix * vertex;
+	for (int i = 0; i < 3; i++) {
+		Vector3& vertex = verts[i]; //(vertices[i], vertices[i + 1], vertices[i + 2]);
 
-		vertices[i] = vertex.getX();
-		vertices[i + 1] = vertex.getY();
-		vertices[i + 2] = vertex.getZ();
+		vertex = worldMatrix * vertex;
 	}
 }
 
 bool Triangle::toBinaryStream(ObjectOutputStream* stream) {
-	for (int i = 0; i < 9; ++i) {
-		TypeInfo<float>::toBinaryStream(&vertices[i], stream);
+	for (int i = 0; i < 3; ++i) {
+		TypeInfo<Vector3>::toBinaryStream(&verts[i], stream);
 	}
 
 	return true;
 }
 
 bool Triangle::parseFromBinaryStream(ObjectInputStream* stream) {
-	for (int i = 0; i < 9; ++i) {
-		TypeInfo<float>::parseFromBinaryStream(&vertices[i], stream);
+	for (int i = 0; i < 3; ++i) {
+		TypeInfo<Vector3>::parseFromBinaryStream(&verts[i], stream);
 	}
 
 	return true;
@@ -80,24 +73,22 @@ bool Triangle::parseFromBinaryStream(ObjectInputStream* stream) {
 
 // calculate the midpoint
 Vector3 Triangle::midPoint() const {
-	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
-	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
-	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+	const Vector3& vert0 = verts[0];
+	const Vector3& vert2 = verts[1];
+	const Vector3& vert1 = verts[2];
 
 	return (vert0 + vert1 + vert2) * (1.0f / 3.0f);
 }
 
 Vector3 Triangle::getNormal() const {
-	Vector3 normal;
-
-	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
-	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
-	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+	const Vector3& vert0 = verts[0];
+	const Vector3& vert2 = verts[1];
+	const Vector3& vert1 = verts[2];
 
 	Vector3 v1 = vert1 - vert0;
 	Vector3 v2 = vert2 - vert0;
 
-	normal = v1.crossProduct(v2);
+	Vector3 normal = v1.crossProduct(v2);
 
 	normal.normalize();
 
@@ -105,28 +96,28 @@ Vector3 Triangle::getNormal() const {
 }
 
 float Triangle::area() const {
-	Vector3 v0(vertices[0], vertices[1], vertices[2]);
-	Vector3 v2(vertices[3], vertices[4], vertices[5]);
-	Vector3 v1(vertices[6], vertices[7], vertices[8]);
+	const Vector3& v0 = verts[0];
+	const Vector3& v2 = verts[1];
+	const Vector3& v1 = verts[2];
 
 	return 0.5 * ((v1 - v0).crossProduct(v2 - v0)).length();
 }
 
 float Triangle::area2D() const {
-	float ax = vertices[3] - vertices[0];
-	float ay = vertices[5] - vertices[2];
+	float ax = verts[1].getX() - verts[0].getX();
+	float ay = verts[1].getZ() - verts[0].getZ();
 
-	float bx = vertices[6] - vertices[0];
-	float by = vertices[8] - vertices[2];
+	float bx = verts[2].getX() - verts[0].getX();
+	float by = verts[2].getZ() - verts[0].getZ();
 
 	return bx * ay - ax * by;
 }
 
 // get the aabb for this triangle (used for making group aabb)
 AABB Triangle::triAABB() const {
-	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
-	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
-	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+	const Vector3& vert0 = verts[0];
+	const Vector3& vert2 = verts[1];
+	const Vector3& vert1 = verts[2];
 
 	// new aabb with min as minimum of 3 verts and maximum max of 3 verts
 	return AABB(vert0.getMin(vert1).getMin(vert2),
@@ -263,9 +254,9 @@ bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersection
 
 
 // Find vectors for two edges sharing vert0
-	Vector3 vert0(vertices[0], vertices[1], vertices[2]);
-	Vector3 vert2(vertices[3], vertices[4], vertices[5]);
-	Vector3 vert1(vertices[6], vertices[7], vertices[8]);
+	const Vector3& vert0 = verts[0]; //(vertices[0], vertices[1], vertices[2]);
+	const Vector3& vert2 = verts[1]; //(vertices[3], vertices[4], vertices[5]);
+	const Vector3& vert1 = verts[2]; //(vertices[6], vertices[7], vertices[8]);
 
 	Vector3 edge1 = vert1 - vert0;
 	Vector3 edge2 = vert2 - vert0;
@@ -325,18 +316,18 @@ bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersection
 
 }
 
-int Triangle::getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertexB) const {
+int Triangle::getSharedVertices(const Triangle& tri, const Vector3*& vertexA, const Vector3*& vertexB) const {
 	int count = 0;
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
-			if (getVertex(i) == tri->getVertex(j)) {
+			if (getVertex(i) == tri.getVertex(j)) {
 				if (++count == 2) {
-					vertexB = getVertex(i);
+					vertexB = &getVertex(i);
 
 					return 0;
 				} else
-					vertexA = getVertex(i);
+					vertexA = &getVertex(i);
 			}
 		}
 	}
@@ -344,13 +335,13 @@ int Triangle::getSharedVertices(Triangle* tri, Vector3& vertexA, Vector3& vertex
 	return 1;
 }
 
-Vector3 Triangle::getLeftSharedVertex(Triangle* tri) const {
+const Vector3& Triangle::getLeftSharedVertex(const Triangle& tri) const {
 	int firstCommon = -1, secondCommon = -1;
 	int apexID = -1;
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
-			if (getVertex(i) == tri->getVertex(j)) {
+			if (getVertex(i) == tri.getVertex(j)) {
 				if (firstCommon == -1) {
 					firstCommon = i;
 				} else if (secondCommon == -1) {
@@ -371,24 +362,23 @@ Vector3 Triangle::getLeftSharedVertex(Triangle* tri) const {
 			apexID = 1;
 	}
 
-	Vector3 pointA = getVertex(firstCommon);
-	Vector3 pointB = getVertex(secondCommon);
-	Vector3 apex = getVertex(apexID);
+	const Vector3& pointA = getVertex(firstCommon);
+	const Vector3& pointB = getVertex(secondCommon);
+	const Vector3& apex = getVertex(apexID);
 
 	if (area2D(apex, pointA, pointB) <= 0)
 		return pointB;
 	else
 		return pointA;
-
 }
 
-Vector3 Triangle::getRightSharedVertex(Triangle* tri) const {
+const Vector3& Triangle::getRightSharedVertex(const Triangle& tri) const {
 	int firstCommon = -1, secondCommon = -1;
 	int apexID = -1;
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
-			if (getVertex(i) == tri->getVertex(j)) {
+			if (getVertex(i) == tri.getVertex(j)) {
 				if (firstCommon == -1) {
 					firstCommon = i;
 				} else if (secondCommon == -1) {
@@ -409,9 +399,9 @@ Vector3 Triangle::getRightSharedVertex(Triangle* tri) const {
 			apexID = 1;
 	}
 
-	Vector3 pointA = getVertex(firstCommon);
-	Vector3 pointB = getVertex(secondCommon);
-	Vector3 apex = getVertex(apexID);
+	const Vector3& pointA = getVertex(firstCommon);
+	const Vector3& pointB = getVertex(secondCommon);
+	const Vector3& apex = getVertex(apexID);
 
 	if (area2D(apex, pointA, pointB) <= 0)
 		return pointA;
@@ -420,9 +410,9 @@ Vector3 Triangle::getRightSharedVertex(Triangle* tri) const {
 }
 
 Vector3 Triangle::getBarycenter() const {
-	float x = (vertices[0] + vertices[3] + vertices[6]) / 3.f;
-	float y = (vertices[1] + vertices[4] + vertices[7])  / 3.f;
-	float z = (vertices[2] + vertices[5] + vertices[8])  / 3.f;
+	float x = (verts[0].getX() + verts[1].getX() + verts[2].getX()) / 3.f;
+	float y = (verts[0].getY() + verts[1].getY() + verts[2].getY())  / 3.f;
+	float z = (verts[0].getZ() + verts[1].getZ() + verts[2].getZ())  / 3.f;
 
 	return Vector3(x, y, z);
 }

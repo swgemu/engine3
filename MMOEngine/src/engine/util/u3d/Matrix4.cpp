@@ -8,6 +8,12 @@
 #include "Matrix4.h"
 #include "Matrix3.h"
 
+const Vector3 Vector3::ZERO;
+
+const Vector3 Vector3::UNIT_X(1, 0, 0);
+const Vector3 Vector3::UNIT_Y(0, 1, 0);
+const Vector3 Vector3::UNIT_Z(0, 0, 1);
+
 Matrix4::Matrix4(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
 	matrix[0] = a;
 	matrix[1] = b;

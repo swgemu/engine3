@@ -114,7 +114,7 @@ namespace engine {
 		//returns all triangles from the mesh sorted
 		void getTriangles(SortedVector<Triangle*>& triangles) const {
 			for (int i = 0; i < mTriangles.size(); ++i) {
-				triangles.put(mTriangles.get(i));
+				triangles.put(mTriangles.getUnsafe(i));
 			}
 
 			if (mChildren[0] != NULL) {

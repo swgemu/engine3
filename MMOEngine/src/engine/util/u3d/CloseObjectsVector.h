@@ -56,7 +56,7 @@ public:
 		ReadLocker locker(&mutex);
 
 		for (int i = 0; i < size(); ++i) {
-			vec.add(get(i).get());
+			vec.add(getUnsafe(i).get());
 		}
 	}
 

@@ -24,7 +24,7 @@ AABBTree::~AABBTree() {
 		getTriangles(uniqueTriangles);
 
 		for (int i = 0; i < uniqueTriangles.size(); ++i) {
-			delete uniqueTriangles.get(i);
+			delete uniqueTriangles.getUnsafe(i);
 		}
 	}
 }
@@ -39,11 +39,11 @@ AABB::AABB(const ArrayList<Triangle*>& triangles) {
 	mBounds[1] = Vector3(0.f);
 
 	// copy aabb of first triangle
-	copy(triangles.get(0)->triAABB());
+	copy(triangles.getUnsafe(0)->triAABB());
 
 	// encompass all other triangles in the list
 	for (int i = 0; i < triangles.size(); ++i) {
-		encompass(triangles.get(i)->triAABB());
+		encompass(triangles.getUnsafe(i)->triAABB());
 	}
 }
 
@@ -144,13 +144,13 @@ AABBNode::AABBNode(const ArrayList<Triangle*>& trilist, int depth, const AABBTre
 		// go through all tris and calculate the average of the midpoints
 		//for (triitr=trilist.begin(); triitr!=trilist.end(); triitr++)
 		for (int i = 0; i < trilist.size(); ++i) {
-			geoavg = geoavg + trilist.get(i)->midPoint() * (1.0f / trilist.size());
+			geoavg = geoavg + trilist.getUnsafe(i)->midPoint() * (1.0f / trilist.size());
 		}
 
 		// bucket tris based on their midpoint's side of the geo average in the longest axis
 		//for (triitr=trilist.begin(); triitr!=trilist.end(); triitr++)
 		for (int i = 0; i < trilist.size(); ++i) {
-			tribuckets[geoavg[longaxis] > trilist.get(i)->midPoint()[longaxis]].add(trilist.get(i));
+			tribuckets[geoavg[longaxis] > trilist.getUnsafe(i)->midPoint()[longaxis]].add(trilist.getUnsafe(i));
 		}
 
 		// create new children using the buckets
@@ -194,8 +194,8 @@ int AABBNode::intersects(const Ray& ray, float maxDistance, SortedVector<Interse
 			for (int i = 0; i < mTriangles.size(); ++i) {
 				//Vector3 intersectionPoint;
 
-				if (mTriangles.get(i)->intersects(ray, maxDistance, intersectionDistance)) {
-					result.put(IntersectionResult(intersectionDistance, mTriangles.get(i)));
+				if (mTriangles.getUnsafe(i)->intersects(ray, maxDistance, intersectionDistance)) {
+					result.put(IntersectionResult(intersectionDistance, mTriangles.getUnsafe(i)));
 				}
 			}
 		}
@@ -219,8 +219,8 @@ bool AABBNode::intersects(const Ray& ray, float distance, float& intersectionDis
 				for (int i = 0; i < mTriangles.size(); ++i) {
 					//Vector3 intersectionPoint;
 
-					if (mTriangles.get(i)->intersects(ray, distance, intersectionDistance)) {
-						triangle = mTriangles.get(i);
+					if (mTriangles.getUnsafe(i)->intersects(ray, distance, intersectionDistance)) {
+						triangle = mTriangles.getUnsafe(i);
 						return true;
 					}
 				}
@@ -249,7 +249,7 @@ bool AABBNode::testCollide(const Sphere& testsphere) const {
 		} else { // is a leaf
 
 			for (int i = 0; i < mTriangles.size(); ++i) {
-				if (testsphere.intersects(*mTriangles.get(i)))
+				if (testsphere.intersects(*mTriangles.getUnsafe(i)))
 					return true;
 			}
 

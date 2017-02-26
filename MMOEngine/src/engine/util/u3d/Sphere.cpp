@@ -40,9 +40,9 @@ bool Sphere::intersects(const Triangle& tri) const {
 	float mRadius2 = radiusSquared;
 
 	Vector3 mCenter = origin;
-	Vector3 vert0 = tri.getVertex(0);
-	Vector3 vert1 = tri.getVertex(1);
-	Vector3 vert2 = tri.getVertex(2);
+	const Vector3& vert0 = tri.getVertex(0);
+	const Vector3& vert1 = tri.getVertex(1);
+	const Vector3& vert2 = tri.getVertex(2);
 
 	Vector3 kDiff = vert2 - mCenter;
 

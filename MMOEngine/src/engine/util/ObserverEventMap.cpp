@@ -23,13 +23,13 @@ void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable,
 	SortedVector<Observer*> observersCopy(observers->size(), 50);
 	
 	for (int i = 0; i < observers->size(); ++i) {
-		observersCopy.add(observers->get(i).get());
+		observersCopy.add(observers->getUnsafe(i).get());
 	}
 	
 	locker.release();
 
 	for (int i = 0; i < observersCopy.size(); ++i) {
-		ManagedReference<Observer*> observer = observersCopy.get(i);
+		ManagedReference<Observer*> observer = observersCopy.getUnsafe(i);
 
 		int result = observer->notifyObserverEvent(eventType, observable, arg1, arg2);
 

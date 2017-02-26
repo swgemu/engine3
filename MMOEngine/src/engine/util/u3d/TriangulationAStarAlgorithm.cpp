@@ -27,10 +27,10 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 		if (target == x->getNode()) {
 			goal = x;
 		} else {
-			Vector<TriangleNode*>* neighbors = x->getNode()->getNeighbors();
+			const Vector<TriangleNode*>* neighbors = x->getNode()->getNeighbors();
 
 			for (int i = 0; i < neighbors->size(); ++i) {
-				TriangleNode* neighbor = neighbors->get(i);
+				TriangleNode* neighbor = neighbors->getUnsafe(i);
 
 				if (visited.containsKey(neighbor->getID()))
 					continue;
@@ -38,15 +38,16 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 				Triangle* triangleA = x->getNode();
 				Triangle* triangleB = neighbor;
 
-				Vector3 pointA, pointB;
+				const Vector3* pointA = &Vector3::ZERO;
+				const Vector3* pointB = &Vector3::ZERO;
 
-				triangleA->getSharedVertices(triangleB, pointA, pointB);
+				triangleA->getSharedVertices(*triangleB, pointA, pointB);
 
-				Vector3 closestPoint = Segment::getClosestPoint(pointA, pointB, goalPoint);
+				Vector3 closestPoint = Segment::getClosestPoint(*pointA, *pointB, goalPoint);
 
 				float h = closestPoint.distanceTo(goalPoint);
 
-				closestPoint = Segment::getClosestPoint(pointA, pointB, startPoint);
+				closestPoint = Segment::getClosestPoint(*pointA, *pointB, startPoint);
 
 				float distEA = closestPoint.distanceTo(startPoint);
 
@@ -90,7 +91,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 				//printf("x->getG():%f distEA:%f funnelPathDistance:%f heuristic:%f\n", x->getG(), distEA, funnelPathDistance, h);
 	//			float g = MAX(MAX(x->getG(), distEA), funnelPathDistance);
 
-				float g = MAX(MAX(x->getG(), distEA), x->getG() + (x->getHeuristic() - h));
+				float g = Math::max(Math::max(x->getG(), distEA), x->getG() + (x->getHeuristic() - h));
 
 				AStarNode<TriangleNode, uint32>* newNode = new AStarNode<TriangleNode, uint32>(neighbor, g, h);
 				newNode->setCameFrom(x);

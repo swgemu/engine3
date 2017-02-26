@@ -118,14 +118,14 @@ namespace engine {
 					Vector<Node*>* neighbors = x->getNode()->getNeighbors();
 
 					for (int i = 0; i < neighbors->size(); ++i) {
-						Node* neighbor = neighbors->get(i);
+						Node* neighbor = neighbors->getUnsafe(i);
 
-						Reference<AStarNode<Node, IDType>* > visited = closeSet.get(neighbor->getID());
+						const Reference<AStarNode<Node, IDType>* >& visited = closeSet.get(neighbor->getID());
 
 						if (visited == NULL) {
 							float g = x->getG() + graph->calculateManhattanDistance(x->getNode(), neighbor);
 
-							Reference<AStarNode<Node, IDType>* > n = openSet.get(neighbor->getID());
+							AStarNode<Node, IDType>* n = openSet.get(neighbor->getID()).get();
 
 							if (n == NULL) {
 								n = new AStarNode<Node, IDType>(neighbor, g, graph->calculateManhattanDistance(neighbor, target));
