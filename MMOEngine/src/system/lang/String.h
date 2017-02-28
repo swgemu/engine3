@@ -15,10 +15,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define SSO_SIZE 16
 #endif
 
+#define STRING_INHERIT_VARIABLE
+
 namespace sys {
   namespace lang {
 
+#ifdef STRING_INHERIT_VARIABLE
 	class String : public Variable {
+#else
+	class String {
+#endif
 	protected:
 		int count;
 
@@ -39,7 +45,11 @@ namespace sys {
 		String(const String& str);
 
 #ifdef CXX11_COMPILER
+#ifdef STRING_INHERIT_VARIABLE
 		String(String&& str) : Variable() {
+#else
+		String(String&& str) {
+#endif
 			count = str.count;
 
 		#ifdef SSO_STRING
@@ -59,7 +69,7 @@ namespace sys {
 		}
 #endif
 
-		virtual ~String();
+		~String();
 
 		String concat(char ch) const;
 		String concat(int i) const;
@@ -322,7 +332,37 @@ namespace sys {
 	};
 #endif
 
-  } // namespace lang
+#ifndef STRING_INHERIT_VARIABLE
+	class SerializableString : public String, public Variable {
+#else
+	class SerializableString : public String {
+#endif
+	public:
+		bool toBinaryStream(sys::io::ObjectOutputStream* stream) {
+			return String::toBinaryStream(stream);
+		}
+
+		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream) {
+			return String::parseFromBinaryStream(stream);
+		}
+
+		SerializableString& operator=(const String& s) {
+			String::operator=(s);
+
+			return *this;
+		}
+
+		SerializableString& operator=(const SerializableString& s) {
+			if (this == &s)
+				return *this;
+
+			String::operator=(s);
+
+			return *this;
+		}
+	};
+
+	} // namespace lang
 } // namespace sys
 
 using namespace sys::lang;

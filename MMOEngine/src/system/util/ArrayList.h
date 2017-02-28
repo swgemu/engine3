@@ -82,12 +82,12 @@ namespace sys {
 	   void insertElementAt(E&& element, int index);
 #endif
 
-       virtual E& get(int index) const;
-       virtual E& getUnsafe(int index) const;
+       E& get(int index) const;
+       E& getUnsafe(int index) const;
 
-       E& elementAt(int index) const;
+       E& elementAt(uint32 index) const;
 
-       E& elementAtUnsafe(int index) const;
+       E& elementAtUnsafe(uint32 index) const;
 
        virtual E remove(int index);
 
@@ -475,8 +475,8 @@ namespace sys {
        return elementAt(index);
    }
 
-   template<class E> E& ArrayList<E>::elementAt(int index) const {
-       if (index >= elementCount || index < 0)
+   template<class E> E& ArrayList<E>::elementAt(uint32 index) const {
+       if (index >= (uint32) elementCount)
            throw ArrayIndexOutOfBoundsException(index);
 
        return elementData[index];
@@ -486,7 +486,7 @@ namespace sys {
 	   return elementAtUnsafe(index);
    }
 
-   template<class E> E& ArrayList<E>::elementAtUnsafe(int index) const {
+   template<class E> E& ArrayList<E>::elementAtUnsafe(uint32 index) const {
 	   return elementData[index];
    }
 

@@ -11,7 +11,7 @@
 #include "Segment.h"
 
 Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint, const Vector3& goalPoint, TriangleNode* source, TriangleNode* target) {
-	HashTable<uint32, Reference<AStarNode<TriangleNode, uint32>* > > visited;
+	HashTable<uint32, Reference<AStarNode<TriangleNode, uint32>* > > visited(100);
 	visited.setNullValue(NULL);
 
 	PriorityQueue priorityQueue;

@@ -70,32 +70,36 @@ Distribution of this file for usage outside of Core3 is prohibited.
 	constexpr uint32 String::crctable[];
 #endif
 
-String::String() : Variable() {
+String::String() {
 	create("", 0);
 }
 
-String::String(char* str) : Variable() {
+String::String(char* str) {
 	if (str == NULL)
 		throw IllegalArgumentException();
 
 	create(str, strlen(str));
 }
 
-String::String(const char* str) : Variable() {
+String::String(const char* str) {
 	if (str == NULL)
 		throw IllegalArgumentException();
 
 	create(str, strlen(str));
 }
 
-String::String(const char* str, int len) : Variable() {
+String::String(const char* str, int len) {
 	if (str == NULL)
 		throw IllegalArgumentException();
 
 	create(str, len);
 }
 
+#ifdef STRING_INHERIT_VARIABLE
 String::String(const String& str) : Variable() {
+#else
+String::String(const String& str) {
+#endif
 	create(str.begin(), str.count);
 }
 
