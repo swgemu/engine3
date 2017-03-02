@@ -64,6 +64,10 @@ public:
 	inline int size() const {
 		return objects.size();
 	}
+
+	void setNoDuplicateInsertPlan() {
+		objects.setNoDuplicateInsertPlan();
+	}
 };
 
 #endif /* CLOSEOBJECTSVECTOR_H_ */
