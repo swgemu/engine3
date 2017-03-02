@@ -14,16 +14,10 @@ const Vector3 Vector3::UNIT_X(1, 0, 0);
 const Vector3 Vector3::UNIT_Y(0, 1, 0);
 const Vector3 Vector3::UNIT_Z(0, 0, 1);
 
-Matrix4::Matrix4(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
-	matrix[0] = a;
-	matrix[1] = b;
-	matrix[2] = c;
-	matrix[3] = d;
+Matrix4::Matrix4(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) : matrix{a, b, c, d} {
 }
 
-Matrix4::Matrix4(const Matrix4& mat) : Object() {
-	for (int i = 0; i < 4; ++i)
-		matrix[i] = mat.matrix[i];
+Matrix4::Matrix4(const Matrix4& mat) : matrix{mat.matrix[0], mat.matrix[1], mat.matrix[2], mat.matrix[3]} {
 }
 
 Matrix4& Matrix4::operator=(const Matrix4& mat) {

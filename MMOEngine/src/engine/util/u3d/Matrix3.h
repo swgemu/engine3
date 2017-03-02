@@ -21,15 +21,10 @@ namespace engine {
 
 	 }
 
-	 Matrix3(const Vector3& v1, const Vector3& v2, const Vector3& v3) {
-		 matrix[0] = v1;
-		 matrix[1] = v2;
-		 matrix[2] = v3;
+	 Matrix3(const Vector3& v1, const Vector3& v2, const Vector3& v3) : matrix{v1, v2, v3} {
 	 }
 
-	 Matrix3(const Matrix3& mat) {
-		 for (int i = 0; i < 3; ++i)
-			 matrix[i] = mat.matrix[i];
+	 Matrix3(const Matrix3& mat) : matrix{mat.matrix[0], mat.matrix[1], mat.matrix[2]} {
 	 }
 
 	 Matrix3& operator=(const Matrix3& mat) {

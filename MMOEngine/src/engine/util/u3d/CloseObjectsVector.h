@@ -20,65 +20,50 @@ namespace engine {
 
 using namespace engine::util::u3d;
 
-class CloseObjectsVector : public SortedVector<ManagedReference<QuadTreeEntry*> > {
+class CloseObjectsVector : public Object {
 	mutable ReadWriteLock mutex;
+	SortedVector<Reference<QuadTreeEntry*> > objects;
+
 	VectorMap<uint32, SortedVector<QuadTreeEntry*> > messageReceivers;
+
+#ifdef CXX11_COMPILER
+	static_assert(sizeof(QuadTreeEntry*) == sizeof(Reference<QuadTreeEntry*>), "Reference<> size is not the size of a pointer");
+#endif
 
 protected:
 	void dropReceiver(QuadTreeEntry* entry);
+	void putReceiver(QuadTreeEntry* entry, uint32 receiverTypes);
 
 public:
 	CloseObjectsVector();
 
-	ManagedReference<QuadTreeEntry*> remove(int index);
+	Reference<QuadTreeEntry*> remove(int index);
 
-	bool contains(const ManagedReference<QuadTreeEntry*>& o) const {
-		ReadLocker locker(&mutex);
+	bool contains(const Reference<QuadTreeEntry*>& o) const;
 
-		bool ret = find(o) != -1;
+	void removeAll(int newSize = 10, int newIncrement = 5);
 
-		return ret;
-	}
+	bool drop(const Reference<QuadTreeEntry*>& o);
 
-	void removeAll(int newSize = 10, int newIncrement = 5) {
-		Locker locker(&mutex);
-
-		SortedVector<ManagedReference<QuadTreeEntry*> >::removeAll(newSize, newIncrement);
-
-		messageReceivers.removeAll(newSize, newIncrement);
-	}
-
-	bool drop(const ManagedReference<QuadTreeEntry*>& o);
-
-	void safeCopyTo(Vector<QuadTreeEntry*>& vec) const {
-		vec.removeAll(size(), size() / 2);
-
-		ReadLocker locker(&mutex);
-
-		for (int i = 0; i < size(); ++i) {
-			vec.add(getUnsafe(i).get());
-		}
-	}
+	void safeCopyTo(Vector<QuadTreeEntry*>& vec) const;
 
 	void safeCopyReceiversTo(Vector<QuadTreeEntry*>& vec, uint32 receiverType) const;
 	void safeCopyReceiversTo(Vector<ManagedReference<QuadTreeEntry*> >& vec, uint32 receiverType) const;
 
-	void safeCopyTo(Vector<ManagedReference<QuadTreeEntry*> >& vec) const {
-		vec.removeAll(size(), size() / 2);
+	void safeCopyTo(Vector<ManagedReference<QuadTreeEntry*> >& vec) const;
 
-		ReadLocker locker(&mutex);
+	SortedVector<ManagedReference<QuadTreeEntry*> > getSafeCopy() const;
 
-		vec.addAll(*this);
+	Reference<QuadTreeEntry*> get(int idx) const;
+
+	int put(const Reference<QuadTreeEntry*>& o);
+#ifdef CXX11_COMPILER
+	int put(Reference<QuadTreeEntry*>&& o);
+#endif
+
+	inline int size() const {
+		return objects.size();
 	}
-
-	SortedVector<ManagedReference<QuadTreeEntry*> > getSafeCopy() const {
-		ReadLocker locker(&mutex);
-
-		return SortedVector<ManagedReference<QuadTreeEntry*> >(*this);
-	}
-
-	int put(const ManagedReference<QuadTreeEntry*>& o);
-	int find(const ManagedReference<QuadTreeEntry*>& o) const;
 };
 
 #endif /* CLOSEOBJECTSVECTOR_H_ */

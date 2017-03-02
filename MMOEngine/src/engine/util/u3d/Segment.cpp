@@ -11,14 +11,10 @@ Segment::Segment() {
 
 }
 
-Segment::Segment(const Vector3& pointA, const Vector3& pointB) {
-	this->pointA = pointA;
-	this->pointB = pointB;
+Segment::Segment(const Vector3& pointA, const Vector3& pointB) : pointA(pointA), pointB(pointB) {
 }
 
-Segment::Segment(const Segment& s) {
-	pointA = s.pointA;
-	pointB = s.pointB;
+Segment::Segment(const Segment& s) : pointA(s.pointA), pointB(s.pointB) {
 }
 
 Segment& Segment::operator=(const Segment& s) {

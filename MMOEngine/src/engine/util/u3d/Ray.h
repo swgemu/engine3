@@ -36,27 +36,29 @@ public:
 
 	}
 
-	Ray(const Vector3& o, const Vector3& d) {
-		origin = o;
-		direction = d;
-		invDirection = Vector3(1 / d.getX(), 1 / d.getY(), 1 / d.getZ());
+	Ray(const Vector3& o, const Vector3& d) : origin(o), direction(d), invDirection(1 / d.getX(), 1 / d.getY(), 1 / d.getZ()) {
 		sign[0] = (invDirection.getX() < 0);
 		sign[1] = (invDirection.getY() < 0);
 		sign[2] = (invDirection.getZ() < 0);
 	}
 
-	Ray(const Ray &r) {
-		origin = r.origin;
-		direction = r.direction;
-		invDirection = r.invDirection;
+	Ray(const Ray &r) : origin(r.origin), direction(r.direction), invDirection(r.invDirection) {
 		sign[0] = r.sign[0]; sign[1] = r.sign[1]; sign[2] = r.sign[2];
 	}
 
-	inline Vector3 getOrigin() const {
+	inline const Vector3& getOrigin() const {
 		return origin;
 	}
 
-	inline Vector3 getDirection() const {
+	inline const Vector3& getDirection() const {
+		return direction;
+	}
+
+	inline Vector3& getOrigin() {
+		return origin;
+	}
+
+	inline Vector3& getDirection() {
 		return direction;
 	}
 

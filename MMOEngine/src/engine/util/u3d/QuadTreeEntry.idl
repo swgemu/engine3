@@ -125,7 +125,7 @@ class QuadTreeEntry extends Observable {
 	
 	@local
 	@dirty
-	public SortedVector<QuadTreeEntry> getCloseObjects() {
+	public CloseObjectsVector getCloseObjects() {
 		return closeobjects;
 	}
 	

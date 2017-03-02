@@ -9,10 +9,63 @@
 
 #define MAX_COV_RECEIVER_TYPES 4
 
-CloseObjectsVector::CloseObjectsVector() : SortedVector<ManagedReference<QuadTreeEntry*> >(), messageReceivers() {
-	setNoDuplicateInsertPlan();
+CloseObjectsVector::CloseObjectsVector() : messageReceivers() {
+	objects.setNoDuplicateInsertPlan();
 
 	messageReceivers.setNoDuplicateInsertPlan();
+}
+
+void CloseObjectsVector::safeCopyTo(Vector<ManagedReference<QuadTreeEntry*> >& vec) const {
+	vec.removeAll(size(), size() / 2);
+
+	ReadLocker locker(&mutex);
+
+	//vec.addAll(*this);
+	for (int i = 0; i < objects.size(); ++i) {
+		const auto& obj = objects.getUnsafe(i);
+
+		vec.emplace(obj);
+	}
+}
+
+SortedVector<ManagedReference<QuadTreeEntry*> > CloseObjectsVector::getSafeCopy() const {
+	ReadLocker locker(&mutex);
+
+	SortedVector<ManagedReference<QuadTreeEntry*> > copy;
+
+	for (int i = 0; i < objects.size(); ++i) {
+		const auto& obj = objects.getUnsafe(i);
+
+		copy.emplace(obj.get());
+	}
+
+	return copy;
+}
+
+void CloseObjectsVector::safeCopyTo(Vector<QuadTreeEntry*>& vec) const {
+	vec.removeAll(size(), size() / 2);
+
+	ReadLocker locker(&mutex);
+
+	for (int i = 0; i < objects.size(); ++i) {
+		vec.add(objects.getUnsafe(i).get());
+	}
+}
+
+bool CloseObjectsVector::contains(const Reference<QuadTreeEntry*>& o) const {
+	ReadLocker locker(&mutex);
+
+	bool ret = objects.find(o) != -1;
+
+	return ret;
+}
+
+void CloseObjectsVector::removeAll(int newSize, int newIncrement) {
+	Locker locker(&mutex);
+
+	objects.removeAll(newSize, newIncrement);
+
+	messageReceivers.removeAll(newSize, newIncrement);
 }
 
 void CloseObjectsVector::dropReceiver(QuadTreeEntry* entry) {
@@ -35,22 +88,22 @@ void CloseObjectsVector::dropReceiver(QuadTreeEntry* entry) {
 	}
 }
 
-ManagedReference<QuadTreeEntry*> CloseObjectsVector::remove(int index) {
+Reference<QuadTreeEntry*> CloseObjectsVector::remove(int index) {
 	Locker locker(&mutex);
 
-	const auto& ref = SortedVector<ManagedReference<QuadTreeEntry*> >::get(index);
+	const auto& ref = objects.get(index);
 
 	dropReceiver(ref);
 
-	return SortedVector<ManagedReference<QuadTreeEntry*> >::remove(index);
+	return objects.remove(index);
 }
 
-bool CloseObjectsVector::drop(const ManagedReference<QuadTreeEntry*>& o) {
+bool CloseObjectsVector::drop(const Reference<QuadTreeEntry*>& o) {
 	Locker locker(&mutex);
 
 	dropReceiver(o);
 
-	return SortedVector<ManagedReference<QuadTreeEntry*> >::drop(o);
+	return objects.drop(o);
 }
 
 void CloseObjectsVector::safeCopyReceiversTo(Vector<QuadTreeEntry*>& vec, uint32 receiverType) const {
@@ -78,15 +131,15 @@ void CloseObjectsVector::safeCopyReceiversTo(Vector<ManagedReference<QuadTreeEnt
 		vec.removeAll(receivers.size(), receivers.size() / 2);
 
 		for (int i = 0; i < receivers.size(); ++i)
-			vec.add(receivers.get(i));
+			vec.add(receivers.getUnsafe(i));
 	}
 }
 
-int CloseObjectsVector::put(const ManagedReference<QuadTreeEntry*>& o) {
-	uint32 receiverTypes = o->registerToCloseObjectsReceivers();
+Reference<QuadTreeEntry*> CloseObjectsVector::get(int idx) const {
+	return objects.get(idx);
+}
 
-	Locker locker(&mutex);
-
+void CloseObjectsVector::putReceiver(QuadTreeEntry* entry, uint32 receiverTypes) {
 	if (receiverTypes) {
 		for (int i = 0; i < MAX_COV_RECEIVER_TYPES; ++i) {
 			uint32 type = 1 << i;
@@ -97,78 +150,38 @@ int CloseObjectsVector::put(const ManagedReference<QuadTreeEntry*>& o) {
 				if (idx != -1) {
 					auto& receivers = messageReceivers.elementAt(idx).getValue();
 
-					receivers.put(o.get());
+					receivers.put(entry);
 				} else {
 					SortedVector<QuadTreeEntry*> vec;
 					vec.setNoDuplicateInsertPlan();
 
-					vec.put(o);
+					vec.put(entry);
 
 					messageReceivers.put(type, std::move(vec));
 				}
 			}
 		}
 	}
-
-	int m = 0, l = 0;
-	int r = Vector<ManagedReference<QuadTreeEntry*> >::elementCount - 1;
-
-	while (l <= r) {
-		//m = (l + r) / 2;
-		m = ((unsigned int)l + (unsigned int)r) >> 1;
-
-		/*E& obj = Vector<E>::elementData[m];
-		int cmp = compare(obj, o);*/
-
-		int cmp = Vector<ManagedReference<QuadTreeEntry*> >::elementData[m].compareTo(o);
-
-		if (cmp == 0) {
-			switch (insertPlan) {
-				case ALLOW_DUPLICATE:
-					Vector<ManagedReference<QuadTreeEntry*> >::add(++m, o);
-					break;
-				case ALLOW_OVERWRITE:
-					Vector<ManagedReference<QuadTreeEntry*> >::set(m, o);
-					break;
-				default:
-					return -1;
-			}
-
-			return m;
-		} else if (cmp > 0)
-			l = m + 1;
-		else
-			r = m - 1;
-	}
-
-	if (r == m)
-		m++;
-
-	Vector<ManagedReference<QuadTreeEntry*> >::add(m, o);
-
-	return m;
 }
 
-int CloseObjectsVector::find(const ManagedReference<QuadTreeEntry*>& o) const {
-	if (ArrayList<ManagedReference<QuadTreeEntry*> >::size() == 0)
-		return -1;
+int CloseObjectsVector::put(const Reference<QuadTreeEntry*>& o) {
+	uint32 receiverTypes = o->registerToCloseObjectsReceivers();
 
-	int l = 0, r = Vector<ManagedReference<QuadTreeEntry*> >::elementCount - 1;
-	int m = 0, cmp = 0;
+	Locker locker(&mutex);
 
-	while (l <= r) {
-		//m = (l + r) / 2;
-		m = ((unsigned int)l + (unsigned int)r) >> 1;
+	putReceiver(o.get(), receiverTypes);
 
-		cmp = Vector<ManagedReference<QuadTreeEntry*> >::elementData[m].compareTo(o);
-
-		if (cmp == 0)
-			return m;
-		else if (cmp > 0)
-			l = m + 1;
-		else
-			r = m - 1;
-	}
-
-	return -1;
+	return objects.put(o.get());
 }
+
+#ifdef CXX11_COMPILER
+int CloseObjectsVector::put(Reference<QuadTreeEntry*>&& o) {
+	uint32 receiverTypes = o->registerToCloseObjectsReceivers();
+
+	Locker locker(&mutex);
+
+	putReceiver(o.get(), receiverTypes);
+
+	return objects.put(std::move(o));
+}
+#endif
