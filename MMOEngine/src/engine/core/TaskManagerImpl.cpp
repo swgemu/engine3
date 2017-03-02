@@ -536,6 +536,56 @@ void TaskManagerImpl::flushTasks() {
 
 }
 
+template<class M, class S>
+void orderStatistics(M& ordered, S& tasksCount) {
+	auto iterator = tasksCount.iterator();
+
+	while (iterator.hasNext()) {
+		typename S::key_type* name;
+		typename S::value_type* count;
+
+		iterator.getNextKeyAndValue(name, count);
+
+		ordered.put(*count, *name);
+	}
+};
+
+
+template<class M>
+void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
+	for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
+		int index = j - i;
+		auto& entry = ordered.elementAt(index);
+		auto& stats = entry.getKey();
+		auto& name = entry.getValue();
+		uint64 averageTime = 0;
+
+		if (stats.totalRunCount) {
+			averageTime = stats.totalRunTime / stats.totalRunCount;
+		}
+
+		String taskName = name;
+
+		if (demangle) {
+#if GCC_VERSION >= 40100
+			int stat;
+			char* demangled = abi::__cxa_demangle(taskName.toCharArray(), 0, 0, &stat);
+
+			if (stat == 0) {
+				taskName = demangled;
+
+				free(demangled);
+			}
+#endif
+		}
+
+		msg4 << "\t" << taskName << ": totalRunTime = " << stats.totalRunTime / 1000000000 <<  "s averageTime = " << averageTime
+			 << "ns maxRunTime = " << stats.maxRunTime
+			 << "ns totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << "ns" << endl;
+	}
+};
+
+
 String TaskManagerImpl::getInfo(bool print) {
 	Locker guard(this);
 
@@ -596,52 +646,27 @@ String TaskManagerImpl::getInfo(bool print) {
 	for (int i = 0; i < workers.size(); ++i) {
 		TaskWorkerThread* worker = workers.get(i);
 
-		HashTable<const char*, TaskStatistics> tasksCount = worker->getTasksStatistics();
+		HashTable<const char*, RunStatistics> tasksCount = worker->getTasksStatistics();
+		VectorMap<RunStatistics, const char*> ordered(tasksCount.size(), 2);
 
 		//lets order them
-		VectorMap<TaskStatistics, const char*> ordered(tasksCount.size(), 2);
-
-		HashTableIterator<const char*, TaskStatistics> iterator = tasksCount.iterator();
-
-		while (iterator.hasNext()) {
-			const char* name;
-			TaskStatistics count;
-
-			iterator.getNextKeyAndValue(name, count);
-
-			ordered.put(count, name);
-		}
+		orderStatistics(ordered, tasksCount);
 
 		msg4 << "distinct tasks recorded in worker " << i << " - " << tasksCount.size() << endl;
 
 		//lets print top 5
-		for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
-			int index = j - i;
-			VectorMapEntry<TaskStatistics, const char*>& entry = ordered.elementAt(index);
-			TaskStatistics& stats = entry.getKey();
-			const char* name = entry.getValue();
-			uint64 averageTime = 0;
+		printStatistics(msg4, ordered, true);
 
-			if (stats.totalRunCount) {
-				averageTime = stats.totalRunTime / stats.totalRunCount;
-			}
+		//now lets print lua tasks
+		HashTable<String, RunStatistics> luaTasksCount = worker->getLuaTasksStatistics();
+		VectorMap<RunStatistics, String> luaOrdered(luaTasksCount.size(), 2);
 
-			String taskName = name;
+		orderStatistics(luaOrdered, luaTasksCount);
 
-#if GCC_VERSION >= 40100
-			int stat;
-			char* demangled = abi::__cxa_demangle(name, 0, 0, &stat);
+		msg4 << "distinct lua tasks recorded in worker " << i << " - " << luaTasksCount.size() << endl;
 
-			if (stat == 0) {
-				taskName = demangled;
-
-				free(demangled);
-			}
-#endif
-			msg4 << "\t" << taskName << ": totalRunTime = " << stats.totalRunTime / 1000000000 <<  "s averageTime = " << averageTime
-				 << "ns maxRunTime = " << stats.maxRunTime
-				 << "ns totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << "ns" << endl;
-		}
+		//lets print top 5
+		printStatistics(msg4, luaOrdered, false);
 
 		msg4 << endl;
 	}

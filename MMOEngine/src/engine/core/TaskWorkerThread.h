@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/service/ServiceThread.h"
 
-#include "TaskStatistics.h"
+#include "RunStatistics.h"
 
 namespace engine {
   namespace core {
@@ -24,7 +24,9 @@ namespace engine {
 		bool blockDuringSave;
 
 #ifdef COLLECT_TASKSTATISTICS
-		HashTable<const char*, TaskStatistics> tasksStatistics;
+		HashTable<const char*, RunStatistics> tasksStatistics;
+		HashTable<String, RunStatistics> luaTasksStatistics;
+
 		ReadWriteLock tasksStatsGuard;
 #endif
 
@@ -42,10 +44,17 @@ namespace engine {
 		void stop();
 
 #ifdef COLLECT_TASKSTATISTICS
-		HashTable<const char*, TaskStatistics> getTasksStatistics();
+		HashTable<const char*, RunStatistics> getTasksStatistics();
+		HashTable<String, RunStatistics> getLuaTasksStatistics();
+
+		void addLuaTaskStats(const String& name, uint64 runTime);
 
 		void clearTaskStatistics();
 #endif
+
+		TaskWorkerThread* asTaskWorkerThread() {
+			return this;
+		}
 
 		inline Mutex* getBlockMutex() {
 			return &blockMutex;

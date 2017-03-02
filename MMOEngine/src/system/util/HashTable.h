@@ -111,6 +111,9 @@ namespace sys {
 
 	    HashTable(const HashTable<K, V>& table);
 
+		typedef K key_type;
+		typedef V value_type;
+
 #ifdef CXX11_COMPILER
 	    HashTable(HashTable<K, V>&& table);
 #endif

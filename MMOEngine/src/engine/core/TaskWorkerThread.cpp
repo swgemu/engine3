@@ -56,12 +56,12 @@ void TaskWorkerThread::run() {
 
 		Locker guard(&tasksStatsGuard);
 
-		Entry<const char*, TaskStatistics>* entry = tasksStatistics.getEntry(taskName);
+		Entry<const char*, RunStatistics>* entry = tasksStatistics.getEntry(taskName);
 
-		TaskStatistics* stats = NULL;
+		RunStatistics* stats = NULL;
 
 		if (entry == NULL) {
-			TaskStatistics stats;
+			RunStatistics stats;
 
 			stats.totalRunCount = 1;
 			stats.totalRunTime = elapsedTime;
@@ -70,7 +70,7 @@ void TaskWorkerThread::run() {
 
 			tasksStatistics.put(taskName, stats);
 		} else {
-			TaskStatistics& stats = entry->getValue();
+			RunStatistics& stats = entry->getValue();
 
 			stats.totalRunTime += elapsedTime;
 
@@ -93,12 +93,18 @@ void TaskWorkerThread::run() {
 }
 
 #ifdef COLLECT_TASKSTATISTICS
-HashTable<const char*, TaskStatistics> TaskWorkerThread::getTasksStatistics() {
-	HashTable<const char*, TaskStatistics> ret;
-
+HashTable<const char*, RunStatistics> TaskWorkerThread::getTasksStatistics() {
 	ReadLocker locker(&tasksStatsGuard);
 
-	ret = tasksStatistics;
+	HashTable<const char*, RunStatistics> ret = tasksStatistics;
+
+	return ret;
+}
+
+HashTable<String, RunStatistics> TaskWorkerThread::getLuaTasksStatistics() {
+	ReadLocker locker(&tasksStatsGuard);
+
+	HashTable<String, RunStatistics> ret = luaTasksStatistics;
 
 	return ret;
 }
@@ -107,6 +113,40 @@ void TaskWorkerThread::clearTaskStatistics() {
 	Locker locker(&tasksStatsGuard);
 
 	tasksStatistics.removeAll();
+	luaTasksStatistics.removeAll();
+}
+
+void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTime) {
+	Locker guard(&tasksStatsGuard);
+
+	Entry<String, RunStatistics>* entry = luaTasksStatistics.getEntry(taskName);
+
+	RunStatistics* stats = NULL;
+
+	if (entry == NULL) {
+		RunStatistics stats;
+
+		stats.totalRunCount = 1;
+		stats.totalRunTime = elapsedTime;
+		stats.maxRunTime = elapsedTime;
+		stats.minRunTime = elapsedTime;
+
+		luaTasksStatistics.put(taskName, stats);
+	} else {
+		RunStatistics& stats = entry->getValue();
+
+		stats.totalRunTime += elapsedTime;
+
+		if (stats.maxRunTime < elapsedTime) {
+			stats.maxRunTime = elapsedTime;
+		}
+
+		if (stats.minRunTime > elapsedTime) {
+			stats.minRunTime = elapsedTime;
+		}
+
+		++stats.totalRunCount;
+	}
 }
 #endif
 

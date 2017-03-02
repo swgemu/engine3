@@ -7,24 +7,27 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "LuaPanicException.h"
 
+#ifdef CXX11_COMPILER
+#include <chrono>
+#endif
+
+
 LuaFunction::LuaFunction() {
 	L = NULL;
 	numberOfArgs = 0;
 	numberOfArgsToReturn = 0;
 }
 
-LuaFunction::LuaFunction(lua_State* l, const String& funcName, int argsToReturn) {
+LuaFunction::LuaFunction(lua_State* l, const String& funcName, int argsToReturn) : functionName(funcName) {
 	L = l;
-	functionName = funcName;
 	numberOfArgs = 0;
 	numberOfArgsToReturn = argsToReturn;
 
 	lua_getglobal(L, functionName.toCharArray());
 }
 
-LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn) {
+LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn) : functionName(func), object(object) {
 	L = l;
-	functionName = func;
 	numberOfArgs = 1;
 	numberOfArgsToReturn = argsToReturn;
 
@@ -36,11 +39,10 @@ LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func,
 	lua_insert(L, -2);  /* and swap with func... */
 }
 
-LuaFunction::LuaFunction(const LuaFunction& func) : Object() {
+LuaFunction::LuaFunction(const LuaFunction& func) : Object(), functionName(func.functionName), object(func.object) {
 	L = func.L;
 	numberOfArgs = func.numberOfArgs;
 	numberOfArgsToReturn = func.numberOfArgsToReturn;
-	functionName = func.functionName;
 }
 
 LuaFunction& LuaFunction::operator=(const LuaFunction& func) {
@@ -51,10 +53,10 @@ LuaFunction& LuaFunction::operator=(const LuaFunction& func) {
 	numberOfArgs = func.numberOfArgs;
 	numberOfArgsToReturn = func.numberOfArgsToReturn;
 	functionName = func.functionName;
+	object = func.object;
 
 	return *this;
 }
-
 
 LuaFunction::~LuaFunction() {
 
@@ -116,7 +118,41 @@ void LuaFunction::operator<<(void* ptr) {
 
 lua_State* LuaFunction::callFunction() {
 	try {
-		if (lua_pcall(getLuaState(), getNumberOfArgs(), getNumberOfReturnArgs(), 0) != 0) {
+#ifdef COLLECT_TASKSTATISTICS
+#ifdef CXX11_COMPILER
+		auto start = std::chrono::high_resolution_clock::now();
+#else
+		Timer executionTimer;
+
+		executionTimer.start();
+#endif
+#endif
+		int result = lua_pcall(getLuaState(), getNumberOfArgs(), getNumberOfReturnArgs(), 0);
+
+#ifdef COLLECT_TASKSTATISTICS
+#ifdef CXX11_COMPILER
+		auto end = std::chrono::high_resolution_clock::now();
+
+		uint64 elapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+#else
+		uint64 elapsedTime = executionTimer.stop();
+#endif
+
+		Thread* thread = Thread::getCurrentThread();
+		TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+
+		if (worker) {
+			if (object.size()) {
+				String fullName = object + ":" + functionName;
+
+				worker->addLuaTaskStats(fullName, elapsedTime);
+			} else {
+				worker->addLuaTaskStats(functionName, elapsedTime);
+			}
+		}
+#endif
+
+		if (result != 0) {
 			Logger::console.error("Error running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
 			return NULL;
 		}

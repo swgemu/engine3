@@ -16,7 +16,9 @@ namespace lua {
 
 		int numberOfArgs;
 		int numberOfArgsToReturn;
+
 		String functionName;
+		String object;
 
 	public:
 		//Empty constructor, only to use in testing
@@ -57,6 +59,18 @@ namespace lua {
 
 		inline String& getFunctionName() {
 			return functionName;
+		}
+
+		inline const String& getFunctionName() const {
+			return functionName;
+		}
+
+		inline String& getObject() {
+			return object;
+		}
+
+		inline const String& getObject() const {
+			return object;
 		}
 
 	};
