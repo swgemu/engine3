@@ -3,6 +3,9 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
+#include "engine/core/Task.h"
+#include "engine/core/TaskWorkerThread.h"
+
 #include "LuaFunction.h"
 
 #include "LuaPanicException.h"
@@ -142,7 +145,7 @@ lua_State* LuaFunction::callFunction() {
 		TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
 
 		if (worker) {
-			if (object.size()) {
+			if (object.length()) {
 				String fullName = object + ":" + functionName;
 
 				worker->addLuaTaskStats(fullName, elapsedTime);
