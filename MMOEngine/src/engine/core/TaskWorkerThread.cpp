@@ -101,10 +101,10 @@ HashTable<const char*, RunStatistics> TaskWorkerThread::getTasksStatistics() {
 	return ret;
 }
 
-HashTable<String, RunStatistics> TaskWorkerThread::getLuaTasksStatistics() {
+VectorMap<String, RunStatistics> TaskWorkerThread::getLuaTasksStatistics() {
 	ReadLocker locker(&tasksStatsGuard);
 
-	HashTable<String, RunStatistics> ret = luaTasksStatistics;
+	VectorMap<String, RunStatistics> ret = luaTasksStatistics;
 
 	return ret;
 }
@@ -119,11 +119,11 @@ void TaskWorkerThread::clearTaskStatistics() {
 void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTime) {
 	Locker guard(&tasksStatsGuard);
 
-	Entry<String, RunStatistics>* entry = luaTasksStatistics.getEntry(taskName);
+	auto entry = luaTasksStatistics.find(taskName);
 
 	RunStatistics* stats = NULL;
 
-	if (entry == NULL) {
+	if (entry == -1) {
 		RunStatistics stats;
 
 		stats.totalRunCount = 1;
@@ -133,7 +133,7 @@ void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTim
 
 		luaTasksStatistics.put(taskName, stats);
 	} else {
-		RunStatistics& stats = entry->getValue();
+		RunStatistics& stats = luaTasksStatistics.elementAt(entry).getValue();
 
 		stats.totalRunTime += elapsedTime;
 

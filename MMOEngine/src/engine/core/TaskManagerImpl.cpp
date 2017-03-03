@@ -550,6 +550,14 @@ void orderStatistics(M& ordered, S& tasksCount) {
 	}
 };
 
+void orderStatisticsMap(VectorMap<RunStatistics, String>& ordered, const VectorMap<String, RunStatistics>& tasksCount) {
+	for (const auto& entry : tasksCount) {
+		const auto& count = entry.getValue();
+		const auto& name = entry.getKey();
+
+		ordered.put(count, name);
+	}
+};
 
 template<class M>
 void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
@@ -658,10 +666,10 @@ String TaskManagerImpl::getInfo(bool print) {
 		printStatistics(msg4, ordered, true);
 
 		//now lets print lua tasks
-		HashTable<String, RunStatistics> luaTasksCount = worker->getLuaTasksStatistics();
+		auto luaTasksCount = worker->getLuaTasksStatistics();
 		VectorMap<RunStatistics, String> luaOrdered(luaTasksCount.size(), 2);
 
-		orderStatistics(luaOrdered, luaTasksCount);
+		orderStatisticsMap(luaOrdered, luaTasksCount);
 
 		msg4 << "distinct lua tasks recorded in worker " << i << " - " << luaTasksCount.size() << endl;
 

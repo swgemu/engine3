@@ -25,7 +25,7 @@ namespace engine {
 
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<const char*, RunStatistics> tasksStatistics;
-		HashTable<String, RunStatistics> luaTasksStatistics;
+		VectorMap<String, RunStatistics> luaTasksStatistics;
 
 		ReadWriteLock tasksStatsGuard;
 #endif
@@ -45,7 +45,7 @@ namespace engine {
 
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<const char*, RunStatistics> getTasksStatistics();
-		HashTable<String, RunStatistics> getLuaTasksStatistics();
+		VectorMap<String, RunStatistics> getLuaTasksStatistics();
 
 		void addLuaTaskStats(const String& name, uint64 runTime);
 
