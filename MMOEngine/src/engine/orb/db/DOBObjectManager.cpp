@@ -368,14 +368,14 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	orderedMap.setAllowDuplicateInsertPlan();
 	
 	for (int i = 0; i < inRamClassCount.size(); ++i) {
-		String name = inRamClassCount.elementAt(i).getKey();
+		const String& name = inRamClassCount.elementAt(i).getKey();
 		int val = inRamClassCount.elementAt(i).getValue();
 		
 		orderedMap.put(val, name);	
 	}
 
 	for (int i = 0; i < orderedMap.size(); ++i) {
-		String name = orderedMap.elementAt(i).getValue();
+		const String& name = orderedMap.elementAt(i).getValue();
 		int val = orderedMap.elementAt(i).getKey();
 		
 		printf("%s\t%d\n", name.toCharArray(), val);

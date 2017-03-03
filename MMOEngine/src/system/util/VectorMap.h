@@ -251,16 +251,6 @@ namespace sys {
 	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
 	 	VectorMapEntry<K, V> e(key, value);
 
-		if ((SortedVector<VectorMapEntry<K, V> >::getInsertPlan() == (SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE))) {
-			int idx = find(key);
-
-			if (idx != -1) {
-				ArrayList<VectorMapEntry<K, V> >::elementAtUnsafe(idx) = e;
-
-				return idx;
-			}
-		}
-
 	 	int res = SortedVector<VectorMapEntry<K, V> >::put(e);
 
 	 	return res;
@@ -268,16 +258,6 @@ namespace sys {
 #ifdef CXX11_COMPILER
 	template<class K, class V> int VectorMap<K, V>::put(K&& key, V&& value) {
 		VectorMapEntry<K, V> e(std::move(key), std::move(value));
-
-		if ((SortedVector<VectorMapEntry<K, V> >::getInsertPlan() == (SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE))) {
-			int idx = find(key);
-
-			if (idx != -1) {
-				ArrayList<VectorMapEntry<K, V> >::elementAtUnsafe(idx) = std::move(e);
-
-				return idx;
-			}
-		}
 
 		int res = SortedVector<VectorMapEntry<K, V> >::put(std::move(e));
 
