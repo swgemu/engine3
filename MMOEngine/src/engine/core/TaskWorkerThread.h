@@ -50,6 +50,10 @@ namespace engine {
 		void addLuaTaskStats(const String& name, uint64 runTime);
 
 		void clearTaskStatistics();
+
+#ifdef CXX11_COMPILER
+		void addLuaTaskStats(String&& name, uint64 runTime);
+#endif
 #endif
 
 		TaskWorkerThread* asTaskWorkerThread() {

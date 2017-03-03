@@ -171,6 +171,8 @@ namespace sys {
 		V& get(int index);
 		V& get(const K& key);
 
+		const V& get(const K& key) const;
+
 		int find(const K& key) const;
 
 		Object* clone();
@@ -253,7 +255,9 @@ namespace sys {
 			int idx = find(key);
 
 			if (idx != -1) {
-				SortedVector<VectorMapEntry<K, V> >::remove(idx);
+				ArrayList<VectorMapEntry<K, V> >::elementAtUnsafe(idx) = e;
+
+				return idx;
 			}
 		}
 
@@ -269,7 +273,9 @@ namespace sys {
 			int idx = find(key);
 
 			if (idx != -1) {
-				SortedVector<VectorMapEntry<K, V> >::remove(idx);
+				ArrayList<VectorMapEntry<K, V> >::elementAtUnsafe(idx) = std::move(e);
+
+				return idx;
 			}
 		}
 
@@ -285,35 +291,51 @@ namespace sys {
 	}
 
 	template<class K, class V> V& VectorMap<K, V>::get(const K& key) {
-		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
-			return nullValue;
+	 	int pos = find(key);
 
-	 	VectorMapEntry<K, V> e(key);
-
-	 	int pos = SortedVector<VectorMapEntry<K, V> >::find(e);
 		if (pos == -1)
 	 		return nullValue;
 
-	 	VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(pos);
+	 	VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::getUnsafe(pos);
 	 	return entry->value;
 	}
 
+	template<class K, class V> const V& VectorMap<K, V>::get(const K& key) const {
+		int pos = find(key);
+
+		if (pos == -1)
+			return nullValue;
+
+		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::getUnsafe(pos);
+		return entry->value;
+	}
+
 	template<class K, class V> int VectorMap<K, V>::find(const K& key) const {
-		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
+		if (ArrayList<VectorMapEntry<K, V> >::elementCount == 0)
 			return -1;
 
-		VectorMapEntry<K, V> e(key);
+		int l = 0, r = ArrayList<VectorMapEntry<K, V> >::elementCount - 1;
+		int m = 0, cmp = 0;
 
-	 	return SortedVector<VectorMapEntry<K, V> >::find(e);
+		while (l <= r) {
+			m = ((unsigned int)l + (unsigned int)r) >> 1;
+
+			const VectorMapEntry<K, V>& obj = ArrayList<VectorMapEntry<K, V> >::elementData[m];
+			cmp = TypeInfo<K>::compare(obj.getKey(), key);
+
+			if (cmp == 0)
+				return m;
+			else if (cmp > 0)
+				l = m + 1;
+			else
+				r = m - 1;
+		}
+
+		return -1;
 	}
 
 	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) const {
-		if (ArrayList<VectorMapEntry<K, V> >::size() == 0)
-			return false;
-
-		VectorMapEntry<K, V> e(key);
-
-	 	int idx = SortedVector<VectorMapEntry<K, V> >::find(e);
+	 	int idx = find(key);
 
 	 	if (idx == -1)
 	 		return false;

@@ -148,7 +148,11 @@ lua_State* LuaFunction::callFunction() {
 			if (object.length()) {
 				String fullName = object + ":" + functionName;
 
+#ifdef CXX11_COMPILER
+				worker->addLuaTaskStats(std::move(fullName), elapsedTime);
+#else
 				worker->addLuaTaskStats(fullName, elapsedTime);
+#endif
 			} else {
 				worker->addLuaTaskStats(functionName, elapsedTime);
 			}

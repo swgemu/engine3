@@ -148,6 +148,41 @@ void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTim
 		++stats.totalRunCount;
 	}
 }
+
+#ifdef CXX11_COMPILER
+void TaskWorkerThread::addLuaTaskStats(String&& taskName, uint64 elapsedTime) {
+	Locker guard(&tasksStatsGuard);
+
+	auto entry = luaTasksStatistics.find(taskName);
+
+	RunStatistics* stats = NULL;
+
+	if (entry == -1) {
+		RunStatistics stats;
+
+		stats.totalRunCount = 1;
+		stats.totalRunTime = elapsedTime;
+		stats.maxRunTime = elapsedTime;
+		stats.minRunTime = elapsedTime;
+
+		luaTasksStatistics.put(std::move(taskName), std::move(stats));
+	} else {
+		RunStatistics& stats = luaTasksStatistics.elementAt(entry).getValue();
+
+		stats.totalRunTime += elapsedTime;
+
+		if (stats.maxRunTime < elapsedTime) {
+			stats.maxRunTime = elapsedTime;
+		}
+
+		if (stats.minRunTime > elapsedTime) {
+			stats.minRunTime = elapsedTime;
+		}
+
+		++stats.totalRunCount;
+	}
+}
+#endif
 #endif
 
 void TaskWorkerThread::stop() {
