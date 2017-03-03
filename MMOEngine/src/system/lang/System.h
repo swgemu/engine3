@@ -39,7 +39,7 @@ namespace sys {
 		static inline uint64 getMiliTime() {
 		    uint64 time_in_ms;
 
-		    static struct timeval tm;
+		    struct timeval tm;
 		    gettimeofday(&tm, NULL);
 
 		    time_in_ms = tm.tv_sec; // Avoid overflow by doing mul in 64 bit int
@@ -51,7 +51,7 @@ namespace sys {
 		static inline uint64 getMikroTime() {
 		    uint64 time_in_ms;
 
-		    static struct timeval tm;
+		    struct timeval tm;
 		    gettimeofday(&tm, NULL);
 
 		    time_in_ms = tm.tv_sec; // Avoid overflow by doing mul in 64 bit int

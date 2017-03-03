@@ -455,9 +455,9 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
 
-	transaction->clearTemporaryObjects();
-
 	if (updateObjects->size() == 0) {
+		transaction->clearTemporaryObjects();
+
 		return;
 	}
 
@@ -537,6 +537,8 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 			assert(0 && "could not commit berkeley transaction");
 		}
 	}
+
+	transaction->clearTemporaryObjects();
 
 	int oldSize = updateObjects->size();
 

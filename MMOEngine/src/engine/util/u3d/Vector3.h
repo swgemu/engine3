@@ -403,8 +403,11 @@ namespace engine {
 
 	class SerializableVector3 : public Vector3, public Variable {
 	public:
-		SerializableVector3() = default;
-		SerializableVector3(const SerializableVector3&) = default;
+		SerializableVector3()  {
+		}
+
+		SerializableVector3(const SerializableVector3& v) : Vector3(v), Variable() {
+		}
 
 		SerializableVector3(const Vector3& vec) : Vector3(vec) {
 		}

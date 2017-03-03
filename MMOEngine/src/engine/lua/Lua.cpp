@@ -490,7 +490,7 @@ void Lua::setGlobalString(const String& name, const String& value) {
 }
 
 void Lua::setGlobalInt(const String& name, const int value) {
-	lua_pushnumber(L, value);
+	lua_pushinteger(L, value);
 	lua_setglobal(L, name.toCharArray());
 }
 
@@ -500,12 +500,12 @@ void Lua::setGlobalLong(const String& name, const uint64 value) {
 }
 
 void Lua::setGlobalShort(const String& name, const short value) {
-	lua_pushnumber(L, value);
+	lua_pushinteger(L, value);
 	lua_setglobal(L, name.toCharArray());
 }
 
 void Lua::setGlobalByte(const String& name, const char value) {
-	lua_pushnumber(L, value);
+	lua_pushinteger(L, value);
 	lua_setglobal(L, name.toCharArray());
 }
 

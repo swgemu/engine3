@@ -17,13 +17,10 @@ namespace lua {
 		String objectName;
 
 	public:
-		LuaObject(lua_State* lState, const String& name) {
-			L = lState;
-			objectName = name;
+		LuaObject(lua_State* lState, const String& name) : L(lState), objectName(name) {
 		}
 
-		LuaObject(lua_State* lState) {
-			L = lState;
+		LuaObject(lua_State* lState) : L(lState) {
 		}
 
 #ifdef CXX11_COMPILER

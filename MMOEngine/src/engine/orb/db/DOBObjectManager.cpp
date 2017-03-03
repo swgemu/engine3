@@ -269,7 +269,7 @@ ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
 		if (local == NULL || !local->isObjectDatabase())
 			return NULL;
 		else
-			table = cast<ObjectDatabase*>( local);
+			table = static_cast<ObjectDatabase*>(local);
 	}
 
 	return table;
