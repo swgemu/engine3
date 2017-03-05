@@ -50,7 +50,7 @@ bool QuadTreeEntryImplementation::isInArea(QuadTreeNode* node) const {
 }
 
 uint64 QuadTreeEntryImplementation::getObjectID() {
-	return _this.get()->_getObjectID();
+	return _this.getReferenceUnsafeStaticCast()->_getObjectID();
 }
 
 ManagedWeakReference<QuadTreeEntry*> QuadTreeEntryImplementation::getRootParent() {
@@ -108,6 +108,10 @@ uint64 QuadTreeEntry::getDirtyObjectID() {
 	return _getObjectID();
 }
 
+uint64 QuadTreeEntry::getObjectID() {
+	return _getObjectID();
+}
+
 uint64 QuadTreeEntryImplementation::getDirtyObjectID() {
-	return _this.get()->_getObjectID();
+	return _this.getReferenceUnsafeStaticCast()->_getObjectID();
 }
