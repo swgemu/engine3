@@ -102,6 +102,10 @@ namespace engine {
 			doGlobalLog = doLog;
 		}
 
+		inline void setLoggingName(const char* s) {
+			name = s;
+		}
+
 		inline void setLoggingName(const String& s) {
 			name = s;
 		}
