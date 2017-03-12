@@ -171,6 +171,7 @@ namespace sys {
 		V& get(int index);
 		V& get(const K& key);
 
+		const V& get(int index) const;
 		const V& get(const K& key) const;
 
 		int find(const K& key) const;
@@ -268,6 +269,11 @@ namespace sys {
 	template<class K, class V> V& VectorMap<K, V>::get(int index) {
 		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(index);
 	 	return entry->value;
+	}
+
+	template<class K, class V> const V& VectorMap<K, V>::get(int index) const {
+		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(index);
+		return entry->value;
 	}
 
 	template<class K, class V> V& VectorMap<K, V>::get(const K& key) {
