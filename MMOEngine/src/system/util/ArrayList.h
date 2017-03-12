@@ -75,7 +75,7 @@ namespace sys {
 
        void addAll(const ArrayList<E>& array);
 
-       bool contains(const E& element);
+       bool contains(const E& element) const;
 
        void insertElementAt(const E& element, int index);
 #ifdef CXX11_COMPILER
@@ -428,7 +428,7 @@ namespace sys {
 	   }
    }
 
-   template<class E> bool ArrayList<E>::contains(const E& element) {
+   template<class E> bool ArrayList<E>::contains(const E& element) const {
 	   for (int i = 0; i < size(); ++i) {
 		   if (element == getUnsafe(i)) {
 			   return true;
