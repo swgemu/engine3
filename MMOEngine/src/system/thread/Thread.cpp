@@ -167,6 +167,7 @@ void Thread::setSchedulingPolicy(int policy) {
 }
 
 void Thread::assignToCPU(int cpu) {
+#ifndef VERSION_PUBLIC
 #ifdef PLATFORM_LINUX
 	cpu_set_t cpuSet;
 
@@ -176,5 +177,6 @@ void Thread::assignToCPU(int cpu) {
 	if (sched_setaffinity(0, sizeof(cpuSet), &cpuSet) < 0) {
 		perror("sched_setaffinity");
 	}
+#endif
 #endif
 }
