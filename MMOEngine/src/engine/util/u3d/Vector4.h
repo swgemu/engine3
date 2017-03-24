@@ -21,7 +21,10 @@ protected:
 
 public:
 	Vector4() {
-		memset(v, 0, sizeof(v));
+		v[0] = 0;
+		v[1] = 0;
+		v[2] = 0;
+		v[3] = 0;
 	}
 
 	Vector4(float px, float py, float pz, float pw) {
@@ -36,14 +39,20 @@ public:
 	}
 
 	Vector4(const Vector4& vector) {
-		memcpy(v, vector.v, sizeof(v));
+		v[0] = vector.v[0];
+		v[1] = vector.v[1];
+		v[2] = vector.v[2];
+		v[3] = vector.v[3];
 	}
 
 	Vector4& operator=(const Vector4& vector) {
 		if (this == &vector)
 			return *this;
 
-		memcpy(v, vector.v, sizeof(v));
+		v[0] = vector.v[0];
+		v[1] = vector.v[1];
+		v[2] = vector.v[2];
+		v[3] = vector.v[3];
 
 		return *this;
 	}
@@ -54,7 +63,10 @@ public:
 	}
 
 	inline void setZero() {
-		memset(v, 0, sizeof(v));
+		v[0] = 0;
+		v[1] = 0;
+		v[2] = 0;
+		v[3] = 0;
 	}
 
 	inline bool isZero() const {

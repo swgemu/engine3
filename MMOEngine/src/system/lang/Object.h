@@ -59,7 +59,7 @@ namespace sys {
 	using namespace sys::util;
 
 	class Object : public Variable {
-		volatile StrongAndWeakReferenceCount* referenceCounters;
+		mutable volatile StrongAndWeakReferenceCount* referenceCounters;
 
 #ifdef MEMORY_PROTECTION
 		AtomicBoolean* _destroying;
@@ -170,9 +170,9 @@ namespace sys {
 #endif
 		}
 
-		inline void acquire() {
+		inline void acquire() const {
 			if (referenceCounters == NULL) {
-				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
+				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, const_cast<Object*>(this));
 
 				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, NULL, newCount)) {
 					delete newCount;
@@ -182,13 +182,13 @@ namespace sys {
 			referenceCounters->increaseStrongCount();
 		}
 
-		inline void release() {
+		inline void release() const {
 			if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
-				if (notifyDestroy()) {
+				if (const_cast<Object*>(this)->notifyDestroy()) {
 #ifdef WITH_STM
 					MemoryManager::getInstance()->reclaim(this);
 #else
-					destroy();
+					const_cast<Object*>(this)->destroy();
 #endif
 				}
 			}

@@ -30,11 +30,15 @@ namespace engine {
 
 	public:
 		inline Vector3() {
-			memset(values, 0, sizeof(values));
+			values[0] = 0;
+			values[1] = 0;
+			values[2] = 0;
 		}
 
 		Vector3(const Vector3& vec) {
-			memcpy(values, vec.values, sizeof(values));
+			values[0] = vec.values[0];
+			values[1] = vec.values[1];
+			values[2] = vec.values[2];
 		}
 
 		inline Vector3(const float fx, const float fy, const float fz) {
@@ -138,8 +142,8 @@ namespace engine {
 			return (values[0] * v.values[0] + values[1] * v.values[1] + values[2] * v.values[2]);
 		}
 
-		inline float product() {
-			return dotProduct(Vector3(values));
+		inline float product() const {
+			return dotProduct(*this);
 		}
 
 		/**

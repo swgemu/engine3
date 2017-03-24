@@ -145,11 +145,11 @@ namespace engine {
 //#else
 	public:
 //#endif
-		O operator->() const {
+		inline O operator->() const {
 			return Reference<O>::object;
 		}
 
-		operator O() const {
+		inline operator O() const {
 			return Reference<O>::object;
 		}
 
