@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/lang.h"
 
 #ifdef PLATFORM_MAC
-#include "mysql5/mysql/mysql.h"
+#include "mysql56/mysql/mysql.h"
 #else
 #include <mysql.h>
 #endif
@@ -32,6 +32,9 @@ namespace engine {
 		uint32 queryTimeout;
 		uint32 writeQueryTimeout;
 
+	private:
+		static int createDatabaseThread();
+
 	public:
 		MySqlDatabase(const String& s);
 		MySqlDatabase(const String& s, const String& host);
@@ -46,9 +49,15 @@ namespace engine {
 		
 		void doExecuteStatement(const String& statement);
 
+		//sync
 		engine::db::ResultSet* executeQuery(const char* statement);
 		engine::db::ResultSet* executeQuery(const String& statement);
 		engine::db::ResultSet* executeQuery(const StringBuffer& statement);
+
+#ifdef CXX11_COMPILER
+		//async
+		void executeQuery(const char* query, std::function<void(engine::db::ResultSet*)>&& callback);
+#endif
 
 		void commit();
 

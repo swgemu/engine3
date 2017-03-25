@@ -11,9 +11,7 @@ class MysqlTask : public Task {
 	MySqlDatabase* database;
 	String query;
 public:
-	MysqlTask(MySqlDatabase* db, const String& q) {
-		database = db;
-		query = q;
+	MysqlTask(MySqlDatabase* db, const String& q) : database(db), query(q) {
 	}
 	
 	void run() {
@@ -23,6 +21,43 @@ public:
 			database->error(e.getMessage().toCharArray());
 		}
 	}	
+};
+
+class MysqlCallback : public Task {
+	engine::db::ResultSet* result;
+	std::function<void(engine::db::ResultSet*)> callback;
+
+public:
+	MysqlCallback(engine::db::ResultSet* res, std::function<void(engine::db::ResultSet*)>&& f)
+			: result(res), callback(std::move(f)) {
+	}
+
+	void run() {
+		callback(result);
+	}
+};
+
+class MysqlLambda : public Task {
+	MySqlDatabase* database;
+	String query;
+	std::function<void(engine::db::ResultSet*)> function;
+
+public:
+	MysqlLambda(MySqlDatabase* db, const char* q,
+				std::function<void(engine::db::ResultSet*)>&& f): database(db), query(q), function(std::move(f)) {
+	}
+
+	void run() {
+		try {
+			engine::db::ResultSet* res = database->executeQuery(query);
+
+			MysqlCallback* callback = new MysqlCallback(res, std::move(function));
+			callback->execute();
+
+		} catch (Exception& e) {
+			database->error(e.getMessage().toCharArray());
+		}
+	}
 };
 
 using namespace engine::db::mysql;
@@ -47,8 +82,16 @@ MySqlDatabase::~MySqlDatabase() {
 	close();
 }
 
+int MySqlDatabase::createDatabaseThread() {
+	Core::getTaskManager()->initializeCustomQueue("mysqlThread", 1, false);
+
+	return 0;
+}
+
 void MySqlDatabase::connect(const String& dbname, const String& user, const String& passw, int port) {
 	Locker locker(this);
+
+	static int databaseThread = createDatabaseThread();
 
 	if (!mysql_init(&mysql))
 		error();
@@ -93,8 +136,10 @@ void MySqlDatabase::doExecuteStatement(const String& statement) {
 }
 
 void MySqlDatabase::executeStatement(const char* statement) {
-	Reference<Task*> task = new MysqlTask(this, statement);
-	Core::getTaskManager()->executeTask(task, 7);
+	Task* task = new MysqlTask(this, statement);
+	task->setCustomTaskQueue("mysqlThread");
+
+	Core::getTaskManager()->executeTask(task);
 }
 
 void MySqlDatabase::executeStatement(const String& statement) {
@@ -103,6 +148,13 @@ void MySqlDatabase::executeStatement(const String& statement) {
 
 void MySqlDatabase::executeStatement(const StringBuffer& statement) {
 	executeStatement(statement.toString().toCharArray());
+}
+
+void MySqlDatabase::executeQuery(const char* query, std::function<void(engine::db::ResultSet*)>&& function) {
+	MysqlLambda* lambda = new MysqlLambda(this, query, std::move(function));
+	lambda->setCustomTaskQueue("mysqlThread");
+
+	Core::getTaskManager()->executeTask(lambda);
 }
 
 engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
