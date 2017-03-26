@@ -59,12 +59,15 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 
 		waitMasterTransaction.wait(&blockMutex);
 
-		Time start(Time::MONOTONIC_TIME);
+		Timer clockTimer(Time::MONOTONIC_TIME);
+		clockTimer.start();
 
 		ObjectDatabaseManager::instance()->commitLocalTransaction(transaction);
 
+		uint64 delta = clockTimer.stop();
+
 		StringBuffer msg;
-		msg << "thread " << threadId << " commited objects into database in " << start.miliDifference() << " ms";
+		msg << "thread " << threadId << " commited objects into database in " << delta << " ms";
 		objectManager->info(msg.toString(), true);
 
 		finishedCommiting = true;
