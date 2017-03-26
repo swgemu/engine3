@@ -67,7 +67,7 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 		uint64 delta = clockTimer.stop();
 
 		StringBuffer msg;
-		msg << "thread " << threadId << " commited objects into database in " << delta << " ms";
+		msg << "thread " << threadId << " commited objects into database in " << delta / 1000000 << " ms";
 		objectManager->info(msg.toString(), true);
 
 		finishedCommiting = true;

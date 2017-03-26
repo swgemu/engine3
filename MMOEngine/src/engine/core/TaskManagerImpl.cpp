@@ -670,7 +670,7 @@ String TaskManagerImpl::getInfo(bool print) {
 		//lets order them
 		auto totalRuntimeTasks = orderStatistics(ordered, tasksCount);
 
-		msg4 << "total runtime: " << totalRuntimeTasks / 1000000000 << "s distinct tasks recorded in worker " << i << " : " << tasksCount.size() << endl;
+		msg4 << "total runtime: " << totalRuntimeTasks / 1000000000 << "s distinct tasks recorded in worker " << i << ": " << tasksCount.size() << endl;
 
 		//lets print top 5
 		printStatistics(msg4, ordered, true);
@@ -681,7 +681,7 @@ String TaskManagerImpl::getInfo(bool print) {
 
 		auto totalRuntimeLua = orderStatisticsMap(luaOrdered, luaTasksCount);
 
-		msg4 << "lua total runtime: " << totalRuntimeLua / 1000000000 <<  "s distinct lua tasks recorded in worker " << i << " : " << luaTasksCount.size() << endl;
+		msg4 << "lua total runtime: " << totalRuntimeLua / 1000000000 <<  "s distinct lua tasks recorded in worker " << i << ": " << luaTasksCount.size() << endl;
 
 		//lets print top 5
 		printStatistics(msg4, luaOrdered, false);
@@ -692,7 +692,7 @@ String TaskManagerImpl::getInfo(bool print) {
 
 		auto totalRuntimeBDB = orderStatisticsMap(bdbOrdered, bdbTasksCount);
 
-		msg4 << "bdb read total runtime: " << totalRuntimeBDB / 1000000000 <<  "s distinct bdb databases in worker " << i << " : " << bdbTasksCount.size() << endl;
+		msg4 << "bdb read total runtime: " << totalRuntimeBDB / 1000000000 <<  "s distinct bdb databases in worker " << i << ": " << bdbTasksCount.size() << endl;
 
 		//lets print top 5
 		printStatistics(msg4, bdbOrdered, false);
