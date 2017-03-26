@@ -59,7 +59,7 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 
 		waitMasterTransaction.wait(&blockMutex);
 
-		Time start;
+		Time start(Time::MONOTONIC_TIME);
 
 		ObjectDatabaseManager::instance()->commitLocalTransaction(transaction);
 

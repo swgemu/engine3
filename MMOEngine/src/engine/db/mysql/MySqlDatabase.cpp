@@ -89,7 +89,12 @@ int MySqlDatabase::createDatabaseThread() {
 }
 
 void MySqlDatabase::connect(const String& dbname, const String& user, const String& passw, int port) {
+	StringBuffer msg;
+
 	Locker locker(this);
+
+	msg << "connecting to " << host << "...";
+	info(msg, true);
 
 	static int databaseThread = createDatabaseThread();
 
@@ -104,9 +109,9 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 	if (!mysql_real_connect(&mysql, host.toCharArray(), user.toCharArray(), passw.toCharArray(), dbname.toCharArray(), port, NULL, 0))
 		error();
 
-	StringBuffer msg;
+	msg.deleteAll();
 	msg << "connected to " << host;
-	info(msg);
+	info(msg, true);
 
 #ifdef WITH_STM
 	autocommit(false);

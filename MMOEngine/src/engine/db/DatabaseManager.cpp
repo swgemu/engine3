@@ -103,6 +103,8 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 	if (loaded)
 		return;
 
+	info("loading bdb databases...", true);
+
 	try {
 		openEnvironment();
 
@@ -203,6 +205,8 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 		convertDatabasesToHashCodeMembers();
 
 	checkpoint();
+
+	info("bdb databases loaded", true);
 }
 
 void DatabaseManager::convertDatabasesToHashCodeMembers() {
