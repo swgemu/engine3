@@ -618,7 +618,7 @@ String TaskManagerImpl::getInfo(bool print) {
 		info(msg);
 
 	StringBuffer msg2;
-	msg2 << "scheduled tasks - " << getScheduledTaskSize() << endl;
+	msg2 << "scheduled tasks: " << getScheduledTaskSize() << endl;
 
 	for (int i = 0; i < schedulers.size(); ++i) {
 		TaskScheduler* scheduler = schedulers.get(i);
@@ -639,8 +639,8 @@ String TaskManagerImpl::getInfo(bool print) {
 			ordered.put(count, name);
 		}
 
-		msg2 << "scheduled tasks in scheduler " << i << " - " << scheduler->getQueueSize();
-		msg2 << " pushed - " << scheduler->getPushedTasks() << " popped - " << scheduler->getPoppedTasks() << " removed - " << scheduler->getRemovedTasks() << endl;
+		msg2 << "scheduled tasks in scheduler " << i << ": " << scheduler->getQueueSize();
+		msg2 << " pushed: " << scheduler->getPushedTasks() << " popped: " << scheduler->getPoppedTasks() << " removed: " << scheduler->getRemovedTasks() << endl;
 
 		//lets print top 5
 		for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
