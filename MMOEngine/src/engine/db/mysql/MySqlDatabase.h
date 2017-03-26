@@ -34,6 +34,7 @@ namespace engine {
 
 	private:
 		static int createDatabaseThread();
+		static const char* mysqlThreadName;
 
 	public:
 		MySqlDatabase(const String& s);

@@ -697,6 +697,18 @@ String TaskManagerImpl::getInfo(bool print) {
 		//lets print top 5
 		printStatistics(msg4, bdbOrdered, false);
 
+		//now lets print mysql stats
+		auto mysqlTasksCount = worker->getMysqlStatistics();
+		VectorMap<RunStatistics, String> mysqlOrdered(mysqlTasksCount.size(), 2);
+
+		auto totalRuntimeMysql = orderStatisticsMap(mysqlOrdered, mysqlTasksCount);
+
+		msg4 << "mysql total runtime: " << totalRuntimeMysql / 1000000000 <<  "s distinct mysql queries in worker " << i << ": " << mysqlTasksCount.size() << endl;
+
+		//lets print top 5
+		printStatistics(msg4, mysqlOrdered, false);
+
+
 		msg4 << endl;
 	}
 

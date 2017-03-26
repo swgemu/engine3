@@ -7,6 +7,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/engine.h"
 
+#include "engine/core/Task.h"
+#include "engine/core/TaskWorkerThread.h"
+
 class MysqlTask : public Task {
 	MySqlDatabase* database;
 	String query;
@@ -20,7 +23,8 @@ public:
 		} catch (Exception& e) {
 			database->error(e.getMessage().toCharArray());
 		}
-	}	
+
+	}
 };
 
 class MysqlCallback : public Task {
@@ -62,10 +66,11 @@ public:
 
 using namespace engine::db::mysql;
 
+const char* MySqlDatabase::mysqlThreadName = "mysqlThread";
+
 MySqlDatabase::MySqlDatabase(const String& s) : Mutex("MYSQL DB"), Logger(s) {
 	queryTimeout = 5;
 	writeQueryTimeout = queryTimeout * 10;
-	
 }
 
 MySqlDatabase::MySqlDatabase(const String& s, const String& host) : Mutex("MYSQL DB"), Logger(s) {
@@ -83,7 +88,7 @@ MySqlDatabase::~MySqlDatabase() {
 }
 
 int MySqlDatabase::createDatabaseThread() {
-	Core::getTaskManager()->initializeCustomQueue("mysqlThread", 1, false);
+	Core::getTaskManager()->initializeCustomQueue(mysqlThreadName, 1, false);
 
 	return 0;
 }
@@ -121,6 +126,11 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 void MySqlDatabase::doExecuteStatement(const String& statement) {
 	Locker locker(this);
 
+#ifdef COLLECT_TASKSTATISTICS
+	Timer timer(Time::MONOTONIC_TIME);
+	timer.start();
+#endif
+
 	/*if (mysql_query(&mysql, statement))
 		error(statement);*/
 
@@ -138,11 +148,22 @@ void MySqlDatabase::doExecuteStatement(const String& statement) {
 	MysqlDatabaseManager::instance()->addModifiedDatabase(this);
 #endif
 
+#ifdef COLLECT_TASKSTATISTICS
+	uint64 elapsed = timer.stop();
+
+	Thread* thread = Thread::getCurrentThread();
+	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+
+	if (worker) {
+		worker->addMysqlStats(statement, elapsed);
+	}
+#endif
+
 }
 
 void MySqlDatabase::executeStatement(const char* statement) {
 	Task* task = new MysqlTask(this, statement);
-	task->setCustomTaskQueue("mysqlThread");
+	task->setCustomTaskQueue(mysqlThreadName);
 
 	Core::getTaskManager()->executeTask(task);
 }
@@ -157,7 +178,7 @@ void MySqlDatabase::executeStatement(const StringBuffer& statement) {
 
 void MySqlDatabase::executeQuery(const char* query, std::function<void(engine::db::ResultSet*)>&& function) {
 	MysqlLambda* lambda = new MysqlLambda(this, query, std::move(function));
-	lambda->setCustomTaskQueue("mysqlThread");
+	lambda->setCustomTaskQueue(mysqlThreadName);
 
 	Core::getTaskManager()->executeTask(lambda);
 }
@@ -167,6 +188,11 @@ engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 
 	/*if (mysql_query(&mysql, statement))
 		error(statement);*/
+
+#ifdef COLLECT_TASKSTATISTICS
+	Timer timer(Time::MONOTONIC_TIME);
+	timer.start();
+#endif
 
 	while (mysql_query(&mysql, statement)) {
 		unsigned int errorNumber = mysql_errno(&mysql);
@@ -190,6 +216,17 @@ engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 
 #ifdef WITH_STM
 	MysqlDatabaseManager::instance()->addModifiedDatabase(this);
+#endif
+
+#ifdef COLLECT_TASKSTATISTICS
+	uint64 elapsed = timer.stop();
+
+	Thread* thread = Thread::getCurrentThread();
+	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+
+	if (worker) {
+		worker->addMysqlStats(statement, elapsed);
+	}
 #endif
 
 	ResultSet* res = new ResultSet(&mysql, result);
