@@ -109,11 +109,20 @@ VectorMap<String, RunStatistics> TaskWorkerThread::getLuaTasksStatistics() {
 	return ret;
 }
 
+VectorMap<String, RunStatistics> TaskWorkerThread::getBDBReadStatistics() {
+	ReadLocker locker(&tasksStatsGuard);
+
+	VectorMap<String, RunStatistics> ret = bdbReadStatistics;
+
+	return ret;
+}
+
 void TaskWorkerThread::clearTaskStatistics() {
 	Locker locker(&tasksStatsGuard);
 
 	tasksStatistics.removeAll();
 	luaTasksStatistics.removeAll();
+	bdbReadStatistics.removeAll();
 }
 
 void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTime) {
@@ -134,6 +143,39 @@ void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTim
 		luaTasksStatistics.put(taskName, stats);
 	} else {
 		RunStatistics& stats = luaTasksStatistics.elementAt(entry).getValue();
+
+		stats.totalRunTime += elapsedTime;
+
+		if (stats.maxRunTime < elapsedTime) {
+			stats.maxRunTime = elapsedTime;
+		}
+
+		if (stats.minRunTime > elapsedTime) {
+			stats.minRunTime = elapsedTime;
+		}
+
+		++stats.totalRunCount;
+	}
+}
+
+void TaskWorkerThread::addBDBReadStats(const String& dbName, uint64 elapsedTime) {
+	Locker guard(&tasksStatsGuard);
+
+	auto entry = bdbReadStatistics.find(dbName);
+
+	RunStatistics* stats = NULL;
+
+	if (entry == -1) {
+		RunStatistics stats;
+
+		stats.totalRunCount = 1;
+		stats.totalRunTime = elapsedTime;
+		stats.maxRunTime = elapsedTime;
+		stats.minRunTime = elapsedTime;
+
+		bdbReadStatistics.put(dbName, stats);
+	} else {
+		RunStatistics& stats = bdbReadStatistics.elementAt(entry).getValue();
 
 		stats.totalRunTime += elapsedTime;
 

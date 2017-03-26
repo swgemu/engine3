@@ -17,14 +17,16 @@ namespace sys {
 
     	uint64 totalTime;
 
+		Time::ClockType clockType;
+
     public:
-    	Timer() : startTime(0), elapsedTime(0), totalTime(0) {
+    	Timer(Time::ClockType type = Time::THREAD_TIME) : startTime(0), elapsedTime(0), totalTime(0), clockType(type) {
     	}
 
     	void start() {
     		assert(startTime == 0);
 
-    		startTime = Time::currentNanoTime(Time::THREAD_TIME);
+    		startTime = Time::currentNanoTime(clockType);
     	}
 
     	uint64 stop() {
@@ -40,7 +42,7 @@ namespace sys {
 
     	uint64 elapsed() {
     		if (startTime != 0)
-    			return Time::currentNanoTime(Time::THREAD_TIME) - startTime;
+    			return Time::currentNanoTime(clockType) - startTime;
     		else
     			return 0;
     	}

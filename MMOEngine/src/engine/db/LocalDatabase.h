@@ -75,6 +75,10 @@ namespace engine {
 		 name = databaseFileName.replaceFirst(".db", "");
 	 }
 
+	 inline const String& getDatabaseFileName() const {
+		 return databaseFileName;
+	 }
+
 	 inline bool hasCompressionEnabled() {
 		 return compression;
 	 }

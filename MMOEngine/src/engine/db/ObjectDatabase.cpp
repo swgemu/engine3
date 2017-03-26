@@ -2,6 +2,14 @@
 
 #include "ObjectDatabaseManager.h"
 
+#include "engine/core/Task.h"
+#include "engine/core/TaskWorkerThread.h"
+
+#ifdef CXX11_COMPILER
+#include <chrono>
+#endif
+
+
 using namespace engine::db;
 using namespace engine::db::berkley;
 
@@ -25,6 +33,16 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 	
 	TransactionConfig cfg = TransactionConfig::DEFAULT;
 	cfg.setNoSync(true);
+
+#ifdef COLLECT_TASKSTATISTICS
+#ifdef CXX11_COMPILER
+	auto start = std::chrono::high_resolution_clock::now();
+#else
+	Timer executionTimer(Time::MONOTONIC_TIME);
+
+	executionTimer.start();
+#endif
+#endif
 
 	do {
 		ret  = -1;
@@ -61,6 +79,22 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 		transaction->commitNoSync();
 	}
 
+#ifdef COLLECT_TASKSTATISTICS
+#ifdef CXX11_COMPILER
+	auto end = std::chrono::high_resolution_clock::now();
+
+	uint64 elapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+#else
+	uint64 elapsedTime = executionTimer.stop();
+#endif
+
+	Thread* thread = Thread::getCurrentThread();
+	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+
+	if (worker) {
+		worker->addBDBReadStats(databaseFileName, elapsedTime);
+	}
+#endif
 
 	return ret;
 }
