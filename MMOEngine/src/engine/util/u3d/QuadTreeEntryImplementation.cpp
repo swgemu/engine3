@@ -53,7 +53,7 @@ uint64 QuadTreeEntryImplementation::getObjectID() {
 	return _this.getReferenceUnsafeStaticCast()->_getObjectID();
 }
 
-ManagedWeakReference<QuadTreeEntry*> QuadTreeEntryImplementation::getRootParent() {
+QuadTreeEntry* QuadTreeEntryImplementation::getRootParent() {
 	ManagedReference<QuadTreeEntry*> grandParent = getParent();
 	ManagedReference<QuadTreeEntry*> tempParent = NULL;
 
@@ -63,9 +63,7 @@ ManagedWeakReference<QuadTreeEntry*> QuadTreeEntryImplementation::getRootParent(
 	while ((tempParent = grandParent->getParent()) != NULL)
 		grandParent = tempParent;
 
-	ManagedWeakReference<QuadTreeEntry*> weak = grandParent.get();
-
-	return weak;
+	return grandParent;
 }
 
 QuadTreeEntry* QuadTreeEntryImplementation::getParentUnsafe() {
