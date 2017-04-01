@@ -111,8 +111,7 @@ namespace sys {
 		    return *this;
 	    }
 #endif
-
-		  virtual Object* clone() {
+		virtual Object* clone() {
 			assert(0 && "clone method not declared");
 
 			return NULL;
@@ -182,16 +181,36 @@ namespace sys {
 			referenceCounters->increaseStrongCount();
 		}
 
-		inline void release() const {
+		inline bool release() const {
 			if (referenceCounters->decrementAndTestAndSetStrongCount() != 0) {
 				if (const_cast<Object*>(this)->notifyDestroy()) {
 #ifdef WITH_STM
 					MemoryManager::getInstance()->reclaim(this);
 #else
 					const_cast<Object*>(this)->destroy();
+
+					return true;
 #endif
 				}
 			}
+
+			return false;
+		}
+
+		inline bool tryFinalRelease() const {
+			if (referenceCounters->tryStrongFinalDecrement()) {
+				if (const_cast<Object*>(this)->notifyDestroy()) {
+#ifdef WITH_STM
+					MemoryManager::getInstance()->reclaim(this);
+#else
+					const_cast<Object*>(this)->destroy();
+
+					return true;
+#endif
+				}
+			}
+
+			return false;
 		}
 
 		void _destroyIgnoringCount();

@@ -33,6 +33,8 @@ namespace engine {
 
 		void removeHelper(sys::uint64 objid);
 
+		bool tryRemoveHelper(sys::uint64 objid);
+
 		DistributedObjectAdapter* getAdapter(uint64 objid);
 
 		void getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
@@ -42,7 +44,7 @@ namespace engine {
 			return objectMap.size();
 		}
 
-		HashTable<uint64, Reference<DistributedObject*> >* getDistributedObjectMap() {
+		HashTable<uint64, DistributedObject* >* getDistributedObjectMap() {
 			return helperObjectMap.getMap();
 		}
 	};

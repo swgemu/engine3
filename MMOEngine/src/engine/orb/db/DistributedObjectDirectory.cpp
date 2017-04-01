@@ -66,6 +66,10 @@ void DistributedObjectDirectory::removeHelper(uint64 objid) {
 	helperObjectMap.remove(objid);
 }
 
+bool DistributedObjectDirectory::tryRemoveHelper(sys::uint64 objid) {
+	return helperObjectMap.tryRemoveAndDestroy(objid);
+}
+
 DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {
 	return objectMap.get(objid);
 }

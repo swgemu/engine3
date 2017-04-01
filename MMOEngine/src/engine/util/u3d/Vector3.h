@@ -51,7 +51,9 @@ namespace engine {
 		 * Converts a 3 dimensional float array into a Vector3.
 		 */
 		inline explicit Vector3(const float coord[3]) {
-			memcpy(values, coord, sizeof(values));
+			values[0] = coord[0];
+			values[1] = coord[1];
+			values[2] = coord[2];
 		}
 
 		/**
@@ -193,7 +195,9 @@ namespace engine {
 			if (this == &v)
 				return *this;
 
-			memcpy(values, v.values, sizeof(values));
+			values[0] = v.values[0];
+			values[1] = v.values[1];
+			values[2] = v.values[2];
 
 			return *this;
 		}

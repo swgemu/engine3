@@ -81,19 +81,20 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 
 	//      while (objectsToDeleteFromRam->size() != 0) {
 	for (int j = 0; j < objectsToDeleteFromRam->size(); ++j) {
-		DistributedObject* object = objectsToDeleteFromRam->get(j);
+		DistributedObject* object = objectsToDeleteFromRam->getUnsafe(j);
 
 		Locker locker(objectManager);
 
 		//printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
 
 		if (object->getReferenceCount() == 2 && (!object->_isUpdated() || object->_isDeletedFromDatabase() || !object->isPersistent())) {
-			objectManager->localObjectDirectory.removeHelper(object->_getObjectID());
-			//localObjectDirectory.removeHelper(object->_getObjectID());
+			if (objectManager->localObjectDirectory.tryRemoveHelper(object->_getObjectID())) {
+				//localObjectDirectory.removeHelper(object->_getObjectID());
 
-			++i;
+				++i;
 
-			object = NULL;
+				object = NULL;
+			}
 		} /*else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
 			String text = TypeInfo<DistributedObject>::getClassName(object) + " 0x" + String::hexvalueOf((int64)object->_getObjectID());
 

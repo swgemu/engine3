@@ -20,7 +20,7 @@ namespace sys {
 		static double RAD2DEG;
 		static double E;
 
-		static float sqrt(float number);
+		static double sqrt(double number);
 
 		//static float rsqrt(float number);
 

@@ -16,7 +16,7 @@ StringTokenizer::StringTokenizer(const String& s) {
 	else
 		index = -1;
 
-	delimeter = " ";
+	delimiter = " ";
 }
 
 int StringTokenizer::getIntToken() {
@@ -66,7 +66,7 @@ void StringTokenizer::nextToken(String& s) {
 	while (true) {
 		oindex = index;
 
-		index = str.indexOf(delimeter, index);
+		index = str.indexOf(delimiter, index);
 
 		if (index == oindex && index <= str.length())
 			++index;
@@ -76,7 +76,7 @@ void StringTokenizer::nextToken(String& s) {
 
 	if (index != -1) {
 		buf.append(str.subString(oindex, index));
-		index += delimeter.length();
+		index += delimiter.length();
 	} else
 		buf.append(str.subString(oindex, str.length()));
 
@@ -92,7 +92,7 @@ void StringTokenizer::nextToken(StringBuffer& s) {
 	while (true) {
 		oindex = index;
 
-		index = str.indexOf(delimeter, index);
+		index = str.indexOf(delimiter, index);
 
 		if (index == oindex && index <= str.length())
 			++index;
@@ -104,7 +104,7 @@ void StringTokenizer::nextToken(StringBuffer& s) {
 
 	if (index != -1) {
 		s.append(str.subString(oindex, index));
-		index += delimeter.length();
+		index += delimiter.length();
 	} else
 		s.append(str.subString(oindex, str.length()));
 }

@@ -78,40 +78,6 @@ namespace engine {
 		void executeTask(Task* task, int taskQueue);
 		void executeTask(Task* task, const String& customTaskQueue);
 
-#ifdef CXX11_COMPILER
-		  void executeTask(std::function<void()>&& function, const char* name) {
-			  TaskManager::executeTask(std::move(function), name);
-		  }
-
-		  void executeTask(std::function<void()>&& function, const char* name, const char* customQueueName) {
-			  TaskManager::executeTask(std::move(function), name, customQueueName);
-		  }
-
-		  void executeTask(const std::function<void()>& function, const char* name) {
-			  TaskManager::executeTask(function, name);
-		  }
-
-		  void executeTask(const std::function<void()>& function, const char* name, const char* customQueueName) {
-			  TaskManager::executeTask(function, name, customQueueName);
-		  }
-
-		  void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay) {
-			  TaskManager::scheduleTask(std::move(function), name, delay);
-		  }
-
-		  void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay, const char* customQueueName) {
-			  TaskManager::scheduleTask(std::move(function), name, delay, customQueueName);
-		  }
-
-		  void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
-			  TaskManager::scheduleTask(function, name, delay);
-		  }
-
-		  void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay, const char* customQueueName) {
-			  TaskManager::scheduleTask(function, name, delay, customQueueName);
-		  }
-#endif
-
 		void executeTasks(const Vector<Task*>& tasks);
 
 		void executeTaskFront(Task* task);

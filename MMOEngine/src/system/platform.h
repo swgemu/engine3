@@ -109,11 +109,12 @@ extern "C" int isinf (double);
 #define isinf(x) (!_finite(x) && !_isnan(x))
 #endif
 
-//#define WMB() __asm__ __volatile__ ("" ::: "memory");
 #if GCC_VERSION >= 40100
 #define WMB() __sync_synchronize()
+#define COMPILER_BARRIER() __asm__ __volatile__ ("" ::: "memory");
 #else
 #define WMB()
+#define COMPILER_BARRIER()
 #endif
 
 #ifdef __clang__

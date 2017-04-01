@@ -26,8 +26,8 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 		const Vector3* right;
 
 		if (i == triangleChannel->size() - 1) {
-			 left = &goalPoint;
-			 right = &goalPoint;
+			left = &goalPoint;
+			right = &goalPoint;
 		} else {
 			left = &triangleChannel->getUnsafe(i)->getLeftSharedVertex(*triangleChannel->getUnsafe(i + 1));
 			right = &triangleChannel->getUnsafe(i)->getRightSharedVertex(*triangleChannel->getUnsafe(i + 1));

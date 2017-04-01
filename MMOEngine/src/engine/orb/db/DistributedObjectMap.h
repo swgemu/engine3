@@ -12,34 +12,69 @@ namespace engine {
   namespace ORB {
 
 	class DistributedObjectMap {
-    	HashTable<uint64, Reference<DistributedObject*> > objectMap;
+    	HashTable<uint64, DistributedObject*> objectMap;
 	
 	public:
 		DistributedObjectMap() {
 		}
 
 		~DistributedObjectMap() {
+			auto iterator = objectMap.iterator();
+
+			while (iterator.hasNext()) {
+				auto ref = iterator.getNextValue();
+
+				ref->release();
+			}
 		}
 		
 		bool add(sys::uint64 objectID, DistributedObject* object) {
-			const static Reference<DistributedObject*> nullReference;
+			bool exists = objectMap.put(objectID, object) != NULL;
 
-			return objectMap.put(objectID, object) != nullReference;
+			if (!exists) {
+				object->acquire();
+			}
+
+			return exists;
 		}
 	
 		DistributedObject* get(sys::uint64 objectID) {
 			return objectMap.get(objectID);
 		}
+
+		bool tryRemoveAndDestroy(sys::uint64 objectID) {
+			DistributedObject* obj = objectMap.remove(objectID);
+
+			if (obj) {
+				bool res = obj->tryFinalRelease();
+
+				if (!res) {
+					objectMap.put(objectID, obj);
+
+					return false;
+				} else {
+					return true;
+				}
+			}
+
+			return false;
+		}
 		
-		DistributedObject* remove(sys::uint64 objectID) {
-			return objectMap.remove(objectID);
+		void remove(sys::uint64 objectID) {
+			DistributedObject* obj = objectMap.remove(objectID);
+
+			if (obj) {
+				obj->release();
+			}
+
+			//return false;
 		}
 
 		inline int getSize() {
 			return objectMap.size();
 		}
 
-		HashTable<uint64, Reference<DistributedObject*> >* getMap() {
+		HashTable<uint64, DistributedObject* >* getMap() {
 			return &objectMap;
 		}
 	};

@@ -19,30 +19,30 @@ namespace sys {
 
 	template<class K, class V> class VectorMap;
 
-	template<class K, class V> class VectorMapEntry : public Variable {
+	template<class K, class V> class VectorMapEntry {
 		K key;
 		V value;
 
 	public:
-		VectorMapEntry() : Variable() {
+		VectorMapEntry() {
 		}
 
-		VectorMapEntry(const K& key) : Variable(), key(key) {
+		VectorMapEntry(const K& key) : key(key) {
 		}
 
-		VectorMapEntry(const K& key, const V& value) : Variable(), key(key), value(value) {
+		VectorMapEntry(const K& key, const V& value) : key(key), value(value) {
 		}
 
 #ifdef CXX11_COMPILER
-		VectorMapEntry(K&& key, V&& value) : Variable(), key(std::move(key)), value(std::move(value)) {
+		VectorMapEntry(K&& key, V&& value) : key(std::move(key)), value(std::move(value)) {
 		}
 #endif
 
-		VectorMapEntry(const VectorMapEntry& entry) : Variable(), key(entry.key), value(entry.value) {
+		VectorMapEntry(const VectorMapEntry& entry) : key(entry.key), value(entry.value) {
 		}
 
 #ifdef CXX11_COMPILER
-		VectorMapEntry(VectorMapEntry&& entry) : Variable(), key(std::move(entry.key)), value(std::move(entry.value)) {
+		VectorMapEntry(VectorMapEntry&& entry) : key(std::move(entry.key)), value(std::move(entry.value)) {
 		}
 #endif
 
@@ -67,10 +67,6 @@ namespace sys {
 			return *this;
 		}
 #endif
-
-		~VectorMapEntry() {
-
-		}
 
 		int compareTo(const VectorMapEntry& e) const {
 			return TypeInfo<K>::compare(key, e.key);
@@ -250,9 +246,7 @@ namespace sys {
 	}
 
 	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
-	 	VectorMapEntry<K, V> e(key, value);
-
-	 	int res = SortedVector<VectorMapEntry<K, V> >::put(e);
+		int res = SortedVector<VectorMapEntry<K, V> >::put(VectorMapEntry<K, V>(key, value));
 
 	 	return res;
 	}
@@ -323,10 +317,7 @@ namespace sys {
 	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) const {
 	 	int idx = find(key);
 
-	 	if (idx == -1)
-	 		return false;
-	 	else
-	 		return true;
+	 	return idx != -1;
 	}
 
 	template<class K, class V> bool VectorMap<K, V>::drop(const K& key) {

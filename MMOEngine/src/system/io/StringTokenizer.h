@@ -20,7 +20,7 @@ namespace sys {
 		String str;
 
 		int index;
-		String delimeter;
+		String delimiter;
 
 	public:
 		StringTokenizer(const String& s);
@@ -40,9 +40,12 @@ namespace sys {
 		bool hasMoreTokens();
 
 		inline void setDelimeter(const String& del) {
-			delimeter = del;
+			delimiter = del;
 		}
 
+		inline void setDelimiter(const String& del) {
+			delimiter = del;
+		}
 	private:
 		void nextToken(String& s);
 		void nextToken(StringBuffer& s);

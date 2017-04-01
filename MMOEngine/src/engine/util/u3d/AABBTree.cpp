@@ -103,15 +103,22 @@ bool AABB::intersects(const Ray &r, float t0, float t1) const {
 	float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
 	tmin = (mBounds[r.sign[0]].getX() - r.origin.getX()) * r.invDirection.getX();
-	tmax = (mBounds[1 - r.sign[0]].getX() - r.origin.getX()) * r.invDirection.getX();
-	tymin = (mBounds[r.sign[1]].getY() - r.origin.getY()) * r.invDirection.getY();
 	tymax = (mBounds[1 - r.sign[1]].getY() - r.origin.getY()) * r.invDirection.getY();
 
-	if ( (tmin > tymax) || (tymin > tmax) )
+	if (tmin > tymax) {
 		return false;
+	}
+
+	tymin = (mBounds[r.sign[1]].getY() - r.origin.getY()) * r.invDirection.getY();
+	tmax = (mBounds[1 - r.sign[0]].getX() - r.origin.getX()) * r.invDirection.getX();
+
+	if (tymin > tmax) {
+		return false;
+	}
 
 	if (tymin > tmin)
 		tmin = tymin;
+
 	if (tymax < tmax)
 		tmax = tymax;
 
@@ -123,6 +130,7 @@ bool AABB::intersects(const Ray &r, float t0, float t1) const {
 
 	if (tzmin > tmin)
 		tmin = tzmin;
+
 	if (tzmax < tmax)
 		tmax = tzmax;
 

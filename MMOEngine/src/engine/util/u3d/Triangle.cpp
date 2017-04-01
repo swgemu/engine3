@@ -100,7 +100,7 @@ float Triangle::area() const {
 	const Vector3& v2 = verts[1];
 	const Vector3& v1 = verts[2];
 
-	return 0.5 * ((v1 - v0).crossProduct(v2 - v0)).length();
+	return (float) 0.5 * ((v1 - v0).crossProduct(v2 - v0)).length();
 }
 
 float Triangle::area2D() const {
@@ -361,6 +361,12 @@ const Vector3& Triangle::getLeftSharedVertex(const Triangle& tri) const {
 		else
 			apexID = 1;
 	}
+
+	/*
+	firstCommon = Math::clamp(0, firstCommon, 3);
+	secondCommon = Math::clamp(0, secondCommon, 3);
+	apexID = Math::clamp(0, apexID, 3);
+	*/
 
 	const Vector3& pointA = getVertex(firstCommon);
 	const Vector3& pointB = getVertex(secondCommon);

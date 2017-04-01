@@ -60,8 +60,6 @@ void TaskWorkerThread::run() {
 
 		Entry<const char*, RunStatistics>* entry = tasksStatistics.getEntry(taskName);
 
-		RunStatistics* stats = NULL;
-
 		if (entry == NULL) {
 			RunStatistics stats;
 

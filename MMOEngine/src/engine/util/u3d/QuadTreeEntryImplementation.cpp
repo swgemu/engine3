@@ -77,9 +77,10 @@ QuadTreeEntry* QuadTreeEntryImplementation::getRootParentUnsafe() {
 		return NULL;
 
 	QuadTreeEntry* grandParent = parent;
+	QuadTreeEntry* temp = NULL;
 
-	while (grandParent->getParentUnsafe() != NULL)
-		grandParent = grandParent->getParentUnsafe();
+	while ((temp = grandParent->getParentUnsafe()) != NULL)
+		grandParent = temp;
 
 	return grandParent;
 }

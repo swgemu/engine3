@@ -136,7 +136,7 @@ namespace sys {
 		}
 
 		template<class B>
-		Reference<B> castTo() {
+		Reference<B> castTo() const {
 			Reference<B> stored = dynamic_cast<B>(get());
 			return stored;
 		}
