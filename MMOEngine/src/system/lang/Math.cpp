@@ -10,7 +10,7 @@ double Math::DEG2RAD = M_PI / 180.0f;
 double Math::RAD2DEG = 180.0f / M_PI;
 double Math::E = 2.71828182845904523536;
 
-float Math::sqrt(float number) { // from Q3 fix for 64 bit
+double Math::sqrt(double number) { // from Q3 fix for 64 bit
 	/*long i;
 	float x, y;
 	const float f = 1.5F;
