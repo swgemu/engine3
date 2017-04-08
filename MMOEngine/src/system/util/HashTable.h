@@ -14,6 +14,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang/StringBuffer.h"
 #include "system/lang/Variable.h"
+#include "system/lang/Math.h"
 
 #include "system/io/Serializable.h"
 #include "system/io/ObjectOutputStream.h"
@@ -330,7 +331,7 @@ namespace sys {
 		Entry<K,V>** oldMap = table;
 
 		int newCapacity = oldCapacity * 2 + 1;
-		newCapacity = MAX(5, newCapacity);
+		newCapacity = Math::max(5, newCapacity);
 
 		Entry<K,V>** newMap = (Entry<K, V>**) malloc(newCapacity * sizeof(Entry<K, V>*));
 		memset(newMap, 0, newCapacity * sizeof(Entry<K, V>*));

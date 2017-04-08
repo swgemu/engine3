@@ -131,7 +131,7 @@ void CloseObjectsVector::safeCopyReceiversTo(Vector<ManagedReference<QuadTreeEnt
 		vec.removeAll(receivers.size(), receivers.size() / 2);
 
 		for (int i = 0; i < receivers.size(); ++i)
-			vec.add(receivers.getUnsafe(i));
+			vec.emplace(receivers.getUnsafe(i));
 	}
 }
 

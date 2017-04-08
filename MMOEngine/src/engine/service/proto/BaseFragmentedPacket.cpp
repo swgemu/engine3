@@ -78,7 +78,7 @@ BasePacket* BaseFragmentedPacket::getFragment() {
 		totalSize = 4;
 		fragsize = 496 - 8 - 3;
 	} else {
-		fragsize = MIN(496 - 4 - 3, singlePacket->size() - totalSize);
+		fragsize = Math::min(496 - 4 - 3, singlePacket->size() - totalSize);
 	}
 
 	frag->insertStream(singlePacket->getBuffer() + totalSize, fragsize);

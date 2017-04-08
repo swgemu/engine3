@@ -1,8 +1,12 @@
-#ifndef TASKSTATISTICS_H_
-#define TASKSTATISTICS_H_
+#ifndef RUNSTATISTICS_H_
+#define RUNSTATISTICS_H_
 
-#include "system/io/ObjectOutputStream.h"
-#include "system/io/ObjectInputStream.h"
+namespace sys {
+    namespace io {
+        class ObjectOutputStream;
+        class ObjectInputStream;
+    }
+}
 
 namespace engine {
   namespace core {
@@ -49,4 +53,4 @@ namespace engine {
 
 using namespace engine::core;
 
-#endif /* TASKSTATISTICS_H_ */
+#endif /* RUNSTATISTICS_H_ */

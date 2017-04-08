@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "String.h"
 #include "StringBuffer.h"
-
+#include "Math.h"
 #include "UnicodeString.h"
 
 #include "system/io/ObjectOutputStream.h"
@@ -134,7 +134,7 @@ UnicodeString UnicodeString::concat(const UnicodeString& str) const {
 }
 
 int UnicodeString::compareTo(const UnicodeString& str) const {
-	int n = MIN(str.length(), count);
+	int n = Math::min(str.length(), count);
 
 	unsigned short* s1 = str.uString;
 	unsigned short* s2 = uString;

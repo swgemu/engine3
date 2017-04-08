@@ -9,12 +9,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/platform.h"
 
 #include "system/lang/String.h"
-
+#include "system/lang/Math.h"
 #include "system/lang/ArrayIndexOutOfBoundsException.h"
 #include "system/lang/IllegalArgumentException.h"
-
 #include "system/lang/types.h"
-
 #include "system/lang/Integer.h"
 
 #ifdef CXX11_COMPILER
@@ -370,7 +368,7 @@ namespace sys {
 		   elementCapacity = 0;
 		   elementData = NULL;
 	   } else {
-		   elementCapacity = MAX(1, initsize);
+		   elementCapacity = Math::max(1, initsize);
 		   elementData = (E*) malloc(elementCapacity * sizeof(E));
 	   }
 

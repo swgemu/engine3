@@ -1011,14 +1011,14 @@ void BaseClient::resendPackets() {
 		return;
 	
 	float checkupTime = (float) ((float)((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime()) / 1000.f;
-	int maxPacketResent = MAX(5, (float)30000.f * checkupTime / 496.f); //30kb * second assuming 496 packet size
+	int maxPacketResent = (int) Math::max(5.f, (float)30000.f * checkupTime / 496.f); //30kb * second assuming 496 packet size
 
 	/*StringBuffer msg2;
 	msg2 << "resending MIN(" << sequenceBuffer.size() << " and " << maxPacketResent << ") packets to \'" << ip << "\' ["
 			<< ((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime() << "]";
 	info(msg2, true);*/
 	
-	for (int i = 0; i < MIN(sequenceBuffer.size(), maxPacketResent); ++i) {
+	for (int i = 0; i < Math::min(sequenceBuffer.size(), maxPacketResent); ++i) {
 //	for (int i = 0; i < sequenceBuffer.size(); ++i) {
 //	for (int i = 0; i < MIN(sequenceBuffer.size(), 1); ++i) {
 		BasePacket* packet = sequenceBuffer.get(i);

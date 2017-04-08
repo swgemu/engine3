@@ -147,6 +147,18 @@ namespace sys {
 			writeStream(stream, len);
 		}
 
+		inline void insertCString(const char* buf, bool nullTerminator = false) {
+			char character;
+
+			while ((character = *buf)) {
+				insertByte(character);
+			}
+
+			if (nullTerminator) {
+				insertByte(0);
+			}
+		}
+
 		// parsing methods
 		inline bool parseBoolean() {
 			return readBoolean();

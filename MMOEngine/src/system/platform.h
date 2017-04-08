@@ -147,11 +147,6 @@ namespace sys {
 	typedef uint32 pointer;
 #endif
 
-	#define MAX(a, b) (a > b ? a : b)
-	#define MIN(a, b) (a < b ? a : b)
-
-	#define SQR(x) ((x) * (x))
-
 	#define MAX_FLOAT FLT_MAX
 	#define SMALL_NUM  FLT_EPSILON
 

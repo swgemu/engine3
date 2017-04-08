@@ -13,6 +13,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskScheduler.h"
 
+#include "system/lang/Math.h"
+
 int TaskManagerImpl::DEFAULT_WORKER_QUEUES = 0;
 int TaskManagerImpl::DEFAULT_WORKER_THREADS_PER_QUEUE = 0; //
 int TaskManagerImpl::DEFAULT_SCHEDULER_THREADS = 0;
@@ -41,7 +43,7 @@ void TaskManagerImpl::initialize() {
 void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent) {
 	Locker locker(this);
 
-	int maxCpus = MAX(1, sysconf(_SC_NPROCESSORS_ONLN));
+	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
 
 	TaskQueue* queue = new TaskQueue();
 	queue->setLogLevel(getLogLevel());
@@ -68,10 +70,10 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 
 	Locker locker(this);
 
-	int maxCpus = MAX(1, sysconf(_SC_NPROCESSORS_ONLN));
+	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
 
 	if (workerCount == 0) {
-		workerCount = MAX(8, maxCpus + 2);
+		workerCount = Math::max(8, maxCpus + 2);
 		DEFAULT_WORKER_QUEUES = workerCount;
 	}
 

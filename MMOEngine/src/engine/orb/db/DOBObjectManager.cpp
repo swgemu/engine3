@@ -385,7 +385,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 }
 
 UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread() {
-	int maxCpus = MAX(1, sysconf(_SC_NPROCESSORS_ONLN));
+	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
 
 	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(), this, updateModifiedObjectsThreads.size() % maxCpus);
 	thread->start();
@@ -410,7 +410,7 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 
 	int numberOfThreads = numberOfObjects / MAXOBJECTSTOUPDATEPERTHREAD;
 	
-	numberOfThreads = MIN(numberOfThreads, MAX_UPDATE_THREADS);
+	numberOfThreads = Math::min(numberOfThreads, MAX_UPDATE_THREADS);
 	int rest = numberOfThreads > 0 ? numberOfObjects % numberOfThreads : 0;
 
 	if (rest != 0)
