@@ -729,7 +729,10 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 void QuadTree::copyObjects(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects) {
 	//	ReadLocker locker(&mutex);
 
-	objects.addAll(node->objects);
+	//objects.addAll(node->objects);
+	for (int i = 0; i < node->objects.size(); ++i) {
+		objects.add(node->objects.getUnsafe(i).get());
+	}
 
 	if (node->hasSubNodes()) {
 		if (node->nwNode != NULL && node->nwNode->testInRange(x, y, range))

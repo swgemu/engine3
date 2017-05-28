@@ -271,7 +271,7 @@ public:
 	 */
 	//inline Matrix4 toMatrix() { }
 
-	Matrix3 toMatrix3() {
+	Matrix3 toMatrix3() const {
 		/*float len = length();
 
 			if (len > 0.9999 && len < 1.0001)
@@ -327,7 +327,7 @@ public:
 		return (getRadians() / 6.283f) * 360.f;
 	}
 
-	inline bool isIdentity() {
+	inline bool isIdentity() const {
 		return (*this == IDENTITY);
 	}
 

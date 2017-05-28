@@ -150,7 +150,7 @@ namespace sys {
 		inline void insertCString(const char* buf, bool nullTerminator = false) {
 			char character;
 
-			while ((character = *buf)) {
+			while ((character = *(buf++))) {
 				insertByte(character);
 			}
 

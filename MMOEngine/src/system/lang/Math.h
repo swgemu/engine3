@@ -37,7 +37,7 @@ namespace sys {
 		}
 
 		template<typename T>
-		static T sqr(const T& val) {
+		static inline T sqr(const T& val) {
 			return val * val;
 		}
 
@@ -56,27 +56,27 @@ namespace sys {
 			return float(floor(num * power + .05f) / power);
 		}
 
-		static double acos(double arg) {
+		static inline double acos(double arg) {
 			return ::acos(arg);
 		}
 
-		static double sin(double arg) {
+		static inline double sin(double arg) {
 			return ::sin(arg);
 		}
 
-		static double cos(double arg) {
+		static inline double cos(double arg) {
 			return ::cos(arg);
 		}
 
-		static double deg2rad(double degrees) {
+		static inline double deg2rad(double degrees) {
 			return degrees * DEG2RAD;
 		}
 
-		static double rad2deg(double radians) {
+		static inline double rad2deg(double radians) {
 			return radians * RAD2DEG;
 		}
 
-		static double ln(float value) {
+		static inline double ln(float value) {
 			return (log10(value) / log10(E));
 		}
 	};
