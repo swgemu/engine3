@@ -34,6 +34,8 @@
 #define MIN_UPDATE_THREADS 4
 #define INITIAL_OBJECT_ID 0x1000000 // reserving first ids for snapshot objects
 
+int DOBObjectManager::UPDATETODATABASETIME = 300000;
+
 DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	nextObjectID = INITIAL_OBJECT_ID;
 

@@ -170,27 +170,27 @@ namespace sys {
 
 		};
 
-		class VariableName : public Variable {
+		class VariableName {
 			const char* name;
 			uint8 version;
 
 			uint8 type;
 
 		public:
-			VariableName() : Variable() {
+			VariableName() {
 				version = 0;
 				type = 0;
 				name = NULL;
 			}
 
-			VariableName(const char* name, int version) : Variable() {
+			VariableName(const char* name, int version) {
 				VariableName::name = name;
 				VariableName::version = version;
 
 				type = 0;
 			}
 
-			VariableName(const VariableName& v) : Variable() {
+			VariableName(const VariableName& v) {
 				name = v.name;
 				version = v.version;
 				type = v.type;

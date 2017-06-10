@@ -38,6 +38,10 @@ namespace sys {
 			return message;
 		}
 
+		inline const char* what() const {
+			return message.toCharArray();
+		}
+
 	};
 
   } // namespace lang
