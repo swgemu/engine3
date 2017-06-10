@@ -163,6 +163,13 @@ namespace sys {
 			return *this;
 		}
 
+		Time& operator=(uint32 seconds) {
+			ts.tv_sec = seconds;
+			ts.tv_nsec = 0;
+
+			return *this;
+		}
+
 		int compareTo(Time& t) {
 			if (ts.tv_sec < t.ts.tv_sec)
 				return 1;
