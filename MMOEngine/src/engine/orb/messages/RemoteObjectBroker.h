@@ -17,7 +17,7 @@ namespace engine {
 
     class DOBServiceClient;
 
-	class RemoteObjectBroker : public ObjectBroker {
+	class RemoteObjectBroker : public ObjectBroker, public Mutex {
 		Reference<DOBServiceClient*> brokerClient;
 		SynchronizedSortedVector<DistributedObject*> deployedObjects;
 

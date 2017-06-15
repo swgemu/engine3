@@ -140,6 +140,8 @@ void DistributedMethod::execute(bool asyncMethod) {
 		throw Exception("cannot do RPC beacuase remote agent died");
 	}
 
+	Locker locker(broker);
+
 	broker->invokeMethod(*this, asyncMethod);
 
 	if (!asyncMethod) {

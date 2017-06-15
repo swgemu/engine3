@@ -70,7 +70,7 @@ void StackTrace::print() const {
 	#endif
 }
 
-void StackTrace::getStackTrace(String& trace) {
+void StackTrace::getStackTrace(String& trace) const {
 	StringBuffer out;
 
 	#ifdef PLATFORM_UNIX
@@ -86,7 +86,7 @@ void StackTrace::printStackTrace() {
 	trace.print();
 }
 
-bool StackTrace::equals(const StackTrace& trace) {
+bool StackTrace::equals(const StackTrace& trace) const {
 	if (count != trace.count)
 		return false;
 

@@ -42,11 +42,11 @@ namespace sys {
 
 		void print() const ;
 
-		void getStackTrace(String& trace);
+		void getStackTrace(String& trace) const;
 
 		static void printStackTrace();
 
-		bool equals(const StackTrace& trace);
+		bool equals(const StackTrace& trace) const;
 
 		static void setBinaryName(const String& name) {
 			binaryName = name;

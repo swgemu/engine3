@@ -32,6 +32,8 @@ void RemoteObjectBroker::registerClass(const String& name, DistributedObjectClas
 }
 
 void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
+	Locker locker(this);
+
 	const String& className = obj->_getClassName();
 	assert(!className.isEmpty());
 
@@ -47,6 +49,8 @@ void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 }
 
 void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
+	Locker locker(this);
+
 	const String& className = obj->_getClassName();
 	assert(!className.isEmpty());
 
@@ -62,6 +66,8 @@ void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) 
 }
 
 DistributedObjectStub* RemoteObjectBroker::undeploy(const String& name) {
+	Locker locker(this);
+
 	UndeployObjectMessage undeployMessage(name);
 
 	if (!brokerClient->sendAndAcceptReply(&undeployMessage))
@@ -79,6 +85,8 @@ void RemoteObjectBroker::removeDeployedObject(DistributedObject* obj) {
 }
 
 Reference<DistributedObject*> RemoteObjectBroker::lookUp(const String& name) {
+	Locker locker(this);
+
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
 	LookUpObjectMessage lookupMessage(name);
@@ -102,6 +110,8 @@ Reference<DistributedObject*> RemoteObjectBroker::lookUp(const String& name) {
 }
 
 void RemoteObjectBroker::requestServant(DistributedObjectStub* obj) {
+	Locker locker(this);
+
 	RequestServantMessage message(obj->_getObjectID());
 
 	if (!brokerClient->sendAndAcceptReply(&message))
@@ -110,6 +120,8 @@ void RemoteObjectBroker::requestServant(DistributedObjectStub* obj) {
 
 Reference<DistributedObject*> RemoteObjectBroker::lookUp(uint64 objid) {
 	DistributedObjectBroker* broker = DistributedObjectBroker::instance();
+
+	Locker locker(this);
 
 	LookUpObjectByIDMessage lookupMessage(objid);
 
@@ -162,6 +174,8 @@ bool RemoteObjectBroker::destroyObject(DistributedObjectStub* obj) {
 }*/
 
 uint64 RemoteObjectBroker::getNextFreeObjectID() {
+	Locker locker(this);
+
 	GetNextFreeObjectIDMessage objectIDMessage;
 
 	if (!brokerClient->sendAndAcceptReply(&objectIDMessage))
@@ -175,6 +189,8 @@ uint64 RemoteObjectBroker::getNextFreeObjectID() {
 }*/
 
 void RemoteObjectBroker::invokeMethod(DistributedMethod& method, bool asyncMethod) {
+	Locker locker(this);
+
 	DOBMessage* invocationMessage = method.getInvocationMessage();
 
 	if (!asyncMethod) {
