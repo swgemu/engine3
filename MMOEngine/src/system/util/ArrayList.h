@@ -73,6 +73,14 @@ namespace sys {
 
        void addAll(const ArrayList<E>& array);
 
+#ifdef CXX11_COMPILER
+	   void addAll(ArrayList<E>&& array) {
+		   moveAll(array);
+	   }
+
+	   void moveAll(ArrayList<E>& array);
+#endif
+
        bool contains(const E& element) const;
 
        void insertElementAt(const E& element, int index);
@@ -425,6 +433,22 @@ namespace sys {
 		   elementCount += array.size();
 	   }
    }
+#ifdef CXX11_COMPILER
+	template<class E> void ArrayList<E>::moveAll(ArrayList<E>& array) {
+		if (TypeInfo<E>::needConstructor) {
+			for (int i = 0; i < array.size(); ++i) {
+				E& element = array.getUnsafe(i);
+
+				emplace(std::move(element));
+			}
+		} else {
+			ensureCapacity(elementCount + array.size());
+
+			memcpy(elementData + elementCount, array.elementData, array.size() * sizeof(E));
+			elementCount += array.size();
+		}
+	}
+#endif
 
    template<class E> bool ArrayList<E>::contains(const E& element) const {
 	   for (int i = 0; i < size(); ++i) {
