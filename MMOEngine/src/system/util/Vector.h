@@ -38,6 +38,16 @@ namespace sys {
        Vector<E>& operator=(Vector<E>&& vector);
 #endif
 
+	   void addAll(const Vector<E>& array) {
+		   ArrayList<E>::addAll(array);
+	   }
+
+#ifdef CXX11_COMPILER
+	   void addAll(Vector<E>&& array) {
+		   ArrayList<E>::moveAll(array);
+	   }
+#endif
+
        virtual ~Vector();
 
        void clone(Vector<E>& vector) const ;
