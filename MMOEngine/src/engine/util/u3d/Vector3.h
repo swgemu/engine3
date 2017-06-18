@@ -161,7 +161,7 @@ namespace engine {
 		/**
 		 * Returns the string representation of the vector in (x, y, z) format.
 		 */
-		inline String toString() {
+		inline String toString() const {
 			StringBuffer sb;
 			sb <<"(x:" << values[0] << ", y:" << values[1] << ", z:" << values[2] << ")";
 			return sb.toString();
