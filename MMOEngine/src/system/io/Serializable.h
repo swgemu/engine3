@@ -95,6 +95,10 @@ namespace sys {
 				return _className;
 			}
 
+			inline const String& _getClassName() const {
+				return _className;
+			}
+
 			static int getObjectData(const String& str, String& obj);
 
 			static int serializeAtomicType(void* address, int type, String& value);
@@ -215,7 +219,7 @@ namespace sys {
 				return strcmp(name, str.name);
 			}
 
-			inline const char* getName() {
+			inline const char* getName() const {
 				return name;
 			}
 
@@ -231,11 +235,11 @@ namespace sys {
 				type = (uint8) typ;
 			}
 
-			inline int getVersion() {
+			inline int getVersion() const {
 				return (int) version;
 			}
 
-			inline int getType() {
+			inline int getType() const {
 				return (int) type;
 			}
 
