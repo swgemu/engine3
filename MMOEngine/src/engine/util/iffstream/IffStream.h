@@ -65,6 +65,10 @@ namespace engine {
 			 return fileName;
 		 }
 
+		 inline const String& getFileName() const {
+			 return fileName;
+		 }
+
 		 uint32 getFormType();
 		 uint32 getNextFormType();
 

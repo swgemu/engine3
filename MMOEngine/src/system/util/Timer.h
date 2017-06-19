@@ -40,22 +40,22 @@ namespace sys {
     		return elapsedTime;
     	}
 
-    	uint64 elapsed() {
+    	uint64 elapsed() const {
     		if (startTime != 0)
     			return Time::currentNanoTime(clockType) - startTime;
     		else
     			return 0;
     	}
 
-    	uint64 getStartTime() {
+    	uint64 getStartTime() const {
     		return startTime;
     	}
 
-    	uint64 getElapsedTime() {
+    	uint64 getElapsedTime() const {
     		return elapsedTime;
     	}
 
-    	uint64 getTotalTime() {
+    	uint64 getTotalTime() const {
     		return totalTime;
     	}
     };
