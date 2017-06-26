@@ -87,9 +87,11 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 	} else {
 		//traces.put(obj->_getObjectID(), new StackTrace());
 
-		assert(localNamingDirectory.put(objectName, obj) == NULL);
+		bool res = localNamingDirectory.put(objectName, obj) == NULL;
+		assert(res);
 
-		assert(localObjectDirectory.put(obj->_getObjectID(), obj) == NULL);
+		bool res2 = localObjectDirectory.put(obj->_getObjectID(), obj) == NULL;
+		assert(res2);
 
 		info("object " + objectName + " deployed");
 

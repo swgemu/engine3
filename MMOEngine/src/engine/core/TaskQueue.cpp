@@ -147,7 +147,7 @@ Task* TaskQueue::pop() {
 	}
 
 	Task* task = remove(0);
-	task->setTaskScheduler(NULL);
+	task->clearTaskScheduler();
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;
@@ -171,7 +171,7 @@ void TaskQueue::flush() {
 
 	while (!isEmpty()) {
 		Task* task = remove(0);
-		task->setTaskScheduler(NULL);
+		task->clearTaskScheduler();
 		task->release();
 	}
 
@@ -179,11 +179,11 @@ void TaskQueue::flush() {
 }
 
 int TaskQueue::size() {
-	condMutex->lock();
+	//condMutex->lock();
 
 	int size = LinkedList<Task*>::size();
 
-	condMutex->unlock();
+	//condMutex->unlock();
 
 	return size;
 }
