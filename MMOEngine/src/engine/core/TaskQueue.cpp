@@ -147,7 +147,7 @@ Task* TaskQueue::pop() {
 	}
 
 	Task* task = remove(0);
-	task->clearTaskScheduler();
+	task->setTaskScheduler(NULL);
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;
