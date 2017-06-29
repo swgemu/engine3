@@ -132,7 +132,7 @@ namespace sys {
 
 	    Entry<K, V>* getEntry(const K& key) const;
 
-	    bool containsKey(const K& key);
+	    bool containsKey(const K& key) const;
 
 	    void copyFrom(HashTable<K, V>* htable);
 
@@ -160,11 +160,11 @@ namespace sys {
 	   	void rehash();
 
 	public:
-	 	inline int size() {
+	 	inline int size() const {
 			return count;
 	    }
 
-	    inline bool isEmpty() {
+	    inline bool isEmpty() const {
 			return count == 0;
 	    }
 
@@ -172,7 +172,7 @@ namespace sys {
 	    	nullValue = val;
 	    }
 
-	    inline V& getNullValue() {
+	    inline const V& getNullValue() const {
 	    	return nullValue;
 	    }
 
@@ -453,7 +453,7 @@ namespace sys {
 		return nullValue;
 	}
 
-	template<class K, class V> bool HashTable<K,V>::containsKey(const K& key) {
+	template<class K, class V> bool HashTable<K,V>::containsKey(const K& key) const {
 		if (!count)
 			return false;
 

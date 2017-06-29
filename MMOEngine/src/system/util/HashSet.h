@@ -45,7 +45,7 @@ namespace sys {
 			HashTable<E, uint8>::put(obj, PRESENT);
 		}
 		
-		bool contains(const E& obj) {
+		bool contains(const E& obj) const {
 			return HashTable<E, uint8>::containsKey(obj);
 		}
 		
