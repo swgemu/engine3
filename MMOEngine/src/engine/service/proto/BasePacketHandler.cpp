@@ -138,7 +138,10 @@ void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
 	uint32 cid = SessionIDRequestMessage::parse(pack);
 
 	Reference<Task*> task = new SessionStartTask(client, cid);
-	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
 #else
 
     SessionIDRequestMessage::parse(pack, client);
@@ -162,7 +165,10 @@ void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
 
 #ifdef MULTI_THREADED_BASE_PACKET_HANDLER
     Reference<Task*> task = new SessionResponseTask(client, seed);
-    Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
 #else
     client->notifyReceivedSeed(seed);
 #endif
@@ -173,7 +179,10 @@ void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
 
 #ifdef MULTI_THREADED_BASE_PACKET_HANDLER
 	Reference<Task*> task = new DisconnectTask(client);
-	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
 #else
 	client->setClientDisconnected();
 	client->disconnect();
@@ -185,7 +194,10 @@ void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 
 #ifdef MULTI_THREADED_BASE_PACKET_HANDLER
 	Reference<Task*> task = new NetStatusResponseTask(client, tick);
-	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
 #else
 	if (client->updateNetStatus(tick)) {
 
@@ -200,7 +212,10 @@ void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 
 #ifdef MULTI_THREADED_BASE_PACKET_HANDLER
 	Reference<Task*> task = new OutOfOrderTask(client, seq);
-	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
 #else
 	client->resendPackets(seq);
 #endif
@@ -215,7 +230,10 @@ void BasePacketHandler::doAcknowledge(BaseClient* client, Packet* pack) {
 
 #ifdef MULTI_THREADED_BASE_PACKET_HANDLER
 	Reference<Task*> task = new AcknowledgeTask(client, seq);
-	Core::getTaskManager()->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
 #else
 	client->acknowledgeServerPackets(seq);
 #endif

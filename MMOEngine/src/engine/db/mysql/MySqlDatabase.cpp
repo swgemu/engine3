@@ -162,10 +162,13 @@ void MySqlDatabase::doExecuteStatement(const String& statement) {
 }
 
 void MySqlDatabase::executeStatement(const char* statement) {
-	Task* task = new MysqlTask(this, statement);
+	Reference<Task*> task = new MysqlTask(this, statement);
 	task->setCustomTaskQueue(mysqlThreadName);
 
-	Core::getTaskManager()->executeTask(task);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(task);
 }
 
 void MySqlDatabase::executeStatement(const String& statement) {
@@ -177,10 +180,13 @@ void MySqlDatabase::executeStatement(const StringBuffer& statement) {
 }
 
 void MySqlDatabase::executeQuery(const char* query, std::function<void(engine::db::ResultSet*)>&& function) {
-	MysqlLambda* lambda = new MysqlLambda(this, query, std::move(function));
+	Reference<MysqlLambda*> lambda = new MysqlLambda(this, query, std::move(function));
 	lambda->setCustomTaskQueue(mysqlThreadName);
 
-	Core::getTaskManager()->executeTask(lambda);
+	auto manager = Core::getTaskManager();
+
+	if (manager != nullptr)
+		manager->executeTask(lambda);
 }
 
 engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
