@@ -101,7 +101,7 @@ namespace sys {
 	protected:
 		//String lockName;
 
-		Thread* threadLockHolder;
+		volatile Thread* threadLockHolder;
 		AtomicInteger readLockCount;
 
 #ifdef TRACE_LOCKS
@@ -167,6 +167,8 @@ namespace sys {
 				refreshTrace();
 		#endif
 
+			COMPILER_BARRIER();
+
 			threadLockHolder = Thread::getCurrentThread();
 		}
 
@@ -185,10 +187,14 @@ namespace sys {
 				refreshTrace();
 		#endif
 
+			COMPILER_BARRIER();
+
 			threadLockHolder = Thread::getCurrentThread();
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
+			COMPILER_BARRIER();
+
 			threadLockHolder = NULL;
 
 		#ifdef TRACE_LOCKS
@@ -263,6 +269,8 @@ namespace sys {
 
 	public:
 		inline bool isLockedByCurrentThread() const {
+			COMPILER_BARRIER();
+
 			return threadLockHolder == Thread::getCurrentThread();
 		}
 
@@ -271,7 +279,9 @@ namespace sys {
 		}
 
 		inline Thread* getLockHolderThread() {
-			return threadLockHolder;
+			COMPILER_BARRIER();
+
+			return (Thread*) threadLockHolder;
 		}
 
 		// setters
