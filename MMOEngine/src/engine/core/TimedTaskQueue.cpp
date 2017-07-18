@@ -27,12 +27,8 @@ TimedTaskQueue::TimedTaskQueue() : PriorityQueue(), Condition(), Logger("TaskQue
 TimedTaskQueue::~TimedTaskQueue() {
 	delete condMutex;
 
-	while (size()) {
-		Task* task = (Task*) poll();
-
-		if (task) {
-			task->release();
-		}
+	while (Task* task = (Task*) poll()) {
+		task->release();
 	}
 }
 
