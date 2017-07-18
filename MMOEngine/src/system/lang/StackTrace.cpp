@@ -61,7 +61,8 @@ void StackTrace::print() const {
 			#endif
 		}
 		#ifdef LINE_TRACING
-			system(command.toString().toCharArray());
+			auto res = system(command.toString().toCharArray());
+
 		#else
 			free(tracedSymbols);
 		#endif

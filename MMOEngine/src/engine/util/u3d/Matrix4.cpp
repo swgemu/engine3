@@ -70,9 +70,9 @@ Matrix4 Matrix4::operator*(const Matrix4& mat) const {
 }
 
 Vector3 Matrix4::operator*(const Vector3& vec) const {
-	float x = vec.getX();
-	float y = vec.getY();
-	float z = vec.getZ();
+	const float x = vec.getX();
+	const float y = vec.getY();
+	const float z = vec.getZ();
 
 	return Vector3(x * matrix[0][0] + y * matrix[1][0] + z * matrix[2][0] + matrix[3][0],
 	               x * matrix[0][1] + y * matrix[1][1] + z * matrix[2][1] + matrix[3][1],

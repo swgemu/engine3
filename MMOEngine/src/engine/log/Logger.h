@@ -6,6 +6,26 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
+#ifdef NDEBUG
+#define DISABLE_DEBUG_LOG
+#endif
+
+#ifdef NDEBUG
+#define E3_INFO(x)
+#define E3_DEBUG(x)
+#define E3_WARNING(x)
+#define E3_ERROR(x) error(x)
+#define E3_LOG(x) log(x)
+#define E3_FATAL(x) fatal(x)
+#else
+#define E3_INFO(x) info(x)
+#define E3_DEBUG(x) debug(x)
+#define E3_WARNING(x) warning(x)
+#define E3_ERROR(x) error(x)
+#define E3_LOG(x) log(x)
+#define E3_FATAL(x) fatal(x)
+#endif
+
 #include "system/lang.h"
 
 namespace engine {
@@ -65,9 +85,20 @@ namespace engine {
 		void fatal(const String& msg) const;
 		void fatal(const StringBuffer& msg) const;
 
+#ifdef DISABLE_DEBUG_LOGLog
+		void debug(const char* msg) const {
+		}
+
+		void debug(const String& msg) const {
+		}
+
+		void debug(const StringBuffer& msg) const {
+		}
+#else
 		void debug(const char* msg) const;
 		void debug(const String& msg) const;
 		void debug(const StringBuffer& msg) const;
+#endif
 
 		void warning(const char* msg) const;
 		void warning(const String& msg) const;

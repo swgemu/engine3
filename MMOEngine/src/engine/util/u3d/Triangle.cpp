@@ -262,7 +262,7 @@ bool Triangle::intersects(const Ray& ray, float maxDistance, float& intersection
 	Vector3 edge2 = vert2 - vert0;
 
 	// Begin calculating determinant - also used to calculate U parameter
-	Vector3 rayDirectionNormalized = ray.direction;
+	const Vector3& rayDirectionNormalized = ray.direction;
 	//rayDirectionNormalized.normalize();
 	Vector3 pvec = rayDirectionNormalized.crossProduct(edge2);
 
