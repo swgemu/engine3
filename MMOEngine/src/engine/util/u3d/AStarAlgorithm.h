@@ -23,7 +23,7 @@ namespace engine {
 
 		Node* node;
 
-		Reference<AStarNode<Node, IDType>* > cameFrom;
+		AStarNode<Node, IDType>* cameFrom;
 	public:
 		AStarNode(Node* node, float g, float heuristic) {
 			AStarNode::g = g;

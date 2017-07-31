@@ -135,7 +135,7 @@ namespace sys {
 		}
 
 		inline V get() const {
-			//WMB();
+			COMPILER_BARRIER();
 
 			return value;
 		}
@@ -159,7 +159,7 @@ namespace sys {
 		}
 
 		inline bool operator== (const V val) const {
-			WMB();
+			COMPILER_BARRIER();
 
 			return val == value;
 		}

@@ -14,7 +14,7 @@ namespace sys {
 	
 	template<class O> class ListEntry {
 		O obj;  
-		AtomicReference<ListEntry*> next;
+		ListEntry* next;
 	
 	public:	
 		ListEntry() {
@@ -29,9 +29,10 @@ namespace sys {
 	};
 	
 	template<class O> class LinkedList {
-		AtomicReference<ListEntry<O>*> head, current;
+		ListEntry<O>* head;
+		ListEntry<O>* current;
 		
-		AtomicInteger count;
+		int count;
 	
 	public:	
 		LinkedList();
@@ -40,7 +41,7 @@ namespace sys {
 		virtual void add(O& obj);
 		virtual void add(int index, O& obj);
 		
-		O& get(int index);
+		O& get(int index) const;
 		
 		O remove(int index);
 
@@ -48,11 +49,11 @@ namespace sys {
 			return LinkedListIterator<O>(this);
 		}
 
-		inline bool isEmpty() {
+		inline bool isEmpty() const {
 			return count == 0;
 		}
 
-		inline int size() {
+		inline int size() const {
 			return count;
 		}
 		
@@ -111,7 +112,7 @@ namespace sys {
 
 		current = e;
 
-		count.increment();
+		count++;
 	}
 	
 	template<class O> void LinkedList<O>::add(int index, O& obj) {
@@ -140,14 +141,14 @@ namespace sys {
 		/*O obj = o->obj;
 		delete o;*/
 
-		count.increment();
+		count++;
 	}
 
-	template<class O> O& LinkedList<O>::get(int index) {
+	template<class O> O& LinkedList<O>::get(int index) const {
 		if (count < index + 1 || index < 0) 
 			throw ArrayIndexOutOfBoundsException(index);
 		
-		ListEntry<O>* e = head;
+		const ListEntry<O>* e = head;
 		
 		for (int i = 0; i < index + 1; ++i)
 			e = e->next;
@@ -172,7 +173,7 @@ namespace sys {
 			O obj = o->obj;
 			delete o;
 
-			count.decrement();
+			--count;
 
 			return obj;
 		}

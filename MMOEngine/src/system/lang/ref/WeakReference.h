@@ -203,6 +203,8 @@ namespace sys {
 
 				old->increaseWeakCount();
 
+				COMPILER_BARRIER();
+
 				if (old == weakReference.get())
 					return old;
 				else

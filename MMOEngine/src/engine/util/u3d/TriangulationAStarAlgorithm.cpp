@@ -11,18 +11,19 @@
 #include "Segment.h"
 
 Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint, const Vector3& goalPoint, TriangleNode* source, TriangleNode* target) {
-	HashTable<uint32, Reference<AStarNode<TriangleNode, uint32>* > > visited(100);
+	VectorMap<uint32, AStarNode<TriangleNode, uint32>* > visited(100, 10);
 	visited.setNullValue(NULL);
+	visited.setNoDuplicateInsertPlan();
 
 	PriorityQueue priorityQueue;
 
-	Reference<AStarNode<TriangleNode, uint32>* > start = new AStarNode<TriangleNode, uint32>(source, 0, startPoint.distanceTo(goalPoint));
+	AStarNode<TriangleNode, uint32>* start = new AStarNode<TriangleNode, uint32>(source, 0, startPoint.distanceTo(goalPoint));
 	priorityQueue.add(start);
 
-	Reference<AStarNode<TriangleNode, uint32>* > goal = NULL;
+	AStarNode<TriangleNode, uint32>* goal = NULL;
 
 	while (!priorityQueue.isEmpty() && goal == NULL) {
-		Reference<AStarNode<TriangleNode, uint32>* > x = static_cast<AStarNode<TriangleNode, uint32>*>(const_cast<PriorityQueueEntry*>(priorityQueue.poll()));
+		AStarNode<TriangleNode, uint32>* x = static_cast<AStarNode<TriangleNode, uint32>*>(const_cast<PriorityQueueEntry*>(priorityQueue.poll()));
 
 		if (target == x->getNode()) {
 			goal = x;
@@ -32,7 +33,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 			for (int i = 0; i < neighbors->size(); ++i) {
 				TriangleNode* neighbor = neighbors->getUnsafe(i);
 
-				if (visited.containsKey(neighbor->getID()))
+				if (visited.contains(neighbor->getID()))
 					continue;
 
 				Triangle* triangleA = x->getNode();
@@ -101,8 +102,16 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 		}
 	}
 
-	if (goal == NULL)
+	if (goal == NULL) {
+		//cleanup all nodes
+		visited.put(start->getID(), start);
+
+		for (auto& val : visited) {
+			delete val.getValue();
+		}
+
 		return NULL;
+	}
 
 	Vector<Triangle*>* path = new Vector<Triangle*>();
 	path->add(goal->getNode());
@@ -112,6 +121,14 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 	while (parent != NULL) {
 		path->insertElementAt(parent->getNode(), 0);
 		parent = parent->getCameFrom();
+	}
+
+	//cleanup all nodes
+	visited.put(start->getID(), start);
+	visited.put(goal->getID(), goal);
+
+	for (auto& val : visited) {
+		delete val.getValue();
 	}
 
 	return path;
