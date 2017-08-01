@@ -93,12 +93,12 @@ public:
 
 	// Approximative test if a circle with center in x,y and
 	// given radius crosses this node.
-	bool testInRange(float x, float y, float range);
+	bool testInRange(float x, float y, float range) const;
 
 	// Check if this node makes any sense to exist
 	void check();
 
-	bool validateNode() {
+	bool validateNode() const {
 		if (minX > maxX || minY > maxY/* || objects.size() > 1000*/)
 			return false;
 		else
@@ -106,12 +106,12 @@ public:
 	}
 
 	// Check if this node has any associated objects
-	inline bool isEmpty() {
+	inline bool isEmpty() const {
 		return objects.isEmpty();
 	}
 
 	// Check if this node has children nodes
-	inline bool hasSubNodes() {
+	inline bool hasSubNodes() const {
 		return nwNode != NULL || neNode != NULL || swNode != NULL || seNode
 				!= NULL;
 	}
