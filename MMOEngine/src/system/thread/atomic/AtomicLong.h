@@ -88,7 +88,7 @@ namespace sys {
 		}
 
 		inline uint64 get() const {
-			WMB();
+			COMPILER_BARRIER();
 
 			return value;
 		}
@@ -98,28 +98,28 @@ namespace sys {
 		}
 
 		operator uint64() const {
-			WMB();
+			COMPILER_BARRIER();
 
 			return value;
 		}
 
 		inline bool operator== (const uint64 val) const {
-			WMB();
+			COMPILER_BARRIER();
 
 			return val == value;
 		}
 		
 		bool toBinaryStream(sys::io::ObjectOutputStream* stream) {
-		        stream->writeLong(value);
+		    stream->writeLong(value);
 		        
-		        return true;
+		    return true;
 		}
 		
 		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream) {
-		        *this = stream->readLong();
+		    *this = stream->readLong();
 		        
-		        return true;
-                }
+			return true;
+		}
 	};
 
 	} // namespace atomic

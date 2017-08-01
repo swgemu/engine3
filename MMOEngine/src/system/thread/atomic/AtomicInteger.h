@@ -155,18 +155,18 @@ namespace sys {
 		}
 
 		inline bool compareAndSet(uint32 oldval, uint32 newval) volatile {
-			//WMB();
-
 			return compareAndSet(&value, oldval, newval);
 		}
 
 		inline uint32 get() const volatile {
-			//WMB();
+			COMPILER_BARRIER();
 
 			return value;
 		}
 
 		void set(uint32 val) {
+			COMPILER_BARRIER();
+
 			value = val;
 		}
 
@@ -175,13 +175,13 @@ namespace sys {
 		}
 
 		inline bool operator== (const int val) const {
-			WMB();
+			COMPILER_BARRIER();
 
 			return (uint32)val == value;
 		}
 
 		inline operator uint32() const {
-			//WMB();
+			COMPILER_BARRIER();
 
 			return value;
 		}

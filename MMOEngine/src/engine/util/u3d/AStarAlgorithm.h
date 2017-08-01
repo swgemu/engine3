@@ -56,27 +56,27 @@ namespace engine {
 			heuristic = h;
 		}
 
-		inline Node* getNode() {
+		inline Node* getNode() const {
 			return node;
 		}
 
-		inline IDType getID() {
+		inline IDType getID() const {
 			return node->getID();
 		}
 
-		inline AStarNode<Node, IDType>* getCameFrom() {
+		inline AStarNode<Node, IDType>* getCameFrom() const {
 			return cameFrom;
 		}
 
-		inline float getF() {
+		inline float getF() const {
 			return g + heuristic;
 		}
 
-		inline float getG() {
+		inline float getG() const {
 			return g;
 		}
 
-		inline float getHeuristic() {
+		inline float getHeuristic() const {
 			return heuristic;
 		}
 

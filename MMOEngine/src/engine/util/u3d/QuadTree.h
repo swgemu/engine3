@@ -51,7 +51,7 @@ namespace engine {
 	
 		static bool logTree;
 
-		ReadWriteLock mutex;
+		mutable ReadWriteLock mutex;
 
 	public:
 		QuadTree();
@@ -117,11 +117,11 @@ namespace engine {
 		/**
 		 * Searches for entries that contain x, y point
 		 */
-		int inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
-		int inRange(float x, float y, SortedVector<QuadTreeEntry*>& objects);
+		int inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const;
+		int inRange(float x, float y, SortedVector<QuadTreeEntry*>& objects) const;
 
-		int inRange(float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
-		int inRange(float x, float y, float range, SortedVector<QuadTreeEntry*>& objects);
+		int inRange(float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const;
+		int inRange(float x, float y, float range, SortedVector<QuadTreeEntry*>& objects) const;
 
 	 	/**
 		 * Update object's position in the quad tree.
@@ -142,10 +142,10 @@ namespace engine {
 		bool _update(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj);
 
 		void _inRange(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range);
-		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
-		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry* >& objects);
-		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects);
-		int _inRange(Reference<QuadTreeNode*>& node, float x, float y, SortedVector<QuadTreeEntry*>& objects);
+		int _inRange(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const;
+		int _inRange(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<QuadTreeEntry* >& objects) const;
+		int _inRange(const Reference<QuadTreeNode*>& node, float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const;
+		int _inRange(const Reference<QuadTreeNode*>& node, float x, float y, SortedVector<QuadTreeEntry*>& objects) const;
 
 		void copyObjects(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> >& objects);
 		void copyObjects(const Reference<QuadTreeNode*>& node, float x, float y, float range, SortedVector<engine::util::u3d::QuadTreeEntry*>& objects);
