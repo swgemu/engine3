@@ -102,6 +102,8 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 		}
 	}
 
+	priorityQueue.clear();
+
 	if (goal == NULL) {
 		//cleanup all nodes
 		visited.put(start->getID(), start);

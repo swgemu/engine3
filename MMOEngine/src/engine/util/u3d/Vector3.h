@@ -301,11 +301,11 @@ namespace engine {
 
 		//Boolean operators
 		inline bool operator == (const Vector3& v) const {
-			return memcmp(values, v.values, sizeof(values)) == 0;
+			return values[0] == v.values[0] && values[1] == v.values[1] && values[2] == v.values[2];
 		}
 
 		inline bool operator != (const Vector3& v) const {
-			return memcmp(values, v.values, sizeof(values)) != 0;
+			return values[0] != v.values[0] || values[1] != v.values[1] || values[2] != v.values[2];
 		}
 
 		inline bool operator < (const Vector3& v) const {

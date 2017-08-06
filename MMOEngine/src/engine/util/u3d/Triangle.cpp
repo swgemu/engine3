@@ -353,6 +353,9 @@ const Vector3& Triangle::getLeftSharedVertex(const Triangle& tri) const {
 		}
 	}
 
+	if (firstCommon == -1 || secondCommon == -1)
+		throw Exception("Couldnt find shared vertex!");
+
 	if (secondCommon == 1)
 		apexID = 2;
 	else {
@@ -395,6 +398,9 @@ const Vector3& Triangle::getRightSharedVertex(const Triangle& tri) const {
 			}
 		}
 	}
+
+	if (firstCommon == -1 || secondCommon == -1)
+		throw Exception("Couldnt find shared vertex!");
 
 	if (secondCommon == 1)
 		apexID = 2;

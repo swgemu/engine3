@@ -83,9 +83,9 @@ namespace sys {
 
        bool contains(const E& element) const;
 
-       void insertElementAt(const E& element, int index);
+       void insertElementAt(const E& element, uint32 index);
 #ifdef CXX11_COMPILER
-	   void insertElementAt(E&& element, int index);
+	   void insertElementAt(E&& element, uint32 index);
 #endif
 
        E& get(int index) const;
@@ -99,7 +99,7 @@ namespace sys {
 
        bool removeElement(const E& element);
 
-       void removeElementAt(int index);
+       void removeElementAt(uint32 index);
 
        virtual void removeRange(int fromIndex, int toIndex);
 
@@ -109,9 +109,9 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
 	   E set(int index, E&& element);
-	   void setElementAt(int index, E&& element);
+	   void setElementAt(uint32 index, E&& element);
 #endif
-       void setElementAt(int index, const E& element);
+       void setElementAt(uint32 index, const E& element);
 
        void clone(ArrayList<E>& array) const ;
 
@@ -460,8 +460,8 @@ namespace sys {
 	   return false;
    }
 
-   template<class E> void ArrayList<E>::insertElementAt(const E& element, int index) {
-       if (index > elementCount || index < 0)
+   template<class E> void ArrayList<E>::insertElementAt(const E& element, uint32 index) {
+       if (index > (uint32)elementCount)
            throw ArrayIndexOutOfBoundsException(index);
 
        ensureCapacity(elementCount + 1);
@@ -476,8 +476,8 @@ namespace sys {
        elementCount++;
    }
 #ifdef CXX11_COMPILER
-	template<class E> void ArrayList<E>::insertElementAt(E&& element, int index) {
-		if (index > elementCount || index < 0)
+	template<class E> void ArrayList<E>::insertElementAt(E&& element, uint32 index) {
+		if (index > (uint32)elementCount)
 			throw ArrayIndexOutOfBoundsException(index);
 
 		ensureCapacity(elementCount + 1);
@@ -547,8 +547,8 @@ namespace sys {
        return false;
    }
 
-   template<class E> void ArrayList<E>::removeElementAt(int index) {
-       if (index >= elementCount || index < 0)
+   template<class E> void ArrayList<E>::removeElementAt(uint32 index) {
+       if (index >= (uint32)elementCount)
            throw ArrayIndexOutOfBoundsException(index);
 
        destroyElementAt(index);
@@ -589,16 +589,16 @@ namespace sys {
 		return oldValue;
 	}
 
-	template<class E> void ArrayList<E>::setElementAt(int index, E&& element) {
-		if (index >= elementCount || index < 0)
+	template<class E> void ArrayList<E>::setElementAt(uint32 index, E&& element) {
+		if (index >= (uint32)elementCount)
 			throw ArrayIndexOutOfBoundsException(index);
 
 		destroyElementAt(index);
 		createElementAt(std::move(element), index);
 	}
 #endif
-   template<class E> void ArrayList<E>::setElementAt(int index, const E& element) {
-       if (index >= elementCount || index < 0)
+   template<class E> void ArrayList<E>::setElementAt(uint32 index, const E& element) {
+       if (index >= (uint32)elementCount)
            throw ArrayIndexOutOfBoundsException(index);
 
        destroyElementAt(index);
