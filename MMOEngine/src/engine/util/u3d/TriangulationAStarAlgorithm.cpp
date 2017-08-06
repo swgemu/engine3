@@ -102,7 +102,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 		}
 	}
 
-	priorityQueue.clear();
+	priorityQueue.clearWithoutTraverse();
 
 	if (goal == NULL) {
 		//cleanup all nodes

@@ -116,6 +116,11 @@ void PriorityQueue::clear() {
 	count = 0;
 }
 
+void PriorityQueue::clearWithoutTraverse() {
+	root = NULL;
+	count = 0;
+}
+
 void PriorityQueue::merge(PriorityQueue& heap) {
 	if (this == &heap)
 		return;

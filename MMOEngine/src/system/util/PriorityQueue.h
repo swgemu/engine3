@@ -85,6 +85,7 @@ namespace sys {
 		bool remove(PriorityQueueEntry* node);
 
 		void clear();
+		void clearWithoutTraverse();
 
 		inline bool isEmpty() const {
 			return root == NULL;
