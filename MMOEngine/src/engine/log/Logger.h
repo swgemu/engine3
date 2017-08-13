@@ -85,7 +85,7 @@ namespace engine {
 		void fatal(const String& msg) const;
 		void fatal(const StringBuffer& msg) const;
 
-#ifdef DISABLE_DEBUG_LOGLog
+#ifdef DISABLE_DEBUG_LOG
 		void debug(const char* msg) const {
 		}
 
