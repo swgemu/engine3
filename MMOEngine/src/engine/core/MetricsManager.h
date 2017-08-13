@@ -31,7 +31,7 @@ namespace engine {
 	};
 
 	namespace core {
-		class MetricsManager : public Singleton<MetricsManager>, public Object {
+		class MetricsManager : public Singleton<MetricsManager>, public Object, public Logger {
 		protected:
 			Reference<engine::service::DatagramServiceClient*> client;
 

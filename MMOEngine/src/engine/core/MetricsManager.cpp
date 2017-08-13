@@ -6,8 +6,7 @@
 
 using namespace engine::core;
 
-MetricsManager::MetricsManager() : client(NULL) {
-
+MetricsManager::MetricsManager() : Logger("MetricsManager"), client(NULL) {
 }
 
 void MetricsManager::initializeStatsDConnection(const char* hostname, int port) {
@@ -39,13 +38,10 @@ MetricsManager::Result MetricsManager::publish(const char* name, const char* val
 
 		pack.insertByte(0);
 
-		int res = client->send(&pack);
-
-		if (res != 0) {
-			return SOCKET_EXCEPTION;
-		}
-
+		client->send(&pack);
 	} catch (const SocketException& exc) {
+		error(exc.getMessage());
+
 		return SOCKET_EXCEPTION;
 	}
 
