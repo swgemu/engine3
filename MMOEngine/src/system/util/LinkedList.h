@@ -17,7 +17,7 @@ namespace sys {
 		ListEntry* next;
 	
 	public:	
-		ListEntry() {
+		ListEntry() : next(NULL) {
 		}
 	
 		ListEntry(O obj, ListEntry* e) {
