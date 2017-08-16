@@ -172,7 +172,7 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 
 	try {
 		ManagedObject* managedObject = static_cast<ManagedObject*>(object);
-		ObjectOutputStream* objectData = new ObjectOutputStream(8000);
+		ObjectOutputStream* objectData = new ObjectOutputStream(8192 / 2, 0);
 
 		managedObject->writeObject(objectData);
 
