@@ -36,8 +36,6 @@ MetricsManager::Result MetricsManager::publish(const char* name, const char* val
 			pack.insertCString(sampleTime);
 		}
 
-		pack.insertByte(0);
-
 		client->send(&pack);
 	} catch (const SocketException& exc) {
 		error(exc.getMessage());
