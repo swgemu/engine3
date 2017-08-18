@@ -59,11 +59,23 @@ public:
 	}
 
 	inline uint32 decrementAndTestAndSetStrongCount() volatile {
-		return strongReferenceCount.decrementAndTestAndSet();
+		uint32 ret = strongReferenceCount.decrementAndTestAndSet();
+
+		if (ret != 0) {
+			object = NULL;
+		}
+
+		return ret;
 	}
 
 	inline bool tryStrongFinalDecrement() volatile {
-		return strongReferenceCount.tryFinalDecrement();
+		bool ret = strongReferenceCount.tryFinalDecrement();
+
+		if (ret) {
+			object = NULL;
+		}
+
+		return ret;
 	}
 
 	inline uint32 decrementAndTestAndSetWeakCount() volatile {
