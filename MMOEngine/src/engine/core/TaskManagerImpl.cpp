@@ -38,6 +38,10 @@ TaskManagerImpl::~TaskManagerImpl() {
 
 void TaskManagerImpl::initialize() {
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	initializeCustomQueue("_baseclient", 8, false);;
+#endif
 }
 
 void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent) {
@@ -397,6 +401,10 @@ void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
 	if (scheduler == NULL)
 		return;
 
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	task->setCustomTaskQueue("_baseclient");
+#endif
+
 	locker.release();
 
 	if (!scheduler->scheduleTask(task, delay))
@@ -420,6 +428,10 @@ void TaskManagerImpl::scheduleIoTask(Task* task, Time& time) {
 	TaskScheduler* scheduler = getIoTaskScheduler();
 	if (scheduler == NULL)
 		return;
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	task->setCustomTaskQueue("_baseclient");
+#endif
 
 	locker.release();
 
