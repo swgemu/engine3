@@ -679,6 +679,7 @@ String TaskManagerImpl::getInfo(bool print) {
 
 		HashTable<const char*, RunStatistics> tasksCount = worker->getTasksStatistics();
 		VectorMap<RunStatistics, const char*> ordered(tasksCount.size(), 2);
+		VectorMap<RunStatisticsOrderedByMaxTime, const char*> orderedByMaxTime(tasksCount.size(), 2);
 
 		//lets order them
 		auto totalRuntimeTasks = orderStatistics(ordered, tasksCount);
@@ -687,6 +688,12 @@ String TaskManagerImpl::getInfo(bool print) {
 
 		//lets print top 5
 		printStatistics(msg4, ordered, true);
+
+		msg4 << endl;
+
+		//order by max time
+		orderStatistics(orderedByMaxTime, tasksCount);
+		printStatistics(msg4, orderedByMaxTime, true);
 
 		//now lets print lua tasks
 		auto luaTasksCount = worker->getLuaTasksStatistics();
