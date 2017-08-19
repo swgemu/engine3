@@ -209,7 +209,11 @@ Task* TimedTaskQueue::get() {
 			changePlan = false;
 		} else {
 			if (time.isFuture()) {
-				return NULL;
+				int64 difference = -task->getNextExecutionTime().miliDifference();
+
+				if (difference > 10) {
+					return NULL;
+				}
 			}
 
 			break;
