@@ -63,6 +63,7 @@ namespace engine {
 		void addLuaTaskStats(String&& name, uint64 runTime);
 #endif
 #endif
+		void setPause(bool val);
 
 		TaskWorkerThread* asTaskWorkerThread() {
 			return this;
@@ -76,9 +77,6 @@ namespace engine {
 			return blockDuringSave;
 		}
 
-		void setPause(bool val) {
-			pauseWorker = val;
-		}
 	};
 
   } // namespace service

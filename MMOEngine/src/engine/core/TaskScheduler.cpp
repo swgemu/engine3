@@ -16,6 +16,8 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 
 	doRun = false;
 
+	pause = false;
+
 	tasks.setTaskScheduler(this);
 
 	tasks.setLoggingName("TaskQueue");
@@ -31,6 +33,8 @@ TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
 	taskManager = NULL;
 
 	doRun = false;
+
+	pause = false;
 
 	startTime.updateToCurrentTime();
 
@@ -59,11 +63,32 @@ void TaskScheduler::prepareTask(Task*) {
 
 }
 
+void TaskScheduler::setPause(bool val) {
+	pause = val;
+
+	if (val) {
+		tasks.wake();
+	}
+}
+
 void TaskScheduler::run() {
 	Task* task = NULL;
 
-	while (doRun && ((task = tasks.get()) != NULL)) {
+	while (doRun) {
+		auto task = tasks.get();
+
 		blockMutex.lock();
+
+		if (task == nullptr) {
+			blockMutex.unlock();
+
+			do {
+				Thread::sleep(0, 1);
+				Thread::yield();
+			} while (pause);
+
+			continue;
+		}
 
 		try {
 
@@ -103,6 +128,13 @@ void TaskScheduler::run() {
 		}
 
 		task->release();
+
+		while (pause) {
+			Thread::sleep(1);
+			Thread::yield();
+
+			continue;
+		}
 	}
 }
 

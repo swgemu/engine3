@@ -49,6 +49,8 @@ namespace engine {
 
 		void printQueue();
 
+		void wake();
+
 		// setters and getters
 		inline void setTaskScheduler(TaskScheduler* scheduler) {
 			taskScheduler = scheduler;

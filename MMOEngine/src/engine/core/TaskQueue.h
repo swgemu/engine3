@@ -35,6 +35,8 @@ namespace engine {
 
 		Task* pop();
 
+		void wake();
+
 		void flush();
 
 		int size();

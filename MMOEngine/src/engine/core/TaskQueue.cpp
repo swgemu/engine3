@@ -51,6 +51,14 @@ void TaskQueue::pushRandom(Task* task) {
 	condMutex->unlock();
 }
 
+void TaskQueue::wake() {
+	condMutex->lock();
+
+	signal(condMutex);
+
+	condMutex->unlock();
+}
+
 void TaskQueue::pushFront(Task* task) {
 	condMutex->lock();
 
@@ -136,7 +144,7 @@ Task* TaskQueue::pop() {
 		info("waiting tasks");
 	#endif
 
-	while (isEmpty()) {
+	/*while (isEmpty()) {
 		if (blocked) {
 			condMutex->unlock();
 			return NULL;
@@ -144,6 +152,16 @@ Task* TaskQueue::pop() {
 
 		//waitingForTask = true;
 		wait(condMutex);
+	}*/
+
+	if (isEmpty()) {
+		wait(condMutex);
+	}
+
+	if (isEmpty()) {
+		condMutex->unlock();
+
+		return NULL;
 	}
 
 	Task* task = remove(0);

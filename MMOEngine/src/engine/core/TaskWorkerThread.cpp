@@ -36,8 +36,21 @@ void TaskWorkerThread::run() {
 
 	Task* task = NULL;
 
-	while ((task = queue->pop()) != NULL) {
+	while (doRun) {
+		auto task = queue->pop();
+
 		blockMutex.lock();
+
+		if (task == nullptr) {
+			blockMutex.unlock();
+
+			do {
+				Thread::sleep(1);
+				Thread::yield();
+			} while (pauseWorker);
+
+			continue;
+		}
 
 		try {
 //			debug("executing task");
@@ -285,4 +298,12 @@ void TaskWorkerThread::stop() {
 	ServiceThread::stop();
 
 	info("stopped");
+}
+
+void TaskWorkerThread::setPause(bool val) {
+	pauseWorker = val;
+
+	if (val) {
+		queue->wake();
+	}
 }

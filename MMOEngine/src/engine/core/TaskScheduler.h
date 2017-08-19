@@ -30,6 +30,7 @@ namespace engine {
 
 		HashTable<const char*, uint64> tasksCount;
 		ReadWriteLock tasksCountGuard;
+		volatile bool pause;
 
 	protected:
 		void prepareTask(Task* task);
@@ -45,6 +46,8 @@ namespace engine {
 		void run();
 
 		void stop();
+
+		void setPause(bool val);
 
 		bool scheduleTask(Task* task, uint64 delay = 0);
 		bool scheduleTask(Task* task, Time& time);

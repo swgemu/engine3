@@ -131,13 +131,21 @@ bool TimedTaskQueue::addAll(PriorityQueue& queue, bool doLock) {
 	return true;
 }
 
+void TimedTaskQueue::wake() {
+	condMutex->lock();
+
+	signal(condMutex);
+
+	condMutex->unlock();
+}
+
 Task* TimedTaskQueue::get() {
 	condMutex->lock();
 
 	waitingForTask = true;
 
 	while (true) {
-		while (PriorityQueue::isEmpty()) {
+		if (PriorityQueue::isEmpty()) {
 			if (blocked) {
 				condMutex->unlock();
 				return NULL;
@@ -148,6 +156,11 @@ Task* TimedTaskQueue::get() {
 			#endif
 
 			wait(condMutex);
+		}
+
+		if (PriorityQueue::isEmpty()) {
+			condMutex->unlock();
+			return NULL;
 		}
 
 		Task* task = (Task*) PriorityQueue::peak();
@@ -184,8 +197,8 @@ Task* TimedTaskQueue::get() {
 			else
 				msg << "condition error (" << res << ")";
 
-			error(msg);
-			continue;
+			warning(msg);
+			return NULL;
 		}
 
 		if (changePlan) {
@@ -194,8 +207,13 @@ Task* TimedTaskQueue::get() {
 			#endif
 
 			changePlan = false;
-		} else
+		} else {
+			if (time.isFuture()) {
+				return NULL;
+			}
+
 			break;
+		}
 	}
 
 	Task* task = (Task*) PriorityQueue::poll();

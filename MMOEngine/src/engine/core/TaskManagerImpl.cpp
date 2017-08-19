@@ -246,13 +246,27 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 	for (int i = 0; i < schedulers.size(); ++i) {
 		TaskScheduler* scheduler = schedulers.get(i);
 
+		scheduler->setPause(true);
+	}
+
+	for (int i = 0; i < schedulers.size(); ++i) {
+		TaskScheduler* scheduler = schedulers.get(i);
+
 		Mutex* blockMutex = scheduler->getBlockMutex();
 
 		Locker* locker = new Locker(blockMutex);
 		lockers->add(locker);
+
+		scheduler->setPause(false);
 	}
 
 //#ifndef VERSION_PUBLIC
+	for (int i = 0; i < ioSchedulers.size(); ++i) {
+		TaskScheduler* scheduler = ioSchedulers.get(i);
+
+		scheduler->setPause(true);
+	}
+
 	for (int i = 0; i < ioSchedulers.size(); ++i) {
 		TaskScheduler* scheduler = ioSchedulers.get(i);
 
@@ -260,6 +274,8 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 
 		Locker* locker = new Locker(blockMutex);
 		lockers->add(locker);
+
+		scheduler->setPause(false);
 	}
 //#endif
 
