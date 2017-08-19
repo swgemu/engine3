@@ -40,7 +40,7 @@ void TaskManagerImpl::initialize() {
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	initializeCustomQueue("_baseclient", 8, false);;
+	initializeCustomQueue("_baseclient", 8, true);
 #endif
 }
 
