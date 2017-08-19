@@ -16,6 +16,8 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 	this->cpu = cpu;
 	this->queue = queue;
 	this->blockDuringSave = blockDuringSave;
+
+	pauseWorker = false;
 }
 
 TaskWorkerThread::~TaskWorkerThread() {
@@ -89,6 +91,13 @@ void TaskWorkerThread::run() {
 		task->release();
 
 		task = NULL;
+
+		while (pauseWorker) {
+			Thread::sleep(1);
+			Thread::yield();
+
+			continue;
+		}
 	}
 }
 

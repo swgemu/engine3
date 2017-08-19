@@ -219,10 +219,21 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		if (!worker->doBlockWorkerDuringSave())
 			continue;
 
+		worker->setPause(true);
+	}
+
+	for (int i = 0; i < workers.size(); ++i) {
+		TaskWorkerThread* worker = workers.get(i);
+
+		if (!worker->doBlockWorkerDuringSave())
+			continue;
+
 		Mutex* blockMutex = worker->getBlockMutex();
 
 		Locker* locker = new Locker(blockMutex);
 		lockers->add(locker);
+
+		worker->setPause(false);
 	}
 
 	for (int i = 0; i < schedulers.size(); ++i) {

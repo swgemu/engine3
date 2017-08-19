@@ -23,6 +23,8 @@ namespace engine {
 
 		bool blockDuringSave;
 
+		volatile bool pauseWorker;
+
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<const char*, RunStatistics> tasksStatistics;
 		VectorMap<String, RunStatistics> luaTasksStatistics;
@@ -72,6 +74,10 @@ namespace engine {
 
 		inline bool doBlockWorkerDuringSave() const {
 			return blockDuringSave;
+		}
+
+		void setPause(bool val) {
+			pauseWorker = val;
 		}
 	};
 
