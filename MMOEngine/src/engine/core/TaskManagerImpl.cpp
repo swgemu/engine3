@@ -40,11 +40,11 @@ void TaskManagerImpl::initialize() {
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	initializeCustomQueue("_baseclient", 8, true);
+	initializeCustomQueue("_baseclient", 8, true, false);
 #endif
 }
 
-void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent) {
+void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) {
 	Locker locker(this);
 
 	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
@@ -63,6 +63,9 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 	}
 
 	customQueues.put(queueName, taskQueues.size() - 1);
+
+	if (!start)
+		return;
 
 	for (int i = 0; i < localWorkers.size(); ++i) {
 		localWorkers.get(i)->start();
