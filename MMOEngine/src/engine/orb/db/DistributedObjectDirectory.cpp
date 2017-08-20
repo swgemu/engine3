@@ -18,6 +18,24 @@ public:
 	}
 };
 
+ObjectHashTable::ObjectHashTable() : HashTable<uint64, DistributedObjectAdapter*>() {
+}
+
+ObjectHashTable::ObjectHashTable(int initialCapacity) : HashTable<uint64, DistributedObjectAdapter*>(initialCapacity) {
+}
+
+int ObjectHashTable::hash(const uint64& keyValue) const {
+	uint64 key = keyValue;
+
+	key = (~key) + (key << 18); // key = (key << 18) - key - 1;
+	key =   key  ^ (key >> 31);
+	key = key * 21;             // key = (key + (key << 2)) + (key << 4);
+	key = key ^ (key >> 11);
+	key = key + (key << 6);
+	key = key ^ (key >> 22);
+	return (int) key;
+}
+
 DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000){
 }
 

@@ -16,8 +16,17 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace ORB {
 
+	class ObjectHashTable : public HashTable<uint64, DistributedObjectAdapter*> {
+	public:
+		ObjectHashTable();
+
+		ObjectHashTable(int initialCapacity);
+
+		int hash(const uint64& keyValue) const;
+	};
+
 	class DistributedObjectDirectory {
-    	HashTable<uint64, DistributedObjectAdapter*> objectMap;
+		ObjectHashTable objectMap;
 
     	DistributedObjectMap helperObjectMap;
 	
