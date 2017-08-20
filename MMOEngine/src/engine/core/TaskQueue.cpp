@@ -155,6 +155,11 @@ Task* TaskQueue::pop() {
 	}*/
 
 	if (isEmpty()) {
+		if (blocked) {
+			condMutex->unlock();
+			return NULL;
+		}
+
 		wait(condMutex);
 	}
 
