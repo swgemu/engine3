@@ -631,7 +631,7 @@ String formatDots(uint64 n)  {
 	}
 	*--out = 0;
 
-	return String(out);
+	return String(outBuf);
 }
 
 template<class M>
