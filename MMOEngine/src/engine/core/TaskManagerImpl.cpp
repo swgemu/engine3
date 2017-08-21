@@ -613,6 +613,27 @@ uint64 orderStatisticsMap(VectorMap<RunStatistics, String>& ordered, const Vecto
 	return totalRuntime;
 };
 
+String formatDots(uint64 n)  {
+	int c;
+	char buf[128];
+	char *p;
+	char outBuf[128];
+	char *out;
+
+	sprintf(buf, "%llu", n);
+	c = 2 - strlen(buf) % 3;
+	for (p = buf, out = outBuf; *p != 0; p++) {
+		*out++ = *p;
+		if (c == 1) {
+			*out++ = '.';
+		}
+		c = (c + 1) % 3;
+	}
+	*--out = 0;
+
+	return String(out);
+}
+
 template<class M>
 void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
 	for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
@@ -641,9 +662,9 @@ void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
 #endif
 		}
 
-		msg4 << "\t" << taskName << ": totalRunTime = " << stats.totalRunTime / 1000000000 <<  "s averageTime = " << averageTime
-			 << "ns maxRunTime = " << stats.maxRunTime
-			 << "ns totalRunCount = " << stats.totalRunCount << " minRunTime = " << stats.minRunTime << "ns" << endl;
+		msg4 << "\t" << taskName << ": totalRunTime = " << formatDots(stats.totalRunTime / 1000000000) <<  "s averageTime = " << formatDots(averageTime)
+			 << "ns maxRunTime = " << formatDots(stats.maxRunTime)
+			 << "ns totalRunCount = " << formatDots(stats.totalRunCount) << " minRunTime = " << formatDots(stats.minRunTime) << "ns" << endl;
 	}
 };
 
