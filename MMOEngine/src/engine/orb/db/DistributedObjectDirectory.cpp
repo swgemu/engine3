@@ -56,14 +56,13 @@ DistributedObjectAdapter* DistributedObjectDirectory::add(uint64 objid, Distribu
 DistributedObject* DistributedObjectDirectory::get(uint64 objid) {
 	DistributedObjectAdapter* adapter = NULL;
 
-	try {
-		adapter = objectMap.get(objid);
-	} catch (...) {
-
-	}
+	adapter = objectMap.get(objid);
 
 	if (adapter != NULL) {
-		helperObjectMap.add(objid, adapter->getStub());
+		if (!helperObjectMap.contains(objid)) {
+			helperObjectMap.add(objid, adapter->getStub());
+		}
+
 		return adapter->getStub();
 	} else
 		return NULL;

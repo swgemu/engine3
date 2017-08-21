@@ -93,7 +93,7 @@ DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* obj
 Reference<DistributedObject*> DOBObjectManager::getObject(uint64 objectID) {
 	Reference<DistributedObject*> obj = NULL;
 
-	Locker _locker(this);
+	ReadLocker _locker(this);
 
 	obj = localObjectDirectory.get(objectID);
 
@@ -278,6 +278,8 @@ ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
 }
 
 void DOBObjectManager::updateModifiedObjectsToDatabase() {
+	info("starting saving objects to database", true);
+
 	bool rootBroker = DistributedObjectBroker::instance()->isRootBroker();
 	//ObjectDatabaseManager::instance()->checkpoint();
 
@@ -304,8 +306,6 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	if (updateModifiedObjectsTask->isScheduled())
 		updateModifiedObjectsTask->cancel();
-
-	info("starting saving objects to database", true);
 
 	Vector<DistributedObject*> objectsToUpdate;
 	Vector<DistributedObject*> objectsToDelete;

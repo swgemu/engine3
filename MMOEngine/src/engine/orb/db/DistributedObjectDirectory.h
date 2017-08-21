@@ -13,6 +13,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/util/ObjectContainer.h"
 
+#include "system/util/SynchronizedHashTable.h"
+
 namespace engine {
   namespace ORB {
 
@@ -28,7 +30,7 @@ namespace engine {
 	class DistributedObjectDirectory {
 		ObjectHashTable objectMap;
 
-    	DistributedObjectMap helperObjectMap;
+		DistributedObjectMap<SynchronizedHashTable<uint64, DistributedObject*>> helperObjectMap;
 	
 	public:
 		DistributedObjectDirectory();
@@ -54,7 +56,7 @@ namespace engine {
 		}
 
 		HashTable<uint64, DistributedObject* >* getDistributedObjectMap() {
-			return helperObjectMap.getMap();
+			return helperObjectMap.getMap()->getHashTable();
 		}
 	};
 

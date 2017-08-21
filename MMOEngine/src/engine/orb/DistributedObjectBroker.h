@@ -48,7 +48,7 @@ namespace engine {
 
 		DOBObjectManager* objectManager;
 
-		DistributedObjectMap remoteObjectCache;
+		DistributedObjectMap<HashTable<uint64, DistributedObject*>> remoteObjectCache;
 
 		String address;
 		int port;

@@ -11,8 +11,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace engine {
   namespace ORB {
 
+	template<class ObjectMap>
 	class DistributedObjectMap {
-    	HashTable<uint64, DistributedObject*> objectMap;
+		ObjectMap objectMap;
 	
 	public:
 		DistributedObjectMap() {
@@ -40,6 +41,10 @@ namespace engine {
 	
 		DistributedObject* get(sys::uint64 objectID) {
 			return objectMap.get(objectID);
+		}
+
+		bool contains(sys::uint64 objectID) {
+			return objectMap.containsKey(objectID);
 		}
 
 		bool tryRemoveAndDestroy(sys::uint64 objectID) {
@@ -74,7 +79,7 @@ namespace engine {
 			return objectMap.size();
 		}
 
-		HashTable<uint64, DistributedObject* >* getMap() {
+		ObjectMap* getMap() {
 			return &objectMap;
 		}
 	};

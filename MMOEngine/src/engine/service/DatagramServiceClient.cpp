@@ -104,7 +104,7 @@ int DatagramServiceClient::send(Packet* pack) {
 		return socket->sendTo(pack, &addr);
 	#endif
 	} else
-		throw SocketException();
+		throw SocketException("socket is null");
 }
 
 bool DatagramServiceClient::read(Packet* pack) {

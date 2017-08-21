@@ -38,7 +38,7 @@ namespace engine {
 
 		ObjectDatabaseManager* databaseManager;
 
-		DistributedObjectMap remoteDeployedObjects;
+		DistributedObjectMap<HashTable<uint64, DistributedObject*>> remoteDeployedObjects;
 
 		Reference<Task*> updateModifiedObjectsTask;
 

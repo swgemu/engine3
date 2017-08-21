@@ -105,9 +105,17 @@ namespace sys {
   			hashTable.removeAll();
   		}
 
-  		int size() {
+  		int size() const {
   			return hashTable.size();
   		}
+
+		HashTableIterator<K, V> iterator() {
+			return hashTable.iterator();
+		};
+
+		HashTable<K, V>* getHashTable() {
+			return &hashTable;
+		}
   	  };
   }
 }
