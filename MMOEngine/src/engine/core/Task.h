@@ -35,7 +35,7 @@ namespace engine {
 
 		uint64 period;
 
-		const char* customTaskQueue;
+		String customTaskQueue;
 
 	#ifdef COLLECT_TASKSTATISTICS
 		Timer queuedTimer;
@@ -167,11 +167,15 @@ namespace engine {
 			period = per;
 		}
 
-		inline void setCustomTaskQueue(const char* queue) {
+		inline void setCustomTaskQueue(const String& queue) {
 			customTaskQueue = queue;
 		}
 
-		inline const char* getCustomTaskQueue() const {
+		inline void setCustomTaskQueue(String&& queue) {
+			customTaskQueue = std::move(queue);
+		}
+
+		inline const String& getCustomTaskQueue() const {
 			return customTaskQueue;
 		}
 

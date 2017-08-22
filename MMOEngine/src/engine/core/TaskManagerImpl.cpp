@@ -328,9 +328,9 @@ void TaskManagerImpl::executeTask(Task* task) {
 	if (shuttingDown)
 		return;
 
-	const char* custQueue = task->getCustomTaskQueue();
+	const String& custQueue = task->getCustomTaskQueue();
 
-	if (custQueue) {
+	if (custQueue.length()) {
 		executeTask(task, custQueue);
 	} else {
 		taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->push(task);
@@ -363,9 +363,9 @@ void TaskManagerImpl::executeTaskFront(Task* task) {
 	if (shuttingDown)
 		return;
 
-	const char* custQueue = task->getCustomTaskQueue();
+	const String& custQueue = task->getCustomTaskQueue();
 
-	if (custQueue) {
+	if (custQueue.length()) {
 		executeTask(task, custQueue);
 	} else {
 		taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushFront(task);
@@ -376,9 +376,9 @@ void TaskManagerImpl::executeTaskRandom(Task* task) {
 	if (shuttingDown)
 		return;
 
-	const char* custQueue = task->getCustomTaskQueue();
+	const String& custQueue = task->getCustomTaskQueue();
 
-	if (custQueue) {
+	if (custQueue.length()) {
 		executeTask(task, custQueue);
 	} else {
 		taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushRandom(task);
