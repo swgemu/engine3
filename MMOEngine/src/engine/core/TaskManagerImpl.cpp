@@ -15,6 +15,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang/Math.h"
 
+#define BASECLIENT_WORKER_THREADS 8
+
 int TaskManagerImpl::DEFAULT_WORKER_QUEUES = 0;
 int TaskManagerImpl::DEFAULT_WORKER_THREADS_PER_QUEUE = 0; //
 int TaskManagerImpl::DEFAULT_SCHEDULER_THREADS = 0;
@@ -40,7 +42,7 @@ void TaskManagerImpl::initialize() {
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	initializeCustomQueue("_baseclient", 8, true, false);
+	initializeCustomQueue("_baseclient", BASECLIENT_WORKER_THREADS, true, false);
 #endif
 }
 
@@ -49,14 +51,14 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 
 	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
 
-	TaskQueue* queue = new TaskQueue();
+	TaskQueue* queue = new TaskQueue(queueName.toCharArray());
 	queue->setLogLevel(getLogLevel());
 	taskQueues.add(queue);
 
 	Vector<TaskWorkerThread*> localWorkers;
 
 	for (int i = 0; i < numberOfThreads; ++i) {
-		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread" + queueName + String::valueOf(i), queue, workers.size() % maxCpus, blockDuringSaveEvent);
+		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread-" + queueName + String::valueOf(i), queue, workers.size() % maxCpus, blockDuringSaveEvent);
 		worker->setLogLevel(getLogLevel());
 		workers.add(worker);
 		localWorkers.add(worker);
@@ -89,11 +91,11 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 	}
 
 	if (schedulerCount == 0) {
-		schedulerCount = workerCount / 2;
+		schedulerCount = workerCount;
 	}
 
 	if (ioCount == 0) {
-		ioCount = schedulerCount;
+		ioCount = schedulerCount / 2;
 	}
 
 	for (int j = 0; j < workerCount; ++j) {
@@ -736,7 +738,7 @@ String TaskManagerImpl::getInfo(bool print) {
 		//lets order them
 		auto totalRuntimeTasks = orderStatistics(ordered, tasksCount);
 
-		msg4 << "total runtime: " << totalRuntimeTasks / 1000000000 << "s distinct tasks recorded in worker " << i << ": " << tasksCount.size() << endl;
+		msg4 << "total runtime: " << totalRuntimeTasks / 1000000000 << "s distinct tasks recorded in worker " << worker->getLoggingName() << ": " << tasksCount.size() << endl;
 
 		//lets print top 5
 		printStatistics(msg4, ordered, true);

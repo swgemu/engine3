@@ -22,9 +22,10 @@ namespace engine {
 
 		bool blocked;
 		//bool waitingForTask;
+		String name;
 
 	public:
-		TaskQueue();
+		TaskQueue(const char* name = NULL);
 
 		virtual ~TaskQueue();
 
@@ -40,6 +41,10 @@ namespace engine {
 		void flush();
 
 		int size();
+
+		const String& getName() const {
+			return name;
+		}
 	};
 
   } // namespace service

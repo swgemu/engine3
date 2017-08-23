@@ -6,8 +6,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskQueue.h"
 #include "Task.h"
 
-TaskQueue::TaskQueue() : Condition(), Logger("TaskQueue") {
+TaskQueue::TaskQueue(const char* name) : Condition(), Logger("TaskQueue") {
 	blocked = false;
+	
+	if (name != NULL)
+		this->name = name;
 	//waitingForTask = false;
 
 	condMutex = new Mutex("TaskQueue");
