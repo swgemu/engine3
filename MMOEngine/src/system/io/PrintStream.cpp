@@ -70,6 +70,10 @@ void PrintStream::print(const char* str) {
 	printf("%s", str);
 }
 
+void PrintStream::print(const char* str, int length) {
+	printf("%.*s", length, str);
+}
+
 void PrintStream::print(const String& str) {
 	printf("%s", str.toCharArray());
 }
@@ -139,6 +143,10 @@ void PrintStream::println(const char* str) {
 	printf("%s\n", str);
 }
 
+void PrintStream::println(const char* str, int length) {
+	printf("%.*s\n", length, str);
+}
+
 void PrintStream::println(const String& str) {
 	printf("%s\n", str.toCharArray());
 }
@@ -193,6 +201,12 @@ PrintStream& PrintStream::operator<<(void* val) {
 
 PrintStream& PrintStream::operator<<(const char* str) {
 	print(str);
+
+	return *this;
+}
+
+PrintStream& PrintStream::operator<<(const StringBuffer& msg) {
+	print(msg.getBuffer(), msg.length());
 
 	return *this;
 }

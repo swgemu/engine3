@@ -32,6 +32,7 @@ namespace sys {
 		void print(float val);
 		void print(void* val);
 		void print(const char* str);
+		void print(const char* str, int length);
 		void print(const String& str);
 
 		void println(char ch);
@@ -43,6 +44,7 @@ namespace sys {
 		void println(float val);
 		void println(void* val);
 		void println(const char* str);
+		void println(const char* str, int length);
 		void println(const String& str);
 
 		PrintStream& operator<< (char ch);
@@ -54,6 +56,7 @@ namespace sys {
 		PrintStream& operator<< (float val);
 		PrintStream& operator<< (void* val);
 		PrintStream& operator<< (const char* str);
+		PrintStream& operator<< (const StringBuffer& msg);
 		PrintStream& operator<< (const String& str);
 		PrintStream& operator<< (const StreamFlags flags);
 

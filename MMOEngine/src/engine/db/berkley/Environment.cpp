@@ -103,9 +103,10 @@ Environment::~Environment() {
 	if (databaseEnvironment != NULL) {
 		int ret = close();
 
-		if (ret != 0) {
+		assert(ret == 0);
+		/*if (ret != 0) {
 	    	throw DatabaseException("unable to open environment handle with ret code " + String::valueOf(ret));
-		}
+		}*/
 
 	}
 }

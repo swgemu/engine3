@@ -162,7 +162,7 @@ void TaskManagerImpl::start() {
 }
 
 void TaskManagerImpl::setLogLevel(int level) {
-	Logger::setLogLevel(level);
+	Logger::setLogLevel(static_cast<Logger::LogLevel>(level));
 }
 
 void TaskManagerImpl::shutdown() {

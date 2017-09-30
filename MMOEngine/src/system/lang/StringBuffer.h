@@ -85,8 +85,12 @@ namespace sys {
 			return streamFlags & SF_uppercase;
 		}
 
-		inline int length() {
+		inline int length() const {
 			return ArrayList<char>::size();
+		}
+
+		inline const char* getBuffer() const {
+			return ArrayList<char>::begin();
 		}
 
 		StringBuffer& operator<< (char ch);

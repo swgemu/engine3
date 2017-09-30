@@ -177,6 +177,12 @@ namespace sys {
 			return *this;
 		}
 
+		FileWriter& operator<< (const StringBuffer& str) {
+			write(str.getBuffer(), str.length());
+
+			return *this;
+		}
+
   		inline File* getFile() {
   			return file;
   		}

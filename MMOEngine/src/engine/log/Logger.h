@@ -32,26 +32,38 @@ namespace engine {
   namespace log {
 
 	class Logger {
+	public:
+		static Logger console;
+
+		enum LogLevel {
+			NONE = -1,
+
+			FATAL = 0,
+			ERROR = 1,
+			WARNING = 2,
+
+			LOG = 3,
+			INFO = 4,
+			DEBUG = 5
+		};
+
+	private:
 		String name;
 
 		static AtomicReference<FileWriter*> globalLogFile;
+		static volatile int globalLogLevel;
+		static bool syncGlobalLog;
 
 		FileWriter* logFile;
 
 		static Time starttime;
 
-		int logLevel;
+		LogLevel logLevel;
 
 		bool doGlobalLog;
+		bool doSyncLog;
 
 		//Mutex writeLock;
-
-	public:
-		static Logger console;
-
-		static const  int LOG = 0;
-		static const int INFO = 1;
-		static const int DEBUG = 2;
 
 	public:
 		Logger();
@@ -62,6 +74,8 @@ namespace engine {
 
 		static void setGlobalFileLogger(const char* file);
 		static void setGlobalFileLogger(const String& file);
+		static void setGlobalFileLogLevel(LogLevel level);
+		static void setGlobalFileLoggerSync(bool val);
 
 		static void closeGlobalFileLogger();
 
@@ -73,7 +87,7 @@ namespace engine {
 		void info(const String& msg, bool forcedLog = false) const;
 		void info(const StringBuffer& msg, bool forcedLog = false) const;
 
-		void log(const char *msg) const;
+		void log(const char *msg, LogLevel type = LogLevel::LOG) const;
 		void log(const String& msg) const;
 		void log(const StringBuffer& msg) const;
 
@@ -105,32 +119,38 @@ namespace engine {
 		void warning(const StringBuffer& msg) const;
 
 		static void getTime(String& time, bool getFull = true);
+		static void getTime(StringBuffer& time, bool getFull = true);
 		static void printTime(bool getFull = true);
+		void getLogType(StringBuffer& buffer, LogLevel type) const;
 
 		static uint64 getElapsedTime();
 
 		// setters
 		inline void setLogging(bool doLog) {
 			if (doLog)
-				logLevel = DEBUG;
+				logLevel = LogLevel::DEBUG;
 			else
-				logLevel = LOG;
+				logLevel = LogLevel::LOG;
 		}
 
-		inline void setLogLevel(int level) {
+		inline void setLogLevel(LogLevel level) {
 			logLevel = level;
 		}
 
 		inline void setInfoLogLevel() {
-			logLevel = INFO;
+			logLevel = LogLevel::INFO;
 		}
 
 		inline void setDebugLogLevel() {
-			logLevel = DEBUG;
+			logLevel = LogLevel::DEBUG;
 		}
 
 		inline void setGlobalLogging(bool doLog) {
 			doGlobalLog = doLog;
+		}
+
+		inline void setSyncFileLogging(bool val) {
+			doSyncLog = val;
 		}
 
 		inline void setLoggingName(const char* s) {
@@ -154,7 +174,7 @@ namespace engine {
 			return logFile;
 		}
 
-		inline int getLogLevel() const {
+		inline LogLevel getLogLevel() const {
 			return logLevel;
 		}
 

@@ -157,7 +157,7 @@ void CloseObjectsVector::putReceiver(QuadTreeEntry* entry, uint32 receiverTypes)
 
 					vec.put(entry);
 
-					messageReceivers.put(type, std::move(vec));
+					messageReceivers.put(std::move(type), std::move(vec));
 				}
 			}
 		}
@@ -171,7 +171,7 @@ int CloseObjectsVector::put(const Reference<QuadTreeEntry*>& o) {
 
 	putReceiver(o.get(), receiverTypes);
 
-	return objects.put(o.get());
+	return objects.put(o);
 }
 
 #ifdef CXX11_COMPILER
