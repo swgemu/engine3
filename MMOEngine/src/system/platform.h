@@ -127,18 +127,18 @@ extern "C" int isinf (double);
 #endif
 
 namespace sys {
-	typedef uint64_t uint64;
-	typedef uint32_t uint32;
-	typedef uint16_t uint16;
-	typedef uint8_t uint8;
+	typedef unsigned long long uint64;
+	typedef unsigned int uint32;
+	typedef unsigned short uint16;
+	typedef unsigned char uint8;
 
-	typedef int64_t int64;
-	typedef int32_t int32;
-	typedef int16_t int16;
-	typedef int8_t int8;
+	typedef signed long long int64;
+	typedef signed int int32;
+	typedef signed short int16;
+	typedef signed char int8;
 
 #ifndef __MINGW32__
-	typedef uint8_t byte;
+	typedef uint8 byte;
 #endif
 
 #ifdef PLATFORM64
