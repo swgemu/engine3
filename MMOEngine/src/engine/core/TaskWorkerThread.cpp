@@ -121,7 +121,7 @@ void TaskWorkerThread::run() {
 			char sampleValue[48];
 			snprintf(sampleValue, 48, "%g", 1.f / samplingRate);
 
-			MetricsManager::instance()->publish(fullName, metricsValue, "ms", sampleValue);
+			MetricsManager::instance()->publish(fullTaskName, metricsValue, "ms", sampleValue);
 		}
 #endif
 
