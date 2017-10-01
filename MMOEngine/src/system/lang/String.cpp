@@ -401,7 +401,7 @@ String String::valueOf(float val) {
 String String::valueOf(double val) {
 	char buf[40];
 
-	snprintf(buf, 40, "%g", (float) val);
+	snprintf(buf, 40, "%g", val);
 
 	return String(buf);
 }

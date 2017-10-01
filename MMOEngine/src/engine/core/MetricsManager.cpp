@@ -10,7 +10,9 @@ MetricsManager::MetricsManager() : Logger("MetricsManager"), client(NULL) {
 }
 
 void MetricsManager::initializeStatsDConnection(const char* hostname, int port) {
-	client = new DatagramServiceClient(hostname, port);
+	DatagramServiceClient* newClient = new DatagramServiceClient(hostname, port);
+
+	client = newClient;
 }
 
 MetricsManager::Result MetricsManager::publish(const Metrics& metrics) {

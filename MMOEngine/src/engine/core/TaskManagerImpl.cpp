@@ -804,6 +804,16 @@ void TaskManagerImpl::clearWorkersTaskStats() {
 #endif
 }
 
+void TaskManagerImpl::setStatsDTaskSampling(int val) {
+#ifdef COLLECT_TASKSTATISTICS
+	for (int i = 0; i < workers.size(); ++i) {
+		TaskWorkerThread* worker = workers.get(i);
+
+		worker->setStatsDSamplingRate(val);
+	}
+#endif
+}
+
 class TestTask : public Task {
 	int value;
 

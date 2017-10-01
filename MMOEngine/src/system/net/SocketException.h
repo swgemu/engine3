@@ -31,7 +31,7 @@ namespace sys {
 			message = str.toString();
 		}
 
-		SocketException(const String msg) : Exception(msg) {
+		SocketException(const String& msg) : Exception(msg) {
 			StringBuffer str;
 			str << msg << " (errno " << getErrorCode() << ")";
 

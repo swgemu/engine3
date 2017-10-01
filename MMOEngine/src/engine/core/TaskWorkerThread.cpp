@@ -7,7 +7,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskWorkerThread.h"
 
+#include "MetricsManager.h"
+
 #define STATS_MAX_MYSQL_QUERIES 1000
+#define STATS_STATSD_SAMPLE 0
 
 TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, bool blockDuringSave) : ServiceThread(s) {
 	setInfoLogLevel();
@@ -18,6 +21,12 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 	this->blockDuringSave = blockDuringSave;
 
 	pauseWorker = false;
+
+#ifdef COLLECT_TASKSTATISTICS
+	totalTaskRunCount = 0;
+
+	samplingRate = STATS_STATSD_SAMPLE;
+#endif
 }
 
 TaskWorkerThread::~TaskWorkerThread() {
@@ -99,6 +108,21 @@ void TaskWorkerThread::run() {
 
 			++stats.totalRunCount;
 		}
+
+		++totalTaskRunCount;
+
+		if (samplingRate && ((totalTaskRunCount % samplingRate)) == 0) {
+			char fullTaskName[256];
+			snprintf(fullTaskName, 256, "engine3.tasks.%s", fullName);
+
+			char metricsValue[48];
+			snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);
+
+			char sampleValue[48];
+			snprintf(sampleValue, 48, "%g", 1.f / samplingRate);
+
+			MetricsManager::getInstance()->publish(fullName, metricsValue, "ms", sampleValue);
+		}
 #endif
 
 		task->release();
@@ -154,6 +178,10 @@ void TaskWorkerThread::clearTaskStatistics() {
 	luaTasksStatistics.removeAll();
 	bdbReadStatistics.removeAll();
 	mysqlStatistics.removeAll();
+}
+
+void TaskWorkerThread::setStatsDSamplingRate(int val) {
+	samplingRate = val;
 }
 
 void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTime) {

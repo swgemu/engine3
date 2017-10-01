@@ -103,6 +103,9 @@ namespace engine {
 
 		}
 
+		virtual void setStatsDTaskSampling(int val) {
+
+		}
 
 #ifdef CXX11_COMPILER
 		void executeTask(std::function<void()>&& function, const char* name) {

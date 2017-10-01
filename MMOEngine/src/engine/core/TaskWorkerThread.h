@@ -32,6 +32,10 @@ namespace engine {
 		VectorMap<String, RunStatistics> mysqlStatistics;
 
 		ReadWriteLock tasksStatsGuard;
+
+		uint64 totalTaskRunCount;
+
+		int samplingRate;
 #endif
 
 	public:
@@ -58,6 +62,7 @@ namespace engine {
 		void addMysqlStats(const String& query, uint64 runTime);
 
 		void clearTaskStatistics();
+		void setStatsDSamplingRate(int val);
 
 #ifdef CXX11_COMPILER
 		void addLuaTaskStats(String&& name, uint64 runTime);

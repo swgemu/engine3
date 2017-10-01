@@ -277,7 +277,7 @@ void Logger::getLogType(StringBuffer& buffer, LogLevel type) const {
 			buffer << " [" << name << "] FATAL - ";
 			return;
 		default:
-			buffer << " [" << name << "] - ";
+			buffer << " [" << name << "] LOG - ";
 			return;
 	}
 }
