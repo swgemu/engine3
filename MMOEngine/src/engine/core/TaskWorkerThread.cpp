@@ -113,7 +113,7 @@ void TaskWorkerThread::run() {
 
 		if (samplingRate && ((totalTaskRunCount % samplingRate)) == 0) {
 			char fullTaskName[256];
-			snprintf(fullTaskName, 256, "engine3.tasks.%s", fullName);
+			snprintf(fullTaskName, 256, "engine3.tasks.%s", taskName);
 
 			char metricsValue[48];
 			snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);
