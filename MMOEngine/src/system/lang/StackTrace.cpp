@@ -7,6 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/thread/Thread.h"
 
+#include "engine/log/Logger.h"
+
 String StackTrace::binaryName = "core3";
 
 StackTrace::StackTrace() {
@@ -35,6 +37,8 @@ StackTrace::~StackTrace() {
 }
 
 void StackTrace::print() const {
+	static Logger logger("StackTrace");
+
 	#ifdef PLATFORM_UNIX
 		#ifdef LINE_TRACING
 			StringBuffer command;
@@ -53,13 +57,17 @@ void StackTrace::print() const {
 		}
 
 		#endif
+		StringBuffer lines;
 		for (int i = 0; i < count; ++i) {
 			#ifdef LINE_TRACING
 				command << " " << hex << symbols[i];
 			#else
-				System::out << tracedSymbols[i] << endl;
+				lines << tracedSymbols[i] << endl;
 			#endif
 		}
+
+		logger.warning(lines.toString());
+
 		#ifdef LINE_TRACING
 			auto res = system(command.toString().toCharArray());
 
