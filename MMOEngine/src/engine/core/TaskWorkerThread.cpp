@@ -22,6 +22,8 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 
 	pauseWorker = false;
 
+	currentTask = NULL;
+
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;
 
@@ -43,8 +45,6 @@ void TaskWorkerThread::run() {
 		assignToCPU(cpu);
 	}
 
-	Task* task = NULL;
-
 	while (doRun) {
 		auto task = queue->pop();
 
@@ -62,14 +62,17 @@ void TaskWorkerThread::run() {
 		}
 
 		try {
-//			debug("executing task");
+			currentTask = task;
 
 			task->doExecute();
 		} catch (Exception& e) {
 			error(e.getMessage());
+			e.printStackTrace();
 		} catch (...) {
 			error("unreported Exception caught");
 		}
+
+		currentTask = NULL;
 
 #ifdef COLLECT_TASKSTATISTICS
 		uint64 elapsedTime = task->getLastElapsedTime();

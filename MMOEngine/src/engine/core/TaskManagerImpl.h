@@ -114,6 +114,8 @@ namespace engine {
 		int getExecutingTaskSize();
 
 		void setLogLevel(int level);
+
+		Task* getCurrentThreadTask();
 	private:
 		TaskScheduler* getTaskScheduler();
 		TaskScheduler* getIoTaskScheduler();

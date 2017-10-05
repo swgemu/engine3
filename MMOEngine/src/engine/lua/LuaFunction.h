@@ -45,15 +45,15 @@ namespace lua {
 
 		virtual lua_State* callFunction();
 
-		inline lua_State* getLuaState() {
+		inline lua_State* getLuaState() const {
 			return L;
 		}
 
-		inline int getNumberOfArgs() {
+		inline int getNumberOfArgs() const {
 			return numberOfArgs;
 		}
 
-		inline int getNumberOfReturnArgs() {
+		inline int getNumberOfReturnArgs() const {
 			return numberOfArgsToReturn;
 		}
 

@@ -25,6 +25,8 @@ namespace engine {
 
 		volatile bool pauseWorker;
 
+		Task* currentTask;
+
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<const char*, RunStatistics> tasksStatistics;
 		VectorMap<String, RunStatistics> luaTasksStatistics;
@@ -80,6 +82,10 @@ namespace engine {
 
 		inline bool doBlockWorkerDuringSave() const {
 			return blockDuringSave;
+		}
+
+		inline Task* getCurrentTask() const {
+			return currentTask;
 		}
 
 	};

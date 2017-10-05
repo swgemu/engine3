@@ -107,6 +107,10 @@ namespace engine {
 
 		}
 
+		virtual Task* getCurrentThreadTask() {
+			return NULL;
+		}
+
 #ifdef CXX11_COMPILER
 		void executeTask(std::function<void()>&& function, const char* name) {
 			auto taskObject = new LambdaTask(std::move(function), name);

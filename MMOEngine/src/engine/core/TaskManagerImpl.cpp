@@ -867,6 +867,22 @@ int TaskManagerImpl::getIoScheduledTaskSize() {
 	return sum;
 }
 
+Task* TaskManagerImpl::getCurrentThreadTask() {
+	Thread* thread = Thread::getCurrentThread();
+
+	if (thread == NULL) {
+		return NULL;
+	}
+
+	TaskWorkerThread* worker = thread->asTaskWorkerThread();
+
+	if (worker == NULL) {
+		return NULL;
+	}
+
+	return worker->getCurrentTask();
+}
+
 int TaskManagerImpl::getExecutingTaskSize() {
 //	return tasks.size();
 
