@@ -27,6 +27,7 @@ MetricsManager::Result MetricsManager::publish(const char* name, const char* val
 	try {
 		Packet pack(64);
 
+		pack.insertCString(globalPrefix.toCharArray());
 		pack.insertCString(name);
 		pack.insertCString(":");
 		pack.insertCString(value);

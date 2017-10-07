@@ -34,6 +34,7 @@ namespace engine {
 		class MetricsManager : public Singleton<MetricsManager>, public Object, public Logger {
 		protected:
 			Reference<engine::service::DatagramServiceClient*> client;
+			String globalPrefix;
 
 		public:
 			enum Result {SUCCESS = 0, NO_CONNECTION, SOCKET_EXCEPTION, GENERAL_ERROR};
@@ -44,6 +45,10 @@ namespace engine {
 
 			Result publish(const char* name, const char* value, const char* type, const char* sampleTime = NULL);
 			Result publish(const Metrics& metrics);
+
+			void setGlobalPrefix(const String& prefix) {
+				globalPrefix = prefix;
+			}
 		};
 
 	}
