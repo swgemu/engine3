@@ -41,12 +41,17 @@ Task::~Task() {
 
 void Task::initialize() {
 	taskManager = Core::getTaskManager();
-	
+
 	priority = 3;
 	period = 0;
 
 #ifdef TRACE_TASKS
 	scheduleTrace = NULL;
+#endif
+
+#ifdef COLLECT_TASKSTATISTICS
+	lastElapsedTime = 0;
+	statsSampleRate = 1;
 #endif
 }
 
@@ -60,7 +65,6 @@ void Task::executeInThread() {
 
 void Task::doExecute() {
 #ifdef WITH_STM
-
 	//Logger::console.info("executing " + TypeInfo<Task>::getClassName(this), true);
 
 	try {
@@ -101,8 +105,6 @@ void Task::doExecute() {
 	} catch (TransactionAbortedException& e) {
 		Logger::console.error("in TASK");
 	}
-
-
 #else
 	ObjectDatabaseManager::instance()->startLocalTransaction();
 
@@ -119,7 +121,7 @@ void Task::doExecute() {
 	try {
 		run();
 	} catch (Exception& e) {
-		//Logger::console.error("exception caught while running a task");
+		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
 	} catch (...) {
 		Logger::console.error("unreported exception caught while running a task");
@@ -138,7 +140,6 @@ void Task::doExecute() {
 	ObjectDatabaseManager::instance()->commitLocalTransaction();
 #endif
 }
-
 
 bool Task::isScheduled() {
 	return taskManager->isTaskScheduled(this);

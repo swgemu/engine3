@@ -13,6 +13,10 @@ class DisconnectTask : public Task {
 public:
 	DisconnectTask(BaseClient* cl) {
 		client = cl;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+		setStatsSample(0);
+#endif
 	}
 
 	void run() {

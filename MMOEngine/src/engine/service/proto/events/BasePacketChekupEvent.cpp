@@ -9,6 +9,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 BasePacketChekupEvent::BasePacketChekupEvent(BaseClient* cl, uint32 time) : Task(time) {
 	client = cl;
 	checkupTime = time;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+	setStatsSample(0);
+#endif
 }
 
 void BasePacketChekupEvent::run() {

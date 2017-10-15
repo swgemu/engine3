@@ -16,6 +16,10 @@ public:
 	SessionResponseTask(BaseClient* cl, uint32 seed) {
 		client = cl;
 		this->seed = seed;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+		setStatsSample(0);
+#endif
 	}
 
 	void run() {

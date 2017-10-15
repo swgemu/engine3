@@ -170,6 +170,8 @@ namespace sys {
 	//#define WITH_STM
 	//#define MEMORY_PROTECTION
 
+	//#define BASECLIENT_DISABLE_STATSD
+
 	namespace lang {
 	} // namespace net
 

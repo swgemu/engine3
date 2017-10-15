@@ -11,6 +11,10 @@ class BaseClientCleanupEvent : public Task {
 public:
 	BaseClientCleanupEvent(BaseClient* cl) : Task(60000) {
 		client = cl;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+		setStatsSample(0);
+#endif
 	}
 	
 	void run() {

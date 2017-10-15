@@ -18,6 +18,10 @@ public:
 	NetStatusResponseTask(BaseClient* cl, uint16 ti) {
 		client = cl;
 		tick = ti;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+		setStatsSample(0);
+#endif
 	}
 
 	void run() {

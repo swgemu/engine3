@@ -16,6 +16,10 @@ public:
 	AcknowledgeTask(BaseClient* cl, uint16 sequence) {
 		client = cl;
 		seq = sequence;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+		setStatsSample(0);
+#endif
 	}
 
 	void run() {

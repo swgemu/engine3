@@ -85,7 +85,10 @@ bool Lua::runFile(const String& filename, lua_State* lState) {
 				const char* err = lua_tostring(lState, -1);
 				lua_pop(lState,1);
 
-				System::out << "file:" << filename << " ERROR " << String(err) << "\n";
+				StringBuffer errorMessage;
+				errorMessage << "file:" << filename << " ERROR " << String(err) << "\n";
+
+				Logger::console.error(errorMessage);
 
 				return false;
 			}

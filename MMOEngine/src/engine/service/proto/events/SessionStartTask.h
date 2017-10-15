@@ -18,6 +18,10 @@ public:
 	SessionStartTask(BaseClient* cl, uint32 cid) {
 		client = cl;
 		connectionID = cid;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+		setStatsSample(0);
+#endif
 	}
 
 	void run() {

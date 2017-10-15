@@ -114,7 +114,7 @@ void TaskWorkerThread::run() {
 
 		++totalTaskRunCount;
 
-		if (samplingRate && ((totalTaskRunCount % samplingRate)) == 0) {
+		if (samplingRate && task->getStatsSampleRate() && ((totalTaskRunCount % samplingRate) == 0)) {
 			char fullTaskName[256];
 			snprintf(fullTaskName, 256, "engine3.tasks.%s", taskName);
 

@@ -25,30 +25,28 @@ namespace engine {
 
 	class Task : public PriorityQueueEntry, public Runnable, public Object {
 	protected:
-		class TaskManager* taskManager;
+		TaskManager* taskManager;
 
 		AtomicReference<TaskScheduler*> taskScheduler;
 
 		Time nextExecutionTime;
 
-		int priority;
-
-		uint64 period;
-
 		String customTaskQueue;
-
-	#ifdef COLLECT_TASKSTATISTICS
-		Timer queuedTimer;
-		Timer executionTimer;
-		uint64 lastElapsedTime;
-		Timer blockedTimer;
-	#endif
 
 	#ifdef TRACE_TASKS
 		StackTrace* scheduleTrace;
 	#endif
 
-	public:
+		uint64 period;
+
+	#ifdef COLLECT_TASKSTATISTICS
+		uint64 lastElapsedTime;
+		int statsSampleRate;
+	#endif
+
+		int priority;
+
+	  public:
 		Task();
 		Task(uint64 mtime);
 		Task(Time& time);
@@ -93,9 +91,7 @@ namespace engine {
 
 			int cmp = nextExecutionTime.compareTo(task->nextExecutionTime);
 			if (cmp == 0) {
-			/*	if (this == task)
-					return 0;
-				else */if (this < task)
+				if (std::less<Task*>()(this, task))
 					return 1;
 				else
 					return -1;
@@ -135,7 +131,6 @@ namespace engine {
 		inline TaskScheduler* getTaskScheduler() {
 			return taskScheduler;
 		}
-
 
 		inline int getPriroty() {
 			return priority;
@@ -179,7 +174,11 @@ namespace engine {
 			return customTaskQueue;
 		}
 
-#ifdef COLLECT_TASKSTATISTICS
+	#ifdef COLLECT_TASKSTATISTICS
+		void setStatsSample(bool val) {
+			statsSampleRate = val;
+		}
+
 	  	inline const Timer& getExecutionTimer() const {
 	  		return executionTimer;
 	  	}
@@ -187,7 +186,11 @@ namespace engine {
 	  	inline uint64 getLastElapsedTime() const {
 	  		return lastElapsedTime;
 	  	}
-#endif
+
+		inline int getStatsSampleRate() const {
+			return statsSampleRate;
+		}
+	#endif
 
 	#ifdef TRACE_TASKS
 		void setScheduleTrace() {

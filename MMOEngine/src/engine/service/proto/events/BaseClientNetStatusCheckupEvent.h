@@ -20,6 +20,10 @@ namespace engine {
 	public:
 		BaseClientNetStatusCheckupEvent(BaseClient* cl) : Task(25000) {
 			client = cl;
+
+#ifdef BASECLIENT_DISABLE_STATSD
+			setStatsSample(0);
+#endif
 		}
 
 		void run() {
