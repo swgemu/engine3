@@ -179,10 +179,6 @@ namespace engine {
 			statsSampleRate = val;
 		}
 
-	  	inline const Timer& getExecutionTimer() const {
-	  		return executionTimer;
-	  	}
-
 	  	inline uint64 getLastElapsedTime() const {
 	  		return lastElapsedTime;
 	  	}
