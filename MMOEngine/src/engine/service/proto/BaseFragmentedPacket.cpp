@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
-#define MAX_COMPLETE_FRAG_SIZE 100000
+#define MAX_COMPLETE_FRAG_SIZE 1500000
 
 BaseFragmentedPacket::BaseFragmentedPacket() : BasePacket() {
 	singlePacket = NULL;
