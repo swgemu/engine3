@@ -12,6 +12,13 @@ namespace engine {
   namespace service {
     namespace proto {
 
+	class FragmentedPacketParseException : public Exception {
+	public:
+		FragmentedPacketParseException(const String& msg) : Exception(msg){
+
+		}
+	};
+
 	class BaseFragmentedPacket : public BasePacket {
 		BasePacket* singlePacket;
 

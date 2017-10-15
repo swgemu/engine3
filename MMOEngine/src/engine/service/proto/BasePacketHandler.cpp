@@ -292,7 +292,9 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack, bool
 
 				BaseMessage* fragPiece = new BaseMessage(pack, pack->getOffset(), endOffset);
 
-				handleFragmentedPacket(client, fragPiece);
+				if (handleFragmentedPacket(client, fragPiece)) {
+					client->error("could not parse frag in handleMultiPacket: " + pack->toStringData() + " with validatePackets:" + validatePackets);
+				}
 
 				delete fragPiece;
 
@@ -343,7 +345,9 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 		} else if (pack->parseShort(0) == 0x0D00) {
 			pack->setOffset(4);
 			//pack->shiftOffset(4);
-			handleFragmentedPacket(client, pack);
+			if (handleFragmentedPacket(client, pack)) {
+				client->error("could not parse frag in processBufferedPackets: " + pack->toStringData());
+			}
 		} else
 			handleDataChannelPacket(client, pack);
 
@@ -430,7 +434,9 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 		message->setClient(client);
 		message->setTimeStampMili(System::getMiliTime() + 50);
 
-		handleFragmentedPacket(client, message);
+		if (handleFragmentedPacket(client, message)) {
+			client->error("could not parse frag in handleDataChannelMultiPacket: " + pack->toStringData());
+		}
 
 		delete message;
 	} else if (opCount == 0x0900) {
@@ -463,18 +469,24 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 	}
 }
 
-void BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
+int BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) {
 //	Logger::console.info("handleFragmentedPacket " + pack->toStringData(), true);
 	//pack must have offset after sequence 0D 00 XX XX HERE
 
-	BasePacket* fraggedPacket = client->recieveFragmentedPacket(pack);
+	try {
+		BasePacket* fraggedPacket = client->receiveFragmentedPacket(pack);
 
-	if (fraggedPacket != NULL) {
-		handleDataChannelPacket(client, fraggedPacket);
+		if (fraggedPacket != NULL) {
+			handleDataChannelPacket(client, fraggedPacket);
 
-		delete fraggedPacket;
-	} /*else if (pack->size() < 485)
+			delete fraggedPacket;
+		} /*else if (pack->size() < 485)
 		throw Exception("incomplete fragmented packet");*/
+	} catch (FragmentedPacketParseException& e) {
+		return 1;
+	}
+
+	return 0;
 }
 
 void BasePacketHandler::processMessage(Message* msg) {

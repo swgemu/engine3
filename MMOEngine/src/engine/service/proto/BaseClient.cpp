@@ -883,7 +883,7 @@ Packet* BaseClient::getBufferedPacket() {
 	return NULL;
 }
 
-BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
+BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 	//Logger::console.debug("recieveFragmentedPacket " + pack->toStringData());
 
 	BasePacket* packet = NULL;
@@ -901,7 +901,7 @@ BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 
 		fragmentedPacket = NULL;
 
-		return NULL;
+		throw FragmentedPacketParseException("could not insert frag");
 	}
 
 	try {

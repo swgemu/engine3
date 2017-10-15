@@ -34,11 +34,11 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 			String msgData = pack->toStringData();
 
 			Logger::console.error("received fragmented packet with size too big = (" + String::valueOf(totalSize) + ") for frag: " + msgData);
-			return false;
 		} else if (totalSize == 0) {
 			Logger::console.error("fragmented total size totalSize parsed 0!");
 		}
 
+		return false;
 		/*Logger::console.info("received first segment of fragmented packet ("
 						+ String::valueOf(seq) + ") - size = " + String::valueOf(totalSize));*/
 	}
