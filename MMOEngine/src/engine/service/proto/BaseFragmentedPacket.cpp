@@ -7,6 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
+#define MAX_COMPLETE_FRAG_SIZE 100000
+
 BaseFragmentedPacket::BaseFragmentedPacket() : BasePacket() {
 	singlePacket = NULL;
 
@@ -30,7 +32,7 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 	if (totalSize == 0) {
 		totalSize = pack->parseNetInt();
 
-		if (totalSize < 0 || totalSize > 50000) {
+		if (totalSize < 0 || totalSize > MAX_COMPLETE_FRAG_SIZE) {
 			String msgData = pack->toStringData();
 
 			Logger::console.error("received fragmented packet with size too big = (" + String::valueOf(totalSize) + ") for frag: " + msgData);
