@@ -112,9 +112,7 @@ void TaskWorkerThread::run() {
 			++stats.totalRunCount;
 		}
 
-		++totalTaskRunCount;
-
-		if (samplingRate && task->getStatsSampleRate() && ((totalTaskRunCount % samplingRate) == 0)) {
+		if (samplingRate && task->getStatsSampleRate() && (((totalTaskRunCount + 1) % samplingRate) == 0)) {
 			char fullTaskName[256];
 			snprintf(fullTaskName, 256, "engine3.tasks.%s", taskName);
 
@@ -125,6 +123,8 @@ void TaskWorkerThread::run() {
 			snprintf(sampleValue, 48, "%g", 1.f / samplingRate);
 
 			MetricsManager::instance()->publish(fullTaskName, metricsValue, "ms", sampleValue);
+
+			++totalTaskRunCount;
 		}
 #endif
 
