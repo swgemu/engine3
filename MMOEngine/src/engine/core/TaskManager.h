@@ -107,6 +107,10 @@ namespace engine {
 
 		}
 
+		virtual void setStatsDBdbSamplingRate(int val) {
+
+		}
+
 		virtual Task* getCurrentThreadTask() {
 			return NULL;
 		}

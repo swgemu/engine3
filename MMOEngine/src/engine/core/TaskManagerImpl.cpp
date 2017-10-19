@@ -814,6 +814,16 @@ void TaskManagerImpl::setStatsDTaskSampling(int val) {
 #endif
 }
 
+void TaskManagerImpl::setStatsDBdbSamplingRate(int val) {
+#ifdef COLLECT_TASKSTATISTICS
+	for (int i = 0; i < workers.size(); ++i) {
+		TaskWorkerThread* worker = workers.get(i);
+
+		worker->setStatsDBdbSamplingRate(val);
+	}
+#endif
+}
+
 class TestTask : public Task {
 	int value;
 

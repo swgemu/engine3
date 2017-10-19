@@ -26,8 +26,10 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;
+	totalBdbReadCount = 0;
 
 	samplingRate = STATS_STATSD_SAMPLE;
+	bdbSamplingRate = STATS_STATSD_SAMPLE;
 #endif
 }
 
@@ -112,19 +114,21 @@ void TaskWorkerThread::run() {
 			++stats.totalRunCount;
 		}
 
-		if (samplingRate && task->getStatsSampleRate() && (((totalTaskRunCount + 1) % samplingRate) == 0)) {
-			char fullTaskName[256];
-			snprintf(fullTaskName, 256, "engine3.tasks.%s", taskName);
-
-			char metricsValue[48];
-			snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);
-
-			char sampleValue[48];
-			snprintf(sampleValue, 48, "%g", 1.f / samplingRate);
-
-			MetricsManager::instance()->publish(fullTaskName, metricsValue, "ms", sampleValue);
-
+		if (task->getStatsSampleRate()) {
 			++totalTaskRunCount;
+
+			if (samplingRate && ((totalTaskRunCount % samplingRate) == 0)) {
+				char fullTaskName[256];
+				snprintf(fullTaskName, 256, "engine3.tasks.%s", taskName);
+
+				char metricsValue[48];
+				snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);
+
+				char sampleValue[48];
+				snprintf(sampleValue, 48, "%g", 1.f / samplingRate);
+
+				MetricsManager::instance()->publish(fullTaskName, metricsValue, "ms", sampleValue);
+			}
 		}
 #endif
 
@@ -185,6 +189,10 @@ void TaskWorkerThread::clearTaskStatistics() {
 
 void TaskWorkerThread::setStatsDSamplingRate(int val) {
 	samplingRate = val;
+}
+
+void TaskWorkerThread::setStatsDBdbSamplingRate(int val) {
+	bdbSamplingRate = val;
 }
 
 void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTime) {
@@ -250,6 +258,16 @@ void TaskWorkerThread::addBDBReadStats(const String& dbName, uint64 elapsedTime)
 		}
 
 		++stats.totalRunCount;
+	}
+	
+	if (bdbSamplingRate && ((++totalBdbReadCount % bdbSamplingRate) == 0)) {
+		char metricsValue[48];
+		snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);
+
+		char sampleValue[48];
+		snprintf(sampleValue, 48, "%g", 1.f / bdbSamplingRate);
+
+		MetricsManager::instance()->publish("engine3.tasks.berkeleydb.getdata", metricsValue, "ms", sampleValue);
 	}
 }
 
