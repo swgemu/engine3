@@ -49,6 +49,12 @@ namespace engine {
 		 matrix[2][0] *= sz;	matrix[2][1] *= sz;	matrix[2][2] *= sz;
 	 }
 
+	 void transpose()  {
+		 *this = Matrix3(Vector3(matrix[0][0], matrix[1][0], matrix[2][0]),
+						Vector3(matrix[0][1], matrix[1][1], matrix[2][1]),
+						Vector3(matrix[0][2], matrix[1][2], matrix[2][2]));
+	 }
+
 	 inline Vector3& operator [] (uint32 index) {
 #ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 		 if (index > 2)

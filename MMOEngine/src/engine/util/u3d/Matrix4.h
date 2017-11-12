@@ -65,6 +65,15 @@ namespace engine {
 		 matrix[3][2] = -matrix[3][2];
 	 }
 
+	 void transpose()  {
+		 *this = Matrix4(Vector4(matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0]),
+						Vector4(matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1]),
+						Vector4(matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2]),
+						Vector4(matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3]));
+	 }
+
+	 Matrix4 inverse() const;
+
 	 void setRotationMatrix(const Matrix3& rot);
 
 	 Matrix4 operator*(const Matrix4& mat) const;
