@@ -10,10 +10,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/build/cm
 MESSAGE(STATUS "CMAKE_MODULE_PATH:" ${CMAKE_MODULE_PATH})
 
 # Add lua includes
-include_directories(/usr/include/lua5.1)
-include_directories(/opt/local/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
+
+find_package(Lua "5.3")
+include_directories(${LUA_INCLUDE_DIR})
+link_directories(${LUA_LIBRARIES})
 
 # Find mysql includes
 find_package(MySql REQUIRED)
@@ -28,7 +30,7 @@ link_directories(/opt/local/lib)
 # Define build flags for public or private engine builds
 if (ENGINE_TYPE EQUAL 2)
 	message("Building public engine")
-	set(CMAKE_CXX_FLAGS "-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register")
+	set(CMAKE_CXX_FLAGS "-std=c++11 -g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register")
 else ()
 	message("Building private engine")
 	set(CMAKE_CXX_FLAGS "-std=c++11 -ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register")

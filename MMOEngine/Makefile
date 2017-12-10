@@ -5,7 +5,7 @@ IDLC = bin/idlc
 
 INSTALL_PATH = /usr/local/engine3
 
-ENGINE_PUB_PATH = /home/oru/git/PublicEngine/MMOEngine
+ENGINE_PUB_PATH = /home/theanswer/git/PublicEngine/MMOEngine
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/ManagedService.idl \
@@ -116,7 +116,7 @@ build-cmake: recompile-idlc
 
 build-cmake-pub: recompile-idlc
 	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && make -j$(CPU_CORES)
-	cd build/unix32 && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=32 ../../ && make -j$(CPU_CORES)
+	#cd build/unix32 && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=32 ../../ && make -j$(CPU_CORES)
 	
 install-cmake: build-cmake
 	cd build/unix && make install
