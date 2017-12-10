@@ -22,8 +22,6 @@ namespace engine {
 
 		Packet* packet;
 
-		bool async;
-
 	public:	
 		InvokeMethodMessage(uint64 objectid, sys::uint32 methid, sys::uint32 invid, bool async);
 		InvokeMethodMessage(Packet* message);
@@ -104,10 +102,6 @@ namespace engine {
 
 		Packet* getIncomingPacket() {
 			return packet;
-		}
-
-		bool isAsync() const {
-			return async;
 		}
 
 	};

@@ -23,6 +23,7 @@ namespace engine {
 		const static uint32 READ_UNCOMMITED = DB_READ_UNCOMMITTED;
 		const static uint32 RMW = DB_RMW;
 		const static uint32 IGNORE_LEASES = DB_IGNORE_LEASE;
+		const static uint32 MVCC = DB_MULTIVERSION;
 	};
 
 	class DatabaseType {
@@ -77,6 +78,13 @@ namespace engine {
 				databaseFlags |= DB_READ_UNCOMMITTED;
 			else
 				databaseFlags &= ~DB_READ_UNCOMMITTED;
+		}
+
+		void setMultiVersionConcurrencyControl(bool value) {
+			if (value)
+				databaseFlags |= DB_MULTIVERSION;
+			else
+				databaseFlags &= ~DB_MULTIVERSION;
 		}
 
 		inline void setType(DBTYPE type) {

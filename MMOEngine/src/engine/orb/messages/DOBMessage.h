@@ -19,6 +19,8 @@ namespace engine {
 
 		Condition replyCondition;
 
+		bool async;
+
 	public:
 		enum MessageTypes { REPLYMESSAGE,
 							CONTROLMESSAGE, STATEUPDATEMESSAGE,
@@ -63,6 +65,10 @@ namespace engine {
 
 		void setSize() {
 			insertInt(0, size());
+		}
+
+		bool isAsync() const {
+			return async;
 		}
 	};
 

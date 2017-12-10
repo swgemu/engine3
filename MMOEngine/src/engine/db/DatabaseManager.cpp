@@ -423,7 +423,10 @@ void DatabaseManager::abortLocalTransaction() {
 }
 
 engine::db::berkley::Transaction* DatabaseManager::startTransaction() {
-	Transaction* transaction = databaseEnvironment->beginTransaction(NULL);
+	TransactionConfig config = TransactionConfig::DEFAULT;
+	//config.setReadUncommitted(true);
+
+	Transaction* transaction = databaseEnvironment->beginTransaction(NULL, config);
 
 	return transaction;
 }

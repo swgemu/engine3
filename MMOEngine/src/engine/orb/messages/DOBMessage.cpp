@@ -4,19 +4,19 @@
 
 #include "DOBMessage.h"
 
-DOBMessage::DOBMessage(uint32 messageType) : Packet(20), client(NULL), sequence(0) {
+DOBMessage::DOBMessage(uint32 messageType) : Packet(20), client(NULL), sequence(0), async(false) {
 	insertInt(0); //size
 	insertInt(messageType);
 	insertInt(0); // sequence
 }
 
-DOBMessage::DOBMessage(uint32 messageType, uint32 initialBufferSize) : Packet(initialBufferSize), client(NULL), sequence(0) {
+DOBMessage::DOBMessage(uint32 messageType, uint32 initialBufferSize) : Packet(initialBufferSize), client(NULL), sequence(0), async(false) {
 	insertInt(0); //size
 	insertInt(messageType);
 	insertInt(0); // sequence
 }
 
-DOBMessage::DOBMessage(Packet* packet) : Packet(40), client(NULL) {
+DOBMessage::DOBMessage(Packet* packet) : Packet(40), client(NULL), async(false) {
 	sequence = packet->parseInt();
 
 	insertInt(0); //size

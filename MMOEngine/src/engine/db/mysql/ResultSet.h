@@ -6,11 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ENGINE_DB_MYSQL_RESULTSET_H_
 #define ENGINE_DB_MYSQL_RESULTSET_H_
 
-#ifdef PLATFORM_MAC
-#include "mysql5/mysql/mysql.h"
-#else
 #include <mysql.h>
-#endif
 
 #include "system/lang/Long.h"
 

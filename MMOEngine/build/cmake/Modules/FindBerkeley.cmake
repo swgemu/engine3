@@ -10,17 +10,17 @@
 # DB_VERSION - set to required BerkeleyDB version, e.g. 47
 
 set(DB_ROOT_DIR /usr/local/BerkeleyDB.5.3)
-#set(DB_VERSION 5.3)
+set(DB_VERSION 5.3)
 
 # This module defines:
 # DB_FOUND - True if BerkleyDB is found
 # DB_INCLUDE_DIR - BerkeleyDB's include directory
 # DB_LIBRARIES - Libraries needed to use Berkeley DB
 
-#find_path(DB_INCLUDE_DIR db.h db_cxx.h
- #         PATHS ${DB_ROOT_DIR}
-  #        PATH_SUFFIXES include
-   #       )
+find_path(DB_INCLUDE_DIR db.h db_cxx.h
+          PATHS ${DB_ROOT_DIR}
+          PATH_SUFFIXES include
+          )
           
 set(DB_INCLUDE_DIR /usr/local/BerkeleyDB.5.3/include)
 set(DB_LIBRARIES /usr/local/BerkeleyDB.5.3/lib)

@@ -8,6 +8,8 @@
 #ifndef LUACALLBACKEXCEPTION_H_
 #define LUACALLBACKEXCEPTION_H_
 
+#include "lua.hpp"
+
 class LuaCallbackException : public Exception {
 public:
 	LuaCallbackException(lua_State *L, const String& msg) : Exception() {
