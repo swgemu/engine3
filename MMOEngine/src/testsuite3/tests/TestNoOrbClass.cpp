@@ -71,6 +71,7 @@ int LuaTestNoOrbClass::getValue(lua_State *L) {
 	} else {
 		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestNoOrbClass:getValue()'");
 	}
+	return 0;
 }
 
 int LuaTestNoOrbClass::setValue(lua_State *L) {
@@ -89,10 +90,12 @@ int LuaTestNoOrbClass::setValue(lua_State *L) {
 	} else {
 		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestNoOrbClass:setValue(integer)'");
 	}
+	return 0;
 }
 
 int LuaTestNoOrbClass::add(lua_State *L) {
 	int parameterCount = lua_gettop(L) - 1;
 	
+	return 0;
 }
 

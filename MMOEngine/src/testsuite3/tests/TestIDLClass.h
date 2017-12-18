@@ -22,18 +22,58 @@
 #endif
 #include "engine/lua/Luna.h"
 
+#include "system/util/Vector.h"
+
+#include "engine/util/u3d/Vector3.h"
+
+#include "system/lang/System.h"
+
+#include "engine/lua/LuaCallbackException.h"
+
 #include "engine/core/ManagedObject.h"
+
+#include "engine/core/ManagedService.h"
 
 namespace testsuite3 {
 namespace tests {
 
-class TestIDLClass : public ManagedObject {
+class TestIDLClass : public ManagedService {
 public:
 	TestIDLClass(int val);
 
 	int getValue();
 
+	float blaNative();
+
 	void setValue(int val);
+
+	void setValue(int val1, int val2);
+
+	unsigned int setValue2(int val1, int val2);
+
+	void setParent(TestIDLClass* val);
+
+	void setStringBla(String& bla);
+
+	ManagedWeakReference<TestIDLClass* > getBlaParent();
+
+	void setPosition(Vector3& pos);
+
+	void setBlaParent(TestIDLClass* val);
+
+	void moveImplementation();
+
+	virtual void testCallback();
+
+	void testShit(const Vector<int>& val);
+
+	Vector<int>* getTestVector();
+
+	String getBlaString();
+
+	long long getLongval();
+
+	ManagedWeakReference<TestIDLClass* > getParent();
 
 	void asyncTest();
 
@@ -58,8 +98,15 @@ using namespace testsuite3::tests;
 namespace testsuite3 {
 namespace tests {
 
-class TestIDLClassImplementation : public ManagedObjectImplementation {
+class TestIDLClassImplementation : public ManagedServiceImplementation {
 	int value;
+
+	Vector<int> testVector;
+
+protected:
+	ManagedWeakReference<TestIDLClass* > parent;
+
+	ManagedWeakReference<TestIDLClass* > blaParent;
 
 public:
 	TestIDLClassImplementation(int val);
@@ -68,7 +115,37 @@ public:
 
 	int getValue();
 
+	float blaNative();
+
 	void setValue(int val);
+
+	void setValue(int val1, int val2);
+
+	unsigned int setValue2(int val1, int val2);
+
+	void setParent(TestIDLClass* val);
+
+	void setStringBla(String& bla);
+
+	ManagedWeakReference<TestIDLClass* > getBlaParent();
+
+	void setPosition(Vector3& pos);
+
+	void setBlaParent(TestIDLClass* val);
+
+	void moveImplementation();
+
+	virtual void testCallback();
+
+	void testShit(const Vector<int>& val);
+
+	Vector<int>* getTestVector();
+
+	String getBlaString();
+
+	long long getLongval();
+
+	ManagedWeakReference<TestIDLClass* > getParent();
 
 	void asyncTest();
 
@@ -109,7 +186,7 @@ protected:
 	friend class TestIDLClass;
 };
 
-class TestIDLClassAdapter : public ManagedObjectAdapter {
+class TestIDLClassAdapter : public ManagedServiceAdapter {
 public:
 	TestIDLClassAdapter(TestIDLClass* impl);
 
@@ -118,6 +195,32 @@ public:
 	int getValue();
 
 	void setValue(int val);
+
+	void setValue(int val1, int val2);
+
+	unsigned int setValue2(int val1, int val2);
+
+	void setParent(TestIDLClass* val);
+
+	void setStringBla(String& bla);
+
+	ManagedWeakReference<TestIDLClass* > getBlaParent();
+
+	void setPosition(Vector3& pos);
+
+	void setBlaParent(TestIDLClass* val);
+
+	void moveImplementation();
+
+	void testCallback();
+
+	void testShit(const Vector<int>& val);
+
+	String getBlaString();
+
+	long long getLongval();
+
+	ManagedWeakReference<TestIDLClass* > getParent();
 
 	void asyncTest();
 
@@ -151,7 +254,21 @@ public:
 	int _setObject(lua_State *L);
 	int _getObject(lua_State *L);
 	int getValue(lua_State *L);
+	int blaNative(lua_State *L);
 	int setValue(lua_State *L);
+	int setValue2(lua_State *L);
+	int setParent(lua_State *L);
+	int setStringBla(lua_State *L);
+	int getBlaParent(lua_State *L);
+	int setPosition(lua_State *L);
+	int setBlaParent(lua_State *L);
+	int moveImplementation(lua_State *L);
+	int testCallback(lua_State *L);
+	int testShit(lua_State *L);
+	int getTestVector(lua_State *L);
+	int getBlaString(lua_State *L);
+	int getLongval(lua_State *L);
+	int getParent(lua_State *L);
 	int asyncTest(lua_State *L);
 
 	Reference<TestIDLClass*> realObject;

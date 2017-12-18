@@ -62,7 +62,7 @@ public:
 
 	float getDistanceTo(QuadTreeEntry* obj);
 
-	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
+	CloseObjectsVector* getCloseObjects();
 
 	ManagedWeakReference<QuadTreeEntry* > getParent();
 
@@ -72,7 +72,7 @@ public:
 
 	bool containsPoint(float x, float y);
 
-	ManagedWeakReference<QuadTreeEntry* > getRootParent();
+	QuadTreeEntry* getRootParent();
 
 	bool isInSWArea(QuadTreeNode* node) const;
 
@@ -108,6 +108,8 @@ public:
 
 	int compareTo(QuadTreeEntry* obj);
 
+	int registerToCloseObjectsReceivers();
+
 	bool isInQuadTree() const;
 
 	TransactionalReference<QuadTreeNode*> getNode() const;
@@ -116,7 +118,7 @@ public:
 
 	unsigned long long getDirtyObjectID();
 
-	unsigned long long getObjectID();
+	virtual unsigned long long getObjectID();
 
 	float getRadius() const;
 
@@ -142,9 +144,11 @@ protected:
 
 	virtual ~QuadTreeEntry();
 
-	int _compareTo(QuadTreeEntry* obj);
+	int __compareTo(QuadTreeEntry* obj);
 
-	unsigned long long _getDirtyObjectID();
+	unsigned long long __getDirtyObjectID();
+
+	unsigned long long __getObjectID();
 
 	friend class QuadTreeEntryHelper;
 };
@@ -192,7 +196,7 @@ public:
 
 	float getDistanceTo(QuadTreeEntry* obj);
 
-	SortedVector<ManagedReference<QuadTreeEntry* > >* getCloseObjects();
+	CloseObjectsVector* getCloseObjects();
 
 	ManagedWeakReference<QuadTreeEntry* > getParent();
 
@@ -202,7 +206,7 @@ public:
 
 	virtual bool containsPoint(float x, float y);
 
-	ManagedWeakReference<QuadTreeEntry* > getRootParent();
+	QuadTreeEntry* getRootParent();
 
 	bool isInSWArea(QuadTreeNode* node) const;
 
@@ -237,6 +241,8 @@ public:
 	void initializePosition(float x, float z, float y);
 
 	virtual int compareTo(QuadTreeEntry* obj);
+
+	virtual int registerToCloseObjectsReceivers();
 
 	bool isInQuadTree() const;
 
@@ -327,7 +333,7 @@ public:
 
 	bool containsPoint(float x, float y);
 
-	ManagedWeakReference<QuadTreeEntry* > getRootParent();
+	QuadTreeEntry* getRootParent();
 
 	void notifyInsert(QuadTreeEntry* obj);
 
@@ -352,6 +358,8 @@ public:
 	void initializePosition(float x, float z, float y);
 
 	int compareTo(QuadTreeEntry* obj);
+
+	int registerToCloseObjectsReceivers();
 
 	bool isInQuadTree() const;
 

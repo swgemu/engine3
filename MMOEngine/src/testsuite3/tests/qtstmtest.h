@@ -10,6 +10,8 @@
 
 #include "engine/engine.h"
 
+#include "engine/util/u3d/QuadTreeEntry.h"
+
 #define MINCOORD -512
 #define MAXCOORD 512
 

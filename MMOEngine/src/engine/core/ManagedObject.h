@@ -129,35 +129,35 @@ protected:
 
 	virtual ~ManagedObject();
 
-	void _updateForWrite();
+	void __updateForWrite();
 
-	void _lock(bool doLock = true);
+	void __lock(bool doLock = true);
 
-	void _lock(ManagedObject* obj);
+	void __lock(ManagedObject* obj);
 
-	void _lock(Lockable* obj);
+	void __lock(Lockable* obj);
 
-	void _rlock(bool doLock = true);
+	void __rlock(bool doLock = true);
 
-	void _rlock(ManagedObject* obj);
+	void __rlock(ManagedObject* obj);
 
-	void _rlock(Lockable* obj);
+	void __rlock(Lockable* obj);
 
-	void _wlock(bool doLock = true);
+	void __wlock(bool doLock = true);
 
-	void _wlock(ManagedObject* obj);
+	void __wlock(ManagedObject* obj);
 
-	void _unlock(bool doLock = true);
+	void __unlock(bool doLock = true);
 
-	void _runlock(bool doLock = true);
+	void __runlock(bool doLock = true);
 
-	void _setLockName(const String& name);
+	void __setLockName(const String& name);
 
-	bool _notifyDestroy();
+	bool __notifyDestroy();
 
-	void _writeObject(ObjectOutputStream* stream);
+	void __writeObject(ObjectOutputStream* stream);
 
-	DistributedObjectServant* _getServant();
+	DistributedObjectServant* __getServant();
 
 	friend class ManagedObjectHelper;
 };

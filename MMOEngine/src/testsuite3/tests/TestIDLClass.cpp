@@ -8,16 +8,16 @@
  *	TestIDLClassStub
  */
 
-enum {RPC_GETVALUE__ = 1133365074,RPC_SETVALUE__INT_,RPC_ASYNCTEST__};
+enum {RPC_GETVALUE__ = 1133365074,RPC_SETVALUE__INT_,RPC_SETVALUE__INT_INT_,RPC_SETVALUE2__INT_INT_,RPC_SETPARENT__TESTIDLCLASS_,RPC_SETSTRINGBLA__STRING_,RPC_GETBLAPARENT__,RPC_SETPOSITION__VECTOR3_,RPC_SETBLAPARENT__TESTIDLCLASS_,RPC_MOVEIMPLEMENTATION__,RPC_TESTCALLBACK__,RPC_TESTSHIT__VECTOR_,RPC_GETBLASTRING__,RPC_GETLONGVAL__,RPC_GETPARENT__,RPC_ASYNCTEST__};
 
-TestIDLClass::TestIDLClass(int val) : ManagedObject(DummyConstructorParameter::instance()) {
+TestIDLClass::TestIDLClass(int val) : ManagedService(DummyConstructorParameter::instance()) {
 	TestIDLClassImplementation* _implementation = new TestIDLClassImplementation(val);
 	_impl = _implementation;
 	_impl->_setStub(this);
 	_setClassName("TestIDLClass");
 }
 
-TestIDLClass::TestIDLClass(DummyConstructorParameter* param) : ManagedObject(param) {
+TestIDLClass::TestIDLClass(DummyConstructorParameter* param) : ManagedService(param) {
 	_setClassName("TestIDLClass");
 }
 
@@ -40,6 +40,16 @@ int TestIDLClass::getValue() {
 	}
 }
 
+float TestIDLClass::blaNative() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		throw ObjectNotLocalException(this);
+
+	} else {
+		return _implementation->blaNative();
+	}
+}
+
 void TestIDLClass::setValue(int val) {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
@@ -52,6 +62,209 @@ void TestIDLClass::setValue(int val) {
 		method.executeWithVoidReturn();
 	} else {
 		_implementation->setValue(val);
+	}
+}
+
+void TestIDLClass::setValue(int val1, int val2) {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETVALUE__INT_INT_);
+		method.addSignedIntParameter(val1);
+		method.addSignedIntParameter(val2);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->setValue(val1, val2);
+	}
+}
+
+unsigned int TestIDLClass::setValue2(int val1, int val2) {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETVALUE2__INT_INT_);
+		method.addSignedIntParameter(val1);
+		method.addSignedIntParameter(val2);
+
+		return method.executeWithUnsignedIntReturn();
+	} else {
+		return _implementation->setValue2(val1, val2);
+	}
+}
+
+void TestIDLClass::setParent(TestIDLClass* val) {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETPARENT__TESTIDLCLASS_);
+		method.addObjectParameter(val);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->setParent(val);
+	}
+}
+
+void TestIDLClass::setStringBla(String& bla) {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETSTRINGBLA__STRING_);
+		method.addAsciiParameter(bla);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->setStringBla(bla);
+	}
+}
+
+ManagedWeakReference<TestIDLClass* > TestIDLClass::getBlaParent() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETBLAPARENT__);
+
+		return static_cast<TestIDLClass*>(method.executeWithObjectReturn());
+	} else {
+		return _implementation->getBlaParent();
+	}
+}
+
+void TestIDLClass::setPosition(Vector3& pos) {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETPOSITION__VECTOR3_);
+		method.addDereferencedSerializableParameter(pos);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->setPosition(pos);
+	}
+}
+
+void TestIDLClass::setBlaParent(TestIDLClass* val) {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETBLAPARENT__TESTIDLCLASS_);
+		method.addObjectParameter(val);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->setBlaParent(val);
+	}
+}
+
+void TestIDLClass::moveImplementation() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_MOVEIMPLEMENTATION__);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->moveImplementation();
+	}
+}
+
+void TestIDLClass::testCallback() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_TESTCALLBACK__);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->testCallback();
+	}
+}
+
+void TestIDLClass::testShit(const Vector<int>& val) {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_TESTSHIT__VECTOR_);
+		method.addDereferencedSerializableParameter(val);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->testShit(val);
+	}
+}
+
+Vector<int>* TestIDLClass::getTestVector() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		throw ObjectNotLocalException(this);
+
+	} else {
+		return _implementation->getTestVector();
+	}
+}
+
+String TestIDLClass::getBlaString() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETBLASTRING__);
+
+		String _return_getBlaString;
+		method.executeWithAsciiReturn(_return_getBlaString);
+		return _return_getBlaString;
+	} else {
+		return _implementation->getBlaString();
+	}
+}
+
+long long TestIDLClass::getLongval() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETLONGVAL__);
+
+		return method.executeWithSignedLongReturn();
+	} else {
+		return _implementation->getLongval();
+	}
+}
+
+ManagedWeakReference<TestIDLClass* > TestIDLClass::getParent() {
+	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETPARENT__);
+
+		return static_cast<TestIDLClass*>(method.executeWithObjectReturn());
+	} else {
+		return _implementation->getParent();
 	}
 }
 
@@ -87,7 +300,7 @@ void TestIDLClass::_setImplementation(DistributedObjectServant* servant) {
  *	TestIDLClassImplementation
  */
 
-TestIDLClassImplementation::TestIDLClassImplementation(DummyConstructorParameter* param) : ManagedObjectImplementation(param) {
+TestIDLClassImplementation::TestIDLClassImplementation(DummyConstructorParameter* param) : ManagedServiceImplementation(param) {
 	_initializeImplementation();
 }
 
@@ -109,7 +322,7 @@ void TestIDLClassImplementation::_initializeImplementation() {
 
 void TestIDLClassImplementation::_setStub(DistributedObjectStub* stub) {
 	_this = static_cast<TestIDLClass*>(stub);
-	ManagedObjectImplementation::_setStub(stub);
+	ManagedServiceImplementation::_setStub(stub);
 }
 
 DistributedObjectStub* TestIDLClassImplementation::_getStub() {
@@ -149,7 +362,7 @@ void TestIDLClassImplementation::runlock(bool doLock) {
 }
 
 void TestIDLClassImplementation::_serializationHelperMethod() {
-	ManagedObjectImplementation::_serializationHelperMethod();
+	ManagedServiceImplementation::_serializationHelperMethod();
 
 	_setClassName("TestIDLClass");
 
@@ -175,12 +388,24 @@ void TestIDLClassImplementation::readObject(ObjectInputStream* stream) {
 }
 
 bool TestIDLClassImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
-	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
+	if (ManagedServiceImplementation::readObjectMember(stream, nameHashCode))
 		return true;
 
 	switch(nameHashCode) {
 	case 0x3f1d6b14: //TestIDLClass.value
 		TypeInfo<int >::parseFromBinaryStream(&value, stream);
+		return true;
+
+	case 0xeef7092b: //TestIDLClass.testVector
+		TypeInfo<Vector<int> >::parseFromBinaryStream(&testVector, stream);
+		return true;
+
+	case 0xc299c5c9: //TestIDLClass.parent
+		TypeInfo<ManagedWeakReference<TestIDLClass* > >::parseFromBinaryStream(&parent, stream);
+		return true;
+
+	case 0xd7d0a0d2: //TestIDLClass.blaParent
+		TypeInfo<ManagedWeakReference<TestIDLClass* > >::parseFromBinaryStream(&blaParent, stream);
 		return true;
 
 	}
@@ -196,7 +421,7 @@ void TestIDLClassImplementation::writeObject(ObjectOutputStream* stream) {
 }
 
 int TestIDLClassImplementation::writeObjectMembers(ObjectOutputStream* stream) {
-	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+	int _count = ManagedServiceImplementation::writeObjectMembers(stream);
 
 	uint32 _nameHashCode;
 	int _offset;
@@ -209,14 +434,42 @@ int TestIDLClassImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
 	stream->writeInt(_offset, _totalSize);
 
+	_nameHashCode = 0xeef7092b; //TestIDLClass.testVector
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<Vector<int> >::toBinaryStream(&testVector, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
 
-	return _count + 1;
+	_nameHashCode = 0xc299c5c9; //TestIDLClass.parent
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<ManagedWeakReference<TestIDLClass* > >::toBinaryStream(&parent, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+	_nameHashCode = 0xd7d0a0d2; //TestIDLClass.blaParent
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<ManagedWeakReference<TestIDLClass* > >::toBinaryStream(&blaParent, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+
+	return _count + 4;
 }
 
 TestIDLClassImplementation::TestIDLClassImplementation(int val) {
 	_initializeImplementation();
 	// testsuite3/tests/TestIDLClass.idl():  		value = val;
 	value = val;
+	// testsuite3/tests/TestIDLClass.idl():  		testVector.add(-1);
+	(&testVector)->add(-1);
+	// testsuite3/tests/TestIDLClass.idl():  		testVector.add(5);
+	(&testVector)->add(5);
 }
 
 int TestIDLClassImplementation::getValue() {
@@ -224,12 +477,68 @@ int TestIDLClassImplementation::getValue() {
 	return value;
 }
 
+float TestIDLClassImplementation::blaNative() {
+}
+
 void TestIDLClassImplementation::setValue(int val) {
 	// testsuite3/tests/TestIDLClass.idl():  		value = val;
 	value = val;
 }
 
+void TestIDLClassImplementation::setValue(int val1, int val2) {
+	// testsuite3/tests/TestIDLClass.idl():   	 value = val2;
+	value = val2;
+}
+
+unsigned int TestIDLClassImplementation::setValue2(int val1, int val2) {
+	// testsuite3/tests/TestIDLClass.idl():  	 value = val2;
+	value = val2;
+	// testsuite3/tests/TestIDLClass.idl():  	 return value;
+	return value;
+}
+
+void TestIDLClassImplementation::setParent(TestIDLClass* val) {
+	// testsuite3/tests/TestIDLClass.idl():  	 parent = val;
+	parent = val;
+}
+
+void TestIDLClassImplementation::setStringBla(String& bla) {
+}
+
+ManagedWeakReference<TestIDLClass* > TestIDLClassImplementation::getBlaParent() {
+	// testsuite3/tests/TestIDLClass.idl():   return blaParent;
+	return blaParent;
+}
+
+void TestIDLClassImplementation::setPosition(Vector3& pos) {
+}
+
+void TestIDLClassImplementation::testShit(const Vector<int>& val) {
+}
+
+Vector<int>* TestIDLClassImplementation::getTestVector() {
+	// testsuite3/tests/TestIDLClass.idl():  	 return testVector;
+	return (&testVector);
+}
+
+String TestIDLClassImplementation::getBlaString() {
+	// testsuite3/tests/TestIDLClass.idl():  	 return "";
+	return "";
+}
+
+long long TestIDLClassImplementation::getLongval() {
+	// testsuite3/tests/TestIDLClass.idl():  	 return 123;
+	return 123;
+}
+
+ManagedWeakReference<TestIDLClass* > TestIDLClassImplementation::getParent() {
+	// testsuite3/tests/TestIDLClass.idl():  	 return parent;
+	return parent;
+}
+
 void TestIDLClassImplementation::asyncTest() {
+	// testsuite3/tests/TestIDLClass.idl():   System.out << "async test";
+	System::out << "async test";
 }
 
 /*
@@ -240,7 +549,7 @@ void TestIDLClassImplementation::asyncTest() {
 #include "engine/orb/messages/InvokeMethodMessage.h"
 
 
-TestIDLClassAdapter::TestIDLClassAdapter(TestIDLClass* obj) : ManagedObjectAdapter(obj) {
+TestIDLClassAdapter::TestIDLClassAdapter(TestIDLClass* obj) : ManagedServiceAdapter(obj) {
 }
 
 void TestIDLClassAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
@@ -249,21 +558,128 @@ void TestIDLClassAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	switch (methid) {
 	case RPC_GETVALUE__:
 		{
-			resp->insertSignedInt(getValue());
+			
+			int _m_res = getValue();
+			resp->insertSignedInt(_m_res);
 		}
 		break;
 	case RPC_SETVALUE__INT_:
 		{
-			setValue(inv->getSignedIntParameter());
+			int val = inv->getSignedIntParameter();
+			
+			setValue(val);
+			
+		}
+		break;
+	case RPC_SETVALUE__INT_INT_:
+		{
+			int val1 = inv->getSignedIntParameter();
+			int val2 = inv->getSignedIntParameter();
+			
+			setValue(val1, val2);
+			
+		}
+		break;
+	case RPC_SETVALUE2__INT_INT_:
+		{
+			int val1 = inv->getSignedIntParameter();
+			int val2 = inv->getSignedIntParameter();
+			
+			unsigned int _m_res = setValue2(val1, val2);
+			resp->insertInt(_m_res);
+		}
+		break;
+	case RPC_SETPARENT__TESTIDLCLASS_:
+		{
+			TestIDLClass* val = static_cast<TestIDLClass*>(inv->getObjectParameter());
+			
+			setParent(val);
+			
+		}
+		break;
+	case RPC_SETSTRINGBLA__STRING_:
+		{
+			String bla; inv->getAsciiParameter(bla);
+			
+			setStringBla(bla);
+			
+		}
+		break;
+	case RPC_GETBLAPARENT__:
+		{
+			
+			DistributedObject* _m_res = getBlaParent().get();
+			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
+		}
+		break;
+	case RPC_SETPOSITION__VECTOR3_:
+		{
+			Vector3 pos = inv->getDereferencedSerializableParameter<Vector3 >();
+			
+			setPosition(pos);
+			
+		}
+		break;
+	case RPC_SETBLAPARENT__TESTIDLCLASS_:
+		{
+			TestIDLClass* val = static_cast<TestIDLClass*>(inv->getObjectParameter());
+			
+			setBlaParent(val);
+			
+		}
+		break;
+	case RPC_MOVEIMPLEMENTATION__:
+		{
+			
+			moveImplementation();
+			
+		}
+		break;
+	case RPC_TESTCALLBACK__:
+		{
+			
+			testCallback();
+			
+		}
+		break;
+	case RPC_TESTSHIT__VECTOR_:
+		{
+			 Vector<int> val = inv->getDereferencedSerializableParameter<Vector<int> >();
+			
+			testShit(val);
+			
+		}
+		break;
+	case RPC_GETBLASTRING__:
+		{
+			
+			String _m_res = getBlaString();
+			resp->insertAscii(_m_res);
+		}
+		break;
+	case RPC_GETLONGVAL__:
+		{
+			
+			long long _m_res = getLongval();
+			resp->insertSignedLong(_m_res);
+		}
+		break;
+	case RPC_GETPARENT__:
+		{
+			
+			DistributedObject* _m_res = getParent().get();
+			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
 		}
 		break;
 	case RPC_ASYNCTEST__:
 		{
+			
 			asyncTest();
+			
 		}
 		break;
 	default:
-		ManagedObjectAdapter::invokeMethod(methid, inv);
+		ManagedServiceAdapter::invokeMethod(methid, inv);
 	}
 }
 
@@ -273,6 +689,58 @@ int TestIDLClassAdapter::getValue() {
 
 void TestIDLClassAdapter::setValue(int val) {
 	(static_cast<TestIDLClass*>(stub))->setValue(val);
+}
+
+void TestIDLClassAdapter::setValue(int val1, int val2) {
+	(static_cast<TestIDLClass*>(stub))->setValue(val1, val2);
+}
+
+unsigned int TestIDLClassAdapter::setValue2(int val1, int val2) {
+	return (static_cast<TestIDLClass*>(stub))->setValue2(val1, val2);
+}
+
+void TestIDLClassAdapter::setParent(TestIDLClass* val) {
+	(static_cast<TestIDLClass*>(stub))->setParent(val);
+}
+
+void TestIDLClassAdapter::setStringBla(String& bla) {
+	(static_cast<TestIDLClass*>(stub))->setStringBla(bla);
+}
+
+ManagedWeakReference<TestIDLClass* > TestIDLClassAdapter::getBlaParent() {
+	return (static_cast<TestIDLClass*>(stub))->getBlaParent();
+}
+
+void TestIDLClassAdapter::setPosition(Vector3& pos) {
+	(static_cast<TestIDLClass*>(stub))->setPosition(pos);
+}
+
+void TestIDLClassAdapter::setBlaParent(TestIDLClass* val) {
+	(static_cast<TestIDLClass*>(stub))->setBlaParent(val);
+}
+
+void TestIDLClassAdapter::moveImplementation() {
+	(static_cast<TestIDLClass*>(stub))->moveImplementation();
+}
+
+void TestIDLClassAdapter::testCallback() {
+	(static_cast<TestIDLClass*>(stub))->testCallback();
+}
+
+void TestIDLClassAdapter::testShit(const Vector<int>& val) {
+	(static_cast<TestIDLClass*>(stub))->testShit(val);
+}
+
+String TestIDLClassAdapter::getBlaString() {
+	return (static_cast<TestIDLClass*>(stub))->getBlaString();
+}
+
+long long TestIDLClassAdapter::getLongval() {
+	return (static_cast<TestIDLClass*>(stub))->getLongval();
+}
+
+ManagedWeakReference<TestIDLClass* > TestIDLClassAdapter::getParent() {
+	return (static_cast<TestIDLClass*>(stub))->getParent();
 }
 
 void TestIDLClassAdapter::asyncTest() {
@@ -320,7 +788,21 @@ Luna<LuaTestIDLClass>::RegType LuaTestIDLClass::Register[] = {
 	{ "_setObject", &LuaTestIDLClass::_setObject },
 	{ "_getObject", &LuaTestIDLClass::_getObject },
 	{ "getValue", &LuaTestIDLClass::getValue },
+	{ "blaNative", &LuaTestIDLClass::blaNative },
 	{ "setValue", &LuaTestIDLClass::setValue },
+	{ "setValue2", &LuaTestIDLClass::setValue2 },
+	{ "setParent", &LuaTestIDLClass::setParent },
+	{ "setStringBla", &LuaTestIDLClass::setStringBla },
+	{ "getBlaParent", &LuaTestIDLClass::getBlaParent },
+	{ "setPosition", &LuaTestIDLClass::setPosition },
+	{ "setBlaParent", &LuaTestIDLClass::setBlaParent },
+	{ "moveImplementation", &LuaTestIDLClass::moveImplementation },
+	{ "testCallback", &LuaTestIDLClass::testCallback },
+	{ "testShit", &LuaTestIDLClass::testShit },
+	{ "getTestVector", &LuaTestIDLClass::getTestVector },
+	{ "getBlaString", &LuaTestIDLClass::getBlaString },
+	{ "getLongval", &LuaTestIDLClass::getLongval },
+	{ "getParent", &LuaTestIDLClass::getParent },
 	{ "asyncTest", &LuaTestIDLClass::asyncTest },
 	{ 0, 0 }
 };
@@ -358,21 +840,237 @@ int LuaTestIDLClass::getValue(lua_State *L) {
 	return 0;
 }
 
+int LuaTestIDLClass::blaNative(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		float result = realObject->blaNative();
+
+		lua_pushnumber(L, result);
+		return 1;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:blaNative()'");
+	}
+	return 0;
+}
+
 int LuaTestIDLClass::setValue(lua_State *L) {
 	int parameterCount = lua_gettop(L) - 1;
 	
 	if (lua_isnumber(L, -1)) {
-		if (parameterCount == 1) {
-			int val = lua_tointeger(L, -1);
+		if (lua_isnumber(L, -2)) {
+			if (parameterCount == 2) {
+				int val1 = lua_tointeger(L, -2);
+				int val2 = lua_tointeger(L, -1);
 
-			realObject->setValue(val);
+				realObject->setValue(val1, val2);
 
-			return 0;
+				return 0;
+			}
 		} else {
-			throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:setValue(integer)'");
+			throw LuaCallbackException(L, "invalid argument at 1 for lua method 'TestIDLClass:setValue(integer)'");
 		}
 	} else {
 		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestIDLClass:setValue(integer)'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::setValue2(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (lua_isnumber(L, -1)) {
+		if (lua_isnumber(L, -2)) {
+			if (parameterCount == 2) {
+				int val1 = lua_tointeger(L, -2);
+				int val2 = lua_tointeger(L, -1);
+
+				unsigned int result = realObject->setValue2(val1, val2);
+
+				lua_pushinteger(L, result);
+				return 1;
+			} else {
+				throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:setValue2(integer, integer)'");
+			}
+		} else {
+			throw LuaCallbackException(L, "invalid argument at 1 for lua method 'TestIDLClass:setValue2(integer, integer)'");
+		}
+	} else {
+		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestIDLClass:setValue2(integer, integer)'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::setParent(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (lua_isuserdata(L, -1)) {
+		if (parameterCount == 1) {
+			TestIDLClass* val = static_cast<TestIDLClass*>(lua_touserdata(L, -1));
+
+			realObject->setParent(val);
+
+			return 0;
+		} else {
+			throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:setParent(userdata)'");
+		}
+	} else {
+		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestIDLClass:setParent(userdata)'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::setStringBla(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (lua_isstring(L, -1)) {
+		if (parameterCount == 1) {
+			String bla = lua_tostring(L, -1);
+
+			realObject->setStringBla(bla);
+
+			return 0;
+		} else {
+			throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:setStringBla(string)'");
+		}
+	} else {
+		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestIDLClass:setStringBla(string)'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::getBlaParent(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		TestIDLClass* result = realObject->getBlaParent().get();
+
+		if (result != NULL)
+			lua_pushlightuserdata(L, result);
+		else
+			lua_pushnil(L);
+		return 1;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:getBlaParent()'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::setPosition(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	return 0;
+}
+
+int LuaTestIDLClass::setBlaParent(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (lua_isuserdata(L, -1)) {
+		if (parameterCount == 1) {
+			TestIDLClass* val = static_cast<TestIDLClass*>(lua_touserdata(L, -1));
+
+			realObject->setBlaParent(val);
+
+			return 0;
+		} else {
+			throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:setBlaParent(userdata)'");
+		}
+	} else {
+		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestIDLClass:setBlaParent(userdata)'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::moveImplementation(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		realObject->moveImplementation();
+
+		return 0;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:moveImplementation()'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::testCallback(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		realObject->testCallback();
+
+		return 0;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:testCallback()'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::testShit(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	return 0;
+}
+
+int LuaTestIDLClass::getTestVector(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		Vector<int>* result = realObject->getTestVector();
+
+		if (result != NULL)
+			lua_pushlightuserdata(L, result);
+		else
+			lua_pushnil(L);
+		return 1;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:getTestVector()'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::getBlaString(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		String result = realObject->getBlaString();
+
+		lua_pushstring(L, result.toCharArray());
+		return 1;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:getBlaString()'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::getLongval(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		long long result = realObject->getLongval();
+
+		lua_pushinteger(L, result);
+		return 1;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:getLongval()'");
+	}
+	return 0;
+}
+
+int LuaTestIDLClass::getParent(lua_State *L) {
+	int parameterCount = lua_gettop(L) - 1;
+	
+	if (parameterCount == 0) {
+		TestIDLClass* result = realObject->getParent().get();
+
+		if (result != NULL)
+			lua_pushlightuserdata(L, result);
+		else
+			lua_pushnil(L);
+		return 1;
+	} else {
+		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestIDLClass:getParent()'");
 	}
 	return 0;
 }

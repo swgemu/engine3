@@ -8,7 +8,7 @@
  *	QuadTreeEntryStub
  */
 
-enum {RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_ = 4100280936,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_GETPARENT__,RPC_GETPARENTUNSAFE__,RPC_GETROOTPARENTUNSAFE__,RPC_CONTAINSPOINT__FLOAT_FLOAT_,RPC_GETROOTPARENT__,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_ISINQUADTREE__,RPC_GETDIRTYOBJECTID__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_SETRADIUS__FLOAT_,RPC_CLEARBOUNDING__,RPC_SETPARENT__QUADTREEENTRY_};
+enum {RPC_ADDINRANGEOBJECT__QUADTREEENTRY_BOOL_ = 4100280936,RPC_REMOVEINRANGEOBJECT__QUADTREEENTRY_,RPC_REMOVEINRANGEOBJECT__INT_,RPC_REMOVEINRANGEOBJECTS__,RPC_ISINRANGE__QUADTREEENTRY_FLOAT_,RPC_ISINRANGE__FLOAT_FLOAT_FLOAT_,RPC_GETDISTANCETO__QUADTREEENTRY_,RPC_GETPARENT__,RPC_GETPARENTUNSAFE__,RPC_GETROOTPARENTUNSAFE__,RPC_CONTAINSPOINT__FLOAT_FLOAT_,RPC_GETROOTPARENT__,RPC_NOTIFYINSERT__QUADTREEENTRY_,RPC_NOTIFYPOSITIONUPDATE__QUADTREEENTRY_,RPC_NOTIFYDISSAPEAR__QUADTREEENTRY_,RPC_GETPOSITIONX__,RPC_GETPOSITIONZ__,RPC_GETPOSITIONY__,RPC_GETPREVIOUSPOSITIONX__,RPC_GETPREVIOUSPOSITIONZ__,RPC_GETPREVIOUSPOSITIONY__,RPC_SETPOSITION__FLOAT_FLOAT_FLOAT_,RPC_INITIALIZEPOSITION__FLOAT_FLOAT_FLOAT_,RPC_COMPARETO__QUADTREEENTRY_,RPC_REGISTERTOCLOSEOBJECTSRECEIVERS__,RPC_ISINQUADTREE__,RPC_GETDIRTYOBJECTID__,RPC_GETOBJECTID__,RPC_GETRADIUS__,RPC_ISBOUNDING__,RPC_SETBOUNDING__,RPC_SETRADIUS__FLOAT_,RPC_CLEARBOUNDING__,RPC_SETPARENT__QUADTREEENTRY_};
 
 QuadTreeEntry::QuadTreeEntry(QuadTreeNode* n) : Observable(DummyConstructorParameter::instance()) {
 	QuadTreeEntryImplementation* _implementation = new QuadTreeEntryImplementation(n);
@@ -134,7 +134,7 @@ float QuadTreeEntry::getDistanceTo(QuadTreeEntry* obj) {
 	}
 }
 
-SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntry::getCloseObjects() {
+CloseObjectsVector* QuadTreeEntry::getCloseObjects() {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);
@@ -202,7 +202,7 @@ bool QuadTreeEntry::containsPoint(float x, float y) {
 	}
 }
 
-ManagedWeakReference<QuadTreeEntry* > QuadTreeEntry::getRootParent() {
+QuadTreeEntry* QuadTreeEntry::getRootParent() {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -429,7 +429,7 @@ void QuadTreeEntry::initializePosition(float x, float z, float y) {
 	}
 }
 
-int QuadTreeEntry::_compareTo(QuadTreeEntry* obj) {
+int QuadTreeEntry::__compareTo(QuadTreeEntry* obj) {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -441,6 +441,20 @@ int QuadTreeEntry::_compareTo(QuadTreeEntry* obj) {
 		return method.executeWithSignedIntReturn();
 	} else {
 		return _implementation->compareTo(obj);
+	}
+}
+
+int QuadTreeEntry::registerToCloseObjectsReceivers() {
+	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_REGISTERTOCLOSEOBJECTSRECEIVERS__);
+
+		return method.executeWithSignedIntReturn();
+	} else {
+		return _implementation->registerToCloseObjectsReceivers();
 	}
 }
 
@@ -478,7 +492,7 @@ void QuadTreeEntry::setCloseObjects(CloseObjectsVector* vec) {
 	}
 }
 
-unsigned long long QuadTreeEntry::_getDirtyObjectID() {
+unsigned long long QuadTreeEntry::__getDirtyObjectID() {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -492,7 +506,7 @@ unsigned long long QuadTreeEntry::_getDirtyObjectID() {
 	}
 }
 
-unsigned long long QuadTreeEntry::getObjectID() {
+unsigned long long QuadTreeEntry::__getObjectID() {
 	QuadTreeEntryImplementation* _implementation = static_cast<QuadTreeEntryImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -847,7 +861,7 @@ float QuadTreeEntryImplementation::getDistanceTo(QuadTreeEntry* obj) {
 	return Math::sqrt(deltaX * deltaX + deltaY * deltaY);
 }
 
-SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntryImplementation::getCloseObjects() {
+CloseObjectsVector* QuadTreeEntryImplementation::getCloseObjects() {
 	// engine/util/u3d/QuadTreeEntry.idl():  		return closeobjects;
 	return closeobjects;
 }
@@ -909,6 +923,11 @@ void QuadTreeEntryImplementation::setPosition(float x, float z, float y) {
 void QuadTreeEntryImplementation::initializePosition(float x, float z, float y) {
 	// engine/util/u3d/QuadTreeEntry.idl():  		coordinates.initializePosition(x, z, y);
 	(&coordinates)->initializePosition(x, z, y);
+}
+
+int QuadTreeEntryImplementation::registerToCloseObjectsReceivers() {
+	// engine/util/u3d/QuadTreeEntry.idl():  	 return 0;
+	return 0;
 }
 
 bool QuadTreeEntryImplementation::isInQuadTree() const{
@@ -1063,7 +1082,7 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 	case RPC_GETROOTPARENT__:
 		{
 			
-			DistributedObject* _m_res = getRootParent().get();
+			DistributedObject* _m_res = getRootParent();
 			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
 		}
 		break;
@@ -1158,6 +1177,13 @@ void QuadTreeEntryAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			QuadTreeEntry* obj = static_cast<QuadTreeEntry*>(inv->getObjectParameter());
 			
 			int _m_res = compareTo(obj);
+			resp->insertSignedInt(_m_res);
+		}
+		break;
+	case RPC_REGISTERTOCLOSEOBJECTSRECEIVERS__:
+		{
+			
+			int _m_res = registerToCloseObjectsReceivers();
 			resp->insertSignedInt(_m_res);
 		}
 		break;
@@ -1275,7 +1301,7 @@ bool QuadTreeEntryAdapter::containsPoint(float x, float y) {
 	return (static_cast<QuadTreeEntry*>(stub))->containsPoint(x, y);
 }
 
-ManagedWeakReference<QuadTreeEntry* > QuadTreeEntryAdapter::getRootParent() {
+QuadTreeEntry* QuadTreeEntryAdapter::getRootParent() {
 	return (static_cast<QuadTreeEntry*>(stub))->getRootParent();
 }
 
@@ -1325,6 +1351,10 @@ void QuadTreeEntryAdapter::initializePosition(float x, float z, float y) {
 
 int QuadTreeEntryAdapter::compareTo(QuadTreeEntry* obj) {
 	return (static_cast<QuadTreeEntry*>(stub))->compareTo(obj);
+}
+
+int QuadTreeEntryAdapter::registerToCloseObjectsReceivers() {
+	return (static_cast<QuadTreeEntry*>(stub))->registerToCloseObjectsReceivers();
 }
 
 bool QuadTreeEntryAdapter::isInQuadTree() const {

@@ -54,7 +54,7 @@ class MemoryPool {
 	void* addresses[POOL_SIZE];
 public:
 	MemoryPool() {
-		memset(addresses, NULL, sizeof(void*) * POOL_SIZE);
+		memset(addresses, 0, sizeof(void*) * POOL_SIZE);
 	}
 
 	bool add(void* mem) {

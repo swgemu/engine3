@@ -2,6 +2,9 @@ package testsuite3.tests;
 
 include system.util.Vector;
 
+include engine.lua.LuaCallbackException;
+
+
 @noORB
 @lua
 class TestNoOrbClass {

@@ -14,7 +14,10 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/util/Observable.idl \
 			  engine/util/Facade.idl \
 			  engine/util/u3d/QuadTreeEntry.idl \
-			  testsuite3/tests/TestIDLClass.idl
+			  testsuite3/tests/TestIDLClass.idl \
+			  testsuite3/tests/ZoneServer.idl \
+			  testsuite3/tests/TestNoOrbClass.idl \
+			  testsuite3/tests/NavWorker.idl
 
 IDL_DIRECTIVES =
 	
@@ -87,7 +90,7 @@ install-headers:
 	#build/unix/install . > /dev/null 2>&1
 
 install-lib:
-	cp build/unix/src/libengine3.a lib/unix
+	#cp build/unix/src/libengine3.a lib/unix
 	#cp build/unix/src/testsuite3/testsuite3* bin
 	#rm build/unix/src/testsuite3/testsuite3*	
 
@@ -107,7 +110,7 @@ ifeq ($(PLATFORM),Linux)
 	CPU_CORES:=$(shell grep -c processor /proc/cpuinfo)
 else 
 ifeq ($(PLATFORM),Darwin)
-  	CPU_CORES:=$(shell system_profiler | awk '/Number Of CPUs/{print $4}{next;}')
+  	CPU_CORES:=2
 endif
 endif
 
