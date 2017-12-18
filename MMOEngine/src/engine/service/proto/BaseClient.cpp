@@ -782,7 +782,6 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 			error(msg);
 
 			disconnect(false);
-
 		}
 
 		return NULL;
@@ -813,7 +812,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 #else
 		if (seq < (clientSequence & 0xFFFF)) {
 #endif
-		acknowledgeClientPackets(clientSequence - 1);
+		acknowledgeClientPackets(seq);
 		//Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, seq), 9);
 
 		return false;

@@ -22,7 +22,7 @@ message("Compiling for ${ARCH}-bit architecture")
 
 if (ARCH EQUAL 32)
 	# Create library
-	add_library(engine3_32 STATIC ${system3_sources} ${engine3_sources})
+	add_library(engine3_32 SHARED ${system3_sources} ${engine3_sources})
 
 	# Set target specific compile flags 
 	set_target_properties(engine3_32 PROPERTIES COMPILE_FLAGS -m32 LINK_FLAGS -m32)

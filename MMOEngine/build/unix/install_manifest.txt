@@ -106,7 +106,7 @@
 /opt/engine3/include/./engine/core/TaskScheduler.h
 /opt/engine3/include/./engine/core/TaskQueue.h
 /opt/engine3/include/./engine/core/TaskWorkerThread.h
-/opt/engine3/include/./engine/core/RunStatistics.h
+/opt/engine3/include/./engine/core/TaskStatistics.h
 /opt/engine3/include/./engine/core/Task.h
 /opt/engine3/include/./engine/core/Core.h
 /opt/engine3/include/./engine/core/TimedTaskQueue.h

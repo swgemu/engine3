@@ -6,16 +6,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 package testsuite3.tests;
 
 import engine.core.ManagedObject;
-import engine.core.ManagedService;
 
 include system.util.Vector;
-include engine.util.u3d.Vector3;
-include system.lang.System;
 
-include engine.lua.LuaCallbackException;
-
-@lua
-class TestIDLClass extends ManagedService {
+//@lua
+class TestIDLClass extends ManagedObject {
 	private int value;
 
 	@dereferenced
@@ -23,11 +18,6 @@ class TestIDLClass extends ManagedService {
 
 	@weakReference
 	protected TestIDLClass parent;
-
-	@weakReference
-    protected TestIDLClass blaParent;
-
-    //public final static string mdamda = "mdadada";
 	
 	public TestIDLClass(int val) {
 		value = val;
@@ -39,49 +29,18 @@ class TestIDLClass extends ManagedService {
 	public int getValue() {
 		return value;
 	}
-
-	@local
-	public float blaNative() {
-
-	}
 	
 	public void setValue(int val) {
 		value = val;
 	}
 
-	public void setValue(int val1, int val2) {
-   	    value = val2;
-   	}
-
-	public unsigned int setValue2(int val1, int val2) {
+	public void setValue2(int val1, int val2) {
 	    value = val2;
-
-	    return value;
 	}
 
 	public void setParent(TestIDLClass val) {
 	    parent = val;
 	}
-
-    public void setStringBla(string bla) {
-
-    }
-
-    @weakReference
-    public TestIDLClass getBlaParent() {
-        return blaParent;
-    }
-
-	public void setPosition(@dereferenced Vector3 pos) {
-
-    }
-
-    public native void setBlaParent(TestIDLClass val);
-
-    public native void moveImplementation();
-
-    @virtualStub
-    public native abstract void testCallback();
 
 	public void testShit(@dereferenced final Vector<int> val) {
 	    //testVector = val;
@@ -99,14 +58,6 @@ class TestIDLClass extends ManagedService {
 	    return testVector;
 	}
 
-	public string getBlaString() {
-	    return "";
-	}
-
-	public long getLongval() {
-	    return 123;
-	}
-
     @weakReference
 	public TestIDLClass getParent() {
 	    return parent;
@@ -114,6 +65,6 @@ class TestIDLClass extends ManagedService {
 
     @async
 	public void asyncTest() {
-        System.out << "async test";
+
 	}
 }

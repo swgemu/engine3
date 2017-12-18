@@ -28,7 +28,7 @@ ManagedObject::~ManagedObject() {
 
 
 
-void ManagedObject::__updateForWrite() {
+void ManagedObject::_updateForWrite() {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -42,7 +42,7 @@ void ManagedObject::__updateForWrite() {
 	}
 }
 
-void ManagedObject::__lock(bool doLock) {
+void ManagedObject::_lock(bool doLock) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -57,7 +57,7 @@ void ManagedObject::__lock(bool doLock) {
 	}
 }
 
-void ManagedObject::__lock(ManagedObject* obj) {
+void ManagedObject::_lock(ManagedObject* obj) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -72,7 +72,7 @@ void ManagedObject::__lock(ManagedObject* obj) {
 	}
 }
 
-void ManagedObject::__lock(Lockable* obj) {
+void ManagedObject::_lock(Lockable* obj) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);
@@ -82,7 +82,7 @@ void ManagedObject::__lock(Lockable* obj) {
 	}
 }
 
-void ManagedObject::__rlock(bool doLock) {
+void ManagedObject::_rlock(bool doLock) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -97,7 +97,7 @@ void ManagedObject::__rlock(bool doLock) {
 	}
 }
 
-void ManagedObject::__rlock(ManagedObject* obj) {
+void ManagedObject::_rlock(ManagedObject* obj) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -112,7 +112,7 @@ void ManagedObject::__rlock(ManagedObject* obj) {
 	}
 }
 
-void ManagedObject::__rlock(Lockable* obj) {
+void ManagedObject::_rlock(Lockable* obj) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);
@@ -122,7 +122,7 @@ void ManagedObject::__rlock(Lockable* obj) {
 	}
 }
 
-void ManagedObject::__wlock(bool doLock) {
+void ManagedObject::_wlock(bool doLock) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -137,7 +137,7 @@ void ManagedObject::__wlock(bool doLock) {
 	}
 }
 
-void ManagedObject::__wlock(ManagedObject* obj) {
+void ManagedObject::_wlock(ManagedObject* obj) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -152,7 +152,7 @@ void ManagedObject::__wlock(ManagedObject* obj) {
 	}
 }
 
-void ManagedObject::__unlock(bool doLock) {
+void ManagedObject::_unlock(bool doLock) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -167,7 +167,7 @@ void ManagedObject::__unlock(bool doLock) {
 	}
 }
 
-void ManagedObject::__runlock(bool doLock) {
+void ManagedObject::_runlock(bool doLock) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -182,7 +182,7 @@ void ManagedObject::__runlock(bool doLock) {
 	}
 }
 
-void ManagedObject::__setLockName(const String& name) {
+void ManagedObject::_setLockName(const String& name) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -197,7 +197,7 @@ void ManagedObject::__setLockName(const String& name) {
 	}
 }
 
-bool ManagedObject::__notifyDestroy() {
+bool ManagedObject::_notifyDestroy() {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -211,7 +211,7 @@ bool ManagedObject::__notifyDestroy() {
 	}
 }
 
-void ManagedObject::__writeObject(ObjectOutputStream* stream) {
+void ManagedObject::_writeObject(ObjectOutputStream* stream) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);
@@ -265,7 +265,7 @@ void ManagedObject::notifyLoadFromDatabase() {
 	}
 }
 
-DistributedObjectServant* ManagedObject::__getServant() {
+DistributedObjectServant* ManagedObject::_getServant() {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);

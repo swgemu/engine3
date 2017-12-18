@@ -95,7 +95,7 @@ void weakreftest() {
 		task->schedule(25);
 	}
 
-	int secondsToRun = Math::max(10, SECONDS_TO_RUN);
+	int secondsToRun = MAX(10, SECONDS_TO_RUN);
 
 	printf("done queuing tasks\n");
 	printf("seconds to run %d\n", secondsToRun);
