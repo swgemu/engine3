@@ -11,6 +11,8 @@
 #include "engine/util/Facade.h"
 #include "engine/util/u3d/Sphere.h"
 #include "engine/util/u3d/Segment.h"
+#include "engine/util/Observer.h"
+#include "engine/util/u3d/Coordinate.h"
 
 #define PRINT_OBJECT_SIZE(OBJ) \
 			printf("size of " #OBJ " is: %ld bytes\n", sizeof(OBJ));
@@ -62,9 +64,9 @@ void testObjectSizes() {
 	//u3d
 	PRINT_OBJECT_SIZE(Coordinate);
 	PRINT_OBJECT_SIZE(Quaternion);
-	PRINT_OBJECT_SIZE(QuadTree);
-	PRINT_OBJECT_SIZE(QuadTreeEntry);
-	PRINT_OBJECT_SIZE(QuadTreeEntryImplementation);
+	//PRINT_OBJECT_SIZE(QuadTree);
+	//PRINT_OBJECT_SIZE(QuadTreeEntry);
+	//PRINT_OBJECT_SIZE(QuadTreeEntryImplementation);
 	PRINT_OBJECT_SIZE(Matrix3);
 	PRINT_OBJECT_SIZE(Matrix4);
 	PRINT_OBJECT_SIZE(Vector3);

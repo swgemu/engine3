@@ -3,7 +3,7 @@
 
 # Add sources
 file(GLOB_RECURSE system3_sources "system/*.cpp") 
-file(GLOB_RECURSE engine3_sources "engine/*.cpp") 
+file(GLOB_RECURSE engine3_sources "engine/*.cpp")
 
 #Exclude sources from engine
 #file(GLOB_RECURSE engine3_excludes "")
@@ -35,10 +35,13 @@ else ()
 	add_library(engine3 STATIC ${system3_sources} ${engine3_sources})
 
 	TARGET_LINK_LIBRARIES(engine3
-			db-5.3
-			lua
-			mysqlclient_r
-			z
+			${DB_LIBRARIES}
+			${LUA_LIBRARIES}
+			${ZLIB_LIBRARIES}
+			Threads::Threads
+			${MYSQL_CLIENT_LIBS}
+			${CMAKE_DL_LIBS}
+			${OPENSSL_LIBRARIES}
 			)
 
 	# Install headers and library

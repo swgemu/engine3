@@ -28,6 +28,13 @@
 
 ##########################################################################
 
+IF (MYSQL_INCLUDE_DIR)
+  SET(MySql_FIND_QUIETLY_INCLUDE TRUE)
+ENDIF (MYSQL_INCLUDE_DIR)
+
+IF (MYSQL_LIB)
+  SET(MySql_FIND_QUIETLY_LIB TRUE)
+ENDIF (MYSQL_LIB)
 
 #-------------- FIND MYSQL_INCLUDE_DIR ------------------
 FIND_PATH(MYSQL_INCLUDE_DIR mysql.h
@@ -70,7 +77,7 @@ IF (WIN32)
           $ENV{ProgramFiles}/MySQL/*/lib/${libsuffixDist}
           $ENV{SystemDrive}/MySQL/*/lib/${libsuffixDist})
 ELSE (WIN32)
-  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient_r
+  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient
           PATHS
           /usr/lib/mysql
           /usr/local/lib/mysql
@@ -95,7 +102,7 @@ IF (MYSQL_INCLUDE_DIR AND MYSQL_LIB_DIR)
 
   FIND_LIBRARY(MYSQL_ZLIB zlib PATHS ${MYSQL_LIB_DIR})
   FIND_LIBRARY(MYSQL_TAOCRYPT taocrypt PATHS ${MYSQL_LIB_DIR})
-  SET(MYSQL_CLIENT_LIBS mysqlclient_r)
+  SET(MYSQL_CLIENT_LIBS mysqlclient)
   IF (MYSQL_ZLIB)
     SET(MYSQL_CLIENT_LIBS ${MYSQL_CLIENT_LIBS} zlib)
   ENDIF (MYSQL_ZLIB)
@@ -107,8 +114,18 @@ IF (MYSQL_INCLUDE_DIR AND MYSQL_LIB_DIR)
     SET(MYSQL_CLIENT_LIBS ${MYSQL_CLIENT_LIBS} ws2_32)
   ENDIF (WIN32)
 
-  MESSAGE(STATUS "MySQL Include dir: ${MYSQL_INCLUDE_DIR}  library dir: ${MYSQL_LIB_DIR}")
-  MESSAGE(STATUS "MySQL client libraries: ${MYSQL_CLIENT_LIBS}")
-ELSEIF (MySQL_FIND_REQUIRED)
+  IF (NOT MySql_FIND_QUIETLY_INCLUDE)
+    MESSAGE(STATUS "Found MySQL Include dir: ${MYSQL_INCLUDE_DIR}  library dir: ${MYSQL_LIB_DIR}")
+  ENDIF (NOT MySql_FIND_QUIETLY_INCLUDE)
+
+  IF (NOT MySql_FIND_QUIETLY_LIB)
+    MESSAGE(STATUS "Found MySQL client libraries: ${MYSQL_CLIENT_LIBS}")
+  ENDIF (NOT MySql_FIND_QUIETLY_LIB)
+ELSEIF (MySql_FIND_REQUIRED)
   MESSAGE(FATAL_ERROR "Cannot find MySQL. Include dir: ${MYSQL_INCLUDE_DIR}  library dir: ${MYSQL_LIB_DIR}")
 ENDIF (MYSQL_INCLUDE_DIR AND MYSQL_LIB_DIR)
+
+MARK_AS_ADVANCED(
+        MYSQL_LIB_DIR
+        MYSQL_INCLUDE_DIR
+)

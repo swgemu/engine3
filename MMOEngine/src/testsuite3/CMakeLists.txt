@@ -13,9 +13,14 @@ add_executable(testsuite3 ${testsuite3_sources})
 
 # Add libraries
 target_link_libraries(testsuite3
-	z rt dl pthread crypto
-	engine3
-	lua db-5.0 ${MYSQL_LIBRARIES})
+		${DB_LIBRARIES}
+		${LUA_LIBRARIES}
+		${ZLIB_LIBRARIES}
+		Threads::Threads
+		${MYSQL_CLIENT_LIBS}
+		${CMAKE_DL_LIBS}
+		${OPENSSL_LIBRARIES}
+		engine3)
 
 # Install core3client binary
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/testsuite3 DESTINATION bin)
