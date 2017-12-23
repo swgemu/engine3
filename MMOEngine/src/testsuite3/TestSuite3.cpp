@@ -9,10 +9,10 @@
 #include "tests/memprottest.h"
 #include "tests/stmtest.h"
 #include "tests/stmmemtest.h"
-#include "tests/qtstmtest.h"
+//#include "tests/qtstmtest.h"
 #include "tests/referencetest.h"
 #include "tests/allocatorhook.h"
-#include "tests/qtboundingtest.h"
+//#include "tests/qtboundingtest.h"
 #include "tests/timeserialize.h"
 #include "tests/loggertest.h"
 #include "tests/orbtest.h"
@@ -56,14 +56,14 @@ int main(int argc, char* argv[]) {
 				testMemoryProtection();
 			else if (arguments.contains("stmmemtest"))
 				testSTMMemory();
-			else if (arguments.contains("qtstmtest"))
-				testQTSTM();
-			else if (arguments.contains("referencetest")) {
+			else if (arguments.contains("qtstmtest")) {
+				//testQTSTM();
+			} else if (arguments.contains("referencetest")) {
 				referenceTest();
 			} else if (arguments.contains("memfiletest")) {
 				testMemoryMappedFile();
 			} else if (arguments.contains("qtboundingtest")) {
-				testQTBounding();
+				//testQTBounding();
 			} else if (arguments.contains("timeserialize")) {
 				testTimeSerialization();
 			} else if (arguments.contains("loggertest")) {
