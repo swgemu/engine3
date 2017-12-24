@@ -13,7 +13,8 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/util/Observer.idl \
 			  engine/util/Observable.idl \
 			  engine/util/Facade.idl \
-			  testsuite3/tests/TestIDLClass.idl
+			  testsuite3/tests/TestIDLClass.idl \
+			  testsuite3/tests/TestNoOrbClass.idl
 
 IDL_DIRECTIVES =
 	
@@ -106,7 +107,7 @@ ifeq ($(PLATFORM),Linux)
 	CPU_CORES:=$(shell grep -c processor /proc/cpuinfo)
 else 
 ifeq ($(PLATFORM),Darwin)
-  	CPU_CORES:=$(shell system_profiler | awk '/Number Of CPUs/{print $4}{next;}')
+  	CPU_CORES:=2
 endif
 endif
 
