@@ -1,4 +1,5 @@
-
+#ifndef LRU_CACHE_USING_ENGINE3_H_
+#define LRU_CACHE_USING_ENGINE3_H_
 #include "system/util/SynchronizedHashTable.h"
 #include "system/thread/atomic/AtomicInteger.h"
 
@@ -504,3 +505,5 @@ protected:
 
   AtomicInteger hitCount, missCount;
 };
+
+#endif
