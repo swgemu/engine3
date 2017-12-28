@@ -23,10 +23,7 @@ Cursor::Cursor(BerkeleyDatabase* database, DBC* dbcursor, const CursorConfig& co
 
 Cursor::~Cursor() {
 	if (dbc != NULL) {
-		int ret = close();
-
-		if (ret != 0)
-			throw DatabaseException("error while trying to close cursor with ret " + String::valueOf(ret));
+		close();
 	}
 }
 
