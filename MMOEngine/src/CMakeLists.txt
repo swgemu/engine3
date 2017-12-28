@@ -15,7 +15,7 @@ include_directories(../external/dlmalloc)
 include_directories(../external/ptmalloc3)
 include_directories(../external/multimmap)
 
-message("Compiling for ${ARCH}-bit architecture")
+#message("Compiling for ${ARCH}-bit architecture")
 
 #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
