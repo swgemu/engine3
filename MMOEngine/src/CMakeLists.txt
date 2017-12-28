@@ -35,6 +35,7 @@ else ()
 	add_library(engine3 STATIC ${system3_sources} ${engine3_sources})
 
 	TARGET_LINK_LIBRARIES(engine3
+			${Boost_LIBRARIES}
 			${DB_LIBRARIES}
 			${LUA_LIBRARIES}
 			${ZLIB_LIBRARIES}

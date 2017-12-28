@@ -286,7 +286,7 @@ ObservableImplementation::ObservableImplementation() {
 
 void ObservableImplementation::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
 	// engine/util/Observable.idl():  		observerEventMap.notifyObservers(eventType, this, arg1, arg2);
-	(&observerEventMap)->notifyObservers(eventType, _this.get(), arg1, arg2);
+	(&observerEventMap)->notifyObservers(eventType, _this.getReferenceUnsafeStaticCast(), arg1, arg2);
 	// engine/util/Observable.idl():  		}
 	for (	// engine/util/Observable.idl():  		for (int i = 0;
 	int i = 0;
