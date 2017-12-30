@@ -160,6 +160,10 @@ namespace engine {
 				strongRef = dynamic_cast<O>(tempObj.get());
 
 				WeakReference<O>::updateObject(strongRef.get());
+
+				if (strongRef == NULL) {
+					savedObjectID = 0;
+				}
 			}
 
 			return strongRef;
@@ -173,6 +177,10 @@ namespace engine {
 				strongRef = dynamic_cast<O>(tempObj.get());
 
 				WeakReference<O>::updateObject(strongRef.get());
+
+				if (strongRef == NULL) {
+					savedObjectID = 0;
+				}
 			}
 
 			return strongRef;
