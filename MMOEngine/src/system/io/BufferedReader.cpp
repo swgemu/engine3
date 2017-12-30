@@ -3,7 +3,7 @@
 BufferedReader::BufferedReader(Reader* reader) {
 	BufferedReader::reader = reader;
 
-	buffer = NULL;
+	buffer = nullptr;
 }
 
 void BufferedReader::close() {

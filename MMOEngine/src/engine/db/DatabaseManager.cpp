@@ -23,13 +23,13 @@ DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 	setGlobalLogging(true);
 	setInfoLogLevel();
 
-	databases.setNullValue(NULL);
+	databases.setNullValue(nullptr);
 	databases.setAllowOverwriteInsertPlan();
 
 	nameDirectory.setNullValue(-1);
 	nameDirectory.setNoDuplicateInsertPlan();
 
-	databaseDirectory = NULL;
+	databaseDirectory = nullptr;
 
 	checkpointTask = new BerkeleyCheckpointTask(this);
 
@@ -43,10 +43,10 @@ DatabaseManager::~DatabaseManager() {
 	closeDatabases();
 
 	delete databaseDirectory;
-	databaseDirectory = NULL;
+	databaseDirectory = nullptr;
 
 	delete databaseEnvironment;
-	databaseEnvironment = NULL;
+	databaseEnvironment = nullptr;
 
 	//checkpointTask->cancel();
 
@@ -147,7 +147,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 			uint32 tableType = (uint32)(tableKey >> 32);
 			uint32 tableID = (uint32)((tableKey << 32) >> 32);
 
-			LocalDatabase* db = NULL;
+			LocalDatabase* db = nullptr;
 
 			StringBuffer msg;
 
@@ -242,14 +242,14 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 		//printf("total count %llu\n", count);
 
 		while (iterator.getNextKeyAndValue(key, &data)) {
-			ObjectOutputStream* newData = NULL;
+			ObjectOutputStream* newData = nullptr;
 
 			++convertedCount;
 
 			/*
 			 * ObjectOutputStream* newData = Serializable::convertToHashCodeNameMembers(&data);
 
-			objectDatabase->putData(key, newData, NULL, transaction);
+			objectDatabase->putData(key, newData, nullptr, transaction);
 			 *
 			 */
 
@@ -264,7 +264,7 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 
 			//assert(iterator.putCurrent(newData) == 0);
 
-			objectDatabase->putData(key, newData, NULL, transaction);
+			objectDatabase->putData(key, newData, nullptr, transaction);
 
 			data.clear();
 		}
@@ -290,7 +290,7 @@ void DatabaseManager::closeDatabases() {
 	}
 
 	delete databaseDirectory;
-	databaseDirectory = NULL;
+	databaseDirectory = nullptr;
 
 	closeEnvironment();
 
@@ -305,11 +305,11 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 
 	LocalDatabase* db = databases.get(uniqueID);
 
-	if (db != NULL)
+	if (db != nullptr)
 		return db;
 
-	if (db == NULL && !create)
-		return NULL;
+	if (db == nullptr && !create)
+		return nullptr;
 
 	if (uniqueID == 0xFFFF)
 		uniqueID = ++lastTableID;
@@ -361,11 +361,11 @@ LocalDatabase* DatabaseManager::loadLocalDatabase(const String& name, bool creat
 
 CurrentTransaction* DatabaseManager::getCurrentTransaction() {
 	if (!loaded)
-		return NULL;
+		return nullptr;
 
 	CurrentTransaction* transaction = localTransaction.get();
 
-	if (transaction == NULL) {
+	if (transaction == nullptr) {
 		transaction = new CurrentTransaction(databaseEnvironment);
 
 		localTransaction.set(transaction);
@@ -375,7 +375,7 @@ CurrentTransaction* DatabaseManager::getCurrentTransaction() {
 }
 
 void DatabaseManager::addTemporaryObject(Object* object) {
-//	if (this == NULL)
+//	if (this == nullptr)
 //		return;
 
 	if (!loaded)
@@ -386,7 +386,7 @@ void DatabaseManager::addTemporaryObject(Object* object) {
 }
 
 void DatabaseManager::startLocalTransaction() {
-	/*if (this == NULL)
+	/*if (this == nullptr)
 		return;
 
 	if (!loaded)
@@ -399,7 +399,7 @@ void DatabaseManager::startLocalTransaction() {
 void DatabaseManager::abortLocalTransaction() {
 	CurrentTransaction* transaction = localTransaction.get();
 
-	if (transaction == NULL)
+	if (transaction == nullptr)
 		return;
 
 	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
@@ -415,7 +415,7 @@ void DatabaseManager::abortLocalTransaction() {
 
 		Stream* stream = updateObject->stream;
 
-		if (stream != NULL)
+		if (stream != nullptr)
 			delete stream;
 	}
 
@@ -426,7 +426,7 @@ engine::db::berkley::Transaction* DatabaseManager::startTransaction() {
 	TransactionConfig config = TransactionConfig::DEFAULT;
 	//config.setReadUncommitted(true);
 
-	Transaction* transaction = databaseEnvironment->beginTransaction(NULL, config);
+	Transaction* transaction = databaseEnvironment->beginTransaction(nullptr, config);
 
 	return transaction;
 }
@@ -438,7 +438,7 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
 	}*/
 
-	assert(transaction != NULL);
+	assert(transaction != nullptr);
 
 	if ((commitRet = transaction->commitSync()) != 0) {
 		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
@@ -449,7 +449,7 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 
 void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* masterTransaction) {
 	//printf("commiting local transaction\n");
-//	if (this == NULL)
+//	if (this == nullptr)
 //		return;
 
 	if (!loaded)
@@ -457,7 +457,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 	CurrentTransaction* transaction = localTransaction.get();
 
-	if (transaction == NULL)
+	if (transaction == nullptr)
 		return;
 
 	Vector<UpdateObject>* updateObjects = transaction->getUpdateVector();
@@ -472,7 +472,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 	int ret = -1;
 	int count = 0;
 
-	Transaction* berkeleyTransaction = NULL;
+	Transaction* berkeleyTransaction = nullptr;
 
 	do {
 		ret = -1;
@@ -487,12 +487,12 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 			++count;
 
-			if (stream != NULL) {
+			if (stream != nullptr) {
 				ret = db->tryPutData(id, stream, berkeleyTransaction);
 
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
-					berkeleyTransaction = NULL;
+					berkeleyTransaction = nullptr;
 
 					info("deadlock detected while trying to putData iterating time " + String::valueOf(iteration));
 					break;
@@ -505,7 +505,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 				if (ret == DB_LOCK_DEADLOCK) {
 					berkeleyTransaction->abort();
-					berkeleyTransaction = NULL;
+					berkeleyTransaction = nullptr;
 
 					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration));
 					break;
@@ -554,12 +554,12 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 		Stream* stream = updateObject->stream;
 
-		if (stream != NULL)
+		if (stream != nullptr)
 			delete stream;
 
 		Stream* id = updateObject->key;
 
-		if (id != NULL)
+		if (id != nullptr)
 			delete id;
 	}
 
@@ -664,7 +664,7 @@ int DatabaseManager::compressDatabase(const String& name, engine::db::berkley::T
 	uint16 id = nameDirectory.get(name);
 	LocalDatabase* database = databases.get(id);
 
-	if (database == NULL) {
+	if (database == nullptr) {
 		error("no " + name + " database found to compress");
 		return 1;
 	}

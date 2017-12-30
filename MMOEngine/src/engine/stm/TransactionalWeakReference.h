@@ -57,7 +57,7 @@ public:
 
 	public:
 		TransactionalWeakReference() {
-			header = NULL;
+			header = nullptr;
 		}
 
 		TransactionalWeakReference(O object) {
@@ -92,17 +92,17 @@ public:
 		}
 
 		O get() {
-			if (header != NULL)
+			if (header != nullptr)
 				return header->get();
 			else
-				return NULL;
+				return nullptr;
 		}
 
 		O getForUpdate() {
-			if (header != NULL)
+			if (header != nullptr)
 				return header->getForUpdate();
 			else
-				return NULL;
+				return nullptr;
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
@@ -117,8 +117,8 @@ public:
 
 	protected:
 		TransactionalObjectHeader<O>* getHeader(O object) {
-			if (object == NULL)
-				return NULL;
+			if (object == nullptr)
+				return nullptr;
 
 			return Transaction::currentTransaction()->getHeader(object);
 		}

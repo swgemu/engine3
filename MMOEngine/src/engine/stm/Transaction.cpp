@@ -20,13 +20,13 @@ volatile int ArrayCloneCounter::totalCount = 0;
 
 UniqueReference<STMAlgorithm*> Transaction::commitAlgorithm(new FraserSTM());
 
-Transaction::Transaction(uint64 id) : Logger(), task(NULL) {
+Transaction::Transaction(uint64 id) : Logger(), task(nullptr) {
 	status = INITIAL;
 
 	commitTime = 0;
 	runTime = 0;
 
-	openedObjets.setNullValue(NULL);
+	openedObjets.setNullValue(nullptr);
 
 	Command* command = TransactionalMemoryManager::instance()->getObjectManager();
 	commands.add(command);
@@ -58,7 +58,7 @@ bool Transaction::start() {
 
 bool Transaction::start(Task* task) NO_THREAD_SAFETY_ANALYSIS {
 	assert(setState(INITIAL, UNDECIDED));
-	assert(task != NULL);
+	assert(task != nullptr);
 
 	Transaction::task = task;
 
@@ -123,7 +123,7 @@ bool Transaction::commit() NO_THREAD_SAFETY_ANALYSIS {
 		doAbort();
 	}
 
-	this->task = NULL;
+	this->task = nullptr;
 
 	Thread::yield();
 
@@ -160,10 +160,10 @@ void Transaction::resolveAbortedHandles() {
 
 		Reference<TransactionalObjectHandle<Object*>*> lastRef = last;
 
-		while (last != NULL) {
+		while (last != nullptr) {
 			Transaction* transaction = last->getTransaction();
 
-			if (transaction != this && transaction != NULL) {
+			if (transaction != this && transaction != nullptr) {
 				transaction->abort();
 
 				if (transaction->isAborted()) {
@@ -175,13 +175,13 @@ void Transaction::resolveAbortedHandles() {
 				}
 			}
 
-			last->setTransaction(NULL);
+			last->setTransaction(nullptr);
 
 			lastRef = last;
 
 			last = last->getPrevious();
 
-			lastRef->setPrevious(NULL);
+			lastRef->setPrevious(nullptr);
 		}
 
 		//while (last->getPrevious())
@@ -198,7 +198,7 @@ void Transaction::cleanReadOnlyHandles() {
 	/*for (int i = 0; i < readOnlyObjects.size(); ++i) {
 		Reference<TransactionalObjectHandle<Object*>* > handle = readOnlyObjects.get(i);
 
-		handle->setTransaction(NULL);
+		handle->setTransaction(nullptr);
 	}*/
 }
 

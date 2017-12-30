@@ -29,10 +29,10 @@ namespace sys {
 	public:
 		Condition() {
 			//cmutex = PTHREAD_MUTEX_INITIALIZER;
-			pthread_mutex_init(&cmutex, NULL);
+			pthread_mutex_init(&cmutex, nullptr);
 				
 			//cond = PTHREAD_COND_INITIALIZER;
-			pthread_cond_init(&cond, NULL);
+			pthread_cond_init(&cond, nullptr);
 
 			signalCount = 0;
 			waiterCount = 0;
@@ -43,7 +43,7 @@ namespace sys {
 		}
 		
 		inline void init() {
-			pthread_cond_init(&cond, NULL);
+			pthread_cond_init(&cond, nullptr);
 		}
 	
 		inline int wait(Mutex* m) {

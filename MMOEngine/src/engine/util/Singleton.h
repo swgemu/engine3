@@ -19,30 +19,30 @@ namespace engine {
 
 	public:
 		SingletonWrapper() {
-			inst = NULL;
+			inst = nullptr;
 			finalized = false;
 			/*rwlock = (pthread_rwlock_t*) malloc(sizeof(pthread_rwlock_t));
-			pthread_rwlock_init(rwlock, NULL);*/
+			pthread_rwlock_init(rwlock, nullptr);*/
 		}
 
 		~SingletonWrapper() {
 			finalize();
 
 			//free(rwlock);
-			//rwlock = NULL;
+			//rwlock = nullptr;
 		}
 
 		O* instance() {
-			if (inst == NULL && !finalized) {
+			if (inst == nullptr && !finalized) {
 				/*int res = pthread_rwlock_wrlock(rwlock);//;rwlock.wlock();
 
 				if (res != 0)
 					System::out << "unlock failed on RWLock Singleton (" << res << ")\n";*/
 
-				//if (inst == NULL && !finalized)
+				//if (inst == nullptr && !finalized)
 					O* in = new O();
 
-					if (!inst.compareAndSet(NULL, in))
+					if (!inst.compareAndSet(nullptr, in))
 						delete in;
 
 				//pthread_rwlock_unlock(rwlock);
@@ -60,14 +60,14 @@ namespace engine {
 		void finalize() {
 			//pthread_rwlock_wrlock(rwlock);//;rwlock.wlock();
 
-			/*if (inst != NULL)
+			/*if (inst != nullptr)
 				delete inst;*/
 
 			finalized = true;
 
 			//pthread_rwlock_unlock(rwlock);
 
-			inst = NULL;
+			inst = nullptr;
 		}
 
 	};

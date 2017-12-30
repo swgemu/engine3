@@ -35,7 +35,7 @@ void orbTestLookup() {
 
 		Reference<TestIDLClass*> object = Core::lookupObject<TestIDLClass>("testCLass1");
 
-		if (object == NULL) {
+		if (object == nullptr) {
 			System::out << "object \'testClass1\' not deployed" << PrintStream::endl;
 
 			return;

@@ -103,7 +103,7 @@ int IOProcessor::pollEvents(int timeout) {
 	tv.tv_sec = (uint32) timeout / 1000;
 	tv.tv_usec = (uint32) (timeout % 1000) * 1000;
 
-	if (select(maxfd + 1, &readSet, NULL, NULL, &tv) < 0) {
+	if (select(maxfd + 1, &readSet, nullptr, nullptr, &tv) < 0) {
 		StringBuffer msg;
 		msg << "select error";
 
@@ -154,7 +154,7 @@ void IOProcessor::addFileDescriptor(FileDescriptor* descriptor, bool edgeTrigger
 
 void IOProcessor::removeFileDescriptor(FileDescriptor* descriptor) {
 #ifdef PLATFORM_LINUX
-	int res = epoll_ctl(epollFileDescritptor, EPOLL_CTL_ADD, descriptor->getFileDescriptor(), NULL);
+	int res = epoll_ctl(epollFileDescritptor, EPOLL_CTL_ADD, descriptor->getFileDescriptor(), nullptr);
 	if (res < 0)
 		throw IOException("epoll file descriptor removal failed");
 #else

@@ -6,35 +6,35 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ServiceMessageHandlerThread.h"
 
 ServiceMessageHandlerThread::ServiceMessageHandlerThread(const String& s) : ServiceThread(s) {
-	socket = NULL;
+	socket = nullptr;
 
-	clients = NULL;
+	clients = nullptr;
 
-	serviceHandler = NULL;
+	serviceHandler = nullptr;
 
-	serviceFilter = NULL;
+	serviceFilter = nullptr;
 }
 
 ServiceMessageHandlerThread::~ServiceMessageHandlerThread() {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		delete socket;
-		socket = NULL;
+		socket = nullptr;
 	}
 
-	if (clients != NULL) {
+	if (clients != nullptr) {
 		delete clients;
-		clients = NULL;
+		clients = nullptr;
 	}
 
 	// FIXME: temp hack
-	/*if (serviceHandler != NULL && serviceHandler != (ServiceHandler*) this) {
+	/*if (serviceHandler != nullptr && serviceHandler != (ServiceHandler*) this) {
 		delete serviceHandler;
-		serviceHandler = NULL;
+		serviceHandler = nullptr;
 	}*/
 }
 
 bool ServiceMessageHandlerThread::removeConnection(ServiceClient* client) {
-	if (serviceHandler != NULL)
+	if (serviceHandler != nullptr)
 		serviceHandler->deleteConnection(client);
 
 	Locker locker(this);
@@ -43,7 +43,7 @@ bool ServiceMessageHandlerThread::removeConnection(ServiceClient* client) {
 }
 
 void ServiceMessageHandlerThread::removeConnections() {
-	if (clients == NULL)
+	if (clients == nullptr)
 		return;
 
 	clients->resetIterator();

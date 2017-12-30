@@ -12,7 +12,7 @@
 
 Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint, const Vector3& goalPoint, TriangleNode* source, TriangleNode* target) {
 	VectorMap<uint32, AStarNode<TriangleNode, uint32>* > visited(100, 10);
-	visited.setNullValue(NULL);
+	visited.setNullValue(nullptr);
 	visited.setNoDuplicateInsertPlan();
 
 	PriorityQueue priorityQueue;
@@ -20,9 +20,9 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 	AStarNode<TriangleNode, uint32>* start = new AStarNode<TriangleNode, uint32>(source, 0, startPoint.distanceTo(goalPoint));
 	priorityQueue.add(start);
 
-	AStarNode<TriangleNode, uint32>* goal = NULL;
+	AStarNode<TriangleNode, uint32>* goal = nullptr;
 
-	while (!priorityQueue.isEmpty() && goal == NULL) {
+	while (!priorityQueue.isEmpty() && goal == nullptr) {
 		AStarNode<TriangleNode, uint32>* x = static_cast<AStarNode<TriangleNode, uint32>*>(const_cast<PriorityQueueEntry*>(priorityQueue.poll()));
 
 		if (target == x->getNode()) {
@@ -64,7 +64,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				AStarNode<TriangleNode, uint32>* parent = x;
 
-				while (parent != NULL) {
+				while (parent != nullptr) {
 					currentPath.insertElementAt(parent->getNode(), 0);
 					
 					if (parent != parent->getCameFrom())
@@ -104,7 +104,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 	priorityQueue.clearWithoutTraverse();
 
-	if (goal == NULL) {
+	if (goal == nullptr) {
 		//cleanup all nodes
 		visited.put(start->getID(), start);
 
@@ -112,7 +112,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 			delete val.getValue();
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	Vector<Triangle*>* path = new Vector<Triangle*>();
@@ -120,7 +120,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 	AStarNode<TriangleNode, uint32>* parent = goal->getCameFrom();
 
-	while (parent != NULL) {
+	while (parent != nullptr) {
 		path->insertElementAt(parent->getNode(), 0);
 		parent = parent->getCameFrom();
 	}

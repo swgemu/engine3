@@ -104,7 +104,7 @@ namespace engine {
 		inline void waitFinishedWork() {
 			blockMutex.lock();
 
-			while (waitingToStart && objectsToUpdate != NULL) {
+			while (waitingToStart && objectsToUpdate != nullptr) {
 				waitCondition.broadcast(&blockMutex);
 				blockMutex.unlock();
 				blockMutex.lock();

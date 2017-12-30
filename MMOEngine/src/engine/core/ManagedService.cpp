@@ -54,7 +54,7 @@ void ManagedServiceImplementation::finalize() {
 void ManagedServiceImplementation::_initializeImplementation() {
 	_setClassHelper(ManagedServiceHelper::instance());
 
-	_this = NULL;
+	_this = nullptr;
 
 	_serializationHelperMethod();
 }

@@ -15,10 +15,10 @@ DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid
 	object = obj;
 	methodID = methid;
 
-	orb = NULL;
+	orb = nullptr;
 
 	invocationMessage = new InvokeMethodMessage(object->_getObjectID(), methid, 0, async);
-	response = NULL;
+	response = nullptr;
 }
 
 DistributedMethod::DistributedMethod(DistributedObjectBroker* broker, InvokeMethodMessage* invmsg) {
@@ -29,10 +29,10 @@ DistributedMethod::DistributedMethod(DistributedObjectBroker* broker, InvokeMeth
 }
 
 DistributedMethod::~DistributedMethod() {
-	if (invocationMessage != NULL)
+	if (invocationMessage != nullptr)
 		delete invocationMessage;
 
-	/*if (response != NULL)
+	/*if (response != nullptr)
 		delete response;*/
 }
 
@@ -131,12 +131,12 @@ DistributedObject* DistributedMethod::executeWithObjectReturn() {
 	if (objid != 0)
 		return Core::getObjectBroker()->lookUp(objid);
 	else
-		return NULL;
+		return nullptr;
 }
 
 void DistributedMethod::execute(bool asyncMethod) {
 	RemoteObjectBroker* broker = dynamic_cast<RemoteObjectBroker*>(object->_getObjectBroker());
-	if (broker == NULL) {
+	if (broker == nullptr) {
 		throw Exception("cannot do RPC beacuase remote agent died");
 	}
 
@@ -206,7 +206,7 @@ void DistributedMethod::addUnicodeParameter(const UnicodeString& str) {
 }
 
 void DistributedMethod::addObjectParameter(DistributedObject* obj) {
-	if (obj != NULL)
+	if (obj != nullptr)
 		invocationMessage->insertLong(obj->_getObjectID());
 	else
 		invocationMessage->insertLong(0);
@@ -280,6 +280,6 @@ DistributedObject* DistributedMethod::getObjectParameter() {
 	if (objid != 0) {
 		return DistributedObjectBroker::instance()->lookUp(objid);
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }

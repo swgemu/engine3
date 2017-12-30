@@ -21,7 +21,7 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 	BerkeleyDatabase::filename = filename;
 	BerkeleyDatabase::databaseName = databaseName;
 
-	int ret = db_create(&dbp, NULL, 0);
+	int ret = db_create(&dbp, nullptr, 0);
 
 	if (ret != 0)
 		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
@@ -30,9 +30,9 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 	dbp->set_flags(dbp, DB_CHKSUM);
 
 	ret = dbp->open(dbp,        /* DB structure pointer */
-			NULL,       /* Transaction pointer */
+			nullptr,       /* Transaction pointer */
 			filename.toCharArray(), /* On-disk file that holds the database. */
-			NULL,       /* Optional logical database name */
+			nullptr,       /* Optional logical database name */
 			this->databaseConfig.getDatabaseType(),   /* Database access method */
 			this->databaseConfig.getDatabaseFlags(),      /* Open flags */
 			0);         /* File mode (using defaults) */
@@ -52,9 +52,9 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 
 	//this->databaseConfig.setTransactional(true);
 
-	DB_TXN* transaction = NULL;
+	DB_TXN* transaction = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		transaction = txn->getDBTXN();
 
 	DB_ENV* dbenvp = env->getDatabaseEnvironmentHandle();
@@ -70,7 +70,7 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 	ret = dbp->open(dbp,        /* DB structure pointer */
 			transaction,       /* Transaction pointer */
 			filename.toCharArray(), /* On-disk file that holds the database. */
-			NULL,       /* Optional logical database name */
+			nullptr,       /* Optional logical database name */
 			this->databaseConfig.getDatabaseType(),   /* Database access method */
 			this->databaseConfig.getDatabaseFlags(),      /* Open flags */
 			0);         /* File mode (using defaults) */
@@ -83,34 +83,34 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 
 
 BerkeleyDatabase::~BerkeleyDatabase() {
-	if (dbp != NULL) {
+	if (dbp != nullptr) {
 	    int ret = dbp->close(dbp, 0);
-	    dbp = NULL;
+	    dbp = nullptr;
 	}
 }
 
 int BerkeleyDatabase::get(Transaction* txn, DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode) {
-	DB_TXN* transaction = NULL;
+	DB_TXN* transaction = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		transaction = txn->getDBTXN();
 
 	return dbp->get(dbp, transaction, key->getDBT(), data->getDBT(), lockMode);
 }
 
 int BerkeleyDatabase::put(Transaction* txn, DatabaseEntry* key, DatabaseEntry* data) {
-	DB_TXN* transaction = NULL;
+	DB_TXN* transaction = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		transaction = txn->getDBTXN();
 
 	return dbp->put(dbp, transaction, key->getDBT(), data->getDBT(), 0);
 }
 
 int BerkeleyDatabase::del(Transaction* txn, DatabaseEntry* key) {
-	DB_TXN* transaction = NULL;
+	DB_TXN* transaction = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		transaction = txn->getDBTXN();
 
 	return dbp->del(dbp, transaction, key->getDBT(), 0);
@@ -119,12 +119,12 @@ int BerkeleyDatabase::del(Transaction* txn, DatabaseEntry* key) {
 Cursor* BerkeleyDatabase::openCursor(Transaction* txn, const CursorConfig& config) {
 	uint32 flags = config.getFlags();
 
-	DB_TXN* transaction = NULL;
+	DB_TXN* transaction = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		transaction = txn->getDBTXN();
 
-	DBC* cursorp = NULL;
+	DBC* cursorp = nullptr;
 
 	int ret = dbp->cursor(dbp, transaction, &cursorp, flags);
 
@@ -149,21 +149,21 @@ void BerkeleyDatabase::close(bool noSync) {
 	if (noSync == true)
 		flags |= DB_NOSYNC;
 
-	if (dbp != NULL) {
+	if (dbp != nullptr) {
 		int ret = dbp->close(dbp, flags);
 
 		if (ret != 0)
 			throw DatabaseException(String("error while closing database with ret ") + db_strerror(ret));
 
-		dbp = NULL;
+		dbp = nullptr;
 	}
 }
 
 int BerkeleyDatabase::truncate(Transaction* txn, bool countRecords) {
 	uint32 recordCount = 0;
-	DB_TXN* txnid = NULL;
+	DB_TXN* txnid = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		txnid = txn->getDBTXN();
 
 	int ret = dbp->truncate(dbp, txnid, &recordCount, 0);
@@ -178,21 +178,21 @@ int BerkeleyDatabase::truncate(Transaction* txn, bool countRecords) {
 }
 
 int BerkeleyDatabase::compact(Transaction* txn, DB_COMPACT* compactData, uint32 flags) {
-	DB_TXN* txnid = NULL;
+	DB_TXN* txnid = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		txnid = txn->getDBTXN();
 
-	return dbp->compact(dbp, txnid, NULL, NULL, compactData, flags, NULL);
+	return dbp->compact(dbp, txnid, nullptr, nullptr, compactData, flags, nullptr);
 }
 
 uint64 BerkeleyDatabase::count(bool forceCalculation, Transaction* txn) {
 	int ret = -1;
 	uint32 flags = 0;
 
-	DB_TXN* txnid = NULL;
+	DB_TXN* txnid = nullptr;
 
-	if (txn != NULL)
+	if (txn != nullptr)
 		txnid = txn->getDBTXN();
 
 	if (!forceCalculation)

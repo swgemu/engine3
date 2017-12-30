@@ -43,9 +43,9 @@ namespace engine {
 		//if stream null its a delete action
 
 		UpdateObject() {
-			stream = NULL;
-			key = NULL;
-			database = NULL;
+			stream = nullptr;
+			key = nullptr;
+			database = nullptr;
 		}
 
 		UpdateObject(Stream* str, Stream* ke, engine::db::LocalDatabase* database, Object* obj) {
@@ -108,7 +108,7 @@ namespace engine {
 		}
 
 		inline uint32 addDeleteObject(Stream* id, engine::db::LocalDatabase* db) {
-			updateObjects.add(UpdateObject(NULL, id, db, NULL));
+			updateObjects.add(UpdateObject(nullptr, id, db, nullptr));
 
 			return currentSize += 100;
 		}
@@ -188,7 +188,7 @@ namespace engine {
 
 		void getDatabaseName(uint16 tableID, String& name);
 
-		void commitLocalTransaction(engine::db::berkley::Transaction* transaction = NULL);
+		void commitLocalTransaction(engine::db::berkley::Transaction* transaction = nullptr);
 		void startLocalTransaction();
 		void abortLocalTransaction();
 

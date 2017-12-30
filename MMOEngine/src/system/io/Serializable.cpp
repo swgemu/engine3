@@ -190,7 +190,7 @@ ObjectOutputStream* Serializable::changeVariableData(const uint32& variableHashC
 	int offset = getVariableDataOffset(variableHashCode, object);
 
 	if (offset == -1)
-		return NULL;
+		return nullptr;
 
 	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
 	object->copy(newData);
@@ -218,7 +218,7 @@ ObjectOutputStream* Serializable::changeVariableData(const String& variableName,
 	int offset = getVariableDataOffset(variableName, object);
 
 	if (offset == -1)
-		return NULL;
+		return nullptr;
 
 	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
 	object->copy(newData);
@@ -290,7 +290,7 @@ ObjectOutputStream* Serializable::deleteVariable(const String& variableName, Obj
 	object->reset();
 
 	if (endOffset == 0)
-		return NULL;
+		return nullptr;
 
 	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
 	object->copy(newData);
@@ -329,7 +329,7 @@ ObjectOutputStream* Serializable::changeVariableName(const String& variableName,
 	object->reset();
 
 	if (endOffset == 0)
-		return NULL;
+		return nullptr;
 
 	ObjectOutputStream* newData = new ObjectOutputStream(object->size());
 	object->copy(newData);
@@ -466,7 +466,7 @@ void Serializable::deSerializeVariable(const String& nameAndVersion, const Strin
 }*/
 
 void Serializable::addSerializableVariable(const char* name, Variable* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -479,7 +479,7 @@ void Serializable::addSerializableVariable(const char* name, Variable* variable,
 }
 
 void Serializable::addSerializableVariable(const char* name, uint8* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -492,7 +492,7 @@ void Serializable::addSerializableVariable(const char* name, uint8* variable, in
 }
 
 void Serializable::addSerializableVariable(const char* name, int8* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -505,7 +505,7 @@ void Serializable::addSerializableVariable(const char* name, int8* variable, int
 }
 
 void Serializable::addSerializableVariable(const char* name, uint16* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -518,7 +518,7 @@ void Serializable::addSerializableVariable(const char* name, uint16* variable, i
 }
 
 void Serializable::addSerializableVariable(const char* name, int16* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -531,7 +531,7 @@ void Serializable::addSerializableVariable(const char* name, int16* variable, in
 }
 
 void Serializable::addSerializableVariable(const char* name, uint32* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -544,7 +544,7 @@ void Serializable::addSerializableVariable(const char* name, uint32* variable, i
 }
 
 void Serializable::addSerializableVariable(const char* name, int32* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -557,7 +557,7 @@ void Serializable::addSerializableVariable(const char* name, int32* variable, in
 }
 
 void Serializable::addSerializableVariable(const char* name, uint64* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -570,7 +570,7 @@ void Serializable::addSerializableVariable(const char* name, uint64* variable, i
 }
 
 void Serializable::addSerializableVariable(const char* name, int64* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -583,7 +583,7 @@ void Serializable::addSerializableVariable(const char* name, int64* variable, in
 }
 
 void Serializable::addSerializableVariable(const char* name, float* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -596,7 +596,7 @@ void Serializable::addSerializableVariable(const char* name, float* variable, in
 }
 
 void Serializable::addSerializableVariable(const char* name, double* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -609,7 +609,7 @@ void Serializable::addSerializableVariable(const char* name, double* variable, i
 }
 
 void Serializable::addSerializableVariable(const char* name, bool* variable, int version) {
-	if (variable == NULL)
+	if (variable == nullptr)
 		return;
 
 	VariableName varName;
@@ -636,7 +636,7 @@ Variable* Serializable::getSerializableVariable(const char* name) {
 	if (varName.getType() == 0)
 		return static_cast<Variable*>(variable);
 	else
-		return NULL;
+		return nullptr;
 }
 
 int Serializable::getObjectData(const String& str, String& obj) {

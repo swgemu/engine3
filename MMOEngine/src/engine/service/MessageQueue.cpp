@@ -58,7 +58,7 @@ Message* MessageQueue::pop() {
 	while (isEmpty()) {
 		if (blocked) {
 			condMutex->unlock();
-			return NULL;
+			return nullptr;
 		}
 
 		//waitingForMessage = true;

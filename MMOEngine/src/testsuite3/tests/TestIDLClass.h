@@ -20,7 +20,7 @@
 #define unlikely(x)     (x)
 #endif
 #endif
-#include "engine/lua/Luna.h"
+#include "system/util/Vector.h"
 
 #include "engine/core/ManagedObject.h"
 
@@ -34,6 +34,16 @@ public:
 	int getValue();
 
 	void setValue(int val);
+
+	void setValue2(int val1, int val2);
+
+	void setParent(TestIDLClass* val);
+
+	void testShit(const Vector<int>& val);
+
+	Vector<int>* getTestVector();
+
+	ManagedWeakReference<TestIDLClass* > getParent();
 
 	void asyncTest();
 
@@ -61,6 +71,11 @@ namespace tests {
 class TestIDLClassImplementation : public ManagedObjectImplementation {
 	int value;
 
+	Vector<int> testVector;
+
+protected:
+	ManagedWeakReference<TestIDLClass* > parent;
+
 public:
 	TestIDLClassImplementation(int val);
 
@@ -69,6 +84,16 @@ public:
 	int getValue();
 
 	void setValue(int val);
+
+	void setValue2(int val1, int val2);
+
+	void setParent(TestIDLClass* val);
+
+	void testShit(const Vector<int>& val);
+
+	Vector<int>* getTestVector();
+
+	ManagedWeakReference<TestIDLClass* > getParent();
 
 	void asyncTest();
 
@@ -119,6 +144,14 @@ public:
 
 	void setValue(int val);
 
+	void setValue2(int val1, int val2);
+
+	void setParent(TestIDLClass* val);
+
+	void testShit(const Vector<int>& val);
+
+	ManagedWeakReference<TestIDLClass* > getParent();
+
 	void asyncTest();
 
 };
@@ -138,23 +171,6 @@ public:
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
 
 	friend class Singleton<TestIDLClassHelper>;
-};
-
-class LuaTestIDLClass {
-public:
-	static const char className[];
-	static Luna<LuaTestIDLClass>::RegType Register[];
-
-	LuaTestIDLClass(lua_State *L);
-	virtual ~LuaTestIDLClass();
-
-	int _setObject(lua_State *L);
-	int _getObject(lua_State *L);
-	int getValue(lua_State *L);
-	int setValue(lua_State *L);
-	int asyncTest(lua_State *L);
-
-	Reference<TestIDLClass*> realObject;
 };
 
 } // namespace tests

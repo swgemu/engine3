@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TimedTaskQueue.h"
 
 TimedTaskQueue::TimedTaskQueue() : PriorityQueue(), Condition(), Logger("TaskQueue") {
-	taskScheduler = NULL;
+	taskScheduler = nullptr;
 
 	condMutex = new Mutex("TaskQueue");
 
@@ -148,7 +148,7 @@ Task* TimedTaskQueue::get() {
 		if (PriorityQueue::isEmpty()) {
 			if (blocked) {
 				condMutex->unlock();
-				return NULL;
+				return nullptr;
 			}
 
 			#ifdef TRACE_TASKS
@@ -160,7 +160,7 @@ Task* TimedTaskQueue::get() {
 
 		if (PriorityQueue::isEmpty()) {
 			condMutex->unlock();
-			return NULL;
+			return nullptr;
 		}
 
 		Task* task = (Task*) PriorityQueue::peak();
@@ -198,7 +198,7 @@ Task* TimedTaskQueue::get() {
 				msg << "condition error (" << res << ")";
 
 			warning(msg);
-			return NULL;
+			return nullptr;
 		}
 
 		if (changePlan) {
@@ -214,7 +214,7 @@ Task* TimedTaskQueue::get() {
 				if (difference > 10) {
 					condMutex->unlock();
 
-					return NULL;
+					return nullptr;
 				}
 			}
 

@@ -22,7 +22,7 @@ namespace sys {
 		int	npl;
 	
 	public:
-		BinaryHeapNode(const O& obj, BinaryHeapNode* lnode = NULL, BinaryHeapNode* rnode = NULL, int np = 0) {
+		BinaryHeapNode(const O& obj, BinaryHeapNode* lnode = nullptr, BinaryHeapNode* rnode = nullptr, int np = 0) {
 			object = obj;
 	
 			leftNode = lnode;
@@ -43,12 +43,12 @@ namespace sys {
 	
 	public:
 		BinaryHeap() {
-			root = NULL;
+			root = nullptr;
 			count = 0;
 		}
 		
 		BinaryHeap(const BinaryHeap& heap) {
-			root = NULL;
+			root = nullptr;
 			*this = heap;
 		}
 		
@@ -87,7 +87,7 @@ namespace sys {
 		void removeAll() {
 			reclaimMemory(root);
 	
-			root = NULL;
+			root = nullptr;
 			count = 0;
 		}
 	
@@ -96,7 +96,7 @@ namespace sys {
 				return;
 	    
 			root = merge(root, heap.root);
-			heap.root = NULL;
+			heap.root = nullptr;
 		}
 	
 		BinaryHeap& operator=(const BinaryHeap& heap) {
@@ -109,7 +109,7 @@ namespace sys {
 		}
 	
 		bool isEmpty() const {
-			return root == NULL;
+			return root == nullptr;
 		}
 		
 		bool isFull() const {
@@ -122,10 +122,10 @@ namespace sys {
 	
 	private:
 		BinaryHeapNode<O>* merge(BinaryHeapNode<O>* h1, BinaryHeapNode<O>* h2 ) const {
-			if (h1 == NULL)
+			if (h1 == nullptr)
 				return h2;
 				
-			if (h2 == NULL)
+			if (h2 == nullptr)
 				return h1;
 			
 			if (h1->object->compareTo(h2->object) > 0)
@@ -135,7 +135,7 @@ namespace sys {
 		}
 	                                             
 		BinaryHeapNode<O>* merge1(BinaryHeapNode<O>* h1, BinaryHeapNode<O>* h2) const {
-			if (h1->leftNode == NULL) {
+			if (h1->leftNode == nullptr) {
 				h1->leftNode = h2;
 			} else {
 				h1->rightNode = merge(h1->rightNode, h2);
@@ -157,7 +157,7 @@ namespace sys {
 		}
 		
 		void reclaimMemory(BinaryHeapNode<O>* node) const {
-			if (node != NULL) {
+			if (node != nullptr) {
 				reclaimMemory(node->leftNode);
 				reclaimMemory(node->rightNode);
 				
@@ -166,8 +166,8 @@ namespace sys {
 		}
 		
 		BinaryHeapNode<O>* clone(BinaryHeapNode<O>* node) const {
-			if (node == NULL)
-				return NULL;
+			if (node == nullptr)
+				return nullptr;
 			else
 				return new BinaryHeapNode<O>(node->object, clone(node->leftNode), 
 					clone(node->rightNode), node->npl);

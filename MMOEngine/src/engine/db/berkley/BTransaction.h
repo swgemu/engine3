@@ -23,7 +23,7 @@ namespace engine {
 		DB_TXN* transaction;
 
 		Transaction() {
-			transaction = NULL;
+			transaction = nullptr;
 		}
 
 	public:

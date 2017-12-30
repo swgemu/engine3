@@ -12,7 +12,7 @@ NamingDirectoryService::~NamingDirectoryService() {
 }
 
 bool NamingDirectoryService::bind(const String& name, DistributedObjectStub* stub) {
-	if (objectNameMap.put(name, stub) != NULL)
+	if (objectNameMap.put(name, stub) != nullptr)
 		return false;
 
 	stub->_setName(name);
@@ -27,7 +27,7 @@ DistributedObject* NamingDirectoryService::lookup(const String& name) {
 DistributedObject* NamingDirectoryService::unbind(const String& name) {
 	DistributedObject* obj = objectNameMap.get(name);
 
-	if (obj != NULL)
+	if (obj != nullptr)
 		objectNameMap.remove(name);
 
 	return obj;

@@ -26,8 +26,8 @@ namespace sys {
 		bool enqueued;
 
 	public:
-		PriorityQueueEntry(PriorityQueueEntry* parent = NULL, PriorityQueueEntry* lnode = NULL,
-				PriorityQueueEntry* rnode = NULL, int np = 0);
+		PriorityQueueEntry(PriorityQueueEntry* parent = nullptr, PriorityQueueEntry* lnode = nullptr,
+				PriorityQueueEntry* rnode = nullptr, int np = 0);
 
 		virtual ~PriorityQueueEntry() {
 			enqueued = false;
@@ -36,10 +36,10 @@ namespace sys {
 		virtual int compareTo(PriorityQueueEntry* node) = 0;
 
 		inline void clear() {
-			parentNode = NULL;
+			parentNode = nullptr;
 
-			leftNode = NULL;
-			rightNode = NULL;
+			leftNode = nullptr;
+			rightNode = nullptr;
 
 			enqueued = false;
 		}
@@ -88,7 +88,7 @@ namespace sys {
 		void clearWithoutTraverse();
 
 		inline bool isEmpty() const {
-			return root == NULL;
+			return root == nullptr;
 		}
 
 		inline bool isFull() const {

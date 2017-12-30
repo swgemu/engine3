@@ -31,14 +31,14 @@ namespace engine {
 		void run() {
 			Locker locker(&lock);
 
-			if (client != NULL)
+			if (client != nullptr)
 				client->requestNetStatus();
 		}
 
 		void clearClient() {
 			Locker locker(&lock);
 
-			client = NULL;
+			client = nullptr;
 		}
 	};
 

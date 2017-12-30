@@ -24,7 +24,7 @@ protected:
 	bool bounding;
 
 public:
-	QuadTreeEntryInterfaceBase() : node(NULL), bounding(false) {
+	QuadTreeEntryInterfaceBase() : node(nullptr), bounding(false) {
 
 	}
 
@@ -86,7 +86,7 @@ public:
 	virtual int compareTo(QuadTreeEntryInterfaceBase* obj) = 0;
 
 	virtual bool isInQuadTree() {
-		return node != NULL;
+		return node != nullptr;
 	}
 
 	virtual Node* getNode() {

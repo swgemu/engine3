@@ -19,15 +19,15 @@ namespace sys {
 
 	public:
 		ReadWriteLock() : Lockable() {
-			pthread_rwlock_init(&rwlock, NULL);
+			pthread_rwlock_init(&rwlock, nullptr);
 		}
 
 		ReadWriteLock(const String& s) : Lockable(s) {
-			pthread_rwlock_init(&rwlock, NULL);
+			pthread_rwlock_init(&rwlock, nullptr);
 		}
 
 		ReadWriteLock(const ReadWriteLock& s) : Lockable() {
-			pthread_rwlock_init(&rwlock, NULL);
+			pthread_rwlock_init(&rwlock, nullptr);
 		}
 
 		virtual ~ReadWriteLock() {

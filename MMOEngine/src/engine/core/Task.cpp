@@ -32,9 +32,9 @@ Task::~Task() {
 	}
 
 #ifdef TRACE_TASKS
-	if (scheduleTrace != NULL) {
+	if (scheduleTrace != nullptr) {
 		delete scheduleTrace;
-		scheduleTrace = NULL;
+		scheduleTrace = nullptr;
 	}
 #endif
 }
@@ -46,7 +46,7 @@ void Task::initialize() {
 	period = 0;
 
 #ifdef TRACE_TASKS
-	scheduleTrace = NULL;
+	scheduleTrace = nullptr;
 #endif
 
 #ifdef COLLECT_TASKSTATISTICS
@@ -83,7 +83,7 @@ void Task::doExecute() {
 			} else {
 				Thread* thisThread = Thread::getCurrentThread();
 
-				if (thisThread != NULL && taskManager->getSerialWorker() != thisThread) {
+				if (thisThread != nullptr && taskManager->getSerialWorker() != thisThread) {
 					taskManager->retryTaskInSerial(this);
 
 					TransactionalMemoryManager::instance()->retryTransaction();

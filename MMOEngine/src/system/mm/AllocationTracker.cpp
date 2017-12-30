@@ -7,10 +7,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "AllocationTracker.h"
 
-AllocationTracker* AllocationTracker::instance = NULL;
+AllocationTracker* AllocationTracker::instance = nullptr;
 
 AllocationTracker::AllocationTracker() {
-	realAllocator = NULL;
+	realAllocator = nullptr;
 
 	numOfAllocatorsM = 0;
 
@@ -37,7 +37,7 @@ void* AllocationTracker::onAllocate(size_t size, const void* allocator) {
 }
 
 void AllocationTracker::onFree(void* ptr, const void*) {
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return;
 
 	uint64* lptr = (uint64*) ptr;
@@ -52,7 +52,7 @@ void AllocationTracker::onFree(void* ptr, const void*) {
 }
 
 void* AllocationTracker::onReallocate(void* ptr, size_t size, const void* alloc) {
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return onAllocate(size, alloc);
 
 	uint64* lptr = (uint64*) ptr;

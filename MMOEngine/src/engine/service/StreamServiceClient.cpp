@@ -30,7 +30,7 @@ StreamServiceClient::~StreamServiceClient() {
 }
 
 void StreamServiceClient::connect() {
-	if (socket == NULL)
+	if (socket == nullptr)
 	{
 		socket = new TCPSocket();
 	}
@@ -83,7 +83,7 @@ void StreamServiceClient::receiveMessages() {
 }
 
 int StreamServiceClient::send(Packet* pack) {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		int res = 0;
 		try {
 			res = socket->send(pack);
@@ -108,7 +108,7 @@ bool StreamServiceClient::read(Packet* pack) {
 }
 
 bool StreamServiceClient::recieve(Packet* pack) {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		return socket->read(pack);
 	} else {
 		doRun = false;
@@ -118,7 +118,7 @@ bool StreamServiceClient::recieve(Packet* pack) {
 }
 
 bool StreamServiceClient::receiveAppend(Stream* stream) {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		return socket->readAppend(stream);
 	} else {
 		doRun = false;

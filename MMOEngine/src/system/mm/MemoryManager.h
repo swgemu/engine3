@@ -23,7 +23,7 @@ namespace sys {
 
 	public:
 		static MemoryManager* getInstance() {
-			if (inst == NULL)
+			if (inst == nullptr)
 				setInstance(new MemoryManager());
 
 			return inst;

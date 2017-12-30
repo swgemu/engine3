@@ -12,7 +12,7 @@ BaseMultiPacket::BaseMultiPacket(BasePacket* pack) : BasePacket() {
 }
 
 BaseMultiPacket::~BaseMultiPacket() {
-	//if (singlePacket != NULL)
+	//if (singlePacket != nullptr)
 	//	delete singlePacket;
 }
 	
@@ -20,7 +20,7 @@ bool BaseMultiPacket::add(BasePacket* pack) {
 	/*if (pack->size() - 4 > 0xFF);
 		return false;*/
 
-	if (singlePacket != NULL) {
+	if (singlePacket != nullptr) {
 		insertShort(0x0900);
 		insertShort(0);
 		insertShort(0x1900);
@@ -30,7 +30,7 @@ bool BaseMultiPacket::add(BasePacket* pack) {
 		setCompression(singlePacket->doCompression());
 		
 		delete singlePacket;
-		singlePacket = NULL;
+		singlePacket = nullptr;
 	}
 	
 	if (size() + pack->size() > 460)
@@ -68,7 +68,7 @@ void BaseMultiPacket::insertPacket(BasePacket* pack) {
 }
 
 BasePacket* BaseMultiPacket::getPacket() {
-	if (singlePacket != NULL) {
+	if (singlePacket != nullptr) {
 		BasePacket* pack = singlePacket;
 		
 		delete this;

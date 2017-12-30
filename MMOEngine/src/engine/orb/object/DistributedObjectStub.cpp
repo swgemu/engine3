@@ -8,16 +8,16 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/orb/DistributedObjectBroker.h"
 
 DistributedObjectStub::DistributedObjectStub() : DistributedObject() {
-	//_setImplementation(NULL);
+	//_setImplementation(nullptr);
 		
 	deployed = false;
 
-	_classHelper = NULL;
+	_classHelper = nullptr;
 
 	destroyed = false;
 
 	#ifdef TRACE_REFERENCING
-		finalizedTrace = NULL;
+		finalizedTrace = nullptr;
 	#endif
 }
 
@@ -32,7 +32,7 @@ DistributedObjectStub::~DistributedObjectStub() {
 		}
 	
 		delete finalizedTrace;
-		finalizedTrace = NULL;
+		finalizedTrace = nullptr;
 	#endif
 }
 
@@ -41,14 +41,14 @@ DistributedObjectStub::~DistributedObjectStub() {
 }*/
 
 void DistributedObjectStub::_requestServant() {
-	if (_getImplementation() != NULL)
+	if (_getImplementation() != nullptr)
 		return;
 
 	_getObjectBroker()->requestServant(this);
 }
 
 void DistributedObjectStub::deploy() {
-	if (_getImplementation() == NULL)
+	if (_getImplementation() == nullptr)
 		throw Exception("unable to deploy object");
 	
 	Core::getObjectBroker()->deploy(this);
@@ -59,7 +59,7 @@ void DistributedObjectStub::deploy() {
 }
 
 void DistributedObjectStub::deploy(const char* name) {
-	if (_getImplementation() == NULL)
+	if (_getImplementation() == nullptr)
 		throw Exception("unable to deploy object");
 
 	Core::getObjectBroker()->deploy(name, this);
@@ -70,7 +70,7 @@ void DistributedObjectStub::deploy(const char* name) {
 }
 
 void DistributedObjectStub::deploy(const String& name) {
-	if (_getImplementation() == NULL)
+	if (_getImplementation() == nullptr)
 		throw Exception("unable to deploy object");
 	
 	Core::getObjectBroker()->deploy(name, this);
@@ -96,7 +96,7 @@ bool DistributedObjectStub::undeploy() {
 	if (deployed) {
 		/*ObjectBroker* broker = Core::getObjectBroker();
 
-		if (broker != NULL)
+		if (broker != nullptr)
 			broker->undeploy(_name);*/
 
 		//this is called when the object is deleted from RAM (MemoryManager deletes it)
@@ -109,15 +109,15 @@ bool DistributedObjectStub::undeploy() {
 
 		deployed = false; 
 	} else {
-		//if (_getImplementation() == NULL)
+		//if (_getImplementation() == nullptr)
 			//throw ObjectNotLocalException(this);
 		
 		//ObjectBroker::instance()->info("deleting undeployed implementation");
 		
 #ifndef WITH_STM
-		_setImplementation(NULL);
+		_setImplementation(nullptr);
 #endif
-		//_setImplementation(NULL);
+		//_setImplementation(nullptr);
 	}
 	
 	destroyed = true;
@@ -127,7 +127,7 @@ bool DistributedObjectStub::undeploy() {
 
 void DistributedObjectStub::finalize() {
 	#ifdef TRACE_REFERENCING
-		if (finalizedTrace != NULL) {
+		if (finalizedTrace != nullptr) {
 			System::out << "ERROR - object already finalized at\n";
 		
 			StackTrace::printStackTrace();

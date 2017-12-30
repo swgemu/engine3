@@ -29,7 +29,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 
 	int i = 0;
 
-	Transaction* transaction = NULL;
+	Transaction* transaction = nullptr;
 	
 	TransactionConfig cfg = TransactionConfig::DEFAULT;
 	cfg.setNoSync(true);
@@ -46,14 +46,14 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 
 	do {
 		ret  = -1;
-		transaction = environment->beginTransaction(NULL, cfg);
+		transaction = environment->beginTransaction(nullptr, cfg);
 
 		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
 
 		if (ret == DB_LOCK_DEADLOCK) {
 			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i));
 			transaction->abort();
-			transaction = NULL;
+			transaction = nullptr;
 		}
 
 		++i;
@@ -69,13 +69,13 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 	} else if (ret != DB_NOTFOUND) {
 		error("error in ObjectDatabase::getData ret " + String::valueOf(db_strerror(ret)));
 
-		if (transaction != NULL)
+		if (transaction != nullptr)
 			transaction->abort();
 
 		throw DatabaseException("error in ObjectDatabase::getData ret " + String(db_strerror(ret)));
 	}
 
-	if (transaction != NULL) {
+	if (transaction != nullptr) {
 		transaction->commitNoSync();
 	}
 
@@ -89,7 +89,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 #endif
 
 	Thread* thread = Thread::getCurrentThread();
-	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : nullptr;
 
 	if (worker) {
 		worker->addBDBReadStats(databaseFileName, elapsedTime);

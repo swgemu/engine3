@@ -73,11 +73,11 @@ int DOBObjectManager::updatePersistentObject(DistributedObject* object) {
 DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* object) {
 	DistributedObjectServant* servant = object->getServant();
 
-	if (servant == NULL) {
+	if (servant == nullptr) {
 		// object not local we add it to remote DOB <-> hosts map
 		remoteDeployedObjects.add(object->_getObjectID(), object);
 
-		return NULL;
+		return nullptr;
 	}
 
 	Locker _locker(this);
@@ -91,13 +91,13 @@ DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* obj
 }
 
 Reference<DistributedObject*> DOBObjectManager::getObject(uint64 objectID) {
-	Reference<DistributedObject*> obj = NULL;
+	Reference<DistributedObject*> obj = nullptr;
 
 	ReadLocker _locker(this);
 
 	obj = localObjectDirectory.get(objectID);
 
-	if (obj != NULL)
+	if (obj != nullptr)
 		return obj;
 	else {
 		//get the object from the remote DOB map
@@ -203,7 +203,7 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 		} else {
 			ObjectDatabase* database = getTable(oid);
 
-			if (database != NULL) {
+			if (database != nullptr) {
 				//StringBuffer msg;
 				/*String dbName;
 
@@ -246,13 +246,13 @@ int DOBObjectManager::commitDestroyObjectToDB(uint64 objectID) {
 
 	ObjectDatabase* table = getTable(objectID);
 
-	if (table != NULL) {
+	if (table != nullptr) {
 		table->deleteData(objectID);
 
 		return 0;
 	} else {
 		StringBuffer msg;
-		msg << "could not delete object id from database table NULL for id 0x" << hex << objectID;
+		msg << "could not delete object id from database table nullptr for id 0x" << hex << objectID;
 		error(msg);
 	}
 
@@ -260,16 +260,16 @@ int DOBObjectManager::commitDestroyObjectToDB(uint64 objectID) {
 }
 
 ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
-	ObjectDatabase* table = NULL;
-	LocalDatabase* local = NULL;
+	ObjectDatabase* table = nullptr;
+	LocalDatabase* local = nullptr;
 
 	if (objectID != 0) {
 		uint16 tableID = (uint16) (objectID >> 48);
 
 		local = databaseManager->getDatabase(tableID);
 
-		if (local == NULL || !local->isObjectDatabase())
-			return NULL;
+		if (local == nullptr || !local->isObjectDatabase())
+			return nullptr;
 		else
 			table = static_cast<ObjectDatabase*>(local);
 	}
@@ -294,7 +294,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	objectUpdateInProcess = true;
 
-	engine::db::berkley::Transaction* transaction = NULL;
+	engine::db::berkley::Transaction* transaction = nullptr;
 
 	if (rootBroker) {
 		databaseManager->updateLastUsedObjectID(getNextFreeObjectID());
@@ -317,7 +317,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, &inRamClassCount);
 #else
-	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, NULL);
+	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, nullptr);
 #endif
 
 	Time start;

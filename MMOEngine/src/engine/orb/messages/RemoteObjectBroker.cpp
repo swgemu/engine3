@@ -73,7 +73,7 @@ DistributedObjectStub* RemoteObjectBroker::undeploy(const String& name) {
 	if (!brokerClient->sendAndAcceptReply(&undeployMessage))
 		throw DistributionException(name);
 
-	return NULL;
+	return nullptr;
 }
 
 void RemoteObjectBroker::addDeployedObject(DistributedObject* obj) {
@@ -95,10 +95,10 @@ Reference<DistributedObject*> RemoteObjectBroker::lookUp(const String& name) {
 		throw DistributionException(name);
 
 	if (!lookupMessage.isFound())
-		return NULL;
+		return nullptr;
 
 	DistributedObjectStub* obj = broker->createObjectStub(lookupMessage.getClassName(), name);
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		obj->_setObjectID(lookupMessage.getObjectID());
 
 		broker->deployRemote(name, obj);
@@ -129,12 +129,12 @@ Reference<DistributedObject*> RemoteObjectBroker::lookUp(uint64 objid) {
 		throw DistributionException(objid);
 
 	if (!lookupMessage.isFound())
-		return NULL;
+		return nullptr;
 
 	const String& name = lookupMessage.getName();
 
 	DistributedObjectStub* obj = broker->createObjectStub(lookupMessage.getClassName(), name);
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		obj->_setObjectID(objid);
 
 		broker->deployRemote(name, obj);

@@ -12,7 +12,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 static Time startTime;
 
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
-	taskManager = NULL;
+	taskManager = nullptr;
 
 	doRun = false;
 
@@ -30,7 +30,7 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 }
 
 TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
-	taskManager = NULL;
+	taskManager = nullptr;
 
 	doRun = false;
 
@@ -72,7 +72,7 @@ void TaskScheduler::setPause(bool val) {
 }
 
 void TaskScheduler::run() {
-	Task* task = NULL;
+	Task* task = nullptr;
 
 	while (doRun) {
 		auto task = tasks.get();
@@ -117,7 +117,7 @@ void TaskScheduler::run() {
 
 			Entry<const char*, uint64>* entry = tasksCount.getEntry(taskName);
 
-			if (entry == NULL) {
+			if (entry == nullptr) {
 				tasksCount.put(taskName, 1);
 			} else {
 				++(entry->getValue());
@@ -173,9 +173,9 @@ bool TaskScheduler::cancelTask(Task* task) {
 }
 
 void TaskScheduler::addSchedulerTasks(TaskScheduler* scheduler) {
-	Task* task = NULL;
+	Task* task = nullptr;
 
-	while ((task = (Task*) scheduler->tasks.poll()) != NULL)
+	while ((task = (Task*) scheduler->tasks.poll()) != nullptr)
 			tasks.add(task);
 
 	//tasks.addAll(scheduler->tasks);

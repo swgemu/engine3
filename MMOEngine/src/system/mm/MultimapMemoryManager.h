@@ -27,7 +27,7 @@ namespace sys {
 		~MultimapMemoryManager();
 
 		static MultimapMemoryManager* getInstance() {
-			if (inst == NULL) {
+			if (inst == nullptr) {
 				setInstance(new MultimapMemoryManager());
 
 				inst->initialize();

@@ -14,7 +14,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define DO_SEGFAULT { __asm__ ("addl $0x120,%esp"); __asm__ ("addl $0x463,%ebp"); }
 #else
 //#define DO_SEGFAULT { int randAdd = 0x200 + System::random(0x100); __asm  { add esp, randAdd }; }
-//#define DO_SEGFAULT { int* __val2 = NULL; *__val2 = 0; }
+//#define DO_SEGFAULT { int* __val2 = nullptr; *__val2 = 0; }
 //#define DO_SEGFAULT2 { __asm { mov [BaseClientCleanUpEvent::cleanUp], 0x100} }
 
 //compile time random (bad, but good enough for purpose)
@@ -25,7 +25,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define DO_SEGFAULT { int randAdd = 0x200 + PREPROCESSORRANDOM(0, 0x100); __asm  { add esp, randAdd }; }
 
 #endif
-//#define DO_SEGFAULT { int* __val2 = NULL; *__val2 = 0; }
+//#define DO_SEGFAULT { int* __val2 = nullptr; *__val2 = 0; }
 
 #define DO_TIMELIMIT if (Logger::getElapsedTime() > TIME_LIMIT * 3600 + System::random(100)) DO_SEGFAULT
 

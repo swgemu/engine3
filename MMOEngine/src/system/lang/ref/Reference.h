@@ -34,7 +34,7 @@ namespace sys {
 
 	public:
 		Reference() : object() {
-			//object = NULL;
+			//object = nullptr;
 #ifdef TRACE_REFERENCES
 			id = ReferenceIdCounter::nextID.increment();
 #endif
@@ -49,7 +49,7 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
 		Reference(Reference<O>&& ref) : object(ref.object) {
-			ref.object = NULL;
+			ref.object = nullptr;
 
 #ifdef TRACE_REFERENCES
 			id = ref.id;
@@ -98,7 +98,7 @@ namespace sys {
 
 			object = ref.object;
 
-			ref.object = NULL;
+			ref.object = nullptr;
 
 #ifdef TRACE_REFERENCES
 			id = ref.id;
@@ -159,7 +159,7 @@ namespace sys {
 			O oldRef = object.compareAndSetReturnOld(oldval, newval);
 
 			if (oldval == oldRef) { //success
-				if (newval != NULL) {
+				if (newval != nullptr) {
 					(newval)->acquire();
 
 					#ifdef TRACE_REFERENCES
@@ -167,7 +167,7 @@ namespace sys {
 					#endif
 				}
 
-				if (oldval != NULL) {
+				if (oldval != nullptr) {
 					#ifdef TRACE_REFERENCES
 					oldval->removeHolder(id);
 					#endif
@@ -187,7 +187,7 @@ namespace sys {
 			bool success = object.compareAndSet(oldval, newval);
 
 			if (success) {
-				if (newval != NULL) {
+				if (newval != nullptr) {
 					(newval)->acquire();
 
 					#ifdef TRACE_REFERENCES
@@ -195,7 +195,7 @@ namespace sys {
 					#endif
 				}
 
-				if (oldval != NULL) {
+				if (oldval != nullptr) {
 					#ifdef TRACE_REFERENCES
 					oldval->removeHolder(id);
 					#endif
@@ -210,7 +210,7 @@ namespace sys {
 	protected:
 		//lock free
 		inline void updateObject(O obj) {
-			if (obj != NULL) {
+			if (obj != nullptr) {
 				(obj)->acquire();
 
 				#ifdef TRACE_REFERENCES
@@ -224,7 +224,7 @@ namespace sys {
 				O oldobj = object.get();
 
 				if (object.compareAndSet(oldobj, obj)) {
-					if (oldobj != NULL) {
+					if (oldobj != nullptr) {
 						#ifdef TRACE_REFERENCES
 						Object* castedObject = dynamic_cast<Object*>(oldobj);
 
@@ -256,7 +256,7 @@ namespace sys {
 		}
 
 		inline void acquireObject() {
-			if (object != NULL) {
+			if (object != nullptr) {
 			#ifdef TRACE_REFERENCES
 				(object.get())->addHolder(id);
 			#endif
@@ -265,12 +265,12 @@ namespace sys {
 		}
 
 		inline void releaseObject() {
-			if (object != NULL) {
+			if (object != nullptr) {
 			#ifdef TRACE_REFERENCES
 				(object.get())->removeHolder(id);
 			#endif
 				(object.get())->release();
-				object = NULL;
+				object = nullptr;
 			}
 		}
 	};

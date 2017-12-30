@@ -72,7 +72,7 @@ TransactionalMemoryManager::~TransactionalMemoryManager() {
 
 	printf("\n");*/
 
-	setInstance(NULL);
+	setInstance(nullptr);
 }
 
 void TransactionalMemoryManager::commitPureTransaction(Transaction* transaction) {
@@ -87,7 +87,7 @@ void TransactionalMemoryManager::commitPureTransaction(Transaction* transaction)
 Transaction* TransactionalMemoryManager::getTransaction() {
 	Reference<Transaction*>* transaction = currentTransaction.get();
 
-	if (transaction == NULL) {
+	if (transaction == nullptr) {
 		//transaction = new Transaction(transactionID.increment());
 		transaction = new Reference<Transaction*>();
 		currentTransaction.set(transaction);
@@ -99,7 +99,7 @@ Transaction* TransactionalMemoryManager::getTransaction() {
 void TransactionalMemoryManager::setCurrentTransaction(Transaction* transaction) {
 	Reference<Transaction*>* trans = currentTransaction.get();
 
-	if (trans == NULL) {
+	if (trans == nullptr) {
 		//transaction = new Transaction(transactionID.increment());
 		trans = new Reference<Transaction*>();
 		currentTransaction.set(trans);
@@ -114,12 +114,12 @@ Transaction* TransactionalMemoryManager::startTransaction() {
 
 	Reference<Transaction*>* current = currentTransaction.get();
 
-	if (current == NULL) {
+	if (current == nullptr) {
 		current = new Reference<Transaction*>();
 		currentTransaction.set(current);
 	}
 
-	assert(*current == NULL);
+	assert(*current == nullptr);
 
 	if (transactionID > 0) {
 		while (!initializationTransactionStarted) {
@@ -153,8 +153,8 @@ void TransactionalMemoryManager::commitTransaction() {
 	if ((*transaction)->getIdentifier() == 1)
 		initializationTransactionStarted.compareAndSet(false, true);
 
-	//currentTransaction.set(NULL);
-	*transaction = NULL;
+	//currentTransaction.set(nullptr);
+	*transaction = nullptr;
 
 	//blockLock.runlock();
 }
@@ -166,8 +166,8 @@ void TransactionalMemoryManager::abortTransaction() {
 
 	//reclaimObjects(0, 0);
 
-	//currentTransaction.set(NULL);
-	*transaction = NULL;
+	//currentTransaction.set(nullptr);
+	*transaction = nullptr;
 
 	abortedTransactions.increment();
 }
@@ -182,7 +182,7 @@ void TransactionalMemoryManager::reclaim(Object* object) {
 
 	Reference<Transaction*> transaction = getTransaction();
 
-	if (transaction == NULL) {
+	if (transaction == nullptr) {
 		//we are out of transaction... transaction probably commited so we are deleting the transaction
 		destroy(object);
 	} else {
@@ -270,7 +270,7 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 Vector<Object*>* TransactionalMemoryManager::getReclamationList() {
 	Vector<Object*>* objects = reclamationList.get();
 
-	if (objects == NULL) {
+	if (objects == nullptr) {
 		objects = new Vector<Object*>(50000, 10000);
 
 		reclamationList.set(objects);

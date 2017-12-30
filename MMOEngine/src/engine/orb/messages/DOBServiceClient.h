@@ -49,7 +49,7 @@ namespace engine {
 
 		DOBMessage* getQueuedMessage(uint32 sequence) {
 			DOBMessage* message = sentMessageQueue.remove(sequence);
-			assert(message != NULL);
+			assert(message != nullptr);
 
 			return message;
 		}

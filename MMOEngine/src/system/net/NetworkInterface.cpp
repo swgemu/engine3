@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "NetworkInterface.h"
 
-NetworkInterface* NetworkInterface::sinterface = NULL;
+NetworkInterface* NetworkInterface::sinterface = nullptr;
 
 NetworkInterface::NetworkInterface() {
 	interfaces = new Vector<InetAddress*>();
@@ -23,7 +23,7 @@ NetworkInterface::~NetworkInterface() {
 }
 
 void NetworkInterface::finalize() {
-	if (sinterface != NULL) {
+	if (sinterface != nullptr) {
 		delete sinterface;
 	}
 }
@@ -35,7 +35,7 @@ void NetworkInterface::initialize() {
 
 	struct hostent* he = gethostbyname(hostname);
 
-	for (int i = 0; he != NULL && he->h_addr_list[i] != NULL; i++) {
+	for (int i = 0; he != nullptr && he->h_addr_list[i] != nullptr; i++) {
 		StringBuffer address;
 
 		for (int j = 0; j < he->h_length; j++) {
@@ -102,7 +102,7 @@ void NetworkInterface::close() {
 }
 
 void NetworkInterface::setPrimaryAddress(InetAddress* address) {
-	if (sinterface == NULL)
+	if (sinterface == nullptr)
 		sinterface = new NetworkInterface();
 
 	Vector<InetAddress*>* interfaces = sinterface->getInterfaces();
@@ -110,7 +110,7 @@ void NetworkInterface::setPrimaryAddress(InetAddress* address) {
 }
 
 InetAddress* NetworkInterface::getPrimaryAddress() {
-	if (sinterface == NULL)
+	if (sinterface == nullptr)
 		sinterface = new NetworkInterface();
 
 	Vector<InetAddress*>* interfaces = sinterface->getInterfaces();
@@ -118,5 +118,5 @@ InetAddress* NetworkInterface::getPrimaryAddress() {
 	if (!interfaces->isEmpty())
 		return interfaces->get(0);
 	else
-		return NULL;
+		return nullptr;
 }

@@ -195,7 +195,7 @@ namespace sys {
 		inline void lockReleasing(const char* modifier = "") {
 			COMPILER_BARRIER();
 
-			threadLockHolder = NULL;
+			threadLockHolder = nullptr;
 
 		#ifdef TRACE_LOCKS
 			if (modifier[0] != 'r') {
@@ -225,7 +225,7 @@ namespace sys {
 		inline void refreshTrace() {
 		#ifdef TRACE_LOCKS
 			if (doTrace) {
-				if (trace != NULL)
+				if (trace != nullptr)
 					delete trace;
 
 				trace = new StackTrace();
@@ -237,9 +237,9 @@ namespace sys {
 		inline void deleteTrace() {
 		#ifdef TRACE_LOCKS
 			if (doTrace) {
-				if (trace != NULL) {
+				if (trace != nullptr) {
 					delete trace;
-					trace = NULL;
+					trace = nullptr;
 				}
 			}
 		#endif
@@ -248,7 +248,7 @@ namespace sys {
 		inline void refreshUnlockTrace() {
 		#ifdef TRACE_LOCKS
 			if (doTrace) {
-				if (unlockTrace != NULL)
+				if (unlockTrace != nullptr)
 					delete unlockTrace;
 
 				unlockTrace = new StackTrace();
@@ -259,9 +259,9 @@ namespace sys {
 		inline void deleteUnlockTrace() {
 		#ifdef TRACE_LOCKS
 			if (doTrace) {
-				if (unlockTrace != NULL) {
+				if (unlockTrace != nullptr) {
 					delete unlockTrace;
-					unlockTrace = NULL;
+					unlockTrace = nullptr;
 				}
 			}
 		#endif

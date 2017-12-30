@@ -25,7 +25,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define MULTI_THREADED_BASE_PACKET_HANDLER
 
 BasePacketHandler::BasePacketHandler() : Logger() {
-	serviceHandler = NULL;
+	serviceHandler = nullptr;
 }
 
 BasePacketHandler::BasePacketHandler(const String& s, ServiceHandler* handler) : Logger(s) {
@@ -33,7 +33,8 @@ BasePacketHandler::BasePacketHandler(const String& s, ServiceHandler* handler) :
 }
 
 void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
-	//info("READ - " + pack->toStringData(), true);
+	info("READ - " + pack->toStringData(), true);
+
 		try {
 			uint16 opcode = pack->parseShort();
 
@@ -328,18 +329,18 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 
 	while (true) {
 		Packet* pack = client->getBufferedPacket();
-		if (pack == NULL)
+		if (pack == nullptr)
 			break;
 
 		if (pack->parseShort(0) == 0x0300) {
 			pack->setOffset(2);
 
 			/*uint8 blockSize = pack->parseByte();
-			//System::out << (int) blockSize << " : " << pack->toString() << "\n";
+			System::out << (int) blockSize << " : " << pack->toString() << "\n";
 
 			handleDataChannelMultiPacket(client, pack, blockSize);*/
 
-			//Logger::console.info("parsing multi in buffered packets", true);
+			Logger::console.info("parsing multi in buffered packets: " + pack->toStringData(), true);
 
 			handleMultiPacket(client, pack, false);
 		} else if (pack->parseShort(0) == 0x0D00) {
@@ -476,13 +477,14 @@ int BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) 
 	try {
 		BasePacket* fraggedPacket = client->receiveFragmentedPacket(pack);
 
-		if (fraggedPacket != NULL) {
+		if (fraggedPacket != nullptr) {
 			handleDataChannelPacket(client, fraggedPacket);
 
 			delete fraggedPacket;
 		} /*else if (pack->size() < 485)
 		throw Exception("incomplete fragmented packet");*/
 	} catch (FragmentedPacketParseException& e) {
+		error(e.getMessage());
 		return 1;
 	}
 

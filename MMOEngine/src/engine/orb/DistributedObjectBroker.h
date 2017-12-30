@@ -99,7 +99,7 @@ namespace engine {
 		}
 
 		bool isRootBroker() {
-			return rootObjectBroker == NULL;
+			return rootObjectBroker == nullptr;
 		}
 
 		/*inline DistributedObjectClassHelperMap* getClassMap() {

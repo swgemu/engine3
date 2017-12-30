@@ -8,7 +8,7 @@ void ManagedObject::lock(bool doLock) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__wlock(doLock);
 #endif
 }
@@ -17,7 +17,7 @@ void ManagedObject::lock(bool doLock) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
-	if (_getImplementation() == NULL)
+	if (_getImplementation() == nullptr)
 		_wlock(obj);
 #endif
 }*/
@@ -26,7 +26,7 @@ void ManagedObject::lock(ManagedObject* obj) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__wlock(obj);
 #endif
 }
@@ -35,7 +35,7 @@ void ManagedObject::rlock(bool doLock) ACQUIRE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(doLock);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__rlock(doLock);
 #endif
 }
@@ -44,7 +44,7 @@ void ManagedObject::wlock(bool doLock) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(doLock);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__wlock(doLock);
 #endif
 }
@@ -53,7 +53,7 @@ void ManagedObject::wlock(ManagedObject* obj) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::wlock(obj);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__wlock(obj);
 #endif
 }
@@ -62,7 +62,7 @@ void ManagedObject::lock(Lockable* obj) ACQUIRE() {
 #ifndef WITH_STM
 	DistributedObjectStub::lock(obj);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__lock(obj);
 #endif
 }
@@ -71,7 +71,7 @@ void ManagedObject::unlock(bool doLock) RELEASE() {
 #ifndef WITH_STM
 	DistributedObjectStub::unlock(doLock);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__unlock(doLock);
 #endif
 }
@@ -81,7 +81,7 @@ void ManagedObject::rlock(ManagedObject* obj) ACQUIRE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(obj);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__rlock();
 #endif
 }
@@ -90,7 +90,7 @@ void ManagedObject::rlock(Lockable* obj) ACQUIRE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::rlock(obj);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__rlock();
 #endif
 }
@@ -99,7 +99,7 @@ void ManagedObject::runlock(bool doLock) RELEASE_SHARED() {
 #ifndef WITH_STM
 	DistributedObjectStub::runlock(doLock);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__runlock(doLock);
 #endif
 }
@@ -107,14 +107,14 @@ void ManagedObject::runlock(bool doLock) RELEASE_SHARED() {
 void ManagedObject::setLockName(const String& name) {
 	DistributedObjectStub::setLockName(name);
 
-	if (_getImplementationForRead() == NULL)
+	if (_getImplementationForRead() == nullptr)
 		__setLockName(name);
 }
 
 bool ManagedObject::notifyDestroy() {
 	ObjectBroker* broker = Core::getObjectBroker();
 
-	if (broker == NULL)
+	if (broker == nullptr)
 		return true;
 	else
 		return broker->destroyObject(this);
@@ -128,7 +128,7 @@ void ManagedObject::writeObject(ObjectOutputStream* stream) {
 	_implementation = (ManagedObjectImplementation*) _getImplementationForRead();
 #endif
 
-	if (_implementation == NULL) {
+	if (_implementation == nullptr) {
 		throw ObjectNotLocalException(this);
 	} else
 		_implementation->writeObject(stream);
@@ -211,7 +211,7 @@ void ManagedObjectImplementation::updateToDatabase() {
 }
 
 void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
-	/*if (updateToDatabaseTask != NULL || persistenceLevel != 2)
+	/*if (updateToDatabaseTask != nullptr || persistenceLevel != 2)
 		return;
 
 	updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);

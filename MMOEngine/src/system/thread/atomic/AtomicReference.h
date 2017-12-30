@@ -19,7 +19,7 @@ namespace sys {
 
 	public:
 		AtomicReference() {
-			value = NULL;
+			value = nullptr;
 		}
 
 		AtomicReference(V ref) {

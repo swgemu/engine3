@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "ServiceClient.h"
 
 ServiceClient::ServiceClient() {
-	socket = NULL;
+	socket = nullptr;
 
 	errored = false;
 
@@ -43,16 +43,16 @@ ServiceClient::~ServiceClient() {
 }
 
 void ServiceClient::close() {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		socket->close();
 		
 		delete socket;
-		socket = NULL;
+		socket = nullptr;
 	}			
 }
 
 bool ServiceClient::isAvailable() {
-	if (socket == NULL)
+	if (socket == nullptr)
 		return false;
 	
 	return !(errored || disconnected);

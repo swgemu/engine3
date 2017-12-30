@@ -21,15 +21,15 @@ bool FraserSTM::doCommit(Transaction* transaction) {
 		for (int i = 0; i < transaction->readWriteObjects.size(); ++i) {
 			TransactionalObjectHandleBase* handle = transaction->readWriteObjects.get(i);
 
-			Reference<Transaction*> competingTransaction = NULL;
+			Reference<Transaction*> competingTransaction = nullptr;
 
 			while (true) {
 				competingTransaction = handle->acquireHeader(transaction);
 
-				if (competingTransaction == transaction || competingTransaction == NULL) { // we acquired the transaction
+				if (competingTransaction == transaction || competingTransaction == nullptr) { // we acquired the transaction
 					break;
 				} else {
-					if (competingTransaction != NULL) {
+					if (competingTransaction != nullptr) {
 						if (competingTransaction->isCommited()) {
 							TransactionalMemoryManager::instance()->increaseFailedByCompetingCommited();
 
@@ -106,7 +106,7 @@ bool FraserSTM::validateReadOnlyObjects(Transaction* transaction) {
 
 			Reference<Transaction*> competingTransaction = handle->getCompetingTransaction();
 
-			if (competingTransaction != NULL) {
+			if (competingTransaction != nullptr) {
 				while (competingTransaction->isReadChecking()) {
 					if (transaction->tid < competingTransaction->tid) { // we fail the other one
 						competingTransaction->setState(Transaction::READ_CHECKING, Transaction::ABORTED);

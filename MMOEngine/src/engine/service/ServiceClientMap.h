@@ -23,11 +23,11 @@ namespace engine {
 				HashTableIterator<uint64, ServiceClient*>(this) {
 			maxConnections = maxconn;
 	
-			setNullValue(NULL);
+			setNullValue(nullptr);
 		}
 
 		bool add(ServiceClient* client) {
-			if (HashTable<uint64, ServiceClient*>::put(client->getNetworkID(), client) == NULL) {
+			if (HashTable<uint64, ServiceClient*>::put(client->getNetworkID(), client) == nullptr) {
 				client->acquire();
 
 				return true;
@@ -36,7 +36,7 @@ namespace engine {
 		}
 
 		bool remove(ServiceClient* client) {
-			if (HashTable<uint64, ServiceClient*>::remove(client->getNetworkID()) != NULL) {
+			if (HashTable<uint64, ServiceClient*>::remove(client->getNetworkID()) != nullptr) {
 				client->release();
 
 				return true;

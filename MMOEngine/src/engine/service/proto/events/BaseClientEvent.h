@@ -37,7 +37,7 @@ namespace engine {
 		void run() {
 			Reference<BaseClient*> strong = client.get();
 
-			if (strong == NULL)
+			if (strong == nullptr)
 				return;
 
 			strong->run();

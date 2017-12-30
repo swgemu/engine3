@@ -23,12 +23,12 @@ namespace engine {
 		
 	public:
 		Message() : Packet()/*, DistributedObject() */{
-			client = NULL;
+			client = nullptr;
 			timestampMili = 0;
 		}
 	
 		Message(int size) : Packet(size)/*, DistributedObject() */{
-			client = NULL;
+			client = nullptr;
 			timestampMili = 0;
 		}
 	

@@ -24,7 +24,7 @@ public:
 	void run() {
 		Reference<Object*> strong = object.get();
 
-		if (strong != NULL) {
+		if (strong != nullptr) {
 			assert(!strong->_isGettingDestroyed());
 			assert(strong->getReferenceCount() > 0);
 
@@ -49,7 +49,7 @@ public:
 	void run() {
 		//schedule(25);
 
-		object = NULL;
+		object = nullptr;
 
 		//printf("creating new strong obj\n");
 

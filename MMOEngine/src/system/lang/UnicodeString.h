@@ -32,7 +32,7 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
 		UnicodeString(UnicodeString&& str) : Variable(), uString(str.uString), count(str.count) {
-			str.uString = NULL;
+			str.uString = nullptr;
 			str.count = 0;
 		}
 #endif
@@ -47,14 +47,14 @@ namespace sys {
 				return *this;
 			}
 
-			if (uString != NULL) {
+			if (uString != nullptr) {
 				delete [] uString;
 			}
 
 			uString = str.uString;
 			count = str.count;
 
-			str.uString = NULL;
+			str.uString = nullptr;
 			str.count = 0;
 
 			return *this;

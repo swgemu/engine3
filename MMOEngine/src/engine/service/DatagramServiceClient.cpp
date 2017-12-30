@@ -13,7 +13,7 @@ DatagramServiceClient::DatagramServiceClient()
 		: ServiceClient() {
 	socket = new UDPSocket();
 
-	serviceHandler = NULL;
+	serviceHandler = nullptr;
 
 	doRun = true;
 }
@@ -22,14 +22,14 @@ DatagramServiceClient::DatagramServiceClient(const String& host, int port)
 		: ServiceClient(host, port) {
 	socket = new UDPSocket();
 
-	serviceHandler = NULL;
+	serviceHandler = nullptr;
 
 	doRun = true;
 }
 
 DatagramServiceClient::DatagramServiceClient(Socket* sock, SocketAddress& addr) 
 		: ServiceClient(sock, addr) {
-	serviceHandler = NULL;
+	serviceHandler = nullptr;
 }
 
 DatagramServiceClient::~DatagramServiceClient() {
@@ -52,7 +52,7 @@ public:
 
 	~ClientMessageReceiverTask() {
 		delete message;
-		message = NULL;
+		message = nullptr;
 	}
 
 	void run() {
@@ -92,7 +92,7 @@ int DatagramServiceClient::send(Packet* pack) {
 	if (packetLossChance != 0 && System::random(100) < (uint32) packetLossChance)
 		return false;
 
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		// FIXME: temp hack for stm
 	#ifdef WITH_STM
 		Message* message = new Message(pack, this);

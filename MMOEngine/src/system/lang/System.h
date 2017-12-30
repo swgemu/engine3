@@ -40,7 +40,7 @@ namespace sys {
 		    uint64 time_in_ms;
 
 		    struct timeval tm;
-		    gettimeofday(&tm, NULL);
+		    gettimeofday(&tm, nullptr);
 
 		    time_in_ms = tm.tv_sec; // Avoid overflow by doing mul in 64 bit int
 		    time_in_ms = (time_in_ms * 1000) + (uint64) (tm.tv_usec / 1000.f);
@@ -52,7 +52,7 @@ namespace sys {
 		    uint64 time_in_ms;
 
 		    struct timeval tm;
-		    gettimeofday(&tm, NULL);
+		    gettimeofday(&tm, nullptr);
 
 		    time_in_ms = tm.tv_sec; // Avoid overflow by doing mul in 64 bit int
 		    time_in_ms = (time_in_ms * 1000000) + tm.tv_usec;
@@ -74,7 +74,7 @@ namespace sys {
 		static MTRand* getMTRand() {
 			MTRand* localMT = mtrand.get();
 
-			if (localMT == NULL) {
+			if (localMT == nullptr) {
 				localMT = new MTRand();
 
 				mtrand.set(localMT);

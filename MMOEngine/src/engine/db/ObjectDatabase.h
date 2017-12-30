@@ -25,8 +25,8 @@ namespace engine {
 		int getData(uint64 objKey, ObjectInputStream* objectData);
 
 		//stream will be deleted
-		int putData(uint64 objKey, Stream* stream, Object* object, engine::db::berkley::Transaction* masterTransaction = NULL);
-		int deleteData(uint64 objKey, engine::db::berkley::Transaction* masterTransaction = NULL);
+		int putData(uint64 objKey, Stream* stream, Object* object, engine::db::berkley::Transaction* masterTransaction = nullptr);
+		int deleteData(uint64 objKey, engine::db::berkley::Transaction* masterTransaction = nullptr);
 
 		int tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction);
 		int tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction);

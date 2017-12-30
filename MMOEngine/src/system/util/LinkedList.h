@@ -17,7 +17,7 @@ namespace sys {
 		ListEntry* next;
 	
 	public:	
-		ListEntry() : next(NULL) {
+		ListEntry() : next(nullptr) {
 		}
 	
 		ListEntry(O obj, ListEntry* e) {
@@ -74,7 +74,7 @@ namespace sys {
 		O next() {
 			O cur = current;
 
-			if (current != NULL)
+			if (current != nullptr)
 				current = current->next;
 
 			return cur;
@@ -83,7 +83,7 @@ namespace sys {
 	};
 
 	template<class O> LinkedList<O>::LinkedList() {
-		current = NULL;
+		current = nullptr;
 		count = 0;
 
 		head = new ListEntry<O>();
@@ -92,7 +92,7 @@ namespace sys {
 	template<class O> LinkedList<O>::~LinkedList() {
 		ListEntry<O>* currentObject = head;
 
-		while (currentObject->next != NULL) {
+		while (currentObject->next != nullptr) {
 			ListEntry<O>* old = currentObject;
 			currentObject = currentObject->next;
 
@@ -103,7 +103,7 @@ namespace sys {
 	}
 
 	template<class O> void LinkedList<O>::add(O& obj) {
-		ListEntry<O>* e = new ListEntry<O>(obj, NULL);
+		ListEntry<O>* e = new ListEntry<O>(obj, nullptr);
 		
 		if (count == 0)
 			head->next = e;
@@ -119,7 +119,7 @@ namespace sys {
 		if ((int) count < index + 1 || index < 0)
 			throw ArrayIndexOutOfBoundsException(index);
 
-		ListEntry<O>* newEntry = new ListEntry<O>(obj, NULL);
+		ListEntry<O>* newEntry = new ListEntry<O>(obj, nullptr);
 
 		//if (count =)
 
@@ -130,7 +130,7 @@ namespace sys {
 
 		ListEntry<O>* o = e->next; //obj at index
 
-		if (o != NULL) {
+		if (o != nullptr) {
 			newEntry->next = o;
 		} else {
 			current = newEntry;
@@ -167,7 +167,7 @@ namespace sys {
 		
 		ListEntry<O>* o = e->next;
 		
-		if (o != NULL) {
+		if (o != nullptr) {
 			e->next = o->next;
 
 			O obj = o->obj;
@@ -178,7 +178,7 @@ namespace sys {
 			return obj;
 		}
 		
-		return NULL;
+		return nullptr;
 	}
 
   } // namespace util

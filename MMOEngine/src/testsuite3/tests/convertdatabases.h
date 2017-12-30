@@ -88,7 +88,7 @@ void convertDatabase(const String& dbName, const String& targetDirectory) {
 	}
 
 	while (iterator.getNextKeyAndValue(&key, &data)) {
-		Stream* newData = NULL;
+		Stream* newData = nullptr;
 
 		try {
 			//data.readShort();
@@ -114,7 +114,7 @@ void convertDatabase(const String& dbName, const String& targetDirectory) {
 			printf("could not convert object\n");
 			printf("%s\n", data.toStringData().toCharArray());
 
-			newData = NULL;
+			newData = nullptr;
 		}
 
 		if (newData) {
@@ -123,7 +123,7 @@ void convertDatabase(const String& dbName, const String& targetDirectory) {
 
 			dataEntry.setData(newData->getBuffer(), newData->size());
 
-			int ret = db->put(NULL, &keyEntry, &dataEntry);
+			int ret = db->put(nullptr, &keyEntry, &dataEntry);
 
 			delete newData;
 

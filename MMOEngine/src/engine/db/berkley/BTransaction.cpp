@@ -14,7 +14,7 @@ TransactionConfig TransactionConfig::DEFAULT;
 int Transaction::abort() {
 	int ret = transaction->abort(transaction);
 
-	transaction = NULL;
+	transaction = nullptr;
 
 	delete this;
 
@@ -28,7 +28,7 @@ int Transaction::abort() {
 int Transaction::commit(uint32 flags) {
 	int ret = transaction->commit(transaction, flags);
 
-	transaction = NULL;
+	transaction = nullptr;
 
 	delete this;
 

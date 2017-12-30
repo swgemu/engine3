@@ -168,8 +168,8 @@ AABBNode::AABBNode(const ArrayList<Triangle*>& trilist, int depth, const AABBTre
 	} else { // otherwise the build heuristic failed, this is
 
 		// set the first child to null (identifies a leaf)
-		mChildren[0] = NULL;
-		mChildren[1] = NULL;
+		mChildren[0] = nullptr;
+		mChildren[1] = nullptr;
 
 		// copy triangle list
 		if (heurdata.storePrimitives) {

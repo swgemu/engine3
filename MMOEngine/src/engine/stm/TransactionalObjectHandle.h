@@ -137,15 +137,15 @@ namespace engine {
 		}
 
 		inline void resetObjects() {
-			object = NULL;
+			object = nullptr;
 
-			objectCopy = NULL;
+			objectCopy = nullptr;
 
-			//header = NULL;
+			//header = nullptr;
 		}
 	};
 
-	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle() : header(NULL), object(NULL), objectCopy(NULL) {
+	template<class O> TransactionalObjectHandle<O>::TransactionalObjectHandle() : header(nullptr), object(nullptr), objectCopy(nullptr) {
 		currentType = 0;
 	}
 
@@ -163,7 +163,7 @@ namespace engine {
 			//System::out.println("[" + Thread::getCurrentThread()->getName() +"] cloning " + String::valueOf((uint64) object));
 			object = header->getObjectForWrite(this);
 
-			assert(object != NULL);
+			assert(object != nullptr);
 
 			objectCopy = transaction_cast<O>(object->clone());
 
@@ -177,13 +177,13 @@ namespace engine {
 		} else if (accessType == READ){
 			object = header->getObjectForRead(this);
 			
-			assert(object != NULL);
+			assert(object != nullptr);
 
-			objectCopy = NULL;
+			objectCopy = nullptr;
 		} else {
 			object = header->getObjectForWrite(this);
 			
-			assert(object != NULL);
+			assert(object != nullptr);
 
 			objectCopy = object;
 			
@@ -196,10 +196,10 @@ namespace engine {
 	}
 
 	template<class O> TransactionalObjectHandle<O>::~TransactionalObjectHandle() {
-		header = NULL;
+		header = nullptr;
 
-		object = NULL;
-		objectCopy = NULL;
+		object = nullptr;
+		objectCopy = nullptr;
 
 	//	HandleCounter::deletedHandles.increment();
 
@@ -212,13 +212,13 @@ namespace engine {
 
 		objectCopy = object->clone();
 		
-		assert(objectCopy != NULL);
+		assert(objectCopy != nullptr);
 		
 		currentType = WRITE;
 
 		//currentType = WRITE_AFTER_READ;
 		/*
-	        assert(object != NULL);
+	        assert(object != nullptr);
 	        
 		objectCopy = static_cast<O>(object->clone());
 		
@@ -234,9 +234,9 @@ namespace engine {
 	template<class O> void TransactionalObjectHandle<O>::releaseHeader() {
 		Reference<Object*> obj = objectCopy.get();
 
-		//if (objectCopy.compareAndSet(obj.get(), NULL)) { // this is to avoid several threads releasing it*/
+		//if (objectCopy.compareAndSet(obj.get(), nullptr)) { // this is to avoid several threads releasing it*/
 
-		//if (object.compareAndSet(object.get(), NULL)) {
+		//if (object.compareAndSet(object.get(), nullptr)) {
 		header->releaseObject(this, obj);
 
 		resetObjects();
@@ -250,7 +250,7 @@ namespace engine {
 
 		resetObjects();
 
-		//this->transaction = NULL; <---------- this is wrong its the param
+		//this->transaction = nullptr; <---------- this is wrong its the param
 	}
 
 	template<class O> Transaction* TransactionalObjectHandle<O>::getCompetingTransaction() {

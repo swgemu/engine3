@@ -111,7 +111,7 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 	my_bool reconnect = 1;
 	mysql_options(&mysql, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(&mysql, host.toCharArray(), user.toCharArray(), passw.toCharArray(), dbname.toCharArray(), port, NULL, 0))
+	if (!mysql_real_connect(&mysql, host.toCharArray(), user.toCharArray(), passw.toCharArray(), dbname.toCharArray(), port, nullptr, 0))
 		error();
 
 	msg.deleteAll();
@@ -152,7 +152,7 @@ void MySqlDatabase::doExecuteStatement(const String& statement) {
 	uint64 elapsed = timer.stop();
 
 	Thread* thread = Thread::getCurrentThread();
-	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : nullptr;
 
 	if (worker) {
 		worker->addMysqlStats(statement, elapsed);
@@ -212,8 +212,8 @@ engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 
 	MYSQL_RES* result = mysql_store_result(&mysql);
 
-	if (result == NULL) {
-		//TA: insert statements return NULL result
+	if (result == nullptr) {
+		//TA: insert statements return nullptr result
 		//but if the table has auto_increment you can still call mysql_insert_id(mysql) to get the last affected row
 		if (mysql_field_count(&mysql) != 0) {
 			error(statement);
@@ -228,7 +228,7 @@ engine::db::ResultSet* MySqlDatabase::executeQuery(const char* statement) {
 	uint64 elapsed = timer.stop();
 
 	Thread* thread = Thread::getCurrentThread();
-	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : nullptr;
 
 	if (worker) {
 		worker->addMysqlStats(statement, elapsed);

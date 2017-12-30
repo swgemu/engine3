@@ -39,17 +39,17 @@ namespace sys {
 		}
 
 		virtual ~Locker() RELEASE() {
-			if (lockable != NULL) {
+			if (lockable != nullptr) {
 				lockable->unlock(doLock);
-				lockable = NULL;
+				lockable = nullptr;
 			}
 		}
 
 	public:
 		inline void release() RELEASE() {
-			if (lockable != NULL) {
+			if (lockable != nullptr) {
 				lockable->unlock(doLock);
-				lockable = NULL;
+				lockable = nullptr;
 			}
 		}
 	};

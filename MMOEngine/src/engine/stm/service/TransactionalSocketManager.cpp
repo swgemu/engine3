@@ -32,7 +32,7 @@ void TransactionalSocketManager::execute() {
 		ServiceClient* client = message->getClient();
 
 		Socket* socket = client->getSocket();
-		if (socket != NULL) {
+		if (socket != nullptr) {
 				//info("SEND(RAW) - " + message->toStringData(), true);
 
 				SocketAddress& addr = client->getAddress();
@@ -63,7 +63,7 @@ void TransactionalSocketManager::undo() {
 MessageQueue* TransactionalSocketManager::getLocalMessageQueue() {
 	MessageQueue* queue = sentMessages.get();
 
-	if (queue == NULL) {
+	if (queue == nullptr) {
 		queue = new MessageQueue();
 
 		//info("message queue created");

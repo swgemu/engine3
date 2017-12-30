@@ -100,7 +100,7 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 }
 
 Environment::~Environment() {
-	if (databaseEnvironment != NULL) {
+	if (databaseEnvironment != nullptr) {
 		int ret = close();
 
 		assert(ret == 0);
@@ -114,20 +114,20 @@ Environment::~Environment() {
 int Environment::close() {
 	int ret = 0;
 
-	if (databaseEnvironment != NULL) {
+	if (databaseEnvironment != nullptr) {
 		ret = databaseEnvironment->close(databaseEnvironment, 0);
 
 		if (ret == 0)
-			databaseEnvironment = NULL;
+			databaseEnvironment = nullptr;
 	}
 
 	return ret;
 }
 
 Transaction* Environment::beginTransaction(Transaction* parent, const TransactionConfig& config) {
-	DB_TXN* parentTransaction = NULL;
+	DB_TXN* parentTransaction = nullptr;
 
-	if (parent != NULL)
+	if (parent != nullptr)
 		parentTransaction = parent->getDBTXN();
 
 	Transaction* newTransaction = new Transaction();
@@ -155,7 +155,7 @@ BerkeleyDatabase* Environment::openDatabase(Transaction* txn, const String& file
 }
 
 int Environment::detectDeadlocks(uint32 lockDetectMode) {
-	return databaseEnvironment->lock_detect(databaseEnvironment, 0, lockDetectMode, NULL);
+	return databaseEnvironment->lock_detect(databaseEnvironment, 0, lockDetectMode, nullptr);
 }
 
 void Environment::checkpoint(const CheckpointConfig& config) {

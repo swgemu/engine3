@@ -26,7 +26,7 @@ namespace sys {
 		AtomicReference<StrongAndWeakReferenceCount* > weakReference;
 	public:
 		WeakReference() {
-			weakReference = NULL;
+			weakReference = nullptr;
 		}
 
 		WeakReference(const WeakReference& ref) {
@@ -47,7 +47,7 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
 		WeakReference(WeakReference<O>&& ref) : weakReference(ref.weakReference) {
-			ref.weakReference = NULL;
+			ref.weakReference = nullptr;
 		}
 
 		WeakReference<O>& operator=(WeakReference<O>&& ref) {
@@ -58,7 +58,7 @@ namespace sys {
 
 			weakReference = ref.weakReference;
 
-			ref.weakReference = NULL;
+			ref.weakReference = nullptr;
 
 			return *this;
 		}
@@ -69,12 +69,12 @@ namespace sys {
 		}
 
 		int compareTo(const WeakReference<O>& val) const {
-			Object* object = NULL;
-			Object* valObject = NULL;
+			Object* object = nullptr;
+			Object* valObject = nullptr;
 
 			StrongAndWeakReferenceCount* old = safeRead();
 
-			if (old != NULL) {
+			if (old != nullptr) {
 				object = old->getObject();
 
 				release(old);
@@ -82,7 +82,7 @@ namespace sys {
 
 			StrongAndWeakReferenceCount* valOld = val.safeRead();
 
-			if (valOld != NULL) {
+			if (valOld != nullptr) {
 				valObject = valOld->getObject();
 
 				release(valOld);
@@ -152,11 +152,11 @@ namespace sys {
 
 		//returns an unsafe object pointer
 		inline Object* getReferenceUnsafe() const {
-			Object* object = NULL;
+			Object* object = nullptr;
 
 			StrongAndWeakReferenceCount* old = weakReference;
 
-			if (old != NULL) {
+			if (old != nullptr) {
 				object = old->getObject();
 			}
 
@@ -167,7 +167,7 @@ namespace sys {
 			Reference<O> objectToReturn;
 			StrongAndWeakReferenceCount* currentRef = safeRead();
 
-			if (currentRef == NULL)
+			if (currentRef == nullptr)
 				return objectToReturn;
 
 			if (currentRef->increaseStrongCount() & 1) {
@@ -198,8 +198,8 @@ namespace sys {
 			for (;;) {
 				StrongAndWeakReferenceCount* old = weakReference.get();
 
-				if (old == NULL)
-					return NULL;
+				if (old == nullptr)
+					return nullptr;
 
 				old->increaseWeakCount();
 
@@ -211,11 +211,11 @@ namespace sys {
 					release(old);
 			}
 
-			return NULL;
+			return nullptr;
 		}
 
 		inline bool release(StrongAndWeakReferenceCount* old) const {
-			if (old == NULL)
+			if (old == nullptr)
 				return false;
 
 			if (old->decrementAndTestAndSetWeakCount() == 0)
@@ -227,7 +227,7 @@ namespace sys {
 		}
 
 		inline StrongAndWeakReferenceCount* newref(StrongAndWeakReferenceCount* newRef) {
-			if (newRef != NULL)
+			if (newRef != nullptr)
 				newRef->increaseWeakCount();
 
 			for (;;) {
@@ -239,12 +239,12 @@ namespace sys {
 					if (!deleted)
 						return p;
 					else
-						return NULL;
+						return nullptr;
 				} else
 					release(p);
 			}
 
-			return NULL;
+			return nullptr;
 		}
 
 		inline void initializeObject(O obj) {
@@ -256,14 +256,14 @@ namespace sys {
 		}
 
 		inline void releaseObject() {
-			updateObject((O) NULL);
+			updateObject((O) nullptr);
 		}
 
 	public:
 		inline void updateObject(O obj) {
-			StrongAndWeakReferenceCount* newRef = NULL;
+			StrongAndWeakReferenceCount* newRef = nullptr;
 
-			if (obj != NULL)
+			if (obj != nullptr)
 				newRef = obj->requestWeak();
 
 			StrongAndWeakReferenceCount* old = newref(newRef);

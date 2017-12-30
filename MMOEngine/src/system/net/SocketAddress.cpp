@@ -35,9 +35,9 @@ SocketAddress::SocketAddress(const String& host, int port) {
 
 	bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);*/
 
-	struct addrinfo *result = NULL;
+	struct addrinfo *result = nullptr;
 
-	int error = getaddrinfo(host.toCharArray(), NULL, NULL, &result);
+	int error = getaddrinfo(host.toCharArray(), nullptr, nullptr, &result);
 
 	if (error != 0 || !result) {
 		Logger::console.error("getaddrinfo failed");
@@ -59,7 +59,7 @@ SocketAddress::SocketAddress(const String& host, int port) {
 #else
 	HOSTENT *hp = gethostbyname(host.toCharArray());
 
-	if (hp == NULL)
+	if (hp == nullptr)
 		throw SocketException("unknown host " + host);
 
 	addr.sin_addr.S_un.S_un_b.s_b1 = (unsigned char)hp->h_addr_list[0][0];

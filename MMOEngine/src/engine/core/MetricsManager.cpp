@@ -6,7 +6,7 @@
 
 using namespace engine::core;
 
-MetricsManager::MetricsManager() : Logger("MetricsManager"), client(NULL) {
+MetricsManager::MetricsManager() : Logger("MetricsManager"), client(nullptr) {
 }
 
 void MetricsManager::initializeStatsDConnection(const char* hostname, int port) {
@@ -20,7 +20,7 @@ MetricsManager::Result MetricsManager::publish(const Metrics& metrics) {
 }
 
 MetricsManager::Result MetricsManager::publish(const char* name, const char* value, const char* type, const char* sampleTime) {
-	if (client == NULL) {
+	if (client == nullptr) {
 		return NO_CONNECTION;
 	}
 

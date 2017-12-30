@@ -76,7 +76,7 @@ namespace engine {
 
 			TransactionalObjectHeader<Object*>* test = (TransactionalObjectHeader<Object*>*)header;
 
-			//assert(test != NULL);
+			//assert(test != nullptr);
 
 			return (TransactionalObjectHeader<O>*) HashTable<uint64, Reference<TransactionalObjectHeader<Object*>*> >::put((uint64) object,
 				test).get();
@@ -211,7 +211,7 @@ namespace engine {
 	template<class O> TransactionalObjectHeader<O>* Transaction::getHeader(O object) {
 		TransactionalObjectHeader<O>* header = localObjectCache.get<O>(object);
 
-		if (header == NULL) {
+		if (header == nullptr) {
 			return new engine::stm::TransactionalObjectHeader<O>(object);
 		}
 
@@ -234,15 +234,15 @@ namespace engine {
 	template<class O> O Transaction::getOpenedObject(TransactionalObjectHeader<O>* header) {
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
-		if (handle == NULL)
-			return NULL;
+		if (handle == nullptr)
+			return nullptr;
 
-		O object = NULL;
+		O object = nullptr;
 
 		if (!isAborted()) {
 			object = transaction_cast<O>(handle->getObject());
 
-			if (handle->getObjectLocalCopy() != NULL) {
+			if (handle->getObjectLocalCopy() != nullptr) {
 				object = transaction_cast<O>(handle->getObjectLocalCopy());
 			}
 		}
@@ -255,7 +255,7 @@ namespace engine {
 
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
-		if (handle == NULL) {
+		if (handle == nullptr) {
 			handle = header->createReadOnlyHandle(this);
 
 			openedObjets.put<O>(header, handle);
@@ -267,11 +267,11 @@ namespace engine {
 
 		O object = transaction_cast<O>(handle->getObject());
 
-		if (handle->getObjectLocalCopy() != NULL) {
+		if (handle->getObjectLocalCopy() != nullptr) {
 			object = transaction_cast<O>(handle->getObjectLocalCopy());
 		}
 
-		assert(object != NULL);
+		assert(object != nullptr);
 		return object;
 	}
 
@@ -281,7 +281,7 @@ namespace engine {
 
 		TransactionalObjectHandle<O>* handle = openedObjets.get<O>(header);
 
-		if (handle == NULL) {
+		if (handle == nullptr) {
 			handle = header->createWriteHandle(this);
 
 			openedObjets.put<O>(header, handle);
@@ -301,7 +301,7 @@ namespace engine {
 
 		O localCopy = transaction_cast<O>(handle->getObjectLocalCopy());
 
-		assert(localCopy != NULL);
+		assert(localCopy != nullptr);
 		
 #ifdef MEMORY_PROTECTION
 		ptrdiff_t rel = (ptrdiff_t)localCopy - (ptrdiff_t)0x8000000000;

@@ -14,10 +14,10 @@
 #include "CommitMasterTransactionThread.h"
 
 CommitMasterTransactionThread::CommitMasterTransactionThread() {
-	transaction = NULL;
-	threads = NULL;
+	transaction = nullptr;
+	threads = nullptr;
 
-	objectsToDeleteFromRam = NULL;
+	objectsToDeleteFromRam = nullptr;
 
 	numberOfThreads = 0;
 
@@ -31,8 +31,8 @@ CommitMasterTransactionThread::~CommitMasterTransactionThread() {
 }
 
 void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
-	assert(workers != NULL);
-	assert(objectsToCollect != NULL);
+	assert(workers != nullptr);
+	assert(objectsToCollect != nullptr);
 
 	transaction = trans;
 	threads = workers;
@@ -56,9 +56,9 @@ void CommitMasterTransactionThread::run() {
 			commitData();
 		}
 
-		transaction = NULL;
-		threads = NULL;
-		objectsToDeleteFromRam = NULL;
+		transaction = nullptr;
+		threads = nullptr;
+		objectsToDeleteFromRam = nullptr;
 
 		blockMutex.unlock();
 	}
@@ -93,7 +93,7 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 
 				++i;
 
-				object = NULL;
+				object = nullptr;
 			}
 		} /*else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
 			String text = TypeInfo<DistributedObject>::getClassName(object) + " 0x" + String::hexvalueOf((int64)object->_getObjectID());
@@ -109,7 +109,7 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 	}
 
 	delete objectsToDeleteFromRam;
-	objectsToDeleteFromRam = NULL;
+	objectsToDeleteFromRam = nullptr;
 
 	return i;
 }

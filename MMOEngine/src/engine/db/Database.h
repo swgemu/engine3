@@ -45,15 +45,15 @@ public:
 	}
 
 	virtual ResultSet* executeQuery(const char* statement) {
-		return NULL;
+		return nullptr;
 	}
 
 	virtual ResultSet* executeQuery(const String& statement) {
-		return NULL;
+		return nullptr;
 	}
 
 	virtual ResultSet* executeQuery(const StringBuffer& statement) {
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void commit() {

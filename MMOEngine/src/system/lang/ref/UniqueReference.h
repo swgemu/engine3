@@ -13,7 +13,7 @@ namespace sys {
 			T obj;
 
 		public:
-			UniqueReference() : obj(NULL) {
+			UniqueReference() : obj(nullptr) {
 
 			}
 

@@ -16,7 +16,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 
 LuaFunction::LuaFunction() {
-	L = NULL;
+	L = nullptr;
 	numberOfArgs = 0;
 	numberOfArgsToReturn = 0;
 }
@@ -113,7 +113,7 @@ void LuaFunction::operator<<(const char* str) {
 void LuaFunction::operator<<(void* ptr) {
 	numberOfArgs++;
 
-	if (ptr != NULL)
+	if (ptr != nullptr)
 		lua_pushlightuserdata(L, ptr);
 	else
 		lua_pushnil(L);
@@ -142,7 +142,7 @@ lua_State* LuaFunction::callFunction() {
 #endif
 
 		Thread* thread = Thread::getCurrentThread();
-		TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : NULL;
+		TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : nullptr;
 
 		if (worker) {
 			if (object.length()) {
@@ -161,12 +161,12 @@ lua_State* LuaFunction::callFunction() {
 
 		if (result != 0) {
 			Logger::console.error("Error running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
-			return NULL;
+			return nullptr;
 		}
 	} catch (LuaPanicException& e) {
 		Logger::console.error("LuaPanicException running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
 
-		return NULL;
+		return nullptr;
 	}
 
 	return getLuaState();

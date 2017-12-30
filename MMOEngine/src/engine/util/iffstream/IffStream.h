@@ -42,7 +42,7 @@ namespace engine {
 		 Chunk* createChunk(Chunk* par, uint32 id, uint32 size, char* data) {
 			 Chunk* chunk = chunkFactory.createObject(id, par, id, size, data);
 
-			 if (chunk == NULL)
+			 if (chunk == nullptr)
 				 chunk = new Chunk(par, id, size, data);
 
 			 return chunk;

@@ -19,7 +19,7 @@ namespace engine {
 
    public:
 	   TaskReference() {
-		   task = NULL;
+		   task = nullptr;
 	   }
 
 	   TaskReference(Task* t) {

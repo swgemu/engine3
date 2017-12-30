@@ -114,7 +114,7 @@ namespace sys {
 				//assert(type == 0);
 
 				struct timeval tv;
-				gettimeofday(&tv, NULL);
+				gettimeofday(&tv, nullptr);
 				TIMEVAL_TO_TIMESPEC(&tv, &ts);
 
 			#elif !defined(PLATFORM_WIN)
@@ -191,7 +191,7 @@ namespace sys {
 
 			char* ret = ctime_r(&ts.tv_sec, str);
 
-			if (ret != NULL)
+			if (ret != nullptr)
 				return String(ret, strlen(str) - 1);
 			else
 				return String("");
@@ -213,7 +213,7 @@ namespace sys {
 			#ifdef PLATFORM_MAC
 				//assert(type == 0);
 				struct timeval tv;
-				gettimeofday(&tv, NULL);
+				gettimeofday(&tv, nullptr);
 
 				struct timespec cts;
 				TIMEVAL_TO_TIMESPEC(&tv, &cts);

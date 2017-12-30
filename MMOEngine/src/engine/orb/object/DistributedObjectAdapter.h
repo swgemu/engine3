@@ -27,7 +27,7 @@ namespace engine {
 	public:
 		DistributedObjectAdapter(DistributedObjectStub* obj) {
 			//impl = obj;
-			stub = NULL;
+			stub = nullptr;
 		}
 		
 		virtual ~DistributedObjectAdapter() {

@@ -2,7 +2,7 @@
 
 #include "GdbStub.h"
 
-GdbStub::GdbStub() : logFile(NULL) {
+GdbStub::GdbStub() : logFile(nullptr) {
 }
 
 GdbStub::~GdbStub() {
@@ -10,7 +10,7 @@ GdbStub::~GdbStub() {
 		logFile->close();
 
 		delete logFile;
-		logFile = NULL;
+		logFile = nullptr;
 	}
 }
 
@@ -46,7 +46,7 @@ void GdbStub::printStackTrace() {
 				"-ex", "thread",
 				"-ex", "bt full",
 				"-pid", const_cast<char*>(processPid.toCharArray()),
-				NULL};
+				nullptr};
 
 		execvp("gdb", argv);
 
@@ -77,7 +77,7 @@ void GdbStub::printRegisters() {
 				"-ex", "set pagination off",
 				"-ex", "info registers",
 				"-pid", const_cast<char*>(processPid.toCharArray()),
-				NULL};
+				nullptr};
 
 		execvp("gdb", argv);
 
@@ -108,7 +108,7 @@ void GdbStub::printDeadlock() {
 				"-ex", "set pagination off",
 				"-ex", "info registers",
 				"-pid", const_cast<char*>(processPid.toCharArray()),
-				NULL};
+				nullptr};
 
 		execvp("gdb", argv);
 
@@ -156,7 +156,7 @@ void GdbStub::printThread(String threadInfo) {
 				//"-ex", "thread 1",
 				"-ex", "bt full",
 				"-pid", const_cast<char*>(processPid.toCharArray()),
-				NULL};
+				nullptr};
 
 		execvp("gdb", argv);
 
@@ -187,7 +187,7 @@ void GdbStub::getThreads(Vector<String>& threads) {
 				"-ex", "set pagination off",
 				"-ex", "info threads",
 				"-pid", const_cast<char*>(processPid.toCharArray()),
-				NULL};
+				nullptr};
 
 		execvp("gdb", argv);
 

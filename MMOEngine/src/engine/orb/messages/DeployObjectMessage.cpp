@@ -29,7 +29,7 @@ void DeployObjectMessage::execute() {
 
 	DistributedObjectStub* obj = broker->createObjectStub(className, name);
 
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		try {
 			//printf("Received DeployObjectMessage with name:%s\n", obj->_getName().toCharArray());
 

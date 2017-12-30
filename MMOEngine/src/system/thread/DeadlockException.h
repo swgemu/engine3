@@ -20,11 +20,11 @@ namespace sys {
   		  StackTrace trace;
 
   	  public:
-  		  DeadlockException() : lockable(NULL) {
+  		  DeadlockException() : lockable(nullptr) {
 
   		  }
 
-  		  DeadlockException(const String& msg) : lockable(NULL), message(msg) {
+  		  DeadlockException(const String& msg) : lockable(nullptr), message(msg) {
 
   		  }
 

@@ -10,11 +10,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "Lockable.h"
 
 Lockable::Lockable() {
-	threadLockHolder = NULL;
+	threadLockHolder = nullptr;
 
 #ifdef TRACE_LOCKS
-	trace = NULL;
-	unlockTrace = NULL;
+	trace = nullptr;
+	unlockTrace = nullptr;
 
 	doTrace = true;
 #endif
@@ -31,13 +31,13 @@ Lockable::Lockable() {
 }
 
 Lockable::Lockable(const String& s) {
-	threadLockHolder = NULL;
+	threadLockHolder = nullptr;
 
 	//lockName = s;
 
 #ifdef TRACE_LOCKS
-	trace = NULL;
-	unlockTrace = NULL;
+	trace = nullptr;
+	unlockTrace = nullptr;
 
 	doTrace = true;
 #endif
@@ -55,14 +55,14 @@ Lockable::Lockable(const String& s) {
 
 Lockable::~Lockable() {
 #ifdef TRACE_LOCKS
-	if (trace != NULL) {
+	if (trace != nullptr) {
 		delete trace;
-		trace = NULL;
+		trace = nullptr;
 	}
 
-	if (unlockTrace != NULL) {
+	if (unlockTrace != nullptr) {
 		delete unlockTrace;
-		unlockTrace = NULL;
+		unlockTrace = nullptr;
 	}
 #endif
 
@@ -78,7 +78,7 @@ void Lockable::traceDeadlock(const char* modifier) {
 	StackTrace::printStackTrace();
 
 #ifdef TRACE_LOCKS
-	if (trace != NULL) {
+	if (trace != nullptr) {
 		System::out << "[" << threadLockHolder->getName() << "] locked at " << lockTime.getMiliTime() << " by\n";
 		trace->print();
 	} else {

@@ -14,7 +14,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 MemoryMappedFile::MemoryMappedFile(const char* name, uint32 size) {
 	fileName = name;
 
-	heapBase = NULL;
+	heapBase = nullptr;
 
 	fileSize = size;
 

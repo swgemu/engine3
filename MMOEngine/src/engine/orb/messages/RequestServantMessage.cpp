@@ -22,7 +22,7 @@ void RequestServantMessage::execute() {
 
 	insertLong(objectID);
 
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		Locker locker(obj);
 
 		ObjectOutputStream stream;
@@ -35,13 +35,13 @@ void RequestServantMessage::execute() {
 		RemoteObjectBroker* oldBroker = dynamic_cast<RemoteObjectBroker*>(obj->_getObjectBroker());
 
 		obj->_setObjectBroker(remoteBroker);
-		obj->_setImplementation(NULL);
+		obj->_setImplementation(nullptr);
 
-		if (remoteBroker != NULL) {
+		if (remoteBroker != nullptr) {
 			remoteBroker->addDeployedObject(obj);
 		}
 
-		if (oldBroker != NULL) {
+		if (oldBroker != nullptr) {
 			oldBroker->removeDeployedObject(obj);
 		}
 
@@ -76,7 +76,7 @@ void RequestServantMessage::handleReply(Packet* message) {
 		Reference<ManagedObject*> obj = DistributedObjectBroker::instance()->lookUp(
 				objectID).castTo<ManagedObject*>();
 
-		if (obj != NULL) {
+		if (obj != nullptr) {
 			DistributedObjectBroker::instance()->createObjectServant(className, obj, true);
 
 			assert(obj->_getImplementation());

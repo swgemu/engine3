@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 DistributedObject::DistributedObject() : Object() {
 	_objectID = 0;
 
-	_objectBroker = NULL;
+	_objectBroker = nullptr;
 
 	_updated = true;
 	_markedForDeletion = false;

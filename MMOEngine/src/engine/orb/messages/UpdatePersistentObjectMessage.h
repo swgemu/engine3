@@ -41,7 +41,7 @@ namespace engine {
 
 			  uint32 success;
 
-			  if (obj != NULL) {
+			  if (obj != nullptr) {
 				  orb->error("could not locate object in  DOBMessageFactory::handleUpdatePersistentObjectMessage");
 
 				  success = 0;

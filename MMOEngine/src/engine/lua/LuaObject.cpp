@@ -18,7 +18,7 @@ void LuaObject::setField(const String& key, const String& value) {
 }
 
 String LuaObject::getStringField(const String& key, const char* defaultValue) {
-	const char* result = NULL;
+	const char* result = nullptr;
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
@@ -30,7 +30,7 @@ String LuaObject::getStringField(const String& key, const char* defaultValue) {
 
 	lua_pop(L, 1);
 
-	if (result != NULL)
+	if (result != nullptr)
 		return String(result);
 	else
 		return String(defaultValue);
@@ -218,7 +218,7 @@ bool LuaObject::getBooleanAt(int idx) {
 }
 
 String LuaObject::getStringAt(int idx) {
-	const char* result = NULL;
+	const char* result = nullptr;
 
 	if (idx > getTableSize() || idx < 1)
 		throw ArrayIndexOutOfBoundsException(idx);

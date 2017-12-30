@@ -27,17 +27,17 @@ namespace sys {
 		}
 
 		virtual ~ReadLocker() RELEASE() {
-			if (lockable != NULL) {
+			if (lockable != nullptr) {
 				lockable->runlock(doLock);
-				lockable = NULL;
+				lockable = nullptr;
 			}
 		}
 
 	public:
 		inline void release() RELEASE() {
-			if (lockable != NULL) {
+			if (lockable != nullptr) {
 				lockable->runlock(doLock);
-				lockable = NULL;
+				lockable = nullptr;
 			}
 		}
 	};

@@ -22,7 +22,7 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 
 	pauseWorker = false;
 
-	currentTask = NULL;
+	currentTask = nullptr;
 
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;
@@ -74,7 +74,7 @@ void TaskWorkerThread::run() {
 			error("unreported Exception caught");
 		}
 
-		currentTask = NULL;
+		currentTask = nullptr;
 
 #ifdef COLLECT_TASKSTATISTICS
 		uint64 elapsedTime = task->getLastElapsedTime();
@@ -89,7 +89,7 @@ void TaskWorkerThread::run() {
 
 		Entry<const char*, RunStatistics>* entry = tasksStatistics.getEntry(taskName);
 
-		if (entry == NULL) {
+		if (entry == nullptr) {
 			RunStatistics stats;
 
 			stats.totalRunCount = 1;
@@ -134,7 +134,7 @@ void TaskWorkerThread::run() {
 
 		task->release();
 
-		task = NULL;
+		task = nullptr;
 
 		while (pauseWorker) {
 			Thread::sleep(1);
@@ -200,7 +200,7 @@ void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTim
 
 	auto entry = luaTasksStatistics.find(taskName);
 
-	RunStatistics* stats = NULL;
+	RunStatistics* stats = nullptr;
 
 	if (entry == -1) {
 		RunStatistics stats;
@@ -233,7 +233,7 @@ void TaskWorkerThread::addBDBReadStats(const String& dbName, uint64 elapsedTime)
 
 	auto entry = bdbReadStatistics.find(dbName);
 
-	RunStatistics* stats = NULL;
+	RunStatistics* stats = nullptr;
 
 	if (entry == -1) {
 		RunStatistics stats;
@@ -276,7 +276,7 @@ void TaskWorkerThread::addMysqlStats(const String& query, uint64 elapsedTime) {
 
 	auto entry = mysqlStatistics.find(query);
 
-	RunStatistics* stats = NULL;
+	RunStatistics* stats = nullptr;
 
 	if (entry == -1) {
 		if (mysqlStatistics.size() >= STATS_MAX_MYSQL_QUERIES)
@@ -313,7 +313,7 @@ void TaskWorkerThread::addLuaTaskStats(String&& taskName, uint64 elapsedTime) {
 
 	auto entry = luaTasksStatistics.find(taskName);
 
-	RunStatistics* stats = NULL;
+	RunStatistics* stats = nullptr;
 
 	if (entry == -1) {
 		RunStatistics stats;

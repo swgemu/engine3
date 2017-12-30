@@ -18,7 +18,7 @@ public:
 	}
 	
 	void run() {
-		client = NULL;
+		client = nullptr;
 	}
 	
 };

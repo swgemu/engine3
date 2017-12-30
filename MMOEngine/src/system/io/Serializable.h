@@ -115,7 +115,7 @@ namespace sys {
 
 			/**
 			 * Returns a new ObjectOutputStream with the modified variable data
-			 * Returns NULL on error
+			 * Returns nullptr on error
 			 */
 			static ObjectOutputStream* convertToHashCodeNameMembers(ObjectInputStream* object);
 			static ObjectOutputStream* changeVariableData(const String& variableName, ObjectInputStream* object, Stream* newVariableData);
@@ -184,7 +184,7 @@ namespace sys {
 			VariableName() {
 				version = 0;
 				type = 0;
-				name = NULL;
+				name = nullptr;
 			}
 
 			VariableName(const char* name, int version) {

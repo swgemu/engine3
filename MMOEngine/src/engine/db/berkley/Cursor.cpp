@@ -22,7 +22,7 @@ Cursor::Cursor(BerkeleyDatabase* database, DBC* dbcursor, const CursorConfig& co
 }
 
 Cursor::~Cursor() {
-	if (dbc != NULL) {
+	if (dbc != nullptr) {
 		close();
 	}
 }
@@ -30,7 +30,7 @@ Cursor::~Cursor() {
 int Cursor::close() {
 	int ret = dbc->close(dbc);
 
-	dbc = NULL;
+	dbc = nullptr;
 
 	return ret;
 }
@@ -45,7 +45,7 @@ Cursor* Cursor::dup(bool samePosition) {
 	if (samePosition)
 		flags = DB_POSITION;
 
-	DBC* dbdup = NULL;
+	DBC* dbdup = nullptr;
 
 	int res = dbc->dup(dbc, &dbdup, flags);
 
@@ -62,7 +62,7 @@ int Cursor::get(DatabaseEntry* key, DatabaseEntry* data, uint32 flags) {
 }
 
 int Cursor::getRecordNumber(DatabaseEntry* data, uint32 lockMode) {
-	return dbc->get(dbc, NULL, data->getDBT(), DB_GET_RECNO | lockMode);
+	return dbc->get(dbc, nullptr, data->getDBT(), DB_GET_RECNO | lockMode);
 }
 
 int Cursor::put(DatabaseEntry* key, DatabaseEntry* data, uint32 flags) {
@@ -70,7 +70,7 @@ int Cursor::put(DatabaseEntry* key, DatabaseEntry* data, uint32 flags) {
 }
 
 int Cursor::putCurrent(DatabaseEntry* data) {
-	return dbc->put(dbc, NULL, data->getDBT(), DB_CURRENT);
+	return dbc->put(dbc, nullptr, data->getDBT(), DB_CURRENT);
 }
 
 

@@ -34,7 +34,7 @@ namespace sys {
 
 	public:
 		Entry() {
-			next = NULL;
+			next = nullptr;
 			hash = 0;
 		}
 
@@ -61,7 +61,7 @@ namespace sys {
 
 			next = e.next;
 
-			e.next = NULL;
+			e.next = nullptr;
 			e.hash = 0;
 		}
 #endif
@@ -237,7 +237,7 @@ namespace sys {
 			initialCapacity(htable.initialCapacity), threshold(htable.threshold),
 			loadFactor(htable.loadFactor), modCount(htable.modCount), nullValue(htable.nullValue) {
 
-		htable.table = NULL;
+		htable.table = nullptr;
 	}
 #endif
 
@@ -262,7 +262,7 @@ namespace sys {
 		free(table);
 
 		table = htable.table;
-		htable.table = NULL;
+		htable.table = nullptr;
 
 		tableLength = htable.tableLength;
 
@@ -288,8 +288,8 @@ namespace sys {
 		HashTableIterator<K, V> iterator(htable);
 
 		while (iterator.hasNext()) {
-			K* key = NULL;
-			V* value = NULL;
+			K* key = nullptr;
+			V* value = nullptr;
 
 			iterator.getNextKeyAndValue(key, value);
 
@@ -298,7 +298,7 @@ namespace sys {
 	}
 
 	template<class K, class V> HashTable<K,V>::~HashTable() {
-		if (table != NULL) {
+		if (table != nullptr) {
 			removeAll();
 
 			free(table);
@@ -311,7 +311,7 @@ namespace sys {
 		HashTable::initialCapacity = initialCapacity;
 
 		if (initialCapacity == 0) {
-			table = NULL;
+			table = nullptr;
 		} else {
 			table = (Entry<K, V>**) malloc(initialCapacity * sizeof(Entry<K, V>*));
 			memset(table, 0, initialCapacity * sizeof(Entry<K, V>*));
@@ -341,7 +341,7 @@ namespace sys {
 		table = newMap;
 
 		for (int i = oldCapacity; i-- > 0 ;) {
-	    	for (Entry<K,V>* old = oldMap[i]; old != NULL ;) {
+	    	for (Entry<K,V>* old = oldMap[i]; old != nullptr ;) {
 				Entry<K,V>* e = old;
 				old = old->next;
 
@@ -365,7 +365,7 @@ namespace sys {
 		if (tableLength) {
 			index = (hashCode & 0x7FFFFFFF) % tableLength;
 
-			for (Entry<K, V>* e = table[index]; e != NULL; e = e->next) {
+			for (Entry<K, V>* e = table[index]; e != nullptr; e = e->next) {
 				if ((e->hash == hashCode) && e->key == key) {
 					V old = e->value;
 					e->value = value;
@@ -396,7 +396,7 @@ namespace sys {
 		if (tableLength) {
 			index = (hashCode & 0x7FFFFFFF) % tableLength;
 
-			for (Entry<K, V>* e = table[index]; e != NULL; e = e->next) {
+			for (Entry<K, V>* e = table[index]; e != nullptr; e = e->next) {
 				if ((e->hash == hashCode) && e->key == key) {
 					V old = e->value;
 					e->value = std::move(value);
@@ -428,7 +428,7 @@ namespace sys {
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
-		for (Entry<K,V>* e = table[index]; e != NULL; e = e->next) {
+		for (Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
 	    	if ((e->hash == hashCode) && e->key == key) {
 				return e->value;
 	    	}
@@ -444,7 +444,7 @@ namespace sys {
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
-		for (const Entry<K,V>* e = table[index]; e != NULL; e = e->next) {
+		for (const Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
 			if ((e->hash == hashCode) && e->key == key) {
 				return e->value;
 			}
@@ -460,7 +460,7 @@ namespace sys {
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
-		for (Entry<K,V>* e = table[index]; e != NULL; e = e->next) {
+		for (Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
 		    if ((e->hash == hashCode) && e->key == key) {
 				return true;
 	    	}
@@ -471,18 +471,18 @@ namespace sys {
 
 	template<class K, class V> Entry<K,V>* HashTable<K,V>::getEntry(const K& key) const {
 		if (!count)
-			return NULL;
+			return nullptr;
 
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
-		for (Entry<K,V>* e = table[index]; e != NULL; e = e->next) {
+		for (Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
 			if ((e->hash == hashCode) && e->key == key) {
 				return e;
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	template<class K, class V> HashTableIterator<K, V> HashTable<K,V>::iterator() {
@@ -496,9 +496,9 @@ namespace sys {
 		int hashCode = hash(key);
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
-		for (Entry<K,V> *e = table[index], *prev = NULL; e != NULL; prev = e, e = e->next) {
+		for (Entry<K,V> *e = table[index], *prev = nullptr; e != nullptr; prev = e, e = e->next) {
 	    	if ((e->hash == hashCode) && e->key == key) {
-				if (prev != NULL)
+				if (prev != nullptr)
 			    	prev->next = e->next;
 				else
 		    		table[index] = e->next;
@@ -521,14 +521,14 @@ namespace sys {
 			return;
 
 		for (int i = 0; i < tableLength; ++i) {
-			for (Entry<K,V>* e = table[i]; e != NULL;) {
+			for (Entry<K,V>* e = table[i]; e != nullptr;) {
 				Entry<K,V>* next = e->next;
 
 				delete e;
 				e = next;
 			}
 
-			table[i] = NULL;
+			table[i] = nullptr;
 		}
 
 		count = 0;
@@ -599,8 +599,8 @@ namespace sys {
 		stream->writeInt(HashTable<K, V>::size());
 
 		while (iterator.hasNext()) {
-			K* key = NULL;
-			V* value = NULL;
+			K* key = nullptr;
+			V* value = nullptr;
 
 			iterator.getNextKeyAndValue(key, value);
 
@@ -634,12 +634,12 @@ namespace sys {
 	}
 
 	template<class K, class V> HashTableIterator<K,V>::HashTableIterator() {
-		htable = NULL;
+		htable = nullptr;
 
 		position = 0;
 		eIndex = -1;
 
-		e = NULL;
+		e = nullptr;
 	}
 
 	template<class K, class V> HashTableIterator<K,V>::HashTableIterator(const HashTableIterator<K, V>& iter) {
@@ -656,11 +656,11 @@ namespace sys {
 		position = 0;
 		eIndex = -1;
 
-		e = NULL;
+		e = nullptr;
 	}
 
 	template<class K, class V> V& HashTableIterator<K,V>::getNextValue() {
-		while (e == NULL)
+		while (e == nullptr)
 			e = htable->table[++eIndex];
 
 		V& result = e->value;
@@ -672,7 +672,7 @@ namespace sys {
 	}
 
 	template<class K, class V> K& HashTableIterator<K,V>::getNextKey() {
-		while (e == NULL)
+		while (e == nullptr)
 			e = htable->table[++eIndex];
 
 		K& result = e->key;
@@ -684,7 +684,7 @@ namespace sys {
 	}
 
 	template<class K, class V> void HashTableIterator<K,V>::getNextKeyAndValue(K& key, V& value) {
-		while (e == NULL)
+		while (e == nullptr)
 			e = htable->table[++eIndex];
 
 		key = e->key;
@@ -695,7 +695,7 @@ namespace sys {
 	}
 
 	template<class K, class V> void HashTableIterator<K,V>::getNextKeyAndValue(K*& key, V*& value) {
-		while (e == NULL)
+		while (e == nullptr)
 			e = htable->table[++eIndex];
 
 		key = &e->key;
@@ -717,12 +717,12 @@ namespace sys {
 		position = 0;
 		eIndex = -1;
 
-		e = NULL;
+		e = nullptr;
 	}
 
 	template<class K, class V> void HashTableIterator<K,V>::toConsole() {
 		while (hasNext()) {
-			while (e == NULL)
+			while (e == nullptr)
 				e = htable->table[++eIndex];
 
 			System::out << e->key << " = " << e->value << "\n";

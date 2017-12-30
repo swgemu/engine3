@@ -15,7 +15,7 @@ DOBServiceClient::DOBServiceClient(Socket* sock)
 
 	rob = new RemoteObjectBroker(this);
 
-	serviceHandler = NULL;
+	serviceHandler = nullptr;
 
 	//setLogging(true);
 	//setGlobalLogging(true);
@@ -25,7 +25,7 @@ DOBServiceClient::DOBServiceClient(Socket* sock)
 
 DOBServiceClient::DOBServiceClient(const String& host, int port)
 		: StreamServiceClient(host, port) , Logger("DistributedObjectBroker") {
-	rob = NULL;
+	rob = nullptr;
 
 	serviceHandler = new DOBServiceHandler();
 
@@ -42,9 +42,9 @@ DOBServiceClient::DOBServiceClient(const String& host, int port)
 }
 
 DOBServiceClient::~DOBServiceClient() {
-	if (rob != NULL) {
+	if (rob != nullptr) {
 		delete rob;
-		rob = NULL;
+		rob = nullptr;
 	}
 }
 

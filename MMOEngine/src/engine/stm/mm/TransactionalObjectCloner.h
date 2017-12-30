@@ -14,13 +14,13 @@ namespace engine {
 		static Object* clone(O* object) {
 		       // KernelCall call;
 			void* allocatedAddress = TransactionalMemoryManager::instance()->create(sizeof(O));
-			assert(allocatedAddress != NULL);
+			assert(allocatedAddress != nullptr);
 
 			//KernelCall call;
 			O* clonedObject = new (allocatedAddress) O(*object);
 
 			Object* downcastedObject = dynamic_cast<Object*>(clonedObject);
-			assert(downcastedObject != NULL);
+			assert(downcastedObject != nullptr);
 
 			return downcastedObject;
 		}

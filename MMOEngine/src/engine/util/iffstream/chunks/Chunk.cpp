@@ -11,7 +11,7 @@ Chunk::Chunk(Chunk* par, uint32 id, uint32 size, char* data) {
 
 	lastOpenedSubChunk = -1;
 
-	iffStream = NULL;
+	iffStream = nullptr;
 }
 
 Chunk::~Chunk() {

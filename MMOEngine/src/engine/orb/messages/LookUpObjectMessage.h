@@ -40,7 +40,7 @@ namespace engine {
 		void execute() {
 			DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(name);
 
-			if (obj != NULL) {
+			if (obj != nullptr) {
 				insertBoolean(true);
 				insertAscii(obj->_getClassName());
 				insertLong(obj->_getObjectID());
@@ -56,6 +56,7 @@ namespace engine {
 
 			if (found) {
 				message->parseAscii(className);
+
 				objectID = message->parseLong();
 			}
 		}

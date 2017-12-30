@@ -10,7 +10,7 @@ IffStream::IffStream() {
 
 	//data = str;
 
-	openedChunk = NULL;
+	openedChunk = nullptr;
 
 	lastOpenedChunk = -1;
 
@@ -20,21 +20,21 @@ IffStream::IffStream() {
 }
 
 IffStream::~IffStream() {
-	/*if (file != NULL && file->exists())
+	/*if (file != nullptr && file->exists())
 		close();*/
 
 	while (mainChunks.size() > 0)
 		delete mainChunks.remove(0);
 
 	/*delete file;
-	file = NULL;*/
+	file = nullptr;*/
 }
 
 bool IffStream::parseChunks(sys::uint8* data, int size, const String& filename) {
 	fileName = filename;
 
 	setLoggingName("IffStream " + fileName);
-	/*if (file == NULL) {
+	/*if (file == nullptr) {
 		close();
 		throw InvalidFileTypeException(this);
 	}
@@ -78,7 +78,7 @@ void IffStream::loadMainChunks(char* dataBuffer) {
 		uint32 size = htonl(*(uint32*)(dataBuffer + offset));
 		offset += 4;
 
-		Chunk* chunk = createChunk(NULL, type, size, dataBuffer + offset);
+		Chunk* chunk = createChunk(nullptr, type, size, dataBuffer + offset);
 		chunk->setIffStream(this);
 		chunk->parseData();
 
@@ -89,9 +89,9 @@ void IffStream::loadMainChunks(char* dataBuffer) {
 }
 
 Chunk* IffStream::openForm(uint32 formType) {
-	Chunk* chunkObject = NULL;
+	Chunk* chunkObject = nullptr;
 
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		chunkObject = mainChunks.get(++lastOpenedChunk);
 	else
 		chunkObject = openedChunk->getNextChunk();
@@ -102,7 +102,7 @@ Chunk* IffStream::openForm(uint32 formType) {
 
 		error(msg.toString());
 
-		return NULL;
+		return nullptr;
 	}
 
 	Form* formObject = (Form*)chunkObject;
@@ -112,7 +112,7 @@ Chunk* IffStream::openForm(uint32 formType) {
 		msg << "Could not open chunk[" << formType << "]!";
 		error(msg.toString());
 
-		return NULL;
+		return nullptr;
 	}
 
 	openedChunk = formObject;
@@ -121,14 +121,14 @@ Chunk* IffStream::openForm(uint32 formType) {
 }
 
 int IffStream::getSubChunksNumber() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		return mainChunks.size();
 	else
 		return openedChunk->getChunksSize();
 }
 
 int IffStream::getRemainingSubChunksNumber() {
-	if (openedChunk == NULL) {
+	if (openedChunk == nullptr) {
 		return mainChunks.size() - (lastOpenedChunk + 1);
 	} else {
 		int result = openedChunk->getChunksSize() - (openedChunk->getLastOpenedChunkIdx() + 1);
@@ -137,14 +137,14 @@ int IffStream::getRemainingSubChunksNumber() {
 }
 
 int IffStream::getDataSize() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->getChunkSize();
 }
 
 uint32 IffStream::getFormType() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	if (!openedChunk->isFORM())
@@ -160,7 +160,7 @@ uint32 IffStream::getFormType() {
 uint32 IffStream::getNextFormType() {
 	Chunk* child;
 
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		child = mainChunks.get((lastOpenedChunk + 1));
 	else {
 		int nextChunk = openedChunk->getLastOpenedChunkIdx();
@@ -182,21 +182,21 @@ bool IffStream::closeForm(uint32 formType) {
 }
 
 Chunk* IffStream::openChunk(uint32 chunk) {
-	Chunk* chunkObject = NULL;
+	Chunk* chunkObject = nullptr;
 
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		chunkObject = mainChunks.get(++lastOpenedChunk);
 	else
 		chunkObject = openedChunk->getNextChunk();
 
 	if (chunk != 0 && chunkObject->getChunkID() != chunk) {
-		/*Chunk* test = NULL;
+		/*Chunk* test = nullptr;
 		test->getChunkSize();*/
 
 		StringBuffer msg;
 		msg << "Could not open chunk:[" << chunk << "] expecting [" << chunkObject->getChunkID() << "]!";
 		error(msg);
-		return NULL;
+		return nullptr;
 	}
 
 	openedChunk = chunkObject;
@@ -205,7 +205,7 @@ Chunk* IffStream::openChunk(uint32 chunk) {
 }
 
 void IffStream::closeChunk(uint32 chunk) {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	openedChunk = openedChunk->getParent();
@@ -216,11 +216,11 @@ void IffStream::closeChunk(uint32 chunk) {
 	FileInputStream::close();
 
 	delete file;
-	file = NULL;
+	file = nullptr;
 }*/
 
 void IffStream::skipChunks(int num) {
-	if (openedChunk != NULL) {
+	if (openedChunk != nullptr) {
 		int chunks = openedChunk->getLastOpenedChunkIdx();
 		chunks += num;
 		openedChunk->setLastOpenedSubChunk(chunks);
@@ -229,77 +229,77 @@ void IffStream::skipChunks(int num) {
 }
 
 void IffStream::getString(String& str) {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	openedChunk->readString(str);
 }
 
 float IffStream::getFloat() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readFloat();
 }
 
 int IffStream::getInt() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readSignedInt();
 }
 
 uint32 IffStream::getUnsignedInt() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readInt();
 }
 
 uint8 IffStream::getByte() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readByte();
 }
 
 uint64 IffStream::getUnsignedLong() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readLong();
 }
 
 int64 IffStream::getLong() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readSignedLong();
 }
 
 void IffStream::getBytes(int bytes, void* dest) {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	openedChunk->readStream((char*)dest, bytes);
 }
 
 Matrix4 IffStream::getMatrix3x4Transform() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readMatrix3x4Transform();
 }
 
 Vector3 IffStream::getVector3() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readVector3();
 }
 
 Vector4 IffStream::getVector4() {
-	if (openedChunk == NULL)
+	if (openedChunk == nullptr)
 		throw NoOpenedChunkException(this);
 
 	return openedChunk->readVector4();

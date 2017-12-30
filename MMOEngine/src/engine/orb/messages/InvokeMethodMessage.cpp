@@ -15,7 +15,7 @@ InvokeMethodMessage::InvokeMethodMessage(uint64 objectid, sys::uint32 methid, sy
 
 	insertBoolean(async);
 
-	packet = NULL;
+	packet = nullptr;
 	objectID = 0;
 	methodID = 0;
 	invocationID = 0;
@@ -35,7 +35,7 @@ InvokeMethodMessage::InvokeMethodMessage(Packet* message) : DOBMessage(message) 
 }
 
 InvokeMethodMessage::~InvokeMethodMessage() {
-	if (packet != NULL)
+	if (packet != nullptr)
 		delete packet;
 }
 
@@ -45,7 +45,7 @@ void InvokeMethodMessage::runMethod() {
 	//printf("trying to get adapter in invoke method fod oid:%d", (int) objectID);
 
 	DistributedObjectAdapter* adapter = orb->getObjectAdapter(objectID);
-	if (adapter == NULL) {
+	if (adapter == nullptr) {
 		orb->error("object not found for method invocation for oid: " + String::valueOf(objectID));
 		return;
 	}

@@ -43,7 +43,7 @@ namespace engine {
 
 			DistributedObject* obj = objectManager->getObject(objectid);
 
-			if (obj != NULL) {
+			if (obj != nullptr) {
 				insertBoolean(true);
 				insertAscii(obj->_getClassName());
 				insertAscii(obj->_getName());

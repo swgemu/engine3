@@ -33,7 +33,7 @@ public:
 		//setNoDuplicateInsertPlan();
 	}
 
-	void notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1 = NULL, int64 arg2 = 0);
+	void notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1 = nullptr, int64 arg2 = 0);
 
 	void registerObserver(uint32 eventType, Observer* observer);
 

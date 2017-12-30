@@ -31,8 +31,8 @@ namespace sys {
   		Allocator* realAllocator;
   	  public:
   		AllocationReplacement() {
-  			instance = NULL;
-  			realAllocator = NULL;
+  			instance = nullptr;
+  			realAllocator = nullptr;
   		}
 
   		void* onAllocate(size_t size, const void* allocator);
@@ -40,7 +40,7 @@ namespace sys {
   		void* onReallocate(void* ptr, size_t size, const void* alloc);
 
   		static AllocationReplacement* getInstance() {
-  			if (instance == NULL) {
+  			if (instance == nullptr) {
   				instance = new AllocationReplacement();
   			}
 

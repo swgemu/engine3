@@ -51,7 +51,7 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 
 		if (messageType != DOBMessage::REPLYMESSAGE) {
 			DOBMessage* dobMessage = create(messageType, message);
-			assert(dobMessage != NULL);
+			assert(dobMessage != nullptr);
 
 			dobMessage->setClient(client);
 
@@ -128,6 +128,6 @@ DOBMessage* DOBMessageFactory::create(uint32 messageType, Packet* message) {
 		return new SendObjectDataMessage(message);
 
 	default:
-		return NULL;
+		return nullptr;
 	}
 }

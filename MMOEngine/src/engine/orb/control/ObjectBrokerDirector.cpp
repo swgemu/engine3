@@ -114,7 +114,7 @@ void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 			DistributedObject* obj = deployedObjects.get(i);
 
 			if (obj->_getObjectBroker() == remote)
-				obj->_setObjectBroker(NULL);
+				obj->_setObjectBroker(nullptr);
 		}
 
 		deployedObjects.removeAll();

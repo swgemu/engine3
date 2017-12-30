@@ -157,7 +157,7 @@ namespace engine {
 
 
 	template<class O> bool ManagedReference<O>::toString(String& str) {
-		if (Reference<O>::get() != NULL)
+		if (Reference<O>::get() != nullptr)
 			str = String::valueOf(((DistributedObject*)Reference<O>::get())->_getObjectID());
 		else
 			str = String::valueOf(0);
@@ -168,8 +168,8 @@ namespace engine {
 	template<class O> bool ManagedReference<O>::parseFromString(const String& str, int version) {
 		Reference<O> obj = Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)).castTo<O>();
 
-		if (obj == NULL) {
-			updateObject(NULL);
+		if (obj == nullptr) {
+			updateObject(nullptr);
 			return false;
 		}
 
@@ -181,7 +181,7 @@ namespace engine {
 	template<class O> bool ManagedReference<O>::toBinaryStream(ObjectOutputStream* stream) {
 		O object = Reference<O>::get();
 
-		if (object != NULL)
+		if (object != nullptr)
 			stream->writeLong(((DistributedObject*)object)->_getObjectID());
 		else
 			stream->writeLong(0);
@@ -195,8 +195,8 @@ namespace engine {
 		Reference<DistributedObject*> obj = Core::lookupObject(oid);
 
 
-		if (obj == NULL) {
-			updateObject(NULL);
+		if (obj == nullptr) {
+			updateObject(nullptr);
 			return false;
 		}
 

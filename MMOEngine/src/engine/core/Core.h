@@ -80,8 +80,8 @@ namespace engine {
 	template<class T> Reference<T*> Core::lookupObject(const String& name) {
 		Reference<DistributedObject*> obj = Core::getObjectBroker()->lookUp(name);
 
-		if (obj == NULL)
-			return NULL;
+		if (obj == nullptr)
+			return nullptr;
 		else
 			return obj.castTo<T*>();
 	}

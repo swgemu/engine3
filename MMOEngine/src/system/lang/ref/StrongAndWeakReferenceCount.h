@@ -62,7 +62,7 @@ public:
 		uint32 ret = strongReferenceCount.decrementAndTestAndSet();
 
 		if (ret != 0) {
-			object = NULL;
+			object = nullptr;
 		}
 
 		return ret;
@@ -72,7 +72,7 @@ public:
 		bool ret = strongReferenceCount.tryFinalDecrement();
 
 		if (ret) {
-			object = NULL;
+			object = nullptr;
 		}
 
 		return ret;

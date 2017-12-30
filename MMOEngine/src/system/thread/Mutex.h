@@ -22,7 +22,7 @@ namespace sys {
 
 	public:
 		Mutex() : Lockable() {
-			pthread_mutex_init(&mutex, NULL);
+			pthread_mutex_init(&mutex, nullptr);
 			recursiveMutex = false;
 		}
 
@@ -36,26 +36,26 @@ namespace sys {
 
 				recursiveMutex = true;
 			} else {
-				pthread_mutex_init(&mutex, NULL);
+				pthread_mutex_init(&mutex, nullptr);
 				recursiveMutex = false;
 			}
 
 		}
 
 		Mutex(const char* s) : Lockable(s) {
-			pthread_mutex_init(&mutex, NULL);
+			pthread_mutex_init(&mutex, nullptr);
 
 			recursiveMutex = false;
 		}
 
 		Mutex(const String& s) : Lockable(s) {
-			pthread_mutex_init(&mutex, NULL);
+			pthread_mutex_init(&mutex, nullptr);
 			
 			recursiveMutex = false;
 		}
 
 		Mutex(const Mutex& m) : Lockable() {
-			pthread_mutex_init(&mutex, NULL);
+			pthread_mutex_init(&mutex, nullptr);
 			
 			recursiveMutex = false;
 		}

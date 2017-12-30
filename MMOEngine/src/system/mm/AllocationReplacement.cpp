@@ -7,21 +7,21 @@
 
 #include "AllocationReplacement.h"
 
-AllocationReplacement* AllocationReplacement::instance = NULL;
+AllocationReplacement* AllocationReplacement::instance = nullptr;
 
 void* AllocationReplacement::onAllocate(size_t size, const void* allocator) {
 	return realAllocator->allocate(size);
 }
 
 void AllocationReplacement::onFree(void* ptr, const void*) {
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return;
 
 	realAllocator->free(ptr);
 }
 
 void* AllocationReplacement::onReallocate(void* ptr, size_t size, const void* alloc) {
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return onAllocate(size, alloc);
 
 	return realAllocator->reallocate(ptr, size);

@@ -21,7 +21,7 @@ Stream::Stream(char *buf, int len) : ArrayList<char>(len, len / 2) {
 }
 
 Stream::~Stream() {
-	end = offset = NULL;
+	end = offset = nullptr;
 }
 
 Stream* Stream::clone(int startoffs) {

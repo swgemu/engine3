@@ -39,7 +39,7 @@ namespace engine {
 
 			DistributedObject* obj = objectManager->loadPersistentObject(objectID);
 
-			if (obj != NULL) {
+			if (obj != nullptr) {
 				insertBoolean(true);
 				insertAscii(obj->_getClassName());
 				insertLong(obj->_getObjectID());

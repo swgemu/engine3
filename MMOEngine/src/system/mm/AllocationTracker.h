@@ -49,7 +49,7 @@ namespace sys {
 
 	public:
 		static AllocationTracker* getInstance() {
-			if (instance == NULL) {
+			if (instance == nullptr) {
 				instance = new AllocationTracker();
 			}
 

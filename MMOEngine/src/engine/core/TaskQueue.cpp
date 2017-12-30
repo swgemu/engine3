@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 TaskQueue::TaskQueue(const char* name) : Condition(), Logger("TaskQueue") {
 	blocked = false;
 	
-	if (name != NULL)
+	if (name != nullptr)
 		this->name = name;
 	//waitingForTask = false;
 
@@ -23,7 +23,7 @@ TaskQueue::TaskQueue(const char* name) : Condition(), Logger("TaskQueue") {
 
 TaskQueue::~TaskQueue() {
 	delete condMutex;
-	condMutex = NULL;
+	condMutex = nullptr;
 }
 
 void TaskQueue::pushRandom(Task* task) {
@@ -150,7 +150,7 @@ Task* TaskQueue::pop() {
 	/*while (isEmpty()) {
 		if (blocked) {
 			condMutex->unlock();
-			return NULL;
+			return nullptr;
 		}
 
 		//waitingForTask = true;
@@ -160,7 +160,7 @@ Task* TaskQueue::pop() {
 	if (isEmpty()) {
 		if (blocked) {
 			condMutex->unlock();
-			return NULL;
+			return nullptr;
 		}
 
 		wait(condMutex);
@@ -169,11 +169,11 @@ Task* TaskQueue::pop() {
 	if (isEmpty()) {
 		condMutex->unlock();
 
-		return NULL;
+		return nullptr;
 	}
 
 	Task* task = remove(0);
-	task->setTaskScheduler(NULL);
+	task->setTaskScheduler(nullptr);
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;

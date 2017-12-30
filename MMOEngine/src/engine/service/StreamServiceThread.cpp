@@ -26,7 +26,7 @@ void StreamServiceThread::start(int p, int mconn) {
 		socket->disableLingering();
 		socket->setBlocking(true);
 	} catch (SocketException& e) {
-		socket = NULL;
+		socket = nullptr;
 
 		StringBuffer msg;
 		msg << "unable to connect to socket on port " << port;
@@ -45,7 +45,7 @@ void StreamServiceThread::start(int p, int mconn) {
 }
 
 void StreamServiceThread::stop() {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		setRunning(false);
 
 		socket->shutdown(SHUT_RDWR);
@@ -67,7 +67,7 @@ void StreamServiceThread::acceptConnections(int limit) {
 			Socket* sock = socket->accept(&address);
 			sock->disableLingering();
 			
-			assert(serviceHandler != NULL);
+			assert(serviceHandler != nullptr);
 			serviceHandler->createConnection(sock, address);
 		}	
 	} catch (...) {

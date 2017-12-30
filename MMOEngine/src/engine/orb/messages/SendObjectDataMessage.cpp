@@ -4,7 +4,7 @@
 
 #include "SendObjectDataMessage.h"
 
-SendObjectDataMessage::SendObjectDataMessage(uint64 oid, Stream* data) : DOBMessage(SENDOBJECTDATA, 40), objectID(oid), objectData(NULL) {
+SendObjectDataMessage::SendObjectDataMessage(uint64 oid, Stream* data) : DOBMessage(SENDOBJECTDATA, 40), objectID(oid), objectData(nullptr) {
 	insertLong(objectID);
 	insertStream(data);
 }
@@ -12,7 +12,7 @@ SendObjectDataMessage::SendObjectDataMessage(uint64 oid, Stream* data) : DOBMess
 SendObjectDataMessage::SendObjectDataMessage(Packet* message) : DOBMessage(message) {
 		objectID = message->parseLong();
 
-		objectData = NULL;
+		objectData = nullptr;
 }
 
 void SendObjectDataMessage::execute() {
@@ -20,7 +20,7 @@ void SendObjectDataMessage::execute() {
 
 	/*DistributedObject* obj = DistributedObjectBroker::instance()->lookUp(name);
 
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		insertBoolean(true);
 		insertAscii(obj->_getClassName());
 		insertLong(obj->_getObjectID());

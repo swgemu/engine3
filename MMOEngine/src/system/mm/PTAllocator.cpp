@@ -16,7 +16,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #endif
 
 PTAllocator::PTAllocator(void* base, size_t size) {
-	dlMspace = NULL;
+	dlMspace = nullptr;
 
 	dlBase = base;
 	dlSize = size;

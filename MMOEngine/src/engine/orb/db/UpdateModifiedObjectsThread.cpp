@@ -7,8 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 UpdateModifiedObjectsThread::UpdateModifiedObjectsThread(int id, DOBObjectManager* manager, int cpu) {
 	objectManager = manager;
-	objectsToUpdate = NULL;
-	objectsToDelete = NULL;
+	objectsToUpdate = nullptr;
+	objectsToDelete = nullptr;
 	startOffset = 0;
 	endOffset = 0;
 	doRun = true;
@@ -18,7 +18,7 @@ UpdateModifiedObjectsThread::UpdateModifiedObjectsThread(int id, DOBObjectManage
 	finishedCommiting = false;
 	waitingToCommit = false;
 
-	transaction = NULL;
+	transaction = nullptr;
 
 	this->cpu = cpu;
 }
@@ -42,8 +42,8 @@ void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 
 		working = false;
 
-		objectsToUpdate = NULL;
-		objectsToDelete = NULL;
+		objectsToUpdate = nullptr;
+		objectsToDelete = nullptr;
 
 		finishedWorkContition.broadcast(&blockMutex);
 
@@ -54,7 +54,7 @@ void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS {
 	bool rootBroker = DistributedObjectBroker::instance()->isRootBroker();
 
-	if (transaction != NULL) {
+	if (transaction != nullptr) {
 		waitingToCommit = true;
 
 		waitMasterTransaction.wait(&blockMutex);
@@ -72,7 +72,7 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 
 		finishedCommiting = true;
 
-		transaction = NULL;
+		transaction = nullptr;
 
 		blockMutex.unlock();
 	} else {
@@ -90,7 +90,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 	try {
 		Time start;
 
-		if (objectsToUpdate != NULL) {
+		if (objectsToUpdate != nullptr) {
 			int j = 0;
 
 			for (int i = startOffset; i <= endOffset; ++i) {
@@ -110,7 +110,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 
 		start.updateToCurrentTime();
 
-		if (objectsToDelete != NULL) {
+		if (objectsToDelete != nullptr) {
 			for (int i = 0; i < objectsToDelete->size(); ++i) {
 				DistributedObject* object = objectsToDelete->getUnsafe(i);
 

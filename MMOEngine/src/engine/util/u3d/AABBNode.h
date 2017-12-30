@@ -21,7 +21,7 @@ namespace engine {
  	public:
  		IntersectionResult() {
  			intersectionDistance = 0;
- 			triangle = NULL;
+ 			triangle = nullptr;
  		}
 
  		IntersectionResult(float intersectionDistance, Triangle* triangle) {
@@ -105,7 +105,7 @@ namespace engine {
 		void getTriangles(ArrayList<Triangle*>& triangles) const {
 			triangles.addAll(mTriangles);
 
-			if (mChildren[0] != NULL) {
+			if (mChildren[0] != nullptr) {
 				mChildren[0]->getTriangles(triangles);
 				mChildren[1]->getTriangles(triangles);
 			}
@@ -117,7 +117,7 @@ namespace engine {
 				triangles.put(mTriangles.getUnsafe(i));
 			}
 
-			if (mChildren[0] != NULL) {
+			if (mChildren[0] != nullptr) {
 				mChildren[0]->getTriangles(triangles);
 				mChildren[1]->getTriangles(triangles);
 			}

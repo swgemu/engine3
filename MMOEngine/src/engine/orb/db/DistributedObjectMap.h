@@ -30,7 +30,7 @@ namespace engine {
 		}
 		
 		bool add(sys::uint64 objectID, DistributedObject* object) {
-			bool exists = objectMap.put(objectID, object) != NULL;
+			bool exists = objectMap.put(objectID, object) != nullptr;
 
 			if (!exists) {
 				object->acquire();

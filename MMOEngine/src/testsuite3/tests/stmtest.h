@@ -56,7 +56,7 @@ public:
 		references = refs;
 
 		/*for (int i = 0; i < references->size(); ++i) {
-			assert(references->get(i) != NULL);
+			assert(references->get(i) != nullptr);
 		}*/
 	}
 

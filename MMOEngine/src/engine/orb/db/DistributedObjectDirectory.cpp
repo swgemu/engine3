@@ -54,24 +54,24 @@ DistributedObjectAdapter* DistributedObjectDirectory::add(uint64 objid, Distribu
 }
 
 DistributedObject* DistributedObjectDirectory::get(uint64 objid) {
-	DistributedObjectAdapter* adapter = NULL;
+	DistributedObjectAdapter* adapter = nullptr;
 
 	adapter = objectMap.get(objid);
 
-	if (adapter != NULL) {
+	if (adapter != nullptr) {
 		if (!helperObjectMap.contains(objid)) {
 			helperObjectMap.add(objid, adapter->getStub());
 		}
 
 		return adapter->getStub();
 	} else
-		return NULL;
+		return nullptr;
 }
 
 DistributedObjectAdapter* DistributedObjectDirectory::remove(uint64 objid) {
 	DistributedObjectAdapter* adapter = objectMap.get(objid);
 
-	if (adapter != NULL)
+	if (adapter != nullptr)
 		objectMap.remove(objid);
 	
 	helperObjectMap.remove(objid);
@@ -111,7 +111,7 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 
 		if (dobObject->getReferenceCount() == 2) // 2 is the lowest count now
 			objectsToDeleteFromRAM.add(dobObject);
-		else if (inRamClassCount != NULL) {
+		else if (inRamClassCount != nullptr) {
 			String className = TypeInfo<DistributedObject>::getClassName(dobObject, false);
 
 			inRamClassCount->put(className, inRamClassCount->get(className) + 1);
@@ -120,7 +120,7 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 		//ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
 		
 
-		//if (managedObject == NULL/* || !managedObject->isPersistent()*/)
+		//if (managedObject == nullptr/* || !managedObject->isPersistent()*/)
 		//	continue;
 		
 		ManagedObject* managedObject = static_cast<ManagedObject*>(dobObject);

@@ -26,7 +26,7 @@ void TransactionalBaseClientManager::sendPacket(BasePacket* packet, BaseClient* 
 
 	Vector<BasePacket*>* buffer =  getLocalBufferedPackets();//packetBuffer->get(baseClient);
 
-	/*if (buffer == NULL) {
+	/*if (buffer == nullptr) {
 		buffer = new Vector<BasePacket*>();
 		packetBuffer->put(baseClient, buffer);
 	}*/
@@ -37,12 +37,12 @@ void TransactionalBaseClientManager::sendPacket(BasePacket* packet, BaseClient* 
 Vector<BasePacket*>* TransactionalBaseClientManager::getLocalBufferedPackets() {
 	Vector<BasePacket*>* queue = bufferedPackets.get();
 
-	if (queue == NULL) {
+	if (queue == nullptr) {
 		queue = new Vector<BasePacket*>();
 		//queue->setNoDuplicateInsertPlan();
 
 		//info("message queue created");
-		//queue->setNullValue(NULL);
+		//queue->setNullValue(nullptr);
 
 		bufferedPackets.set(queue);
 	}
@@ -63,7 +63,7 @@ void TransactionalBaseClientManager::execute() {
 
 		BaseClient* baseClient = dynamic_cast<BaseClient*>(pack->getClient());
 
-		pack->setClient(NULL);
+		pack->setClient(nullptr);
 
 		Locker locker(baseClient);
 
@@ -78,10 +78,10 @@ void TransactionalBaseClientManager::execute() {
 		try {
 			if (pack->doSequencing()) {
 				if (pack->size() >= 490) {
-					if (baseClient->getRawBufferedPacket() != NULL) {
+					if (baseClient->getRawBufferedPacket() != nullptr) {
 						baseClient->sendSequenced(baseClient->getRawBufferedPacket()->getPacket());
 						baseClient->setNullBufferedPacket();
-						//bufferedPacket = NULL;
+						//bufferedPacket = nullptr;
 					}
 
 					baseClient->sendFragmented(pack);

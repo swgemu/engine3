@@ -28,12 +28,12 @@ void SynchronizedMessageQueue::push(Message* msg) {
 Message* SynchronizedMessageQueue::pop() {
 	int index = readIndex.get();
 	if (writeIndex.get() == index)
-		return NULL;
+		return nullptr;
 
 	while (!readIndex.compareAndSet(index, index + 1)) {
 		index = readIndex.get();
 		if (writeIndex.get() == index)
-			return NULL;
+			return nullptr;
 	}
 
 	return ArrayList<Message*>::get(index);

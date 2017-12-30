@@ -5,7 +5,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Logger.h"
 
-AtomicReference<FileWriter*> Logger::globalLogFile = NULL;
+AtomicReference<FileWriter*> Logger::globalLogFile = nullptr;
 
 Time Logger::starttime;
 
@@ -15,7 +15,7 @@ volatile int Logger::globalLogLevel = LogLevel::DEBUG;
 bool Logger::syncGlobalLog = false;
 
 Logger::Logger() {
-	logFile = NULL;
+	logFile = nullptr;
 
 	logLevel = LOG;
 	doSyncLog = true;
@@ -23,7 +23,7 @@ Logger::Logger() {
 }
 
 Logger::Logger(const char *s) {
-	logFile = NULL;
+	logFile = nullptr;
 
 	name = s;
 
@@ -33,7 +33,7 @@ Logger::Logger(const char *s) {
 }
 
 Logger::Logger(const String& s) {
-	logFile = NULL;
+	logFile = nullptr;
 
 	name = s;
 
@@ -43,14 +43,14 @@ Logger::Logger(const String& s) {
 }
 
 Logger::~Logger() {
-	if (logFile != NULL) {
+	if (logFile != nullptr) {
 		closeFileLogger();
 		delete logFile;
 	}
 }
 
 void Logger::setGlobalFileLogger(const char* file) {
-	if (globalLogFile != NULL)
+	if (globalLogFile != nullptr)
 		closeGlobalFileLogger();
 
 	globalLogFile = new FileWriter(new File(file), true);
@@ -67,7 +67,7 @@ void Logger::setGlobalFileLoggerSync(bool val) {
 };
 
 void Logger::setGlobalFileLogger(const String& file) {
-	if (globalLogFile != NULL)
+	if (globalLogFile != nullptr)
 		closeGlobalFileLogger();
 
 	globalLogFile = new FileWriter(new File(file), true);
@@ -76,7 +76,7 @@ void Logger::setGlobalFileLogger(const String& file) {
 }
 
 void Logger::setFileLogger(const String& file, bool appendData) {
-	if (logFile != NULL)
+	if (logFile != nullptr)
 		closeFileLogger();
 
 	File* fileObject = new File(file);
@@ -85,24 +85,24 @@ void Logger::setFileLogger(const String& file, bool appendData) {
 }
 
 void Logger::closeGlobalFileLogger() {
-	if (globalLogFile != NULL) {
+	if (globalLogFile != nullptr) {
 		globalLogFile->close();
 
 		delete globalLogFile->getFile();
 
 		delete globalLogFile;
-		globalLogFile = NULL;
+		globalLogFile = nullptr;
 	}
 }
 
 void Logger::closeFileLogger() {
-	if (logFile != NULL) {
+	if (logFile != nullptr) {
 		logFile->close();
 
 		delete logFile->getFile();
 
 		delete logFile;
-		logFile = NULL;
+		logFile = nullptr;
 	}
 }
 
@@ -126,12 +126,12 @@ void Logger::info(const StringBuffer& msg, bool forcedLog) const {
 }
 
 void Logger::log(const char *msg, LogLevel type) const {
-	if (logFile == NULL && globalLogFile == NULL)
+	if (logFile == nullptr && globalLogFile == nullptr)
 		return;
 
 	//Locker locker(&writeLock);
 
-	if (logLevel >= type && logFile != NULL) {
+	if (logLevel >= type && logFile != nullptr) {
 		FileWriter* logFile = const_cast<FileWriter*>(this->logFile);
 
 		StringBuffer fullMessage;
@@ -146,7 +146,7 @@ void Logger::log(const char *msg, LogLevel type) const {
 		if (doSyncLog) {
 			logFile->flush();
 		}
-	} else if (doGlobalLog && globalLogFile != NULL && globalLogLevel >= type) {
+	} else if (doGlobalLog && globalLogFile != nullptr && globalLogLevel >= type) {
 		FileWriter* globalLogFile = const_cast<FileWriter*>(this->globalLogFile.get());
 
 		StringBuffer fullMessage;
@@ -298,7 +298,7 @@ void Logger::getTime(StringBuffer& str, bool getFull) {
 
 	Thread* currentThread = Thread::getCurrentThread();
 
-	if (currentThread != NULL && getFull)
+	if (currentThread != nullptr && getFull)
 		str << " " << currentThread->getName() << " -";
 }
 
@@ -327,7 +327,7 @@ void Logger::printTime(bool getFull) {
 
 	Thread* currentThread = Thread::getCurrentThread();
 
-	if (currentThread != NULL && getFull)
+	if (currentThread != nullptr && getFull)
 		str << " " << currentThread->getName() << " -";
 
 	System::out << str;

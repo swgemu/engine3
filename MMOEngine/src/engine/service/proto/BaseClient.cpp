@@ -43,14 +43,14 @@ public:
 
 BaseClient::BaseClient() : DatagramServiceClient(),
 		BaseProtocol(), Mutex(true) {
-	bufferedPacket = NULL;
+	bufferedPacket = nullptr;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
-	fragmentedPacket = NULL;
+	fragmentedPacket = nullptr;
 
-	checkupEvent = NULL;
-	netcheckupEvent = NULL;
-	netRequestEvent = NULL;
+	checkupEvent = nullptr;
+	netcheckupEvent = nullptr;
+	netRequestEvent = nullptr;
 
 	reentrantTask = new BaseClientEvent(this);
 
@@ -70,14 +70,14 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
 		BaseProtocol(), Mutex(true) {
-	bufferedPacket = NULL;
+	bufferedPacket = nullptr;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
-	fragmentedPacket = NULL;
+	fragmentedPacket = nullptr;
 
-	checkupEvent = NULL;
-	netcheckupEvent = NULL;
-	netRequestEvent = NULL;
+	checkupEvent = nullptr;
+	netcheckupEvent = nullptr;
+	netRequestEvent = nullptr;
 
 	reentrantTask = new BaseClientEvent(this);
 
@@ -97,13 +97,13 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 
 BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClient(sock, addr),
 		BaseProtocol(), Mutex(true) {
-	bufferedPacket = NULL;
+	bufferedPacket = nullptr;
 
-	fragmentedPacket = NULL;
+	fragmentedPacket = nullptr;
 
-	checkupEvent = NULL;
-	netcheckupEvent = NULL;
-	netRequestEvent = NULL;
+	checkupEvent = nullptr;
+	netcheckupEvent = nullptr;
+	netRequestEvent = nullptr;
 
 	reentrantTask = new BaseClientEvent(this);
 
@@ -129,22 +129,22 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 }
 
 BaseClient::~BaseClient() {
-	if (checkupEvent != NULL) {
+	if (checkupEvent != nullptr) {
 		checkupEvent->cancel();
 
-		checkupEvent = NULL;
+		checkupEvent = nullptr;
 	}
 
-	if (netcheckupEvent != NULL) {
+	if (netcheckupEvent != nullptr) {
 		netcheckupEvent->cancel();
 
-		netcheckupEvent = NULL;
+		netcheckupEvent = nullptr;
 	}
 
-	if (netRequestEvent != NULL) {
+	if (netRequestEvent != nullptr) {
 		netRequestEvent->cancel();
 
-		netRequestEvent = NULL;
+		netRequestEvent = nullptr;
 	}
 
 	if (!keepSocket)
@@ -152,7 +152,7 @@ BaseClient::~BaseClient() {
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	delete sendLockFreeBuffer;
-	sendLockFreeBuffer = NULL;
+	sendLockFreeBuffer = nullptr;
 #endif
 
 	debug("deleted");
@@ -178,7 +178,7 @@ void BaseClient::initialize() {
 	realServerSequence = 0;
 	resentPackets = 0;
 
-	service = NULL;
+	service = nullptr;
 
 	checkupEvent = new BasePacketChekupEvent(this);
 	netcheckupEvent = new BaseClientNetStatusCheckupEvent(this);
@@ -201,7 +201,7 @@ void BaseClient::close() {
 	netcheckupEvent->cancel();
 	netcheckupEvent.castTo<BaseClientNetStatusCheckupEvent*>()->clearClient();
 
-	if (netRequestEvent != NULL) {
+	if (netRequestEvent != nullptr) {
 		netRequestEvent->cancel();
 
 		netRequestEvent.castTo<BaseClientNetStatusRequestEvent*>()->clearClient();
@@ -251,13 +251,13 @@ void BaseClient::close() {
 	sendUnreliableBuffer.removeAll();
 #endif
 
-	if (fragmentedPacket != NULL) {
+	if (fragmentedPacket != nullptr) {
 		if (fragmentedPacket->getReferenceCount())
 			fragmentedPacket->release();
 		else
 			delete fragmentedPacket;
 
-		fragmentedPacket = NULL;
+		fragmentedPacket = nullptr;
 	}
 
 	//serverSequence = 0;
@@ -374,9 +374,9 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 	try {
 		if (pack->doSequencing()) {
 			if (pack->size() >= 490) {
-				if (bufferedPacket != NULL) {
+				if (bufferedPacket != nullptr) {
 					sendSequenced(bufferedPacket->getPacket());
-					bufferedPacket = NULL;
+					bufferedPacket = nullptr;
 				}
 
 				sendFragmented(pack);
@@ -394,7 +394,7 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 }
 
 void BaseClient::bufferMultiPacket(BasePacket* pack) {
-	if (bufferedPacket != NULL) {
+	if (bufferedPacket != nullptr) {
 		if (pack->isDataChannelPacket() && !pack->isMultiPacket() && (pack->size() - 4 < 0xFF)) { // client is sending out of orders for our multi packets with size >= 0xFF
 			if (!bufferedPacket->add(pack)) {
 				sendSequenced(bufferedPacket->getPacket());
@@ -403,7 +403,7 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 			}
 		} else {
 			sendSequenced(bufferedPacket->getPacket());
-			bufferedPacket = NULL;
+			bufferedPacket = nullptr;
 
 			sendSequenced(pack);
 		}
@@ -497,9 +497,9 @@ int BaseClient::sendReliablePackets(int count) {
 			if (isAvailable()) {
 				BasePacket* pack = getNextSequencedPacket();
 
-				if (pack == NULL) {
+				if (pack == nullptr) {
 #ifndef LOCKFREE_BCLIENT_BUFFERS
-					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
+					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != nullptr)) {
 						try {
 							reentrantTask->scheduleInIoScheduler(10);
 						} catch (Exception& e) {
@@ -555,7 +555,7 @@ int BaseClient::sendReliablePackets(int count) {
 			}
 		}
 #ifndef LOCKFREE_BCLIENT_BUFFERS
-		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
+		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != nullptr)) {
 			reentrantTask->scheduleInIoScheduler(10);
 		}
 #endif
@@ -614,9 +614,9 @@ void BaseClient::sendUnreliablePackets() {
 			if (isAvailable()) {
 				BasePacket* pack = getNextUnreliablePacket();
 
-				if (pack == NULL) {
+				if (pack == nullptr) {
 #ifndef LOCKFREE_BCLIENT_BUFFERS
-					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
+					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != nullptr)) {
 						try {
 							reentrantTask->scheduleInIoScheduler(10);
 						} catch (Exception& e) {
@@ -648,7 +648,7 @@ void BaseClient::sendUnreliablePackets() {
 			}
 		}
 #ifndef LOCKFREE_BCLIENT_BUFFERS
-		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
+		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != nullptr)) {
 			reentrantTask->scheduleInIoScheduler(10);
 		}
 #endif
@@ -692,9 +692,9 @@ void BaseClient::run() {
 				sendSequenceLess(pack);
 			} else {
 				if (pack->size() >= 490) {
-					if (bufferedPacket != NULL) {
+					if (bufferedPacket != nullptr) {
 						sendSequenced(bufferedPacket->getPacket());
-						bufferedPacket = NULL;
+						bufferedPacket = nullptr;
 					}
 
 					sendFragmented(pack);
@@ -727,7 +727,7 @@ void BaseClient::run() {
 		try {
 			auto ref = reentrantTask;
 
-			if (ref != NULL)
+			if (ref != nullptr)
 				ref->scheduleInIoScheduler(10);
 		} catch (...) {
 
@@ -740,7 +740,7 @@ void BaseClient::run() {
 
 BasePacket* BaseClient::getNextUnreliablePacket() {
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-		return NULL;
+		return nullptr;
 #else
 	if (!sendUnreliableBuffer.isEmpty()) {
 		BasePacket* pack = sendUnreliableBuffer.remove(0);
@@ -748,12 +748,12 @@ BasePacket* BaseClient::getNextUnreliablePacket() {
 		return pack;
 	}
 
-	return NULL;
+	return nullptr;
 #endif
 }
 
 BasePacket* BaseClient::getNextSequencedPacket() {
-	BasePacket* pack = NULL;
+	BasePacket* pack = nullptr;
 
 	/*#ifdef TRACE_CLIENTS
 		StringBuffer msg;
@@ -764,7 +764,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 	if (serverSequence - acknowledgedServerSequence > 50) { //originally 25
 #ifndef LOCKFREE_BCLIENT_BUFFERS
-		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
+		if ((!sendBuffer.isEmpty() || bufferedPacket != nullptr) && !reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
 #endif
 		try {
@@ -784,16 +784,16 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 			disconnect(false);
 		}
 
-		return NULL;
+		return nullptr;
 	} else if (!sendBuffer.isEmpty()) {
 		pack = sendBuffer.remove(0);
-	} else if (bufferedPacket != NULL) {
+	} else if (bufferedPacket != nullptr) {
 		pack = bufferedPacket->getPacket();
 		pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
-		bufferedPacket = NULL;
+		bufferedPacket = nullptr;
 	} else
-		return NULL;
+		return nullptr;
 
 	return pack;
 }
@@ -865,7 +865,7 @@ Packet* BaseClient::getBufferedPacket() {
 
 		uint32 packseq = packet->getSequence();
 		if ((packseq & 0xFFFF) != (clientSequence & 0xFFFF))
-			return NULL;
+			return nullptr;
 
 		receiveBuffer.remove(0);
 
@@ -880,15 +880,15 @@ Packet* BaseClient::getBufferedPacket() {
 		return packet;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
-	//Logger::console.debug("recieveFragmentedPacket " + pack->toStringData());
+	Logger::console.info("recieveFragmentedPacket " + pack->toStringData(), true);
 
-	BasePacket* packet = NULL;
+	BasePacket* packet = nullptr;
 
-	if (fragmentedPacket == NULL) {
+	if (fragmentedPacket == nullptr) {
 		fragmentedPacket = new BaseFragmentedPacket();
 		//Logger::console.info("creating new BaseFragmentedPacket", true);
 	}
@@ -899,7 +899,7 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 		else
 			delete fragmentedPacket;
 
-		fragmentedPacket = NULL;
+		fragmentedPacket = nullptr;
 
 		throw FragmentedPacketParseException("could not insert frag");
 	}
@@ -912,13 +912,13 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 			//Logger::console.info("completed fragmented packet", true);
 
 			packet = fragmentedPacket;
-			fragmentedPacket = NULL;
+			fragmentedPacket = nullptr;
 		}
 	} catch (Exception& e) {
 		Logger::console.error(e.getMessage());
 		Logger::console.error(pack->toStringData());
 
-		if (fragmentedPacket != NULL) {
+		if (fragmentedPacket != nullptr) {
 			StringBuffer msg;
 			msg << "current fragmented packet.." << fragmentedPacket->toStringData();
 			Logger::console.error(msg.toString());
@@ -928,14 +928,14 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 			else
 				delete fragmentedPacket;
 
-			fragmentedPacket = NULL;
-			packet = NULL;
+			fragmentedPacket = nullptr;
+			packet = nullptr;
 		}
 	} catch (...) {
 		Logger::console.error("unreproted exception caught in BasePacket* BaseClient::recieveFragmentedPacket");
 		Logger::console.error(pack->toStringData());
 
-		if (fragmentedPacket != NULL) {
+		if (fragmentedPacket != nullptr) {
 			StringBuffer msg;
 			msg << "current fragmented packet.." << fragmentedPacket->toString();
 			Logger::console.error(msg.toString());
@@ -945,8 +945,8 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 			else
 				delete fragmentedPacket;
 
-			fragmentedPacket = NULL;
-			packet = NULL;
+			fragmentedPacket = nullptr;
+			packet = nullptr;
 		}
 	}
 
@@ -1466,7 +1466,7 @@ void BaseClient::disconnect(bool doLock) {
 		#endif
 
 		if (!hasError()) {
-			if (bufferedPacket != NULL) {
+			if (bufferedPacket != nullptr) {
 				if (bufferedPacket->getReferenceCount())
 					bufferedPacket->release();
 				else
@@ -1496,10 +1496,10 @@ void BaseClient::disconnect(bool doLock) {
 	//unlock(doLock);
 	locker.release();
 
-	if (service != NULL) {
+	if (service != nullptr) {
 		service->removeConnection(this);
 
-		service = NULL;
+		service = nullptr;
 	}
 }
 

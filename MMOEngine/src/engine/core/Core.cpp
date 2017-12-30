@@ -29,11 +29,11 @@ Core::~Core() {
 }
 
 void Core::initializeContext(int logLevel) {
-	taskManager = NULL;
+	taskManager = nullptr;
 
 	std::set_new_handler(outOfMemoryHandler);
 
-	mysql_library_init(0, NULL, NULL);
+	mysql_library_init(0, nullptr, nullptr);
 	mysql_thread_init();
 
 	Thread::initializeThread(this);
@@ -83,10 +83,10 @@ void Core::shutdownTaskManager() {
 
     taskManagerShutDown = true;
 
-    if (taskMgr != NULL)
+    if (taskMgr != nullptr)
 	    taskMgr->shutdown();
 
-    taskManager = NULL;
+    taskManager = nullptr;
 }
 
 /*void Core::scheduleTask(Task* task, uint64 time) {
@@ -100,9 +100,9 @@ void Core::scheduleTask(Task* task, Time& time) {
 }*/
 
 TaskManager* Core::getTaskManager() {
-	if (taskManager.get() == NULL) {
+	if (taskManager.get() == nullptr) {
 		if (taskManagerShutDown)
-			return NULL;
+			return nullptr;
 
 #ifdef WITH_STM
 		taskManager = new TransactionalTaskManager();
@@ -117,7 +117,7 @@ TaskManager* Core::getTaskManager() {
 ObjectBroker* Core::getObjectBroker() {
 	return DistributedObjectBroker::instance();
 	/*
-	if (objectBroker == NULL)
+	if (objectBroker == nullptr)
 	#ifdef WITH_STM
 		objectBroker = new TransactionalObjectManager();
 		//objectBroker = DistributedObjectBroker::instance();

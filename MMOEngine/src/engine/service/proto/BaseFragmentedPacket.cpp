@@ -10,7 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define MAX_COMPLETE_FRAG_SIZE 1500000
 
 BaseFragmentedPacket::BaseFragmentedPacket() : BasePacket() {
-	singlePacket = NULL;
+	singlePacket = nullptr;
 
 	totalSize = 0;
 }
@@ -22,7 +22,7 @@ BaseFragmentedPacket::BaseFragmentedPacket(BasePacket* pack) : BasePacket() {
 }
 
 BaseFragmentedPacket::~BaseFragmentedPacket() {
-	if (singlePacket != NULL)
+	if (singlePacket != nullptr)
 		delete singlePacket;
 }
 

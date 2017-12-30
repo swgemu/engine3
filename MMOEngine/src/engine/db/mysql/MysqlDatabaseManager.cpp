@@ -30,7 +30,7 @@ void MysqlDatabaseManager::addModifiedDatabase(MySqlDatabase* database) {
 
 VectorSet<MySqlDatabase*>* MysqlDatabaseManager::getLocalModifiedDatabases() {
 	VectorSet<MySqlDatabase*>* localModifiedDatabases = modifiedDatabases.get();
-	if (localModifiedDatabases == NULL) {
+	if (localModifiedDatabases == nullptr) {
 		localModifiedDatabases = new VectorSet<MySqlDatabase*>();
 
 		modifiedDatabases.set(localModifiedDatabases);

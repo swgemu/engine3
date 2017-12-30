@@ -79,7 +79,7 @@ public:
 		int status = lua_pcall(L, 1+nargs, nresults, errfunc);  // call method
 		if (status) {
 			const char *msg = lua_tostring(L, -1);
-			if (msg == NULL) msg = "(error with no message)";
+			if (msg == nullptr) msg = "(error with no message)";
 			lua_pushfstring(L, "%s:%s status = %d\n%s",
 					T::className, method, status, msg);
 			lua_remove(L, base);             // remove old message
@@ -121,7 +121,7 @@ public:
 				static_cast<userdataType*>(luaL_checkudata(L, narg, T::className));
 		if(!ud) {
 			luaL_typerror(L, narg, T::className);
-			return NULL;
+			return nullptr;
 		}
 		return ud->pT;  // pointer to T object
 	}

@@ -41,7 +41,7 @@ namespace sys {
   		 StackTrace trace;
   		 bool monitorLike;
 
-  		 LockableTrace(Lockable* l, byte value, Lockable* cross = NULL, bool monitor = false) :
+  		 LockableTrace(Lockable* l, byte value, Lockable* cross = nullptr, bool monitor = false) :
   			lockable(l), locked(value), crossedTo(cross), monitorLike(monitor) {
   		 }
 
@@ -136,7 +136,7 @@ namespace sys {
 			return &lockableTrace;
 		}
 
-		void addAcquiredLockable(Lockable* lockable, Lockable* cross = NULL, bool monitorLike = false, bool addToTrace = true) {
+		void addAcquiredLockable(Lockable* lockable, Lockable* cross = nullptr, bool monitorLike = false, bool addToTrace = true) {
 			acquiredLockables.add(lockable);
 
 			if (addToTrace)
@@ -150,7 +150,7 @@ namespace sys {
 		}
 
 		virtual engine::core::TaskWorkerThread* asTaskWorkerThread() {
-			return NULL;
+			return nullptr;
 		}
 
 	protected:

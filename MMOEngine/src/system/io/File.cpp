@@ -7,7 +7,7 @@
 File::File(const String& pathname) {
 	name = pathname;
 
-	fileDescriptor = NULL;
+	fileDescriptor = nullptr;
 
 	mode = TEXT_MODE;
 	access = READONLY_ACCESS;
@@ -17,14 +17,14 @@ File::File(const String& pathname) {
 bool File::open(int access) {
 	String modestr = getModeString(mode, access);
 
-	if (fileDescriptor == NULL)
+	if (fileDescriptor == nullptr)
 		fileDescriptor = fopen(name.toCharArray(), modestr.toCharArray());
 	else
 		fileDescriptor = freopen(name.toCharArray(), modestr.toCharArray(), fileDescriptor);
 
 //	File::mode = mode;
 
-	return fileDescriptor != NULL;
+	return fileDescriptor != nullptr;
 }
 
 bool File::close() {

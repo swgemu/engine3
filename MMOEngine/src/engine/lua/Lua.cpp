@@ -13,7 +13,7 @@ extern "C" {
 #include "LuaPanicException.h"
 
 Lua::Lua() : Logger("Lua") {
-	L = NULL;
+	L = nullptr;
 
 	deinitOnDestruction = true;
 }
@@ -40,7 +40,7 @@ void Lua::deinit() {
 	if (L)
 		lua_close(L);
 
-	L = NULL;
+	L = nullptr;
 }
 
 bool Lua::runFile(const String& filename) {
@@ -139,7 +139,7 @@ int Lua::atPanic(lua_State* L) {
 
 	String errorMessage;
 
-	if (msg != NULL) {
+	if (msg != nullptr) {
 		errorMessage = msg;
 	}
 
@@ -157,7 +157,7 @@ bool Lua::getGlobalBoolean(const String& name) {
 }
 
 String Lua::getGlobalString(const String& name) {
-	const char* result = NULL;
+	const char* result = nullptr;
 
 	lua_getglobal(L, name.toCharArray());
 
@@ -290,7 +290,7 @@ LuaObject Lua::getGlobalObject(const String& name) {
 
 //params passed to funcs
 String Lua::getStringParameter(lua_State* lState) {
-	const char* result = NULL;
+	const char* result = nullptr;
 	if (!lua_isstring(lState, -1)) {
 		lua_pop(lState, 1);
 		/*

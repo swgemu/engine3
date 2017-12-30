@@ -20,7 +20,7 @@ namespace sys {
 		IOHandler* handler;
 
 	public:
-		FileDescriptor() : fileDescriptor(-1), handler(NULL) {
+		FileDescriptor() : fileDescriptor(-1), handler(nullptr) {
 		}
 
 		virtual ~FileDescriptor() {

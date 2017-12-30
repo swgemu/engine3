@@ -54,7 +54,7 @@ void* Thread::executeThread(void* th) {
 
 	mysql_thread_end();
 
-	return NULL;
+	return nullptr;
 }
 
 //#ifndef PLATFORM_WIN
@@ -93,7 +93,7 @@ void Thread::join() {
 	if (isDetached())
 		setJoinable();
 
-	pthread_join(thread, NULL);
+	pthread_join(thread, nullptr);
 }
 
 void Thread::detach() {

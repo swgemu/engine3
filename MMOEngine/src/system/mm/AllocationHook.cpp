@@ -28,12 +28,12 @@ void *(*__saved_realloc_hook)(void *__ptr, size_t __size, const void *) = 0;
 
 #endif
 
-AllocationHook* instance = NULL;
+AllocationHook* instance = nullptr;
 
 pthread_mutex_t mutex;
 
 AllocationHook::AllocationHook() {
-	pthread_mutex_init(&mutex, NULL);
+	pthread_mutex_init(&mutex, nullptr);
 
 	//install();
 }
@@ -45,7 +45,7 @@ AllocationHook::~AllocationHook() {
 }
 
 void AllocationHook::install() {
-	assert(instance == NULL);
+	assert(instance == nullptr);
 
 	instance = this;
 
@@ -115,7 +115,7 @@ void AllocationHook::uninstall() {
 	}
 #endif
 
-	instance = NULL;
+	instance = nullptr;
 
 	//printf("hook uninstalled %p\n", __saved_malloc_hook);
 }
@@ -157,12 +157,12 @@ void AllocationHook::unHookedFree(void* mem) {
 
 #ifndef PLATFORM_MAC
 void* AllocationHook::mallocHook(size_t size, const void* allocator) {
-	void* mem = NULL;
+	void* mem = nullptr;
 
 	try {
 		pthread_mutex_lock(&mutex);
 
-		assert(instance != NULL);
+		assert(instance != nullptr);
 
 		mem = instance->onAllocate(size, allocator);
 		//mem = instance->unHookedAllocate(size);
@@ -179,7 +179,7 @@ void AllocationHook::freeHook(void* ptr, const void* allocator) {
 	try {
 		pthread_mutex_lock(&mutex);
 
-		assert(instance != NULL);
+		assert(instance != nullptr);
 
 		instance->onFree(ptr, allocator);
 		//instance->unHookedFree(ptr);
@@ -191,12 +191,12 @@ void AllocationHook::freeHook(void* ptr, const void* allocator) {
 }
 
 void* AllocationHook::reallocHook(void* ptr, size_t size, const void* allocator) {
-	void* mem = NULL;
+	void* mem = nullptr;
 
 	try {
 		pthread_mutex_lock(&mutex);
 
-		assert(instance != NULL);
+		assert(instance != nullptr);
 
 		mem = instance->onReallocate(ptr, size, allocator);
 		/*mem = instance->onAllocate(size, allocator);
@@ -216,12 +216,12 @@ void* AllocationHook::reallocHook(void* ptr, size_t size, const void* allocator)
 #else
 
 void* AllocationHook::mallocHook(_malloc_zone_t* zone, size_t size) {
-	void* mem = NULL;
+	void* mem = nullptr;
 
 	try {
 		pthread_mutex_lock(&mutex);
 
-		assert(instance != NULL);
+		assert(instance != nullptr);
 
 		mem = instance->onAllocate(size, zone);
 		//mem = instance->unHookedAllocate(size);
@@ -235,12 +235,12 @@ void* AllocationHook::mallocHook(_malloc_zone_t* zone, size_t size) {
 }
 
 void* AllocationHook::reallocHook(malloc_zone_t *zone, void *ptr, size_t size) {
-	void* mem = NULL;
+	void* mem = nullptr;
 
 	try {
 		pthread_mutex_lock(&mutex);
 
-		assert(instance != NULL);
+		assert(instance != nullptr);
 
 		mem = instance->onReallocate(ptr, size, zone);
 		/*mem = instance->onAllocate(size, allocator);
@@ -261,7 +261,7 @@ void AllocationHook::freeHook(malloc_zone_t *zone, void *ptr) {
 	try {
 		pthread_mutex_lock(&mutex);
 
-		assert(instance != NULL);
+		assert(instance != nullptr);
 
 		instance->onFree(ptr, zone);
 		//instance->unHookedFree(ptr);

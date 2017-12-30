@@ -24,7 +24,7 @@ public:
 		}
 
 		delete objects;
-		objects = NULL;
+		objects = nullptr;
 
 		Logger::console.info("finished deleting objects from ram", true);
 	}

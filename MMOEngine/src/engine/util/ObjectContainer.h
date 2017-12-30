@@ -25,7 +25,7 @@ namespace engine {
 		ObjectContainer(KeyHandler<K>* handler) : objects(100000) {
 			keyHandler = handler;
 
-			objects.setNullValue(NULL);
+			objects.setNullValue(nullptr);
 		}
 
 		bool add(const O& object) {
@@ -35,7 +35,7 @@ namespace engine {
 		}
 
 		bool add(const K& key, const O& object) {
-			return objects.put(key, object) == NULL;
+			return objects.put(key, object) == nullptr;
 		}
 
 		O& get(const K& key) const {

@@ -38,7 +38,7 @@ UnicodeString::UnicodeString(const UnicodeString& str) : Variable() {
 }
 
 UnicodeString::~UnicodeString() {
-	if (uString != NULL) {
+	if (uString != nullptr) {
 		delete[] uString;
 	}
 }
@@ -218,7 +218,7 @@ int UnicodeString::indexOf(unsigned short chr) const {
 
 	/*unsigned short* pos = wcschr(uString, chr);
 
-	if (pos != NULL)
+	if (pos != nullptr)
 		return (int) (pos - uString);
 	else
 		return -1;*/

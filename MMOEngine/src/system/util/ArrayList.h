@@ -277,7 +277,7 @@ namespace sys {
 
    };
 
-   template<class E> ArrayList<E>::ArrayList() : elementData(NULL), elementCapacity(0), capacityIncrement(0), elementCount(0) {
+   template<class E> ArrayList<E>::ArrayList() : elementData(nullptr), elementCapacity(0), capacityIncrement(0), elementCount(0) {
    }
 
    template<class E> ArrayList<E>::ArrayList(int incr) {
@@ -321,7 +321,7 @@ namespace sys {
 
 	   elementCount = array.elementCount;
 
-	   array.elementData = NULL;
+	   array.elementData = nullptr;
 	   array.elementCount = 0;
 	   array.capacityIncrement = 0;
    }
@@ -341,7 +341,7 @@ namespace sys {
    	   if (this == &array)
    		   return *this;
 
-   	   if (elementData != NULL) {
+   	   if (elementData != nullptr) {
    		   destroyElements();
 
    		   free(elementData);
@@ -355,7 +355,7 @@ namespace sys {
 
    	   elementCount = array.elementCount;
 
-   	   array.elementData = NULL;
+   	   array.elementData = nullptr;
    	   array.elementCount = 0;
    	   array.capacityIncrement = 0;
 
@@ -364,7 +364,7 @@ namespace sys {
 #endif
 
    template<class E> ArrayList<E>::~ArrayList() {
-	   if (elementData != NULL) {
+	   if (elementData != nullptr) {
 		   destroyElements();
 
        	   free(elementData);
@@ -374,7 +374,7 @@ namespace sys {
    template<class E> void ArrayList<E>::init(int initsize, int incr) {
 	   if (!initsize) {
 		   elementCapacity = 0;
-		   elementData = NULL;
+		   elementData = nullptr;
 	   } else {
 		   elementCapacity = Math::max(1, initsize);
 		   elementData = (E*) malloc(elementCapacity * sizeof(E));

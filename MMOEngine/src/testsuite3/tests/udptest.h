@@ -12,7 +12,7 @@
 		}
 
 		ServiceClient* createConnection(Socket* sock, SocketAddress& addr) {
-			return NULL;
+			return nullptr;
 		}
 
 		bool deleteConnection(ServiceClient* session) {

@@ -25,7 +25,7 @@ namespace engine {
 		String name;
 
 	public:
-		TaskQueue(const char* name = NULL);
+		TaskQueue(const char* name = nullptr);
 
 		virtual ~TaskQueue();
 

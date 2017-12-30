@@ -169,7 +169,7 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) ACQUIRE() {
 	}
 
 	#ifdef TRACE_LOCKS
-		if (lock->threadLockHolder == NULL) {
+		if (lock->threadLockHolder == nullptr) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking to an unlocked mutex [" << lock->lockName << "]\n";
 			StackTrace::printStackTrace();
 
@@ -218,12 +218,12 @@ void ReadWriteLock::unlock(bool doLock) RELEASE() {
 		return;
 
 	#if defined(TRACE_LOCKS) && !defined(PLATFORM_CYGWIN)
-		if (threadLockHolder == NULL) {
+		if (threadLockHolder == nullptr) {
 			System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]"
 					<< " unlocking an unlocked mutex\n";
 			StackTrace::printStackTrace();
 
-			if (unlockTrace != NULL) {
+			if (unlockTrace != nullptr) {
 				System::out << "previously unlocked by\n";
 				unlockTrace->print();
 			}
@@ -233,7 +233,7 @@ void ReadWriteLock::unlock(bool doLock) RELEASE() {
 			System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
 			StackTrace::printStackTrace();
 
-			if (trace != NULL) {
+			if (trace != nullptr) {
 				System::out << "previously locked at " << lockTime->getMiliTime() << " by\n";
 				trace->print();
 			}
@@ -272,14 +272,14 @@ void ReadWriteLock::runlock(bool doLock) RELEASE_SHARED() {
 					System::out << "(" << Time::currentNanoTime() << " nsec) WARNING" << "[" << lockName << "]" << " mutex unlocked by a different thread\n";
 					StackTrace::printStackTrace();
 
-					if (trace != NULL) {
+					if (trace != nullptr) {
 						System::out << "previously locked at " << lockTime->getMiliTime() << " by\n";
 						trace->print();
 					}
 				}*/
 
 	/*delete trace;
-	trace = NULL;
+	trace = nullptr;
 
 	threadIDLockHolder = 0;*/
 #endif

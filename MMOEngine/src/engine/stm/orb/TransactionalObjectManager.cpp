@@ -58,7 +58,7 @@ void TransactionalObjectManager::addObjectsToSave(const Vector<Reference<Object*
 
 		//Di
 
-		if (impl != NULL && (impl->_this != NULL)) {
+		if (impl != nullptr && (impl->_this != nullptr)) {
 			implementationCopiesToSave.put(impl->_this.get(), impl);
 		}
 	}*/
@@ -106,7 +106,7 @@ bool TransactionalObjectManager::destroyObject(DistributedObjectStub* obj) {
 
 LocalObjectManager* TransactionalObjectManager::getLocalObjectManager() {
 	LocalObjectManager* manager = localObjectManager.get();
-	if (manager == NULL) {
+	if (manager == nullptr) {
 		manager = new LocalObjectManager();
 
 		localObjectManager.set(manager);

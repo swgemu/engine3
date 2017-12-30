@@ -58,12 +58,12 @@ namespace sys {
 				sso[count] = 0;
 			} else {
 				value = str.value;
-				str.value = NULL;
+				str.value = nullptr;
 				str.count = 0;
 			}
 		#else
 			value = str.value;
-			str.value = NULL;
+			str.value = nullptr;
 			str.count = 0;
 		#endif
 		}
@@ -169,12 +169,12 @@ namespace sys {
 				sso[count] = 0;
 			} else {
 				value = str.value;
-				str.value = NULL;
+				str.value = nullptr;
 				str.count = 0;
 			}
 		#else
 			value = str.value;
-			str.value = NULL;
+			str.value = nullptr;
 			str.count = 0;
 		#endif
 

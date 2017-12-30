@@ -75,21 +75,21 @@ String::String() {
 }
 
 String::String(char* str) {
-	if (str == NULL)
+	if (str == nullptr)
 		throw IllegalArgumentException();
 
 	create(str, strlen(str));
 }
 
 String::String(const char* str) {
-	if (str == NULL)
+	if (str == nullptr)
 		throw IllegalArgumentException();
 
 	create(str, strlen(str));
 }
 
 String::String(const char* str, int len) {
-	if (str == NULL)
+	if (str == nullptr)
 		throw IllegalArgumentException();
 
 	create(str, len);
@@ -107,14 +107,14 @@ String::~String() {
 #ifdef SSO_STRING
 	if (count >= SSO_SIZE) {
 		free(value);
-		value = NULL;
+		value = nullptr;
 	}
 
 	count = 0;
 #else
-	if (value != NULL) {
+	if (value != nullptr) {
 		free(value);
-		value = NULL;
+		value = nullptr;
 
 		count = 0;
 	}
@@ -146,9 +146,9 @@ void String::clear() {
 		count = 0;
 	} else {
 #endif
-	if (value != NULL) {
+	if (value != nullptr) {
 		free(value);
-		value = NULL;
+		value = nullptr;
 
 		count = 0;
 	}
@@ -235,7 +235,7 @@ int String::indexOf(char ch, int fromIndex) const {
 
 	char* position = strchr(begin() + fromIndex, ch);
 
-	if (position != NULL)
+	if (position != nullptr)
 		return position - begin();
 	else
 		return -1;
@@ -251,7 +251,7 @@ int String::indexOf(const char* str, int fromIndex) const {
 
 	char* position = strstr(begin() + fromIndex, str);
 
-	if (position != NULL)
+	if (position != nullptr)
 		return position - begin();
 	else
 		return -1;
@@ -275,7 +275,7 @@ int String::lastIndexOf(char ch, int fromIndex) const {
 
 	char* position = strrchr(begin() + fromIndex, ch);
 
-	if (position != NULL)
+	if (position != nullptr)
 		return position - begin();
 	else
 		return -1;
@@ -291,7 +291,7 @@ int String::lastIndexOf(const char* str, int fromIndex) const {
 
 	char* position = strrstr(begin() + fromIndex, count - fromIndex, str, strlen(str));
 
-	if (position != NULL)
+	if (position != nullptr)
 		return position - begin();
 	else
 		return -1;
@@ -307,7 +307,7 @@ int String::lastIndexOf(const String& str, int fromIndex) const {
 
 	char* position = strrstr(begin() + fromIndex, count - fromIndex, str.begin(), str.count);
 
-	if (position != NULL)
+	if (position != nullptr)
 		return position - begin();
 	else
 		return -1;
@@ -881,5 +881,5 @@ char* String::strrstr(const char* s, int slen, const char* t, int tlen) {
 			return (char *) (s + i - tlen);
 	}
 
-	return NULL;
+	return nullptr;
 }

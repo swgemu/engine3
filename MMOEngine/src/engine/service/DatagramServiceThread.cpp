@@ -26,7 +26,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 
 	clients = new ServiceClientMap(mconn);
 
-	if (serviceHandler == NULL)
+	if (serviceHandler == nullptr)
 		throw ServiceException("no service handler assigned");
 
 	try {
@@ -35,7 +35,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 
 		socket->setBlocking(false);
 	} catch (SocketException& e) {
-		socket = NULL;
+		socket = nullptr;
 
 		StringBuffer msg;
 		msg << "unable to connect to socket on port " << port;
@@ -54,7 +54,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 }
 
 void DatagramServiceThread::stop() {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		ServiceThread::stop();
 
 		socket->close();
@@ -160,7 +160,7 @@ void DatagramServiceThread::processMessage(Packet* packet, SocketAddress& addr) 
 }
 
 void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) {
-	Reference<ServiceClient*> client = NULL;
+	Reference<ServiceClient*> client = nullptr;
 
 	try	{
 		uint64 netid = addr.getNetworkID();
@@ -169,8 +169,8 @@ void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) 
 
 		client = clients->get(netid);
 
-		if (client == NULL)	{
-			if ((client = serviceHandler->createConnection(socket, addr)) == NULL)
+		if (client == nullptr)	{
+			if ((client = serviceHandler->createConnection(socket, addr)) == nullptr)
 				return;
 
 			clients->add(client);

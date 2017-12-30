@@ -72,7 +72,7 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 
 	assert(!objectName.isEmpty());
 
-	if (lookUp(objectName).get() != NULL) {
+	if (lookUp(objectName).get() != nullptr) {
 		warning("object \'" + objectName + "\' (0x" + String::valueOf(obj) + ") already deployed");
 
 		/*traces.get(obj->_getObjectID())->print();
@@ -87,10 +87,10 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 	} else {
 		//traces.put(obj->_getObjectID(), new StackTrace());
 
-		bool res = localNamingDirectory.put(objectName, obj) == NULL;
+		bool res = localNamingDirectory.put(objectName, obj) == nullptr;
 		assert(res);
 
-		bool res2 = localObjectDirectory.put(obj->_getObjectID(), obj) == NULL;
+		bool res2 = localObjectDirectory.put(obj->_getObjectID(), obj) == nullptr;
 		assert(res2);
 
 		info("object " + objectName + " deployed");
@@ -101,7 +101,7 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 
 DistributedObjectStub* LocalObjectManager::undeploy(const String& name) {
 	DistributedObjectStub * object = localNamingDirectory.get(name);
-	if (object != NULL)
+	if (object != nullptr)
 		undeployedObjects.put(object);
 
 	return object;
@@ -111,24 +111,24 @@ Reference<DistributedObject*> LocalObjectManager::lookUp(const String& name) {
 	Reference<DistributedObject*> object;
 
 	object = localNamingDirectory.get(name);
-	if (object == NULL)
+	if (object == nullptr)
 		object = objectBroker->lookUp(name);
 
-	if (object != NULL && !undeployedObjects.contains((DistributedObjectStub*) object.get()))
+	if (object != nullptr && !undeployedObjects.contains((DistributedObjectStub*) object.get()))
 		return object;
 	else
-		return NULL;
+		return nullptr;
 }
 
 Reference<DistributedObject*> LocalObjectManager::lookUp(uint64 objid) {
 	Reference<DistributedObject*> object;
 
 	object = localObjectDirectory.get(objid);
-	if (object == NULL)
+	if (object == nullptr)
 		object = objectBroker->lookUp(objid);
 
-	if (object != NULL && undeployedObjects.contains((DistributedObjectStub*) object.get()))
-		return NULL;
+	if (object != nullptr && undeployedObjects.contains((DistributedObjectStub*) object.get()))
+		return nullptr;
 
 	return object;
 }

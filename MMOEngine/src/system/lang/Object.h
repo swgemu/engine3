@@ -81,11 +81,11 @@ namespace sys {
 		Object(const Object& obj);
 
 #ifdef CXX11_COMPILER
-		Object(Object&& o) : referenceCounters(NULL), _destroying(o._destroying) {
-			assert(o.referenceCounters == NULL); // We cant move objects that are referenced
+		Object(Object&& o) : referenceCounters(nullptr), _destroying(o._destroying) {
+			assert(o.referenceCounters == nullptr); // We cant move objects that are referenced
 
 #ifdef TRACE_REFERENCES
-			referenceHolders = NULL;
+			referenceHolders = nullptr;
 #endif
 		}
 #endif
@@ -105,7 +105,7 @@ namespace sys {
 		    if (this == &o)
 			    return *this;
 
-		    assert(o.referenceCounters == NULL);
+		    assert(o.referenceCounters == nullptr);
 
 		    _destroying = o._destroying;
 		    return *this;
@@ -114,7 +114,7 @@ namespace sys {
 		virtual Object* clone() {
 			assert(0 && "clone method not declared");
 
-			return NULL;
+			return nullptr;
 		}
 
 		virtual Object* clone(void* object) {
@@ -170,10 +170,10 @@ namespace sys {
 		}
 
 		inline void acquire() const {
-			if (referenceCounters == NULL) {
+			if (referenceCounters == nullptr) {
 				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, const_cast<Object*>(this));
 
-				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, NULL, newCount)) {
+				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, nullptr, newCount)) {
 					delete newCount;
 				}
 			}
@@ -216,22 +216,22 @@ namespace sys {
 		void _destroyIgnoringCount();
 
 		inline void _markAsDestroyed() {
-			if (referenceCounters != NULL)
+			if (referenceCounters != nullptr)
 				referenceCounters->markAsDestroyed();
 		}
 
 		inline uint32 getReferenceCount() {
-			if (referenceCounters == NULL)
+			if (referenceCounters == nullptr)
 				return 0;
 			else
 				return referenceCounters->getStrongReferenceCount();
 		}
 
 		StrongAndWeakReferenceCount* requestWeak() {
-			if (referenceCounters == NULL) {
+			if (referenceCounters == nullptr) {
 				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
 
-				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, NULL, newCount))
+				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, nullptr, newCount))
 					delete newCount;
 			}
 

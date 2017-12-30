@@ -27,7 +27,7 @@ DatabaseEntry::DatabaseEntry(uint8* data, int size) {
 DatabaseEntry::~DatabaseEntry() {
 	//TODO: THIS CRASHES UNDER MSVC link against libdb50dl.lib and set current runtime to multi-thread debug dll
 //#ifndef _MSC_VER
-	if (!(databaseEntry.flags & DB_DBT_USERMEM) && databaseEntry.data != NULL)
+	if (!(databaseEntry.flags & DB_DBT_USERMEM) && databaseEntry.data != nullptr)
 		free(databaseEntry.data);
 //#endif
 }

@@ -17,7 +17,7 @@ PriorityQueueEntry::PriorityQueueEntry(PriorityQueueEntry* parent,
 }
 
 PriorityQueue::PriorityQueue() {
-	root = NULL;
+	root = nullptr;
 	count = 0;
 
 	pushedEntries = 0;
@@ -26,7 +26,7 @@ PriorityQueue::PriorityQueue() {
 }
 
 PriorityQueue::PriorityQueue(const PriorityQueue& heap) {
-	root = NULL;
+	root = nullptr;
 
 	*this = heap;
 }
@@ -51,17 +51,17 @@ const PriorityQueueEntry* PriorityQueue::peak() const {
 
 const PriorityQueueEntry* PriorityQueue::poll() {
 	if (isEmpty())
-		return NULL;
+		return nullptr;
 
 	PriorityQueueEntry* oldRoot = root;
 	root = merge(root->leftNode, root->rightNode);
 
-	if (root != NULL)
-		root->parentNode = NULL;
+	if (root != nullptr)
+		root->parentNode = nullptr;
 
-	oldRoot->parentNode = NULL;
-	oldRoot->leftNode = NULL;
-	oldRoot->rightNode = NULL;
+	oldRoot->parentNode = nullptr;
+	oldRoot->leftNode = nullptr;
+	oldRoot->rightNode = nullptr;
 
 	oldRoot->setUnqueued();
 
@@ -81,24 +81,24 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 
 	node = merge(node->leftNode, node->rightNode);
 
-	if (parent != NULL) {
+	if (parent != nullptr) {
 		if (parent->leftNode == oldNode)
 			parent->leftNode = node;
 		else
 			parent->rightNode = node;
 
-		if (node != NULL)
+		if (node != nullptr)
 			node->parentNode = parent;
 	} else {
 		root = node;
 
-		if (node != NULL)
-			node->parentNode = NULL;
+		if (node != nullptr)
+			node->parentNode = nullptr;
 	}
 
-	oldNode->parentNode = NULL;
-	oldNode->leftNode = NULL;
-	oldNode->rightNode = NULL;
+	oldNode->parentNode = nullptr;
+	oldNode->leftNode = nullptr;
+	oldNode->rightNode = nullptr;
 
 	oldNode->setUnqueued();
 
@@ -112,12 +112,12 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 void PriorityQueue::clear() {
 	reclaimMemory(root);
 
-	root = NULL;
+	root = nullptr;
 	count = 0;
 }
 
 void PriorityQueue::clearWithoutTraverse() {
-	root = NULL;
+	root = nullptr;
 	count = 0;
 }
 
@@ -130,14 +130,14 @@ void PriorityQueue::merge(PriorityQueue& heap) {
 	count += heap.count;
 
 	heap.count = 0;
-	heap.root = NULL;
+	heap.root = nullptr;
 }
 
 PriorityQueueEntry* PriorityQueue::merge(PriorityQueueEntry* h1, PriorityQueueEntry* h2) const {
-	if (h1 == NULL)
+	if (h1 == nullptr)
 		return h2;
 
-	if (h2 == NULL)
+	if (h2 == nullptr)
 		return h1;
 
 	assert(h1 != h2);
@@ -149,7 +149,7 @@ PriorityQueueEntry* PriorityQueue::merge(PriorityQueueEntry* h1, PriorityQueueEn
 }
 
 PriorityQueueEntry* PriorityQueue::merge1(PriorityQueueEntry* h1, PriorityQueueEntry* h2) const {
-	if (h1->leftNode == NULL) {
+	if (h1->leftNode == nullptr) {
 		h1->leftNode = h2;
 		h2->parentNode = h1;
 	} else {
@@ -175,7 +175,7 @@ void PriorityQueue::swapChildren(PriorityQueueEntry* node) const {
 }
 
 void PriorityQueue::reclaimMemory(PriorityQueueEntry* node) const {
-	if (node != NULL) {
+	if (node != nullptr) {
 		reclaimMemory(node->leftNode);
 		reclaimMemory(node->rightNode);
 

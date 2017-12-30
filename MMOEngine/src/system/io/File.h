@@ -57,7 +57,7 @@ namespace sys {
 
 		// getters
 		inline bool exists() {
-			return fileDescriptor != NULL;
+			return fileDescriptor != nullptr;
 		}
 
 		inline const String& getName() {

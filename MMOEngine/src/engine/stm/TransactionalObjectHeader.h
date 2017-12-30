@@ -29,10 +29,10 @@ namespace engine {
 		Reference<Object*> object;
 
 	public:
-		TransactionalObjectHeader(O obj) : ownerTransaction(NULL), object(obj) {
+		TransactionalObjectHeader(O obj) : ownerTransaction(nullptr), object(obj) {
 			createObject();
 
-			assert(object != NULL);
+			assert(object != nullptr);
 		}
 
 		virtual ~TransactionalObjectHeader() {
@@ -54,7 +54,7 @@ namespace engine {
 		Reference<TransactionalObjectHandle<O>*> add(TransactionalObjectHandle<O>* handle);
 
 		inline Reference<TransactionalObjectHandle<O>*> getLastHandle() {
-			return add(NULL);
+			return add(nullptr);
 		}
 
 		O getForDirty();
@@ -136,13 +136,13 @@ namespace engine {
 	template<class O> O TransactionalObjectHeader<O>::getForDirty() {
 		Transaction* trans = Transaction::currentTransaction();
 
-		O obj = NULL;
+		O obj = nullptr;
 
-		if (trans != NULL) {
+		if (trans != nullptr) {
 			obj = trans->getOpenedObject<O>(this);
 		}
 
-		if (obj != NULL)
+		if (obj != nullptr)
 			return obj;
 		else
 			return transaction_cast<O>(object.get());
@@ -153,31 +153,31 @@ namespace engine {
 				", " + String::valueOf((uint64) transaction) + ")" );*/
 
 		//Reference<Transaction*> str
-		return ownerTransaction.compareAndSetReturnOld(NULL, transaction);
+		return ownerTransaction.compareAndSetReturnOld(nullptr, transaction);
 	}
 
 	template<class O> void TransactionalObjectHeader<O>::discardObject(Transaction* transaction) {
-		/*if (!ownerTransaction.compareAndSet(transaction, NULL))
+		/*if (!ownerTransaction.compareAndSet(transaction, nullptr))
 			assert(0 && "hui");*/
-		ownerTransaction.compareAndSet(transaction, NULL);
+		ownerTransaction.compareAndSet(transaction, nullptr);
 	}
 
 	template <class O> Reference<TransactionalObjectHandle<O>*> TransactionalObjectHeader<O>::add(TransactionalObjectHandle<O>* handle) {
 #ifdef STMLINKELISTDHELP
-		if (handle != NULL)
+		if (handle != nullptr)
 			handle->acquire();
 
 		while (true) {
 			TransactionalObjectHandle<O>* lastRef = last.get();
 
 			if (last.compareAndSet(lastRef, handle)) {
-				if (lastRef != NULL && handle != NULL) {
+				if (lastRef != nullptr && handle != nullptr) {
 					lastRef->setPrevious(handle);
 				}
 
 				Reference<TransactionalObjectHandle<O>*> strong = lastRef;
 
-				if (lastRef != NULL)
+				if (lastRef != nullptr)
 					lastRef->release();
 
 				return strong;
@@ -186,47 +186,47 @@ namespace engine {
 			Thread::yield();
 		}
 #else
-		return NULL;
+		return nullptr;
 #endif
 	}
 
 	template<class O> bool TransactionalObjectHeader<O>::isCurrentVersion(Object* obj) {
-		if (TransactionalObjectHeader<O>::ownerTransaction != NULL && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
+		if (TransactionalObjectHeader<O>::ownerTransaction != nullptr && TransactionalObjectHeader<O>::ownerTransaction != Transaction::currentTransaction())
 			return false;
 
 		return object == obj;
 	}
 
 	template<class O> void TransactionalObjectHeader<O>::releaseObject(TransactionalObjectHandle<O>* handle, Object* objectCopy) {
-		//if (objectCopy != NULL) {
+		//if (objectCopy != nullptr) {
 
 		//if (owner)
 
-		//assert(ownerTransaction != NULL);
+		//assert(ownerTransaction != nullptr);
 
 		Reference<Transaction*> oldTrans = ownerTransaction.get();
 
-		if (oldTrans != NULL && ownerTransaction.compareAndSet(oldTrans.get(), NULL) && objectCopy != NULL) {
+		if (oldTrans != nullptr && ownerTransaction.compareAndSet(oldTrans.get(), nullptr) && objectCopy != nullptr) {
 #ifdef MEMORY_PROTECTION
-			object = objectCopy->clone(NULL);
+			object = objectCopy->clone(nullptr);
 #else
 			object = objectCopy;
 #endif
 		}
 
-		assert(object != NULL);
+		assert(object != nullptr);
 
-		//ownerTransaction.compareAndSet(ownerTransaction.get(), NULL);
-		//ownerTransaction = NULL;
+		//ownerTransaction.compareAndSet(ownerTransaction.get(), nullptr);
+		//ownerTransaction = nullptr;
 		//s}
 	}
 
 	template<class O> O TransactionalObjectHeader<O>::getObjectForRead(TransactionalObjectHandle<O>* handle) {
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
-		assert(object != NULL);
+		assert(object != nullptr);
 #ifdef EAGERABORTS
-		if (transaction != NULL) {
+		if (transaction != nullptr) {
 			if (!transaction->isCommited())
 				return transaction_cast<O>(object.get());
 			else
@@ -246,7 +246,7 @@ namespace engine {
 #ifdef EAGERABORTS
 		Transaction* transaction = TransactionalObjectHeader<O>::ownerTransaction;
 
-		if (transaction != NULL) {
+		if (transaction != nullptr) {
 			 	 if (!transaction->isCommited())
 			 	 	 return transaction_cast<O>(object.get());
 			 	 else
@@ -258,11 +258,11 @@ namespace engine {
 
 		this->add(handle);
 
-		assert(object != NULL);
+		assert(object != nullptr);
 
 		O objectToReturn = transaction_cast<O>(object.get());
 
-		assert(objectToReturn != NULL);
+		assert(objectToReturn != nullptr);
 		return objectToReturn;
 
 #ifdef EAGERABORTS

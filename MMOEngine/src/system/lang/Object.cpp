@@ -18,14 +18,14 @@ Object::Object() : Variable() {
 	_destroying = false;
 #endif
 
-	referenceCounters = NULL;
+	referenceCounters = nullptr;
 
 	//MemoryManager::getInstance()->create(this);
 
 #ifdef TRACE_REFERENCES
 	/*referenceHolders = new VectorMap<uint64, StackTrace*>();
-	referenceHolders->setNullValue(NULL);*/
-	referenceHolders = NULL;
+	referenceHolders->setNullValue(nullptr);*/
+	referenceHolders = nullptr;
 #endif
 }
 
@@ -36,47 +36,47 @@ Object::Object(const Object& obj) : Variable() {
 	_destroying = false;
 #endif
 
-	referenceCounters = NULL;
+	referenceCounters = nullptr;
 
 	//MemoryManager::getInstance()->create(this);
 
 #ifdef TRACE_REFERENCES
 	/*referenceHolders = new VectorMap<uint64, StackTrace*>();
-	referenceHolders->setNullValue(NULL);*/
-	referenceHolders = NULL;
+	referenceHolders->setNullValue(nullptr);*/
+	referenceHolders = nullptr;
 #endif
 }
 
 Object::~Object() {
 #ifdef TRACE_REFERENCES
-	if (referenceHolders != NULL) {
+	if (referenceHolders != nullptr) {
 		for (int i = 0; i < referenceHolders->size(); ++i)
 			delete referenceHolders->get(i);
 	}
 #endif
 
-	if (referenceCounters != NULL) {
+	if (referenceCounters != nullptr) {
 		if ((referenceCounters->getStrongReferenceCount() % 2) == 0) {
 			assert(0 && "Deleting object with strong references");
 		}
 
 		if (referenceCounters->decrementAndTestAndSetWeakCount() != 0) {
 			delete referenceCounters;
-			referenceCounters = NULL;
+			referenceCounters = nullptr;
 		}
 
 	}
 
 #ifdef MEMORY_PROTECTION
 	delete _destroying;
-	_destroying = NULL;
+	_destroying = nullptr;
 #endif
 
 	finalize();
 
 #ifdef TRACE_REFERENCES
 	delete referenceHolders;
-	referenceHolders = NULL;
+	referenceHolders = nullptr;
 #endif
 
 	//deletedByTrace = new StackTrace();
@@ -98,10 +98,10 @@ bool Object::tryAcquire() {
 */
 /*
 void Object::acquire() {
-	if (referenceCounters == NULL) {
+	if (referenceCounters == nullptr) {
 		StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 1);
 
-		if (!referenceCounters.compareAndSet(NULL, newCount)) {
+		if (!referenceCounters.compareAndSet(nullptr, newCount)) {
 			delete newCount;
 		}
 	}
@@ -160,9 +160,9 @@ void Object::addHolder(uint64 obj) {
 
 	StackTrace* trace = new StackTrace();
 
-	if (referenceHolders == NULL) {
+	if (referenceHolders == nullptr) {
 		referenceHolders = new VectorMap<uint64, StackTrace*>();
-		referenceHolders->setNullValue(NULL);
+		referenceHolders->setNullValue(nullptr);
 	}
 
 	referenceHolders->put(obj, trace);
@@ -172,20 +172,20 @@ void Object::removeHolder(uint64 obj) {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
 #endif
-	if (referenceHolders == NULL) {
+	if (referenceHolders == nullptr) {
 		return;
 	}
 
 	StackTrace* trace = referenceHolders->get(obj);
 
-	if (trace != NULL) {
+	if (trace != nullptr) {
 		delete trace;
 		referenceHolders->drop(obj);
 	}
 }
 
 void Object::printReferenceHolders() {
-	if (referenceHolders == NULL) {
+	if (referenceHolders == nullptr) {
 		return;
 	}
 

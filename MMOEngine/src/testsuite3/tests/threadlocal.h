@@ -25,7 +25,7 @@ void testThreadLocalSpeed() {
 	for (int i = 0; i < THREAD_LOCAL_ITERATIONS; ++i) {
 		Object* obj = tl.get();
 
-		if (obj == NULL)
+		if (obj == nullptr)
 			break;
 	}
 

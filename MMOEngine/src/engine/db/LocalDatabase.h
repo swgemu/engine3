@@ -47,8 +47,8 @@ namespace engine {
 	 int getData(Stream* inputKey, ObjectInputStream* objectData);
 
 	 //incoming streams will be deleted
-	 int putData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* masterTransaction = NULL);
-	 int deleteData(Stream* inputKey, engine::db::berkley::Transaction* masterTransaction = NULL);
+	 int putData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* masterTransaction = nullptr);
+	 int deleteData(Stream* inputKey, engine::db::berkley::Transaction* masterTransaction = nullptr);
 
 	 //incoming streams wont be deleted
 	 int tryPutData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* transaction);
@@ -109,7 +109,7 @@ namespace engine {
 	 int putCurrent(ObjectOutputStream* data);
 
 	 inline void closeCursor() {
-		 if (cursor != NULL) {
+		 if (cursor != nullptr) {
 			 int ret = cursor->close();
 
 			 delete cursor;
@@ -118,7 +118,7 @@ namespace engine {
 				 throw DatabaseException("could not close cursor ret: " + String::valueOf(ret));
 		 }
 
-		 cursor = NULL;
+		 cursor = nullptr;
 	 }
  };
 

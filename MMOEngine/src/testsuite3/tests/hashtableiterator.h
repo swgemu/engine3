@@ -44,7 +44,7 @@ void testHashTableIterator() {
 
 		ManagedObject* dist = dynamic_cast<ManagedObject*>(obj);
 
-		assert(dist != NULL);
+		assert(dist != nullptr);
 
 		objects.add(dist);
 	}

@@ -13,8 +13,8 @@
 BasicQuadTreeNode::BasicQuadTreeNode() {
 	objects.setInsertPlan(SortedVector<QuadTreeEntryInterface*>::NO_DUPLICATE);
 
-	parentNode = NULL;
-	nwNode = neNode = swNode = seNode = NULL;
+	parentNode = nullptr;
+	nwNode = neNode = swNode = seNode = nullptr;
 
 	minX = 0;
 	minY = 0;
@@ -29,7 +29,7 @@ BasicQuadTreeNode::BasicQuadTreeNode(float minx, float miny, float maxx, float m
 	objects.setInsertPlan(SortedVector<QuadTreeEntryInterface*>::NO_DUPLICATE);
 
 	parentNode = parent;
-	nwNode = neNode = swNode = seNode = NULL;
+	nwNode = neNode = swNode = seNode = nullptr;
 
 	minX = minx;
 	minY = miny;
@@ -47,16 +47,16 @@ BasicQuadTreeNode::BasicQuadTreeNode(float minx, float miny, float maxx, float m
 }
 
 BasicQuadTreeNode::~BasicQuadTreeNode() {
-	if (nwNode != NULL)
+	if (nwNode != nullptr)
 		delete nwNode;
 
-	if (neNode != NULL)
+	if (neNode != nullptr)
 		delete neNode;
 
-	if (swNode != NULL)
+	if (swNode != nullptr)
 		delete swNode;
 
-	if (seNode != NULL)
+	if (seNode != nullptr)
 		delete seNode;
 }
 
@@ -70,7 +70,7 @@ void BasicQuadTreeNode::addObject(QuadTreeEntryInterface *obj) {
 
 	objects.put(obj);
 
-	assert(obj->getNode() == NULL);
+	assert(obj->getNode() == nullptr);
 
 	obj->setNode(this);
 }
@@ -80,7 +80,7 @@ void BasicQuadTreeNode::removeObject(QuadTreeEntryInterface *obj) {
 		System::out << hex << "object [" << obj->getObjectID() <<  "] not found on BasicQuadTree"
 				<< toStringData() << "\n";
 	} else {
-		obj->setNode(NULL);
+		obj->setNode(nullptr);
 
 		if (BasicQuadTree::doLog())
 			System::out <<  hex << "object [" << obj->getObjectID() <<  "] removed BasicQuadTree"
@@ -90,7 +90,7 @@ void BasicQuadTreeNode::removeObject(QuadTreeEntryInterface *obj) {
 
 void BasicQuadTreeNode::removeObject(int index) {
 	QuadTreeEntryInterface* obj = objects.remove(index);
-	obj->setNode(NULL);
+	obj->setNode(nullptr);
 }
 
 bool BasicQuadTreeNode::testInside(QuadTreeEntryInterface* obj) const {
@@ -117,15 +117,15 @@ bool BasicQuadTreeNode::testInRange(float x, float y, float range) const {
 }
 
 void BasicQuadTreeNode::check () {
-	if (isEmpty() && !hasSubNodes() && parentNode != NULL) {
+	if (isEmpty() && !hasSubNodes() && parentNode != nullptr) {
 		if (parentNode->nwNode == this)
-			parentNode->nwNode = NULL;
+			parentNode->nwNode = nullptr;
 		else if (parentNode->neNode == this)
-			parentNode->neNode = NULL;
+			parentNode->neNode = nullptr;
 		else if (parentNode->swNode == this)
-			parentNode->swNode = NULL;
+			parentNode->swNode = nullptr;
 		else if (parentNode->seNode == this)
-			parentNode->seNode = NULL;
+			parentNode->seNode = nullptr;
 
 		if (BasicQuadTree::doLog())
 			System::out << "deleteing node (" << this << ")\n";
@@ -146,19 +146,19 @@ String BasicQuadTreeNode::toStringData() {
 int BasicQuadTreeNode::_getSubNodeCount(const BasicQuadTreeNode* s) {
 	int count = 1;
 
-	if (s->neNode != NULL) {
+	if (s->neNode != nullptr) {
 		count += _getSubNodeCount(s->neNode);
 	}
 
-	if (s->nwNode != NULL) {
+	if (s->nwNode != nullptr) {
 		count += _getSubNodeCount(s->nwNode);
 	}
 
-	if (s->seNode != NULL) {
+	if (s->seNode != nullptr) {
 		count += _getSubNodeCount(s->seNode);
 	}
 
-	if (s->swNode != NULL) {
+	if (s->swNode != nullptr) {
 		count += _getSubNodeCount(s->swNode);
 	}
 
@@ -174,24 +174,24 @@ int BasicQuadTreeNode::getNodeCount() const {
 
 bool BasicQuadTree::logTree = false;
 
-BasicQuadTree::BasicQuadTree() : root(NULL), minSquareSize(8) {
+BasicQuadTree::BasicQuadTree() : root(nullptr), minSquareSize(8) {
 }
 
 BasicQuadTree::BasicQuadTree(float minx, float miny, float maxx,
-		float maxy, float minSquareSize) : root(new BasicQuadTreeNode(minx, miny, maxx, maxy, NULL)),
+		float maxy, float minSquareSize) : root(new BasicQuadTreeNode(minx, miny, maxx, maxy, nullptr)),
 				minSquareSize(minSquareSize) {
 }
 
 BasicQuadTree::~BasicQuadTree() {
 	delete root;
 
-	root = NULL;
+	root = nullptr;
 }
 
 void BasicQuadTree::setSize(float minx, float miny, float maxx, float maxy) {
 	delete root;
 
-	root = new BasicQuadTreeNode(minx, miny, maxx, maxy, NULL);
+	root = new BasicQuadTreeNode(minx, miny, maxx, maxy, nullptr);
 }
 
 void BasicQuadTree::insert(QuadTreeEntryInterface *obj) {
@@ -207,7 +207,7 @@ void BasicQuadTree::insert(QuadTreeEntryInterface *obj) {
 			System::out << "(" << obj->getPositionX() << ", " << obj->getPositionY() << ")\n";
 		}
 
-		if (obj->getNode() != NULL)
+		if (obj->getNode() != nullptr)
 			remove(obj);
 
 		_insert(root, obj);
@@ -241,7 +241,7 @@ void BasicQuadTree::remove(BasicQuadTreeNode* node) {
 		return;
 	}
 
-	if (node->parentNode == NULL) {
+	if (node->parentNode == nullptr) {
 		System::out << "[BasicQuadTree] " << " error on remove(BasicQuadTreeNode) - trying to remove root Node"
 				<< node->toStringData() << "\n";
 	}
@@ -249,19 +249,19 @@ void BasicQuadTree::remove(BasicQuadTreeNode* node) {
 	BasicQuadTreeNode* parent = node->parentNode;
 
 	if (parent->nwNode == node) {
-		parent->nwNode = NULL;
+		parent->nwNode = nullptr;
 	}
 
 	if (parent->neNode == node) {
-		parent->neNode = NULL;
+		parent->neNode = nullptr;
 	}
 
 	if (parent->swNode == node) {
-		parent->swNode = NULL;
+		parent->swNode = nullptr;
 	}
 
 	if (parent->seNode == node){
-		parent->seNode = NULL;
+		parent->seNode = nullptr;
 	}
 }
 
@@ -281,7 +281,7 @@ void BasicQuadTree::remove(QuadTreeEntryInterface *obj) {
 
 	BasicQuadTreeNode* node = obj->getNode();
 
-	if (node != NULL) {
+	if (node != nullptr) {
 		if (!node->validateNode()) {
 			System::out << "[BasicQuadTree] " << obj->getObjectID() << " error on remove() - invalid Node"
 					<< node->toStringData() << "\n";
@@ -290,7 +290,7 @@ void BasicQuadTree::remove(QuadTreeEntryInterface *obj) {
 		node->removeObject(obj);
 
 		node->check();
-		obj->setNode(NULL);
+		obj->setNode(nullptr);
 	} else {
 		System::out << hex << "object [" << obj->getObjectID() <<  "] ERROR - removing the node\n";
 		StackTrace::printStackTrace();
@@ -301,8 +301,8 @@ void BasicQuadTree::remove(QuadTreeEntryInterface *obj) {
 }
 
 void BasicQuadTree::removeAll() {
-	if (root != NULL) {
-		root = NULL;
+	if (root != nullptr) {
+		root = nullptr;
 		delete root;
 	}
 }
@@ -367,22 +367,22 @@ void BasicQuadTree::_insert(BasicQuadTreeNode* node, QuadTreeEntryInterface *obj
 			// We divide the Node area into 4 squares, reusing existing children
 
 			if (existing->isInSWArea(node)) {
-				if (node->swNode == NULL)
+				if (node->swNode == nullptr)
 					node->swNode = new BasicQuadTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
 				_insert(node->swNode, existing);
 			} else if (existing->isInSEArea(node)) {
-				if (node->seNode == NULL)
+				if (node->seNode == nullptr)
 					node->seNode = new BasicQuadTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
 				_insert(node->seNode, existing);
 			} else if (existing->isInNWArea(node)) {
-				if (node->nwNode == NULL)
+				if (node->nwNode == nullptr)
 					node->nwNode = new BasicQuadTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
 				_insert(node->nwNode, existing);
 			} else {
-				if (node->neNode == NULL)
+				if (node->neNode == nullptr)
 					node->neNode = new BasicQuadTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
 				_insert(node->neNode, existing);
@@ -413,22 +413,22 @@ void BasicQuadTree::_insert(BasicQuadTreeNode* node, QuadTreeEntryInterface *obj
 	 */
 	if (node->hasSubNodes()) {
 		if (obj->isInSWArea(node)) {
-			if (node->swNode == NULL)
+			if (node->swNode == nullptr)
 				node->swNode = new BasicQuadTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
 			_insert(node->swNode, obj);
 		} else if (obj->isInSEArea(node)) {
-			if (node->seNode == NULL)
+			if (node->seNode == nullptr)
 				node->seNode = new BasicQuadTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
 			_insert(node->seNode, obj);
 		} else if (obj->isInNWArea(node)) {
-			if (node->nwNode == NULL)
+			if (node->nwNode == nullptr)
 				node->nwNode = new BasicQuadTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
 			_insert(node->nwNode, obj);
 		} else {
-			if (node->neNode == NULL)
+			if (node->neNode == nullptr)
 				node->neNode = new BasicQuadTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
 			_insert(node->neNode, obj);
@@ -456,13 +456,13 @@ int BasicQuadTree::_inRange(BasicQuadTreeNode* node, float x, float y, float ran
 	}
 
 	if (node->hasSubNodes()) {
-		if (node->nwNode != NULL && node->nwNode->testInRange(x, y, range))
+		if (node->nwNode != nullptr && node->nwNode->testInRange(x, y, range))
 			count += _inRange(node->nwNode, x, y, range, objects);
-		if (node->neNode != NULL && node->neNode->testInRange(x, y, range))
+		if (node->neNode != nullptr && node->neNode->testInRange(x, y, range))
 			count += _inRange(node->neNode, x, y, range, objects);
-		if (node->swNode != NULL && node->swNode->testInRange(x, y, range))
+		if (node->swNode != nullptr && node->swNode->testInRange(x, y, range))
 			count += _inRange(node->swNode, x, y, range, objects);
-		if (node->seNode != NULL && node->seNode->testInRange(x, y, range))
+		if (node->seNode != nullptr && node->seNode->testInRange(x, y, range))
 			count += _inRange(node->seNode, x, y, range, objects);
 	}
 

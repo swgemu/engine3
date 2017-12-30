@@ -20,11 +20,11 @@ namespace engine {
 		const char* type;
 		const char* sampleTime;
 
-		Metrics() : name(NULL), value(NULL), type(NULL), sampleTime(NULL) {
+		Metrics() : name(nullptr), value(nullptr), type(nullptr), sampleTime(nullptr) {
 
 		}
 
-		Metrics(const char* name, const char* value, const char* type, const char* sampleTime = NULL)
+		Metrics(const char* name, const char* value, const char* type, const char* sampleTime = nullptr)
 					: name(name), value(value), type(type), sampleTime(sampleTime) {
 
 		}
@@ -43,7 +43,7 @@ namespace engine {
 
 			void initializeStatsDConnection(const char* hostname, int port);
 
-			Result publish(const char* name, const char* value, const char* type, const char* sampleTime = NULL);
+			Result publish(const char* name, const char* value, const char* type, const char* sampleTime = nullptr);
 			Result publish(const Metrics& metrics);
 
 			void setGlobalPrefix(const String& prefix) {

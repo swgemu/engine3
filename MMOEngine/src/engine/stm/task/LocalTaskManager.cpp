@@ -13,7 +13,7 @@ LocalTaskManager::LocalTaskManager() {
 	cancelledTasks.setNoDuplicateInsertPlan();*/
 
 	lastTaskAction.setAllowOverwriteInsertPlan();
-	lastTaskAction.setNullValue(NULL);
+	lastTaskAction.setNullValue(nullptr);
 }
 
 void LocalTaskManager::initialize() {
@@ -60,7 +60,7 @@ void LocalTaskManager::executeTask(Task* task) {
 bool LocalTaskManager::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
 	TaskAction* action = lastTaskAction.get(task);
 
-	if (action == NULL)
+	if (action == nullptr)
 		return false;
 
 	nextExecutionTime = action->getNextExecutionTime();
@@ -173,7 +173,7 @@ bool LocalTaskManager::cancelTask(Task* task) {
 
 	TaskAction* action = lastTaskAction.get(task);
 
-	if (action != NULL) {
+	if (action != nullptr) {
 		if (action->getType() == TaskAction::CANCEL)
 			return false;
 	}
@@ -184,7 +184,7 @@ bool LocalTaskManager::cancelTask(Task* task) {
 }
 
 Task* LocalTaskManager::getTask() {
-	return NULL;
+	return nullptr;
 }
 
 bool LocalTaskManager::isTaskScheduled(Task* task) {
@@ -192,7 +192,7 @@ bool LocalTaskManager::isTaskScheduled(Task* task) {
 
 	TaskAction* action = lastTaskAction.get(task);
 
-	if (action == NULL)
+	if (action == nullptr)
 		return false;
 
 	if (action->getType() == TaskAction::SCHEDULE ||
@@ -207,7 +207,7 @@ bool LocalTaskManager::isTaskCancelled(Task* task) {
 
 	TaskAction* action = lastTaskAction.get(task);
 
-	if (action == NULL)
+	if (action == nullptr)
 		return false;
 
 	if (action->getType() == TaskAction::CANCEL)

@@ -16,7 +16,7 @@ void ObjectUpdateToDatabaseTask::run() {
 
 	ManagedObject* object = objectRef.getForUpdate();
 
-	if (object == NULL)
+	if (object == nullptr)
 		return;
 
 	try {

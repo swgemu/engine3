@@ -20,7 +20,7 @@ namespace engine {
 		BaseClientProxy(Socket* sock, SocketAddress& addr);
 
 		virtual ~BaseClientProxy() {
-			socket = NULL;
+			socket = nullptr;
 		}
 
 		void init(DatagramServiceThread* serv);

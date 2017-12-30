@@ -30,7 +30,7 @@ namespace engine {
 			AStarNode::heuristic = heuristic;
 			AStarNode::node = node;
 
-			cameFrom = NULL;
+			cameFrom = nullptr;
 		}
 
 		int compareTo(PriorityQueueEntry* node) {
@@ -90,18 +90,18 @@ namespace engine {
 		static Vector<Node*>* search(Graph* graph, Node* source, Node* target) {
 			VectorMap<IDType, Reference<AStarNode<Node, IDType>* > > openSet;
 			openSet.setAllowDuplicateInsertPlan();
-			openSet.setNullValue(NULL);
+			openSet.setNullValue(nullptr);
 
 			PriorityQueue priorityQueue;
 			VectorMap<IDType, Reference<AStarNode<Node, IDType>* > > closeSet;
 			closeSet.setAllowDuplicateInsertPlan();
-			closeSet.setNullValue(NULL);
+			closeSet.setNullValue(nullptr);
 
 			Reference<AStarNode<Node, IDType>* > start = new AStarNode<Node, IDType>(source, 0, graph->calculateManhattanDistance(source, target));
 			openSet.put(source->getID(), start);
 			priorityQueue.add(start);
 
-			Reference<AStarNode<Node, IDType>* > goal = NULL;
+			Reference<AStarNode<Node, IDType>* > goal = nullptr;
 
 			while (openSet.size() > 0) {
 				Reference<AStarNode<Node, IDType>* > x = (AStarNode<Node, IDType>*)const_cast<PriorityQueueEntry*>(priorityQueue.poll());
@@ -122,12 +122,12 @@ namespace engine {
 
 						const Reference<AStarNode<Node, IDType>* >& visited = closeSet.get(neighbor->getID());
 
-						if (visited == NULL) {
+						if (visited == nullptr) {
 							float g = x->getG() + graph->calculateManhattanDistance(x->getNode(), neighbor);
 
 							AStarNode<Node, IDType>* n = openSet.get(neighbor->getID()).get();
 
-							if (n == NULL) {
+							if (n == nullptr) {
 								n = new AStarNode<Node, IDType>(neighbor, g, graph->calculateManhattanDistance(neighbor, target));
 								n->setCameFrom(x);
 								openSet.put(neighbor->getID(), n);
@@ -143,15 +143,15 @@ namespace engine {
 				}
 			}
 
-			if (goal == NULL)
-				return NULL;
+			if (goal == nullptr)
+				return nullptr;
 
 			Vector<Node*>* path = new Vector<Node*>();
 			path->add(goal->getNode());
 
 			AStarNode<Node, IDType>* parent = goal->getCameFrom();
 
-			while (parent != NULL) {
+			while (parent != nullptr) {
 				path->insertElementAt(parent->getNode(), 0);
 				parent = parent->getCameFrom();
 			}

@@ -49,7 +49,7 @@ namespace engine {
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID) {
 			if (!objectCreator.containsKey(uniqueID))
-				return NULL;
+				return nullptr;
 
 			return objectCreator.get(uniqueID)();
 		}
@@ -88,7 +88,7 @@ namespace engine {
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1) {
 			if (!objectCreator.containsKey(uniqueID))
-				return NULL;
+				return nullptr;
 
 			return objectCreator.get(uniqueID)(param1);
 		}
@@ -127,7 +127,7 @@ namespace engine {
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2) {
 			if (!objectCreator.containsKey(uniqueID))
-				return NULL;
+				return nullptr;
 
 			return objectCreator.get(uniqueID)(param1, param2);
 		}
@@ -166,7 +166,7 @@ namespace engine {
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2, Param3Type param3) {
 			if (!objectCreator.containsKey(uniqueID))
-				return NULL;
+				return nullptr;
 
 			return objectCreator.get(uniqueID)(param1, param2, param3);
 		}
@@ -205,7 +205,7 @@ namespace engine {
 	public:
 		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2, Param3Type param3, Param4Type param4) {
 			if (!objectCreator.containsKey(uniqueID))
-				return NULL;
+				return nullptr;
 
 			return objectCreator.get(uniqueID)(param1, param2, param3, param4);
 		}

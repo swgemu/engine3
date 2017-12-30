@@ -10,7 +10,7 @@ DatagramServiceClientProxy::DatagramServiceClientProxy(Socket* sock, SocketAddre
 }
 
 DatagramServiceClientProxy::~DatagramServiceClientProxy() {
-	socket = NULL;
+	socket = nullptr;
 }
 
 void DatagramServiceClientProxy::run() {

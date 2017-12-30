@@ -58,7 +58,7 @@ namespace sys {
 		void set(const T& value);
 
 	protected:
-		void createKey(void (*keyDestructor)(void*) = NULL);
+		void createKey(void (*keyDestructor)(void*) = nullptr);
 
 		static void defaultThreadLocalDeleteDtor(void* value) {
 			DefaultThreadLocalDestructor<T> destructor;
@@ -74,11 +74,11 @@ namespace sys {
 		T getValue();
 	};
 
-	template<class T> ThreadLocal<T>::ThreadLocal() : keyDestructor(NULL) {
-		createKey(NULL);
+	template<class T> ThreadLocal<T>::ThreadLocal() : keyDestructor(nullptr) {
+		createKey(nullptr);
 	}
 
-	template<class T> ThreadLocal<T>::ThreadLocal(void (*keyDtor)(void*) ) : keyDestructor(NULL) {
+	template<class T> ThreadLocal<T>::ThreadLocal(void (*keyDtor)(void*) ) : keyDestructor(nullptr) {
 		createKey(keyDtor);
 	}
 
@@ -100,7 +100,7 @@ namespace sys {
 	}
 
 	template<class T> void ThreadLocal<T>::remove() {
-		set(NULL);
+		set(nullptr);
 	}
 
 	template <class T> void ThreadLocal<T>::set(const T& value) {
@@ -108,7 +108,7 @@ namespace sys {
 	}
 
 	template<class T> void ThreadLocal<T>::createKey(void (*dtor)(void*)) {
-		if (dtor == NULL && TypeInfo<T>::type == TypeInfoAtomicBase<T>::POINTER) {
+		if (dtor == nullptr && TypeInfo<T>::type == TypeInfoAtomicBase<T>::POINTER) {
 			keyDestructor = defaultThreadLocalDeleteDtor;
 		} else {
 			keyDestructor = dtor;

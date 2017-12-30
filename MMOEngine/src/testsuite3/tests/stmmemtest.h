@@ -54,7 +54,7 @@ class MemoryPool {
 	void* addresses[POOL_SIZE];
 public:
 	MemoryPool() {
-		memset(addresses, NULL, sizeof(void*) * POOL_SIZE);
+		memset(addresses, nullptr, sizeof(void*) * POOL_SIZE);
 	}
 
 	bool add(void* mem) {
@@ -74,8 +74,8 @@ public:
 		for (int i = pos; i < POOL_SIZE; ++i) {
 			void* mem = addresses[i];
 
-			if (mem != NULL) {
-				addresses[i] = NULL;
+			if (mem != nullptr) {
+				addresses[i] = nullptr;
 
 				//printf("got %p from %i slot\n", mem, i);
 
@@ -86,8 +86,8 @@ public:
 		for (int i = pos; i >= 0; --i) {
 			void* mem = addresses[i];
 
-			if (mem != NULL) {
-				addresses[i] = NULL;
+			if (mem != nullptr) {
+				addresses[i] = nullptr;
 
 				//printf("got %p from %i slot\n", mem, i);
 
@@ -95,7 +95,7 @@ public:
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 };
 
@@ -113,14 +113,14 @@ public:
 		for (int i = 0; i < 10000000; ++i) {
 			int addressestoManipulate = System::random(10);
 
-			void* mem = NULL;
+			void* mem = nullptr;
 			int size;
 
 			for (int j = 0; j < addressestoManipulate; ++j) {
 				switch (System::random(2)) {
 				case 0:
 					mem = memPool.get();
-					if (mem != NULL) {
+					if (mem != nullptr) {
 						printf("[thread %i] freed %p\n", threadID, mem);
 
 						free(mem);
@@ -171,7 +171,7 @@ void testSTMMemory() {
 
 	TransactionalMemoryManager::commitPureTransaction(transaction);
 
-	object = NULL;
+	object = nullptr;
 
 	//TransactionalMemoryManager::commitPureTransaction();
 	//TransactionalMemoryManager::commitPureTransaction();

@@ -45,7 +45,7 @@ namespace sys {
 
   			char buf[4096];
 
-  			if (fgets(buf, 4096, file->getDescriptor()) != NULL) {
+  			if (fgets(buf, 4096, file->getDescriptor()) != nullptr) {
   				line = buf;
 
   				return true;

@@ -67,7 +67,7 @@ public:
 
 	public:
 		TransactionalReference() {
-			header = NULL;
+			header = nullptr;
 		}
 
 		TransactionalReference(O object) {
@@ -83,7 +83,7 @@ public:
 		}
 
 		~TransactionalReference() {
-			header = NULL;
+			header = nullptr;
 		}
 
 		TransactionalReference& operator=(const TransactionalReference& ref) {
@@ -134,24 +134,24 @@ public:
 		}
 
 		O get() {
-			if (header != NULL)
+			if (header != nullptr)
 				return header->get();
 			else
-				return NULL;
+				return nullptr;
 		}
 
 		O getForUpdate() {
-			if (header != NULL)
+			if (header != nullptr)
 				return header->getForUpdate();
 			else
-				return NULL;
+				return nullptr;
 		}
 
 		O getForDirty() {
-			if (header != NULL)
+			if (header != nullptr)
 				return header->getForDirty();
 			else
-				return NULL;
+				return nullptr;
 		}
 
 		bool compareAndSet(O oldval, O newval) {
@@ -168,9 +168,9 @@ public:
 
 	protected:
 		TransactionalObjectHeader<O>* getHeader(O object) {
-			//assert(object != NULL);
-			if (object == NULL)
-				return NULL;
+			//assert(object != nullptr);
+			if (object == nullptr)
+				return nullptr;
 
 			return Transaction::currentTransaction()->getHeader(object);
 		}

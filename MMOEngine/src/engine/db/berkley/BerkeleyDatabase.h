@@ -84,7 +84,7 @@ namespace engine {
 		/**
 		 * Returns number of unique keys, returns 0 if it was never calculated
 		 */
-		uint64 count(bool forceCalculation = false, Transaction* txn = NULL);
+		uint64 count(bool forceCalculation = false, Transaction* txn = nullptr);
 
 		inline String& getDatabaseFile() {
 			return filename;

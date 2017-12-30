@@ -59,10 +59,10 @@ namespace sys {
 		SynchronizedLinkedListEntry* backlink;
 
 	public:	
-		SynchronizedLinkedListEntry() : backlink(NULL) {
+		SynchronizedLinkedListEntry() : backlink(nullptr) {
 		}
 	
-		SynchronizedLinkedListEntry(SynchronizedLinkedListEntry* next) : successor(next), backlink(NULL) {
+		SynchronizedLinkedListEntry(SynchronizedLinkedListEntry* next) : successor(next), backlink(nullptr) {
 		}
 	
 		void mark() {

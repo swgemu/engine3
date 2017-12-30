@@ -141,13 +141,13 @@ namespace engine {
 		}
 
 		inline bool setTaskScheduler(TaskScheduler* scheduler) {
-			return taskScheduler.compareAndSet(NULL, scheduler);
+			return taskScheduler.compareAndSet(nullptr, scheduler);
 		}
 
 		inline bool clearTaskScheduler() {
 			TaskScheduler* scheduler = taskScheduler.get();
 
-			return taskScheduler.compareAndSet(scheduler, NULL);
+			return taskScheduler.compareAndSet(scheduler, nullptr);
 		}
 
 		inline void setPriority(int priority) {
@@ -190,14 +190,14 @@ namespace engine {
 
 	#ifdef TRACE_TASKS
 		void setScheduleTrace() {
-			if (scheduleTrace != NULL)
+			if (scheduleTrace != nullptr)
 				delete scheduleTrace;
 
 			scheduleTrace = new StackTrace();
 		}
 
 		void printScheduleTrace() {
-			assert(scheduleTrace != NULL);
+			assert(scheduleTrace != nullptr);
 
 			scheduleTrace->print();
 		}

@@ -167,7 +167,7 @@ namespace engine {
 		}
 
 		inline void setNullBufferedPacket() {
-			bufferedPacket = NULL;
+			bufferedPacket = nullptr;
 		}
 
 		// getters

@@ -51,8 +51,8 @@ void StackTrace::print() const {
 		#else
 		char** tracedSymbols = backtrace_symbols(symbols, count);
 
-		if (tracedSymbols == NULL) {
-			System::out << "error while trying to print stack trace: tracedSymbols == NULL" << endl;
+		if (tracedSymbols == nullptr) {
+			System::out << "error while trying to print stack trace: tracedSymbols == nullptr" << endl;
 			return;
 		}
 

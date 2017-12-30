@@ -40,7 +40,7 @@ namespace engine {
 		void execute() {
 			DistributedObjectBroker* broker = DistributedObjectBroker::instance();
 
-			DistributedObjectStub* obj = NULL;
+			DistributedObjectStub* obj = nullptr;
 			try {
 				obj = broker->undeployRemote(name);
 			} catch (const Exception& e) {
@@ -48,7 +48,7 @@ namespace engine {
 			}
 
 			uint64 objectID = 0;
-			if (obj != NULL)
+			if (obj != nullptr)
 				objectID = obj->_getObjectID();
 
 			insertLong(objectID);

@@ -23,7 +23,7 @@ LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 
 	databaseFileName = dbFileName;
 
-	objectsDatabase = NULL;
+	objectsDatabase = nullptr;
 
 	this->compression = compression;
 
@@ -36,7 +36,7 @@ LocalDatabase::~LocalDatabase() {
 	closeDatabase();
 
 	delete objectsDatabase;
-	objectsDatabase = NULL;
+	objectsDatabase = nullptr;
 }
 
 void LocalDatabase::openDatabase() {
@@ -58,7 +58,7 @@ int LocalDatabase::sync() {
 
 int LocalDatabase::truncate() {
 	try {
-		objectsDatabase->truncate(NULL, false);
+		objectsDatabase->truncate(nullptr, false);
 
 		info("database truncated");
 
@@ -75,7 +75,7 @@ int LocalDatabase::truncate() {
 void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 	try {
 
-		Transaction* transaction = environment->beginTransaction(NULL);
+		Transaction* transaction = environment->beginTransaction(nullptr);
 
 		objectsDatabase = environment->openDatabase(transaction, databaseFileName, "", config);
 
@@ -205,11 +205,11 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 
 	int i = 0;
 
-	Transaction* transaction = NULL;
+	Transaction* transaction = nullptr;
 
 	do {
 		ret  = -1;
-		transaction = environment->beginTransaction(NULL);
+		transaction = environment->beginTransaction(nullptr);
 
 		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
 
@@ -217,7 +217,7 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 			info("deadlock detected in LocalDatabase::get.. retrying iteration " + String::valueOf(i));
 
 			transaction->abort();
-			transaction = NULL;
+			transaction = nullptr;
 		}
 
 		++i;
@@ -234,13 +234,13 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 	} else if (ret != DB_NOTFOUND) {
 		error("error in LocalDatabase::getData ret " + String::valueOf(db_strerror(ret)));
 
-		if (transaction != NULL)
+		if (transaction != nullptr)
 			transaction->abort();
 
 		throw DatabaseException("error in LocalDatabase::getData ret " + String(db_strerror(ret)));
 	}
 
-	if (transaction != NULL) {
+	if (transaction != nullptr) {
 		transaction->commit();
 	}
 
@@ -253,7 +253,7 @@ int LocalDatabase::putData(Stream* inputKey, Stream* stream, engine::db::berkley
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
 
-	uint64 currentSize = transaction->addUpdateObject(inputKey, stream, this, NULL);
+	uint64 currentSize = transaction->addUpdateObject(inputKey, stream, this, nullptr);
 
 	if (currentSize > DatabaseManager::MAX_CACHE_SIZE) {
 		ObjectDatabaseManager::instance()->commitLocalTransaction(masterTransaction);
@@ -366,7 +366,7 @@ LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, bool useCu
 
 	databaseHandle = database->getDatabaseHandle();
 
-	Transaction* txn = NULL;//ObjectDatabaseManager::instance()->getLocalTransaction();
+	Transaction* txn = nullptr;//ObjectDatabaseManager::instance()->getLocalTransaction();
 
 /*	if (useCurrentThreadTransaction)
 		txn = ObjectDatabaseManager::instance()->getLocalTransaction();*/
@@ -382,7 +382,7 @@ LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, bool useCu
 LocalDatabaseIterator::LocalDatabaseIterator(BerkeleyDatabase* dbHandle)
 	: Logger("LocalDatabaseIterator") {
 	databaseHandle = dbHandle;
-	Transaction* txn = NULL; // ObjectDatabaseManager::instance()->getLocalTransaction();
+	Transaction* txn = nullptr; // ObjectDatabaseManager::instance()->getLocalTransaction();
 	cursor = databaseHandle->openCursor(txn);
 
 	data.setReuseBuffer(true);
@@ -394,13 +394,13 @@ LocalDatabaseIterator::~LocalDatabaseIterator() {
 }
 
 void LocalDatabaseIterator::resetIterator() {
-	if (cursor != NULL) {
+	if (cursor != nullptr) {
 		cursor->close();
 		delete cursor;
 	}
 
 
-	Transaction* txn = NULL;//
+	Transaction* txn = nullptr;//
 	//Transaction* txn = ObjectDatabaseManager::instance()->getLocalTransaction();
 
 	cursor = databaseHandle->openCursor(txn);
@@ -409,8 +409,8 @@ void LocalDatabaseIterator::resetIterator() {
 bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data) {
 	try {
 		if (cursor->getNext(&this->key, &this->data, LockMode::READ_COMMITED) != 0) {
-			/*this->key.setData(NULL, 0);
-			this->data.setData(NULL, 0);*/
+			/*this->key.setData(nullptr, 0);
+			this->data.setData(nullptr, 0);*/
 			return false;
 		}
 
@@ -434,8 +434,8 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data) {
 	try {
 		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
-			/*this->key.setData(NULL, 0);
-			this->data.setData(NULL, 0);*/
+			/*this->key.setData(nullptr, 0);
+			this->data.setData(nullptr, 0);*/
 			return false;
 		}
 
@@ -460,8 +460,8 @@ bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data) {
 bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key) {
 	try {
 		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
-			/*this->key.setData(NULL, 0);
-			this->data.setData(NULL, 0);*/
+			/*this->key.setData(nullptr, 0);
+			this->data.setData(nullptr, 0);*/
 			return false;
 		}
 

@@ -25,7 +25,7 @@ ObjectBrokerAgent::ObjectBrokerAgent() : Logger("ObjectBrokerAgent") {
 
 		directorPort = static_cast<RemoteObjectBroker*>(rootBroker)->getBrokerClient();
 	} else {
-		directorPort = NULL;
+		directorPort = nullptr;
 	}
 }
 
@@ -75,7 +75,7 @@ void ObjectBrokerAgent::setState(AgentState state) {
 
 	debug("sending state update " + String(stateToString((int) state)) + " to director");
 
-	if (directorPort != NULL) {
+	if (directorPort != nullptr) {
 		directorPort->send(&stateUpdateMessage);
 	} else {
 		ObjectBrokerDirector::instance()->handleStateUpdate(DistributedObjectBroker::instance(), (int) state);

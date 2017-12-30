@@ -52,7 +52,7 @@ namespace engine {
 		}
 		
 		DOBObjectManager* getObjectManager() {
-			return NULL;
+			return nullptr;
 		}
 
 		uint64 getNextFreeObjectID();

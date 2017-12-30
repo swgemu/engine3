@@ -443,7 +443,7 @@ template<> int64 TypeInfoAtomicBase<int64>::nullValue() {
 }
 
 template<> void* TypeInfoAtomicBase<void*>::nullValue() {
-	return NULL;
+	return nullptr;
 }
 
 template<> float TypeInfoAtomicBase<float>::nullValue() {
@@ -459,5 +459,5 @@ template<> bool TypeInfoAtomicBase<bool>::nullValue() {
 }
 
 template<> const char* TypeInfoAtomicBase<const char*>::nullValue() {
-	return NULL;
+	return nullptr;
 }

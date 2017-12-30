@@ -176,7 +176,7 @@ public:
 
 	  Entry<K, map_value_type>* entry = _key_to_value.getEntryUnsafe(k);
 
-	  if (entry == NULL) {// We don't have it:
+	  if (entry == nullptr) {// We don't have it:
 		  // Evaluate function and create new record
 		  readLocker.release();
 
@@ -208,7 +208,7 @@ public:
 			  //it while we were releasing the read lock and acquiring the write lock
 			  entry = _key_to_value.getEntryUnsafe(k);
 
-			  if (entry != NULL) {
+			  if (entry != nullptr) {
 				  //safe by the write lock to the map
 				  const key_traker_iterator_type it = entry->getValue().second();
 
@@ -364,7 +364,7 @@ public:
 
 	  Entry<key_type, map_value_type>* entry = _key_to_value.getEntryUnsafe(hash);
 
-	  if (entry == NULL) {// We don't have it:
+	  if (entry == nullptr) {// We don't have it:
 		  // Evaluate function and create new record
 		  readLocker.release();
 
@@ -396,7 +396,7 @@ public:
 			  //it while we were releasing the read lock and acquiring the write lock
 			  entry = _key_to_value.getEntryUnsafe(hash);
 
-			  if (entry != NULL) {
+			  if (entry != nullptr) {
 				  //safe by the write lock to the map
 				  const key_traker_iterator_type it = entry->getValue().second();
 

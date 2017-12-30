@@ -82,7 +82,7 @@ bool TransactionalTaskManager::cancelTask(Task* task) {
 }
 
 Task* TransactionalTaskManager::getTask() {
-	return NULL;
+	return nullptr;
 }
 
 bool TransactionalTaskManager::isTaskScheduled(Task* task) {
@@ -146,7 +146,7 @@ void TransactionalTaskManager::undo() {
 LocalTaskManager* TransactionalTaskManager::getLocalTaskManager() {
 	LocalTaskManager* impl = localTaskManager.get();
 
-	if (impl == NULL) {
+	if (impl == nullptr) {
 		impl = new LocalTaskManager();
 
 		localTaskManager.set(impl);

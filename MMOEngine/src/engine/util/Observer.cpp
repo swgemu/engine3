@@ -32,7 +32,7 @@ Observer::~Observer() {
 
 int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
-	if (unlikely(_implementation == NULL)) {
+	if (unlikely(_implementation == nullptr)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -50,7 +50,7 @@ int Observer::notifyObserverEvent(unsigned int eventType, Observable* observable
 
 unsigned long long Observer::getObjectID() {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
-	if (unlikely(_implementation == NULL)) {
+	if (unlikely(_implementation == nullptr)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -64,7 +64,7 @@ unsigned long long Observer::getObjectID() {
 
 int Observer::compareTo(Observer* obj) {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
-	if (unlikely(_implementation == NULL)) {
+	if (unlikely(_implementation == nullptr)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -79,7 +79,7 @@ int Observer::compareTo(Observer* obj) {
 
 void Observer::setObserverType(unsigned int type) {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementation());
-	if (unlikely(_implementation == NULL)) {
+	if (unlikely(_implementation == nullptr)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -94,7 +94,7 @@ void Observer::setObserverType(unsigned int type) {
 
 bool Observer::isObserverType(unsigned int type) const {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
-	if (unlikely(_implementation == NULL)) {
+	if (unlikely(_implementation == nullptr)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -140,7 +140,7 @@ void ObserverImplementation::finalize() {
 void ObserverImplementation::_initializeImplementation() {
 	_setClassHelper(ObserverHelper::instance());
 
-	_this = NULL;
+	_this = nullptr;
 
 	_serializationHelperMethod();
 }

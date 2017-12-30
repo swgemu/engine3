@@ -26,7 +26,7 @@ TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager")
 	shuttingDown = false;
 
 #ifdef WITH_STM
-	serialWorker = NULL;
+	serialWorker = nullptr;
 #endif
 
 	setInfoLogLevel();
@@ -298,7 +298,7 @@ TaskScheduler* TaskManagerImpl::getIoTaskScheduler() {
 		if (!shuttingDown)
 			throw Exception("No schedulers available");
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	int index = currentTaskScheduler.increment() % ioSchedulers.size();
@@ -313,7 +313,7 @@ TaskScheduler* TaskManagerImpl::getTaskScheduler() {
 		if (!shuttingDown)
 			throw Exception("No schedulers available");
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	int index = currentTaskScheduler.increment() % schedulers.size();
@@ -401,7 +401,7 @@ bool TaskManagerImpl::getNextExecutionTime(Task* task, Time& nextExecutionTime) 
 }
 
 bool TaskManagerImpl::isTaskScheduled(Task* task) {
-	return task->getTaskScheduler() != NULL;
+	return task->getTaskScheduler() != nullptr;
 }
 
 void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
@@ -419,7 +419,7 @@ void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
 	}
 
 	TaskScheduler* scheduler = getIoTaskScheduler();
-	if (scheduler == NULL)
+	if (scheduler == nullptr)
 		return;
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
@@ -447,7 +447,7 @@ void TaskManagerImpl::scheduleIoTask(Task* task, Time& time) {
 	}
 
 	TaskScheduler* scheduler = getIoTaskScheduler();
-	if (scheduler == NULL)
+	if (scheduler == nullptr)
 		return;
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
@@ -475,7 +475,7 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 	}
 
 	TaskScheduler* scheduler = getTaskScheduler();
-	if (scheduler == NULL)
+	if (scheduler == nullptr)
 		return;
 
 	locker.release();
@@ -499,7 +499,7 @@ void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
 	}
 
 	TaskScheduler* scheduler = getTaskScheduler();
-	if (scheduler == NULL)
+	if (scheduler == nullptr)
 		return;
 
 	locker.release();
@@ -555,11 +555,11 @@ bool TaskManagerImpl::cancelTask(Task* task) {
 		return false;
 
 	TaskScheduler* scheduler = task->getTaskScheduler();
-	//assert (scheduler != NULL);
+	//assert (scheduler != nullptr);
 
 	locker.release();
 
-	if (scheduler == NULL)
+	if (scheduler == nullptr)
 		return false;
 
 	return scheduler->cancelTask(task);
@@ -880,14 +880,14 @@ int TaskManagerImpl::getIoScheduledTaskSize() {
 Task* TaskManagerImpl::getCurrentThreadTask() {
 	Thread* thread = Thread::getCurrentThread();
 
-	if (thread == NULL) {
-		return NULL;
+	if (thread == nullptr) {
+		return nullptr;
 	}
 
 	TaskWorkerThread* worker = thread->asTaskWorkerThread();
 
-	if (worker == NULL) {
-		return NULL;
+	if (worker == nullptr) {
+		return nullptr;
 	}
 
 	return worker->getCurrentTask();

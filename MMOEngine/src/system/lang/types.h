@@ -224,7 +224,7 @@ public:
 	}
 
 	static T* nullValue() {
-		return NULL;
+		return nullptr;
 	}
 };
 

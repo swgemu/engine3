@@ -16,11 +16,11 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 DistributedObjectBroker::DistributedObjectBroker()
 		: StreamServiceThread("DistributedObjectBroker") {
-	rootObjectBroker = NULL;
+	rootObjectBroker = nullptr;
 
-	namingDirectoryService = NULL;
+	namingDirectoryService = nullptr;
 
-	objectManager = NULL;
+	objectManager = nullptr;
 
 	port = 0;
 
@@ -31,24 +31,24 @@ DistributedObjectBroker::DistributedObjectBroker()
 DistributedObjectBroker::~DistributedObjectBroker() {
 	shutdown();
 
-	if (namingDirectoryService != NULL) {
+	if (namingDirectoryService != nullptr) {
 		delete namingDirectoryService;
-		namingDirectoryService = NULL;
+		namingDirectoryService = nullptr;
 	}
 
-	if (rootObjectBroker != NULL) {
+	if (rootObjectBroker != nullptr) {
 		delete rootObjectBroker;
-		rootObjectBroker = NULL;
+		rootObjectBroker = nullptr;
 	}
 
-	if (serviceHandler != NULL) {
+	if (serviceHandler != nullptr) {
 		delete serviceHandler;
-		serviceHandler = NULL;
+		serviceHandler = nullptr;
 	}
 
-	/*if (objectManager != NULL) {
+	/*if (objectManager != nullptr) {
 		delete objectManager;
-		objectManager = NULL;
+		objectManager = nullptr;
 	}*/
 }
 
@@ -91,7 +91,7 @@ void DistributedObjectBroker::initialize() {
 	DOBServiceHandler* serviceHandler = new DOBServiceHandler();
 	setHandler(serviceHandler);
 
-	objectManager = NULL; //new DOBObjectManager();
+	objectManager = nullptr; //new DOBObjectManager();
 
 	ObjectBrokerAgent::instance()->start();
 }
@@ -101,11 +101,11 @@ void DistributedObjectBroker::run() {
 }
 
 void DistributedObjectBroker::shutdown() {
-	if (socket != NULL) {
+	if (socket != nullptr) {
 		StreamServiceThread::stop();
 
 		delete socket;
-		socket = NULL;
+		socket = nullptr;
 	}
 }
 
@@ -142,7 +142,7 @@ Reference<DistributedObject*> DistributedObjectBroker::lookUp(const String& name
 	Locker locker(objectManager);
 
 	Reference<DistributedObject*> object = namingDirectoryService->lookup(name);
-	if (object != NULL)
+	if (object != nullptr)
 		return object;
 
 	locker.release();
@@ -165,21 +165,21 @@ void DistributedObjectBroker::requestServant(DistributedObjectStub* obj) {
 Reference<DistributedObject*> DistributedObjectBroker::lookUp(uint64 objid) {
 	//Locker locker(objectManager);
 
-	Reference<DistributedObject*> object = NULL;
+	Reference<DistributedObject*> object = nullptr;
 
 	object = objectManager->getObject(objid);
 
 	//locker.release();
 
-	if (object == NULL)
+	if (object == nullptr)
 		object = objectManager->loadPersistentObject(objid);
 
-	if (object != NULL)
+	if (object != nullptr)
 		return object;
 
 	if (!isRootBroker()) {
 		object = remoteObjectCache.get(objid);
-		if (object != NULL) {
+		if (object != nullptr) {
 			debug("found object 0x" + String::valueOf(objid) + " in remote cache");
 
 			return object;
@@ -197,7 +197,7 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 	/*Locker locker(this);
 
 	Locker clocker(objectManager, this);*/
-	if (objectManager == NULL) {
+	if (objectManager == nullptr) {
 		obj->_setDestroying();
 
 		obj->undeploy();
@@ -243,7 +243,7 @@ uint64 DistributedObjectBroker::getNextFreeObjectID() {
 }
 
 void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectStub* obj) {
-	if (objectManager == NULL)
+	if (objectManager == nullptr)
 		return;
 
 	Locker locker(objectManager);
@@ -257,7 +257,7 @@ void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectS
 	if (!namingDirectoryService->bind(obj->_getName(), obj))
 		throw NameAlreadyBoundException(obj);
 
-	if (objectManager->addObject(obj) != NULL) {
+	if (objectManager->addObject(obj) != nullptr) {
 		throw ObjectAlreadyDeployedException(obj);
 	} else
 		debug("object \'" + obj->_getName() + "\' deployed with ID 0x" + String::hexvalueOf((int64)obj->_getObjectID()));
@@ -284,8 +284,8 @@ void DistributedObjectBroker::deployRemote(const String& name, DistributedObject
 }
 
 DistributedObjectStub* DistributedObjectBroker::undeployLocal(const String& name) {
-	if (objectManager == NULL)
-		return NULL;
+	if (objectManager == nullptr)
+		return nullptr;
 
 	Locker locker(objectManager); //Locker locker(this);
 
@@ -293,17 +293,17 @@ DistributedObjectStub* DistributedObjectBroker::undeployLocal(const String& name
 
 	locker.release();
 
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		DistributedObjectAdapter* adapter = objectManager->removeObject(obj->_getObjectID());
 
-		if (adapter != NULL) {
+		if (adapter != nullptr) {
 			delete adapter;
 		}
 
 	#ifndef WITH_STM
-		obj->_setImplementation(NULL);
+		obj->_setImplementation(nullptr);
 
-		/*if (servant != NULL) {
+		/*if (servant != nullptr) {
 			debug("deleting servant \'" + name + "\'");
 
 			delete servant;
@@ -323,7 +323,7 @@ DistributedObjectStub* DistributedObjectBroker::undeployRemote(const String& nam
 
 	locker.release();
 
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		remoteObjectCache.remove(obj->_getObjectID());
 
 
@@ -341,10 +341,10 @@ void DistributedObjectBroker::setCustomObjectManager(DOBObjectManager* manager) 
 }
 
 DistributedObjectStub* DistributedObjectBroker::createObjectStub(const String& className, const String& name) {
-	DistributedObjectStub* obj = NULL;
+	DistributedObjectStub* obj = nullptr;
 
 	DistributedObjectClassHelper* helper = classMap.get(className);
-	if (helper != NULL) {
+	if (helper != nullptr) {
 		debug("class \'" + className + "\' found when creating stub");
 
 		obj = dynamic_cast<DistributedObjectStub*>(helper->instantiateObject());
@@ -359,10 +359,10 @@ DistributedObjectStub* DistributedObjectBroker::createObjectStub(const String& c
 }
 
 DistributedObjectServant* DistributedObjectBroker::createObjectServant(const String& className, DistributedObjectStub* stub, bool addToObjectManager) {
-	DistributedObjectServant* servant = NULL;
+	DistributedObjectServant* servant = nullptr;
 
 	DistributedObjectClassHelper* helper = classMap.get(className);
-	if (helper != NULL) {
+	if (helper != nullptr) {
 		debug("class \'" + className + "\' found when creating servant");
 
 		servant = helper->instantiateServant();
