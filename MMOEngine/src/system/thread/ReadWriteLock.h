@@ -49,7 +49,13 @@ namespace sys {
 		void lock(Lockable* lockable) ACQUIRE();
 
 		inline bool tryWLock() TRY_ACQUIRE(true) {
-			return pthread_rwlock_trywrlock(&rwlock) == 0;
+			if (pthread_rwlock_trywrlock(&rwlock) == 0) {
+				lockAcquired("w");
+
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		void unlock(bool doLock = true) RELEASE();
