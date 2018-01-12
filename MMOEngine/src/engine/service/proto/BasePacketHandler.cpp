@@ -22,7 +22,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #define BASE_PACKET_HANDLER_TASK_QUEUE "_baseclient"
 
-#define MULTI_THREADED_BASE_PACKET_HANDLER
+//#define MULTI_THREADED_BASE_PACKET_HANDLER
 
 BasePacketHandler::BasePacketHandler() : Logger() {
 	serviceHandler = nullptr;
@@ -33,103 +33,103 @@ BasePacketHandler::BasePacketHandler(const String& s, ServiceHandler* handler) :
 }
 
 void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
-	info("READ - " + pack->toStringData(), true);
+	//info("READ - " + pack->toStringData(), true);
 
-		try {
-			uint16 opcode = pack->parseShort();
+	try {
+		uint16 opcode = pack->parseShort();
 
-			switch (opcode) {
-			case 0x0100: //Session Request
-				doSessionStart(client, pack);
-				break;
-			case 0x0200: //Session Response
-				doSessionResponse(client, pack);
-				break;
-			case 0x0300: //Multi-SOE
-				if (!client->processRecieve(pack))
-					return;
-
-				handleMultiPacket(client, pack);
-				break;
-			case 0x0500: //Disconnect
-				if (!client->processRecieve(pack))
-					return;
-
-				doDisconnect(client, pack); //we shouldnt send a disconnect back.
-				break;
-			case 0x0600: //SOE Ping
-				if (!client->processRecieve(pack))
-					return;
-
-				break;
-			case 0x0700: //Client Net-Status Request
-				if (!client->processRecieve(pack))
-					return;
-
-				doNetStatusResponse(client, pack);
-				break;
-			case 0x0800: //Client Net-Status Response
-				/*if (!client->processRecieve(pack))
+		switch (opcode) {
+		case 0x0100: //Session Request
+			doSessionStart(client, pack);
+			break;
+		case 0x0200: //Session Response
+			doSessionResponse(client, pack);
+			break;
+		case 0x0300: //Multi-SOE
+			if (!client->processRecieve(pack))
 				return;
 
-			doNetStatusResponse(client, pack);*/
-				break;
-			case 0x0900: //Data Channel
-				if (!client->processRecieve(pack))
-					return;
+			handleMultiPacket(client, pack);
+			break;
+		case 0x0500: //Disconnect
+			if (!client->processRecieve(pack))
+				return;
 
-				if (!client->validatePacket(pack))
-					return;
+			doDisconnect(client, pack); //we shouldnt send a disconnect back.
+			break;
+		case 0x0600: //SOE Ping
+			if (!client->processRecieve(pack))
+				return;
 
-				handleDataChannelPacket(client, pack);
+			break;
+		case 0x0700: //Client Net-Status Request
+			if (!client->processRecieve(pack))
+				return;
 
-				processBufferedPackets(client);
-				break;
-			case 0x0D00: //Fragmented
-				if (!client->processRecieve(pack))
-					return;
+			doNetStatusResponse(client, pack);
+			break;
+		case 0x0800: //Client Net-Status Response
+			/*if (!client->processRecieve(pack))
+			return;
 
-				if (!client->validatePacket(pack))
-					return;
+		doNetStatusResponse(client, pack);*/
+			break;
+		case 0x0900: //Data Channel
+			if (!client->processRecieve(pack))
+				return;
 
-				handleFragmentedPacket(client, pack);
+			if (!client->validatePacket(pack))
+				return;
 
-				processBufferedPackets(client);
+			handleDataChannelPacket(client, pack);
 
-				break;
-			case 0x1100: //Out of order
-				if (!client->processRecieve(pack))
-					return;
+			processBufferedPackets(client);
+			break;
+		case 0x0D00: //Fragmented
+			if (!client->processRecieve(pack))
+				return;
 
-				doOutOfOrder(client, pack);
-				break;
-			case 0x1500: //Acknowledge
-				if (!client->processRecieve(pack))
-					return;
+			if (!client->validatePacket(pack))
+				return;
 
-				doAcknowledge(client, pack);
-				break;
-			case 0x1D00: //??
-				break;
-			case 0x1F00: { //??
-				break;
-			}
-			case 0x2000: { //??
-				break;
-			}
-			default:
-				if (!client->processRecieve(pack))
-					return;
+			handleFragmentedPacket(client, pack);
 
-				pack->setOffset(0);
+			processBufferedPackets(client);
 
-				handleDataChannelPacket(client, pack);
-				break;
-			}
-		} catch (Exception& e) {
-			Logger::console.error(e.getMessage());
-			e.printStackTrace();
+			break;
+		case 0x1100: //Out of order
+			if (!client->processRecieve(pack))
+				return;
+
+			doOutOfOrder(client, pack);
+			break;
+		case 0x1500: //Acknowledge
+			if (!client->processRecieve(pack))
+				return;
+
+			doAcknowledge(client, pack);
+			break;
+		case 0x1D00: //??
+			break;
+		case 0x1F00: { //??
+			break;
 		}
+		case 0x2000: { //??
+			break;
+		}
+		default:
+			if (!client->processRecieve(pack))
+				return;
+
+			pack->setOffset(0);
+
+			handleDataChannelPacket(client, pack);
+			break;
+		}
+	} catch (Exception& e) {
+		Logger::console.error(e.getMessage());
+		e.printStackTrace();
+	}
 }
 
 void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
