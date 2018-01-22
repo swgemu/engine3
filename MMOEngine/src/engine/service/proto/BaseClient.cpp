@@ -884,7 +884,7 @@ Packet* BaseClient::getBufferedPacket() {
 }
 
 BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
-	Logger::console.info("recieveFragmentedPacket " + pack->toStringData(), true);
+	//Logger::console.info("recieveFragmentedPacket " + pack->toStringData(), true);
 
 	BasePacket* packet = nullptr;
 

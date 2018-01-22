@@ -340,7 +340,7 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 
 			handleDataChannelMultiPacket(client, pack, blockSize);*/
 
-			Logger::console.info("parsing multi in buffered packets: " + pack->toStringData(), true);
+			//Logger::console.info("parsing multi in buffered packets: " + pack->toStringData(), true);
 
 			handleMultiPacket(client, pack, false);
 		} else if (pack->parseShort(0) == 0x0D00) {
