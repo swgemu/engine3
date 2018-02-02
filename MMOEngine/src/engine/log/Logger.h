@@ -62,6 +62,8 @@ namespace engine {
 
 		bool doGlobalLog;
 		bool doSyncLog;
+		bool logTimeToFile;
+		bool logLevelToFile;
 
 		//Mutex writeLock;
 
@@ -151,6 +153,14 @@ namespace engine {
 
 		inline void setSyncFileLogging(bool val) {
 			doSyncLog = val;
+		}
+
+		inline void setLogTimeToFile(bool val) {
+			logTimeToFile = val;
+		}
+
+		inline void setLogLevelToFile(bool val) {
+			logLevelToFile = val;
 		}
 
 		inline void setLoggingName(const char* s) {

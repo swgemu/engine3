@@ -20,6 +20,8 @@ Logger::Logger() {
 	logLevel = LOG;
 	doSyncLog = true;
 	doGlobalLog = true;
+	logTimeToFile = true;
+	logLevelToFile = true;
 }
 
 Logger::Logger(const char *s) {
@@ -30,6 +32,8 @@ Logger::Logger(const char *s) {
 	logLevel = LOG;
 	doSyncLog = true;
 	doGlobalLog = true;
+	logTimeToFile = true;
+	logLevelToFile = true;
 }
 
 Logger::Logger(const String& s) {
@@ -40,6 +44,8 @@ Logger::Logger(const String& s) {
 	logLevel = LOG;
 	doSyncLog = true;
 	doGlobalLog = true;
+	logTimeToFile = true;
+	logLevelToFile = true;
 }
 
 Logger::~Logger() {
@@ -136,8 +142,13 @@ void Logger::log(const char *msg, LogLevel type) const {
 
 		StringBuffer fullMessage;
 
-		getTime(fullMessage);
-		getLogType(fullMessage, type);
+		if (logTimeToFile) {
+			getTime(fullMessage);
+		}
+
+		if (logLevelToFile) {
+			getLogType(fullMessage, type);
+		}
 
 		fullMessage << msg << "\n";
 

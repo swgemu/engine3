@@ -33,8 +33,12 @@ namespace sys {
 				delete tail;
 			}
 
-			void push(A data) {
+			void push(const A& data) {
 				push(new MPSCNode<A>(data));
+			}
+
+			void push(A&& data) {
+				push(new MPSCNode<A>(std::move(data)));
 			}
 
 			void push(MPSCNode<A>* n) {
@@ -64,7 +68,7 @@ namespace sys {
 
 				if (next) {
 					this->tail = next;
-					tail->data = next->data;
+					tail->data = std::move(next->data);
 					return tail;
 				}
 
