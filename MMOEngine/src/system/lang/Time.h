@@ -197,6 +197,39 @@ namespace sys {
 				return String("");
 		}
 
+		String getFormattedTimeFull() {
+			int ret;
+			struct tm t;
+			String value;
+			char buf[128];
+			int len = sizeof(buf);
+
+			if (localtime_r(&(ts.tv_sec), &t) == nullptr)
+				return value;
+
+			ret = strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &t);
+			if (ret <= 0)
+				return value;
+
+			len -= ret - 1;
+
+			ret = snprintf(&buf[strlen(buf)], len, ".%09ld", ts.tv_nsec);
+			if (ret < 0 || ret >= len)
+				return value;
+
+			len -= ret;
+
+			char tz[32];
+
+			strftime(tz, sizeof(tz), "%z", &t);
+
+			snprintf(&buf[strlen(buf)], len, "%s", tz);
+
+			value = buf;
+
+			return value;
+		}
+
 		int compareMiliTo(Time& t) {
 			uint64 t1 = getMiliTime();
 			uint64 t2 = t.getMiliTime();
