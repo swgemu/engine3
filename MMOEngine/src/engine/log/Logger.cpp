@@ -4,6 +4,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
  */
 
 #include "Logger.h"
+#include "json/json.hpp"
 
 AtomicReference<FileWriter*> Logger::globalLogFile = nullptr;
 
@@ -13,6 +14,7 @@ Logger Logger::console("Console");
 
 volatile int Logger::globalLogLevel = LogLevel::DEBUG;
 bool Logger::syncGlobalLog = false;
+bool Logger::jsonGlobalLog = false;
 
 Logger::Logger() {
 	logFile = nullptr;
@@ -70,7 +72,11 @@ void Logger::setGlobalFileLogLevel(LogLevel level) {
 
 void Logger::setGlobalFileLoggerSync(bool val) {
 	syncGlobalLog = val;
-};
+}
+
+void Logger::setGlobalFileJson(bool val) {
+	jsonGlobalLog = val;
+}
 
 void Logger::setGlobalFileLogger(const String& file) {
 	if (globalLogFile != nullptr)
@@ -162,10 +168,29 @@ void Logger::log(const char *msg, LogLevel type) const {
 
 		StringBuffer fullMessage;
 
-		getTime(fullMessage);
-		getLogType(fullMessage, type);
+		if (!jsonGlobalLog) {
+			getTime(fullMessage);
+			getLogType(fullMessage, type);
 
-		fullMessage << msg << "\n";
+			fullMessage << msg << "\n";
+		} else {
+			Time time;
+
+			using json = nlohmann::json;
+			json rootObject;
+
+			rootObject["currentTimestamp"] = time.getMiliTime();
+			rootObject["elapsedTimeSinceStart"] = Logger::starttime.miliDifference(time);
+			rootObject["logType"] = getLogType(type);
+			rootObject["message"] = msg;
+
+			Thread* currentThread = Thread::getCurrentThread();
+
+			if (currentThread != nullptr)
+				rootObject["thread"]  = currentThread->getName().toCharArray();
+
+			fullMessage << rootObject.dump().c_str() << "\n";
+		}
 
 		(*globalLogFile) << fullMessage;
 
@@ -293,6 +318,25 @@ void Logger::getLogType(StringBuffer& buffer, LogLevel type) const {
 	}
 }
 
+const char* Logger::getLogType(LogLevel type)  {
+	switch (type) {
+		case LogLevel::INFO:
+			return "INFO";
+		case LogLevel::DEBUG:
+			return "DEBUG";
+		case LogLevel::WARNING:
+			return "WARNING";
+		case LogLevel::ERROR:
+			return "ERROR";
+		case LogLevel::FATAL:
+			return "FATAL";
+		default:
+			return "LOG";
+	}
+
+	return "INVALIDLOGLEVEL";
+}
+
 void Logger::getTime(StringBuffer& str, bool getFull) {
 	Time time;
 
@@ -347,4 +391,105 @@ void Logger::printTime(bool getFull) {
 uint64 Logger::getElapsedTime() {
 	Time time;
 	return Logger::starttime.miliDifference(time) / 1000;
+}
+
+String Logger::unescapeJSON(const String& input) {
+	enum State {ESCAPED, UNESCAPED};
+
+	State s = UNESCAPED;
+	StringBuffer output;
+
+	for (int i = 0; i < input.length(); ++i) {
+		switch(s) {
+			case ESCAPED:
+			{
+				switch(input.charAt(i))
+				{
+					case '"':
+						output << '\"';
+						break;
+					case '/':
+						output << '/';
+						break;
+					case 'b':
+						output << '\b';
+						break;
+					case 'f':
+						output << '\f';
+						break;
+					case 'n':
+						output << '\n';
+						break;
+					case 'r':
+						output << '\r';
+						break;
+					case 't':
+						output << '\t';
+						break;
+					case '\\':
+						output << '\\';
+						break;
+					default:
+						output << input.charAt(i);
+						break;
+				}
+
+				s = UNESCAPED;
+				break;
+			}
+			case UNESCAPED:
+			{
+				switch(input.charAt(i))
+				{
+					case '\\':
+						s = ESCAPED;
+						break;
+					default:
+						output << input.charAt(i);
+						break;
+				}
+			}
+		}
+	}
+
+	return output.toString();
+}
+
+String Logger::escapeJSON(const String& input) {
+	StringBuffer output;
+
+	for (int i = 0; i < input.length(); ++i)  {
+		switch (input.charAt(i)) {
+			case '"':
+				output << "\\\"";
+				break;
+			case '/':
+				output << "\\/";
+				break;
+			case '\b':
+				output << "\\b";
+				break;
+			case '\f':
+				output << "\\f";
+				break;
+			case '\n':
+				output << "\\n";
+				break;
+			case '\r':
+				output << "\\r";
+				break;
+			case '\t':
+				output << "\\t";
+				break;
+			case '\\':
+				output << "\\\\";
+				break;
+			default:
+				output << input.charAt(i);
+				break;
+		}
+
+	}
+
+	return output.toString();
 }
