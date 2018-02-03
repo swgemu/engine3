@@ -157,10 +157,11 @@ void Logger::getJSONString(StringBuffer& output, const char* logName, const char
 		rootObject["thread"]  = currentThread->getName().toCharArray();*/
 
 	output << "{\"@timestamp\":\"" << time.getFormattedTimeFull().toCharArray() << "\","
-			<< "\"timeSinceStart\":" <<  Logger::starttime.miliDifference(time) << ","
-			<< "\"logType\":\"" << getLogType(type) << "\","
-			<< "\"message\":\"" << escapeJSON(msg) << "\","
-			<< "\"logName\":\"" << logName << "\"";
+			<< "\"time_msec\":" << time.getMiliTime() << ","
+			<< "\"uptime_secs\":" <<  Logger::starttime.miliDifference(time) / 1000 << ","
+			<< "\"log_level\":\"" << getLogType(type) << "\","
+			<< "\"log\":\"" << escapeJSON(msg) << "\","
+			<< "\"log_tag\":\"" << logName << "\"";
 
 	if (currentThread != nullptr) {
 		output << ",\"thread\":\"" << currentThread->getName() << "\"";
