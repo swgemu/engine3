@@ -3,8 +3,6 @@ Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
  */
 
-#include "engine/util/json.hpp"
-
 #include "Logger.h"
 
 AtomicReference<FileWriter*> Logger::globalLogFile = nullptr;
@@ -25,6 +23,7 @@ Logger::Logger() {
 	doGlobalLog = true;
 	logTimeToFile = true;
 	logLevelToFile = true;
+	logJSON = false;
 }
 
 Logger::Logger(const char *s) {
@@ -37,6 +36,7 @@ Logger::Logger(const char *s) {
 	doGlobalLog = true;
 	logTimeToFile = true;
 	logLevelToFile = true;
+	logJSON = false;
 }
 
 Logger::Logger(const String& s) {
@@ -49,6 +49,7 @@ Logger::Logger(const String& s) {
 	doGlobalLog = true;
 	logTimeToFile = true;
 	logLevelToFile = true;
+	logJSON = false;
 }
 
 Logger::~Logger() {
@@ -138,6 +139,36 @@ void Logger::info(const StringBuffer& msg, bool forcedLog) const {
 	info(s, forcedLog);
 }
 
+void Logger::getJSONString(StringBuffer& output, const char* logName, const char* msg, LogLevel type) {
+	Time time;
+	Thread* currentThread = Thread::getCurrentThread();
+
+	/*using json = nlohmann::json;
+	json rootObject;
+
+	rootObject["currentTimestamp"] = time.getFormattedTimeFull().toCharArray();
+	rootObject["timeSinceStart"] = Logger::starttime.miliDifference(time);
+	rootObject["logType"] = getLogType(type);
+	rootObject["message"] = msg;
+	rootObject["logName"] = logName;
+
+
+	if (currentThread != nullptr)
+		rootObject["thread"]  = currentThread->getName().toCharArray();*/
+
+	output << "{\"@timestamp\":\"" << time.getFormattedTimeFull().toCharArray() << "\","
+			<< "\"timeSinceStart\":" <<  Logger::starttime.miliDifference(time) << ","
+			<< "\"logType\":\"" << getLogType(type) << "\","
+			<< "\"message\":\"" << escapeJSON(msg) << "\","
+			<< "\"logName\":\"" << logName << "\"";
+
+	if (currentThread != nullptr) {
+		output << ",\"thread\":\"" << currentThread->getName() << "\"";
+	}
+
+	output << "}";
+}
+
 void Logger::log(const char *msg, LogLevel type) const {
 	if (logFile == nullptr && globalLogFile == nullptr)
 		return;
@@ -149,15 +180,21 @@ void Logger::log(const char *msg, LogLevel type) const {
 
 		StringBuffer fullMessage;
 
-		if (logTimeToFile) {
-			getTime(fullMessage);
-		}
+		if (!logJSON) {
+			if (logTimeToFile) {
+				getTime(fullMessage);
+			}
 
-		if (logLevelToFile) {
-			getLogType(fullMessage, type);
-		}
+			if (logLevelToFile) {
+				getLogType(fullMessage, type);
+			}
 
-		fullMessage << msg << "\n";
+			fullMessage << msg << "\n";
+		} else {
+			getJSONString(fullMessage, name.toCharArray(), msg, type);
+
+			fullMessage << "\n";
+		}
 
 		(*logFile) << fullMessage;
 
@@ -175,22 +212,9 @@ void Logger::log(const char *msg, LogLevel type) const {
 
 			fullMessage << msg << "\n";
 		} else {
-			Time time;
+			getJSONString(fullMessage, name.toCharArray(), msg, type);
 
-			using json = nlohmann::json;
-			json rootObject;
-
-			rootObject["currentTimestamp"] = time.getMiliTime();
-			rootObject["elapsedTimeSinceStart"] = Logger::starttime.miliDifference(time);
-			rootObject["logType"] = getLogType(type);
-			rootObject["message"] = msg;
-
-			Thread* currentThread = Thread::getCurrentThread();
-
-			if (currentThread != nullptr)
-				rootObject["thread"]  = currentThread->getName().toCharArray();
-
-			fullMessage << rootObject.dump().c_str() << "\n";
+			fullMessage << "\n";
 		}
 
 		(*globalLogFile) << fullMessage;

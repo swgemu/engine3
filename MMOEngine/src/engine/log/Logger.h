@@ -65,6 +65,7 @@ namespace engine {
 		bool doSyncLog;
 		bool logTimeToFile;
 		bool logLevelToFile;
+		bool logJSON;
 
 		//Mutex writeLock;
 
@@ -125,6 +126,8 @@ namespace engine {
 		static void getTime(String& time, bool getFull = true);
 		static void getTime(StringBuffer& time, bool getFull = true);
 
+		static void getJSONString(StringBuffer& output, const char* logName, const char* msg, LogLevel type);
+
 		static void printTime(bool getFull = true);
 
 		void getLogType(StringBuffer& buffer, LogLevel type) const;
@@ -179,6 +182,10 @@ namespace engine {
 			name = s;
 		}
 
+		inline void setLogJSON(bool val) {
+			logJSON = val;
+		}
+
 		// getters
 		inline String& getLoggingName() {
 			return name;
@@ -194,6 +201,10 @@ namespace engine {
 
 		inline LogLevel getLogLevel() const {
 			return logLevel;
+		}
+
+		inline bool getLogJSON() const {
+			return logJSON;
 		}
 
 	};
