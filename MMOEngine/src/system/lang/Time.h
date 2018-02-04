@@ -299,11 +299,11 @@ namespace sys {
 
 	public:
 		// getters
-		inline uint32 getTime() {
+		inline uint32 getTime() const {
 			return ts.tv_sec;
 		}
 
-		inline uint64 getMiliTime() {
+		inline uint64 getMiliTime() const {
 		    uint64 time;
 
 		    time = ts.tv_sec;
@@ -312,7 +312,7 @@ namespace sys {
 		    return time;
 		}
 
-		inline uint64 getMikroTime() {
+		inline uint64 getMikroTime() const {
 		    uint64 time;
 
 		    time = ts.tv_sec;
@@ -321,7 +321,7 @@ namespace sys {
 		    return time;
 		}
 
-		inline uint64 getNanoTime() {
+		inline uint64 getNanoTime() const {
 		    uint64 time;
 
 		    time = ts.tv_sec;
@@ -330,11 +330,11 @@ namespace sys {
 		    return time;
 		}
 
-		inline int64 miliDifference(Time& t) {
+		inline int64 miliDifference(Time& t) const {
 			return t.getMiliTime() - getMiliTime();
 		}
 
-		inline int64 miliDifference() {
+		inline int64 miliDifference() const {
 			return Time().getMiliTime() - getMiliTime();
 		}
 
