@@ -12,7 +12,7 @@ void sys::lang::to_json(nlohmann::json& j, const sys::lang::String& p) {
 }
 
 void sys::lang::to_json(nlohmann::json& j, const sys::lang::UnicodeString& p) {
-	j = p.toCharArray();
+	j = p.toString().toCharArray();
 }
 
 void sys::lang::to_json(nlohmann::json& j, const sys::lang::Time& p) {
