@@ -8,6 +8,26 @@
 #include "json.hpp"
 
 #include "system/util/VectorMap.h"
+#include "engine/core/ManagedReference.h"
+#include "engine/core/ManagedWeakReference.h"
+
+namespace engine {
+	namespace core {
+		template<class V>
+		void to_json(nlohmann::json& j, const ManagedReference<V>& p) {
+			if (p.get() == nullptr) {
+				j = 0;
+			} else {
+				j = p->_getObjectID();
+			}
+		}
+
+		template<class V>
+		void to_json(nlohmann::json& j, const ManagedWeakReference<V>& p) {
+			j = p.getSavedObjectID();
+		}
+	}
+}
 
 namespace sys {
 	namespace lang {
