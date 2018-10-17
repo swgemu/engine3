@@ -46,7 +46,7 @@ namespace sys {
 			uint32 oldVal, newVal;
 
 			do {
-				oldVal = _references.load(std::memory_order_relaxed);
+				oldVal = _references.load(std::memory_order_acquire);
 
 				newVal = oldVal | 1;
 			} while (!_references.compare_exchange_weak(oldVal, newVal,
@@ -57,7 +57,7 @@ namespace sys {
 			uint32 oldVal, newVal;
 
 			do {
-				oldVal = _references.load(std::memory_order_relaxed);
+				oldVal = _references.load(std::memory_order_acquire);
 
 				newVal = oldVal - 1;
 			} while (!_references.compare_exchange_weak(oldVal, newVal,
@@ -67,7 +67,7 @@ namespace sys {
 		inline bool tryFinalDecrement() volatile {
 			uint32 oldVal, newVal;
 
-			oldVal = _references.load(std::memory_order_relaxed);
+			oldVal = _references.load(std::memory_order_acquire);
 
 			if (oldVal != 2)
 				return false;
@@ -96,10 +96,8 @@ namespace sys {
 			return ((oldVal - newVal) & 1);
 		}
 
-		inline uint32 getReferenceCount() volatile const {
-			//WMB();
-
-			return _references.load(std::memory_order_acquire);
+		inline uint32 getReferenceCount(std::memory_order o = std::memory_order_acquire) volatile const {
+			return _references.load(o);
 		}
 
 		inline void reset() volatile {
