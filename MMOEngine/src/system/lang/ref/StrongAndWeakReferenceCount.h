@@ -99,6 +99,10 @@ public:
 		return object;
 	}
 
+	inline void resetCountsToZero() {
+		strongReferenceCount.reset();
+		weakReferenceCount.reset();
+	}
 
 	template<class R, bool virt>
 	class Helper {

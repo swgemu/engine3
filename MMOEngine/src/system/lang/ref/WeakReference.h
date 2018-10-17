@@ -197,14 +197,14 @@ namespace sys {
 	protected:
 		inline StrongAndWeakReferenceCount* safeRead() const {
 			for (;;) {
-				StrongAndWeakReferenceCount* old = weakReference.get();
+				StrongAndWeakReferenceCount* old = weakReference.get(std::memory_order_seq_cst);
 
 				if (old == nullptr)
 					return nullptr;
 
 				old->increaseWeakCount();
 
-				if (old == weakReference.get())
+				if (old == weakReference.get(std::memory_order_seq_cst))
 					return old;
 				else
 					release(old);

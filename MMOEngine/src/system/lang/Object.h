@@ -92,7 +92,7 @@ namespace sys {
 		}
 #endif
 
-		virtual ~Object();
+		~Object();
 
 		Object& operator=(const Object& o) {
 			if (this == &o)

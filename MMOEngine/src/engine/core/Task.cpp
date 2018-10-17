@@ -26,10 +26,7 @@ Task::Task(Time& time) : PriorityQueueEntry() {
 }
 
 Task::~Task() {
-	if (isQueued()) {
-		System::out << "ERROR: scheduled task deleted\n";
-		raise(SIGSEGV);
-	}
+	assert(!isQueued());
 
 #ifdef TRACE_TASKS
 	if (scheduleTrace != nullptr) {

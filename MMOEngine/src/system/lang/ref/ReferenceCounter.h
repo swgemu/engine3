@@ -39,7 +39,7 @@ namespace sys {
 
 	public:
 		inline uint32 increaseCount() volatile {
-			return _references += 2;
+			return _references.fetch_add(2, std::memory_order_acq_rel) + 2;
 		}
 
 		void setLowestBit() volatile {
@@ -82,7 +82,7 @@ namespace sys {
 			uint32 oldVal, newVal;
 
 			do {
-				oldVal = _references.load(std::memory_order_relaxed);
+				oldVal = _references.load(std::memory_order_acquire);
 
 				newVal = oldVal - 2;
 
@@ -91,15 +91,19 @@ namespace sys {
 				if (newVal == 0)
 					newVal = 1;
 			} while (!_references.compare_exchange_weak(oldVal, newVal,
-						std::memory_order_release, std::memory_order_relaxed));
+						std::memory_order_release, std::memory_order_release));
 
 			return ((oldVal - newVal) & 1);
 		}
 
-		inline uint32 getReferenceCount() volatile {
+		inline uint32 getReferenceCount() volatile const {
 			//WMB();
 
-			return _references.load(std::memory_order_relaxed);
+			return _references.load(std::memory_order_acquire);
+		}
+
+		inline void reset() volatile {
+			_references.store(0);
 		}
 
 	};

@@ -46,13 +46,13 @@ namespace engine {
 
             }
 
-            void run() {
+            void run() final {
                 auto& lambda = function.getLambda();
 
                 lambda();
             }
 
-            const char* getTaskName() {
+            const char* getTaskName() final {
                 return function.getName();
             }
         };

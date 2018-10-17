@@ -63,8 +63,8 @@ namespace sys {
 			return value.compare_exchange_weak(ref, newval);
 		}
 
-		inline V get() const {
-			return (V) value.load(std::memory_order_relaxed);
+		inline V get(std::memory_order t = std::memory_order_relaxed) const {
+			return (V) value.load(t);
 		}
 
 		void set(V val) volatile {

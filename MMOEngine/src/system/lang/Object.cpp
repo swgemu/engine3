@@ -45,7 +45,7 @@ Object::Object(const Object& obj) : Variable() {
 #endif
 }
 
-Object::~Object() {
+Object::~Object() NO_THREAD_SAFETY_ANALYSIS {
 #ifdef TRACE_REFERENCES
 	if (referenceHolders != nullptr) {
 		for (int i = 0; i < referenceHolders->size(); ++i)
@@ -59,6 +59,8 @@ Object::~Object() {
 		assert((counters->getStrongReferenceCount() % 2) != 0);
 
 		if (counters->decrementAndTestAndSetWeakCount() != 0) {
+			referenceCounters = nullptr;
+
 			delete counters;
 			//referenceCounters = nullptr;
 		}
@@ -129,7 +131,7 @@ void Object::_destroyIgnoringCount() {
 	}
 }
 
-void Object::destroy() {
+void Object::destroy() NO_THREAD_SAFETY_ANALYSIS {
 #ifdef MEMORY_PROTECTION
 	_destroying->set(true);
 #else

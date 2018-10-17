@@ -38,7 +38,7 @@ namespace engine {
 		StackTrace* scheduleTrace;
 	#endif
 
-		uint64 period;
+		AtomicLong period;
 
 	#ifdef COLLECT_TASKSTATISTICS
 		uint64 lastElapsedTime;
@@ -52,7 +52,7 @@ namespace engine {
 		Task(uint64 mtime);
 		Task(Time& time);
 
-		virtual ~Task();
+		~Task();
 
 		bool isScheduled();
 
@@ -131,11 +131,11 @@ namespace engine {
 			return taskScheduler;
 		}
 
-		inline int getPriroty() {
+		inline int getPriroty() const {
 			return priority;
 		}
 
-		inline bool isPeriodic() {
+		inline bool isPeriodic() const {
 			return period != 0;
 		}
 
@@ -153,7 +153,7 @@ namespace engine {
 			Task::priority = priority;
 		}
 
-		inline uint64 getPeriod() {
+		inline uint64 getPeriod() const {
 			return period;
 		}
 
