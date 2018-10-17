@@ -109,7 +109,7 @@ namespace sys {
 
 				while (prev->isMarked()) { // Possibly a failure due to marking. Traverse
 					prev = prev->backlink; // a chain of backlinks to reach an unmarked node.
-		/*11 (prev node, del node) = SearchFrom(target node.key − , prev node)
+		/*11 (prev node, del node) = SearchFrom(target node.key − , prev node)
 		12 		if (del node =6 target node) // target node got deleted.
 					return (null, false) // Report the failure, return no pointer*/
 				}
