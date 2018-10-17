@@ -46,7 +46,7 @@ void TaskManagerImpl::initialize() {
 #endif
 }
 
-void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) {
+void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) NO_THREAD_SAFETY_ANALYSIS {
 	Locker locker(this);
 
 	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
@@ -132,7 +132,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 
 		ioSchedulers.add(scheduler);
 	}
-	
+
 	StringBuffer msg;
 	msg << "initialized";
 	debug(msg);
@@ -222,7 +222,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 	for (int i = 0; i < workers.size(); ++i) {
 //		if (i == 9 || i == 7) //mysql and bas packet handler workers should continue
 //			continue;
-			
+
 		TaskWorkerThread* worker = workers.get(i);
 
 		if (!worker->doBlockWorkerDuringSave())
@@ -326,7 +326,7 @@ void TaskManagerImpl::setTaskScheduler(Task* task, TaskScheduler* scheduler) {
 		throw IllegalArgumentException("task is already scheduled");
 }
 
-void TaskManagerImpl::executeTask(Task* task) {
+void TaskManagerImpl::executeTask(Task* task) NO_THREAD_SAFETY_ANALYSIS {
 	if (shuttingDown)
 		return;
 
@@ -335,18 +335,18 @@ void TaskManagerImpl::executeTask(Task* task) {
 	if (custQueue.length()) {
 		executeTask(task, custQueue);
 	} else {
-		taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->push(task);
+		taskQueues.getUnsafe(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->push(task);
 	}
 }
 
-void TaskManagerImpl::executeTask(Task* task, int taskqueue) {
+void TaskManagerImpl::executeTask(Task* task, int taskqueue) NO_THREAD_SAFETY_ANALYSIS {
 	if (shuttingDown)
 		return;
 
-	taskQueues.get(taskqueue)->push(task);
+	taskQueues.getUnsafe(taskqueue)->push(task);
 }
 
-void TaskManagerImpl::executeTask(Task* task, const String& customTaskQueue) {
+void TaskManagerImpl::executeTask(Task* task, const String& customTaskQueue) NO_THREAD_SAFETY_ANALYSIS {
 	if (shuttingDown)
 		return;
 
@@ -358,10 +358,10 @@ void TaskManagerImpl::executeTask(Task* task, const String& customTaskQueue) {
 
 	int val = customQueues.elementAt(find).getValue();
 
-	taskQueues.get(val)->push(task);
+	taskQueues.getUnsafe(val)->push(task);
 }
 
-void TaskManagerImpl::executeTaskFront(Task* task) {
+void TaskManagerImpl::executeTaskFront(Task* task) NO_THREAD_SAFETY_ANALYSIS {
 	if (shuttingDown)
 		return;
 
@@ -394,7 +394,7 @@ void TaskManagerImpl::executeTasks(const Vector<Task*>& taskList) {
 	taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushAll(taskList);
 }
 
-bool TaskManagerImpl::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
+bool TaskManagerImpl::getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) {
 	nextExecutionTime = task->getNextExecutionTime();
 
 	return true;
@@ -432,7 +432,7 @@ void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
 		throw IllegalArgumentException("Task was invalid for scheduling");
 }
 
-void TaskManagerImpl::scheduleIoTask(Task* task, Time& time) {
+void TaskManagerImpl::scheduleIoTask(Task* task, const Time& time) {
 	if (shuttingDown)
 		return;
 
@@ -484,7 +484,7 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 		throw IllegalArgumentException("Task was invalid for scheduling");
 }
 
-void TaskManagerImpl::scheduleTask(Task* task, Time& time) {
+void TaskManagerImpl::scheduleTask(Task* task, const Time& time) {
 	if (shuttingDown)
 		return;
 
@@ -518,7 +518,7 @@ void TaskManagerImpl::rescheduleIoTask(Task* task, uint64 delay) {
 	task->release();
 }
 
-void TaskManagerImpl::rescheduleIoTask(Task* task, Time& time) {
+void TaskManagerImpl::rescheduleIoTask(Task* task, const Time& time) {
 	task->acquire();
 
 	cancelTask(task);
@@ -538,7 +538,7 @@ void TaskManagerImpl::rescheduleTask(Task* task, uint64 delay) {
 	task->release();
 }
 
-void TaskManagerImpl::rescheduleTask(Task* task, Time& time) {
+void TaskManagerImpl::rescheduleTask(Task* task, const Time& time) {
 	task->acquire();
 
 	cancelTask(task);
@@ -569,7 +569,7 @@ void TaskManagerImpl::flushTasks() {
 	Locker locker(this);
 
 	//tasks.flush();
-	
+
 	for (int i = 0; i < taskQueues.size(); ++i) {
 		taskQueues.get(i)->flush();
 	}
@@ -904,7 +904,7 @@ int TaskManagerImpl::getExecutingTaskSize() {
 #ifdef WITH_STM
 	count += serialTaskQueue.size();
 #endif
-	
+
 	return count;
 }
 

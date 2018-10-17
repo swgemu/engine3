@@ -12,6 +12,7 @@
 #include <type_traits>
 #endif
 
+#include "system/thread/atomic/AtomicReference.h"
 #include "ReferenceCounter.h"
 
 namespace sys {
@@ -23,7 +24,7 @@ class StrongAndWeakReferenceCount {
 protected:
 	ReferenceCounter strongReferenceCount;
 	ReferenceCounter weakReferenceCount;
-	Object* object;
+	AtomicReference<Object*> object;
 public:
 	StrongAndWeakReferenceCount(uint32 strongCount, uint32 weakCount, Object* obj) :
 		strongReferenceCount(strongCount), weakReferenceCount(weakCount), object(obj) {
@@ -58,7 +59,7 @@ public:
 		return weakReferenceCount.increaseCount();
 	}
 
-	inline uint32 decrementAndTestAndSetStrongCount() volatile {
+	inline uint32 decrementAndTestAndSetStrongCount() {
 		uint32 ret = strongReferenceCount.decrementAndTestAndSet();
 
 		if (ret != 0) {
@@ -68,7 +69,7 @@ public:
 		return ret;
 	}
 
-	inline bool tryStrongFinalDecrement() volatile {
+	inline bool tryStrongFinalDecrement() {
 		bool ret = strongReferenceCount.tryFinalDecrement();
 
 		if (ret) {
@@ -126,9 +127,9 @@ public:
 	template <class O>
 	O getObjectReference() {
 #ifdef CXX11_COMPILER
-		return Helper<O, std::remove_pointer<O>::type::is_virtual_object>::convert(object);
+		return Helper<O, std::remove_pointer<O>::type::is_virtual_object>::convert(object.get());
 #else
-		return dynamic_cast<O>(object);
+		return dynamic_cast<O>(object.get());
 #endif
 	}
 

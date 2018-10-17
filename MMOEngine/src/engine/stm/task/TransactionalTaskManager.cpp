@@ -53,7 +53,7 @@ void TransactionalTaskManager::unblockTaskManager(Vector<Locker*>* lockers) {
 	taskManager->unblockTaskManager(lockers);
 }
 
-void TransactionalTaskManager::scheduleTask(Task* task, Time& time) {
+void TransactionalTaskManager::scheduleTask(Task* task, const Time& time) {
 	LocalTaskManager* manager = getLocalTaskManager();
 
 	//manager->info("scheduling task");
@@ -67,7 +67,7 @@ void TransactionalTaskManager::rescheduleTask(Task* task, uint64 delay) {
 	manager->rescheduleTask(task, delay);
 }
 
-void TransactionalTaskManager::rescheduleTask(Task* task, Time& time) {
+void TransactionalTaskManager::rescheduleTask(Task* task, const Time& time) {
 	LocalTaskManager* impl = getLocalTaskManager();
 
 	impl->rescheduleTask(task, time);
@@ -94,7 +94,7 @@ bool TransactionalTaskManager::isTaskScheduled(Task* task) {
 		return taskManager->isTaskScheduled(task);
 }
 
-bool TransactionalTaskManager::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
+bool TransactionalTaskManager::getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) {
 	LocalTaskManager* manager = getLocalTaskManager();
 
 	//if (manager->......................................)

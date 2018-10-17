@@ -28,7 +28,7 @@ TestIDLClass::~TestIDLClass() {
 
 int TestIDLClass::getValue() {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -42,7 +42,7 @@ int TestIDLClass::getValue() {
 
 void TestIDLClass::setValue(int val) {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -57,7 +57,7 @@ void TestIDLClass::setValue(int val) {
 
 void TestIDLClass::setValue2(int val1, int val2) {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -73,7 +73,7 @@ void TestIDLClass::setValue2(int val1, int val2) {
 
 void TestIDLClass::setParent(TestIDLClass* val) {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -88,7 +88,7 @@ void TestIDLClass::setParent(TestIDLClass* val) {
 
 void TestIDLClass::testShit(const Vector<int>& val) {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -103,7 +103,7 @@ void TestIDLClass::testShit(const Vector<int>& val) {
 
 Vector<int>* TestIDLClass::getTestVector() {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);
 
 	} else {
@@ -113,7 +113,7 @@ Vector<int>* TestIDLClass::getTestVector() {
 
 ManagedWeakReference<TestIDLClass* > TestIDLClass::getParent() {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -127,7 +127,7 @@ ManagedWeakReference<TestIDLClass* > TestIDLClass::getParent() {
 
 void TestIDLClass::asyncTest() {
 	TestIDLClassImplementation* _implementation = static_cast<TestIDLClassImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -172,7 +172,7 @@ void TestIDLClassImplementation::finalize() {
 void TestIDLClassImplementation::_initializeImplementation() {
 	_setClassHelper(TestIDLClassHelper::instance());
 
-	_this = nullptr;
+	_this = NULL;
 
 	_serializationHelperMethod();
 }
@@ -412,7 +412,7 @@ void TestIDLClassAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 		{
 			
 			DistributedObject* _m_res = getParent().get();
-			resp->insertLong(_m_res == nullptr ? 0 : _m_res->_getObjectID());
+			resp->insertLong(_m_res == NULL ? 0 : _m_res->_getObjectID());
 		}
 		break;
 	case RPC_ASYNCTEST__:

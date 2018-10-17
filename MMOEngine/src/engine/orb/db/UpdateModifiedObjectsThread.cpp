@@ -70,9 +70,9 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 		msg << "thread " << threadId << " commited objects into database in " << delta / 1000000 << " ms";
 		objectManager->info(msg.toString(), true);
 
-		finishedCommiting = true;
-
 		transaction = nullptr;
+
+		finishedCommiting = true;
 
 		blockMutex.unlock();
 	} else {

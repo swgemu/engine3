@@ -35,11 +35,7 @@ namespace engine {
 			values[2] = 0;
 		}
 
-		Vector3(const Vector3& vec) {
-			values[0] = vec.values[0];
-			values[1] = vec.values[1];
-			values[2] = vec.values[2];
-		}
+		Vector3(const Vector3& vec) = default;
 
 		inline Vector3(const float fx, const float fy, const float fz) {
 			values[0] = fx;
@@ -191,16 +187,7 @@ namespace engine {
 			return values;
 		}
 
-		inline Vector3& operator = (const Vector3& v) {
-			if (this == &v)
-				return *this;
-
-			values[0] = v.values[0];
-			values[1] = v.values[1];
-			values[2] = v.values[2];
-
-			return *this;
-		}
+		Vector3& operator = (const Vector3& v) = default;
 
 		inline Vector3& operator = (const float scalar) {
 			values[0] = scalar;
@@ -325,20 +312,9 @@ namespace engine {
 		Vector3 getMin(const Vector3& vec) const {
 			Vector3 minVector;
 
-			if (values[0] < vec.values[0])
-				minVector.setX(values[0]);
-			else
-				minVector.setX(vec.values[0]);
-
-			if (values[1] < vec.values[1])
-				minVector.setY(values[1]);
-			else
-				minVector.setY(vec.values[1]);
-
-			if (values[2] < vec.values[2])
-				minVector.setZ(values[2]);
-			else
-				minVector.setZ(vec.values[2]);
+			minVector.setX(Math::min(values[0], vec.values[0]));
+			minVector.setY(Math::min(values[1], vec.values[1]));
+			minVector.setZ(Math::min(values[2], vec.values[2]));
 
 			return minVector;
 		}
@@ -346,20 +322,9 @@ namespace engine {
 		inline Vector3 getMax(const Vector3& vec) const {
 			Vector3 maxVector;
 
-			if (values[0] > vec.values[0])
-				maxVector.setX(values[0]);
-			else
-				maxVector.setX(vec.values[0]);
-
-			if (values[1] > vec.values[1])
-				maxVector.setY(values[1]);
-			else
-				maxVector.setY(vec.values[1]);
-
-			if (values[2] > vec.values[2])
-				maxVector.setZ(values[2]);
-			else
-				maxVector.setZ(vec.values[2]);
+			maxVector.setX(Math::max(values[0], vec.values[0]));
+			maxVector.setY(Math::max(values[1], vec.values[1]));
+			maxVector.setZ(Math::max(values[2], vec.values[2]));
 
 			return maxVector;
 		}

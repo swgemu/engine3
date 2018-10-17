@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define DISTRIBUTEDOBJECT_H_
 
 #include "system/lang.h"
+#include <atomic>
 
 namespace engine {
   namespace ORB {
@@ -25,7 +26,7 @@ namespace engine {
 
 		ObjectBroker* _objectBroker;
 
-		bool _updated;
+		std::atomic<bool> _updated;
 		bool _markedForDeletion;
 		bool _deletedFromDatabase;
 
@@ -52,7 +53,7 @@ namespace engine {
 		}
 
 		inline void _setUpdated(bool var) {
-			_updated = var;
+			_updated.store(var, std::memory_order_relaxed);;
 		}
 		
 		inline void _setDeletedFromDatabase(bool val) {
@@ -89,7 +90,7 @@ namespace engine {
 		}
 
 		inline bool _isUpdated() const {
-			return _updated;
+			return _updated.load(std::memory_order_relaxed);
 		}
 
 		inline bool _isMarkedForDeletion() const {

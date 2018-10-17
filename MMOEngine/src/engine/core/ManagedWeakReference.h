@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef MANAGEDWEAKREFERENCE_H_
 #define MANAGEDWEAKREFERENCE_H_
 
+#include <atomic>
+
 #include "system/lang.h"
 
 #include "engine/orb/object/DistributedObject.h"
@@ -22,32 +24,25 @@ namespace engine {
 
 	template<class O> class ManagedWeakReference : public WeakReference<O>, public Variable {
 	protected:
-		mutable uint64 savedObjectID;
+		mutable std::atomic<uint64> savedObjectID{0};
 	public:
 		ManagedWeakReference() : WeakReference<O>(), Variable() {
-			savedObjectID = 0;
 		}
 
-		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref), Variable() {
-			savedObjectID = ref.savedObjectID;
+		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref), Variable(), savedObjectID(ref.savedObjectID.load(std::memory_order_relaxed)) {
 		}
 
-		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p), Variable() {
-			savedObjectID = oid;
+		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p), Variable(), savedObjectID(oid) {
 		}
 
 #ifdef CXX11_COMPILER
 		ManagedWeakReference(ManagedWeakReference<O>&& ref) : WeakReference<O>(std::move(ref)), Variable(),
-				savedObjectID(ref.savedObjectID) {
-			ref.savedObjectID = 0;
+				savedObjectID(ref.savedObjectID.load(std::memory_order_relaxed)) {
+			ref.savedObjectID.store(0);
 		}
 #endif
 
-		ManagedWeakReference(O obj) : WeakReference<O>(obj), Variable() {
-			savedObjectID = 0;
-
-			if (obj != nullptr)
-				savedObjectID = obj->_getObjectID();
+		ManagedWeakReference(O obj) : WeakReference<O>(obj), Variable(), savedObjectID(obj != nullptr ? obj->_getObjectID() : 0) {
 		}
 
 		ManagedWeakReference& operator=(const ManagedWeakReference& ref) {
@@ -56,7 +51,7 @@ namespace engine {
 
 			WeakReference<O>::operator=(ref);
 
-			savedObjectID = ref.savedObjectID;
+			savedObjectID.store(ref.savedObjectID.load(std::memory_order_relaxed), std::memory_order_relaxed);
 
 			return *this;
 		}
@@ -68,9 +63,9 @@ namespace engine {
 
 			WeakReference<O>::operator=(std::move(ref));
 
-			savedObjectID = ref.savedObjectID;
+			savedObjectID.store(ref.savedObjectID.load(std::memory_order_relaxed), std::memory_order_relaxed);
 
-			ref.savedObjectID = 0;
+			ref.savedObjectID.store(0);
 
 			return *this;
 		}
@@ -80,9 +75,9 @@ namespace engine {
 			WeakReference<O>::updateObject(obj);
 
 			if (obj == nullptr)
-				savedObjectID = 0;
+				savedObjectID.store(0, std::memory_order_relaxed);
 			else
-				savedObjectID = obj->_getObjectID();
+				savedObjectID.store(obj->_getObjectID(), std::memory_order_relaxed);
 
 			return obj;
 		}
@@ -122,6 +117,7 @@ namespace engine {
 
 		inline bool operator==(O obj) {
 			O ref = getReferenceUnsafe();
+			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
 
 			if (ref == nullptr && savedObjectID != 0) {
 				if (obj == nullptr)
@@ -134,7 +130,8 @@ namespace engine {
 
 		inline bool operator!=(O obj) {
 			O ref = getReferenceUnsafe();
-
+			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
+			
 			if (ref == nullptr && savedObjectID != 0) {
 				if (obj == nullptr)
 					return savedObjectID != 0;
@@ -145,16 +142,21 @@ namespace engine {
 		}
 
 		inline bool operator!=(const ManagedWeakReference<O>& r) {
-			return savedObjectID != r.savedObjectID;
+			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
+			
+			return savedObjectID != r.savedObjectID.load(std::memory_order_relaxed);
 		}
 
 		inline bool operator==(const ManagedWeakReference<O>& r) {
-			return savedObjectID == r.savedObjectID;
+			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
+			
+			return savedObjectID == r.savedObjectID.load(std::memory_order_relaxed);;
 		}
 
 		inline ManagedReference<O> get() {
 			ManagedReference<O> strongRef = WeakReference<O>::get();
-
+			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
+			
 			if (strongRef == nullptr && savedObjectID != 0) {
 				Reference<DistributedObject*> tempObj = Core::lookupObject(savedObjectID);
 				strongRef = dynamic_cast<O>(tempObj.get());
@@ -162,7 +164,7 @@ namespace engine {
 				WeakReference<O>::updateObject(strongRef.get());
 
 				if (strongRef == NULL) {
-					savedObjectID = 0;
+					this->savedObjectID.store(0, std::memory_order_relaxed);
 				}
 			}
 
@@ -171,7 +173,8 @@ namespace engine {
 
 		inline ManagedReference<O> getForUpdate() {
 			ManagedReference<O> strongRef = WeakReference<O>::get();
-
+			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
+			
 			if (savedObjectID != 0 && strongRef == nullptr) {
 				Reference<DistributedObject*> tempObj = Core::lookupObject(savedObjectID);
 				strongRef = dynamic_cast<O>(tempObj.get());
@@ -179,7 +182,7 @@ namespace engine {
 				WeakReference<O>::updateObject(strongRef.get());
 
 				if (strongRef == NULL) {
-					savedObjectID = 0;
+					this->savedObjectID.store(0, std::memory_order_relaxed);
 				}
 			}
 
@@ -187,7 +190,7 @@ namespace engine {
 		}
 
 		inline uint64 getSavedObjectID() const {
-			return savedObjectID;
+			return savedObjectID.load(std::memory_order_relaxed);
 		}
 
 		int compareTo(const ManagedWeakReference& ref) const;
@@ -203,8 +206,8 @@ namespace engine {
 	};
 
 	template<class O> int ManagedWeakReference<O>::compareTo(const ManagedWeakReference& ref) const {
-		uint64 thisOid = savedObjectID;
-		uint64 otherOid = ref.savedObjectID;
+		uint64 thisOid = savedObjectID.load(std::memory_order_relaxed);
+		uint64 otherOid = ref.savedObjectID.load(std::memory_order_relaxed);
 
 		if (thisOid < otherOid)
 			return 1;
@@ -215,7 +218,7 @@ namespace engine {
 	}
 
 	template<class O> bool ManagedWeakReference<O>::toString(String& str) {
-		str = String::valueOf(savedObjectID);
+		str = String::valueOf(savedObjectID.load(std::memory_order_relaxed));
 
 		return true;
 	}
@@ -246,14 +249,14 @@ namespace engine {
 	}
 
 	template<class O> bool ManagedWeakReference<O>::toBinaryStream(ObjectOutputStream* stream) {
-		stream->writeLong(savedObjectID);
+		stream->writeLong(savedObjectID.load(std::memory_order_relaxed));
 
 		return true;
 	}
 
 	template<class O> bool ManagedWeakReference<O>::parseFromBinaryStream(ObjectInputStream* stream) {
 		uint64 oid = stream->readLong();
-		savedObjectID = oid;
+		savedObjectID.store(oid, std::memory_order_relaxed);
 
 		WeakReference<O>::updateObject((O)nullptr);
 

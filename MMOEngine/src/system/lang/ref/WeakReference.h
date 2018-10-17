@@ -20,6 +20,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace sys {
   namespace lang {
+	template<class T> class Reference;
 
 	template<class O> class WeakReference {
 	protected:
@@ -203,8 +204,6 @@ namespace sys {
 
 				old->increaseWeakCount();
 
-				COMPILER_BARRIER();
-
 				if (old == weakReference.get())
 					return old;
 				else
@@ -233,7 +232,7 @@ namespace sys {
 			for (;;) {
 				StrongAndWeakReferenceCount* p = safeRead();
 
-				if (weakReference.compareAndSet(p, newRef)) {
+				if (weakReference.compareAndSetWeak(p, newRef)) {
 					bool deleted = release(p);
 
 					if (!deleted)

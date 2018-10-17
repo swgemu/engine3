@@ -30,7 +30,7 @@ Observable::~Observable() {
 
 void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -47,7 +47,7 @@ void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, lo
 
 void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -63,7 +63,7 @@ void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 
 void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -79,7 +79,7 @@ void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 
 int Observable::getObserverCount(unsigned int eventType) const {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementationForRead());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -94,7 +94,7 @@ int Observable::getObserverCount(unsigned int eventType) const {
 
 void Observable::addObservableChild(Observable* observable) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -109,7 +109,7 @@ void Observable::addObservableChild(Observable* observable) {
 
 void Observable::dropObserveableChild(Observable* observable) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -155,7 +155,7 @@ void ObservableImplementation::finalize() {
 void ObservableImplementation::_initializeImplementation() {
 	_setClassHelper(ObservableHelper::instance());
 
-	_this = nullptr;
+	_this = NULL;
 
 	_serializationHelperMethod();
 }

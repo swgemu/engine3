@@ -17,11 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <process.h>
 #endif
 
-#ifdef PLATFORM_MAC
-#include "mysql56/mysql/mysql.h"
-#else
 #include <mysql.h>
-#endif
 
 AtomicInteger Thread::threadCounter;
 
@@ -32,9 +28,6 @@ void threadDtor(void*) {
 }
 
 ThreadLocal<Thread*> Thread::currentThread(threadDtor);
-
-volatile uint64 AtomicInteger::totalDecrementCount = 0;
-volatile uint64 AtomicInteger::totalIncrementCount = 0;
 
 void Thread::initializeThread(Thread* thread) {
 	currentThread.set(thread);

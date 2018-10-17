@@ -6,43 +6,45 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef LINKEDLIST_H_
 #define LINKEDLIST_H_
 
+#include <atomic>
+
 namespace sys {
   namespace util {
-		
+
 	template<class O> class LinkedList;
 	template<class O> class LinkedListIterator;
-	
+
 	template<class O> class ListEntry {
-		O obj;  
+		O obj;
 		ListEntry* next;
-	
-	public:	
+
+	public:
 		ListEntry() : next(nullptr) {
 		}
-	
+
 		ListEntry(O obj, ListEntry* e) {
 			ListEntry::obj = obj; next = e;
 		}
-	
+
 		friend class LinkedList<O>;
 		friend class LinkedListIterator<O>;
 	};
-	
+
 	template<class O> class LinkedList {
 		ListEntry<O>* head;
 		ListEntry<O>* current;
-		
-		int count;
-	
-	public:	
+
+		std::atomic<int> count;
+
+	public:
 		LinkedList();
 		virtual ~LinkedList();
-		
+
 		virtual void add(O& obj);
 		virtual void add(int index, O& obj);
-		
+
 		O& get(int index) const;
-		
+
 		O remove(int index);
 
 		LinkedListIterator<O> getIterator() {
@@ -50,13 +52,13 @@ namespace sys {
 		}
 
 		inline bool isEmpty() const {
-			return count == 0;
+			return count.load(std::memory_order_relaxed) == 0;
 		}
 
 		inline int size() const {
-			return count;
+			return count.load(std::memory_order_relaxed);
 		}
-		
+
 		friend class LinkedListIterator<O>;
 
 	};
@@ -88,7 +90,7 @@ namespace sys {
 
 		head = new ListEntry<O>();
 	}
-	
+
 	template<class O> LinkedList<O>::~LinkedList() {
 		ListEntry<O>* currentObject = head;
 
@@ -104,8 +106,8 @@ namespace sys {
 
 	template<class O> void LinkedList<O>::add(O& obj) {
 		ListEntry<O>* e = new ListEntry<O>(obj, nullptr);
-		
-		if (count == 0)
+
+		if (count.load(std::memory_order_relaxed) == 0)
 			head->next = e;
 		else
 			current->next = e;
@@ -114,9 +116,9 @@ namespace sys {
 
 		count++;
 	}
-	
+
 	template<class O> void LinkedList<O>::add(int index, O& obj) {
-		if ((int) count < index + 1 || index < 0)
+		if ((int) count.load(std::memory_order_relaxed) < index + 1 || index < 0)
 			throw ArrayIndexOutOfBoundsException(index);
 
 		ListEntry<O>* newEntry = new ListEntry<O>(obj, nullptr);
@@ -145,28 +147,28 @@ namespace sys {
 	}
 
 	template<class O> O& LinkedList<O>::get(int index) const {
-		if (count < index + 1 || index < 0) 
+		if (count.load(std::memory_order_relaxed) < index + 1 || index < 0)
 			throw ArrayIndexOutOfBoundsException(index);
-		
+
 		const ListEntry<O>* e = head;
-		
+
 		for (int i = 0; i < index + 1; ++i)
 			e = e->next;
-		
+
 		return e->obj;
 	}
 
 	template<class O> O LinkedList<O>::remove(int index) {
-		if ((int) count < index + 1 || index < 0)
+		if ((int) count.load(std::memory_order_relaxed) < index + 1 || index < 0)
 			throw ArrayIndexOutOfBoundsException(index);
-		
+
 		ListEntry<O>* e = head;
-		
+
 		for (int i = 0; i < index; ++i)
 			e = e->next;
-		
+
 		ListEntry<O>* o = e->next;
-		
+
 		if (o != nullptr) {
 			e->next = o->next;
 
@@ -177,7 +179,7 @@ namespace sys {
 
 			return obj;
 		}
-		
+
 		return nullptr;
 	}
 

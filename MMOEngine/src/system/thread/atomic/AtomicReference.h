@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef ATOMICREFERENCE_H_
 #define ATOMICREFERENCE_H_
 
+#include <atomic>
+
 #include "system/platform.h"
 
 //#include "system/lang/ref/Reference.h"
@@ -15,139 +17,58 @@ namespace sys {
 	namespace atomic {
 
 	 template<class V> class AtomicReference {
-		 volatile V value;
+		std::atomic<V> value{};
 
 	public:
 		AtomicReference() {
-			value = nullptr;
 		}
 
-		AtomicReference(V ref) {
-			value = ref;
+		AtomicReference(AtomicReference&& ref) : value(ref.value.load(std::memory_order_relaxed)) {
 		}
 
-		AtomicReference(const AtomicReference& r) : value(r.value) {
-
+		AtomicReference(V ref) : value(ref) {
 		}
 
-		inline V compareAndSetReturnOld(volatile void* oldval, void* newval) {
-#ifdef CLANG_COMPILER
-#ifdef PLATFORM_64
-			volatile long long* addy = (volatile long long*) &value;
-
-			return (V) __sync_val_compare_and_swap (addy, (uint64)oldval, (uint64)newval);
-#else
-			volatile int* addy = (volatile int*) &value;
-
-			return (V) __sync_val_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
-#endif
-#elif GCC_VERSION >= 40100
-			return __sync_val_compare_and_swap((void**)&value, (void*)oldval, (void*)newval);
-#else
-			PVOID* oldVal = (PVOID*)value;
-			InterlockedCompareExchangePointer((volatile PVOID*)&oldVal, newval, (PVOID*) oldval);
-
-			return (V) oldVal;
-#endif
+		AtomicReference(const AtomicReference& r) : value(r.value.load(std::memory_order_relaxed)) {
 		}
 
-		inline bool compareAndSet(volatile void* oldval, void* newval) {
-#ifdef CLANG_COMPILER
-#ifdef PLATFORM_64
-//			void* blia = value;
+		AtomicReference& operator=(const AtomicReference& r) {
+			value.store(r.value.load(std::memory_order_relaxed));
 
-			volatile long long* addy = (volatile long long*) &value;
-
-			return __sync_bool_compare_and_swap (addy, (uint64)oldval, (uint64)newval);
-#else
-			volatile int* addy = (volatile int*) &value;
-
-			return __sync_bool_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
-#endif
-#elif GCC_VERSION >= 40100 || defined(__MINGW32__)
-			return __sync_bool_compare_and_swap ((void**)&value, (void*)oldval, (void*)newval);
-#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
-			//TODO: find appropriate method
-			if ( value == oldval ) {
-				value = newval;
-				return true;
-			} else {
-				return false;
-			}
-#else
-			InterlockedCompareExchangePointer((volatile PVOID *)&value, newval, (PVOID *)oldval);
-
-			return value == newval;
-#endif
+			return *this;
 		}
 
-		template<typename T>
-		static inline T compareAndSetReturnOld(volatile T* value, volatile void* oldval, void* newval) {
-		#ifdef CLANG_COMPILER
-		#ifdef PLATFORM_64
-					volatile long long* addy = (volatile long long*) value;
+		AtomicReference& operator=(const V val) {
+			value.store(val);
 
-					return (V) __sync_val_compare_and_swap (addy, (uint64)oldval, (uint64)newval);
-		#else
-					volatile int* addy = (volatile int*) value;
+			return *this;
+		}
 
-					return (V) __sync_val_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
-		#endif
-		#elif GCC_VERSION >= 40100
-					return __sync_val_compare_and_swap((void**)value, (void*)oldval, (void*)newval);
-		#else
-					PVOID* oldVal = (PVOID*)value;
-					InterlockedCompareExchangePointer((volatile PVOID*)&oldVal, newval, (PVOID*) oldval);
+		inline V compareAndSetReturnOld(volatile V oldval, V newval) {
+			V ref = oldval;
+			value.compare_exchange_strong(ref, newval);
 
-					return (V) oldVal;
-		#endif
-				}
+			return ref;
+		}
 
-		template<typename T>
-		static inline bool compareAndSet(volatile T* value, volatile void* oldval, void* newval) {
-		#ifdef CLANG_COMPILER
-		#ifdef PLATFORM_64
-		//			void* blia = value;
+		inline bool compareAndSet(volatile V oldval, V newval) {
+			V ref = oldval;
 
-					volatile long long* addy = (volatile long long*) value;
+			return value.compare_exchange_strong(ref, newval);
+		}
 
-					return __sync_bool_compare_and_swap (addy, (uint64)oldval, (uint64)newval);
-		#else
-					volatile int* addy = (volatile int*) value;
+		inline bool compareAndSetWeak(volatile V oldval, V newval) {
+			V ref = oldval;
 
-					return __sync_bool_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
-		#endif
-		#elif GCC_VERSION >= 40100 || defined(__MINGW32__)
-					return __sync_bool_compare_and_swap ((void**)value, (void*)oldval, (void*)newval);
-		#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
-					//TODO: find appropriate method
-					if ( *value == *oldval ) {
-						*value = *newval;
-						return true;
-					} else {
-						return false;
-					}
-		#else
-					InterlockedCompareExchangePointer((volatile PVOID *)&value, newval, (PVOID *)oldval);
-
-					return value == newval;
-		#endif
+			return value.compare_exchange_weak(ref, newval);
 		}
 
 		inline V get() const {
-			COMPILER_BARRIER();
-
-			return value;
+			return (V) value.load(std::memory_order_relaxed);
 		}
 
-		void set(V val) {
-			value = val;
-		}
-
-		V operator=(V ref) {
-			set(ref);
-
-			return ref;
+		void set(V val) volatile {
+			value.store(val);
 		}
 
 		operator V() const {
@@ -159,9 +80,7 @@ namespace sys {
 		}
 
 		inline bool operator== (const V val) const {
-			COMPILER_BARRIER();
-
-			return val == value;
+			return val == (V) value.load(std::memory_order_relaxed);
 		}
 
 	};

@@ -114,7 +114,7 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 	return i;
 }
 
-void CommitMasterTransactionThread::commitData() {
+void CommitMasterTransactionThread::commitData() NO_THREAD_SAFETY_ANALYSIS {
 	for (int i = 0; i < numberOfThreads; ++i) {
 		UpdateModifiedObjectsThread* worker = threads->get(i);
 

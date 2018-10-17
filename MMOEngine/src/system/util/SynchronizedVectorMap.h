@@ -45,6 +45,12 @@ namespace sys {
 
  		 bool drop(const K& key);
 
+		 void removeAll() {
+		 	Locker locker(&guard);
+
+			vectorMap.removeAll();
+		 }
+
  		 int size() const {
  			 return vectorMap.size();
  		 }

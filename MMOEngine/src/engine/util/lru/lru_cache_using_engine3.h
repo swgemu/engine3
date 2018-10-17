@@ -1,7 +1,6 @@
 #ifndef LRU_CACHE_USING_ENGINE3_H_
 #define LRU_CACHE_USING_ENGINE3_H_
 #include "system/util/SynchronizedHashTable.h"
-#include "system/thread/atomic/AtomicInteger.h"
 
 #include <utility>
 #include <cassert>
@@ -37,7 +36,7 @@ template<typename A, typename B>
 class LRUCacheEntry {
 	A key;
 	B value;
-	volatile uint32 accessCount;
+	std::atomic<uint32> accessCount;
 public:
 	LRUCacheEntry() : accessCount(0) {
 
@@ -46,11 +45,13 @@ public:
 	LRUCacheEntry(const A& a, const B& b) : key(a), value(b), accessCount(0) {
 
 	}
-/*
-#ifdef CXX11_COMPILER
-	LRUCacheEntry(LRUCacheEntry&& a) : key(std::move(a.key)),
-			value(std::move(a.value)), accessCount(a.accessCount) {
 
+#ifdef CXX11_COMPILER
+	LRUCacheEntry(const LRUCacheEntry& a) : key(a.key), value(a.value), accessCount(a.accessCount.load(std::memory_order_relaxed)) {
+	}
+
+	LRUCacheEntry(LRUCacheEntry&& a) : key(std::move(a.key)),
+			value(std::move(a.value)), accessCount(a.accessCount.load(std::memory_order_relaxed)) {
 	}
 
 	LRUCacheEntry& operator=(LRUCacheEntry&& a) {
@@ -60,12 +61,23 @@ public:
 		key = std::move(a.key);
 		value = std::move(a.value);
 
-		accessCount = a.accessCount;
+		accessCount.store(a.accessCount.load(std::memory_order_relaxed));
 
 		return *this;
 	}
 #endif
-*/
+	LRUCacheEntry& operator=(const LRUCacheEntry& a) {
+		if (this == &a)
+			return *this;
+
+		key = a.key;
+		value = a.value;
+
+		accessCount.store(a.accessCount.load(std::memory_order_relaxed));
+
+		return *this;
+	}
+
 	A& first() {
 		return key;
 	}
@@ -88,7 +100,7 @@ public:
 
 		do {
 			result = false;
-			old = accessCount;
+			old = accessCount.load(std::memory_order_relaxed);
 
 			newCount = old + 1;
 
@@ -97,13 +109,13 @@ public:
 
 				result = true;
 			}
-		} while (!AtomicInteger::compareAndSet(&accessCount, old, newCount));
+		} while (!accessCount.compare_exchange_strong(old, newCount));
 
 		return result;
 	}
 
 	uint32 getAccessCount() const {
-		return accessCount;
+		return accessCount.load(std::memory_order_relaxed);
 	}
 
 	bool toBinaryStream(ObjectOutputStream* stream) {

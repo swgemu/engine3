@@ -23,7 +23,7 @@ namespace engine {
 
 		bool blockDuringSave;
 
-		volatile bool pauseWorker;
+		AtomicBoolean pauseWorker;
 
 		Task* currentTask;
 

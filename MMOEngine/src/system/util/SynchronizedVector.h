@@ -17,6 +17,8 @@ namespace sys {
    protected:
 	   mutable ReadWriteLock guard;
 	   Vector<E> vector;
+
+	   AtomicInteger count;
    public:
 	   SynchronizedVector();
 
@@ -61,11 +63,11 @@ namespace sys {
 	   }
 
 	   int size() const {
-		   return vector.size();
+		   return count;
 	   }
 
 	   inline bool isEmpty() const {
-		   return vector.size() == 0;
+		   return count == 0;
 	   }
    };
    template<class E>
@@ -89,6 +91,8 @@ namespace sys {
 
 	   vector.operator=(array);
 
+	   count = array.count;
+
 	   return *this;
    }
 
@@ -97,6 +101,8 @@ namespace sys {
 	   Locker locker(&guard);
 
 	   bool ret = vector.add(element);
+
+	   count.increment();
 
 	   return ret;
    }
@@ -107,6 +113,8 @@ namespace sys {
 
 	   bool ret = vector.add(index, element);
 
+	   count = vector.size();
+
 	   return ret;
    }
 
@@ -115,6 +123,8 @@ namespace sys {
 	   Locker locker(&guard);
 
 	   vector.addAll(array);
+
+	   count = vector.size();
    }
 
    template<class E>
@@ -131,6 +141,8 @@ namespace sys {
 	   Locker locker(&guard);
 
 	   vector.insertElementAt(element, index);
+
+	   count = vector.size();
    }
 
    template<class E>
@@ -157,6 +169,8 @@ namespace sys {
 
 	   E obj = vector.remove(index);
 
+	   count.decrement();
+
 	   return obj;
    }
 
@@ -166,6 +180,8 @@ namespace sys {
 
 	   bool obj = vector.removeElement(element);
 
+	   count = vector.size();
+
 	   return obj;
    }
 
@@ -174,6 +190,8 @@ namespace sys {
 	   Locker locker(&guard);
 
 	   vector.removeElementAt(index);
+
+	   count.decrement();
    }
 
    template<class E>
@@ -181,6 +199,8 @@ namespace sys {
 	   Locker locker(&guard);
 
 	   vector.removeRange(fromIndex, toIndex);
+
+	   count = vector.size();
    }
 
    template<class E>
@@ -188,6 +208,8 @@ namespace sys {
 	   Locker locker(&guard);
 
 	   vector.removeAll(newSize, newIncrement);
+
+	   count = 0;
    }
 
    template<class E>

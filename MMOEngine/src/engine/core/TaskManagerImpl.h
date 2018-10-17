@@ -39,12 +39,12 @@ namespace engine {
 		int schedulerThreads;
 
 		AtomicInteger currentTaskScheduler;
-        AtomicInteger currentTaskQueue;
+		AtomicInteger currentTaskQueue;
 
-		bool shuttingDown;
+		AtomicBoolean shuttingDown;
 
 	public:
-	    static int DEFAULT_WORKER_QUEUES;
+	    	static int DEFAULT_WORKER_QUEUES;
 		static int DEFAULT_WORKER_THREADS_PER_QUEUE;
 		static int DEFAULT_SCHEDULER_THREADS;
 		static int DEFAULT_IO_SCHEDULERS;
@@ -84,21 +84,21 @@ namespace engine {
 
 		void executeTaskFront(Task* task);
 		void executeTaskRandom(Task* task);
-		bool getNextExecutionTime(Task* task, Time& nextExecutionTime);
+		bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime);
 
 		bool isTaskScheduled(Task* task);
 
 		void scheduleTask(Task* task, uint64 delay = 0);
-		void scheduleTask(Task* task, Time& time);
+		void scheduleTask(Task* task, const Time& time);
 
 		void scheduleIoTask(Task* task, uint64 delay = 0);
-		void scheduleIoTask(Task* task, Time& time);
+		void scheduleIoTask(Task* task, const Time& time);
 
 		void rescheduleTask(Task* task, uint64 delay = 0);
-		void rescheduleTask(Task* task, Time& time);
+		void rescheduleTask(Task* task, const Time& time);
 
 		void rescheduleIoTask(Task* task, uint64 delay = 0);
-		void rescheduleIoTask(Task* task, Time& time);
+		void rescheduleIoTask(Task* task, const Time& time);
 
 		bool cancelTask(Task* task);
 

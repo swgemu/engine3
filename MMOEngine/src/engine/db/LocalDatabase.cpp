@@ -209,7 +209,10 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 
 	do {
 		ret  = -1;
-		transaction = environment->beginTransaction(nullptr);
+		TransactionConfig config = TransactionConfig::DEFAULT;
+		config.setReadUncommitted(true);
+
+		transaction = environment->beginTransaction(nullptr, config);
 
 		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
 

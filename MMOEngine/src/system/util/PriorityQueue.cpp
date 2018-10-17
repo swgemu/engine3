@@ -65,7 +65,8 @@ const PriorityQueueEntry* PriorityQueue::poll() {
 
 	oldRoot->setUnqueued();
 
-	assert (--count >= 0);
+	auto val = --count >= 0;
+	assert (val);
 
 	++poppedEntries;
 
@@ -101,8 +102,9 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 	oldNode->rightNode = nullptr;
 
 	oldNode->setUnqueued();
+	auto val = --count >= 0;
 
-	assert(--count >= 0);
+	assert(val);
 
 	++removedEntries;
 

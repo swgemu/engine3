@@ -48,7 +48,7 @@ bool TimedTaskQueue::add(Task* task, uint64 delay) {
 	return result;
 }
 
-bool TimedTaskQueue::add(Task* task, Time& time) {
+bool TimedTaskQueue::add(Task* task, const Time& time) {
 	condMutex->lock();
 
 	if (task->isQueued())
@@ -164,7 +164,7 @@ Task* TimedTaskQueue::get() {
 		}
 
 		Task* task = (Task*) PriorityQueue::peak();
-		Time& time = task->getNextExecutionTime();
+		Time time = task->getNextExecutionTime().getTimeObject();
 
 		if (blocked || !time.isFuture())
 			break;

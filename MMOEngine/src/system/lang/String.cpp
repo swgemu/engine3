@@ -107,10 +107,10 @@ String::~String() {
 #ifdef SSO_STRING
 	if (count >= SSO_SIZE) {
 		free(value);
-		value = nullptr;
+		//value = nullptr;
 	}
 
-	count = 0;
+	//count = 0;
 #else
 	if (value != nullptr) {
 		free(value);

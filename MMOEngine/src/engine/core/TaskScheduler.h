@@ -8,6 +8,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include <atomic>
+
 #include "system/util/SynchronizedHashTable.h"
 
 #include "engine/log/Logger.h"
@@ -24,13 +26,13 @@ namespace engine {
 
 		TimedTaskQueue tasks;
 
-		bool doRun;
+		AtomicBoolean doRun;
 
 		Mutex blockMutex;
 
 		HashTable<const char*, uint64> tasksCount;
 		ReadWriteLock tasksCountGuard;
-		volatile bool pause;
+		AtomicBoolean pause;
 
 	protected:
 		void prepareTask(Task* task);
@@ -50,7 +52,7 @@ namespace engine {
 		void setPause(bool val);
 
 		bool scheduleTask(Task* task, uint64 delay = 0);
-		bool scheduleTask(Task* task, Time& time);
+		bool scheduleTask(Task* task, const Time& time);
 
 		bool cancelTask(Task* task);
 

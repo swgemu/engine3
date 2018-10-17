@@ -15,7 +15,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define SSO_SIZE 16
 #endif
 
-#define STRING_INHERIT_VARIABLE
+//#define STRING_INHERIT_VARIABLE
 
 namespace sys {
   namespace lang {

@@ -57,7 +57,7 @@ void LocalTaskManager::executeTask(Task* task) {
 
 }
 
-bool LocalTaskManager::getNextExecutionTime(Task* task, Time& nextExecutionTime) {
+bool LocalTaskManager::getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) {
 	TaskAction* action = lastTaskAction.get(task);
 
 	if (action == nullptr)
@@ -72,7 +72,7 @@ void LocalTaskManager::scheduleTask(Task* task, uint64 delay) {
 	if (task->isScheduled())
 		throw IllegalArgumentException("task already scheduled");
 
-	Time nextTime;
+	AtomicTime nextTime;
 
 	if (delay != 0)
 		nextTime.addMiliTime(delay);
@@ -115,7 +115,7 @@ void LocalTaskManager::scheduleTask(Task* task, uint64 delay) {
 	cancelledTasks.removeElement(task);
 }*/
 
-void LocalTaskManager::scheduleTask(Task* task, Time& time) {
+void LocalTaskManager::scheduleTask(Task* task, const Time& time) {
 	if (task->isScheduled())
 		throw IllegalArgumentException("task already scheduled");
 
@@ -129,7 +129,7 @@ void LocalTaskManager::scheduleTask(Task* task, Time& time) {
 }*/
 
 void LocalTaskManager::rescheduleTask(Task* task, uint64 delay) {
-	Time nextTime;
+	AtomicTime nextTime;
 
 	if (delay != 0)
 		nextTime.addMiliTime(delay);
@@ -137,8 +137,8 @@ void LocalTaskManager::rescheduleTask(Task* task, uint64 delay) {
 	lastTaskAction.put(task, new TaskAction(TaskAction::RESCHEDULE, task, nextTime));
 }
 
-void LocalTaskManager::rescheduleTask(Task* task, Time& time) {
-	lastTaskAction.put(task, new TaskAction(TaskAction::RESCHEDULE, task, time));
+void LocalTaskManager::rescheduleTask(Task* task, const Time& time) {
+	lastTaskAction.put(task, new TaskAction(TaskAction::RESCHEDULE, task, AtomicTime(time)));
 }
 
 
@@ -238,15 +238,15 @@ void LocalTaskManager::mergeTasks(TaskManagerImpl* manager) {
 				break;
 			case TaskAction::SCHEDULE: {
 				try {
-					manager->scheduleTask(task, action->getNextExecutionTime());
+					manager->scheduleTask(task, action->getNextExecutionTime().getTime());
 				} catch (IllegalArgumentException& e) {
 					//manager->error(e.getMessage() + " for " + task->toStringData());
 
-					manager->rescheduleTask(task, action->getNextExecutionTime());
+					manager->rescheduleTask(task, action->getNextExecutionTime().getTime());
 				}
 				break;
 			} case TaskAction::RESCHEDULE:
-				manager->rescheduleTask(task, action->getNextExecutionTime());
+				manager->rescheduleTask(task, action->getNextExecutionTime().getTime());
 				break;
 			case TaskAction::CANCEL:
 				manager->cancelTask(task);

@@ -6,7 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/stm/TransactionalMemoryManager.h"
 
 #ifndef VERSION_PUBLIC
-#define COUNT_SCHEDULER_TASKS
+//#define COUNT_SCHEDULER_TASKS
 #endif
 
 static Time startTime;
@@ -138,7 +138,7 @@ void TaskScheduler::run() {
 	}
 }
 
-void TaskScheduler::stop() {
+void TaskScheduler::stop(){
 	if (doRun) {
 		doRun = false;
 		tasks.flush();
@@ -156,7 +156,7 @@ bool TaskScheduler::scheduleTask(Task* task, uint64 delay) {
 	return tasks.add(task, delay);
 }
 
-bool TaskScheduler::scheduleTask(Task* task, Time& time) {
+bool TaskScheduler::scheduleTask(Task* task, const Time& time) {
 	/*if  (!task->setTaskScheduler(this))
 		return false;*/
 

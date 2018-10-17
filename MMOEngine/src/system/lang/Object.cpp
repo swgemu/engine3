@@ -15,7 +15,6 @@ Object::Object() : Variable() {
 #ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
 #else
-	_destroying = false;
 #endif
 
 	referenceCounters = nullptr;
@@ -33,7 +32,6 @@ Object::Object(const Object& obj) : Variable() {
 #ifdef MEMORY_PROTECTION
 	_destroying = new AtomicBoolean(false);
 #else
-	_destroying = false;
 #endif
 
 	referenceCounters = nullptr;
@@ -135,7 +133,7 @@ void Object::destroy() {
 #ifdef MEMORY_PROTECTION
 	_destroying->set(true);
 #else
-	_destroying = true;
+	_destroying.store(true, std::memory_order_relaxed);
 
 #endif
 

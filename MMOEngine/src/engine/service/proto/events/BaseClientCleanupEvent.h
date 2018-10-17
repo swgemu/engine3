@@ -18,6 +18,8 @@ public:
 	}
 	
 	void run() {
+		Locker locker(client);
+		
 		client = nullptr;
 	}
 	

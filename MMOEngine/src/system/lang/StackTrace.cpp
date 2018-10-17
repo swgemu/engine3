@@ -37,6 +37,8 @@ StackTrace::~StackTrace() {
 }
 
 void StackTrace::print() const {
+	return;
+
 	static Logger logger("StackTrace");
 
 	#ifdef PLATFORM_UNIX

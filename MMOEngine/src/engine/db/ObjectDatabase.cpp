@@ -30,9 +30,10 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 	int i = 0;
 
 	Transaction* transaction = nullptr;
-	
+
 	TransactionConfig cfg = TransactionConfig::DEFAULT;
 	cfg.setNoSync(true);
+	cfg.setReadUncommitted(true);
 
 #ifdef COLLECT_TASKSTATISTICS
 #ifdef CXX11_COMPILER

@@ -33,7 +33,7 @@ namespace engine {
 		~TimedTaskQueue();
 
 		bool add(Task* e, uint64 delay);
-		bool add(Task* e, Time& time);
+		bool add(Task* e, const Time& time);
 
 		bool add(Task* e, bool doLock = true);
 

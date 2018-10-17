@@ -78,7 +78,7 @@ namespace engine {
     class TaskAction : public Object {
     	int type;
     	Reference<Task*> task;
-    	Time nextExecutionTime;
+    	AtomicTime nextExecutionTime;
 
     public:
     	const static int CANCEL = 1;
@@ -93,7 +93,7 @@ namespace engine {
     		nextExecutionTime = a.nextExecutionTime;
     	}
 
-    	TaskAction(int type, Reference<Task*> task, Time nextExecutionTime) {
+    	TaskAction(int type, Reference<Task*> task, const AtomicTime& nextExecutionTime) {
     		TaskAction::type = type;
     		TaskAction::task = task;
     		TaskAction::nextExecutionTime = nextExecutionTime;
@@ -118,7 +118,7 @@ namespace engine {
     		return task;
     	}
 
-    	inline Time& getNextExecutionTime() {
+    	inline AtomicTime& getNextExecutionTime() {
     		return nextExecutionTime;
     	}
 
@@ -165,10 +165,10 @@ namespace engine {
 #endif
 
   		void scheduleTask(Task* task, uint64 delay);
-  		void scheduleTask(Task* task, Time& time);
+  		void scheduleTask(Task* task, const Time& time);
 
   		void rescheduleTask(Task* task, uint64 delay);
-  		void rescheduleTask(Task* task, Time& time);
+  		void rescheduleTask(Task* task, const Time& time);
 
   		bool cancelTask(Task* task);
 
@@ -190,7 +190,7 @@ namespace engine {
 
   		int getExecutingTaskSize();
 
-  		bool getNextExecutionTime(Task* task, Time& nextExecutionTime);
+  		bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime);
 
   		bool isMerging() {
   			return merging;

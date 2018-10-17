@@ -111,8 +111,9 @@ void MySqlDatabase::connect(const String& dbname, const String& user, const Stri
 	my_bool reconnect = 1;
 	mysql_options(&mysql, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(&mysql, host.toCharArray(), user.toCharArray(), passw.toCharArray(), dbname.toCharArray(), port, nullptr, 0))
+	if (!mysql_real_connect(&mysql, host.toCharArray(), user.toCharArray(), passw.toCharArray(), dbname.toCharArray(), port, nullptr, 0)) {
 		error();
+	}
 
 	msg.deleteAll();
 	msg << "connected to " << host;

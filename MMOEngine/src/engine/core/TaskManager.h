@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define TASKMANAGER_H_
 
 #include "system/lang.h"
+#include "system/thread/atomic/AtomicTime.h"
 
 #include "Task.h"
 
@@ -45,7 +46,7 @@ namespace engine {
 
 		}
 
-		virtual bool getNextExecutionTime(Task* task, Time& nextExecutionTime) = 0;
+		virtual bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) = 0;
 
 		virtual void executeTask(Task* task) = 0;
 
@@ -66,24 +67,24 @@ namespace engine {
 		virtual bool isTaskScheduled(Task* task) = 0;
 
 		virtual void scheduleTask(Task* task, uint64 delay = 0) = 0;
-		virtual void scheduleTask(Task* task, Time& time) = 0;
+		virtual void scheduleTask(Task* task, const Time& time) = 0;
 
 		virtual void scheduleIoTask(Task* task, uint64 delay = 0) {
 			scheduleTask(task, delay);
 		}
 
-		virtual void scheduleIoTask(Task* task, Time& time) {
+		virtual void scheduleIoTask(Task* task, const Time& time) {
 			scheduleTask(task, time);
 		}
 
 		virtual void rescheduleTask(Task* task, uint64 delay = 0) = 0;
-		virtual void rescheduleTask(Task* task, Time& time) = 0;
+		virtual void rescheduleTask(Task* task, const Time& time) = 0;
 
 		virtual void rescheduleIoTask(Task* task, uint64 delay = 0) {
 			rescheduleTask(task, delay);
 		}
 
-		virtual void rescheduleIoTask(Task* task, Time& time) {
+		virtual void rescheduleIoTask(Task* task, const Time& time) {
 			rescheduleTask(task, time);
 		}
 

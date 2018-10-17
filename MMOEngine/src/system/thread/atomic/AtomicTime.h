@@ -1,10 +1,11 @@
-/*
-Copyright (C) 2007 <SWGEmu>. All rights reserved.
-Distribution of this file for usage outside of Core3 is prohibited.
-*/
+/**
+ * @author      : theanswer (theanswer@Victors-MacBook-Pro.local)
+ * @file        : AtomicTime
+ * @created     : Monday Oct 15, 2018 22:10:03 CEST
+ */
 
-#ifndef TIME_H_
-#define TIME_H_
+#ifndef ATOMICTIME_H
+#define ATOMICTIME_H
 
 #include "system/platform.h"
 
@@ -18,17 +19,19 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include <time.h>
 
-#include "String.h"
-#include "StringBuffer.h"
+#include "system/lang/String.h"
+#include "system/lang/StringBuffer.h"
 
-#include "Long.h"
+#include "system/lang/Long.h"
 
 #include "system/io/StringTokenizer.h"
+
+#include <atomic>
 
 namespace sys {
   namespace lang {
 
-	class Time : public Variable {
+	class AtomicTime : public Variable {
 	public:
 #if defined(PLATFORM_MAC) || defined(PLATFORM_WIN)
 		typedef int ClockType;
@@ -46,7 +49,7 @@ namespace sys {
 		const static ClockType MONOTONIC_TIME = CLOCK_MONOTONIC;
 #endif
 	private:
-		struct timespec ts;
+		std::atomic<struct timespec> ts;
 
 	#ifdef PLATFORM_WIN
 		#define TIMESPEC_TO_FILETIME_OFFSET (((LONGLONG)27111902u << 32) + (LONGLONG)3577643008u)
@@ -58,21 +61,28 @@ namespace sys {
 	#endif
 
 	public:
-		explicit Time(ClockType type = REAL_TIME) {
+		explicit AtomicTime(ClockType type = REAL_TIME) {
 			updateToCurrentTime(type);
 		}
 
-		explicit Time(uint32 seconds) {
+		explicit AtomicTime(uint32 seconds) {
+			struct timespec ts;
+
 			ts.tv_sec = seconds;
 			ts.tv_nsec = 0;
+
+			this->ts.store(ts, std::memory_order_relaxed);
 		}
 
-		Time(const Time& time) : Variable() {
-			//ts = time.ts;
-			memcpy(&ts, &time.ts, sizeof(timespec));
+		AtomicTime(const AtomicTime& time) : Variable(), ts(time.ts.load(std::memory_order_relaxed)) {
+		}
+
+		AtomicTime(const Time& time) : Variable(), ts(time.ts) {
 		}
 
 		bool toString(String& str) const {
+			auto ts = this->ts.load(std::memory_order_relaxed);
+
 			StringBuffer msg;
 			msg << ts.tv_sec << "," << ts.tv_nsec;
 
@@ -89,13 +99,19 @@ namespace sys {
 			String sec = str.subString(0, separator);
 			String nsec = str.subString(separator + 1);
 
+			struct timespec ts;
+
 			ts.tv_sec = Integer::valueOf(sec);
 			ts.tv_nsec = Integer::valueOf(nsec);
+
+			this->ts.store(ts, std::memory_order_relaxed);
 
 			return true;
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
+			auto ts = this->ts.load(std::memory_order_relaxed);
+
 			stream->writeLong(ts.tv_sec);
 			stream->writeLong(ts.tv_nsec);
 
@@ -103,13 +119,19 @@ namespace sys {
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			struct timespec ts;
+
 			ts.tv_sec = stream->readLong();
 			ts.tv_nsec = stream->readLong();
+
+			this->ts.store(ts, std::memory_order_relaxed);
 
 			return true;
 		}
 
 		inline void updateToCurrentTime(ClockType type = REAL_TIME) {
+			struct timespec ts;
+
 			#ifdef PLATFORM_MAC
 				//assert(type == 0);
 
@@ -130,55 +152,100 @@ namespace sys {
 
 				filetime_to_timespec(&ft, &ts);
 			#endif
+
+			this->ts.store(ts, std::memory_order_relaxed);
 		}
 
 		inline void addMiliTime(uint64 mtime) {
+			auto ts = this->ts.load(std::memory_order_relaxed);
+
 			ts.tv_sec += (long) (mtime / 1000);
 			ts.tv_nsec += (long) ((mtime % 1000) * 1000000);
 
-			checkForOverflow();
+			checkForOverflow(ts);
+
+			this->ts.store(ts, std::memory_order_relaxed);
 		}
 
 		inline void addMikroTime(uint64 utime) {
+			auto ts = this->ts.load(std::memory_order_relaxed);
+
 			ts.tv_sec += (long) (utime / 1000000);
 			ts.tv_nsec += (long) ((utime % 1000000) * 1000);
 
-			checkForOverflow();
+			checkForOverflow(ts);
+
+			this->ts.store(ts, std::memory_order_relaxed);
 		}
 
 		inline void addNanoTime(uint64 ntime) {
+			auto ts = this->ts.load(std::memory_order_relaxed);
+
 			ts.tv_sec += (long) (ntime / 1000000000);
 			ts.tv_nsec += (long) (ntime % 1000000000);
 
-			checkForOverflow();
+			checkForOverflow(ts);
+
+			this->ts.store(ts, std::memory_order_relaxed);
 		}
 
-		Time& operator=(const Time& t) {
+		AtomicTime& operator=(const AtomicTime& t) {
 			if (this == &t)
 				return *this;
 
-			//ts = t.ts;
-			memcpy(&ts, &t.ts, sizeof(timespec));
+			this->ts.store(t.ts.load(std::memory_order_relaxed), std::memory_order_relaxed);
 
 			return *this;
 		}
 
-		Time& operator=(uint32 seconds) {
+		AtomicTime& operator=(const Time& t) {
+			this->ts.store(t.ts, std::memory_order_relaxed);
+
+			return *this;
+		}
+
+		AtomicTime& operator=(uint32 seconds) {
+			struct timespec ts;
+
 			ts.tv_sec = seconds;
 			ts.tv_nsec = 0;
 
+			this->ts.store(ts, std::memory_order_relaxed);
+
 			return *this;
 		}
 
-		int compareTo(const Time& t) const {
-			if (ts.tv_sec < t.ts.tv_sec)
+		int compareTo(const AtomicTime& t) const {
+			auto ts = this->ts.load(std::memory_order_relaxed);
+			auto tsr = t.ts.load(std::memory_order_relaxed);
+
+			if (ts.tv_sec < tsr.tv_sec)
 				return 1;
-			else if (ts.tv_sec > t.ts.tv_sec)
+			else if (ts.tv_sec > tsr.tv_sec)
 				return -1;
 			else {
-				if (ts.tv_nsec < t.ts.tv_nsec)
+				if (ts.tv_nsec < tsr.tv_nsec)
 					return 1;
-				else if (ts.tv_nsec > t.ts.tv_nsec)
+				else if (ts.tv_nsec > tsr.tv_nsec)
+					return -1;
+				else
+					return 0;
+			}
+
+		}
+
+		int compareTo(const Time& t) const {
+			auto ts = this->ts.load(std::memory_order_relaxed);
+			const auto& tsr = *t.getTimeSpec();
+
+			if (ts.tv_sec < tsr.tv_sec)
+				return 1;
+			else if (ts.tv_sec > tsr.tv_sec)
+				return -1;
+			else {
+				if (ts.tv_nsec < tsr.tv_nsec)
+					return 1;
+				else if (ts.tv_nsec > tsr.tv_nsec)
 					return -1;
 				else
 					return 0;
@@ -188,7 +255,7 @@ namespace sys {
 
 		String getFormattedTime() const {
 			char str[100];
-
+			auto ts = this->ts.load(std::memory_order_relaxed);
 			char* ret = ctime_r(&ts.tv_sec, str);
 
 			if (ret != nullptr)
@@ -203,6 +270,7 @@ namespace sys {
 			String value;
 			char buf[128];
 			int len = sizeof(buf);
+			auto ts = this->ts.load(std::memory_order_relaxed);
 
 			if (localtime_r(&(ts.tv_sec), &t) == nullptr)
 				return value;
@@ -290,20 +358,29 @@ namespace sys {
 		}
 
 	protected:
-		inline void checkForOverflow() {
+		inline static void checkForOverflow(struct timespec& ts) {
 			if (ts.tv_nsec >= 1000000000) {
-				ts.tv_sec++;
-				ts.tv_nsec -= 1000000000;
-			}
+	    			ts.tv_sec++;
+	    			ts.tv_nsec -= 1000000000;
+	  		}
 		}
 
 	public:
 		// getters
 		inline uint32 getTime() const {
-			return ts.tv_sec;
+			return ts.load(std::memory_order_relaxed).tv_sec;
+		}
+
+		inline Time getTimeObject() const {
+			Time val(0);
+			val.ts = ts.load(std::memory_order_relaxed);
+
+			return val;
 		}
 
 		inline uint64 getMiliTime() const {
+		    struct timespec ts = this->ts.load(std::memory_order_relaxed);
+
 		    uint64 time;
 
 		    time = ts.tv_sec;
@@ -313,6 +390,8 @@ namespace sys {
 		}
 
 		inline uint64 getMikroTime() const {
+		    struct timespec ts = this->ts.load(std::memory_order_relaxed);
+
 		    uint64 time;
 
 		    time = ts.tv_sec;
@@ -322,6 +401,7 @@ namespace sys {
 		}
 
 		inline uint64 getNanoTime() const {
+		    struct timespec ts = this->ts.load(std::memory_order_relaxed);
 		    uint64 time;
 
 		    time = ts.tv_sec;
@@ -330,24 +410,13 @@ namespace sys {
 		    return time;
 		}
 
-		inline int64 miliDifference(const Time& t) const {
+		inline int64 miliDifference(Time& t) const {
 			return t.getMiliTime() - getMiliTime();
 		}
 
 		inline int64 miliDifference() const {
 			return Time().getMiliTime() - getMiliTime();
 		}
-
-		inline struct timespec* getTimeSpec() {
-			return &ts;
-		}
-
-		inline const struct timespec* getTimeSpec() const {
-			return &ts;
-		}
-
-		friend class AtomicTime;
-
 	};
 
   } // namespace lang
@@ -355,4 +424,7 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*TIME_H_*/
+
+
+#endif /* end of include guard ATOMICTIME_H */
+

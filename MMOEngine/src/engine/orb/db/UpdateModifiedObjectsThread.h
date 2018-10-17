@@ -8,6 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/engine.h"
 
+#include "system/thread/atomic/AtomicBoolean.h"
 #include "DOBObjectManager.h"
 
 namespace engine {
@@ -27,11 +28,11 @@ namespace engine {
 		Condition finishedWorkContition;
 		Condition waitMasterTransaction;
 
-		bool doRun;
-		bool working;
-		bool finishedCommiting;
-		bool waitingToCommit;
-		bool waitingToStart;
+		AtomicBoolean doRun;
+		AtomicBoolean working;
+		AtomicBoolean finishedCommiting;
+		AtomicBoolean waitingToCommit;
+		AtomicBoolean waitingToStart;
 
 		engine::db::berkley::Transaction* transaction;
 
@@ -40,10 +41,10 @@ namespace engine {
 	public:
 		UpdateModifiedObjectsThread(int id, DOBObjectManager* manager, int cpu);
 
-		void run();
+		void run() NO_THREAD_SAFETY_ANALYSIS ;
 
 		void commitObjectsToDatabase();
-		void commitTransaction();
+		void commitTransaction() NO_THREAD_SAFETY_ANALYSIS;
 
 		inline void setObjectsToUpdateVector(Vector<DistributedObject*>* objectsToUpdate) {
 			this->objectsToUpdate = objectsToUpdate;
@@ -74,13 +75,7 @@ namespace engine {
 		}
 
 		inline bool hasFinishedCommiting() {
-			//blockMutex.lock();
-
-			bool res = finishedCommiting;
-
-			//blockMutex.unlock();
-
-			return res;
+			return finishedCommiting;
 		}
 
 		inline void signalMasterTransactionFinish() {

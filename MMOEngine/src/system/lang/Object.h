@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef OBJECT_H_
 #define OBJECT_H_
 
+#include <atomic>
+
 #include "system/lang/ref/ReferenceCounter.h"
 //#include "system/lang/ref/WeakReference.h"
 #include "system/lang/ref/StrongAndWeakReferenceCount.h"
@@ -59,12 +61,12 @@ namespace sys {
 	using namespace sys::util;
 
 	class Object : public Variable {
-		mutable volatile StrongAndWeakReferenceCount* referenceCounters;
+		mutable AtomicReference<StrongAndWeakReferenceCount*> referenceCounters;
 
 #ifdef MEMORY_PROTECTION
 		AtomicBoolean* _destroying;
 #else
-		volatile bool _destroying;
+		std::atomic<bool> _destroying{false};
 #endif
 
 	#ifdef TRACE_REFERENCES
@@ -81,7 +83,7 @@ namespace sys {
 		Object(const Object& obj);
 
 #ifdef CXX11_COMPILER
-		Object(Object&& o) : referenceCounters(nullptr), _destroying(o._destroying) {
+		Object(Object&& o) : referenceCounters(nullptr), _destroying(o._destroying.load(std::memory_order_relaxed)) {
 			assert(o.referenceCounters == nullptr); // We cant move objects that are referenced
 
 #ifdef TRACE_REFERENCES
@@ -96,7 +98,7 @@ namespace sys {
 			if (this == &o)
 				return *this;
 
-			_destroying = o._destroying;
+			_destroying.store( o._destroying.load(std::memory_order_relaxed), std::memory_order_relaxed);
 			return *this;
 		}
 
@@ -107,7 +109,7 @@ namespace sys {
 
 		    assert(o.referenceCounters == nullptr);
 
-		    _destroying = o._destroying;
+		    _destroying.store(o._destroying.load(std::memory_order_relaxed), std::memory_order_relaxed);
 		    return *this;
 	    }
 #endif
@@ -138,7 +140,8 @@ namespace sys {
 #ifdef MEMORY_PROTECTION
 			return _destroying->compareAndSet(false, true);
 #else
-			return AtomicBoolean::compareAndSet(&_destroying, false, true);
+			bool oldval = false;
+			return _destroying.compare_exchange_strong(oldval, true);
 #endif
 		}
 
@@ -146,7 +149,7 @@ namespace sys {
 #ifdef MEMORY_PROTECTION
 			_destroying->set(false);
 #else
-			_destroying = false;
+			_destroying.store(false, std::memory_order_relaxed);
 #endif
 		}
 
@@ -160,12 +163,12 @@ namespace sys {
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			return false;
 		}
-		
+
 		inline bool _isGettingDestroyed() const {
 #ifdef MEMORY_PROTECTION
 			return _destroying->get();
 #else
-			return (bool) _destroying;
+			return _destroying.load(std::memory_order_relaxed);
 #endif
 		}
 
@@ -173,7 +176,7 @@ namespace sys {
 			if (referenceCounters == nullptr) {
 				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, const_cast<Object*>(this));
 
-				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, nullptr, newCount)) {
+				if (!referenceCounters.compareAndSet(nullptr, newCount)) {
 					delete newCount;
 				}
 			}
@@ -231,7 +234,7 @@ namespace sys {
 			if (referenceCounters == nullptr) {
 				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
 
-				if (!AtomicReference<StrongAndWeakReferenceCount*>::compareAndSet(&referenceCounters, nullptr, newCount))
+				if (!referenceCounters.compareAndSet(nullptr, newCount))
 					delete newCount;
 			}
 

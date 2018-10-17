@@ -7,6 +7,11 @@ project(engine3 CXX C)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+option(ENABLE_ASAN "Enables address sanitizer compiling" OFF)
+option(ENABLE_TSAN "Enables thread sanitizer compiling" OFF)
+option(ENABLE_NATIVE "Enables -march=native compiler option" ON)
 
 # Set cmake find moudles path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake/Modules/")
@@ -61,8 +66,22 @@ if (ENGINE_TYPE EQUAL 2)
 	set(CMAKE_CXX_FLAGS "-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -DVERSION_PUBLIC")
 else ()
 	message(STATUS "Building private engine")
-	set(CMAKE_CXX_FLAGS "-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register")
+	set(CMAKE_CXX_FLAGS "-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer")
 endif ()
+
+if (ENABLE_ASAN)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+	set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=address")
+endif(ENABLE_ASAN)
+
+if (ENABLE_TSAN)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
+	set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=thread")
+endif(ENABLE_TSAN)
+
+if (ENABLE_NATIVE)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+endif(ENABLE_NATIVE)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")

@@ -6,6 +6,7 @@
 #include "system/lang.h"
 
 #include "system/util/Timer.h"
+#include "system/thread/atomic/AtomicTime.h"
 
 //#define COLLECT_TASKSTATISTICS
 
@@ -29,7 +30,7 @@ namespace engine {
 
 		AtomicReference<TaskScheduler*> taskScheduler;
 
-		Time nextExecutionTime;
+		AtomicTime nextExecutionTime;
 
 		String customTaskQueue;
 
@@ -100,10 +101,8 @@ namespace engine {
 		}
 
 		virtual String toStringData() {
-			struct timespec* ts = nextExecutionTime.getTimeSpec();
-
 			StringBuffer s;
-			s << nextExecutionTime.getMiliTime() << "[" << ts->tv_sec << "/" << ts->tv_nsec << "] (ptr = " << this << ")";
+			s << nextExecutionTime.getMiliTime() << "(ptr = " << this << ")";
 			return s.toString();
 		}
 
@@ -112,7 +111,7 @@ namespace engine {
 
 		void doExecute();
 
-		void setExecutionTime(Time& time) {
+		void setExecutionTime(const Time& time) {
 			nextExecutionTime = time;
 		}
 
@@ -123,7 +122,7 @@ namespace engine {
 				nextExecutionTime.addMiliTime(mtime);
 		}
 
-		inline Time& getNextExecutionTime() {
+		inline const AtomicTime& getNextExecutionTime() const {
 			return nextExecutionTime;
 		}
 

@@ -9,6 +9,7 @@
 #define COMMITMASTERTRANSACTIONTHREAD_H_
 
 #include "engine/engine.h"
+#include "system/thread/atomic/AtomicBoolean.h"
 
 #include "UpdateModifiedObjectsThread.h"
 
@@ -24,7 +25,7 @@ namespace engine {
 		Vector<DistributedObject* >* objectsToDeleteFromRam;
 		int numberOfThreads;
 
-		bool doRun;
+		AtomicBoolean doRun;
 
 	public:
 		CommitMasterTransactionThread();
@@ -36,7 +37,7 @@ namespace engine {
 
 		void startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect);
 
-		void commitData();
+		void commitData() NO_THREAD_SAFETY_ANALYSIS;
 
 		int garbageCollect(DOBObjectManager* objectManager);
 	};

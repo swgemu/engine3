@@ -17,7 +17,7 @@ namespace engine {
   	
 	class ServiceThread : public Thread, public Mutex, public Logger, public Object {
 	protected:
-		bool doRun, serviceReady;
+		AtomicBoolean doRun, serviceReady;
 	
 	public:
 		ServiceThread(const String& s);

@@ -41,10 +41,10 @@ namespace engine {
 #endif
 
   		void scheduleTask(Task* task, uint64 delay);
-  		void scheduleTask(Task* task, Time& time);
+  		void scheduleTask(Task* task, const Time& time);
 
   		void rescheduleTask(Task* task, uint64 delay);
-  		void rescheduleTask(Task* task, Time& time);
+  		void rescheduleTask(Task* task, const Time& time);
 
   		Vector<Locker*>* blockTaskManager();
   		void unblockTaskManager(Vector<Locker*>* lockers);
@@ -59,7 +59,7 @@ namespace engine {
 
   		bool isTaskScheduled(Task* task);
 
-  		bool getNextExecutionTime(Task* task, Time& nextExecutionTime);
+  		bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime);
 
   		void flushTasks();
 

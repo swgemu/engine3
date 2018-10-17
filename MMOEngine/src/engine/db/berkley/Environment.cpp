@@ -136,7 +136,7 @@ Transaction* Environment::beginTransaction(Transaction* parent, const Transactio
 
 	if (res != 0) {
 		delete newTransaction;
-    	throw DatabaseException("unable to begin transaction with ret code " + String::valueOf(res));
+    		throw DatabaseException("unable to begin transaction with ret code " + String::valueOf(res));
 	}
 
 	/*DB_TXN* newTrans = newTransaction->getDBTXN();

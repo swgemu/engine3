@@ -6,6 +6,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PRIORITYQUEUE_H_
 #define PRIORITYQUEUE_H_
 
+#include <atomic>
+
 #include "system/platform.h"
 
 #include "system/lang/Exception.h"
@@ -23,14 +25,14 @@ namespace sys {
 
 		int	npl;
 
-		bool enqueued;
+		std::atomic<bool> enqueued;
 
 	public:
 		PriorityQueueEntry(PriorityQueueEntry* parent = nullptr, PriorityQueueEntry* lnode = nullptr,
 				PriorityQueueEntry* rnode = nullptr, int np = 0);
 
 		virtual ~PriorityQueueEntry() {
-			enqueued = false;
+			//enqueued = false;
 		}
 
 		virtual int compareTo(PriorityQueueEntry* node) = 0;
@@ -53,7 +55,7 @@ namespace sys {
 		}
 
 		inline bool isQueued() {
-			return enqueued;
+			return enqueued.load(std::memory_order_relaxed);
 		}
 
 		friend class PriorityQueue;
@@ -95,7 +97,7 @@ namespace sys {
 			return false;
 		}
 
-		inline int size() {
+		int size() const NO_THREAD_SAFETY_ANALYSIS {
 			return count;
 		}
 

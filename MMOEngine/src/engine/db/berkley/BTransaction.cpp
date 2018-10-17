@@ -11,10 +11,10 @@ using namespace engine::db::berkley;
 
 TransactionConfig TransactionConfig::DEFAULT;
 
-int Transaction::abort() {
+int Transaction::abort() NO_THREAD_SAFETY_ANALYSIS {
 	int ret = transaction->abort(transaction);
 
-	transaction = nullptr;
+	//transaction = nullptr;
 
 	delete this;
 
@@ -25,10 +25,10 @@ int Transaction::abort() {
  * End the transaction.
  */
 
-int Transaction::commit(uint32 flags) {
+int Transaction::commit(uint32 flags) NO_THREAD_SAFETY_ANALYSIS {
 	int ret = transaction->commit(transaction, flags);
 
-	transaction = nullptr;
+	//transaction = nullptr;
 
 	delete this;
 

@@ -7,90 +7,61 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define ATOMICLONG_H_
 
 #include "system/platform.h"
+#include "system/io/ObjectInputStream.h"
+#include "system/io/ObjectOutputStream.h"
 
-#ifdef PLATFORM_MAC
-#include <libkern/OSAtomic.h>
-#elif PLATFORM_FREEBSD
-#include <machine/atomic.h>
-#elif defined PLATFORM_SOLARIS
-#include <atomic.h>
-#endif
+#include <atomic>
 
 namespace sys {
   namespace thread {
 	namespace atomic {
 
 	class AtomicLong {
-		volatile uint64 value;
+		std::atomic<uint64> value{0};
 
 	public:
-		AtomicLong() {
-			value = 0;
+		AtomicLong() : value{0} {
 		}
 
-		AtomicLong(uint64 val) {
-			value = val;
+		AtomicLong(uint64 val) : value{val} {
+		}
+
+		AtomicLong(const AtomicLong& val) : value{val.value.load(std::memory_order_relaxed)} {
+
+		}
+
+		AtomicLong& operator=(const AtomicLong& v) {
+			value.store(v.value.load(std::memory_order_relaxed));
+
+			return *this;
+		}
+
+		AtomicLong& operator=(const uint64 val) {
+			value.store(val);
+
+			return *this;
 		}
 
 		inline uint64 increment() {
-			#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
-				return __sync_add_and_fetch(&value, 1);
-			#elif defined(PLATFORM_MAC)
-				return OSAtomicIncrement64((volatile int64_t*) &value);
-			#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
-				return ++(value);
-			#else
-				return InterlockedIncrement64((volatile LONGLONG *) &value);
-			#endif
+			return ++value;
 		}
 
 		inline uint64 decrement() {
-			#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
-				return __sync_sub_and_fetch(&value, 1);
-			#elif defined(PLATFORM_MAC)
-				return OSAtomicDecrement64((volatile int64_t*) &value);
-			#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
-				//TODO: find appropriate method
-				return --(value);
-			#else
-				return InterlockedDecrement((long*) &value);
-			#endif
+			return --value;
 		}
 
 		inline uint64 add(uint64 val) {
-			#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
-				return __sync_add_and_fetch(&value, val);
-			#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
-				return value += val;
-			#else
-				return InterlockedAdd64((volatile LONGLONG *) &value, val);
-			#endif
+			return value += val;
 		}
 
 		inline bool compareAndSet(uint64 oldval, uint64 newval) {
-		#if GCC_VERSION >= 40100 && defined(PLATFORM_64) || defined(__MINGW32__)
-			return __sync_bool_compare_and_swap (&value, oldval, newval);
-		#elif defined(PLATFORM_MAC)
-			return OSAtomicCompareAndSwap64(oldvalue, newvalue, (volatile int64_t*) &value);
-		#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
-			//TODO: find appropriate method
-			 if ( value == oldval ) {
-				 value = newval;
-			      return true;
-			  } else {
-			      return false;
-			  }
-		#else
-			InterlockedCompareExchange64((volatile LONGLONG *)&value, newval, oldval);
+			uint64 val = oldval;
 
-			return value == newval;
-		#endif
+			return value.compare_exchange_strong(val, newval);
 		}
 
 		inline uint64 get() const {
-			COMPILER_BARRIER();
-
-			return value;
+			return value.load(std::memory_order_relaxed);
 		}
 
 		inline void set(uint64 val) {
@@ -98,26 +69,22 @@ namespace sys {
 		}
 
 		operator uint64() const {
-			COMPILER_BARRIER();
-
-			return value;
+			return value.load(std::memory_order_relaxed);
 		}
 
 		inline bool operator== (const uint64 val) const {
-			COMPILER_BARRIER();
+			return val == value.load(std::memory_order_relaxed);
+		}
 
-			return val == value;
-		}
-		
 		bool toBinaryStream(sys::io::ObjectOutputStream* stream) {
-		    stream->writeLong(value);
-		        
-		    return true;
+			stream->writeLong(value);
+
+			return true;
 		}
-		
+
 		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream) {
-		    *this = stream->readLong();
-		        
+			value = stream->readLong();
+
 			return true;
 		}
 	};

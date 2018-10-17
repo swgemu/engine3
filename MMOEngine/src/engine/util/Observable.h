@@ -45,7 +45,7 @@ class Observable : public ManagedObject {
 public:
 	Observable();
 
-	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = nullptr, long long arg2 = 0);
+	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = NULL, long long arg2 = 0);
 
 	void registerObserver(unsigned int eventType, Observer* observer);
 
@@ -89,7 +89,7 @@ public:
 
 	ObservableImplementation(DummyConstructorParameter* param);
 
-	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = nullptr, long long arg2 = 0);
+	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = NULL, long long arg2 = 0);
 
 	void registerObserver(unsigned int eventType, Observer* observer);
 

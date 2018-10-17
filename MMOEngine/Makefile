@@ -17,16 +17,16 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 			  testsuite3/tests/TestNoOrbClass.idl
 
 IDL_DIRECTIVES =
-	
-all: 
+
+all:
 	#cd build/unix && cmake ../.. && make
 	#cp build/unix/src/libengine3.so lib/unix
 
 build: compile install-headers
 	#done
 
-all-public: 
-	make all-public64 
+all-public:
+	make all-public64
 	make all-public32
 
 all-public32: clean configure-release32 compile install-public
@@ -60,7 +60,7 @@ compile-idlc:
 
 recompile-idlc:
 	$(IDLC) -rb $(IDL_DIRECTIVES) -sd src $(IDL_SOURCES)
-	
+
 compile-engine:
 	cd build/unix && make
 
@@ -69,7 +69,7 @@ modules:
 	cp external/multimmap/multimmap.ko bin/
 	#rmmod multimmap
 	#insmod bin/multimmap.ko
-	
+
 clean: recompile-idlc
 	cd build/unix && make clean
 	#done
@@ -83,15 +83,15 @@ install:
 	cp bin/idlc /usr/local/bin
 	build/unix/install ${INSTALL_PATH} #> /dev/null 2>&1
 
-install-headers:	
+install-headers:
 	#build/unix/install . > /dev/null 2>&1
 
 install-lib:
 	cp build/unix/src/libengine3.a lib/unix
 	#cp build/unix/src/testsuite3/testsuite3* bin
-	#rm build/unix/src/testsuite3/testsuite3*	
+	#rm build/unix/src/testsuite3/testsuite3*
 
-install-public:	
+install-public:
 	strip --strip-debug lib/unix/libengine3.a
 	build/unix/install $(ENGINE_PUB_PATH) -u > /dev/null
 	rm -f $(ENGINE_PUB_PATH)/lib/idlc.jar
@@ -101,23 +101,18 @@ pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
 
-PLATFORM:=$(shell uname -s)
-
-ifeq ($(PLATFORM),Linux)
-	CPU_CORES:=$(shell grep -c processor /proc/cpuinfo)
-else 
-ifeq ($(PLATFORM),Darwin)
-  	CPU_CORES:=2
-endif
-endif
-
 build-cmake: recompile-idlc
-	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && make -j$(CPU_CORES)
+	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	#done
+
+build-ninja: recompile-idlc
+	mkdir build/unix/ninja || true
+	cd build/unix/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
+	#done
 
 build-cmake-pub: recompile-idlc
-	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && make -j$(CPU_CORES)
-	#cd build/unix32 && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=32 ../../ && make -j$(CPU_CORES)
-	
+	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+
 install-cmake: build-cmake
 	cd build/unix && make install
 
@@ -128,4 +123,4 @@ install-cmake-pub:
 clean-cmake: recompile-idlc
 	cd build/unix && make clean
 	cd build/unix32 && make clean
-		
+

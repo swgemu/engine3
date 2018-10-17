@@ -223,7 +223,7 @@ namespace sys {
 			while (true) {
 				O oldobj = object.get();
 
-				if (object.compareAndSet(oldobj, obj)) {
+				if (object.compareAndSetWeak(oldobj, obj)) {
 					if (oldobj != nullptr) {
 						#ifdef TRACE_REFERENCES
 						Object* castedObject = dynamic_cast<Object*>(oldobj);

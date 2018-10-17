@@ -54,7 +54,7 @@ void ManagedVectorImplementation::finalize() {
 void ManagedVectorImplementation::_initializeImplementation() {
 	_setClassHelper(ManagedVectorHelper::instance());
 
-	_this = nullptr;
+	_this = NULL;
 
 	_serializationHelperMethod();
 }

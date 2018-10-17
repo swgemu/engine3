@@ -23,7 +23,11 @@
 #include "tests/weakreftest.h"
 #include "tests/regexptest.h"
 
+#include "system/thread/atomic/AtomicInteger.h"
+#include "system/thread/atomic/AtomicTime.h"
+
 class TestCore : public Core {
+	AtomicInteger ha;
 public:
 	TestCore(int log) : Core(log) {
 
@@ -33,8 +37,21 @@ public:
 	}
 
 	void run() {
+		for (auto i = 0; i < 5; ++i) {
+			System::out << "ok then" << ha << endl;
 
+			Core::getTaskManager()->scheduleTask([this] () { ha.increment(); System::out << "test" << ha << endl; }, "TEstTask", 800);
+
+			//Thread::sleep(1000);
+		}
 	}
+};
+
+class test_bla {
+	public:
+		~test_bla() {
+			System::out << "ha" << endl;
+		}
 };
 
 int main(int argc, char* argv[]) {
@@ -45,9 +62,13 @@ int main(int argc, char* argv[]) {
 			arguments.put(argv[i]);
 		}
 
-		TestCore core(Logger::INFO);
+		UniqueReference<TestCore*> core(new TestCore(Logger::INFO));
 
-		StackTrace::setBinaryName("testsuite3");
+		core->run();
+		Thread::sleep(1000);
+		//return 0;
+
+		//StackTrace::setBinaryName("testsuite3");
 
 		if (!arguments.isEmpty()) {
 			if (arguments.contains("stmtest"))
