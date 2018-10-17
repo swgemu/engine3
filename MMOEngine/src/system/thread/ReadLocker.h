@@ -15,29 +15,36 @@ namespace sys {
 
 	class SCOPED_CAPABILITY ReadLocker  {
 		ReadWriteLock* lockable;
-
-		bool doLock;
-
 	public:
-		ReadLocker(ReadWriteLock* lock) ACQUIRE_SHARED(lock) {
-			ReadLocker::doLock = !lock->isLockedByCurrentThread();
-
-			ReadLocker::lockable = lock;
-			lock->rlock(doLock);
+		ReadLocker(ReadLocker&& locker) : lockable(locker.lockable) {
+			locker.lockable = nullptr;
 		}
 
-		virtual ~ReadLocker() RELEASE() {
-			if (lockable != nullptr) {
-				lockable->runlock(doLock);
+		ReadLocker(ReadWriteLock* lock) ACQUIRE_SHARED(lock) {
+			const auto doLock = !lock->isLockedByCurrentThread();
+
+			if (doLock) {
+				lockable = lock;
+
+				lock->rlock();
+			} else {
 				lockable = nullptr;
+			}
+		}
+
+	       	ReadLocker(const ReadLocker&) = delete;
+		ReadLocker& operator=(const ReadLocker&) = delete;
+
+		~ReadLocker() RELEASE() {
+			if (lockable != nullptr) {
+				lockable->runlock();
 			}
 		}
 
 	public:
 		inline void release() RELEASE() {
 			if (lockable != nullptr) {
-				lockable->runlock(doLock);
-				lockable = nullptr;
+				lockable->runlock();
 			}
 		}
 	};

@@ -11,48 +11,59 @@ Distribution of this file for usage outside of Core3 is prohibited.
 namespace sys {
   namespace thread {
 
-	class SCOPED_CAPABILITY Locker  {
-		Lockable* lockable;
-
-		bool doLock;
+	  class SCOPED_CAPABILITY Locker  {
+		  Lockable* lockable;
 
 	public:
-		Locker(Lockable* lock) ACQUIRE(lock) {
-			Locker::doLock = !lock->isLockedByCurrentThread();
+		  Locker(Locker&& locker) : lockable(locker.lockable) {
+		  	locker.lockable = nullptr;
+		  }
 
-			Locker::lockable = lock;
-			lock->lock(doLock);
-		}
+		  Locker(const Locker&) = delete;
+		  Locker& operator=(const Locker&) = delete;
 
-		Locker(Lockable* lock, Lockable* cross) ACQUIRE(lock) {
-			Locker::doLock = !lock->isLockedByCurrentThread();
 
-			Locker::lockable = lock;
+		  Locker(Lockable* lock) ACQUIRE(lock) {
+			  const auto doLock = !lock->isLockedByCurrentThread();
 
-			if (doLock && lock != cross) {
-				assert(cross->isLockedByCurrentThread());
+			  if (doLock) {
+				  Locker::lockable = lock;
 
-				lock->lock(cross);
-			} else {
-				doLock = false;
-			}
-		}
+				  lock->lock(doLock);
+			  } else {
+				  Locker::lockable = nullptr;
+			  }
+		  }
 
-		virtual ~Locker() RELEASE() {
-			if (lockable != nullptr) {
-				lockable->unlock(doLock);
-				lockable = nullptr;
-			}
-		}
+		  Locker(Lockable* lock, Lockable* cross) ACQUIRE(lock) {
+			  const auto doLock = !lock->isLockedByCurrentThread();
 
-	public:
-		inline void release() RELEASE() {
-			if (lockable != nullptr) {
-				lockable->unlock(doLock);
-				lockable = nullptr;
-			}
-		}
-	};
+			  Locker::lockable = lock;
+
+			  if (doLock && lock != cross) {
+				  Locker::lockable = lock;
+
+				  assert(cross->isLockedByCurrentThread());
+
+				  lock->lock(cross);
+			  } else {
+				  lockable = nullptr;
+			  }
+		  }
+
+		  ~Locker() RELEASE() {
+			  if (lockable != nullptr) {
+				  lockable->unlock();
+			  }
+		  }
+
+		  public:
+		  inline void release() RELEASE() {
+			  if (lockable != nullptr) {
+				  lockable->unlock();
+			  }
+		  }
+	  };
 
   } // namespace thread
 } //namespace sys

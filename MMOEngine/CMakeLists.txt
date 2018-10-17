@@ -72,11 +72,13 @@ endif ()
 if (ENABLE_ASAN)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 	set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=address")
+	message(STATUS "Address sanitizer enabled")
 endif(ENABLE_ASAN)
 
 if (ENABLE_TSAN)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
 	set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=thread")
+	message(STATUS "Thread sanitizer enabled")
 endif(ENABLE_TSAN)
 
 if (ENABLE_NATIVE)
