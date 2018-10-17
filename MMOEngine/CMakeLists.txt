@@ -63,10 +63,10 @@ endif()
 # Define build flags for public or private engine builds
 if (ENGINE_TYPE EQUAL 2)
 	message(STATUS "Building public engine")
-	set(CMAKE_CXX_FLAGS "-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -DVERSION_PUBLIC")
+	set(CMAKE_CXX_FLAGS "-g0 -DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -DVERSION_PUBLIC")
 else ()
 	message(STATUS "Building private engine")
-	set(CMAKE_CXX_FLAGS "-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer")
+	set(CMAKE_CXX_FLAGS "-ggdb -DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer")
 endif ()
 
 if (ENABLE_ASAN)
