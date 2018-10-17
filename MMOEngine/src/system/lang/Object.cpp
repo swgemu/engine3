@@ -53,14 +53,14 @@ Object::~Object() {
 	}
 #endif
 
-	if (referenceCounters != nullptr) {
-		if ((referenceCounters->getStrongReferenceCount() % 2) == 0) {
-			assert(0 && "Deleting object with strong references");
-		}
+	auto counters = referenceCounters;
 
-		if (referenceCounters->decrementAndTestAndSetWeakCount() != 0) {
-			delete referenceCounters;
-			referenceCounters = nullptr;
+	if (counters != nullptr) {
+		assert((counters->getStrongReferenceCount() % 2) != 0);
+
+		if (counters->decrementAndTestAndSetWeakCount() != 0) {
+			delete counters;
+			//referenceCounters = nullptr;
 		}
 
 	}
