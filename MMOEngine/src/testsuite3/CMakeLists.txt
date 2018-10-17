@@ -19,14 +19,14 @@ target_link_libraries(testsuite3
 		${LUA_LIBRARIES}
 		${ZLIB_LIBRARIES}
 		Threads::Threads
-		${MYSQL_CLIENT_LIBS}
+		#${MYSQL_CLIENT_LIBS}
 		${CMAKE_DL_LIBS}
 		${OPENSSL_LIBRARIES})
 
 install(PROGRAMS testsuite3 DESTINATION bin)
 
- add_custom_command(
-	 TARGET testsuite3 POST_BUILD
-	 COMMAND ${CMAKE_COMMAND} -E copy
-	 $<TARGET_FILE:testsuite3>
-	 ${CMAKE_SOURCE_DIR}/bin/)
+add_custom_command(
+	TARGET testsuite3 POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy
+	$<TARGET_FILE:testsuite3>
+	${CMAKE_SOURCE_DIR}/bin/)

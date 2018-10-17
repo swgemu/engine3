@@ -68,6 +68,10 @@ public:
 
 	}
 
+	virtual int compareTo(const Database* database) const {
+		return 0;
+	}
+
 	static void escapeString(String& s) {
 		if (s.isEmpty())
 			return;

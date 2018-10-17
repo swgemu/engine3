@@ -5,12 +5,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ManagedReference.h"
 
-#include "engine/db/mysql/MySqlDatabase.h"
-
-
 UniqueReference<TaskManager*> Core::taskManager;
 bool Core::taskManagerShutDown = false;
-//ObjectBroker* Core::objectBroker;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 
@@ -33,8 +29,10 @@ void Core::initializeContext(int logLevel) {
 
 	std::set_new_handler(outOfMemoryHandler);
 
-	mysql_library_init(0, nullptr, nullptr);
-	mysql_thread_init();
+	if (threadInitializer)
+		threadInitializer->onThreadStart(this);
+	//mysql_library_init(0, nullptr, nullptr);
+	//mysql_thread_init();
 
 	Thread::initializeThread(this);
 
@@ -48,10 +46,15 @@ void Core::initializeContext(int logLevel) {
 }
 
 void Core::finalizeContext() {
-    shutdownTaskManager();
+	shutdownTaskManager();
 
-	mysql_thread_end();
-	engine::db::mysql::MySqlDatabase::finalizeLibrary();
+	auto threadInitializer = Thread::getThreadInitializer();
+
+	if (threadInitializer)
+		threadInitializer->onThreadEnd(this);
+	//mysql_thread_end();
+
+	//engine::db::mysql::MySqlDatabase::finalizeLibrary();
 
 	NetworkInterface::finalize();
 

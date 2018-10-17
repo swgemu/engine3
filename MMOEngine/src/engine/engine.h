@@ -61,7 +61,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "db/ObjectDatabase.h"
 #include "db/ObjectDatabaseManager.h"
 #include "db/BinaryData.h"
-#include "db/mysql/MySqlDatabase.h"
 #include "db/berkley/BerkeleyDatabase.h"
 
 #include "lua/Lua.h"

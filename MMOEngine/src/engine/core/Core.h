@@ -32,8 +32,6 @@ namespace engine {
 
 		static bool taskManagerShutDown;
 
-		//static ObjectBroker* objectBroker;
-
 	public:
 		Core(int logLevel = Logger::INFO);
 		Core(const char* globallogfile, int logLevel = Logger::INFO);
@@ -55,11 +53,10 @@ namespace engine {
 		static TaskManager* getTaskManager();
 
 		static ObjectBroker* getObjectBroker();
-
 	protected:
-		void initializeContext(int logLevel);
+		virtual void initializeContext(int logLevel);
 
-		void finalizeContext();
+		virtual void finalizeContext();
 
 		static void outOfMemoryHandler();
 	};

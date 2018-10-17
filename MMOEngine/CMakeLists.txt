@@ -25,7 +25,7 @@ find_package(Lua "5.3" REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
 
 # Find mysql includes
-find_package(MySql REQUIRED)
+#find_package(MySql REQUIRED)
 
 # Find berkeley includes
 find_package(Berkeley REQUIRED)

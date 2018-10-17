@@ -2,7 +2,7 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 # Add sources
-file(GLOB_RECURSE system3_sources "system/*.cpp") 
+file(GLOB_RECURSE system3_sources "system/*.cpp")
 file(GLOB_RECURSE engine3_sources "engine/*.cpp")
 
 #Exclude sources from engine
@@ -24,7 +24,7 @@ if (ARCH EQUAL 32)
 	# Create library
 	add_library(engine3_32 SHARED ${system3_sources} ${engine3_sources})
 
-	# Set target specific compile flags 
+	# Set target specific compile flags
 	set_target_properties(engine3_32 PROPERTIES COMPILE_FLAGS -m32 LINK_FLAGS -m32)
 
 	# Install library
@@ -40,7 +40,7 @@ else ()
 			${LUA_LIBRARIES}
 			${ZLIB_LIBRARIES}
 			Threads::Threads
-			${MYSQL_CLIENT_LIBS}
+			#${MYSQL_CLIENT_LIBS}
 			${CMAKE_DL_LIBS}
 			${OPENSSL_LIBRARIES}
 			)
@@ -59,4 +59,4 @@ else ()
 	install(PROGRAMS ../bin/idlc DESTINATION bin)
 	install(FILES ../lib/idlc.jar DESTINATION lib)
 endif ()
-	
+

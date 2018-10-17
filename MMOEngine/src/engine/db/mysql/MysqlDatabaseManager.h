@@ -10,23 +10,23 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/util/Singleton.h"
 
-#include "MySqlDatabase.h"
+#include "engine/db/Database.h"
 
 namespace engine {
   namespace db {
     namespace mysql {
 
     class MysqlDatabaseManager : public Singleton<MysqlDatabaseManager>, public Object {
-    	ThreadLocal<VectorSet<MySqlDatabase*>* > modifiedDatabases;
+    	ThreadLocal<VectorSet<Database*>* > modifiedDatabases;
 
     public:
     	void commitModifiedDatabases();
     	void rollbackModifiedDatabases();
 
-    	void addModifiedDatabase(MySqlDatabase* database);
+    	void addModifiedDatabase(Database* database);
 
     protected:
-    	VectorSet<MySqlDatabase*>* getLocalModifiedDatabases();
+    	VectorSet<Database*>* getLocalModifiedDatabases();
 
     };
 

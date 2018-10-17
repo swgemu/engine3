@@ -13,8 +13,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <signal.h>
 
 #include "system/lang/Runnable.h"
-
 #include "system/lang/String.h"
+
+#include "system/lang/ref/UniqueReference.h"
 
 #include "atomic/AtomicInteger.h"
 
@@ -63,6 +64,16 @@ namespace sys {
   		}
   	 };
 
+ 	class Thread;
+
+	class ThreadInitializer {
+	public:
+		virtual ~ThreadInitializer() {
+		}
+
+		virtual void onThreadStart(Thread* thread) = 0;
+		virtual void onThreadEnd(Thread* thread) = 0;
+	};
 	/*!
 	 * thread wrapper class. the inheriting classes must implement a run() method that have to contain the code to be executed
 	 */
@@ -78,6 +89,8 @@ namespace sys {
 		static pthread_once_t initThread;
 
 		static ThreadLocal<Thread*> currentThread;
+
+		static UniqueReference<ThreadInitializer*> threadInitializer;
 
 		//only used in testing
 		ArrayList<Lockable*> acquiredLockables;
@@ -123,6 +136,14 @@ namespace sys {
 
 		//does nothing on osx
 		void assignToCPU(int cpu);
+
+		static void setThreadInitializer(ThreadInitializer* init) {
+			threadInitializer = init;
+		}
+
+		static ThreadInitializer* getThreadInitializer() {
+			return threadInitializer;
+		}
 
 		const String& getName() {
 			return name;

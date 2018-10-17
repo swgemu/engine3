@@ -17,9 +17,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <process.h>
 #endif
 
-#include <mysql.h>
-
 AtomicInteger Thread::threadCounter;
+UniqueReference<ThreadInitializer*> Thread::threadInitializer;
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
 
@@ -38,14 +37,16 @@ void* Thread::executeThread(void* th) {
 
 	currentThread.set(impl);
 
-	mysql_thread_init();
+	if (threadInitializer)
+		threadInitializer->onThreadStart(impl);//mysql_thread_init();
 
 	impl->run();
 
 	if (impl->isDetached())
 		delete impl;
 
-	mysql_thread_end();
+	if (threadInitializer)
+		threadInitializer->onThreadEnd(impl);//mysql_thread_end();
 
 	return nullptr;
 }
