@@ -128,11 +128,11 @@ extern "C" int isinf (double);
 
 // Enable thread safety attributes only with clang.
 // The attributes can be safely erased when compiling with other compilers.
-//#if defined(__clang__) && (!defined(SWIG))
+#if defined(__clang__) && (!defined(SWIG))
 #define THREAD_ANNOTATION_ATTRIBUTE__(x)   __attribute__((x))
-//#else
-//#define THREAD_ANNOTATION_ATTRIBUTE__(x)   // no-op
-//#endif
+#else
+#define THREAD_ANNOTATION_ATTRIBUTE__(x)   // no-op
+#endif
 
 //#define THREAD_ANNOTATION_ATTRIBUTE__(x)   __attribute__((x))
 
