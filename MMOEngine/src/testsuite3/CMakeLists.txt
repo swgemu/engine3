@@ -2,7 +2,7 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 # Add testsuite3 sources
-file(GLOB_RECURSE testsuite3_sources "*.cpp") 
+file(GLOB_RECURSE testsuite3_sources "*.cpp")
 
 # Add testsuite3 includes
 include_directories(.)
@@ -23,6 +23,10 @@ target_link_libraries(testsuite3
 		${CMAKE_DL_LIBS}
 		${OPENSSL_LIBRARIES})
 
-# Install core3client binary
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/testsuite3 DESTINATION bin)
-	
+install(PROGRAMS testsuite3 DESTINATION bin)
+
+ add_custom_command(
+	 TARGET testsuite3 POST_BUILD
+	 COMMAND ${CMAKE_COMMAND} -E copy
+	 $<TARGET_FILE:testsuite3>
+	 ${CMAKE_SOURCE_DIR}/bin/)
