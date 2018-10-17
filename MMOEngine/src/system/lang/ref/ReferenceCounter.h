@@ -91,7 +91,7 @@ namespace sys {
 				if (newVal == 0)
 					newVal = 1;
 			} while (!_references.compare_exchange_weak(oldVal, newVal,
-						std::memory_order_release, std::memory_order_release));
+						std::memory_order_release, std::memory_order_relaxed));
 
 			return ((oldVal - newVal) & 1);
 		}
