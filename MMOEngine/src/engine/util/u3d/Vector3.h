@@ -29,7 +29,7 @@ namespace engine {
 		static const Vector3 UNIT_Z;
 
 	public:
-		inline Vector3() {
+		inline Vector3() noexcept {
 			values[0] = 0;
 			values[1] = 0;
 			values[2] = 0;
@@ -37,7 +37,7 @@ namespace engine {
 
 		Vector3(const Vector3& vec) = default;
 
-		inline Vector3(const float fx, const float fy, const float fz) {
+		inline Vector3(const float fx, const float fy, const float fz) noexcept {
 			values[0] = fx;
 			values[1] = fy;
 			values[2] = fz;
@@ -46,7 +46,7 @@ namespace engine {
 		/**
 		 * Converts a 3 dimensional float array into a Vector3.
 		 */
-		inline explicit Vector3(const float coord[3]) {
+		inline explicit Vector3(const float coord[3]) noexcept {
 			values[0] = coord[0];
 			values[1] = coord[1];
 			values[2] = coord[2];
@@ -55,7 +55,7 @@ namespace engine {
 		/**
 		 * Converts a 3 dimensional int array into a Vector3.
 		 */
-		inline explicit Vector3(const int coord[3]) {
+		inline explicit Vector3(const int coord[3]) noexcept {
 			values[0] = (float) coord[0];
 			values[1] = (float) coord[1];
 			values[2] = (float) coord[2];
@@ -64,7 +64,7 @@ namespace engine {
 		/**
 		 * Converts a float scalar to a Vector3.
 		 */
-		inline explicit Vector3(const float scalar) {
+		inline explicit Vector3(const float scalar) noexcept {
 			values[0] = scalar;
 			values[1] = scalar;
 			values[2] = scalar;
