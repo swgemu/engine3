@@ -7,7 +7,7 @@
 
 class BaseClientCleanupEvent : public Task {
 	Reference<BaseClient*> client;
-	
+
 public:
 	BaseClientCleanupEvent(BaseClient* cl) : Task(60000) {
 		client = cl;
@@ -16,13 +16,11 @@ public:
 		setStatsSample(0);
 #endif
 	}
-	
+
 	void run() {
-		Locker locker(client);
-		
 		client = nullptr;
 	}
-	
+
 };
 
 #endif /*BASECLIENTCLEANUPEVENT_H_*/
