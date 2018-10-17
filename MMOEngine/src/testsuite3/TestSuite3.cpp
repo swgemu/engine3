@@ -26,6 +26,7 @@
 #include "system/thread/atomic/AtomicInteger.h"
 #include "system/thread/atomic/AtomicTime.h"
 
+
 class TestCore : public Core {
 	AtomicInteger ha;
 public:
@@ -45,13 +46,6 @@ public:
 			//Thread::sleep(1000);
 		}
 	}
-};
-
-class test_bla {
-	public:
-		~test_bla() {
-			System::out << "ha" << endl;
-		}
 };
 
 int main(int argc, char* argv[]) {
