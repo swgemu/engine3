@@ -45,6 +45,8 @@ namespace sys {
 		inline void release() RELEASE() {
 			if (lockable != nullptr) {
 				lockable->runlock();
+
+				lockable = nullptr;
 			}
 		}
 	};

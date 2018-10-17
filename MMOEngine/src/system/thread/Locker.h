@@ -57,10 +57,11 @@ namespace sys {
 			  }
 		  }
 
-		  public:
 		  inline void release() RELEASE() {
 			  if (lockable != nullptr) {
 				  lockable->unlock();
+
+				  lockable = nullptr;
 			  }
 		  }
 	  };
