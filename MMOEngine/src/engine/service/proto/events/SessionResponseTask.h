@@ -17,7 +17,7 @@ public:
 		client = cl;
 		this->seed = seed;
 
-#ifdef BASECLIENT_DISABLE_STATSD
+#if defined(BASECLIENT_DISABLE_STATSD) and defined(COLLECT_TASKSTATISTICS)
 		setStatsSample(0);
 #endif
 	}

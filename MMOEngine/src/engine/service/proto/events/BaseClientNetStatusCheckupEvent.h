@@ -21,7 +21,7 @@ namespace engine {
 		BaseClientNetStatusCheckupEvent(BaseClient* cl) : Task(25000) {
 			client = cl;
 
-#ifdef BASECLIENT_DISABLE_STATSD
+ #if defined(BASECLIENT_DISABLE_STATSD) and defined(COLLECT_TASKSTATISTICS)
 			setStatsSample(0);
 #endif
 		}

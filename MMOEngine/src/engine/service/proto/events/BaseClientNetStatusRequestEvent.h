@@ -23,7 +23,7 @@ namespace engine {
 		BaseClientNetStatusRequestEvent(BaseClient* cl) : Task(5000) {
 			client = cl;
 
-#ifdef BASECLIENT_DISABLE_STATSD
+#if defined(BASECLIENT_DISABLE_STATSD) and defined(COLLECT_TASKSTATISTICS)
 			setStatsSample(0);
 #endif
 		}
