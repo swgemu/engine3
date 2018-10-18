@@ -190,12 +190,12 @@ void Logger::log(const char *msg, LogLevel type) const {
 				getLogType(fullMessage, type);
 			}
 
-			fullMessage << msg << "\n";
+			fullMessage << msg;
 		} else {
 			getJSONString(fullMessage, name.toCharArray(), msg, type);
-
-			fullMessage << "\n";
 		}
+
+		fullMessage << "\n";
 
 		(*logFile) << fullMessage;
 
@@ -211,12 +211,12 @@ void Logger::log(const char *msg, LogLevel type) const {
 			getTime(fullMessage);
 			getLogType(fullMessage, type);
 
-			fullMessage << msg << "\n";
+			fullMessage << msg;
 		} else {
 			getJSONString(fullMessage, name.toCharArray(), msg, type);
-
-			fullMessage << "\n";
 		}
+
+		fullMessage << "\n";
 
 		(*globalLogFile) << fullMessage;
 
@@ -238,7 +238,7 @@ void Logger::error(const char* msg) const {
 	printTime(false);
 
 	StringBuffer fullMessage;
-	fullMessage << " [" << name << "] ERROR - " << msg << "\n";
+	System::out << " [" << name << "] ERROR - " << msg << "\n";
 
 	System::out << fullMessage;
 
@@ -392,24 +392,9 @@ void Logger::getTime(String& times, bool getFull) {
 }
 
 void Logger::printTime(bool getFull) {
-	Time time;
 	StringBuffer str;
 
-	uint64 elapsed = Logger::starttime.miliDifference(time);
-
-	if (getFull) {
-		//System::out << time.getMiliTime() << " msec ";
-		String formattedTime = time.getFormattedTime();
-		formattedTime = formattedTime.replaceAll("\n", "");
-		str << formattedTime << " [" << time.getMiliTime() << " msec] ";
-	}
-
-	str << "(" << (elapsed / 1000) << " s)";
-
-	Thread* currentThread = Thread::getCurrentThread();
-
-	if (currentThread != nullptr && getFull)
-		str << " " << currentThread->getName() << " -";
+	getTime(str, getFull);
 
 	System::out << str;
 }

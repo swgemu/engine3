@@ -27,21 +27,19 @@ namespace sys {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
-				  Locker::lockable = lock;
+				  lockable = lock;
 
-				  lock->lock(doLock);
+				  lock->lock();
 			  } else {
-				  Locker::lockable = nullptr;
+				  lockable = nullptr;
 			  }
 		  }
 
 		  Locker(Lockable* lock, Lockable* cross) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
-			  Locker::lockable = lock;
-
 			  if (doLock && lock != cross) {
-				  Locker::lockable = lock;
+				  lockable = lock;
 
 				  assert(cross->isLockedByCurrentThread());
 
