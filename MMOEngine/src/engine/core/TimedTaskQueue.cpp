@@ -226,6 +226,8 @@ Task* TimedTaskQueue::get() {
 		}
 	}
 
+	postWait.updateToCurrentTime();
+
 	Task* task = (Task*) PriorityQueue::poll();
 
 	bool cleared = task->clearTaskScheduler();
