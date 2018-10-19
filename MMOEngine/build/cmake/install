@@ -15,6 +15,9 @@ set +v
 #copy libraries
 cp lib/idlc.jar ${INSTALL_PATH}/bin
 cp lib/unix/libengine3.a ${INSTALL_PATH}/lib/linux64
+cp lib/unix/libengine3-asan.a ${INSTALL_PATH}/lib/linux64
+cp lib/unix/libengine3-tsan.a ${INSTALL_PATH}/lib/linux64
+cp lib/unix/libengine3-ubsan.a ${INSTALL_PATH}/lib/linux64
 
 # create tree on include files
 cd src

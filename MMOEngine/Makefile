@@ -104,7 +104,7 @@ build-cmake:
 	#done
 
 build-ninja:
-	mkdir build/unix/ninja || true
+	mkdir -p build/unix/ninja
 	cd build/unix/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
 	#done
 
@@ -113,10 +113,30 @@ clean-ninja:
 	#done
 
 build-cmake-pub:
+	rm -rf build/unix
+	mkdir -p build/unix
 	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+	${MAKE} build-cmake-pub-asan
+	${MAKE} build-cmake-pub-tsan
+	${MAKE} build-cmake-pub-ubsan
+
+build-cmake-pub-asan:
+	rm -rf build/unix
+	mkdir -p build/unix
+	cd build/unix && cmake -DENGINE_TYPE=2 -DENABLE_ASAN=ON -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+
+build-cmake-pub-tsan:
+	rm -rf build/unix
+	mkdir -p build/unix
+	cd build/unix && cmake -DENGINE_TYPE=2 -DENABLE_TSAN=ON -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+
+build-cmake-pub-ubsan:
+	rm -rf build/unix
+	mkdir -p build/unix
+	cd build/unix && cmake -DENGINE_TYPE=2 -DENABLE_UBSAN=ON -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
 build-clang-pub:
-	cd build/unix && cmake -DCMAKE_CXX_COMPILER=clang++-7 -DXMAKE_C_COMPILER=clang-7 -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+	cd build/unix && cmake -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
 install-cmake: build-cmake
 	cd build/unix && make install
