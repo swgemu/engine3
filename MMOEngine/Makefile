@@ -93,9 +93,7 @@ install-lib:
 
 install-public:
 	strip --strip-debug lib/unix/libengine3.a
-	build/cmake/install $(ENGINE_PUB_PATH) -u > /dev/null
-	rm -f $(ENGINE_PUB_PATH)/lib/idlc.jar
-	rm -f $(ENGINE_PUB_PATH)/lib/libengine3.a
+	build/cmake/install $(ENGINE_PUB_PATH)
 
 pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h

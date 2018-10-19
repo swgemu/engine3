@@ -13,8 +13,8 @@ set +v
 #fi
 
 #copy libraries
-cp bin/idlc.jar ${INSTALL_PATH}/lib
-cp lib/unix/libengine3.a ${INSTALL_PATH}/lib
+cp lib/idlc.jar ${INSTALL_PATH}/bin
+cp lib/unix/libengine3.a ${INSTALL_PATH}/lib/linux64
 
 # create tree on include files
 cd src
