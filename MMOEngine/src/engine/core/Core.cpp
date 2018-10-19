@@ -5,11 +5,15 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ManagedReference.h"
 
+#include "engine/lua/Lua.h"
+
+SynchronizedHashTable<String, String> Core::properties;
 UniqueReference<TaskManager*> Core::taskManager;
 bool Core::taskManagerShutDown = false;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
-
+//
+//
 Core::Core(int logLevel) {
 	initializeContext(logLevel);
 }
@@ -41,6 +45,44 @@ void Core::initializeContext(int logLevel) {
 	taskManager->initialize();
 
 	taskManager->start();
+}
+
+void Core::parsePropertyData(const String& className, const char* name, LuaObject& table) {
+	Core::properties.put((className + ".") + name, Lua::getStringParameter(table.getLuaState()));
+}
+
+void Core::initializeProperties(const String& className) {
+	try {
+		Lua lua;
+		lua.init();
+
+		if (!lua.runFile("engine3.lua")) {
+			return;
+		}
+
+		auto obj = lua.getGlobalObject(className);
+		auto L = obj.getLuaState();
+
+		if (obj.isValidTable()) {
+			lua_pushnil(L);
+
+			while (lua_next(L, -2) != 0) {
+				int type = lua_type(L, -2);
+
+				if (type == LUA_TSTRING) {
+					size_t len = 0;
+					const char* varName = lua_tolstring(L, -2, &len);
+
+					parsePropertyData(className, varName, obj);
+				} else {
+					lua_pop(L, 1);
+				}
+			}
+
+			obj.pop();
+		}
+	} catch (...) {
+	}
 }
 
 void Core::finalizeContext() {

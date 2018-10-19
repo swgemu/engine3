@@ -13,6 +13,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "TaskManager.h"
 
 #include "engine/orb/ObjectBroker.h"
+#include "system/util/SynchronizedHashTable.h"
 
 #include <new>
 
@@ -20,6 +21,10 @@ namespace engine {
   namespace ORB {
   	  class ObjectBroker;
   	  class DistributedObject;
+  }
+
+  namespace lua {
+  	  class LuaObject;
   }
 }
 
@@ -31,6 +36,8 @@ namespace engine {
 		static UniqueReference<TaskManager*> taskManager;
 
 		static bool taskManagerShutDown;
+	public:
+		static SynchronizedHashTable<String, String> properties;
 
 	public:
 		Core(int logLevel = Logger::INFO);
@@ -53,10 +60,24 @@ namespace engine {
 		static TaskManager* getTaskManager();
 
 		static ObjectBroker* getObjectBroker();
+
+		static int getIntProperty(const String& key, int defaultValue = 0) {
+			auto val = properties.get(key);
+
+			if (!val.isEmpty()) {
+				return Integer::valueOf(val);
+			} else {
+				return defaultValue;
+			}
+		}
+
+		static void initializeProperties(const String& className);
 	protected:
 		virtual void initializeContext(int logLevel);
 
 		virtual void finalizeContext();
+
+		static void parsePropertyData(const String& className, const char* name, engine::lua::LuaObject& table);
 
 		static void outOfMemoryHandler();
 	};

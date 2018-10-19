@@ -13,6 +13,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "TaskScheduler.h"
 
+#include "Core.h"
+
 #include "system/lang/Math.h"
 
 #define BASECLIENT_WORKER_THREADS 8
@@ -39,6 +41,13 @@ TaskManagerImpl::~TaskManagerImpl() {
 }
 
 void TaskManagerImpl::initialize() {
+	Core::initializeProperties("TaskManager");
+
+	DEFAULT_SCHEDULER_THREADS = Core::getIntProperty("TaskManager.defaultSchedulerThreads");
+	DEFAULT_WORKER_THREADS_PER_QUEUE = Core::getIntProperty("TaskManager.defaultWorkerThreadsPerQueue");
+	DEFAULT_WORKER_QUEUES = Core::getIntProperty("TaskManager.defaultWorkerQueues");
+	DEFAULT_IO_SCHEDULERS = Core::getIntProperty("TaskManager.defaultIOSchedulers");
+
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS

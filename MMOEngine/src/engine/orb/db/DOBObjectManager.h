@@ -50,10 +50,6 @@ namespace engine {
 
 		static int UPDATETODATABASETIME;
 
-		const static int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 10;
-
-		const static int MAXOBJECTSTOUPDATEPERTHREAD = 7000;
-
 	public:
 		DOBObjectManager();
 

@@ -30,14 +30,25 @@
 
 //#define PRINT_OBJECT_COUNT
 
-#define MAX_UPDATE_THREADS 20
-#define MIN_UPDATE_THREADS 4
 #define INITIAL_OBJECT_ID 0x1000000 // reserving first ids for snapshot objects
 
 int DOBObjectManager::UPDATETODATABASETIME = 300000;
 
+int MAXOBJECTSTOUPDATEPERTHREAD = 7000;
+int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 10;
+int MIN_UPDATE_THREADS = 4;
+int MAX_UPDATE_THREADS = 20;
+
 DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	nextObjectID = INITIAL_OBJECT_ID;
+
+	Core::initializeProperties("ObjectManager");
+
+	INITIALUPDATEMODIFIEDOBJECTSTHREADS = Core::getIntProperty("ObjectManager.initialUpdateModifiedObjectsThreads", INITIALUPDATEMODIFIEDOBJECTSTHREADS);
+	MAXOBJECTSTOUPDATEPERTHREAD = Core::getIntProperty("ObjectManager.maxObjectsToUpdatePerThread", MAXOBJECTSTOUPDATEPERTHREAD);
+	MIN_UPDATE_THREADS = Core::getIntProperty("ObjectManager.minUpdateThreads", MIN_UPDATE_THREADS);
+	MAX_UPDATE_THREADS = Core::getIntProperty("ObjectManager.maxUpdateThreads", MAX_UPDATE_THREADS);
+	UPDATETODATABASETIME = Core::getIntProperty("ObjectManager.updateToDatabaseTIme", UPDATETODATABASETIME);
 
 	objectUpdateInProcess = false;
 	totalUpdatedObjects = 0;
@@ -332,7 +343,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	for (int i = 0; i < objectsToDeleteFromRAM->size(); ++i) {
 		DistributedObjectStub* object = static_cast<DistributedObjectStub*>(objectsToDeleteFromRAM->get(i));
-		
+
 	localObjectDirectory.removeHelper(object->_getObjectID());
 	}
 
@@ -346,7 +357,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 #endif
 
 	onUpdateModifiedObjectsToDatabase();
-	
+
 //#ifndef WITH_STM
 	Core::getTaskManager()->unblockTaskManager(lockers);
 	delete lockers;
@@ -368,18 +379,18 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	VectorMap<int, String> orderedMap(inRamClassCount.size(), 0);
 	orderedMap.setAllowDuplicateInsertPlan();
-	
+
 	for (int i = 0; i < inRamClassCount.size(); ++i) {
 		const String& name = inRamClassCount.elementAt(i).getKey();
 		int val = inRamClassCount.elementAt(i).getValue();
-		
-		orderedMap.put(val, name);	
+
+		orderedMap.put(val, name);
 	}
 
 	for (int i = 0; i < orderedMap.size(); ++i) {
 		const String& name = orderedMap.elementAt(i).getValue();
 		int val = orderedMap.elementAt(i).getKey();
-		
+
 		printf("%s\t%d\n", name.toCharArray(), val);
 	}
 #endif
@@ -411,7 +422,7 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 
 
 	int numberOfThreads = numberOfObjects / MAXOBJECTSTOUPDATEPERTHREAD;
-	
+
 	numberOfThreads = Math::min(numberOfThreads, MAX_UPDATE_THREADS);
 	int rest = numberOfThreads > 0 ? numberOfObjects % numberOfThreads : 0;
 
