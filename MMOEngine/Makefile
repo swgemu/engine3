@@ -131,11 +131,11 @@ clean-ninja:
 	#done
 
 build-cmake-pub:
-	rm -rf build/unix
-	mkdir -p build/unix
 	${MAKE} build-cmake-pub-asan
 	${MAKE} build-cmake-pub-tsan
 	${MAKE} build-cmake-pub-ubsan
+	rm -rf build/unix
+	mkdir -p build/unix
 	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
 build-cmake-pub-asan:
