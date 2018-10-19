@@ -75,7 +75,7 @@ add_custom_target(rebuild-idl
 
 add_dependencies(engine3 idl)
 
-if (ENGINE_TYPE EQUAL 2 AND NOT APPLE)
+if (ENGINE_TYPE EQUAL 2 AND NOT APPLE AND NOT (ENABLE_ASAN OR ENABLE_TSAN OR ENABLE_UBSAN))
 	add_custom_command(
 		TARGET engine3 POST_BUILD
 		COMMAND strip --strip-debug lib/unix/libengine3.a

@@ -25,33 +25,33 @@ all: build-ninja
 build: compile install-headers
 	#done
 
-all-public:
-	make all-public64
-	make all-public32
+#all-public:
+	#make all-public64
+	#make all-public32
 
-all-public32: clean configure-release32 compile install-public
-	rm -f $(ENGINE_PUB_PATH)/lib/linux32/libengine3.a
-	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux32
+#all-public32: clean configure-release32 compile install-public
+#	rm -f $(ENGINE_PUB_PATH)/lib/linux32/libengine3.a
+#	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux32
 
-all-public64: clean configure-release64 compile install-public
-	rm -f $(ENGINE_PUB_PATH)/lib/linux64/libengine3.a
-	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux64
+#all-public64: clean configure-release64 compile install-public
+#	rm -f $(ENGINE_PUB_PATH)/lib/linux64/libengine3.a
+#	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux64
 
-rebuild: clean configure-debug compile install-headers
+#rebuild: clean configure-debug compile install-headers
 	#done
 
-config:
-	autoreconf --force --install
+#config:
+#	autoreconf --force --install
 	#done
 
-configure-release32:
-	cd build/unix && ../../configure --with-cross-host i686-linux
+#configure-release32:
+#	cd build/unix && ../../configure --with-cross-host i686-linux
 
-configure-release64:
-	cd build/unix && ../../configure --with-cross-host amd64-linux
+#configure-release64:
+#	cd build/unix && ../../configure --with-cross-host amd64-linux
 
-configure-debug:
-	cd build/unix && ../../configure --enable-debug
+#configure-debug:
+#	cd build/unix && ../../configure --enable-debug
 
 compile: compile-idlc compile-engine install-lib
 
@@ -61,14 +61,18 @@ compile-idlc:
 recompile-idlc:
 	$(IDLC) -rb $(IDL_DIRECTIVES) -sd src $(IDL_SOURCES)
 
-compile-engine:
-	cd build/unix && make
+compile-engine: build-cmake
+	#cd build/unix && make
 
 modules:
 	cd external/multimmap && make -C /usr/src/linux-headers-`uname -r` M=`pwd` modules
 	cp external/multimmap/multimmap.ko bin/
 	#rmmod multimmap
 	#insmod bin/multimmap.ko
+
+force-clean:
+	rm -rf build/unix
+	mkdir -p build/unix
 
 clean: recompile-idlc
 	cd build/unix && make clean
