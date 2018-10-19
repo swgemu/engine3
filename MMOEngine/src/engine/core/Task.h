@@ -46,6 +46,7 @@ namespace engine {
 	#endif
 
 		int priority;
+		bool runInScheduler = false;
 
 	  public:
 		Task();
@@ -137,6 +138,14 @@ namespace engine {
 
 		inline bool isPeriodic() const {
 			return period != 0;
+		}
+
+		inline bool doRunInScheduler() const {
+			return runInScheduler;
+		}
+
+		inline void setRunInScheduler(bool val) {
+			runInScheduler = val;
 		}
 
 		inline bool setTaskScheduler(TaskScheduler* scheduler) {

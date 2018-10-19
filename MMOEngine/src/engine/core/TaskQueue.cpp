@@ -8,7 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 TaskQueue::TaskQueue(const char* name) : Condition(), Logger("TaskQueue") {
 	blocked = false;
-	
+
 	if (name != nullptr)
 		this->name = name;
 	//waitingForTask = false;
@@ -94,9 +94,9 @@ void TaskQueue::push(Task* task) {
 		return;
 	}
 
-	LinkedList<Task*>::add(task);
-
 	task->acquire();
+
+	LinkedList<Task*>::add(task);
 
 	#ifdef TRACE_TASKS
 		StringBuffer s;

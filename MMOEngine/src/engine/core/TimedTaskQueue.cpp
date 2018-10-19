@@ -144,6 +144,8 @@ Task* TimedTaskQueue::get() {
 
 	waitingForTask = true;
 
+	Time postWait;
+
 	while (true) {
 		if (PriorityQueue::isEmpty()) {
 			if (blocked) {
@@ -201,6 +203,8 @@ Task* TimedTaskQueue::get() {
 			return nullptr;
 		}
 
+		postWait.updateToCurrentTime();
+
 		if (changePlan) {
 			#ifdef TRACE_TASKS
 				info("changing plan");
@@ -208,8 +212,8 @@ Task* TimedTaskQueue::get() {
 
 			changePlan = false;
 		} else {
-			if (time.isFuture()) {
-				int64 difference = -task->getNextExecutionTime().miliDifference();
+			if (time.compareTo(postWait) < 0) {
+				int64 difference = -(postWait.getMiliTime() - task->getNextExecutionTime().getMiliTime());
 
 				if (difference > 10) {
 					condMutex->unlock();
@@ -227,8 +231,8 @@ Task* TimedTaskQueue::get() {
 	bool cleared = task->clearTaskScheduler();
 	assert(cleared);
 
-	if (!blocked && task->getNextExecutionTime().isFuture()) {
-		int64 difference = - task->getNextExecutionTime().miliDifference();
+	if (!blocked && task->getNextExecutionTime().compareTo(postWait) < 0) {
+		int64 difference = -(postWait.getMiliTime() - task->getNextExecutionTime().getMiliTime());
 
 		if (difference > 10) {
 			StringBuffer msg;

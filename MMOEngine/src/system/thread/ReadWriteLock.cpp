@@ -16,13 +16,13 @@ void ReadWriteLock::rlock(bool doLock) ACQUIRE_SHARED() {
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_rdlock(&rwlock);
 		if (res != 0) {
-#ifdef TRACE_LOCKS
+		#ifdef TRACE_LOCKS
 			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock \'" << lockName << "\' (" << strerror(res) << ")\n";
-#else
+		#else
 			System::out << "(" << Time::currentNanoTime() << " nsec) rlock() failed on RWLock (" << strerror(res) << ")\n";
-#endif
+		#endif
 			StackTrace::printStackTrace();
-			
+
 			assert(0 && "rlock failed");
 		}
 	#else
@@ -239,7 +239,7 @@ void ReadWriteLock::unlock(bool doLock) RELEASE() {
 			}
 		}
 	#endif
-	
+
 //	assert(threadLockHolder == Thread::getCurrentThread());
 
 	lockReleasing();
@@ -297,7 +297,7 @@ void ReadWriteLock::runlock(bool doLock) RELEASE_SHARED() {
 #endif
 
 		StackTrace::printStackTrace();
-		
+
 		assert(0 && "runlock failed");
 	}
 

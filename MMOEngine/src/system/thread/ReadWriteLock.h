@@ -30,7 +30,7 @@ namespace sys {
 			pthread_rwlock_init(&rwlock, nullptr);
 		}
 
-		virtual ~ReadWriteLock() {
+		~ReadWriteLock() {
 			pthread_rwlock_destroy(&rwlock);
 		}
 

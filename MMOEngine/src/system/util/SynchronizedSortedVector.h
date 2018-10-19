@@ -93,6 +93,8 @@ namespace sys {
 
  		 SynchronizedVector<E>::operator=(vector);
 
+		 SynchronizedVector<E>::count = this->vector.size();
+
  		 return *this;
  	 }
 
@@ -185,6 +187,8 @@ namespace sys {
  					 return -1;
  				 }
 
+				 SynchronizedVector<E>::count = this->vector.size();
+
  				 return m;
  			 } else if (cmp > 0)
  				 l = m + 1;
@@ -196,6 +200,8 @@ namespace sys {
  			 m++;
 
  		 SynchronizedVector<E>::vector.add(m, o);
+
+		 SynchronizedVector<E>::count = this->vector.size();
 
  		 return m;
  	 }
@@ -245,6 +251,9 @@ namespace sys {
  		 //E& oldValue = Vector<E>::elementData[index];
 
  		 SynchronizedVector<E>::vector.remove(index);
+
+		 SynchronizedVector<E>::count = this->vector.size();
+
  		 return true;
  	 }
  }

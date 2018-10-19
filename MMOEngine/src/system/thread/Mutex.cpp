@@ -18,11 +18,11 @@ void Mutex::lock(bool doLock) {
 		int res = pthread_mutex_lock(&mutex);
 
 		if (res != 0)
-#ifdef TRACE_LOCKS
+	#ifdef TRACE_LOCKS
 			System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
-#else
+	#else
 			System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex (" << res << ")\n";
-#endif
+	#endif
 	#else
 		Time start;
 		start.addMiliTime(10000);
@@ -118,7 +118,7 @@ bool Mutex::tryLock(uint64 millis) {
 void Mutex::unlock(bool doLock) {
 	if (!doLock)
 		return;
-		
+
 	lockReleasing();
 
 	int res = pthread_mutex_unlock(&mutex);

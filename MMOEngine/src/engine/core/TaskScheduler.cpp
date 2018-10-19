@@ -91,8 +91,11 @@ void TaskScheduler::run() {
 		}
 
 		try {
-
-			task->execute();
+			if (!task->doRunInScheduler()) {
+				task->execute();
+			} else {
+				task->executeInThread();
+			}
 
 		} catch (Exception& e) {
 			error(e.getMessage());

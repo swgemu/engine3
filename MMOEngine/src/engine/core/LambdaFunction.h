@@ -25,9 +25,6 @@ namespace engine {
 
             LambdaFunction() = delete;
 
-            virtual ~LambdaFunction() {
-            }
-
             inline const char *getName() {
                 return name;
             }

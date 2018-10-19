@@ -76,12 +76,12 @@ namespace sys {
    }
 
    template<class E>
-   SynchronizedVector<E>::SynchronizedVector(const SynchronizedVector<E>& array) : Object(), vector(array.vector) {
+   SynchronizedVector<E>::SynchronizedVector(const SynchronizedVector<E>& array) : Object(), vector(array.vector), count(array.vector.size()) {
 
    }
 
    template<class E>
-   SynchronizedVector<E>::SynchronizedVector(const Vector<E>& array) : vector(array) {
+   SynchronizedVector<E>::SynchronizedVector(const Vector<E>& array) : vector(array), count(array.vector.size()) {
 
    }
 

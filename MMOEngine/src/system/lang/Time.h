@@ -95,14 +95,14 @@ namespace sys {
 			return true;
 		}
 
-		bool toBinaryStream(ObjectOutputStream* stream) {
+		bool toBinaryStream(ObjectOutputStream* stream) final {
 			stream->writeLong(ts.tv_sec);
 			stream->writeLong(ts.tv_nsec);
 
 			return true;
 		}
 
-		bool parseFromBinaryStream(ObjectInputStream* stream) {
+		bool parseFromBinaryStream(ObjectInputStream* stream) final {
 			ts.tv_sec = stream->readLong();
 			ts.tv_nsec = stream->readLong();
 
