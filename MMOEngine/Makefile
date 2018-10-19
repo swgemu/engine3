@@ -18,7 +18,7 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 
 IDL_DIRECTIVES =
 
-all: build-ninja
+all: build-cmake-all
 	#cd build/unix && cmake ../.. && make
 	#cp build/unix/src/libengine3.so lib/unix
 
@@ -106,6 +106,20 @@ pch:
 build-cmake:
 	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 	#done
+
+build-cmake-all:
+	rm -rf build/unix
+	mkdir -p build/unix
+	cd build/unix && cmake -DENGINE_TYPE=1 -DENABLE_ASAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	rm -rf build/unix
+	mkdir -p build/unix
+	cd build/unix && cmake -DENGINE_TYPE=1 -DENABLE_TSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	rm -rf build/unix
+	mkdir -p build/unix
+	cd build/unix && cmake -DENGINE_TYPE=1 -DENABLE_UBSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	rm -rf build/unix
+	mkdir -p build/unix
+	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 
 build-ninja:
 	mkdir -p build/unix/ninja
