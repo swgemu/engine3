@@ -81,10 +81,10 @@ clean-distribution: recompile-idlc
 install:
 	mkdir -p ${INSTALL_PATH}/lib
 	cp bin/idlc /usr/local/bin
-	build/unix/install ${INSTALL_PATH} #> /dev/null 2>&1
+	build/cmake/install ${INSTALL_PATH} #> /dev/null 2>&1
 
 install-headers:
-	#build/unix/install . > /dev/null 2>&1
+	build/cmake/install $(ENGINE_PUB_PATH) -u > /dev/null
 
 install-lib:
 	cp build/unix/src/libengine3.a lib/unix
@@ -93,7 +93,7 @@ install-lib:
 
 install-public:
 	strip --strip-debug lib/unix/libengine3.a
-	build/unix/install $(ENGINE_PUB_PATH) -u > /dev/null
+	build/cmake/install $(ENGINE_PUB_PATH) -u > /dev/null
 	rm -f $(ENGINE_PUB_PATH)/lib/idlc.jar
 	rm -f $(ENGINE_PUB_PATH)/lib/libengine3.a
 
@@ -116,6 +116,9 @@ clean-ninja:
 
 build-cmake-pub:
 	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+
+build-clang-pub:
+	cd build/unix && cmake -DCMAKE_CXX_COMPILER=clang++-7 -DXMAKE_C_COMPILER=clang-7 -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
 install-cmake: build-cmake
 	cd build/unix && make install

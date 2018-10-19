@@ -73,7 +73,6 @@ add_custom_target(rebuild-idl
 	COMMENT "Rebuilding idl sources"
 	VERBATIM)
 
-
 add_dependencies(engine3 idl)
 
 if (ENGINE_TYPE EQUAL 2 AND NOT APPLE)
@@ -83,3 +82,27 @@ if (ENGINE_TYPE EQUAL 2 AND NOT APPLE)
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 		VERBATIM)
 endif ()
+
+if (ENABLE_ASAN)
+	add_custom_command(
+		TARGET engine3 POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		$<TARGET_FILE:engine3>
+		${CMAKE_SOURCE_DIR}/lib/unix/libengine3-asan.a)
+endif (ENABLE_ASAN)
+
+if (ENABLE_TSAN)
+	add_custom_command(
+		TARGET engine3 POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		$<TARGET_FILE:engine3>
+		${CMAKE_SOURCE_DIR}/lib/unix/libengine3-tsan.a)
+endif (ENABLE_TSAN)
+
+if (ENABLE_UBSAN)
+	add_custom_command(
+		TARGET engine3 POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		$<TARGET_FILE:engine3>
+		${CMAKE_SOURCE_DIR}/lib/unix/libengine3-ubsan.a)
+endif (ENABLE_UBSAN)
