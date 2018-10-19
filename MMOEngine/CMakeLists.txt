@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(CheckCXXSourceCompiles)
+
 option(ENABLE_ASAN "Enables address sanitizer compiling" OFF)
 option(ENABLE_TSAN "Enables thread sanitizer compiling" OFF)
 option(ENABLE_NATIVE "Enables -march=native compiler option" ON)
@@ -60,9 +62,28 @@ if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-if (NOT APPLE)
+function(check_working_cxx_atomics varname)
+	set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+	set(CMAKE_REQUIRED_FLAGS "-std=c++11")
+	CHECK_CXX_SOURCE_COMPILES("
+	#include <atomic>
+	struct test_type { float x[3]; };
+	std::atomic<test_type> atom;
+	test_type old;
+	test_type newval;
+	int main() {
+	newval.x[2] = 3;
+	return atom.compare_exchange_strong(old, newval);
+	}
+	" ${varname})
+	set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
+endfunction(check_working_cxx_atomics)
+
+check_working_cxx_atomics(HAVE_CXX_ATOMICS_WITHOUT_LIB)
+
+if (NOT HAVE_CXX_ATOMICS_WITHOUT_LIB)
 	find_package(GccAtomic REQUIRED)
-endif ()
+endif()
 
 # Define build flags for public or private engine builds
 if (ENGINE_TYPE EQUAL 2)
