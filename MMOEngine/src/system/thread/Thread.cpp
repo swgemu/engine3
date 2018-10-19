@@ -17,7 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <process.h>
 #endif
 
-AtomicInteger Thread::threadCounter;
+std::atomic<int> Thread::threadCounter;
 UniqueReference<ThreadInitializer*> Thread::threadInitializer;
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
@@ -64,7 +64,7 @@ pid_t Thread::getProcessID() {
 Thread::Thread() {
 	pthread_attr_init(&attributes);
 
-	name = "Thread " + String::valueOf(threadCounter.increment());
+	name = "Thread " + String::valueOf(++threadCounter);
 }
 
 Thread::~Thread() {

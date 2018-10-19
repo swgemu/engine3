@@ -9,7 +9,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/platform.h"
 
 #include <pthread.h>
-
+#include <atomic>
 #include <signal.h>
 
 #include "system/lang/Runnable.h"
@@ -50,7 +50,7 @@ namespace sys {
   				 crossedTo(l.crossedTo), trace(l.trace), monitorLike(l.monitorLike) {
   		 }
 
-  		LockableTrace& operator=(const LockableTrace& l) {
+  		 LockableTrace& operator=(const LockableTrace& l) {
   			if (this == &l)
   				return *this;
 
@@ -61,7 +61,7 @@ namespace sys {
   			trace = l.trace;
 
   			return *this;
-  		}
+  		 }
   	 };
 
  	class Thread;
@@ -84,12 +84,10 @@ namespace sys {
 
 		String name;
 
-		static AtomicInteger threadCounter;
+		static std::atomic<int> threadCounter;
 
 		static pthread_once_t initThread;
-
 		static ThreadLocal<Thread*> currentThread;
-
 		static UniqueReference<ThreadInitializer*> threadInitializer;
 
 		//only used in testing
