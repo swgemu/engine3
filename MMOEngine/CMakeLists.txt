@@ -60,6 +60,10 @@ if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
+if (NOT APPLE)
+	find_package(GccAtomic REQUIRED)
+endif ()
+
 # Define build flags for public or private engine builds
 if (ENGINE_TYPE EQUAL 2)
 	message(STATUS "Building public engine")

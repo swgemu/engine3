@@ -19,9 +19,10 @@ target_link_libraries(testsuite3
 		${LUA_LIBRARIES}
 		${ZLIB_LIBRARIES}
 		Threads::Threads
-		#${MYSQL_CLIENT_LIBS}
+		${GCCLIBATOMIC_LIBRARY}
 		${CMAKE_DL_LIBS}
-		${OPENSSL_LIBRARIES})
+		${OPENSSL_LIBRARIES}
+		${optional_atomic})
 
 install(PROGRAMS testsuite3 DESTINATION bin)
 

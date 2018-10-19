@@ -18,7 +18,7 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 
 IDL_DIRECTIVES =
 
-all:
+all: build-ninja
 	#cd build/unix && cmake ../.. && make
 	#cp build/unix/src/libengine3.so lib/unix
 
@@ -108,6 +108,10 @@ build-cmake:
 build-ninja:
 	mkdir build/unix/ninja || true
 	cd build/unix/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
+	#done
+
+clean-ninja:
+	rm -rf build/unix/ninja
 	#done
 
 build-cmake-pub:

@@ -66,11 +66,20 @@ add_custom_target(idl
 	COMMENT "Building idl sources"
 	VERBATIM)
 
+
 add_custom_target(rebuild-idl
 	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_SOURCE_DIR}/lib/idlc.jar org.sr.idlc.compiler.Compiler -rb -sd src anyadEclipse
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	COMMENT "Rebuilding idl sources"
 	VERBATIM)
 
+
 add_dependencies(engine3 idl)
 
+if (ENGINE_TYPE EQUAL 2 AND NOT APPLE)
+	add_custom_command(
+		TARGET engine3 POST_BUILD
+		COMMAND strip --strip-debug lib/unix/libengine3.a
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		VERBATIM)
+endif ()

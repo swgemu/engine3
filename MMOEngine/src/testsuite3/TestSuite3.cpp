@@ -49,6 +49,12 @@ public:
 };
 
 int main(int argc, char* argv[]) {
+	std::atomic<Vector3> test;
+	Vector3 blas, blas2;
+	System::out << test.compare_exchange_strong(blas, blas2);
+
+
+
 	try {
 		SortedVector<String> arguments;
 
