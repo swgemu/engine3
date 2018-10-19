@@ -101,16 +101,16 @@ pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o system/lang.h.gch system/lang.h
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
 
-build-cmake: recompile-idlc
+build-cmake:
 	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 	#done
 
-build-ninja: recompile-idlc
+build-ninja:
 	mkdir build/unix/ninja || true
 	cd build/unix/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
 	#done
 
-build-cmake-pub: recompile-idlc
+build-cmake-pub:
 	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
 install-cmake: build-cmake

@@ -60,3 +60,17 @@ else ()
 	install(FILES ../lib/idlc.jar DESTINATION lib)
 endif ()
 
+add_custom_target(idl
+	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_SOURCE_DIR}/lib/idlc.jar org.sr.idlc.compiler.Compiler -sd src anyadEclipse
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	COMMENT "Building idl sources"
+	VERBATIM)
+
+add_custom_target(rebuild-idl
+	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_SOURCE_DIR}/lib/idlc.jar org.sr.idlc.compiler.Compiler -rb -sd src anyadEclipse
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	COMMENT "Rebuilding idl sources"
+	VERBATIM)
+
+add_dependencies(engine3 idl)
+

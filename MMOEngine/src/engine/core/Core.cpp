@@ -31,8 +31,6 @@ void Core::initializeContext(int logLevel) {
 
 	if (threadInitializer)
 		threadInitializer->onThreadStart(this);
-	//mysql_library_init(0, nullptr, nullptr);
-	//mysql_thread_init();
 
 	Thread::initializeThread(this);
 
@@ -52,9 +50,6 @@ void Core::finalizeContext() {
 
 	if (threadInitializer)
 		threadInitializer->onThreadEnd(this);
-	//mysql_thread_end();
-
-	//engine::db::mysql::MySqlDatabase::finalizeLibrary();
 
 	NetworkInterface::finalize();
 
