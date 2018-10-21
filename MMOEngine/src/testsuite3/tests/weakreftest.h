@@ -25,7 +25,7 @@ public:
 		Reference<Object*> strong = object.get();
 
 		if (strong != nullptr) {
-			assert(!strong->_isGettingDestroyed());
+			//assert(!strong->_isGettingDestroyed());
 			assert(strong->getReferenceCount() > 0);
 
 			schedule(1);
