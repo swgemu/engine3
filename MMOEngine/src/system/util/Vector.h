@@ -48,7 +48,7 @@ namespace sys {
 	   }
 #endif
 
-       virtual ~Vector();
+       ~Vector();
 
        void clone(Vector<E>& vector) const ;
 
@@ -115,40 +115,11 @@ namespace sys {
    }
 
    template<class E> bool Vector<E>::toBinaryStream(ObjectOutputStream* stream) {
-	   int size = Vector<E>::size();
-
-	   Integer::toBinaryStream(size, stream);
-
-	   for (int i = 0; i < Vector<E>::size(); ++i) {
-		   E* obj = &Vector<E>::get(i);
-
-		   TypeInfo<E>::toBinaryStream(obj, stream);
-	   }
-
-	   return true;
+	   return ArrayList<E>::toBinaryStream(stream);
    }
 
    template<class E> bool Vector<E>::parseFromBinaryStream(ObjectInputStream* stream) {
-	   Vector<E>::removeAll();
-
-	   int size;
-
-	   Integer::parseFromBinaryStream(size, stream);
-
-	   for (int i = 0; i < size; ++i) {
-		   E object;
-
-		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream)) {
-#ifdef CXX11_COMPILER
-			   if (std::is_move_constructible<E>::value)
-			   		ArrayList<E>::add(std::move(object));
-			   else
-#endif
-			   ArrayList<E>::add(object);
-		   }
-	   }
-
-	   return true;
+	   return ArrayList<E>::parseFromBinaryStream(stream);
    }
 
    template<class E> Object* Vector<E>::clone() {

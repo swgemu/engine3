@@ -65,8 +65,6 @@ namespace sys {
 
 #ifdef MEMORY_PROTECTION
 		AtomicBoolean* _destroying;
-#else
-		std::atomic<bool> _destroying{false};
 #endif
 
 	#ifdef TRACE_REFERENCES
@@ -83,7 +81,7 @@ namespace sys {
 		Object(const Object& obj);
 
 #ifdef CXX11_COMPILER
-		Object(Object&& o) : referenceCounters(nullptr), _destroying(o._destroying.load(std::memory_order_relaxed)) {
+		Object(Object&& o) : referenceCounters(nullptr) {
 			assert(o.referenceCounters == nullptr); // We cant move objects that are referenced
 
 #ifdef TRACE_REFERENCES
@@ -98,7 +96,6 @@ namespace sys {
 			if (this == &o)
 				return *this;
 
-			_destroying.store( o._destroying.load(std::memory_order_relaxed), std::memory_order_relaxed);
 			return *this;
 		}
 
@@ -109,7 +106,6 @@ namespace sys {
 
 		    assert(o.referenceCounters == nullptr);
 
-		    _destroying.store(o._destroying.load(std::memory_order_relaxed), std::memory_order_relaxed);
 		    return *this;
 	    }
 #endif
@@ -136,23 +132,6 @@ namespace sys {
 			return true;
 		}
 
-		bool _setDestroying() {
-#ifdef MEMORY_PROTECTION
-			return _destroying->compareAndSet(false, true);
-#else
-			bool oldval = false;
-			return _destroying.compare_exchange_strong(oldval, true);
-#endif
-		}
-
-		void _clearDestroying() {
-#ifdef MEMORY_PROTECTION
-			_destroying->set(false);
-#else
-			_destroying.store(false, std::memory_order_relaxed);
-#endif
-		}
-
 		void finalize() {
 		}
 
@@ -162,14 +141,6 @@ namespace sys {
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			return false;
-		}
-
-		inline bool _isGettingDestroyed() const {
-#ifdef MEMORY_PROTECTION
-			return _destroying->get();
-#else
-			return _destroying.load(std::memory_order_relaxed);
-#endif
 		}
 
 		inline void acquire() const {

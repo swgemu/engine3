@@ -135,8 +135,6 @@ void Object::destroy() NO_THREAD_SAFETY_ANALYSIS {
 #ifdef MEMORY_PROTECTION
 	_destroying->set(true);
 #else
-	_destroying.store(true, std::memory_order_relaxed);
-
 #endif
 
 	//printf("deleting in ::destroy\n");

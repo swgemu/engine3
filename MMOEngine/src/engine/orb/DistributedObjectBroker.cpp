@@ -82,7 +82,7 @@ void DistributedObjectBroker::initialize() {
 		info("attaching to root naming directory at " + address + ":" + String::valueOf(port), true);
 
 		rootObjectBroker = new RemoteObjectBroker(address, port);
-	}		
+	}
 
 	ObjectBrokerDirector::instance()->brokerConnected(this);
 
@@ -198,7 +198,7 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 
 	Locker clocker(objectManager, this);*/
 	if (objectManager == nullptr) {
-		obj->_setDestroying();
+		//obj->_setDestroying();
 
 		obj->undeploy();
 
@@ -215,7 +215,7 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 		return false;
 	 */
 
-	obj->_setDestroying();
+	//obj->_setDestroying();
 
 	obj->undeploy();
 

@@ -105,6 +105,10 @@ namespace sys {
 
 		   virtual void removeAll(int newSize = 10, int newIncrement = 5);
 
+		   bool toBinaryStream(ObjectOutputStream* stream);
+
+       		   bool parseFromBinaryStream(ObjectInputStream* stream);
+
 		   E set(int index, const E& element);
 
 #ifdef CXX11_COMPILER
@@ -700,6 +704,37 @@ namespace sys {
 	   destroyElementRange(0, elementCount);
    }
 
+   template<class E> bool ArrayList<E>::toBinaryStream(ObjectOutputStream* stream) {
+	   int size = ArrayList<E>::size();
+
+	   Integer::toBinaryStream(size, stream);
+
+	   for (int i = 0; i < ArrayList<E>::size(); ++i) {
+		   E* obj = &get(i);
+
+		   TypeInfo<E>::toBinaryStream(obj, stream);
+	   }
+
+	   return true;
+   }
+
+   template<class E> bool ArrayList<E>::parseFromBinaryStream(ObjectInputStream* stream) {
+	   ArrayList<E>::removeAll();
+
+	   int size;
+
+	   Integer::parseFromBinaryStream(size, stream);
+
+	   for (int i = 0; i < size; ++i) {
+		   E object;
+
+		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream)) {
+		 		ArrayList<E>::add(std::move(object));
+		   }
+	   }
+
+	   return true;
+   }
   } // namespace util
 } // namespace sys
 

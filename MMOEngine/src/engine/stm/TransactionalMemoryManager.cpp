@@ -177,8 +177,8 @@ void TransactionalMemoryManager::retryTransaction() {
 }
 
 void TransactionalMemoryManager::reclaim(Object* object) {
-	if (!object->_setDestroying())
-		return;
+	/*if (!object->_setDestroying())
+		return;*/
 
 	Reference<Transaction*> transaction = getTransaction();
 
@@ -233,7 +233,7 @@ void TransactionalMemoryManager::reclaimObjects(int objectsToSpare, int maxObjec
 				/*if (++objectsReclaimed == maxObjectsToReclaim)
 				break;*/
 			} else {
-				obj->_clearDestroying();
+				//obj->_clearDestroying();
 
 				//deleted.drop((uint64)obj);
 			}

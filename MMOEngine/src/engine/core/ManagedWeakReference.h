@@ -22,27 +22,27 @@ namespace engine {
 
   	template<class O> class ManagedReference;
 
-	template<class O> class ManagedWeakReference : public WeakReference<O>, public Variable {
+	template<class O> class ManagedWeakReference : public WeakReference<O> {
 	protected:
 		mutable std::atomic<uint64> savedObjectID{0};
 	public:
-		ManagedWeakReference() : WeakReference<O>(), Variable() {
+		ManagedWeakReference() : WeakReference<O>() {
 		}
 
-		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref), Variable(), savedObjectID(ref.savedObjectID.load(std::memory_order_relaxed)) {
+		ManagedWeakReference(const ManagedWeakReference& ref) : WeakReference<O>(ref), savedObjectID(ref.savedObjectID.load(std::memory_order_relaxed)) {
 		}
 
-		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p), Variable(), savedObjectID(oid) {
+		ManagedWeakReference(StrongAndWeakReferenceCount* p, uint64 oid) : WeakReference<O>(p), savedObjectID(oid) {
 		}
 
 #ifdef CXX11_COMPILER
-		ManagedWeakReference(ManagedWeakReference<O>&& ref) : WeakReference<O>(std::move(ref)), Variable(),
+		ManagedWeakReference(ManagedWeakReference<O>&& ref) : WeakReference<O>(std::move(ref)),
 				savedObjectID(ref.savedObjectID.load(std::memory_order_relaxed)) {
 			ref.savedObjectID.store(0);
 		}
 #endif
 
-		ManagedWeakReference(O obj) : WeakReference<O>(obj), Variable(), savedObjectID(obj != nullptr ? obj->_getObjectID() : 0) {
+		ManagedWeakReference(O obj) : WeakReference<O>(obj), savedObjectID(obj != nullptr ? obj->_getObjectID() : 0) {
 		}
 
 		ManagedWeakReference& operator=(const ManagedWeakReference& ref) {
@@ -131,7 +131,7 @@ namespace engine {
 		inline bool operator!=(O obj) {
 			O ref = getReferenceUnsafe();
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
-			
+
 			if (ref == nullptr && savedObjectID != 0) {
 				if (obj == nullptr)
 					return savedObjectID != 0;
@@ -143,20 +143,20 @@ namespace engine {
 
 		inline bool operator!=(const ManagedWeakReference<O>& r) {
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
-			
+
 			return savedObjectID != r.savedObjectID.load(std::memory_order_relaxed);
 		}
 
 		inline bool operator==(const ManagedWeakReference<O>& r) {
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
-			
+
 			return savedObjectID == r.savedObjectID.load(std::memory_order_relaxed);;
 		}
 
 		inline ManagedReference<O> get() {
 			ManagedReference<O> strongRef = WeakReference<O>::get();
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
-			
+
 			if (strongRef == nullptr && savedObjectID != 0) {
 				Reference<DistributedObject*> tempObj = Core::lookupObject(savedObjectID);
 				strongRef = dynamic_cast<O>(tempObj.get());
@@ -174,7 +174,7 @@ namespace engine {
 		inline ManagedReference<O> getForUpdate() {
 			ManagedReference<O> strongRef = WeakReference<O>::get();
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
-			
+
 			if (savedObjectID != 0 && strongRef == nullptr) {
 				Reference<DistributedObject*> tempObj = Core::lookupObject(savedObjectID);
 				strongRef = dynamic_cast<O>(tempObj.get());
