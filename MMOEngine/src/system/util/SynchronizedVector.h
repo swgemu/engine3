@@ -18,7 +18,9 @@ namespace sys {
 	   mutable ReadWriteLock guard;
 	   Vector<E> vector;
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   AtomicInteger count;
+#endif
    public:
 	   SynchronizedVector();
 
@@ -63,11 +65,19 @@ namespace sys {
 	   }
 
 	   int size() const {
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 		   return count;
+#else
+		   return vector.size();
+#endif
 	   }
 
 	   inline bool isEmpty() const {
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 		   return count == 0;
+#else
+		   return vector.isEmpty();
+#endif
 	   }
    };
    template<class E>
@@ -76,13 +86,17 @@ namespace sys {
    }
 
    template<class E>
-   SynchronizedVector<E>::SynchronizedVector(const SynchronizedVector<E>& array) : Object(), vector(array.vector), count(array.vector.size()) {
-
+   SynchronizedVector<E>::SynchronizedVector(const SynchronizedVector<E>& array) : Object(), vector(array.vector) {
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
+	   count = array.vector.size();
+#endif
    }
 
    template<class E>
-   SynchronizedVector<E>::SynchronizedVector(const Vector<E>& array) : vector(array), count(array.vector.size()) {
-
+   SynchronizedVector<E>::SynchronizedVector(const Vector<E>& array) : vector(array) {
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
+	   count = array.vector.size();
+#endif
    }
 
    template<class E>
@@ -91,7 +105,9 @@ namespace sys {
 
 	   vector.operator=(array);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = array.count;
+#endif
 
 	   return *this;
    }
@@ -102,7 +118,9 @@ namespace sys {
 
 	   bool ret = vector.add(element);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count.increment();
+#endif
 
 	   return ret;
    }
@@ -113,7 +131,9 @@ namespace sys {
 
 	   bool ret = vector.add(index, element);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = vector.size();
+#endif
 
 	   return ret;
    }
@@ -124,7 +144,9 @@ namespace sys {
 
 	   vector.addAll(array);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = vector.size();
+#endif
    }
 
    template<class E>
@@ -142,7 +164,9 @@ namespace sys {
 
 	   vector.insertElementAt(element, index);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = vector.size();
+#endif
    }
 
    template<class E>
@@ -169,7 +193,9 @@ namespace sys {
 
 	   E obj = vector.remove(index);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count.decrement();
+#endif
 
 	   return obj;
    }
@@ -180,7 +206,9 @@ namespace sys {
 
 	   bool obj = vector.removeElement(element);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = vector.size();
+#endif
 
 	   return obj;
    }
@@ -191,7 +219,9 @@ namespace sys {
 
 	   vector.removeElementAt(index);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count.decrement();
+#endif
    }
 
    template<class E>
@@ -200,7 +230,9 @@ namespace sys {
 
 	   vector.removeRange(fromIndex, toIndex);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = vector.size();
+#endif
    }
 
    template<class E>
@@ -209,7 +241,9 @@ namespace sys {
 
 	   vector.removeAll(newSize, newIncrement);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = 0;
+#endif
    }
 
    template<class E>

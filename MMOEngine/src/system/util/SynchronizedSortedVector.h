@@ -93,7 +93,9 @@ namespace sys {
 
  		 SynchronizedVector<E>::operator=(vector);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 		 SynchronizedVector<E>::count = this->vector.size();
+#endif
 
  		 return *this;
  	 }
@@ -186,8 +188,9 @@ namespace sys {
  				 default:
  					 return -1;
  				 }
-
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 				 SynchronizedVector<E>::count = this->vector.size();
+#endif
 
  				 return m;
  			 } else if (cmp > 0)
@@ -201,7 +204,9 @@ namespace sys {
 
  		 SynchronizedVector<E>::vector.add(m, o);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 		 SynchronizedVector<E>::count = this->vector.size();
+#endif
 
  		 return m;
  	 }
@@ -252,7 +257,9 @@ namespace sys {
 
  		 SynchronizedVector<E>::vector.remove(index);
 
+#ifdef ATOMIC_SYNC_VECTOR_COUNT
 		 SynchronizedVector<E>::count = this->vector.size();
+#endif
 
  		 return true;
  	 }
