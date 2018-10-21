@@ -1,4 +1,5 @@
 #include "system/lang/StringBuffer.h"
+#include "system/io/StringTokenizer.h"
 
 #include "GdbStub.h"
 

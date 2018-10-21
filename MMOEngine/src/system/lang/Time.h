@@ -23,12 +23,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Long.h"
 
-#include "system/io/StringTokenizer.h"
-
 namespace sys {
   namespace lang {
 
-	class Time : public Variable {
+	class Time {
 	public:
 #if defined(PLATFORM_MAC) || defined(PLATFORM_WIN)
 		typedef int ClockType;
@@ -58,19 +56,16 @@ namespace sys {
 	#endif
 
 	public:
-		explicit Time(ClockType type = REAL_TIME) {
+		explicit Time(ClockType type = REAL_TIME) noexcept {
 			updateToCurrentTime(type);
 		}
 
-		explicit Time(uint32 seconds) {
+		explicit Time(uint32 seconds) noexcept {
 			ts.tv_sec = seconds;
 			ts.tv_nsec = 0;
 		}
 
-		Time(const Time& time) : Variable() {
-			//ts = time.ts;
-			memcpy(&ts, &time.ts, sizeof(timespec));
-		}
+		Time(const Time& time) = default;
 
 		bool toString(String& str) const {
 			StringBuffer msg;
@@ -95,14 +90,14 @@ namespace sys {
 			return true;
 		}
 
-		bool toBinaryStream(ObjectOutputStream* stream) final {
+		bool toBinaryStream(ObjectOutputStream* stream) {
 			stream->writeLong(ts.tv_sec);
 			stream->writeLong(ts.tv_nsec);
 
 			return true;
 		}
 
-		bool parseFromBinaryStream(ObjectInputStream* stream) final {
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
 			ts.tv_sec = stream->readLong();
 			ts.tv_nsec = stream->readLong();
 
@@ -153,15 +148,7 @@ namespace sys {
 			checkForOverflow();
 		}
 
-		Time& operator=(const Time& t) {
-			if (this == &t)
-				return *this;
-
-			//ts = t.ts;
-			memcpy(&ts, &t.ts, sizeof(timespec));
-
-			return *this;
-		}
+		Time& operator=(const Time& t) = default;
 
 		Time& operator=(uint32 seconds) {
 			ts.tv_sec = seconds;
@@ -347,6 +334,32 @@ namespace sys {
 		}
 
 		friend class AtomicTime;
+
+	};
+
+	class SerializableTime : public Time, public Variable {
+	public:
+
+		SerializableTime() : Time(), Variable() {
+		}
+
+		SerializableTime(const SerializableTime& time) : Time(time), Variable() {
+		}
+
+		SerializableTime& operator=(const Time& time) {
+			Time::operator=(time);
+
+			return *this;
+		}
+
+		bool parseFromBinaryStream(ObjectInputStream* stream) {
+			return Time::parseFromBinaryStream(stream);
+		}
+
+		bool toBinaryStream(ObjectOutputStream* stream) {
+			return Time::toBinaryStream(stream);
+		}
+
 
 	};
 

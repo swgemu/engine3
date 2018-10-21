@@ -7,14 +7,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "DistributedObject.h"
 
-DistributedObject::DistributedObject() : Object() {
-	_objectID = 0;
-
-	_objectBroker = nullptr;
-
-	_updated = true;
-	_markedForDeletion = false;
-	_deletedFromDatabase = false;
+DistributedObject::DistributedObject() : Object(), _objectID(0), _objectBroker(nullptr),
+	_updated(true), _markedForDeletion(false), _deletedFromDatabase(false) {
 }
 
 DistributedObject::~DistributedObject() {

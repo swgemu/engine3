@@ -19,88 +19,88 @@ import engine.core.ObjectUpdateToDatabaseTask;
 
 class ManagedObject {
 	protected int persistenceLevel;
-	
+
 	private transient unsigned int lastCRCSave;
-	
+
 	@pointer
 	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
-	
+
 	protected transient string _className; //idlc automatically loads/saves this from streams
-	
+
 	public ManagedObject() {
 		persistenceLevel = 0;
-		
+
 		lastCRCSave = 0;
-		
+
 		updateToDatabaseTask = null;
 	}
 
-	/*@nativeStub 
+	/*@nativeStub
 	public native void acquireWeak(WeakReference<ManagedObject> ref);
 
-	@nativeStub 
+	@nativeStub
 	public native void releaseWeak(WeakReference<ManagedObject> ref);*/
 
-	@nativeStub 
+	@nativeStub
 	public native void updateForWrite();
 
-	@nativeStub 
+	@nativeStub
 	public native void lock(boolean doLock = true);
-	
-	@nativeStub 
+
+	@nativeStub
 	public native void lock(ManagedObject obj);
 
 	@local
-	@nativeStub 
+	@nativeStub
 	public native void lock(Lockable obj);
 
-	@nativeStub 
+	@nativeStub
 	public native void rlock(boolean doLock = true);
-	
-	@nativeStub 
+
+	@nativeStub
 	public native void rlock(ManagedObject obj);
-	
-	@nativeStub 
+
+	@nativeStub
 	@local
 	public native void rlock(Lockable obj);
 
-	@nativeStub 
+	@nativeStub
 	public native void wlock(boolean doLock = true);
 
-	@nativeStub 
+	@nativeStub
 	public native void wlock(ManagedObject obj);
 
-	@nativeStub 
+	@nativeStub
 	public native void unlock(boolean doLock = true);
 
-	@nativeStub 
+	@nativeStub
 	public native void runlock(boolean doLock = true);
 
-	@nativeStub 
+	@nativeStub
 	public native void setLockName(final string name);
-	
+
 	@nativeStub
 	public native boolean notifyDestroy();
-	
+
 	/*public abstract void writeObject(string data) {
 		Serializable.writeObject(data);
 	}*/
-	
+
 	@local
 	@nativeStub
 	@noImplementationDeclaration
 	@dirty
 	public native void writeObject(ObjectOutputStream stream);
-	
+
 	@local
 	@noImplementationDeclaration
 	public native void readObject(ObjectInputStream stream);
 
-	@dirty	
+	@dirty
 	@local
 	public boolean toBinaryStream(ObjectOutputStream stream) {
 		writeObject(stream);
-		return true;	
+		return true;
 	}
 
 	@local
@@ -108,61 +108,61 @@ class ManagedObject {
 		readObject(stream);
 		return true;
 	}
-	
+
 	/**
 	 * Gets called when this objects is loaded from database
 	 * @pre { this locked }
 	 * @post { this locked }
 	 */
 	public abstract void notifyLoadFromDatabase() {
-		
+
 	}
-	
+
 	/*public abstract void readObject(final string data) {
 		Serializable.readObject(data);
-		
+
 		initializeTransientMembers();
 	}*/
-	
+
 	@local
 	@nativeStub
 	public native DistributedObjectServant getServant();
-	
+
 	public abstract native void initializeTransientMembers();
-	
+
 	public native void updateToDatabase();
 	public abstract native void queueUpdateToDatabaseTask();
-	
+
 	public void clearUpdateToDatabaseTask() {
 		updateToDatabaseTask = null;
 	}
-	
+
 	@read
 	@dirty
 	public unsigned int getLastCRCSave() {
 		return lastCRCSave;
 	}
-	
+
 	@dirty
 	public void setLastCRCSave(unsigned int crc) {
 		lastCRCSave = crc;
 	}
-	
+
 	@dirty
 	public boolean isPersistent() {
 		return persistenceLevel != 0;
 	}
-	
+
 	@dirty
 	@read
 	public int getPersistenceLevel() {
 		return persistenceLevel;
 	}
-	
+
 	protected void _setClassName(final string name) {
 		_className = name;
 	}
-	
+
 	/**
 	 * Sets the persistence level of the object
 	 * level 0 makes the object transient
