@@ -310,23 +310,15 @@ namespace engine {
 		}
 
 		Vector3 getMin(const Vector3& vec) const {
-			Vector3 minVector;
-
-			minVector.setX(Math::min(values[0], vec.values[0]));
-			minVector.setY(Math::min(values[1], vec.values[1]));
-			minVector.setZ(Math::min(values[2], vec.values[2]));
-
-			return minVector;
+			return Vector3(Math::min(values[0], vec.values[0]),
+					Math::min(values[1], vec.values[1]),
+					Math::min(values[2], vec.values[2]));
 		}
 
 		inline Vector3 getMax(const Vector3& vec) const {
-			Vector3 maxVector;
-
-			maxVector.setX(Math::max(values[0], vec.values[0]));
-			maxVector.setY(Math::max(values[1], vec.values[1]));
-			maxVector.setZ(Math::max(values[2], vec.values[2]));
-
-			return maxVector;
+			return Vector3(Math::max(values[0], vec.values[0]),
+					Math::max(values[1], vec.values[1]),
+					Math::max(values[2], vec.values[2]));
 		}
 
 		inline float normalize() {

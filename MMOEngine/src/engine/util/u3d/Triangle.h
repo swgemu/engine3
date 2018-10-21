@@ -8,7 +8,7 @@
 #ifndef TRIANGLE_H_
 #define TRIANGLE_H_
 
-#define TRIANGLE_INHERITS_VARIABLE
+//#define TRIANGLE_INHERITS_VARIABLE
 
 #include "Vector3.h"
 #include "Matrix4.h"
@@ -29,13 +29,21 @@ namespace engine {
 		Vector3 verts[3];
 
 	public:
-		Triangle();
+		Triangle() noexcept {
+		}
 
-		Triangle(const Triangle& tri);
+#ifdef TRIANGLE_INHERITS_VARIABLE
+		Triangle(const Triangle& tri) noexcept;
+#else
+		Triangle(const Triangle& tri)  = default;
+#endif
+		Triangle(const Vector3 vert[3]) noexcept;
 
-		Triangle(const Vector3 vert[3]);
-
-		Triangle& operator=(const Triangle& tri);
+#ifdef TRIANGLE_INHERITS_VARIABLE
+		Triangle& operator=(const Triangle& tri) noexcept;
+#else
+		Triangle& operator=(const Triangle& tri) = default;
+#endif
 
 		void transform(const Matrix4& worldMatrix);
 

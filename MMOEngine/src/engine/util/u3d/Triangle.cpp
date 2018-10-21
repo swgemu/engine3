@@ -10,29 +10,23 @@
 
 #define LOCAL_EPSILON FLT_EPSILON
 
-Triangle::Triangle() {
-
-}
-
 #ifdef TRIANGLE_INHERITS_VARIABLE
-Triangle::Triangle(const Triangle& tri) : Variable() {
-#else
-Triangle::Triangle(const Triangle& tri) {
-#endif
+Triangle::Triangle(const Triangle& tri) noexcept : Variable() {
 	memcpy(verts, tri.verts, sizeof(verts));
 }
 
-Triangle::Triangle(const Vector3 vert[3]) {
-	set(vert);
-}
-
-Triangle& Triangle::operator=(const Triangle& tri) {
+Triangle& Triangle::operator=(const Triangle& tri) noexcept {
 	if (this == &tri)
 		return *this;
 
 	memcpy(verts, tri.verts, sizeof(verts));
 
 	return *this;
+}
+#endif
+
+Triangle::Triangle(const Vector3 vert[3]) noexcept {
+	set(vert);
 }
 
 int Triangle::compareTo(const Triangle* object) const {
