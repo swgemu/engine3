@@ -18,42 +18,14 @@ IDL_SOURCES = engine/core/ManagedObject.idl \
 
 IDL_DIRECTIVES =
 
+BUILD_PATH = build/unix
+
+SANITIZERS_CXX_COMPILER = clang++-7
+SANITIZERS_C_COMPILER = clang-7
+
 all: build-cmake-all
-	#cd build/unix && cmake ../.. && make
-	#cp build/unix/src/libengine3.so lib/unix
 
-build: compile install-headers
-	#done
-
-#all-public:
-	#make all-public64
-	#make all-public32
-
-#all-public32: clean configure-release32 compile install-public
-#	rm -f $(ENGINE_PUB_PATH)/lib/linux32/libengine3.a
-#	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux32
-
-#all-public64: clean configure-release64 compile install-public
-#	rm -f $(ENGINE_PUB_PATH)/lib/linux64/libengine3.a
-#	cp lib/unix/libengine3.a $(ENGINE_PUB_PATH)/lib/linux64
-
-#rebuild: clean configure-debug compile install-headers
-	#done
-
-#config:
-#	autoreconf --force --install
-	#done
-
-#configure-release32:
-#	cd build/unix && ../../configure --with-cross-host i686-linux
-
-#configure-release64:
-#	cd build/unix && ../../configure --with-cross-host amd64-linux
-
-#configure-debug:
-#	cd build/unix && ../../configure --enable-debug
-
-compile: compile-idlc compile-engine install-lib
+build: build-cmake
 
 compile-idlc:
 	$(IDLC) $(IDL_DIRECTIVES) -sd src $(IDL_SOURCES)
@@ -62,7 +34,7 @@ recompile-idlc:
 	$(IDLC) -rb $(IDL_DIRECTIVES) -sd src $(IDL_SOURCES)
 
 compile-engine: build-cmake
-	#cd build/unix && make
+	#cd $(BUILD_PATH) && make
 
 modules:
 	cd external/multimmap && make -C /usr/src/linux-headers-`uname -r` M=`pwd` modules
@@ -71,16 +43,14 @@ modules:
 	#insmod bin/multimmap.ko
 
 force-clean:
-	rm -rf build/unix
-	mkdir -p build/unix
+	rm -rf $(BUILD_PATH)
+	mkdir -p $(BUILD_PATH)
 
 clean: recompile-idlc
-	cd build/unix && make clean
-	#done
+	cd $(BUILD_PATH) && ${MAKE} clean
 
 clean-distribution: recompile-idlc
-	cd build/unix && make distclean
-	#done
+	cd $(BUILD_PATH) && ${MAKE} distclean
 
 install:
 	mkdir -p ${INSTALL_PATH}/lib
@@ -91,9 +61,9 @@ install-headers:
 	build/cmake/install $(ENGINE_PUB_PATH) -u > /dev/null
 
 install-lib:
-	cp build/unix/src/libengine3.a lib/unix
-	#cp build/unix/src/testsuite3/testsuite3* bin
-	#rm build/unix/src/testsuite3/testsuite3*
+	cp $(BUILD_PATH)/src/libengine3.a lib/unix
+	#cp $(BUILD_PATH)/src/testsuite3/testsuite3* bin
+	#rm $(BUILD_PATH)/src/testsuite3/testsuite3*
 
 install-public:
 	strip --strip-debug lib/unix/libengine3.a
@@ -104,66 +74,64 @@ pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
 
 build-cmake:
-	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
-	#done
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 
 build-cmake-all:
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=1 -DENABLE_ASAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=1 -DENABLE_TSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=1 -DENABLE_UBSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	${MAKE} build-cmake-asan
+	${MAKE} build-cmake-tsan
+	${MAKE} build-cmake-ubsan
+	${MAKE} force-clean
+	${MAKE} build-cmake
+
+build-tags:
+	cd $(BUILD_PATH) && ${MAKE} tags
+
+build-compdb:
+	cd $(BUILD_PATH) && ${MAKE} compdb
+
+build-cmake-asan: force-clean
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_ASAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+
+build-cmake-tsan: force-clean
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_TSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+
+build-cmake-ubsan: force-clean
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_UBSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 
 build-ninja:
-	mkdir -p build/unix/ninja
-	cd build/unix/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
-	#done
+	mkdir -p $(BUILD_PATH)/ninja
+	cd $(BUILD_PATH)/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
 
 clean-ninja:
-	rm -rf build/unix/ninja
-	#done
+	rm -rf $(BUILD_PATH)/ninja
 
 build-cmake-pub:
 	${MAKE} build-cmake-pub-asan
 	${MAKE} build-cmake-pub-tsan
 	${MAKE} build-cmake-pub-ubsan
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+	${MAKE} force-clean
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
-build-cmake-pub-asan:
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=2 -DENABLE_ASAN=ON -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+build-cmake-pub-asan: force-clean
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=2 -DENABLE_ASAN=ON -DCMAKE_CXX_COMPILER=$(SANITIZERS_CXX_COMPILER) -DCMAKE_C_COMPILER=$(SANITIZERS_C_COMPILER) -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
-build-cmake-pub-tsan:
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=2 -DENABLE_TSAN=ON -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+build-cmake-pub-tsan: force-clean
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=2 -DENABLE_TSAN=ON -DCMAKE_CXX_COMPILER=$(SANITIZERS_CXX_COMPILER) -DCMAKE_C_COMPILER=$(SANITIZERS_C_COMPILER) -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
-build-cmake-pub-ubsan:
-	rm -rf build/unix
-	mkdir -p build/unix
-	cd build/unix && cmake -DENGINE_TYPE=2 -DENABLE_UBSAN=ON -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+build-cmake-pub-ubsan: force-clean
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=2 -DENABLE_UBSAN=ON -DCMAKE_CXX_COMPILER=$(SANITIZERS_CXX_COMPILER) -DCMAKE_C_COMPILER=$(SANITIZERS_C_COMPILER) -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
 build-clang-pub:
-	cd build/unix && cmake -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_C_COMPILER=clang-7 -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
+	cd $(BUILD_PATH) && cmake -DCMAKE_CXX_COMPILER=$(SANITIZERS_CXX_COMPILER) -DCMAKE_C_COMPILER=$(SANITIZERS_C_COMPILER) -DENGINE_TYPE=2 -DCMAKE_INSTALL_PREFIX=/opt/engine3pub -DARCH=64 ../../ && ${MAKE}
 
 install-cmake: build-cmake
-	cd build/unix && make install
+	cd $(BUILD_PATH) && ${MAKE} install
 
-install-cmake-pub:
-	cd build/unix && make install/strip
-	cd build/unix32 && make install/strip
+#install-cmake-pub:
+#	cd $(BUILD_PATH) && make install/strip
+#	cd $(BUILD_PATH)32 && make install/strip
 
 clean-cmake: recompile-idlc
-	cd build/unix && make clean
-	cd build/unix32 && make clean
+	cd $(BUILD_PATH) && ${MAKE} clean
+#	cd $(BUILD_PATH)32 && make clean
 

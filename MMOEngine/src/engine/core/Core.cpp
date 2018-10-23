@@ -53,34 +53,40 @@ void Core::parsePropertyData(const String& className, const char* name, LuaObjec
 
 void Core::initializeProperties(const String& className) {
 	try {
-		Lua lua;
-		lua.init();
+		static Lua lua = []() {
+			Lua lua;
 
-		if (!lua.runFile("engine3.lua")) {
-			return;
-		}
+			lua.init();
+
+			lua.runFile("conf/engine3.lua");
+			lua.runFile("engine3.lua");
+
+			return lua;
+		} ();
 
 		auto obj = lua.getGlobalObject(className);
 		auto L = obj.getLuaState();
 
-		if (obj.isValidTable()) {
-			lua_pushnil(L);
-
-			while (lua_next(L, -2) != 0) {
-				int type = lua_type(L, -2);
-
-				if (type == LUA_TSTRING) {
-					size_t len = 0;
-					const char* varName = lua_tolstring(L, -2, &len);
-
-					parsePropertyData(className, varName, obj);
-				} else {
-					lua_pop(L, 1);
-				}
-			}
-
-			obj.pop();
+		if (!obj.isValidTable()) {
+			return;
 		}
+
+		lua_pushnil(L);
+
+		while (lua_next(L, -2) != 0) {
+			int type = lua_type(L, -2);
+
+			if (type == LUA_TSTRING) {
+				size_t len = 0;
+				const char* varName = lua_tolstring(L, -2, &len);
+
+				parsePropertyData(className, varName, obj);
+			} else {
+				lua_pop(L, 1);
+			}
+		}
+
+		obj.pop();
 	} catch (...) {
 	}
 }

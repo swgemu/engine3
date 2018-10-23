@@ -122,3 +122,16 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
 
 add_subdirectory(src)
 add_subdirectory(src/testsuite3)
+
+set_source_files_properties(tags PROPERTIES GENERATED true)
+add_custom_target(tags
+    COMMAND ctags -R --fields=+iaS --extra=+q src/
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+set_source_files_properties(compile_commands.json PROPERTIES GENERATED true)
+add_custom_target(compdb
+	COMMAND compdb -p ${CMAKE_BINARY_DIR} list > compile_commands.json
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+add_dependencies(compdb engine3)
+
