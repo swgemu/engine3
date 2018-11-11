@@ -20,6 +20,8 @@
 #define unlikely(x)     (x)
 #endif
 #endif
+#include "engine/util/json_utils.h"
+
 namespace engine {
 namespace log {
 
@@ -108,6 +110,7 @@ public:
 	DistributedObjectStub* _getStub();
 	virtual void readObject(ObjectInputStream* stream);
 	virtual void writeObject(ObjectOutputStream* stream);
+	virtual void writeJSON(nlohmann::json& j);
 protected:
 	virtual ~ObservableImplementation();
 

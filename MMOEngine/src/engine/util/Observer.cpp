@@ -251,6 +251,13 @@ int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	return _count + 1;
 }
 
+void ObserverImplementation::writeJSON(nlohmann::json& j) {
+	ManagedObjectImplementation::writeJSON(j);
+
+	j["Observer.observerType"] = observerType;
+
+}
+
 int ObserverImplementation::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {
 	// engine/util/Observer.idl():  		return 1;
 	return 1;

@@ -17,7 +17,7 @@ namespace sys {
 
 	template<class E> class HashSet : public HashTable<E, uint8> {
 		uint8 PRESENT;
-		
+
 	public:
 		HashSet() : HashTable<E, uint8>() {
 			PRESENT = 0;
@@ -26,7 +26,7 @@ namespace sys {
 		HashSet(int initcap) : HashTable<E, uint8>(initcap) {
 			PRESENT = 0;//new Object();
 		}
-		
+
 		HashSet(const HashSet<E>& h) : HashTable<E, uint8>(h) {
 			PRESENT = h.PRESENT;
 		}
@@ -40,16 +40,16 @@ namespace sys {
 		virtual ~HashSet() {
 			//delete PRESENT;
 		}
-		
+
 		void add(const E& obj) {
 			HashTable<E, uint8>::put(obj, PRESENT);
 		}
-		
+
 		bool contains(const E& obj) const {
 			return HashTable<E, uint8>::containsKey(obj);
 		}
-		
-		HashSetIterator<E> iterator() {
+
+		HashSetIterator<E> iterator() const {
 			return HashSetIterator<E>(this);
 		}
 
@@ -60,7 +60,7 @@ namespace sys {
 		HashSetIterator(const HashSetIterator& i)  :  HashTableIterator<E, uint8>(i) {
 		}
 
-		HashSetIterator(HashSet<E>* set)  :  HashTableIterator<E, uint8>(set) {
+		HashSetIterator(const HashSet<E>* set)  :  HashTableIterator<E, uint8>(set) {
 		}
 
 		E& next() {

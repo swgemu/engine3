@@ -20,6 +20,8 @@
 #define unlikely(x)     (x)
 #endif
 #endif
+#include "engine/util/json_utils.h"
+
 namespace engine {
 namespace core {
 
@@ -43,6 +45,8 @@ using namespace engine::core;
 #include "system/io/ObjectOutputStream.h"
 
 #include "engine/orb/object/DistributedObjectServant.h"
+
+#include "engine/util/JSONSerializationType.h"
 
 namespace engine {
 namespace core {
@@ -78,6 +82,8 @@ public:
 	bool notifyDestroy();
 
 	void writeObject(ObjectOutputStream* stream);
+
+	void writeJSON(JSONSerializationType& j);
 
 	void readObject(ObjectInputStream* stream);
 
@@ -156,6 +162,8 @@ protected:
 	bool __notifyDestroy();
 
 	void __writeObject(ObjectOutputStream* stream);
+
+	void __writeJSON(JSONSerializationType& j);
 
 	DistributedObjectServant* __getServant();
 
@@ -253,6 +261,7 @@ public:
 	DistributedObjectStub* _getStub();
 	virtual void readObject(ObjectInputStream* stream);
 	virtual void writeObject(ObjectOutputStream* stream);
+	virtual void writeJSON(nlohmann::json& j);
 protected:
 	virtual ~ManagedObjectImplementation();
 

@@ -142,7 +142,7 @@ namespace sys {
 	    HashTable<K, V>& operator=(HashTable<K, V>&& htable);
 #endif
 
-	    HashTableIterator<K, V> iterator();
+	    HashTableIterator<K, V> iterator() const;
 
 	    V remove(const K& key);
 
@@ -181,7 +181,7 @@ namespace sys {
 	};
 
 	template<class K, class V> class HashTableIterator {
-		HashTable<K,V>* htable;
+		const HashTable<K,V>* htable;
 		Entry<K,V>* e;
 
 		int position;
@@ -190,7 +190,7 @@ namespace sys {
 	public:
 		HashTableIterator();
 		HashTableIterator(const HashTableIterator<K, V>& iter);
-		HashTableIterator(HashTable<K,V>* Table);
+		HashTableIterator(const HashTable<K,V>* Table);
 
 		V& getNextValue();
 
@@ -485,7 +485,7 @@ namespace sys {
 		return nullptr;
 	}
 
-	template<class K, class V> HashTableIterator<K, V> HashTable<K,V>::iterator() {
+	template<class K, class V> HashTableIterator<K, V> HashTable<K,V>::iterator() const {
 		return HashTableIterator<K, V>(this);
 	}
 
@@ -650,7 +650,7 @@ namespace sys {
 		eIndex = iter.eIndex;
 	}
 
-	template<class K, class V> HashTableIterator<K,V>::HashTableIterator(HashTable<K,V>* Table) {
+	template<class K, class V> HashTableIterator<K,V>::HashTableIterator(const HashTable<K,V>* Table) {
 		htable = Table;
 
 		position = 0;

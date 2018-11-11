@@ -10,6 +10,9 @@
 
 #include "Vector.h"
 
+#include "system/thread/ReadWriteLock.h"
+#include "system/thread/Locker.h"
+
 namespace sys {
  namespace util {
 
@@ -62,6 +65,10 @@ namespace sys {
 
 	   bool parseFromBinaryStream(ObjectInputStream* stream) {
 		   return vector.parseFromBinaryStream(stream);
+	   }
+
+	   const Vector<E>& getVectorUnsafe() const {
+	   	   return vector;
 	   }
 
 	   int size() const {

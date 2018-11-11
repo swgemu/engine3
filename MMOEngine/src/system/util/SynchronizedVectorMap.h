@@ -10,6 +10,10 @@
 
 #include "VectorMap.h"
 
+#include "system/thread/ReadWriteLock.h"
+#include "system/thread/Locker.h"
+#include "system/thread/ReadLocker.h"
+
 namespace sys {
  namespace util {
  	 template<class K, class V> class VectorMap;
@@ -78,6 +82,10 @@ namespace sys {
  		 inline int getInsertPlan() const {
  			 return vectorMap.getInsertPlan();
  		 }
+
+		 inline const VectorMap<K, V>& getMapUnsafe() const {
+		 	return vectorMap;
+		 }
  	 };
 
  	 template<class K, class V> SynchronizedVectorMap<K, V>::SynchronizedVectorMap()

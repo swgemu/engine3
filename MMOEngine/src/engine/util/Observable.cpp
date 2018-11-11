@@ -278,6 +278,15 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	return _count + 2;
 }
 
+void ObservableImplementation::writeJSON(nlohmann::json& j) {
+	ManagedObjectImplementation::writeJSON(j);
+
+	j["Observable.observerEventMap"] = observerEventMap;
+
+	j["Observable.observableChildren"] = observableChildren;
+
+}
+
 ObservableImplementation::ObservableImplementation() {
 	_initializeImplementation();
 	// engine/util/Observable.idl():  		observableChildren.setNoDuplicateInsertPlan();

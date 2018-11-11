@@ -13,27 +13,28 @@ import engine.log.Logger;
 import engine.util.Observable;
 
 //@nonTransactional
+@json
 class Observer extends ManagedObject {
 
 	protected unsigned int observerType;
-	
+
 	public abstract int notifyObserverEvent(unsigned int eventType, Observable observable, ManagedObject arg1, long arg2) {
 		return 1;
 	}
-	
+
 	public Observer() {
 		observerType = 0;
 	}
-	
+
 	@dirty
 	public abstract native unsigned long getObjectID();
-	
+
 	/**
 	 * Compares object ids of this object with obj
 	 * @pre { this object is locked, obj is not null }
 	 * @post {this object is locked }
 	 * @param obj SceneObject that will be compared to
-	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj
 	 */
 	@dirty
 	public int compareTo(Observer obj) {
@@ -44,11 +45,11 @@ class Observer extends ManagedObject {
 		else
 			return 0;
 	}
-	
+
 	public void setObserverType(unsigned int type) {
 		observerType = type;
 	}
-	
+
 	@read
 	public abstract boolean isObserverType(unsigned int type) {
 		return observerType == type;

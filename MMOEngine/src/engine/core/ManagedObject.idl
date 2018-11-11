@@ -15,8 +15,11 @@ include system.io.ObjectOutputStream;
 
 include engine.orb.object.DistributedObjectServant;
 
+include engine.util.JSONSerializationType;
+
 import engine.core.ObjectUpdateToDatabaseTask;
 
+@json
 class ManagedObject {
 	protected int persistenceLevel;
 
@@ -91,6 +94,12 @@ class ManagedObject {
 	@noImplementationDeclaration
 	@dirty
 	public native void writeObject(ObjectOutputStream stream);
+
+	@local
+	@nativeStub
+	@noImplementationDeclaration
+	@dirty
+	public native void writeJSON(@dereferenced JSONSerializationType j);
 
 	@local
 	@noImplementationDeclaration

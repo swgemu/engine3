@@ -20,6 +20,8 @@
 #define unlikely(x)     (x)
 #endif
 #endif
+#include "engine/util/json_utils.h"
+
 namespace engine {
 namespace log {
 
@@ -58,7 +60,7 @@ public:
 	 * @pre { this object is locked, obj is not null }
 	 * @post {this object is locked }
 	 * @param obj SceneObject that will be compared to
-	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj
 	 */
 	int compareTo(Observer* obj);
 
@@ -105,7 +107,7 @@ public:
 	 * @pre { this object is locked, obj is not null }
 	 * @post {this object is locked }
 	 * @param obj SceneObject that will be compared to
-	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj
 	 */
 	int compareTo(Observer* obj);
 
@@ -120,6 +122,7 @@ public:
 	DistributedObjectStub* _getStub();
 	virtual void readObject(ObjectInputStream* stream);
 	virtual void writeObject(ObjectOutputStream* stream);
+	virtual void writeJSON(nlohmann::json& j);
 protected:
 	virtual ~ObserverImplementation();
 

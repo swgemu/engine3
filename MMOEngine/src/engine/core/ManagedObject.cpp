@@ -221,6 +221,16 @@ void ManagedObject::__writeObject(ObjectOutputStream* stream) {
 	}
 }
 
+void ManagedObject::__writeJSON(JSONSerializationType& j) {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+	if (unlikely(_implementation == NULL)) {
+		throw ObjectNotLocalException(this);
+
+	} else {
+		_implementation->writeJSON(j);
+	}
+}
+
 void ManagedObject::readObject(ObjectInputStream* stream) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
@@ -516,6 +526,11 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
 	stream->writeInt(_offset, _totalSize);
 	return 2;
+}
+
+void ManagedObjectImplementation::writeJSON(nlohmann::json& j) {
+	j["ManagedObject.persistenceLevel"] = persistenceLevel;
+
 }
 
 ManagedObjectImplementation::ManagedObjectImplementation() {

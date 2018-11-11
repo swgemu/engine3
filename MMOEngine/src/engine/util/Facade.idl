@@ -12,19 +12,20 @@ import engine.log.Logger;
 
 //include engine.util.SessionFacadeType;
 
+@json
 class Facade extends ManagedObject implements Logger {
 	public Facade() {
 		Logger.setLoggingName("Facade");
 	}
-	
+
 	public abstract int initializeSession() {
 		return 0;
 	}
-	
+
 	public abstract int cancelSession() {
 		return 0;
 	}
-	
+
 	public abstract int clearSession() {
 		return 0;
 	}

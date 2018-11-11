@@ -20,6 +20,8 @@
 #define unlikely(x)     (x)
 #endif
 #endif
+#include "engine/util/json_utils.h"
+
 #include "engine/core/ManagedObject.h"
 
 namespace engine {

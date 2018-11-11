@@ -200,6 +200,11 @@ int FacadeImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	return _count + 0;
 }
 
+void FacadeImplementation::writeJSON(nlohmann::json& j) {
+	ManagedObjectImplementation::writeJSON(j);
+
+}
+
 FacadeImplementation::FacadeImplementation() {
 	_initializeImplementation();
 	// engine/util/Facade.idl():  		Logger.setLoggingName("Facade");

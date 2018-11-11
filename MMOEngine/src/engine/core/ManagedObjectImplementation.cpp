@@ -134,6 +134,20 @@ void ManagedObject::writeObject(ObjectOutputStream* stream) {
 		_implementation->writeObject(stream);
 }
 
+void ManagedObject::writeJSON(JSONSerializationType& j) {
+	Reference<ManagedObjectImplementation*> _implementation;
+#ifdef WITH_STM
+	_implementation = header->getForDirty();
+#else
+	_implementation = (ManagedObjectImplementation*) _getImplementationForRead();
+#endif
+
+	if (_implementation == nullptr) {
+		throw ObjectNotLocalException(this);
+	} else
+		_implementation->writeJSON(j);
+}
+
 DistributedObjectServant* ManagedObject::getServant() {
 #ifdef WITH_STM
 	return header->getForDirty();
