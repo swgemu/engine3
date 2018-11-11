@@ -37,6 +37,7 @@ void sys::lang::to_json(nlohmann::json& j, const sys::lang::String& p) {
 void sys::lang::to_json(nlohmann::json& j, const sys::lang::UnicodeString& p) {
 	const char16_t* wideArray = (const char16_t*) p.toWideCharArray();
 	u16string uStr;
+	uStr.reserve(p.length());
 
 	for (int i = 0; i < p.length(); ++i) {
 		uStr.push_back(wideArray[i]);
