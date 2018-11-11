@@ -118,7 +118,7 @@ extern "C" int isinf (double);
 #endif
 
 #ifdef __clang__
-#define CLANG_COMPILER
+#define E3_CLANG_COMPILER
 #endif
 
 #if __cplusplus >= 201103L
