@@ -254,8 +254,10 @@ int ObserverImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 void ObserverImplementation::writeJSON(nlohmann::json& j) {
 	ManagedObjectImplementation::writeJSON(j);
 
-	j["Observer.observerType"] = observerType;
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["observerType"] = observerType;
 
+	j["Observer"] = thisObject;
 }
 
 int ObserverImplementation::notifyObserverEvent(unsigned int eventType, Observable* observable, ManagedObject* arg1, long long arg2) {

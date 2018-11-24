@@ -203,6 +203,7 @@ int FacadeImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 void FacadeImplementation::writeJSON(nlohmann::json& j) {
 	ManagedObjectImplementation::writeJSON(j);
 
+	nlohmann::json thisObject = nlohmann::json::object();
 }
 
 FacadeImplementation::FacadeImplementation() {

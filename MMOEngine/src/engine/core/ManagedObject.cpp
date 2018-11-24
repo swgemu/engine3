@@ -529,8 +529,10 @@ int ManagedObjectImplementation::writeObjectMembers(ObjectOutputStream* stream) 
 }
 
 void ManagedObjectImplementation::writeJSON(nlohmann::json& j) {
-	j["ManagedObject.persistenceLevel"] = persistenceLevel;
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["persistenceLevel"] = persistenceLevel;
 
+	j["ManagedObject"] = thisObject;
 	j["_className"] = _className;
 }
 

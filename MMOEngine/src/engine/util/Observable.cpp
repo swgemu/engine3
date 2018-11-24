@@ -281,10 +281,12 @@ int ObservableImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 void ObservableImplementation::writeJSON(nlohmann::json& j) {
 	ManagedObjectImplementation::writeJSON(j);
 
-	j["Observable.observerEventMap"] = observerEventMap;
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["observerEventMap"] = observerEventMap;
 
-	j["Observable.observableChildren"] = observableChildren;
+	thisObject["observableChildren"] = observableChildren;
 
+	j["Observable"] = thisObject;
 }
 
 ObservableImplementation::ObservableImplementation() {
