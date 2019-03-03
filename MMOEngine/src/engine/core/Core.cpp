@@ -52,6 +52,10 @@ void Core::parsePropertyData(const String& className, const char* name, LuaObjec
 }
 
 void Core::initializeProperties(const String& className) {
+	static Mutex guard;
+
+	Locker locker(&guard);
+
 	try {
 		static Lua lua = []() {
 			Lua lua;
