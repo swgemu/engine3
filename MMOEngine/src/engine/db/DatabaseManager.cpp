@@ -1,5 +1,5 @@
 #include "DatabaseManager.h"
-
+#include "engine/core/Core.h"
 
 using namespace engine::db;
 using namespace engine::db::berkley;
@@ -7,7 +7,6 @@ using namespace engine::db::berkley;
 void BerkeleyCheckpointTask::run() {
 	manager->checkpoint();
 }
-
 
 //#ifdef VERSION_PUBLIC
 //uint64 DatabaseManager::MAX_CACHE_SIZE = 500000000; // 500MB
@@ -66,19 +65,26 @@ void DatabaseManager::checkpoint() {
 }
 
 void DatabaseManager::openEnvironment() {
+	MAX_CACHE_SIZE = Core::getIntProperty("DatabaseManager.maxCacheSize", -1);
+
 	EnvironmentConfig config;
 	config.setAllowCreate(true);
 	config.setInitializeLocking(true);
 	config.setInitializeLogging(true);
-	config.setLogAutoRemove(true);
+
+	config.setLogAutoRemove(Core::getIntProperty("DatabaseManager.logAutoRemove", 1));
+
 	config.setThreaded(true);
-	config.setThreadCount(512);
+
+	config.setThreadCount(Core::getIntProperty("DatabaseManager.threadCount", 512));
+
 	config.setTransactional(true);
 	config.setInitializeCache(true);
-	uint32 logFileSize = 100;
 
-	logFileSize = logFileSize * 1024 * 1024;
-	config.setMaxLogFileSize(logFileSize); // 3gb
+	constexpr const uint32 logFileSize = 100 * 1024 * 1024;
+
+	config.setMaxLogFileSize(Core::getIntProperty("DatabaseManager.logFileSize", logFileSize));
+
 	config.setLockDetectMode(LockDetectMode::RANDOM);
 	//config.setLockDetectMode(LockDetectMode::YOUNGEST);
 

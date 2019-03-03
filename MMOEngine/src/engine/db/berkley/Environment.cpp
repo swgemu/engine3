@@ -10,6 +10,9 @@
 #include "Environment.h"
 #include "BTransaction.h"
 #include "BerkeleyDatabase.h"
+#include "engine/core/Core.h"
+
+#include <sys/ipc.h>
 
 using namespace engine::db::berkley;
 
@@ -29,74 +32,55 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 	//System::out << "trying to set " << threadCount << " thread count" << endl;
 
 	//databaseEnvironment->mutex_set_max(databaseEnvironment, 75000);
-	databaseEnvironment->set_lk_max_locks(databaseEnvironment, 750000);
-	databaseEnvironment->set_lk_max_lockers(databaseEnvironment, 750000);
-	databaseEnvironment->set_lk_max_objects(databaseEnvironment, 750000);
-/*
-#ifndef VERSION_PUBLIC
-	databaseEnvironment->set_cachesize(databaseEnvironment, 0, 262144000 * 4, 8);
-	
-	uint32 logCache = 1024 * 1024;
-	logCache = 1000 * logCache;
-	databaseEnvironment->set_lg_bsize(databaseEnvironment, logCache);
+	databaseEnvironment->set_lk_max_locks(databaseEnvironment, Core::getIntProperty("BerkeleyDB.envMaxLocks", 750000));
+	databaseEnvironment->set_lk_max_lockers(databaseEnvironment, Core::getIntProperty("BerkeleyDB.envMaxLockers", 750000));
+	databaseEnvironment->set_lk_max_objects(databaseEnvironment, Core::getIntProperty("BerkeleyDB.envMaxLockObjects", 750000));
+
+	databaseEnvironment->set_cachesize(databaseEnvironment, 0, Core::getIntProperty("BerkeleyDB.envCacheSize", 262144000), Core::getIntProperty("BerkeleyDB.envCacheNumber", 0));
+	databaseEnvironment->set_lg_bsize(databaseEnvironment, Core::getIntProperty("BerkeleyDB.envLogCache", 262144000));
 
 	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
 
-        key_t shm_key = ftok("/mnt/ssd/workspaceALPHA/MMOCoreORB/bin/databases/err2.file", 7232);
-        	
-	databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
+	int shmKey = Core::getIntProperty("BerkeleyDB.envSHMKey", 0);
 
-	ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER | DB_SYSTEM_MEM, 0);
-#else
-*/
-        databaseEnvironment->set_cachesize(databaseEnvironment, 0, 262144000, 0);
-	
-        databaseEnvironment->set_lg_bsize(databaseEnvironment, 262144000);
+	if (shmKey) {
+		String fileName = Core::getProperty("BerkeleyDB.envSHMKeyFile", "databases/err2.file");
+		key_t shm_key = ftok(fileName.toCharArray(), shmKey);
 
-	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
+		databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
 
-        ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER, 0);
-        
-//#endif
+		ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER | DB_SYSTEM_MEM, 0);
+	} else {
+		ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER, 0);
+	}
 
 	if (ret != 0)
 		throw DatabaseException("unable to open environment handle with ret code " + String(db_strerror(ret)));
 
-    databaseEnvironment->set_isalive(databaseEnvironment, isAlive);
+	databaseEnvironment->set_isalive(databaseEnvironment, isAlive);
 
-    int lret = databaseEnvironment->set_lk_detect(databaseEnvironment, environmentConfig.getLockDetectMode());
+	int lret = databaseEnvironment->set_lk_detect(databaseEnvironment, environmentConfig.getLockDetectMode());
 
-    if (lret != 0) {
-    	throw DatabaseException("error setting lock detect " + String(db_strerror(lret)));
-    }
+	if (lret != 0) {
+		throw DatabaseException("error setting lock detect " + String(db_strerror(lret)));
+	}
 
-    databaseEnvironment->set_lg_max(databaseEnvironment, environmentConfig.getMaxLogFileSize());
+	databaseEnvironment->set_lg_max(databaseEnvironment, environmentConfig.getMaxLogFileSize());
 
-   // databaseEnvironment->set_timeout(databaseEnvironment, 10000 , DB_SET_LOCK_TIMEOUT);
+	// databaseEnvironment->set_timeout(databaseEnvironment, 10000 , DB_SET_LOCK_TIMEOUT);
 
-    if (environmentConfig.getLogAutoRemove())
-    	databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
-/*
-#ifndef VERSION_PUBLIC
-    int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, 1, 50000 / 2);
+	if (environmentConfig.getLogAutoRemove())
+		databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
 
-    if (resSleep != 0) {
-    	printf("could not set max writes\n");
-    }
-    
-    
-        int maxwritep;
-    unsigned int maxwrite_sleepp;
+	int writesConfig = Core::getIntProperty("BerkeleyDB.envMaxSeqWrites", 0);
 
-    databaseEnvironment->get_mp_max_write(databaseEnvironment, &maxwritep, &maxwrite_sleepp);
-    
+	if (writesConfig) {
+		int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, writesConfig, Core::getIntProperty("BerkeleyDB.envMaxSeqWriteSleep", 50000));
 
-    printf("maxwritep:%d maxwrite_speepp:%d\n", maxwritep, maxwrite_sleepp); 
-#endif  
- */   
-  
-    
-
+		if (resSleep != 0) {
+			printf("could not set max writes\n");
+		}
+	}
 }
 
 Environment::~Environment() {
@@ -105,8 +89,8 @@ Environment::~Environment() {
 
 		assert(ret == 0);
 		/*if (ret != 0) {
-	    	throw DatabaseException("unable to open environment handle with ret code " + String::valueOf(ret));
-		}*/
+		  throw DatabaseException("unable to open environment handle with ret code " + String::valueOf(ret));
+		  }*/
 
 	}
 }

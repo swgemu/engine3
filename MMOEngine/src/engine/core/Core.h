@@ -71,6 +71,14 @@ namespace engine {
 			}
 		}
 
+		static String getProperty(const String& key, const String& defaultValue = "") {
+			if (!properties.containsKey(key)) {
+				return defaultValue;
+			}
+
+			return properties.get(key);
+		}
+
 		static void initializeProperties(const String& className);
 	protected:
 		virtual void initializeContext(int logLevel);

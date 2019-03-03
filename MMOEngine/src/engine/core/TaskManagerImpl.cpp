@@ -91,7 +91,11 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
 
 	if (workerCount == 0) {
+#ifdef VERSION_PUBLIC
 		workerCount = Math::max(8, maxCpus + 2);
+#else
+		workerCount = Math::max(8, maxCpus / 2);
+#endif
 		DEFAULT_WORKER_QUEUES = workerCount;
 	}
 

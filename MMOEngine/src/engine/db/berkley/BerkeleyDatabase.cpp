@@ -11,6 +11,8 @@
 
 #include "engine/db/ObjectDatabaseManager.h"
 
+#include "engine/core/Core.h"
+
 using namespace engine::db::berkley;
 
 CheckpointConfig CheckpointConfig::DEFAULT;
@@ -26,7 +28,9 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 	if (ret != 0)
 		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
 
-	dbp->set_pagesize(dbp, 16384);
+	int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
+
+	dbp->set_pagesize(dbp, pageSize);
 	dbp->set_flags(dbp, DB_CHKSUM);
 
 	ret = dbp->open(dbp,        /* DB structure pointer */
@@ -64,7 +68,9 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 	if (ret != 0)
 		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
 
-	dbp->set_pagesize(dbp, 16384);
+	int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
+
+	dbp->set_pagesize(dbp, pageSize);
 	dbp->set_flags(dbp, DB_CHKSUM);
 
 	ret = dbp->open(dbp,        /* DB structure pointer */
