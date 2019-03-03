@@ -31,7 +31,7 @@ rm src/tree.cpio
 
 # unpack tree at destination
 cd ${INCLUDE_INSTALL_PATH}
-cpio --quiet -id $2 < tree.cpio
+cpio --quiet -u -id $2 < tree.cpio
 
 # clean up
 rm tree.cpio
