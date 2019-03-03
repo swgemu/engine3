@@ -36,6 +36,9 @@ DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 	currentVersion = 0;
 
 	managedObjectsWithHashCodeMembers = false;
+
+	Core::initializeProperties("DatabaseManager");
+	Core::initializeProperties("BerkeleyDB");
 }
 
 DatabaseManager::~DatabaseManager() {
