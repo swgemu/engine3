@@ -171,6 +171,8 @@ public:
 
 	DistributedObject* instantiateObject();
 
+	DistributedObjectPOD* instantiatePOD();
+
 	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
@@ -183,4 +185,32 @@ public:
 
 using namespace engine::util;
 
-#endif /*OBSERVABLE_H_*/
+namespace engine {
+namespace util {
+
+class ObservablePOD : public ManagedObjectPOD {
+public:
+	ObserverEventMap observerEventMap;
+
+	SortedVector<ManagedReference<ObservablePOD* > > observableChildren;
+
+	String _className;
+	ObservablePOD();
+	virtual void writeJSON(nlohmann::json& j);
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
+	int writeObjectMembers(ObjectOutputStream* stream);
+
+
+
+	virtual ~ObservablePOD();
+
+};
+
+} // namespace util
+} // namespace engine
+
+using namespace engine::util;
+
+#endif /*OBSERVABLEPOD_H_*/

@@ -19,7 +19,7 @@ LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 
 	setLoggingName("LocalDatabase " + dbFileName);
 	setGlobalLogging(true);
-	setInfoLogLevel();
+	setLogLevel(LogLevel::LOG);
 
 	databaseFileName = dbFileName;
 

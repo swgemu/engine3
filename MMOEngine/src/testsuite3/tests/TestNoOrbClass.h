@@ -20,59 +20,30 @@
 #define unlikely(x)     (x)
 #endif
 #endif
-#include "engine/lua/Luna.h"
+#include "engine/util/json_utils.h"
 
 #include "system/util/Vector.h"
+
+#include "engine/core/ManagedObject.h"
 
 #include "engine/lua/LuaCallbackException.h"
 
 namespace testsuite3 {
 namespace tests {
 
-class TestNoOrbClass : public Object {
+class TestNoOrbClass : public ManagedObject {
 public:
-private:
-	int value;
+	DistributedObjectServant* _getImplementation();
+	DistributedObjectServant* _getImplementationForRead() const;
 
-	Reference<Vector<int>* > test;
-
-	Reference<TestNoOrbClass* > testObject;
-
-public:
-	TestNoOrbClass(int val);
-
-	virtual int getValue();
-
-	virtual void setValue(int val);
+	void _setImplementation(DistributedObjectServant* servant);
 
 protected:
-	void nothing();
-
-public:
-	void add(Vector<int>* testing);
-
-
-
+	TestNoOrbClass(DummyConstructorParameter* param);
 
 	virtual ~TestNoOrbClass();
 
-};
-
-class LuaTestNoOrbClass {
-public:
-	static const char className[];
-	static Luna<LuaTestNoOrbClass>::RegType Register[];
-
-	LuaTestNoOrbClass(lua_State *L);
-	virtual ~LuaTestNoOrbClass();
-
-	int _setObject(lua_State *L);
-	int _getObject(lua_State *L);
-	int getValue(lua_State *L);
-	int setValue(lua_State *L);
-	int add(lua_State *L);
-
-	Reference<TestNoOrbClass*> realObject;
+	friend class TestNoOrbClassHelper;
 };
 
 } // namespace tests
@@ -80,4 +51,105 @@ public:
 
 using namespace testsuite3::tests;
 
-#endif /*TESTNOORBCLASS_H_*/
+namespace testsuite3 {
+namespace tests {
+
+class TestNoOrbClassImplementation : public ManagedObjectImplementation {
+
+public:
+	TestNoOrbClassImplementation();
+	TestNoOrbClassImplementation(DummyConstructorParameter* param);
+
+	WeakReference<TestNoOrbClass*> _this;
+
+	operator const TestNoOrbClass*();
+
+	DistributedObjectStub* _getStub();
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
+protected:
+	virtual ~TestNoOrbClassImplementation();
+
+	void finalize();
+
+	void _initializeImplementation();
+
+	void _setStub(DistributedObjectStub* stub);
+
+	void lock(bool doLock = true);
+
+	void lock(ManagedObject* obj);
+
+	void rlock(bool doLock = true);
+
+	void wlock(bool doLock = true);
+
+	void wlock(ManagedObject* obj);
+
+	void unlock(bool doLock = true);
+
+	void runlock(bool doLock = true);
+
+	void _serializationHelperMethod();
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
+	int writeObjectMembers(ObjectOutputStream* stream);
+
+	friend class TestNoOrbClass;
+};
+
+class TestNoOrbClassAdapter : public ManagedObjectAdapter {
+public:
+	TestNoOrbClassAdapter(TestNoOrbClass* impl);
+
+	void invokeMethod(sys::uint32 methid, DistributedMethod* method);
+
+};
+
+class TestNoOrbClassHelper : public DistributedObjectClassHelper, public Singleton<TestNoOrbClassHelper> {
+	static TestNoOrbClassHelper* staticInitializer;
+
+public:
+	TestNoOrbClassHelper();
+
+	void finalizeHelper();
+
+	DistributedObject* instantiateObject();
+
+	DistributedObjectPOD* instantiatePOD();
+
+	DistributedObjectServant* instantiateServant();
+
+	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
+
+	friend class Singleton<TestNoOrbClassHelper>;
+};
+
+} // namespace tests
+} // namespace testsuite3
+
+using namespace testsuite3::tests;
+
+namespace testsuite3 {
+namespace tests {
+
+class TestNoOrbClassPOD : public ManagedObjectPOD {
+public:
+
+	TestNoOrbClassPOD();
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
+	int writeObjectMembers(ObjectOutputStream* stream);
+
+
+
+	virtual ~TestNoOrbClassPOD();
+
+};
+
+} // namespace tests
+} // namespace testsuite3
+
+using namespace testsuite3::tests;
+
+#endif /*TESTNOORBCLASSPOD_H_*/

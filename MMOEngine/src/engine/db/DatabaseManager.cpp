@@ -20,7 +20,7 @@ DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 	loaded = false;
 
 	setGlobalLogging(true);
-	setInfoLogLevel();
+	setLogLevel(LogLevel::LOG);
 
 	databases.setNullValue(nullptr);
 	databases.setAllowOverwriteInsertPlan();
@@ -112,7 +112,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 	if (loaded)
 		return;
 
-	info("loading bdb databases...", true);
+	info("loading bdb databases...");
 
 	try {
 		openEnvironment();
@@ -215,7 +215,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 
 	checkpoint();
 
-	info("bdb databases loaded", true);
+	info("bdb databases loaded");
 }
 
 void DatabaseManager::convertDatabasesToHashCodeMembers() {

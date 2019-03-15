@@ -197,6 +197,10 @@ DistributedObjectServant* ManagedServiceHelper::instantiateServant() {
 	return new ManagedServiceImplementation(DummyConstructorParameter::instance());
 }
 
+DistributedObjectPOD* ManagedServiceHelper::instantiatePOD() {
+	return new ManagedServicePOD();
+}
+
 DistributedObjectAdapter* ManagedServiceHelper::createAdapter(DistributedObjectStub* obj) {
 	DistributedObjectAdapter* adapter = new ManagedServiceAdapter(static_cast<ManagedService*>(obj));
 
@@ -206,5 +210,62 @@ DistributedObjectAdapter* ManagedServiceHelper::createAdapter(DistributedObjectS
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+/*
+ *	ManagedServicePOD
+ */
+
+ManagedServicePOD::~ManagedServicePOD() {
+}
+
+ManagedServicePOD::ManagedServicePOD(void) {
+	_className = "ManagedService";
+}
+
+
+void ManagedServicePOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ManagedServicePOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ManagedServicePOD::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectPOD::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+
+	return _count + 0;
+}
+
+bool ManagedServicePOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectPOD::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	}
+
+	return false;
+}
+
+void ManagedServicePOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ManagedServicePOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

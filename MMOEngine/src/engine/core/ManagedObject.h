@@ -336,6 +336,8 @@ public:
 
 	DistributedObject* instantiateObject();
 
+	DistributedObjectPOD* instantiatePOD();
+
 	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
@@ -348,4 +350,30 @@ public:
 
 using namespace engine::core;
 
-#endif /*MANAGEDOBJECT_H_*/
+namespace engine {
+namespace core {
+
+class ManagedObjectPOD : public DistributedObjectPOD {
+public:
+	int persistenceLevel;
+
+	String _className;
+	ManagedObjectPOD();
+	virtual void writeJSON(nlohmann::json& j);
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
+	int writeObjectMembers(ObjectOutputStream* stream);
+
+
+
+	virtual ~ManagedObjectPOD();
+
+};
+
+} // namespace core
+} // namespace engine
+
+using namespace engine::core;
+
+#endif /*MANAGEDOBJECTPOD_H_*/

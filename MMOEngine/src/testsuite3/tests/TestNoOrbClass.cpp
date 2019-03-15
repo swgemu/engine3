@@ -5,97 +5,267 @@
 #include "TestNoOrbClass.h"
 
 /*
- *	TestNoOrbClass
+ *	TestNoOrbClassStub
  */
+
+TestNoOrbClass::TestNoOrbClass(DummyConstructorParameter* param) : ManagedObject(param) {
+	_setClassName("TestNoOrbClass");
+}
 
 TestNoOrbClass::~TestNoOrbClass() {
 }
 
 
-TestNoOrbClass::TestNoOrbClass(int val) {
-	// testsuite3/tests/TestNoOrbClass.idl():  		value = val;
-	value = val;
+
+DistributedObjectServant* TestNoOrbClass::_getImplementation() {
+
+	 if (!_updated) _updated = true;
+	return _impl;
 }
 
-int TestNoOrbClass::getValue() {
-	// testsuite3/tests/TestNoOrbClass.idl():  		return value;
-	return value;
+DistributedObjectServant* TestNoOrbClass::_getImplementationForRead() const {
+	return _impl;
 }
 
-void TestNoOrbClass::setValue(int val) {
-	// testsuite3/tests/TestNoOrbClass.idl():  		value = val;
-	value = val;
+void TestNoOrbClass::_setImplementation(DistributedObjectServant* servant) {
+	_impl = servant;
 }
 
-void TestNoOrbClass::nothing() {
+/*
+ *	TestNoOrbClassImplementation
+ */
+
+TestNoOrbClassImplementation::TestNoOrbClassImplementation() : ManagedObjectImplementation() {
+	_initializeImplementation();
 }
 
-const char LuaTestNoOrbClass::className[] = "LuaTestNoOrbClass";
-
-Luna<LuaTestNoOrbClass>::RegType LuaTestNoOrbClass::Register[] = {
-	{ "_setObject", &LuaTestNoOrbClass::_setObject },
-	{ "_getObject", &LuaTestNoOrbClass::_getObject },
-	{ "getValue", &LuaTestNoOrbClass::getValue },
-	{ "setValue", &LuaTestNoOrbClass::setValue },
-	{ "add", &LuaTestNoOrbClass::add },
-	{ 0, 0 }
-};
-
-LuaTestNoOrbClass::LuaTestNoOrbClass(lua_State *L) {
-	realObject = static_cast<TestNoOrbClass*>(lua_touserdata(L, 1));
+TestNoOrbClassImplementation::TestNoOrbClassImplementation(DummyConstructorParameter* param) : ManagedObjectImplementation(param) {
+	_initializeImplementation();
 }
 
-LuaTestNoOrbClass::~LuaTestNoOrbClass() {
+
+TestNoOrbClassImplementation::~TestNoOrbClassImplementation() {
 }
 
-int LuaTestNoOrbClass::_setObject(lua_State* L) {
-	realObject = static_cast<TestNoOrbClass*>(lua_touserdata(L, -1));
 
-	return 0;
+void TestNoOrbClassImplementation::finalize() {
 }
 
-int LuaTestNoOrbClass::_getObject(lua_State* L) {
-	lua_pushlightuserdata(L, realObject.get());
+void TestNoOrbClassImplementation::_initializeImplementation() {
+	_setClassHelper(TestNoOrbClassHelper::instance());
 
-	return 1;
+	_this = NULL;
+
+	_serializationHelperMethod();
 }
 
-int LuaTestNoOrbClass::getValue(lua_State *L) {
-	int parameterCount = lua_gettop(L) - 1;
-	
-	if (parameterCount == 0) {
-		int result = realObject->getValue();
-
-		lua_pushinteger(L, result);
-		return 1;
-	} else {
-		throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestNoOrbClass:getValue()'");
-	}
-	return 0;
+void TestNoOrbClassImplementation::_setStub(DistributedObjectStub* stub) {
+	_this = static_cast<TestNoOrbClass*>(stub);
+	ManagedObjectImplementation::_setStub(stub);
 }
 
-int LuaTestNoOrbClass::setValue(lua_State *L) {
-	int parameterCount = lua_gettop(L) - 1;
-	
-	if (lua_isnumber(L, -1)) {
-		if (parameterCount == 1) {
-			int val = lua_tointeger(L, -1);
+DistributedObjectStub* TestNoOrbClassImplementation::_getStub() {
+	return _this.get();
+}
 
-			realObject->setValue(val);
+TestNoOrbClassImplementation::operator const TestNoOrbClass*() {
+	return _this.get();
+}
 
-			return 0;
-		} else {
-			throw LuaCallbackException(L, "invalid argument count " + String::valueOf(parameterCount) + " for lua method 'TestNoOrbClass:setValue(integer)'");
+void TestNoOrbClassImplementation::lock(bool doLock) {
+	_this.getReferenceUnsafeStaticCast()->lock(doLock);
+}
+
+void TestNoOrbClassImplementation::lock(ManagedObject* obj) {
+	_this.getReferenceUnsafeStaticCast()->lock(obj);
+}
+
+void TestNoOrbClassImplementation::rlock(bool doLock) {
+	_this.getReferenceUnsafeStaticCast()->rlock(doLock);
+}
+
+void TestNoOrbClassImplementation::wlock(bool doLock) {
+	_this.getReferenceUnsafeStaticCast()->wlock(doLock);
+}
+
+void TestNoOrbClassImplementation::wlock(ManagedObject* obj) {
+	_this.getReferenceUnsafeStaticCast()->wlock(obj);
+}
+
+void TestNoOrbClassImplementation::unlock(bool doLock) {
+	_this.getReferenceUnsafeStaticCast()->unlock(doLock);
+}
+
+void TestNoOrbClassImplementation::runlock(bool doLock) {
+	_this.getReferenceUnsafeStaticCast()->runlock(doLock);
+}
+
+void TestNoOrbClassImplementation::_serializationHelperMethod() {
+	ManagedObjectImplementation::_serializationHelperMethod();
+
+	_setClassName("TestNoOrbClass");
+
+}
+
+void TestNoOrbClassImplementation::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(TestNoOrbClassImplementation::readObjectMember(stream, _nameHashCode)) {
 		}
-	} else {
-		throw LuaCallbackException(L, "invalid argument at 0 for lua method 'TestNoOrbClass:setValue(integer)'");
+
+		stream->setOffset(_currentOffset + _varSize);
 	}
-	return 0;
+
+	initializeTransientMembers();
 }
 
-int LuaTestNoOrbClass::add(lua_State *L) {
-	int parameterCount = lua_gettop(L) - 1;
-	
-	return 0;
+bool TestNoOrbClassImplementation::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectImplementation::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	}
+
+	return false;
+}
+
+void TestNoOrbClassImplementation::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = TestNoOrbClassImplementation::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int TestNoOrbClassImplementation::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectImplementation::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+
+	return _count + 0;
+}
+
+/*
+ *	TestNoOrbClassAdapter
+ */
+
+
+#include "engine/orb/messages/InvokeMethodMessage.h"
+
+
+TestNoOrbClassAdapter::TestNoOrbClassAdapter(TestNoOrbClass* obj) : ManagedObjectAdapter(obj) {
+}
+
+void TestNoOrbClassAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
+	DOBMessage* resp = inv->getInvocationMessage();
+
+	switch (methid) {
+	default:
+		ManagedObjectAdapter::invokeMethod(methid, inv);
+	}
+}
+
+/*
+ *	TestNoOrbClassHelper
+ */
+
+TestNoOrbClassHelper* TestNoOrbClassHelper::staticInitializer = TestNoOrbClassHelper::instance();
+
+TestNoOrbClassHelper::TestNoOrbClassHelper() {
+	className = "TestNoOrbClass";
+
+	Core::getObjectBroker()->registerClass(className, this);
+}
+
+void TestNoOrbClassHelper::finalizeHelper() {
+	TestNoOrbClassHelper::finalize();
+}
+
+DistributedObject* TestNoOrbClassHelper::instantiateObject() {
+	return new TestNoOrbClass(DummyConstructorParameter::instance());
+}
+
+DistributedObjectServant* TestNoOrbClassHelper::instantiateServant() {
+	return new TestNoOrbClassImplementation(DummyConstructorParameter::instance());
+}
+
+DistributedObjectPOD* TestNoOrbClassHelper::instantiatePOD() {
+	return new TestNoOrbClassPOD();
+}
+
+DistributedObjectAdapter* TestNoOrbClassHelper::createAdapter(DistributedObjectStub* obj) {
+	DistributedObjectAdapter* adapter = new TestNoOrbClassAdapter(static_cast<TestNoOrbClass*>(obj));
+
+	obj->_setClassName(className);
+	obj->_setClassHelper(this);
+
+	adapter->setStub(obj);
+
+	return adapter;
+}
+
+/*
+ *	TestNoOrbClassPOD
+ */
+
+TestNoOrbClassPOD::~TestNoOrbClassPOD() {
+}
+
+TestNoOrbClassPOD::TestNoOrbClassPOD(void) {
+	_className = "TestNoOrbClass";
+}
+
+
+void TestNoOrbClassPOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = TestNoOrbClassPOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int TestNoOrbClassPOD::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectPOD::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+
+	return _count + 0;
+}
+
+bool TestNoOrbClassPOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectPOD::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	}
+
+	return false;
+}
+
+void TestNoOrbClassPOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(TestNoOrbClassPOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

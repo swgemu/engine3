@@ -304,6 +304,10 @@ DistributedObjectServant* FacadeHelper::instantiateServant() {
 	return new FacadeImplementation();
 }
 
+DistributedObjectPOD* FacadeHelper::instantiatePOD() {
+	return new FacadePOD();
+}
+
 DistributedObjectAdapter* FacadeHelper::createAdapter(DistributedObjectStub* obj) {
 	DistributedObjectAdapter* adapter = new FacadeAdapter(static_cast<Facade*>(obj));
 
@@ -313,5 +317,69 @@ DistributedObjectAdapter* FacadeHelper::createAdapter(DistributedObjectStub* obj
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+/*
+ *	FacadePOD
+ */
+
+FacadePOD::~FacadePOD() {
+}
+
+FacadePOD::FacadePOD(void) {
+	_className = "Facade";
+}
+
+
+void FacadePOD::writeJSON(nlohmann::json& j) {
+	ManagedObjectPOD::writeJSON(j);
+
+	nlohmann::json thisObject = nlohmann::json::object();
+}
+
+
+void FacadePOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = FacadePOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int FacadePOD::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectPOD::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+
+	return _count + 0;
+}
+
+bool FacadePOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectPOD::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	}
+
+	return false;
+}
+
+void FacadePOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(FacadePOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

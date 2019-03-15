@@ -22,6 +22,7 @@ namespace engine {
   	class DistributedObject;
   	class DistributedObjectStub;
   	class DOBObjectManager;
+	class DistributedObjectPOD;
 
 	class ObjectBroker {
 	public:
@@ -42,10 +43,14 @@ namespace engine {
 		virtual Reference<DistributedObject*> lookUp(uint64 objid) = 0;
 
 		virtual bool destroyObject(DistributedObjectStub* obj) = 0;
-		
+
 		virtual DOBObjectManager* getObjectManager() = 0;
 
 		virtual uint64 getNextFreeObjectID() = 0;
+
+		virtual DistributedObjectPOD* createObjectPOD(const String& className) {
+			return nullptr;
+		}
 
 		int compareTo(ObjectBroker*& b) {
 			if (this < b)

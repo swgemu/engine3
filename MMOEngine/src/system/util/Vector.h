@@ -28,7 +28,7 @@ namespace sys {
        Vector(const Vector<E>& vector);
 
 #ifdef CXX11_COMPILER
-	   Vector(std::initializer_list<E> l);
+       Vector(std::initializer_list<E> l);
        Vector(Vector<E>&& vector);
 #endif
 
@@ -38,14 +38,14 @@ namespace sys {
        Vector<E>& operator=(Vector<E>&& vector);
 #endif
 
-	   void addAll(const Vector<E>& array) {
-		   ArrayList<E>::addAll(array);
-	   }
+       void addAll(const Vector<E>& array) {
+	       ArrayList<E>::addAll(array);
+       }
 
 #ifdef CXX11_COMPILER
-	   void addAll(Vector<E>&& array) {
-		   ArrayList<E>::moveAll(array);
-	   }
+       void addAll(Vector<E>&& array) {
+	       ArrayList<E>::moveAll(array);
+       }
 #endif
 
        ~Vector();

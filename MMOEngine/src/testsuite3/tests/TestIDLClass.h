@@ -20,6 +20,8 @@
 #define unlikely(x)     (x)
 #endif
 #endif
+#include "engine/util/json_utils.h"
+
 #include "system/util/Vector.h"
 
 #include "engine/core/ManagedObject.h"
@@ -104,6 +106,7 @@ public:
 	DistributedObjectStub* _getStub();
 	virtual void readObject(ObjectInputStream* stream);
 	virtual void writeObject(ObjectOutputStream* stream);
+	virtual void writeJSON(nlohmann::json& j);
 protected:
 	virtual ~TestIDLClassImplementation();
 
@@ -166,6 +169,8 @@ public:
 
 	DistributedObject* instantiateObject();
 
+	DistributedObjectPOD* instantiatePOD();
+
 	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
@@ -178,4 +183,34 @@ public:
 
 using namespace testsuite3::tests;
 
-#endif /*TESTIDLCLASS_H_*/
+namespace testsuite3 {
+namespace tests {
+
+class TestIDLClassPOD : public ManagedObjectPOD {
+public:
+	int value;
+
+	Vector<int> testVector;
+
+	ManagedWeakReference<TestIDLClassPOD* > parent;
+
+	String _className;
+	TestIDLClassPOD();
+	virtual void writeJSON(nlohmann::json& j);
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
+	int writeObjectMembers(ObjectOutputStream* stream);
+
+
+
+	virtual ~TestIDLClassPOD();
+
+};
+
+} // namespace tests
+} // namespace testsuite3
+
+using namespace testsuite3::tests;
+
+#endif /*TESTIDLCLASSPOD_H_*/

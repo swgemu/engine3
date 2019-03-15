@@ -15,6 +15,7 @@ option(ENABLE_ASAN "Enables address sanitizer compiling" OFF)
 option(ENABLE_TSAN "Enables thread sanitizer compiling" OFF)
 option(ENABLE_UBSAN "Enables undefined behavior sanitizer compiling" OFF)
 option(ENABLE_NATIVE "Enables -march=native compiler option" ON)
+option(ENABLE_ODB_REFERENCES "Enables ODB_REFERENCES define" ON)
 
 # Set cmake find moudles path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake/Modules/")
@@ -61,6 +62,10 @@ find_package(Boost QUIET OPTIONAL_COMPONENTS thread)
 
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
+endif()
+
+if (ENABLE_ODB_REFERENCES)
+	add_definitions(-DODB_REFERENCES)
 endif()
 
 function(check_working_cxx_atomics varname)

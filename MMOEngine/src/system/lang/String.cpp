@@ -121,6 +121,31 @@ String::~String() {
 #endif
 }
 
+#ifdef CXX11_COMPILER
+#ifdef STRING_INHERIT_VARIABLE
+String::String(String&& str) : Variable() {
+#else
+String::String(String&& str) {
+#endif
+	count = str.count;
+
+#ifdef SSO_STRING
+	if (count < SSO_SIZE) {
+		memcpy(sso, str.sso, count);
+		sso[count] = 0;
+	} else {
+		value = str.value;
+		str.value = nullptr;
+		str.count = 0;
+	}
+#else
+	value = str.value;
+	str.value = nullptr;
+	str.count = 0;
+#endif
+}
+#endif
+
 void String::create(const char* str, int len) {
 #ifdef SSO_STRING
 	if (len < SSO_SIZE) {
@@ -233,7 +258,7 @@ int String::indexOf(char ch, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strchr(begin() + fromIndex, ch);
+	const char* position = strchr(begin() + fromIndex, ch);
 
 	if (position != nullptr)
 		return position - begin();
@@ -249,7 +274,7 @@ int String::indexOf(const char* str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strstr(begin() + fromIndex, str);
+	const char* position = strstr(begin() + fromIndex, str);
 
 	if (position != nullptr)
 		return position - begin();
@@ -273,7 +298,7 @@ int String::lastIndexOf(char ch, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strrchr(begin() + fromIndex, ch);
+	const char* position = strrchr(begin() + fromIndex, ch);
 
 	if (position != nullptr)
 		return position - begin();
@@ -289,7 +314,7 @@ int String::lastIndexOf(const char* str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strrstr(begin() + fromIndex, count - fromIndex, str, strlen(str));
+	const char* position = strrstr(begin() + fromIndex, count - fromIndex, str, strlen(str));
 
 	if (position != nullptr)
 		return position - begin();
@@ -305,7 +330,7 @@ int String::lastIndexOf(const String& str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
 		return -1;
 
-	char* position = strrstr(begin() + fromIndex, count - fromIndex, str.begin(), str.count);
+	const char* position = strrstr(begin() + fromIndex, count - fromIndex, str.begin(), str.count);
 
 	if (position != nullptr)
 		return position - begin();
@@ -422,7 +447,27 @@ String String::hexvalueOf(int val) {
 	return String(buf);
 }
 
+String String::hexvalueOf(uint32 val) {
+	char buf[20];
+
+	snprintf(buf, 20, "%x", val);
+
+	return String(buf);
+}
+
 String String::hexvalueOf(int64 val) {
+	char buf[32];
+
+#ifdef PLATFORM_WIN
+	snprintf(buf, 32, "%I64x", val);
+#else
+	snprintf(buf, 32, "%llx", val);
+#endif
+
+	return String(buf);
+}
+
+String String::hexvalueOf(uint64 val) {
 	char buf[32];
 
 #ifdef PLATFORM_WIN
@@ -779,17 +824,33 @@ String String::format(const char* format, ...) {
 	return returnString;
 }
 
-char* String::begin() const {
-#ifdef SSO_STRING
-	return count < SSO_SIZE ? (char*) sso : (char*) value;
-#else
-	return value;
-#endif
-}
+#ifdef CXX11_COMPILER
+String& String::operator=(String&& str) {
+	if (this == &str)
+		return *this;
 
-char* String::end() const {
-	return begin() + count;
+	clear();
+
+	count = str.count;
+
+#ifdef SSO_STRING
+	if (count < SSO_SIZE) {
+		memcpy(sso, str.sso, count);
+		sso[count] = 0;
+	} else {
+		value = str.value;
+		str.value = nullptr;
+		str.count = 0;
+	}
+#else
+	value = str.value;
+	str.value = nullptr;
+	str.count = 0;
+#endif
+
+	return *this;
 }
+#endif
 
 bool String::parseFromString(const String& str, int version) {
 	if (str.length() < 2)

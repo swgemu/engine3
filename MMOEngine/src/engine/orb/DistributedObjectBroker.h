@@ -88,6 +88,8 @@ namespace engine {
 		DistributedObjectStub* createObjectStub(const String& className, const String& name);
 		DistributedObjectServant* createObjectServant(const String& className, DistributedObjectStub* stub, bool addToObjectManager = false);
 
+		DistributedObjectPOD* createObjectPOD(const String& className);
+
 		DistributedObjectAdapter* getObjectAdapter(const String& name);
 		DistributedObjectAdapter* getObjectAdapter(uint64 oid);
 

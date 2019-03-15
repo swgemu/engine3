@@ -16,7 +16,7 @@ using namespace engine::db::berkley;
 ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression)
 	: LocalDatabase(dbEnv, dbFileName, compression) {
 
-	setInfoLogLevel();
+	setLogLevel(LogLevel::LOG);
 	setLoggingName("ObjectDatabase " + dbFileName);
 }
 

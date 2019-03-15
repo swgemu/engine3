@@ -358,6 +358,19 @@ DistributedObjectStub* DistributedObjectBroker::createObjectStub(const String& c
 	return obj;
 }
 
+
+DistributedObjectPOD* DistributedObjectBroker::createObjectPOD(const String& className) {
+	DistributedObjectPOD* obj = nullptr;
+
+	DistributedObjectClassHelper* helper = classMap.get(className);
+	if (helper != nullptr) {
+		return helper->instantiatePOD();
+	} else
+		warning("class \'" + className + "\' is not declared when creating stub");
+
+	return obj;
+}
+
 DistributedObjectServant* DistributedObjectBroker::createObjectServant(const String& className, DistributedObjectStub* stub, bool addToObjectManager) {
 	DistributedObjectServant* servant = nullptr;
 

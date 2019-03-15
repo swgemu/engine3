@@ -11,10 +11,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #define SSO_STRING
 
-#ifdef SSO_STRING
-#define SSO_SIZE 16
-#endif
-
 //#define STRING_INHERIT_VARIABLE
 
 namespace sys {
@@ -26,6 +22,8 @@ namespace sys {
 	class String {
 #endif
 	protected:
+		static const int constexpr SSO_SIZE = int(sizeof(char*) * 2);
+
 		int count;
 
 #ifdef SSO_STRING
@@ -45,28 +43,7 @@ namespace sys {
 		String(const String& str);
 
 #ifdef CXX11_COMPILER
-#ifdef STRING_INHERIT_VARIABLE
-		String(String&& str) : Variable() {
-#else
-		String(String&& str) {
-#endif
-			count = str.count;
-
-		#ifdef SSO_STRING
-			if (count < SSO_SIZE) {
-				memcpy(sso, str.sso, count);
-				sso[count] = 0;
-			} else {
-				value = str.value;
-				str.value = nullptr;
-				str.count = 0;
-			}
-		#else
-			value = str.value;
-			str.value = nullptr;
-			str.count = 0;
-		#endif
-		}
+		String(String&& str);
 #endif
 
 		~String();
@@ -140,6 +117,8 @@ namespace sys {
 
 		static String hexvalueOf(int val) ;
 		static String hexvalueOf(int64 val);
+		static String hexvalueOf(uint32 val);
+		static String hexvalueOf(uint64 val);
 
 		String replaceFirst(const String& regex, const String& replacement) const ;
 		String replaceAll(const String& regex, const String& replacement) const ;
@@ -155,31 +134,7 @@ namespace sys {
 		String& operator= (const String& str);
 
 #ifdef CXX11_COMPILER
-		String& operator=(String&& str) {
-			if (this == &str)
-				return *this;
-
-			clear();
-
-			count = str.count;
-
-		#ifdef SSO_STRING
-			if (count < SSO_SIZE) {
-				memcpy(sso, str.sso, count);
-				sso[count] = 0;
-			} else {
-				value = str.value;
-				str.value = nullptr;
-				str.count = 0;
-			}
-		#else
-			value = str.value;
-			str.value = nullptr;
-			str.count = 0;
-		#endif
-
-			return *this;
-		}
+		String& operator=(String&& str);
 #endif
 
 		bool operator== (const char* str) const {
@@ -253,8 +208,29 @@ namespace sys {
 
 		static char* strrstr(const char* s, int slen, const char* t, int tlen);
 
-		char* begin() const;
-		char* end() const;
+		inline const char* begin() const {
+#ifdef SSO_STRING
+			return count < SSO_SIZE ? (const char*) sso : (const char*) value;
+#else
+			return value;
+#endif
+		}
+
+		inline const char* end() const {
+			return begin() + count;
+		}
+
+		inline char* begin() {
+#ifdef SSO_STRING
+			return count < SSO_SIZE ? (char*) sso : (char*) value;
+#else
+			return value;
+#endif
+		}
+
+		inline char* end() {
+			return begin() + count;
+		}
 
 	public:
 		// getters

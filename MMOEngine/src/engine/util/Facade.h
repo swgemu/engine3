@@ -135,6 +135,8 @@ public:
 
 	DistributedObject* instantiateObject();
 
+	DistributedObjectPOD* instantiatePOD();
+
 	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
@@ -147,4 +149,28 @@ public:
 
 using namespace engine::util;
 
-#endif /*FACADE_H_*/
+namespace engine {
+namespace util {
+
+class FacadePOD : public ManagedObjectPOD {
+public:
+
+	FacadePOD();
+	virtual void writeJSON(nlohmann::json& j);
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
+	int writeObjectMembers(ObjectOutputStream* stream);
+
+
+
+	virtual ~FacadePOD();
+
+};
+
+} // namespace util
+} // namespace engine
+
+using namespace engine::util;
+
+#endif /*FACADEPOD_H_*/

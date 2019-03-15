@@ -197,6 +197,10 @@ DistributedObjectServant* ManagedVectorHelper::instantiateServant() {
 	return new ManagedVectorImplementation(DummyConstructorParameter::instance());
 }
 
+DistributedObjectPOD* ManagedVectorHelper::instantiatePOD() {
+	return new ManagedVectorPOD();
+}
+
 DistributedObjectAdapter* ManagedVectorHelper::createAdapter(DistributedObjectStub* obj) {
 	DistributedObjectAdapter* adapter = new ManagedVectorAdapter(static_cast<ManagedVector*>(obj));
 
@@ -206,5 +210,62 @@ DistributedObjectAdapter* ManagedVectorHelper::createAdapter(DistributedObjectSt
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+/*
+ *	ManagedVectorPOD
+ */
+
+ManagedVectorPOD::~ManagedVectorPOD() {
+}
+
+ManagedVectorPOD::ManagedVectorPOD(void) {
+	_className = "ManagedVector";
+}
+
+
+void ManagedVectorPOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ManagedVectorPOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ManagedVectorPOD::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectPOD::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+
+	return _count + 0;
+}
+
+bool ManagedVectorPOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectPOD::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	}
+
+	return false;
+}
+
+void ManagedVectorPOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ManagedVectorPOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

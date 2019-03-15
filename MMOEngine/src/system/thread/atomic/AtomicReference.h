@@ -67,8 +67,8 @@ namespace sys {
 			return (V) value.load(t);
 		}
 
-		void set(V val) volatile {
-			value.store(val);
+		void set(V val, std::memory_order t = std::memory_order_seq_cst) volatile {
+			value.store(val, t);
 		}
 
 		operator V() const {

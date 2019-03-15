@@ -20,6 +20,9 @@ namespace engine {
     template<class O> class ManagedWeakReference;
 
 	template<class O> class ManagedReference : public Reference<O> {
+#ifdef ODB_REFERENCES
+		uint64_t loadedOID = 0;
+#endif
 
 	public:
 		ManagedReference() : Reference<O>() {
@@ -29,6 +32,9 @@ namespace engine {
 		}*/
 
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
+#ifdef ODB_REFERENCES
+			loadedOID = ref.loadedOID;
+#endif
 		}
 
 		ManagedReference(const Reference<O>& r) : Reference<O>(r) {
@@ -36,6 +42,9 @@ namespace engine {
 
 #ifdef CXX11_COMPILER
 		ManagedReference(ManagedReference<O>&& ref) : Reference<O>(std::move(ref)) {
+#ifdef ODB_REFERENCES
+			loadedOID = ref.loadedOID;
+#endif
 		}
 
 		ManagedReference(Reference<O>&& ref) : Reference<O>(std::move(ref)) {
@@ -55,6 +64,9 @@ namespace engine {
 			if (this == &ref)
 				return *this;
 
+#ifdef ODB_REFERENCES
+			loadedOID = ref.loadedOID;
+#endif
 			updateObject(ref);
 
 			return *this;
@@ -65,6 +77,9 @@ namespace engine {
 			if (this == &ref)
 				return *this;
 
+#ifdef ODB_REFERENCES
+			loadedOID = ref.loadedOID;
+#endif
 			Reference<O>::operator=(std::move(ref));
 
 			return *this;
@@ -114,7 +129,32 @@ namespace engine {
 			return Reference<O>::object;
 		}
 
+		inline uint64_t getObjectID() const {
+#ifdef ODB_REFERENCES
+			if (!Core::MANAGED_REFERENCE_LOAD)
+				return loadedOID;
+#endif
+			auto val = ((DistributedObject*)Reference<O>::object.get());
+
+			if (!val) {
+				return 0;
+			} else {
+				return val->_getObjectID();
+			}
+		}
+
 		inline int compareTo(const ManagedReference& ref) const {
+#ifdef ODB_REFERENCES
+			if (!Core::MANAGED_REFERENCE_LOAD) {
+				return loadedOID;
+				if (loadedOID < ref.loadedOID)
+					return 1;
+				else if (loadedOID > ref.loadedOID)
+					return -1;
+				else
+					return 0;
+			}
+#endif
 			if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() < ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
 				return 1;
 			else if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() > ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
@@ -134,10 +174,17 @@ namespace engine {
 	protected:
 		void updateObject(O obj) {
 			Reference<O>::updateObject(obj);
+#ifdef ODB_REFERENCES
+			loadedOID = obj ? obj->_getObjectID() : 0;
+#endif
 		}
 
 		void updateObject(const ManagedReference& ref) {
 			Reference<O>::updateObject(ref.object);
+
+#ifdef ODB_REFERENCES
+			loadedOID = ref.object ? ref.object->_getObjectID() : 0;
+#endif
 		}
 
 //#ifdef WITH_STM
@@ -179,19 +226,20 @@ namespace engine {
 	}
 
 	template<class O> bool ManagedReference<O>::toBinaryStream(ObjectOutputStream* stream) {
-		O object = Reference<O>::get();
-
-		if (object != nullptr)
-			stream->writeLong(((DistributedObject*)object)->_getObjectID());
-		else
-			stream->writeLong(0);
+		stream->writeLong(getObjectID());
 
 		return true;
 	}
 
 	template<class O> bool ManagedReference<O>::parseFromBinaryStream(ObjectInputStream* stream) {
-		uint64 oid = stream->readLong();
+#ifdef ODB_REFERENCES
+		uint64 oid = loadedOID = stream->readLong();
 
+		if (!Core::MANAGED_REFERENCE_LOAD)
+			return true;
+#else
+		uint64 oid = stream->readLong();
+#endif
 		Reference<DistributedObject*> obj = Core::lookupObject(oid);
 
 

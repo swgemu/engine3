@@ -867,6 +867,10 @@ DistributedObjectServant* ManagedObjectHelper::instantiateServant() {
 	return new ManagedObjectImplementation();
 }
 
+DistributedObjectPOD* ManagedObjectHelper::instantiatePOD() {
+	return new ManagedObjectPOD();
+}
+
 DistributedObjectAdapter* ManagedObjectHelper::createAdapter(DistributedObjectStub* obj) {
 	DistributedObjectAdapter* adapter = new ManagedObjectAdapter(static_cast<ManagedObject*>(obj));
 
@@ -876,5 +880,90 @@ DistributedObjectAdapter* ManagedObjectHelper::createAdapter(DistributedObjectSt
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+/*
+ *	ManagedObjectPOD
+ */
+
+ManagedObjectPOD::~ManagedObjectPOD() {
+}
+
+ManagedObjectPOD::ManagedObjectPOD(void) {
+	_className = "ManagedObject";
+}
+
+
+void ManagedObjectPOD::writeJSON(nlohmann::json& j) {
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["persistenceLevel"] = persistenceLevel;
+
+	j["ManagedObject"] = thisObject;
+	j["_className"] = _className;
+}
+
+
+void ManagedObjectPOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ManagedObjectPOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ManagedObjectPOD::writeObjectMembers(ObjectOutputStream* stream) {
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+	_nameHashCode = 0x62b0f0cf; //ManagedObject.persistenceLevel
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<int >::toBinaryStream(&persistenceLevel, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+
+	_nameHashCode = 0x76457cca;//_className
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<String>::toBinaryStream(&_className, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+	return 2;
+}
+
+bool ManagedObjectPOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (nameHashCode == 0x76457cca) {//_className 
+		TypeInfo<String>::parseFromBinaryStream(&_className, stream);
+		return true;
+	}
+
+	switch(nameHashCode) {
+	case 0x62b0f0cf: //ManagedObject.persistenceLevel
+		TypeInfo<int >::parseFromBinaryStream(&persistenceLevel, stream);
+		return true;
+
+	}
+
+	return false;
+}
+
+void ManagedObjectPOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ManagedObjectPOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

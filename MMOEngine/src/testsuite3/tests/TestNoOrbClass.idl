@@ -1,40 +1,10 @@
 package testsuite3.tests;
 
 include system.util.Vector;
+include engine.core.ManagedObject;
 
 include engine.lua.LuaCallbackException;
 
-@noORB
-@lua
-class TestNoOrbClass {
-	private int value;
-	
-	private Vector<int> test;
-	
-	private TestNoOrbClass testObject;
-	
-	public TestNoOrbClass(int val) {
-		value = val;
-	}
-	
-	/*
-	public void finalize() {
-		getValue();
-	}*/
-	
-	@mock
-	public int getValue() {
-		return value;
-	}
-	
-	@mock
-	public void setValue(int val) {
-		value = val;
-	}
-	
-	protected void nothing() {
-		
-	}
-	
-	public native void add(Vector<int> testing);
+class TestNoOrbClass extends ManagedObject {
+
 }

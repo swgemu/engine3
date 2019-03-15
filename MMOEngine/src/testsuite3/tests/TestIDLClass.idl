@@ -10,6 +10,7 @@ import engine.core.ManagedObject;
 include system.util.Vector;
 
 //@lua
+@json
 class TestIDLClass extends ManagedObject {
 	private int value;
 
@@ -18,18 +19,18 @@ class TestIDLClass extends ManagedObject {
 
 	@weakReference
 	protected TestIDLClass parent;
-	
+
 	public TestIDLClass(int val) {
 		value = val;
 
 		testVector.add(-1);
 		testVector.add(5);
 	}
-	
+
 	public int getValue() {
 		return value;
 	}
-	
+
 	public void setValue(int val) {
 		value = val;
 	}

@@ -114,6 +114,8 @@ public:
 
 	DistributedObject* instantiateObject();
 
+	DistributedObjectPOD* instantiatePOD();
+
 	DistributedObjectServant* instantiateServant();
 
 	DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj);
@@ -127,4 +129,29 @@ public:
 
 using namespace engine::core::util;
 
-#endif /*MANAGEDVECTOR_H_*/
+namespace engine {
+namespace core {
+namespace util {
+
+class ManagedVectorPOD : public ManagedObjectPOD {
+public:
+
+	ManagedVectorPOD();
+	virtual void readObject(ObjectInputStream* stream);
+	virtual void writeObject(ObjectOutputStream* stream);
+	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
+	int writeObjectMembers(ObjectOutputStream* stream);
+
+
+
+	virtual ~ManagedVectorPOD();
+
+};
+
+} // namespace util
+} // namespace core
+} // namespace engine
+
+using namespace engine::core::util;
+
+#endif /*MANAGEDVECTORPOD_H_*/

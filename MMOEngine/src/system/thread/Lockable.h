@@ -119,11 +119,11 @@ namespace sys {
 				refreshTrace();
 		#endif
 
-			threadLockHolder = Thread::getCurrentThread();
+			threadLockHolder.set(Thread::getCurrentThread(), std::memory_order_relaxed);
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
-			threadLockHolder = nullptr;
+			threadLockHolder.set(nullptr, std::memory_order_relaxed);
 
 		#ifdef TRACE_LOCKS
 			if (modifier[0] != 'r') {

@@ -729,7 +729,7 @@ namespace sys {
 		   E object;
 
 		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream)) {
-		 		ArrayList<E>::add(std::move(object));
+		 		ArrayList<E>::emplace(std::move(object));
 		   }
 	   }
 

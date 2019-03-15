@@ -453,6 +453,10 @@ DistributedObjectServant* ObservableHelper::instantiateServant() {
 	return new ObservableImplementation();
 }
 
+DistributedObjectPOD* ObservableHelper::instantiatePOD() {
+	return new ObservablePOD();
+}
+
 DistributedObjectAdapter* ObservableHelper::createAdapter(DistributedObjectStub* obj) {
 	DistributedObjectAdapter* adapter = new ObservableAdapter(static_cast<Observable*>(obj));
 
@@ -462,5 +466,98 @@ DistributedObjectAdapter* ObservableHelper::createAdapter(DistributedObjectStub*
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+/*
+ *	ObservablePOD
+ */
+
+ObservablePOD::~ObservablePOD() {
+}
+
+ObservablePOD::ObservablePOD(void) {
+	_className = "Observable";
+}
+
+
+void ObservablePOD::writeJSON(nlohmann::json& j) {
+	ManagedObjectPOD::writeJSON(j);
+
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["observerEventMap"] = observerEventMap;
+
+	thisObject["observableChildren"] = observableChildren;
+
+	j["Observable"] = thisObject;
+}
+
+
+void ObservablePOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ObservablePOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ObservablePOD::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectPOD::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+	_nameHashCode = 0xe6687dd1; //Observable.observerEventMap
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<ObserverEventMap >::toBinaryStream(&observerEventMap, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+	_nameHashCode = 0xc23a7ce7; //Observable.observableChildren
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<SortedVector<ManagedReference<ObservablePOD* > > >::toBinaryStream(&observableChildren, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+
+	return _count + 2;
+}
+
+bool ObservablePOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectPOD::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	case 0xe6687dd1: //Observable.observerEventMap
+		TypeInfo<ObserverEventMap >::parseFromBinaryStream(&observerEventMap, stream);
+		return true;
+
+	case 0xc23a7ce7: //Observable.observableChildren
+		TypeInfo<SortedVector<ManagedReference<ObservablePOD* > > >::parseFromBinaryStream(&observableChildren, stream);
+		return true;
+
+	}
+
+	return false;
+}
+
+void ObservablePOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ObservablePOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

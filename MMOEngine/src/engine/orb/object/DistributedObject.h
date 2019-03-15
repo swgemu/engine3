@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/lang.h"
 #include <atomic>
 
+#include "DistributedObjectPOD.h"
+
 namespace engine {
   namespace ORB {
 
@@ -34,10 +36,10 @@ namespace engine {
 		DistributedObject();
 
 		virtual ~DistributedObject();
-		
+
 		virtual bool isPersistent() {
   		    return false;
-		}		
+		}
 
 		// setters
 		inline void _setClassName(const String& n) {
@@ -55,7 +57,7 @@ namespace engine {
 		inline void _setUpdated(bool var) {
 			_updated.store(var, std::memory_order_relaxed);;
 		}
-		
+
 		inline void _setDeletedFromDatabase(bool val) {
 		        _deletedFromDatabase = val;
 		}
@@ -72,7 +74,7 @@ namespace engine {
 		inline const String& _getClassName() const {
 			return _className;
 		}
-		
+
 		inline bool _isDeletedFromDatabase() const {
 			return _deletedFromDatabase;
 		}

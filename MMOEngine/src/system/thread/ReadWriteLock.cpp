@@ -47,7 +47,7 @@ void ReadWriteLock::rlock(bool doLock) ACQUIRE_SHARED() {
 
 	readLockCount.increment();
 
-	lockAcquired("r");
+	//lockAcquired("r");
 }
 
 void ReadWriteLock::wlock(bool doLock) ACQUIRE() {
@@ -135,7 +135,7 @@ void ReadWriteLock::rlock(Lockable* lock) ACQUIRE_SHARED() {
 
 	readLockCount.increment();
 
-	lockAcquired(lock, "r");
+	//lockAcquired(lock, "r");
 }
 
 void ReadWriteLock::rlock(ReadWriteLock* lock) ACQUIRE_SHARED() {
@@ -153,7 +153,7 @@ void ReadWriteLock::rlock(ReadWriteLock* lock) ACQUIRE_SHARED() {
 
 	readLockCount.increment();
 
-	lockAcquired(lock, "r");
+	//lockAcquired(lock, "r");
 }
 
 void ReadWriteLock::wlock(ReadWriteLock* lock) ACQUIRE() {
@@ -284,7 +284,7 @@ void ReadWriteLock::runlock(bool doLock) RELEASE_SHARED() {
 	threadIDLockHolder = 0;*/
 #endif
 
-	lockReleasing("r");
+	//lockReleasing("r");
 
 	readLockCount.decrement();
 

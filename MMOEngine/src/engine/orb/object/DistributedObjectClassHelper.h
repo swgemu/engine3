@@ -14,26 +14,29 @@ namespace engine {
   namespace ORB {
 
 	class DistributedObjectStub;
-	
+	class DistributedObjectPOD;
+
 	class DistributedObjectClassHelper : public Object {
 	protected:
 		String className;
-		
+
 	public:
 		DistributedObjectClassHelper() {
 		}
-		
+
 		virtual ~DistributedObjectClassHelper() {
-		}	
-	
+		}
+
 		virtual void finalizeHelper() = 0;
-		
+
 		virtual DistributedObject* instantiateObject() = 0;
 
 		virtual DistributedObjectServant* instantiateServant() = 0;
 
 		virtual DistributedObjectAdapter* createAdapter(DistributedObjectStub* obj) = 0;
-		
+
+		virtual DistributedObjectPOD* instantiatePOD() = 0;
+
 		inline const String& getClassName() {
 			return className;
 		}

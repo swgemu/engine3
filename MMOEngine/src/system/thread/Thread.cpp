@@ -161,6 +161,8 @@ void Thread::setSchedulingPolicy(int policy) {
 }
 
 void Thread::assignToCPU(int cpu) {
+//	Disabling this, new kernels are smart enough usually
+	/*
 #ifndef VERSION_PUBLIC
 #ifdef PLATFORM_LINUX
 	cpu_set_t cpuSet;
@@ -172,5 +174,5 @@ void Thread::assignToCPU(int cpu) {
 		perror("sched_setaffinity");
 	}
 #endif
-#endif
+#endif*/
 }

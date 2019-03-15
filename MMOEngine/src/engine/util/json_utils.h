@@ -19,11 +19,7 @@ namespace engine {
 
 		template<class O>
 		void to_json(nlohmann::json& j, const engine::core::ManagedReference<O>& p) {
-			if (p.get() == nullptr) {
-				j = 0;
-			} else {
-				j = p->_getObjectID();
-			}
+			j = p.getObjectID();
 		}
 
 		template<class O>

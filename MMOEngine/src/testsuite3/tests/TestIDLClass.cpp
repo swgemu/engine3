@@ -307,6 +307,19 @@ int TestIDLClassImplementation::writeObjectMembers(ObjectOutputStream* stream) {
 	return _count + 3;
 }
 
+void TestIDLClassImplementation::writeJSON(nlohmann::json& j) {
+	ManagedObjectImplementation::writeJSON(j);
+
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["value"] = value;
+
+	thisObject["testVector"] = testVector;
+
+	thisObject["parent"] = parent;
+
+	j["TestIDLClass"] = thisObject;
+}
+
 TestIDLClassImplementation::TestIDLClassImplementation(int val) {
 	_initializeImplementation();
 	// testsuite3/tests/TestIDLClass.idl():  		value = val;
@@ -479,6 +492,10 @@ DistributedObjectServant* TestIDLClassHelper::instantiateServant() {
 	return new TestIDLClassImplementation(DummyConstructorParameter::instance());
 }
 
+DistributedObjectPOD* TestIDLClassHelper::instantiatePOD() {
+	return new TestIDLClassPOD();
+}
+
 DistributedObjectAdapter* TestIDLClassHelper::createAdapter(DistributedObjectStub* obj) {
 	DistributedObjectAdapter* adapter = new TestIDLClassAdapter(static_cast<TestIDLClass*>(obj));
 
@@ -488,5 +505,112 @@ DistributedObjectAdapter* TestIDLClassHelper::createAdapter(DistributedObjectStu
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+/*
+ *	TestIDLClassPOD
+ */
+
+TestIDLClassPOD::~TestIDLClassPOD() {
+}
+
+TestIDLClassPOD::TestIDLClassPOD(void) {
+	_className = "TestIDLClass";
+}
+
+
+void TestIDLClassPOD::writeJSON(nlohmann::json& j) {
+	ManagedObjectPOD::writeJSON(j);
+
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["value"] = value;
+
+	thisObject["testVector"] = testVector;
+
+	thisObject["parent"] = parent;
+
+	j["TestIDLClass"] = thisObject;
+}
+
+
+void TestIDLClassPOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = TestIDLClassPOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int TestIDLClassPOD::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectPOD::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+	_nameHashCode = 0x3f1d6b14; //TestIDLClass.value
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<int >::toBinaryStream(&value, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+	_nameHashCode = 0xeef7092b; //TestIDLClass.testVector
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<Vector<int> >::toBinaryStream(&testVector, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+	_nameHashCode = 0xc299c5c9; //TestIDLClass.parent
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<ManagedWeakReference<TestIDLClassPOD* > >::toBinaryStream(&parent, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+
+	return _count + 3;
+}
+
+bool TestIDLClassPOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectPOD::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	case 0x3f1d6b14: //TestIDLClass.value
+		TypeInfo<int >::parseFromBinaryStream(&value, stream);
+		return true;
+
+	case 0xeef7092b: //TestIDLClass.testVector
+		TypeInfo<Vector<int> >::parseFromBinaryStream(&testVector, stream);
+		return true;
+
+	case 0xc299c5c9: //TestIDLClass.parent
+		TypeInfo<ManagedWeakReference<TestIDLClassPOD* > >::parseFromBinaryStream(&parent, stream);
+		return true;
+
+	}
+
+	return false;
+}
+
+void TestIDLClassPOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(TestIDLClassPOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

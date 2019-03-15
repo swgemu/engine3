@@ -17,7 +17,7 @@ namespace sys {
 		class MPSCQueue {
 		private:
 			std::atomic<MPSCNode<A>*> head;
-			MPSCNode<A>* tail;
+			std::atomic<MPSCNode<A>*> tail;
 
 		public:
 			MPSCQueue(int capacity = 0/*unused*/) {
@@ -30,7 +30,7 @@ namespace sys {
 			}
 
 			~MPSCQueue() {
-				delete tail;
+				delete tail.load();
 			}
 
 			void push(const A& data) {
@@ -42,9 +42,9 @@ namespace sys {
 			}
 
 			void push(MPSCNode<A>* n) {
-				n->next = nullptr;
+				n->next.store(nullptr, std::memory_order_relaxed);
 
-				MPSCNode<A>* prev = std::atomic_exchange_explicit(&this->head, n, std::memory_order_acq_rel);
+				auto prev = head.exchange(n, std::memory_order_acq_rel);
 				prev->next.store(n, std::memory_order_release);
 			}
 
@@ -52,7 +52,7 @@ namespace sys {
 				auto node = popNode();
 
 				if (node != nullptr) {
-					val = node->data;
+					val = std::move(node->data);
 
 					delete node;
 
@@ -63,12 +63,14 @@ namespace sys {
 			}
 
 			MPSCNode<A>* popNode() {
-				MPSCNode<A>* tail = this->tail;
-				MPSCNode<A>* next = tail->next.load(std::memory_order_acquire);
+				auto tailCopy = tail.load(std::memory_order_relaxed);
+				auto next = tailCopy->next.load(std::memory_order_acquire);
 
 				if (next) {
-					this->tail = next;
-					tail->data = std::move(next->data);
+					tail.store(next, std::memory_order_relaxed);
+
+					tailCopy->data = std::move(next->data);
+
 					return tail;
 				}
 

@@ -38,6 +38,7 @@ namespace engine {
 		static bool taskManagerShutDown;
 	public:
 		static SynchronizedHashTable<String, String> properties;
+		static bool MANAGED_REFERENCE_LOAD;
 
 	public:
 		Core(int logLevel = Logger::INFO);

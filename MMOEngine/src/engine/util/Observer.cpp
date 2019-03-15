@@ -400,6 +400,10 @@ DistributedObjectServant* ObserverHelper::instantiateServant() {
 	return new ObserverImplementation();
 }
 
+DistributedObjectPOD* ObserverHelper::instantiatePOD() {
+	return new ObserverPOD();
+}
+
 DistributedObjectAdapter* ObserverHelper::createAdapter(DistributedObjectStub* obj) {
 	DistributedObjectAdapter* adapter = new ObserverAdapter(static_cast<Observer*>(obj));
 
@@ -409,5 +413,84 @@ DistributedObjectAdapter* ObserverHelper::createAdapter(DistributedObjectStub* o
 	adapter->setStub(obj);
 
 	return adapter;
+}
+
+/*
+ *	ObserverPOD
+ */
+
+ObserverPOD::~ObserverPOD() {
+}
+
+ObserverPOD::ObserverPOD(void) {
+	_className = "Observer";
+}
+
+
+void ObserverPOD::writeJSON(nlohmann::json& j) {
+	ManagedObjectPOD::writeJSON(j);
+
+	nlohmann::json thisObject = nlohmann::json::object();
+	thisObject["observerType"] = observerType;
+
+	j["Observer"] = thisObject;
+}
+
+
+void ObserverPOD::writeObject(ObjectOutputStream* stream) {
+	int _currentOffset = stream->getOffset();
+	stream->writeShort(0);
+	int _varCount = ObserverPOD::writeObjectMembers(stream);
+	stream->writeShort(_currentOffset, _varCount);
+}
+
+int ObserverPOD::writeObjectMembers(ObjectOutputStream* stream) {
+	int _count = ManagedObjectPOD::writeObjectMembers(stream);
+
+	uint32 _nameHashCode;
+	int _offset;
+	uint32 _totalSize;
+	_nameHashCode = 0x893f1c9; //Observer.observerType
+	TypeInfo<uint32>::toBinaryStream(&_nameHashCode, stream);
+	_offset = stream->getOffset();
+	stream->writeInt(0);
+	TypeInfo<unsigned int >::toBinaryStream(&observerType, stream);
+	_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+	stream->writeInt(_offset, _totalSize);
+
+
+	return _count + 1;
+}
+
+bool ObserverPOD::readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode) {
+	if (ManagedObjectPOD::readObjectMember(stream, nameHashCode))
+		return true;
+
+	switch(nameHashCode) {
+	case 0x893f1c9: //Observer.observerType
+		TypeInfo<unsigned int >::parseFromBinaryStream(&observerType, stream);
+		return true;
+
+	}
+
+	return false;
+}
+
+void ObserverPOD::readObject(ObjectInputStream* stream) {
+	uint16 _varCount = stream->readShort();
+	for (int i = 0; i < _varCount; ++i) {
+		uint32 _nameHashCode;
+		TypeInfo<uint32>::parseFromBinaryStream(&_nameHashCode, stream);
+
+		uint32 _varSize = stream->readInt();
+
+		int _currentOffset = stream->getOffset();
+
+		if(ObserverPOD::readObjectMember(stream, _nameHashCode)) {
+		}
+
+		stream->setOffset(_currentOffset + _varSize);
+	}
+
 }
 

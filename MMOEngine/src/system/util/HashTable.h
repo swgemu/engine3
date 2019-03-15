@@ -51,7 +51,7 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
 		Entry(int hash, K&& key, V&& value, Entry* e) : hash(hash), key(std::move(key)),
-																  value(std::move(value)), next(e) {
+			  	value(std::move(value)), next(e) {
 		}
 
 		Entry(Entry&& e) {
@@ -112,23 +112,23 @@ namespace sys {
 
 	    HashTable(const HashTable<K, V>& table);
 
-		typedef K key_type;
-		typedef V value_type;
+	    typedef K key_type;
+	    typedef V value_type;
 
 #ifdef CXX11_COMPILER
 	    HashTable(HashTable<K, V>&& table);
 #endif
 
-		virtual ~HashTable();
+	    virtual ~HashTable();
 
 	    V put(const K& key, const V& value);
 
 #ifdef CXX11_COMPILER
-		V put(K&& key, V&& value);
+	    V put(K&& key, V&& value);
 #endif
 
 	    V& get(const K& key);
-		const V& get(const K& key) const;
+	    const V& get(const K& key) const;
 
 	    Entry<K, V>* getEntry(const K& key) const;
 

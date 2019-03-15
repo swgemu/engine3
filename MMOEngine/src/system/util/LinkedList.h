@@ -6,6 +6,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef LINKEDLIST_H_
 #define LINKEDLIST_H_
 
+#include "system/lang/ArrayIndexOutOfBoundsException.h"
 #include <atomic>
 
 namespace sys {

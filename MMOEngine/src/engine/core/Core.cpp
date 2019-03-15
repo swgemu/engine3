@@ -10,6 +10,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 SynchronizedHashTable<String, String> Core::properties;
 UniqueReference<TaskManager*> Core::taskManager;
 bool Core::taskManagerShutDown = false;
+bool Core::MANAGED_REFERENCE_LOAD = true;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 //
