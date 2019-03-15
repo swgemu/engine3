@@ -7,6 +7,7 @@
 
 #include "MPSCNode.h"
 
+
 /**
  * Wait free Multiple Producers Single Consumer Queue
  * http://www.1024cores.net/home/lock-free-algorithms/queues/non-intrusive-mpsc-node-based-queue
@@ -17,7 +18,7 @@ namespace sys {
 		class MPSCQueue {
 		private:
 			std::atomic<MPSCNode<A>*> head;
-			std::atomic<MPSCNode<A>*> tail;
+			MPSCNode<A>* tail;
 
 		public:
 			MPSCQueue(int capacity = 0/*unused*/) {
@@ -30,7 +31,7 @@ namespace sys {
 			}
 
 			~MPSCQueue() {
-				delete tail.load();
+				delete tail;
 			}
 
 			void push(const A& data) {
@@ -42,9 +43,9 @@ namespace sys {
 			}
 
 			void push(MPSCNode<A>* n) {
-				n->next.store(nullptr, std::memory_order_relaxed);
+				n->next = nullptr;
 
-				auto prev = head.exchange(n, std::memory_order_acq_rel);
+				MPSCNode<A>* prev = std::atomic_exchange_explicit(&this->head, n, std::memory_order_acq_rel);
 				prev->next.store(n, std::memory_order_release);
 			}
 
@@ -52,7 +53,7 @@ namespace sys {
 				auto node = popNode();
 
 				if (node != nullptr) {
-					val = std::move(node->data);
+					val = node->data;
 
 					delete node;
 
@@ -63,14 +64,12 @@ namespace sys {
 			}
 
 			MPSCNode<A>* popNode() {
-				auto tailCopy = tail.load(std::memory_order_relaxed);
-				auto next = tailCopy->next.load(std::memory_order_acquire);
+				MPSCNode<A>* tail = this->tail;
+				MPSCNode<A>* next = tail->next.load(std::memory_order_acquire);
 
 				if (next) {
-					tail.store(next, std::memory_order_relaxed);
-
-					tailCopy->data = std::move(next->data);
-
+					this->tail = next;
+					tail->data = std::move(next->data);
 					return tail;
 				}
 
