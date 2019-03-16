@@ -369,7 +369,7 @@ void Serializable::readObject(ObjectInputStream* stream) {
 		int currentOffset = stream->getOffset();
 
 		if (!_variables.contains(var)) {
-			System::out << "WARNING: variable " << name << " not found when deserializing [" << _className << "] \n";
+			//System::out << "WARNING: variable " << name << " not found when deserializing [" << _className << "] \n";
 
 			stream->shiftOffset(varSize);
 

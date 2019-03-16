@@ -11,6 +11,7 @@ SynchronizedHashTable<String, String> Core::properties;
 UniqueReference<TaskManager*> Core::taskManager;
 bool Core::taskManagerShutDown = false;
 bool Core::MANAGED_REFERENCE_LOAD = true;
+String Core::engineConfigName;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 //
@@ -19,10 +20,11 @@ Core::Core(int logLevel) {
 	initializeContext(logLevel);
 }
 
-Core::Core(const char* globallogfile, int logLevel) {
-	initializeContext(logLevel);
-
+Core::Core(const char* globallogfile, const char* name, int logLevel) {
 	Logger::setGlobalFileLogger(globallogfile);
+	Core::engineConfigName = name;
+
+	initializeContext(logLevel);
 }
 
 Core::~Core() {
@@ -65,17 +67,18 @@ void Core::initializeProperties(const String& className) {
 
 			lua.runFile("conf/engine3.lua");
 			lua.runFile("engine3.lua");
+			lua.runFile("conf/" + engineConfigName + ".lua");
 
 			return lua;
 		} ();
 
 		auto obj = lua.getGlobalObject(className);
-		auto L = obj.getLuaState();
 
 		if (!obj.isValidTable()) {
 			return;
 		}
 
+		auto L = obj.getLuaState();
 		lua_pushnil(L);
 
 		while (lua_next(L, -2) != 0) {
@@ -93,6 +96,7 @@ void Core::initializeProperties(const String& className) {
 
 		obj.pop();
 	} catch (...) {
+		Logger::console.error("count not initialize engine properties");
 	}
 }
 

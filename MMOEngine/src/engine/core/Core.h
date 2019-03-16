@@ -36,13 +36,15 @@ namespace engine {
 		static UniqueReference<TaskManager*> taskManager;
 
 		static bool taskManagerShutDown;
+
+		static String engineConfigName;
 	public:
 		static SynchronizedHashTable<String, String> properties;
 		static bool MANAGED_REFERENCE_LOAD;
 
 	public:
 		Core(int logLevel = Logger::INFO);
-		Core(const char* globallogfile, int logLevel = Logger::INFO);
+		Core(const char* globallogfile, const char* engineConfigName, int logLevel = Logger::INFO);
 
 		virtual ~Core();
 

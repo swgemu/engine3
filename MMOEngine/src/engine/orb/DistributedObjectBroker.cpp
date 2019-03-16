@@ -365,8 +365,7 @@ DistributedObjectPOD* DistributedObjectBroker::createObjectPOD(const String& cla
 	DistributedObjectClassHelper* helper = classMap.get(className);
 	if (helper != nullptr) {
 		return helper->instantiatePOD();
-	} else
-		warning("class \'" + className + "\' is not declared when creating stub");
+	}
 
 	return obj;
 }

@@ -51,6 +51,10 @@ namespace sys {
 		static void setBinaryName(const String& name) {
 			binaryName = name;
 		}
+
+		static const String& getBinaryName() {
+			return binaryName;
+		}
 	};
 
   } // namespace lang
