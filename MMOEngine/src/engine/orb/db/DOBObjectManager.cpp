@@ -48,7 +48,7 @@ DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	MAXOBJECTSTOUPDATEPERTHREAD = Core::getIntProperty("ObjectManager.maxObjectsToUpdatePerThread", MAXOBJECTSTOUPDATEPERTHREAD);
 	MIN_UPDATE_THREADS = Core::getIntProperty("ObjectManager.minUpdateThreads", MIN_UPDATE_THREADS);
 	MAX_UPDATE_THREADS = Core::getIntProperty("ObjectManager.maxUpdateThreads", MAX_UPDATE_THREADS);
-	UPDATETODATABASETIME = Core::getIntProperty("ObjectManager.updateToDatabaseTIme", UPDATETODATABASETIME);
+	UPDATETODATABASETIME = Core::getIntProperty("ObjectManager.updateToDatabaseTime", UPDATETODATABASETIME);
 
 	objectUpdateInProcess = false;
 	totalUpdatedObjects = 0;
