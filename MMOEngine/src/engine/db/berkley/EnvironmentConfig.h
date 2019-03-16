@@ -70,6 +70,13 @@ namespace engine {
 				environmentFlags |= DB_INIT_LOG;
 		}
 
+		inline void setRecover(bool recover) {
+			if (!recover)
+				environmentFlags &= ~DB_RECOVER;
+			else
+				environmentFlags |= DB_RECOVER;
+		}
+
 		inline void setLogAutoRemove(bool logAutoRemove) {
 			this->logAutoRemove = logAutoRemove;
 		}

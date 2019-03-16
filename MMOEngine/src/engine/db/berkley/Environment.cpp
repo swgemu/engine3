@@ -49,9 +49,9 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
 		databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
 
-		ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER | DB_SYSTEM_MEM, 0);
+		ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_SYSTEM_MEM, 0);
 	} else {
-		ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags() | DB_RECOVER, 0);
+		ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags(), 0);
 	}
 
 	if (ret != 0)

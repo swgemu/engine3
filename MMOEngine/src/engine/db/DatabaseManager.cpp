@@ -71,6 +71,8 @@ void DatabaseManager::openEnvironment() {
 	MAX_CACHE_SIZE = Core::getIntProperty("DatabaseManager.maxCacheSize", -1);
 
 	EnvironmentConfig config;
+
+	config.setRecover(Core::getIntProperty("DatabaseManager.recoverEnvironment", 1));
 	config.setAllowCreate(true);
 	config.setInitializeLocking(true);
 	config.setInitializeLogging(true);
