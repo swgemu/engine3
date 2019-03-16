@@ -11,12 +11,26 @@
 #include "BTransaction.h"
 #include "BerkeleyDatabase.h"
 #include "engine/core/Core.h"
+#include <thread>
 
 #include <sys/ipc.h>
+#include <sys/types.h>
 
 using namespace engine::db::berkley;
 
 EnvironmentConfig EnvironmentConfig::DEFAULT;
+
+namespace BDBNS {
+	void thread_id_bdb (DB_ENV *env, pid_t *pid, db_threadid_t *tid) {
+		if (pid) {
+			*pid = getpid();
+		}
+
+		if (tid) {
+			*tid = pthread_self();
+		}
+	}
+}
 
 Environment::Environment(const String& directory, const EnvironmentConfig& environmentConfig) {
 	Environment::directory = directory;
@@ -58,6 +72,7 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 		throw DatabaseException("unable to open environment handle with ret code " + String(db_strerror(ret)));
 
 	databaseEnvironment->set_isalive(databaseEnvironment, isAlive);
+	databaseEnvironment->set_thread_id(databaseEnvironment, BDBNS::thread_id_bdb);
 
 	int lret = databaseEnvironment->set_lk_detect(databaseEnvironment, environmentConfig.getLockDetectMode());
 
@@ -159,8 +174,20 @@ int Environment::failCheck() {
 }
 
 int Environment::isAlive(DB_ENV* dbenv, pid_t pid, db_threadid_t tid, u_int32_t flags) {
-	if (pid != Thread::getProcessID())
+/*	if (pid != Thread::getProcessID())
 		return 0;
 
-	return 1; // still running
+	return 1; // still running*/
+
+	int alive = 0;
+
+	if (pid == getpid()) {
+		alive = 1;
+	} else if (kill(pid, 0) == 0) {
+		alive = 1;
+	} else if (errno == EPERM) {
+		alive = 1;
+	}
+
+	return alive;
 }
