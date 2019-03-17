@@ -56,6 +56,9 @@ namespace engine {
 
 		bool getNextKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
 
+		//returns raw compressed data
+		int getNextKeyAndValueMultiple(berkley::DatabaseEntry& data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+
 		bool getNextKey(uint64& key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
 
 		bool getSearchKey(uint64 key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);

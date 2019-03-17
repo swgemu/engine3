@@ -217,6 +217,24 @@ bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* 
 	return true;
 }
 
+
+int ObjectDatabaseIterator::getNextKeyAndValueMultiple(berkley::DatabaseEntry& data, uint32 lockMode) {
+	int res = 0;
+
+	try {
+		if ((res = cursor->getNextMultiple(&this->key, &data, lockMode)) != 0) {
+			/*this->key.setData(nullptr, 0);
+			  this->data.setData(nullptr, 0);*/
+			return res;
+		}
+
+	} catch (...) {
+		error("unreported exception caught in ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, String& data)");
+	}
+
+	return res;
+}
+
 bool ObjectDatabaseIterator::getPrevKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode) {
 	ObjectInputStream stream(8, 8);
 

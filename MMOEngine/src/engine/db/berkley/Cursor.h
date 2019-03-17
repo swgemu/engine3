@@ -73,6 +73,13 @@ namespace engine {
 		}
 
 		/**
+		 * Move the cursor to the next key/data pair and return that pair.
+		 */
+		inline int getNextMultiple(DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode = LockMode::DEFAULT) {
+			return get(key, data, DB_MULTIPLE_KEY | DB_NEXT | lockMode);
+		}
+
+		/**
 		 * If the next key/data pair of the database is a duplicate data record for the current key/data pair, move the cursor to the next key/data pair of the database and return that pair.
 		 */
 		inline int getNextDup(DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode = LockMode::DEFAULT) {
