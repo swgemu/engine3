@@ -102,6 +102,33 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	return ret;
 }
 
+int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode) {
+	int ret = 0;
+
+	DatabaseEntry key, data;
+
+	key.setData(&objKey, sizeof(uint64));
+
+	int i = 0;
+
+	ret = objectsDatabase->get(nullptr, &key, &data, lockMode);
+
+	if (ret == 0) {
+		if (!compression)
+			objectData->writeStream((const char*) data.getData(), data.getSize());
+		else
+			uncompress(data.getData(), data.getSize(), objectData);
+
+		objectData->reset();
+	} else if (ret != DB_NOTFOUND) {
+		error("error in ObjectDatabase::getData ret " + String::valueOf(db_strerror(ret)));
+
+		throw DatabaseException("error in ObjectDatabase::getData ret " + String(db_strerror(ret)));
+	}
+
+	return ret;
+}
+
 int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
 	int ret = -1;
 
@@ -166,10 +193,10 @@ int ObjectDatabase::deleteData(uint64 objKey, engine::db::berkley::Transaction* 
 	info(msg);*/
 }
 
-bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode) {
+bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode, bool compressed) {
 	ObjectInputStream stream(8, 8);
 
-	bool res = LocalDatabaseIterator::getNextKeyAndValue(&stream, data, lockMode);
+	bool res = LocalDatabaseIterator::getNextKeyAndValue(&stream, data, lockMode, compressed);
 
 	if (res == true) {
 		key = stream.readLong();

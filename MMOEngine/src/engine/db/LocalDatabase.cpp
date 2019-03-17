@@ -409,7 +409,7 @@ void LocalDatabaseIterator::resetIterator() {
 	cursor = databaseHandle->openCursor(txn);
 }
 
-bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode) {
+bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode, bool compressed) {
 	try {
 		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
@@ -419,7 +419,7 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 
-		if (!localDatabase->hasCompressionEnabled())
+		if (!localDatabase->hasCompressionEnabled() || !compressed)
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		else
 			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
