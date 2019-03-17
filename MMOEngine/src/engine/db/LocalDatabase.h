@@ -86,6 +86,7 @@ namespace engine {
  };
 
  class LocalDatabaseIterator : public Logger {
+ protected:
 	 engine::db::berkley::Cursor* cursor;
 	 engine::db::berkley::BerkeleyDatabase* databaseHandle;
 

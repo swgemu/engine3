@@ -194,15 +194,27 @@ int ObjectDatabase::deleteData(uint64 objKey, engine::db::berkley::Transaction* 
 }
 
 bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode, bool compressed) {
-	ObjectInputStream stream(8, 8);
+	try {
+		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
+			/*this->key.setData(nullptr, 0);
+			this->data.setData(nullptr, 0);*/
+			return false;
+		}
 
-	bool res = LocalDatabaseIterator::getNextKeyAndValue(&stream, data, lockMode, compressed);
+		key = *reinterpret_cast<uint64*>(this->key.getData());
 
-	if (res == true) {
-		key = stream.readLong();
+		if (!localDatabase->hasCompressionEnabled() || !compressed)
+			data->writeStream((char*)this->data.getData(), this->data.getSize());
+		else
+			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
+
+		data->reset();
+
+	} catch (...) {
+		error("unreported exception caught in ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, String& data)");
 	}
 
-	return res;
+	return true;
 }
 
 bool ObjectDatabaseIterator::getPrevKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode) {
