@@ -44,7 +44,7 @@ namespace engine {
 	 LocalDatabase(engine::db::DatabaseManager* dbEnv, const String& dbFileName, bool compression);
 	 virtual ~LocalDatabase();
 
-	 int getData(Stream* inputKey, ObjectInputStream* objectData);
+	 int getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
 
 	 //incoming streams will be deleted
 	 int putData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* masterTransaction = nullptr);
@@ -95,15 +95,22 @@ namespace engine {
 
  public:
 	 LocalDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database);
-	 LocalDatabaseIterator(LocalDatabase* database, bool useCurrentThreadTransaction = false);
+	 LocalDatabaseIterator(LocalDatabase* database, const berkley::CursorConfig& config = berkley::CursorConfig::DEFAULT, bool useCurrentThreadTransaction = false);
 	 LocalDatabaseIterator(engine::db::berkley::BerkeleyDatabase* databaseHandle);
 	 ~LocalDatabaseIterator();
 
 	 void resetIterator();
 
-	 bool getNextKeyAndValue(ObjectInputStream* keyStream, ObjectInputStream* data);
-	 bool getNextValue(ObjectInputStream* data);
-	 bool getNextKey(ObjectInputStream* key);
+	 bool getNextKeyAndValue(ObjectInputStream* keyStream, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_COMMITED);
+	 bool getNextValue(ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 bool getNextKey(ObjectInputStream* key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+
+	 bool getPrevKey(ObjectInputStream* key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 bool getPrevKeyAndValue(ObjectInputStream* keyStream, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 bool getLastKey(ObjectInputStream* key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+
+	 bool getSearchKey(ObjectOutputStream* key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 bool getSearchKeyRange(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
 
 	 //data is freed
 	 int putCurrent(ObjectOutputStream* data);

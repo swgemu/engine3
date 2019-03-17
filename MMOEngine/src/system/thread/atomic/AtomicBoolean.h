@@ -29,6 +29,9 @@ namespace sys {
 		AtomicBoolean(bool val) : value(val) {
 		}
 
+		~AtomicBoolean() {
+		}
+
 		static bool compareAndSet(volatile bool* address, bool oldval, bool newval) {
 			return __sync_bool_compare_and_swap(address, oldval, newval);
 		}
@@ -37,8 +40,8 @@ namespace sys {
 			return value.compare_exchange_strong(oldval, newval);
 		}
 
-		bool get() const {
-			return value.load(std::memory_order_relaxed);
+		bool get(std::memory_order m = std::memory_order_relaxed) const {
+			return value.load(m);
 		}
 
 		void set(bool val) {

@@ -32,6 +32,9 @@ namespace sys {
 		AtomicInteger(const AtomicInteger& v) : value{v.value.load(std::memory_order_relaxed)} {
 		}
 
+		~AtomicInteger() {
+		}
+
 		AtomicInteger& operator=(const AtomicInteger& val) {
 			value.store(val.value.load(std::memory_order_relaxed));
 
@@ -52,7 +55,7 @@ namespace sys {
 
 		inline uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) {
 			uint32 val = oldval;
-			
+
 			value.compare_exchange_strong(val, newval);
 
 			return val;
@@ -64,8 +67,8 @@ namespace sys {
 			return value.compare_exchange_strong(val, newval);
 		}
 
-		inline uint32 get() const {
-			return value.load(std::memory_order_relaxed);
+		inline uint32 get(std::memory_order m = std::memory_order_relaxed) const {
+			return value.load(m);
 		}
 
 		void set(uint32 val) {

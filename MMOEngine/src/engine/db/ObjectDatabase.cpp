@@ -20,7 +20,7 @@ ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName,
 	setLoggingName("ObjectDatabase " + dbFileName);
 }
 
-int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
+int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode) {
 	int ret = 0;
 
 	DatabaseEntry key, data;
@@ -33,7 +33,9 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 
 	TransactionConfig cfg = TransactionConfig::DEFAULT;
 	cfg.setNoSync(true);
-	cfg.setReadUncommitted(true);
+
+	if (lockMode == LockMode::READ_UNCOMMITED)
+		cfg.setReadUncommitted(true);
 
 #ifdef COLLECT_TASKSTATISTICS
 #ifdef CXX11_COMPILER
@@ -49,7 +51,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData) {
 		ret  = -1;
 		transaction = environment->beginTransaction(nullptr, cfg);
 
-		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
+		ret = objectsDatabase->get(transaction, &key, &data, lockMode);
 
 		if (ret == DB_LOCK_DEADLOCK) {
 			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i));
@@ -164,10 +166,10 @@ int ObjectDatabase::deleteData(uint64 objKey, engine::db::berkley::Transaction* 
 	info(msg);*/
 }
 
-bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data) {
+bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode) {
 	ObjectInputStream stream(8, 8);
 
-	bool res = LocalDatabaseIterator::getNextKeyAndValue(&stream, data);
+	bool res = LocalDatabaseIterator::getNextKeyAndValue(&stream, data, lockMode);
 
 	if (res == true) {
 		key = stream.readLong();
@@ -176,10 +178,67 @@ bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* 
 	return res;
 }
 
-bool ObjectDatabaseIterator::getNextKey(uint64& key) {
+bool ObjectDatabaseIterator::getPrevKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode) {
 	ObjectInputStream stream(8, 8);
 
-	bool res = LocalDatabaseIterator::getNextKey(&stream);
+	bool res = LocalDatabaseIterator::getPrevKeyAndValue(&stream, data, lockMode);
+
+	if (res == true) {
+		key = stream.readLong();
+	}
+
+	return res;
+}
+
+bool ObjectDatabaseIterator::getPrevKey(uint64& key, uint32 lockMode) {
+	ObjectInputStream stream(8, 8);
+
+	bool res = LocalDatabaseIterator::getPrevKey(&stream, lockMode);
+
+	if (res == true) {
+		key = stream.readLong();
+	}
+
+	return res;
+}
+
+bool ObjectDatabaseIterator::getLastKey(uint64& key, uint32 lockMode) {
+	ObjectInputStream stream(8, 8);
+
+	bool res = LocalDatabaseIterator::getLastKey(&stream, lockMode);
+
+	if (res == true) {
+		key = stream.readLong();
+	}
+
+	return res;
+}
+
+bool ObjectDatabaseIterator::getNextKey(uint64& key, uint32 lockMode) {
+	ObjectInputStream stream(8, 8);
+
+	bool res = LocalDatabaseIterator::getNextKey(&stream, lockMode);
+
+	if (res == true) {
+		key = stream.readLong();
+	}
+
+	return res;
+}
+
+bool ObjectDatabaseIterator::getSearchKey(uint64 key, ObjectInputStream* data, uint32 lockMode) {
+	ObjectOutputStream stream;
+	stream.writeLong(key);
+
+	return LocalDatabaseIterator::getSearchKey(&stream, data, lockMode);
+}
+
+bool ObjectDatabaseIterator::getSearchKeyRange(uint64& key, ObjectInputStream* data, uint32 lockMode) {
+	Packet stream;
+	stream.writeLong(key);
+
+	bool res = LocalDatabaseIterator::getSearchKeyRange(&stream, data, lockMode);
+	stream.reset();
 
 	if (res == true) {
 		key = stream.readLong();

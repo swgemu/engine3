@@ -196,7 +196,7 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 	//free(outputData);
 }
 
-int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
+int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode) {
 	int ret = 0;
 
 	DatabaseEntry key, data;
@@ -214,7 +214,7 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
 
 		transaction = environment->beginTransaction(nullptr, config);
 
-		ret = objectsDatabase->get(transaction, &key, &data, LockMode::READ_UNCOMMITED);
+		ret = objectsDatabase->get(transaction, &key, &data, lockMode);
 
 		if (ret == DB_LOCK_DEADLOCK) {
 			info("deadlock detected in LocalDatabase::get.. retrying iteration " + String::valueOf(i));
@@ -364,7 +364,7 @@ LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkley::Transaction* t
 	key.setReuseBuffer(true);
 }
 
-LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, bool useCurrentThreadTransaction)
+LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, const berkley::CursorConfig& config, bool useCurrentThreadTransaction)
 	: Logger("LocalDatabaseIterator") {
 
 	databaseHandle = database->getDatabaseHandle();
@@ -374,7 +374,7 @@ LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, bool useCu
 /*	if (useCurrentThreadTransaction)
 		txn = ObjectDatabaseManager::instance()->getLocalTransaction();*/
 
-	cursor = databaseHandle->openCursor(txn);
+	cursor = databaseHandle->openCursor(txn, config);
 
 	localDatabase = database;
 
@@ -409,9 +409,9 @@ void LocalDatabaseIterator::resetIterator() {
 	cursor = databaseHandle->openCursor(txn);
 }
 
-bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data) {
+bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode) {
 	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_COMMITED) != 0) {
+		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
 			this->data.setData(nullptr, 0);*/
 			return false;
@@ -434,9 +434,9 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 	return true;
 }
 
-bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data) {
+bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data, uint32 lockMode) {
 	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
+		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
 			this->data.setData(nullptr, 0);*/
 			return false;
@@ -460,16 +460,15 @@ bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data) {
 	return true;
 }
 
-bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key) {
+bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key, uint32 lockMode) {
 	try {
-		if (cursor->getNext(&this->key, &this->data, LockMode::READ_UNCOMMITED) != 0) {
+		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
 			this->data.setData(nullptr, 0);*/
 			return false;
 		}
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
-
 		key->reset();
 
 	}  catch(Exception &e) {
@@ -481,6 +480,74 @@ bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key) {
 
 	return true;
 }
+
+bool LocalDatabaseIterator::getPrevKeyAndValue(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode) {
+	try {
+		if (cursor->getPrev(&this->key, &this->data, lockMode) != 0) {
+			/*this->key.setData(nullptr, 0);
+			this->data.setData(nullptr, 0);*/
+			return false;
+		}
+
+		key->writeStream((char*)this->key.getData(), this->key.getSize());
+
+		if (!localDatabase->hasCompressionEnabled())
+			data->writeStream((char*)this->data.getData(), this->data.getSize());
+		else
+			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
+
+		data->reset();
+		key->reset();
+
+	} catch (...) {
+		error("unreported exception caught in ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, String& data)");
+	}
+
+	return true;
+}
+
+bool LocalDatabaseIterator::getPrevKey(ObjectInputStream* key, uint32 lockMode) {
+	try {
+		if (cursor->getPrev(&this->key, &this->data, lockMode) != 0) {
+			/*this->key.setData(nullptr, 0);
+			this->data.setData(nullptr, 0);*/
+			return false;
+		}
+
+		key->writeStream((char*)this->key.getData(), this->key.getSize());
+		key->reset();
+
+	} catch(Exception &e) {
+		error("Error in ObjectDatabaseIterator::getNextValue(String& data)");
+		error(e.getMessage());
+	} catch (...) {
+		error("unreported exception caught in ObjectDatabaseIterator::getNextValue(String& data)");
+	}
+
+	return true;
+}
+
+bool LocalDatabaseIterator::getLastKey(ObjectInputStream* key, uint32 lockMode) {
+	try {
+		if (cursor->getLast(&this->key, &this->data, lockMode) != 0) {
+			/*this->key.setData(nullptr, 0);
+			this->data.setData(nullptr, 0);*/
+			return false;
+		}
+
+		key->writeStream((char*)this->key.getData(), this->key.getSize());
+		key->reset();
+
+	}  catch(Exception &e) {
+		error("Error in ObjectDatabaseIterator::getNextKey");
+		error(e.getMessage());
+	} catch (...) {
+		error("unreported exception caught  in ObjectDatabaseIterator::getNextKey(uint64& key) ");
+	}
+
+	return true;
+}
+
 
 int LocalDatabaseIterator::putCurrent(ObjectOutputStream* data) {
 	DatabaseEntry dataEntry;
@@ -508,3 +575,58 @@ int LocalDatabaseIterator::putCurrent(ObjectOutputStream* data) {
 	return ret;
 }
 
+bool LocalDatabaseIterator::getSearchKey(ObjectOutputStream* key, ObjectInputStream* data, uint32 lockMode) {
+	try {
+		DatabaseEntry keyDBE, dataDBE;
+		keyDBE.setData(key->getBuffer(), key->size());
+
+		if (cursor->getSearchKey(&keyDBE, &dataDBE, lockMode) != 0) {
+			/*this->key.setData(nullptr, 0);
+			  this->data.setData(nullptr, 0);*/
+			return false;
+		}
+
+/*		if (!localDatabase->hasCompressionEnabled())
+			data->writeStream((char*)this->data.getData(), this->data.getSize());
+		else
+			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
+*/
+		data->reset();
+		key->reset();
+
+	} catch (...) {
+		error("unreported exception caught in ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, String& data)");
+	}
+
+	return true;
+}
+
+bool LocalDatabaseIterator::getSearchKeyRange(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode) {
+	try {
+		this->key.setData(key->getBuffer(), key->size());
+
+		int res = 0;
+
+		if ((res = cursor->getSearchKeyRange(&this->key, &this->data, lockMode))) {
+			/*this->key.setData(nullptr, 0);
+			  this->data.setData(nullptr, 0);*/
+			return false;
+		}
+
+		key->reset();
+		key->writeStream((char*)this->key.getData(), this->key.getSize());
+
+		if (!localDatabase->hasCompressionEnabled())
+			data->writeStream((char*)this->data.getData(), this->data.getSize());
+		else
+			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
+
+		data->reset();
+		key->reset();
+
+	} catch (...) {
+		error("unreported exception caught in ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, String& data)");
+	}
+
+	return true;
+}

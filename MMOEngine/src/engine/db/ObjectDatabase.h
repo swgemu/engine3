@@ -22,7 +22,7 @@ namespace engine {
 	public:
 		ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression);
 
-		int getData(uint64 objKey, ObjectInputStream* objectData);
+		int getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
 
 		//stream will be deleted
 		int putData(uint64 objKey, Stream* stream, Object* object, engine::db::berkley::Transaction* masterTransaction = nullptr);
@@ -44,9 +44,8 @@ namespace engine {
 
 		}
 
-		ObjectDatabaseIterator(ObjectDatabase* database, bool useCurrentThreadTransaction = false)
-			: LocalDatabaseIterator(database, useCurrentThreadTransaction) {
-
+		ObjectDatabaseIterator(ObjectDatabase* database, const berkley::CursorConfig& config = berkley::CursorConfig::DEFAULT, bool useCurrentThreadTransaction = false)
+			: LocalDatabaseIterator(database, config, useCurrentThreadTransaction) {
 		}
 
 		ObjectDatabaseIterator(engine::db::berkley::BerkeleyDatabase* databaseHandle) :
@@ -54,8 +53,15 @@ namespace engine {
 
 		}
 
-		bool getNextKeyAndValue(uint64& key, ObjectInputStream* data);
-		bool getNextKey(uint64& key);
+		bool getNextKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+		bool getNextKey(uint64& key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+
+		bool getSearchKey(uint64 key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+		bool getSearchKeyRange(uint64& key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+
+		bool getLastKey(uint64& key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+		bool getPrevKey(uint64& key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+		bool getPrevKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
 
 	};
 

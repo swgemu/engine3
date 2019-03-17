@@ -59,7 +59,7 @@ namespace engine {
 		}
 
 		/**
-         * Move the cursor to the last key/data pair of the database, and return that pair.
+	         * Move the cursor to the last key/data pair of the database, and return that pair.
 		 */
 		inline int getLast(DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode = LockMode::DEFAULT) {
 			return get(key, data, DB_LAST | lockMode);
