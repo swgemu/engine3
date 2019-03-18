@@ -73,7 +73,7 @@ DistributedObjectAdapter* DistributedObjectDirectory::remove(uint64 objid) {
 
 	if (adapter != nullptr)
 		objectMap.remove(objid);
-	
+
 	helperObjectMap.remove(objid);
 
 	return adapter;
@@ -93,15 +93,17 @@ DistributedObjectAdapter* DistributedObjectDirectory::getAdapter(uint64 objid) {
 
 void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
 		Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
-		
+
 	Logger::console.info("starting getObjectsMarkedForUpdate", true);
 
 	objectsToUpdate.removeAll(objectMap.size(), 1);
 	objectsToDelete.removeAll(100000, 0);
-	
+
 	Logger::console.info("allocated objectsToUpdate size", true);
 
 	HashTableIterator<uint64, DistributedObjectAdapter*> iterator(&objectMap);
+
+	auto start = std::chrono::high_resolution_clock::now();
 
 	while (iterator.hasNext()) {
 		DistributedObjectAdapter* adapter = iterator.getNextValue();
@@ -118,11 +120,11 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 		}
 
 		//ManagedObject* managedObject = dynamic_cast<ManagedObject*>(dobObject);
-		
+
 
 		//if (managedObject == nullptr/* || !managedObject->isPersistent()*/)
 		//	continue;
-		
+
 		ManagedObject* managedObject = static_cast<ManagedObject*>(dobObject);
 
 		if (dobObject->_isMarkedForDeletion()) {
@@ -132,9 +134,12 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 		}
 	}
 
+	auto end = std::chrono::high_resolution_clock::now();
+	auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
 	StringBuffer msg;
 	msg << "[DistributedObjectDirectory] marked " << objectsToUpdate.size() << " objects to update and "
-			<< objectsToDelete.size() << " for deletion";
+			<< objectsToDelete.size() << " for deletion in " << diff << " ms";
 
 	Logger::console.info(msg.toString(), true);
 }

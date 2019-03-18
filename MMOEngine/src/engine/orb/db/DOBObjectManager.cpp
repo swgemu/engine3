@@ -299,7 +299,15 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 		return;
 	}
 
+	auto startBlock = std::chrono::high_resolution_clock::now();
+
 	Vector<Locker*>* lockers = Core::getTaskManager()->blockTaskManager();
+
+	auto endBlock = std::chrono::high_resolution_clock::now();
+
+	auto durationOfBlocking = std::chrono::duration_cast<std::chrono::nanoseconds>(endBlock - startBlock).count();
+
+	info("waited task manager to stop for " + String::valueOf(durationOfBlocking) + " ns", true);
 
 	Locker _locker(this);
 
