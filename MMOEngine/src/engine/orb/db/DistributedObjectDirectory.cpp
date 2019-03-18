@@ -8,6 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/db/ObjectDatabaseManager.h"
 
 #include "engine/core/ManagedObject.h"
+#include <chrono>
 
 class DirectoryKeyHandler : public KeyHandler<uint64> {
 	AtomicLong id;
@@ -135,7 +136,7 @@ void DistributedObjectDirectory::getObjectsMarkedForUpdate(Vector<DistributedObj
 	}
 
 	auto end = std::chrono::high_resolution_clock::now();
-	auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	uint64 diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 	StringBuffer msg;
 	msg << "[DistributedObjectDirectory] marked " << objectsToUpdate.size() << " objects to update and "

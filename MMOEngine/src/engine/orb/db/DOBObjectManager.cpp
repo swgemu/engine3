@@ -9,6 +9,7 @@
 #define DOBOBJECTMANAGER_CPP_
 
 #include <unistd.h>
+#include <chrono>
 
 #include "engine/orb/DistributedObjectBroker.h"
 
@@ -305,7 +306,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	auto endBlock = std::chrono::high_resolution_clock::now();
 
-	auto durationOfBlocking = std::chrono::duration_cast<std::chrono::nanoseconds>(endBlock - startBlock).count();
+	uint64 durationOfBlocking = std::chrono::duration_cast<std::chrono::nanoseconds>(endBlock - startBlock).count();
 
 	info("waited task manager to stop for " + String::valueOf(durationOfBlocking) + " ns", true);
 
