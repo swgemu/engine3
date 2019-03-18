@@ -203,7 +203,7 @@ bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* 
 
 		key = *reinterpret_cast<uint64*>(this->key.getData());
 
-		if (!localDatabase->hasCompressionEnabled() || !compressed)
+		if (!localDatabase->hasCompressionEnabled() || compressed)
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		else
 			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);

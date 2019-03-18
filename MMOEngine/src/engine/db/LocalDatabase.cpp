@@ -419,7 +419,7 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 
-		if (!localDatabase->hasCompressionEnabled() || !compressed)
+		if (!localDatabase->hasCompressionEnabled() || compressed)
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		else
 			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
