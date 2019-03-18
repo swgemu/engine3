@@ -44,7 +44,7 @@ namespace engine {
 	 LocalDatabase(engine::db::DatabaseManager* dbEnv, const String& dbFileName, bool compression);
 	 virtual ~LocalDatabase();
 
-	 int getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 int getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
 
 	 //incoming streams will be deleted
 	 int putData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* masterTransaction = nullptr);

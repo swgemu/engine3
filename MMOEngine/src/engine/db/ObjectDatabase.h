@@ -22,8 +22,8 @@ namespace engine {
 	public:
 		ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression);
 
-		int getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
-		int getDataNoTx(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+		int getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
+		int getDataNoTx(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
 
 		//stream will be deleted
 		int putData(uint64 objKey, Stream* stream, Object* object, engine::db::berkley::Transaction* masterTransaction = nullptr);

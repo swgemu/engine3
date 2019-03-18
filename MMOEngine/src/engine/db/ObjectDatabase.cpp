@@ -20,7 +20,7 @@ ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName,
 	setLoggingName("ObjectDatabase " + dbFileName);
 }
 
-int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode) {
+int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode, bool compressed) {
 	int ret = 0;
 
 	DatabaseEntry key, data;
@@ -63,7 +63,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
 
 	if (ret == 0) {
-		if (!compression)
+		if (!compression || compressed)
 			objectData->writeStream((const char*) data.getData(), data.getSize());
 		else
 			uncompress(data.getData(), data.getSize(), objectData);
@@ -102,7 +102,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	return ret;
 }
 
-int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode) {
+int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode, bool compressed) {
 	int ret = 0;
 
 	DatabaseEntry key, data;
@@ -114,7 +114,7 @@ int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, ui
 	ret = objectsDatabase->get(nullptr, &key, &data, lockMode);
 
 	if (ret == 0) {
-		if (!compression)
+		if (!compression || compressed)
 			objectData->writeStream((const char*) data.getData(), data.getSize());
 		else
 			uncompress(data.getData(), data.getSize(), objectData);

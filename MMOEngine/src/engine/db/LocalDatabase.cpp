@@ -196,7 +196,7 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 	//free(outputData);
 }
 
-int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode) {
+int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode, bool compressed) {
 	int ret = 0;
 
 	DatabaseEntry key, data;
@@ -227,7 +227,7 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
 
 	if (ret == 0) {
-		if (!compression) {
+		if (!compression || compressed) {
 			objectData->writeStream((const char*) data.getData(), data.getSize());
 		} else {
 			uncompress(data.getData(), data.getSize(), objectData);
