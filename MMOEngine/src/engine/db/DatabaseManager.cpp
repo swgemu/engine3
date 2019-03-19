@@ -294,6 +294,9 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 }
 
 void DatabaseManager::closeDatabases() {
+	if (!loaded)
+		return;
+
 	while (databases.size() > 0) {
 		LocalDatabase* db = databases.remove(0).getValue();
 
