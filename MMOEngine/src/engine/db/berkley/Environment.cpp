@@ -116,8 +116,7 @@ int Environment::close() {
 	if (databaseEnvironment != nullptr) {
 		ret = databaseEnvironment->close(databaseEnvironment, 0);
 
-		if (ret == 0)
-			databaseEnvironment = nullptr;
+		databaseEnvironment = nullptr;
 	}
 
 	return ret;

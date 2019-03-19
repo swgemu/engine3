@@ -435,6 +435,8 @@ void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, i
 
 	thread->signalActivity();
 
+	Thread::yield();
+
 	lastThreadCount += objectsToUpdateCount;
 	objectsToUpdateCount = 0;
 }
