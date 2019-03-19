@@ -54,10 +54,11 @@ void Core::parsePropertyData(const String& className, const char* name, LuaObjec
 	Core::properties.put((className + ".") + name, Lua::getStringParameter(table.getLuaState()));
 }
 
-void Core::initializeProperties(const String& className) {
+int Core::initializeProperties(const String& className) {
 	static Mutex guard;
 
 	Locker locker(&guard);
+	int count = 0;
 
 	try {
 		static Lua lua = []() {
@@ -75,7 +76,7 @@ void Core::initializeProperties(const String& className) {
 		auto obj = lua.getGlobalObject(className);
 
 		if (!obj.isValidTable()) {
-			return;
+			return 0;
 		}
 
 		auto L = obj.getLuaState();
@@ -89,15 +90,19 @@ void Core::initializeProperties(const String& className) {
 				const char* varName = lua_tolstring(L, -2, &len);
 
 				parsePropertyData(className, varName, obj);
+				++count;
 			} else {
 				lua_pop(L, 1);
 			}
 		}
 
 		obj.pop();
+
 	} catch (...) {
 		Logger::console.error("count not initialize engine properties");
 	}
+
+	return count;
 }
 
 void Core::finalizeContext() {
@@ -195,3 +200,42 @@ void Core::outOfMemoryHandler() {
 Reference<DistributedObject*> Core::lookupObject(uint64 id) {
 	return Core::getObjectBroker()->lookUp(id);
 }
+
+int Core::getIntProperty(const String& key, int defaultValue) {
+	auto val = properties.get(key);
+
+	if (!val.isEmpty()) {
+		return Integer::valueOf(val);
+	} else {
+		return defaultValue;
+	}
+}
+
+uint64 Core::getLongProperty(const String& key, uint64 defaultValue) {
+	auto val = properties.get(key);
+
+	if (!val.isEmpty()) {
+		return UnsignedLong::valueOf(val);
+	} else {
+		return defaultValue;
+	}
+}
+
+String Core::getProperty(const String& key, const String& defaultValue) {
+	if (!properties.containsKey(key)) {
+		return defaultValue;
+	}
+
+	return properties.get(key);
+}
+
+double Core::getDoubleProperty(const String& key, double defaultValue) {
+	auto val = properties.get(key);
+
+	if (!val.isEmpty()) {
+		return Double::valueOf(val);
+	} else {
+		return defaultValue;
+	}
+}
+

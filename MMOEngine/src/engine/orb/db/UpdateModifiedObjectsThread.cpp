@@ -92,7 +92,7 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 
 void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 	try {
-		Time start;
+		Time start(Time::MONOTONIC_TIME);
 
 		if (objectsToUpdate != nullptr) {
 			int j = 0;
@@ -107,12 +107,12 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			}
 
 			StringBuffer msg;
-			msg << "thread " << threadId << " copied " << j <<  " modified objects into ram in " << start.miliDifference() << " ms";
+			msg << "thread " << threadId << " copied " << j <<  " modified objects into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
 			objectManager->info(msg.toString(), true);
 		}
 
 
-		start.updateToCurrentTime();
+		start.updateToCurrentTime(Time::MONOTONIC_TIME);
 
 		if (objectsToDelete != nullptr) {
 			for (int i = 0; i < objectsToDelete->size(); ++i) {
@@ -125,7 +125,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			}
 
 			StringBuffer msg;
-			msg << "thread " << threadId << " commited " << objectsToDelete->size() <<  " objects for deletion into ram in " << start.miliDifference() << " ms";
+			msg << "thread " << threadId << " commited " << objectsToDelete->size() <<  " objects for deletion into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
 			objectManager->info(msg.toString(), true);
 		}
 	} catch (Exception& e) {

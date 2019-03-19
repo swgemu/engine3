@@ -48,7 +48,7 @@ void BaseProtocol::prepareEncryptionAndCompression(BasePacket* pack) {
 void BaseProtocol::prepareSend(BasePacket* pack) {
 	if (pack->doCompression())
 		pack->setCompression(false);
-		
+
 /*        if (pack->doEncryption()) {
             pack->setEncryption(false);
         }
@@ -346,25 +346,25 @@ static const unsigned int crcTable[256] = {
 unsigned int BaseProtocol::generateCrc(Packet* pack, int nLength) {
 	char* pData = pack->getBuffer();
 
-    unsigned int nCrc = crcTable[(~crcSeed) & 0xFF];
-    nCrc ^= 0x00FFFFFF;
-    unsigned int nIndex = (crcSeed >> 8) ^ nCrc;
-    nCrc = (nCrc >> 8) & 0x00FFFFFF;
-    nCrc ^= crcTable[nIndex & 0xFF];
-    nIndex = (crcSeed >> 16) ^ nCrc;
-    nCrc = (nCrc >> 8) & 0x00FFFFFF;
-    nCrc ^= crcTable[nIndex & 0xFF];
-    nIndex = (crcSeed >> 24) ^ nCrc;
-    nCrc = (nCrc >> 8) &0x00FFFFFF;
-    nCrc ^= crcTable[nIndex & 0xFF];
+	unsigned int nCrc = crcTable[(~crcSeed) & 0xFF];
+	nCrc ^= 0x00FFFFFF;
+	unsigned int nIndex = (crcSeed >> 8) ^ nCrc;
+	nCrc = (nCrc >> 8) & 0x00FFFFFF;
+	nCrc ^= crcTable[nIndex & 0xFF];
+	nIndex = (crcSeed >> 16) ^ nCrc;
+	nCrc = (nCrc >> 8) & 0x00FFFFFF;
+	nCrc ^= crcTable[nIndex & 0xFF];
+	nIndex = (crcSeed >> 24) ^ nCrc;
+	nCrc = (nCrc >> 8) &0x00FFFFFF;
+	nCrc ^= crcTable[nIndex & 0xFF];
 
 	for (short i = 0; i < nLength; i++) {
-        nIndex = (pData[i]) ^ nCrc;
-        nCrc = (nCrc >> 8) & 0x00FFFFFF;
-        nCrc ^= crcTable[nIndex & 0xFF];
-    }
+		nIndex = (pData[i]) ^ nCrc;
+		nCrc = (nCrc >> 8) & 0x00FFFFFF;
+		nCrc ^= crcTable[nIndex & 0xFF];
+	}
 
-    return ~nCrc;
+	return ~nCrc;
 }
 
 unsigned int BaseProtocol::generateCRC(Stream* stream, uint32 seed) {
@@ -400,10 +400,10 @@ void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
     if (crcLength > 0) {
         uint32 crc = generateCrc(pack, nLength - crcLength);
         pData += (nLength-crcLength);
-        
+
         /*if (crcLength == 2) {
             crc = crc & 0xFFFF;
-        
+
             pData[1] = (char) ((crc >> 0) & 0xFF);
             pData[0] = (char) ((crc >> 8) & 0xFF);
         } else {
@@ -412,7 +412,7 @@ void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
             for (uint16 i = 0; i < crcLength; i++) {
                 pData[(crcLength - 1) - i] = (char)((crc >> (8 * i)) & 0xFF);
             }
-        
+
     }
 }
 

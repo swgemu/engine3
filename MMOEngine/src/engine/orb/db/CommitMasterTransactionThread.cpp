@@ -79,6 +79,10 @@ void CommitMasterTransactionThread::shutdown() {
 int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
 	int i = 0;
 
+	static const int objectsToDeletePerSleep = Core::getIntProperty("ObjectManager.objectsToDeletePerSleepThrottle", 10000);
+	static const int actualObjectsToDeleteSleep = Core::getIntProperty("ObjectManager.actualObjectsToDeleteSleepThrottle", 100);
+	static const int objectsToDeleteSleep = Core::getIntProperty("ObjectManager.objectsToDeleteSleepThrottle", 25);
+
 	//      while (objectsToDeleteFromRam->size() != 0) {
 	for (int j = 0; j < objectsToDeleteFromRam->size(); ++j) {
 		DistributedObject* object = objectsToDeleteFromRam->getUnsafe(j);
@@ -101,10 +105,10 @@ int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManage
 			printf("%s refs:%d\n", text.toCharArray(), object->getReferenceCount());
 		}*/
 
-		if ((((j + 1) % 10000) == 0) || ((i + 1) % 100) == 0) {
+		if ((((j + 1) % objectsToDeletePerSleep) == 0) || ((i + 1) % actualObjectsToDeleteSleep ) == 0) {
 			locker.release();
 
-			Thread::sleep(25);
+			Thread::sleep(objectsToDeleteSleep);
 		}
 	}
 
@@ -120,7 +124,10 @@ void CommitMasterTransactionThread::commitData() NO_THREAD_SAFETY_ANALYSIS {
 
 		while (!worker->hasFinishedCommiting()) {
 			worker->signalMasterTransactionFinish();
-			Thread::sleep(500);
+
+			static const int databaseWatchThreadThrottle = Core::getIntProperty("ObjectManager.databaseWatchThreadThrottle", 500);
+
+			Thread::sleep(databaseWatchThreadThrottle);
 		}
 	}
 

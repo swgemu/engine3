@@ -8,6 +8,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/thread/Thread.h"
 
 #include "engine/log/Logger.h"
+#include "engine/core/Core.h"
 
 String StackTrace::binaryName = "core3";
 
@@ -37,9 +38,18 @@ StackTrace::~StackTrace() {
 }
 
 void StackTrace::print() const {
+	static int initializeProperties = Core::initializeProperties("StackTrace");
 	static Logger logger("StackTrace");
 
 	#ifdef PLATFORM_UNIX
+		static const bool enableAddr2Line = Core::getIntProperty("StackTrace.enableArr2Line", 1);
+		char** tracedSymbols = backtrace_symbols(symbols, count);
+
+		if (tracedSymbols == nullptr) {
+			System::out << "error while trying to print stack trace: tracedSymbols == nullptr" << endl;
+			return;
+		}
+
 		#ifdef LINE_TRACING
 			StringBuffer command;
 
@@ -48,32 +58,28 @@ void StackTrace::print() const {
 			#else
 			command << "/usr/bin/addr2line -e " << binaryName;
 			#endif
-		#else
-		char** tracedSymbols = backtrace_symbols(symbols, count);
-
-		if (tracedSymbols == nullptr) {
-			System::out << "error while trying to print stack trace: tracedSymbols == nullptr" << endl;
-			return;
-		}
-
 		#endif
+
 		StringBuffer lines;
 		for (int i = 0; i < count; ++i) {
+			if (enableAddr2Line) {
 			#ifdef LINE_TRACING
 				command << " " << hex << symbols[i];
-			#else
-				lines << tracedSymbols[i] << endl;
 			#endif
+			}
+
+			lines << tracedSymbols[i] << endl;
 		}
 
-		logger.warning(lines.toString());
+		free(tracedSymbols);
 
-		#ifdef LINE_TRACING
+	#ifdef LINE_TRACING
+		if (enableAddr2Line) {
 			auto res = system(command.toString().toCharArray());
+		}
+	#endif
 
-		#else
-			free(tracedSymbols);
-		#endif
+		logger.warning(lines.toString());
 	#elif defined PLATFORM_CYGWIN
 		cygwin_stackdump();
 	#endif

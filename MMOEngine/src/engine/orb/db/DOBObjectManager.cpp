@@ -31,17 +31,15 @@
 
 //#define PRINT_OBJECT_COUNT
 
-#define INITIAL_OBJECT_ID 0x1000000 // reserving first ids for snapshot objects
-
 int DOBObjectManager::UPDATETODATABASETIME = 300000;
 
-int MAXOBJECTSTOUPDATEPERTHREAD = 7000;
-int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 4;
+int MAXOBJECTSTOUPDATEPERTHREAD = 15000;
+int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 2;
 int MIN_UPDATE_THREADS = 2;
-int MAX_UPDATE_THREADS = 4;
+int MAX_UPDATE_THREADS = 8;
 
 DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
-	nextObjectID = INITIAL_OBJECT_ID;
+	nextObjectID = Core::getLongProperty("ObjectManager.initialObjectID", 0x1000000); // reserving first ids for snapshot objects
 
 	Core::initializeProperties("ObjectManager");
 
@@ -348,7 +346,9 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	int numberOfThreads = executeUpdateThreads(&objectsToUpdate, &objectsToDelete,
                                  objectsToDeleteFromRAM, transaction);
 
-	info("copied objects into ram in " + String::valueOf(copy.elapsed() / 1000000) + " ms", true);
+	auto copyTime = copy.stopMs();
+
+	info("copied objects into ram in " + String::valueOf(copyTime) + " ms", true);
 
 #ifdef WITH_STM
 	TransactionalMemoryManager::instance()->unblockTransactions();
@@ -492,15 +492,15 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction
 				&objectsToDelete);
 	}
 
-	start.stop();
+	auto elapsed = start.stopMs();
 
 	StringBuffer msg;
 	msg << "launched " << currentThread << " workers and marked " << objectsToUpdate.size() << " objects to update and "
-			<< objectsToDelete.size() << " for deletion in " << start.elapsed() / 1000000 << " ms from " << lastThreadCount << " total objects";
+			<< objectsToDelete.size() << " for deletion in " << elapsed << " ms from " << localObjectDirectory.getObjectHashTable().size() << " total objects";
 
 	info(msg.toString(), true);
 
-	return currentThread % updateModifiedObjectsThreads.size();
+	return currentThread;
 }
 
 void DOBObjectManager::finishObjectUpdate() {

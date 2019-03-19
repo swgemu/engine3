@@ -64,25 +64,12 @@ namespace engine {
 
 		static ObjectBroker* getObjectBroker();
 
-		static int getIntProperty(const String& key, int defaultValue = 0) {
-			auto val = properties.get(key);
+		static int getIntProperty(const String& key, int defaultValue = 0);
+		static uint64 getLongProperty(const String& key, uint64 defaultValue = 0);
+		static String getProperty(const String& key, const String& defaultValue = "");
+		static double getDoubleProperty(const String& key, double defaultValue = 0);
 
-			if (!val.isEmpty()) {
-				return Integer::valueOf(val);
-			} else {
-				return defaultValue;
-			}
-		}
-
-		static String getProperty(const String& key, const String& defaultValue = "") {
-			if (!properties.containsKey(key)) {
-				return defaultValue;
-			}
-
-			return properties.get(key);
-		}
-
-		static void initializeProperties(const String& className);
+		static int initializeProperties(const String& className);
 	protected:
 		virtual void initializeContext(int logLevel);
 

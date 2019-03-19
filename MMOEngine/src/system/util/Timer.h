@@ -20,8 +20,27 @@ namespace sys {
 	Time::ClockType clockType;
 
     public:
-    	Timer(Time::ClockType type = Time::MONOTONIC_TIME) : startTime(0), elapsedTime(0), totalTime(0), clockType(type) {
+    	Timer(Time::ClockType type = Time::MONOTONIC_TIME) : startTime(0),
+		elapsedTime(0), totalTime(0), clockType(type) {
+
     	}
+
+	Timer(const Timer& timer) : startTime(timer.startTime), elapsedTime(timer.elapsedTime),
+				    totalTime(timer.totalTime), clockType(timer.clockType) {
+	}
+
+	Timer& operator=(const Timer& timer) {
+		if (this == &timer) {
+			return *this;
+		}
+
+		startTime = timer.startTime;
+		elapsedTime = timer.elapsedTime;
+		totalTime = timer.totalTime;
+		clockType = timer.clockType;
+
+		return *this;
+	}
 
     	void start() {
     		assert(startTime == 0);
@@ -32,7 +51,7 @@ namespace sys {
     	uint64 stop() {
     		assert(startTime != 0);
 
-    		elapsedTime = elapsed();
+    		elapsedTime = elapsedToNow();
     		startTime = 0;
 
     		totalTime += elapsedTime;
@@ -40,11 +59,19 @@ namespace sys {
     		return elapsedTime;
     	}
 
-    	uint64 elapsed() const {
+	uint64 stopMs() {
+    		return stop() / 1000000;
+    	}
+
+    	uint64 elapsedToNow() const {
     		if (startTime != 0)
     			return Time::currentNanoTime(clockType) - startTime;
     		else
     			return 0;
+    	}
+
+	uint64 elapsedMs() const {
+    		return elapsedToNow() / 1000000;
     	}
 
     	uint64 getStartTime() const {
@@ -58,6 +85,22 @@ namespace sys {
     	uint64 getTotalTime() const {
     		return totalTime;
     	}
+
+	uint64 getStartTimeMs() const {
+    		return startTime / 1000000;
+    	}
+
+    	uint64 getElapsedTimeMs() const {
+    		return elapsedTime / 1000000;
+    	}
+
+    	uint64 getTotalTimeMs() const {
+    		return totalTime / 1000000;
+    	}
+
+	Time::ClockType getClockType() const {
+		return clockType;
+	}
     };
 
   } // namespace util
