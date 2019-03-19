@@ -359,7 +359,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Core::getTaskManager()->unblockTaskManager(lockers);
 	delete lockers;
 
-	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, numberOfThreads, objectsToDeleteFromRAM);
+	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, updateModifiedObjectsThreads.size(), objectsToDeleteFromRAM);
 
 #ifndef WITH_STM
 	_locker.release();
