@@ -418,14 +418,12 @@ void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, i
 	UpdateModifiedObjectsThread* thread = nullptr;
 
 	if (threadIndex >= MAX_UPDATE_THREADS) {
-		thread = updateModifiedObjectsThreads.get(threadIndex % updateModifiedObjectsThreads.size());
+		threadIndex = threadIndex % updateModifiedObjectsThreads.size();
 	} else if (updateModifiedObjectsThreads.size() <= threadIndex) {
 		createUpdateModifiedObjectsThread();
-
-		thread = updateModifiedObjectsThreads.get(threadIndex);
-	} else {
-		thread = updateModifiedObjectsThreads.get(threadIndex);
 	}
+
+	thread = updateModifiedObjectsThreads.get(threadIndex);
 
 	thread->waitFinishedWork();
 
@@ -435,29 +433,30 @@ void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, i
 	thread->setTransaction(transaction);
 	thread->setObjectsToDeleteVector(objectsToDelete);
 
+	thread->signalActivity();
+
 	lastThreadCount += objectsToUpdateCount;
 	objectsToUpdateCount = 0;
-
-	thread->signalActivity();
 }
 
 int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction* transaction,
 		Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
 		Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
 
-	info("starting getObjectsMarkedForUpdate", true);
+	info("starting object map iteration", true);
 
-	objectsToUpdate.removeAll(localObjectDirectory.getObjectHashTable().size(), 1);
+	objectsToUpdate.removeAll(localObjectDirectory.getObjectHashTable().size(), 1); //need to make sure no reallocs happen or threads will read garbage data
 	objectsToDelete.removeAll(100000, 0);
 
-	info("allocated objectsToUpdate size", true);
+	info("allocated object map to update size", true);
 
 	auto iterator = localObjectDirectory.getObjectHashTable().iterator();
 	int objectsToUpdateCount = 0;
 	int currentThread = 0;
 	int lastThreadCount = 0;
 
-	auto start = std::chrono::high_resolution_clock::now();
+	Timer start;
+	start.start();
 
 	while (iterator.hasNext()) {
 		DistributedObjectAdapter* adapter = iterator.getNextValue();
@@ -493,12 +492,11 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction
 				&objectsToDelete);
 	}
 
-	auto end = std::chrono::high_resolution_clock::now();
-	uint64 diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	start.stop();
 
 	StringBuffer msg;
-	msg << "launched " << currentThread % updateModifiedObjectsThreads.size() << " threads and marked " << objectsToUpdate.size() << " objects to update and "
-			<< objectsToDelete.size() << " for deletion in " << diff << " ms from " << lastThreadCount << " objects in ram";
+	msg << "launched " << currentThread << " workers and marked " << objectsToUpdate.size() << " objects to update and "
+			<< objectsToDelete.size() << " for deletion in " << start.elapsed() / 1000000 << " ms from " << lastThreadCount << " total objects";
 
 	info(msg.toString(), true);
 
