@@ -36,9 +36,9 @@
 int DOBObjectManager::UPDATETODATABASETIME = 300000;
 
 int MAXOBJECTSTOUPDATEPERTHREAD = 7000;
-int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 10;
-int MIN_UPDATE_THREADS = 4;
-int MAX_UPDATE_THREADS = 20;
+int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 4;
+int MIN_UPDATE_THREADS = 2;
+int MAX_UPDATE_THREADS = 4;
 
 DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	nextObjectID = INITIAL_OBJECT_ID;
@@ -289,6 +289,17 @@ ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
 	return table;
 }
 
+UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread() {
+	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
+
+	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(), this, updateModifiedObjectsThreads.size() % maxCpus);
+	thread->start();
+
+	updateModifiedObjectsThreads.add(thread);
+
+	return thread;
+}
+
 void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	info("starting saving objects to database", true);
 
@@ -331,35 +342,13 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Vector<DistributedObject*> objectsToDelete;
 	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
 
-#ifdef PRINT_OBJECT_COUNT
-	VectorMap<String, int> inRamClassCount;
-	inRamClassCount.setNullValue(0);
+	Timer copy;
+	copy.start();
 
-	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, &inRamClassCount);
-#else
-	localObjectDirectory.getObjectsMarkedForUpdate(objectsToUpdate, objectsToDelete, *objectsToDeleteFromRAM, nullptr);
-#endif
+	int numberOfThreads = executeUpdateThreads(&objectsToUpdate, &objectsToDelete,
+                                 objectsToDeleteFromRAM, transaction);
 
-	Time start;
-
-//#ifndef WITH_STM
-	int numberOfThreads = deployUpdateThreads(&objectsToUpdate, &objectsToDelete, transaction);
-//#endif
-
-	info("copied objects into ram in " + String::valueOf(start.miliDifference()) + " ms", true);
-/*
-	info("objects to delete from ram: " + String::valueOf(objectsToDeleteFromRAM->size()), true);
-
-	for (int i = 0; i < objectsToDeleteFromRAM->size(); ++i) {
-		DistributedObjectStub* object = static_cast<DistributedObjectStub*>(objectsToDeleteFromRAM->get(i));
-
-	localObjectDirectory.removeHelper(object->_getObjectID());
-	}
-
-//	objectsToDeleteFromRAM.removeAll();
-
-	info("finished undeploying objects from orb", true);
-	*/
+	info("copied objects into ram in " + String::valueOf(copy.elapsed() / 1000000) + " ms", true);
 
 #ifdef WITH_STM
 	TransactionalMemoryManager::instance()->unblockTransactions();
@@ -367,14 +356,8 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	onUpdateModifiedObjectsToDatabase();
 
-//#ifndef WITH_STM
 	Core::getTaskManager()->unblockTaskManager(lockers);
 	delete lockers;
-//#endif
-/*
-	Reference<DestroyFromRamObjectsTask*> dest = new DestroyFromRamObjectsTask(objectsToDeleteFromRAM);
-	dest->execute();
-*/
 
 	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, numberOfThreads, objectsToDeleteFromRAM);
 
@@ -382,10 +365,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	_locker.release();
 #endif
 
-//	delete objectsToDeleteFromRAM;
-
 #ifdef PRINT_OBJECT_COUNT
-
 	VectorMap<int, String> orderedMap(inRamClassCount.size(), 0);
 	orderedMap.setAllowDuplicateInsertPlan();
 
@@ -403,84 +383,126 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 		printf("%s\t%d\n", name.toCharArray(), val);
 	}
 #endif
-
 }
 
-UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread() {
-	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
-
-	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(), this, updateModifiedObjectsThreads.size() % maxCpus);
-	thread->start();
-
-	updateModifiedObjectsThreads.add(thread);
-
-	return thread;
-}
-
-int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete, engine::db::berkley::Transaction* transaction) {
-	if (objectsToUpdate->size() == 0)
-		return 0;
-
+int DOBObjectManager::executeUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete,
+		Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkley::Transaction* transaction) {
 	totalUpdatedObjects = 0;
 
-	//Time start;
+	int numberOfThreads = 0;
 
-	int numberOfObjects = objectsToUpdate->size();
+#ifdef PRINT_OBJECT_COUNT
+	VectorMap<String, int> inRamClassCount;
+	inRamClassCount.setNullValue(0);
 
-	info("numberOfObjects to update:" + String::valueOf(numberOfObjects), true);
+	numberOfThreads = runObjectsMarkedForUpdate(transaction, *objectsToUpdate, *objectsToDelete, *objectsToDeleteFromRAM, &inRamClassCount);
+#else
+	numberOfThreads = runObjectsMarkedForUpdate(transaction, *objectsToUpdate, *objectsToDelete, *objectsToDeleteFromRAM, nullptr);
+#endif
 
-
-	int numberOfThreads = numberOfObjects / MAXOBJECTSTOUPDATEPERTHREAD;
-
-	numberOfThreads = Math::min(numberOfThreads, MAX_UPDATE_THREADS);
-	int rest = numberOfThreads > 0 ? numberOfObjects % numberOfThreads : 0;
-
-	if (rest != 0)
-		++numberOfThreads;
-
-	while (numberOfThreads > updateModifiedObjectsThreads.size())
-		createUpdateModifiedObjectsThread();
-
-	if (numberOfThreads < MIN_UPDATE_THREADS)
-		numberOfThreads = MIN_UPDATE_THREADS;
-
-	int numberPerThread  = numberOfObjects / numberOfThreads;
-
-	if (numberPerThread == 0) {
-		numberPerThread = numberOfObjects;
-		numberOfThreads = 1;
-	}
-
-	for (int i = 0; i < numberOfThreads; ++i) {
-		UpdateModifiedObjectsThread* thread = updateModifiedObjectsThreads.getUnsafe(i);
-
-		thread->waitFinishedWork();
-
-		int start = i * numberPerThread;
-		int end = 0;
-
-		if (i == numberOfThreads - 1) {
-			end = numberOfObjects - 1;
-			thread->setObjectsToDeleteVector(objectsToDelete);
-		} else
-			end = start + numberPerThread - 1;
-
-		thread->setObjectsToUpdateVector(objectsToUpdate);
-		thread->setStartOffset(start);
-		thread->setEndOffset(end);
-		thread->setTransaction(transaction);
-
-		thread->signalActivity();
-	}
-
-	for (int i = 0; i < numberOfThreads; ++i) {
-		UpdateModifiedObjectsThread* thread = updateModifiedObjectsThreads.getUnsafe(i);
+	for (auto thread : updateModifiedObjectsThreads) {
+		thread->signalCopyFinished();
 
 		thread->waitFinishedWork();
 	}
 
 	return numberOfThreads;
 
+}
+
+void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, int& lastThreadCount,
+		int& objectsToUpdateCount, engine::db::berkley::Transaction* transaction,
+		Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>* objectsToDelete) {
+	int threadIndex = currentThread++;
+
+	UpdateModifiedObjectsThread* thread = nullptr;
+
+	if (threadIndex >= MAX_UPDATE_THREADS) {
+		thread = updateModifiedObjectsThreads.get(threadIndex % updateModifiedObjectsThreads.size());
+	} else if (updateModifiedObjectsThreads.size() <= threadIndex) {
+		createUpdateModifiedObjectsThread();
+
+		thread = updateModifiedObjectsThreads.get(threadIndex);
+	} else {
+		thread = updateModifiedObjectsThreads.get(threadIndex);
+	}
+
+	thread->waitFinishedWork();
+
+	thread->setObjectsToUpdateVector(&objectsToUpdate);
+	thread->setStartOffset(lastThreadCount);
+	thread->setEndOffset(lastThreadCount + objectsToUpdateCount);
+	thread->setTransaction(transaction);
+	thread->setObjectsToDeleteVector(objectsToDelete);
+
+	lastThreadCount += objectsToUpdateCount;
+	objectsToUpdateCount = 0;
+
+	thread->signalActivity();
+}
+
+int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction* transaction,
+		Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
+		Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
+
+	info("starting getObjectsMarkedForUpdate", true);
+
+	objectsToUpdate.removeAll(localObjectDirectory.getObjectHashTable().size(), 1);
+	objectsToDelete.removeAll(100000, 0);
+
+	info("allocated objectsToUpdate size", true);
+
+	auto iterator = localObjectDirectory.getObjectHashTable().iterator();
+	int objectsToUpdateCount = 0;
+	int currentThread = 0;
+	int lastThreadCount = 0;
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	while (iterator.hasNext()) {
+		DistributedObjectAdapter* adapter = iterator.getNextValue();
+
+		DistributedObject* dobObject = adapter->getStub();
+
+		if (dobObject->getReferenceCount() == 2) // 2 is the lowest count now
+			objectsToDeleteFromRAM.emplace(dobObject);
+		else if (inRamClassCount != nullptr) {
+			String className = TypeInfo<DistributedObject>::getClassName(dobObject, false);
+
+			inRamClassCount->put(className, inRamClassCount->get(className) + 1);
+		}
+
+		ManagedObject* managedObject = static_cast<ManagedObject*>(dobObject);
+
+		if (dobObject->_isMarkedForDeletion()) {
+			objectsToDelete.emplace(dobObject);
+		} else if (dobObject->_isUpdated() && managedObject->isPersistent()) {
+			objectsToUpdate.emplace(dobObject);
+
+			objectsToUpdateCount++;
+		}
+
+		if (objectsToUpdateCount >= MAXOBJECTSTOUPDATEPERTHREAD) {
+			dispatchUpdateModifiedObjectsThread(currentThread, lastThreadCount, objectsToUpdateCount, transaction, objectsToUpdate,
+					nullptr);
+		}
+	}
+
+	if (objectsToUpdateCount || objectsToDelete.size()) {
+		dispatchUpdateModifiedObjectsThread(currentThread, lastThreadCount, objectsToUpdateCount, transaction, objectsToUpdate,
+				&objectsToDelete);
+	}
+
+	auto end = std::chrono::high_resolution_clock::now();
+	uint64 diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+	StringBuffer msg;
+	msg << "launched " << currentThread % updateModifiedObjectsThreads.size() << " threads and marked " << objectsToUpdate.size() << " objects to update and "
+			<< objectsToDelete.size() << " for deletion in " << diff << " ms from " << lastThreadCount << " objects in ram";
+
+	info(msg.toString(), true);
+
+	return currentThread % updateModifiedObjectsThreads.size();
 }
 
 void DOBObjectManager::finishObjectUpdate() {

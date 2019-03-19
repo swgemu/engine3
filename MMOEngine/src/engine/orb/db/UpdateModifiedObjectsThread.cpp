@@ -31,23 +31,27 @@ void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 
 		waitingToStart = true;
 
-		waitCondition.wait(&blockMutex);
+		while (!copyRAMFinished) {
+			waitCondition.wait(&blockMutex);
 
-		waitingToStart = false;
+			waitingToStart = false;
 
-		working = true;
-		finishedCommiting = false;
+			working = true;
+			finishedCommiting = false;
 
-		commitObjectsToDatabase();
+			commitObjectsToDatabase();
 
-		working = false;
+			working = false;
 
-		objectsToUpdate = nullptr;
-		objectsToDelete = nullptr;
+			objectsToUpdate = nullptr;
+			objectsToDelete = nullptr;
 
-		finishedWorkContition.broadcast(&blockMutex);
+			finishedWorkContition.broadcast(&blockMutex);
+		}
 
 		commitTransaction();
+
+		copyRAMFinished = false;
 	}
 }
 
@@ -93,7 +97,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 		if (objectsToUpdate != nullptr) {
 			int j = 0;
 
-			for (int i = startOffset; i <= endOffset; ++i) {
+			for (int i = startOffset; i < endOffset; ++i) {
 				DistributedObject* object = objectsToUpdate->getUnsafe(i);
 
 				if (objectManager->commitUpdatePersistentObjectToDB(object) == 0)

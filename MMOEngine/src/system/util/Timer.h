@@ -17,10 +17,10 @@ namespace sys {
 
     	uint64 totalTime;
 
-		Time::ClockType clockType;
+	Time::ClockType clockType;
 
     public:
-    	Timer(Time::ClockType type = Time::THREAD_TIME) : startTime(0), elapsedTime(0), totalTime(0), clockType(type) {
+    	Timer(Time::ClockType type = Time::MONOTONIC_TIME) : startTime(0), elapsedTime(0), totalTime(0), clockType(type) {
     	}
 
     	void start() {

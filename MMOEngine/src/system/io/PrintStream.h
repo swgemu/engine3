@@ -53,6 +53,7 @@ namespace sys {
 		PrintStream& operator<< (long val);
 		PrintStream& operator<< (int64 val);
 		PrintStream& operator<< (uint64 val);
+		PrintStream& operator<< (unsigned long val);
 		PrintStream& operator<< (float val);
 		PrintStream& operator<< (void* val);
 		PrintStream& operator<< (const char* str);

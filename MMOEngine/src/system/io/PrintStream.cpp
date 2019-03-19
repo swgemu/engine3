@@ -187,6 +187,12 @@ PrintStream& PrintStream::operator<<(uint64 val) {
 	return *this;
 }
 
+PrintStream& PrintStream::operator<<(unsigned long val) {
+	print((uint64)val);
+
+	return *this;
+}
+
 PrintStream& PrintStream::operator<<(float val) {
 	print(val);
 

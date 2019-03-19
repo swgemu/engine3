@@ -28,6 +28,7 @@ namespace engine {
 		Condition finishedWorkContition;
 		Condition waitMasterTransaction;
 
+		AtomicBoolean copyRAMFinished;
 		AtomicBoolean doRun;
 		AtomicBoolean working;
 		AtomicBoolean finishedCommiting;
@@ -74,6 +75,10 @@ namespace engine {
 			join();
 		}
 
+		inline void setRAMCopyFinished(bool val) {
+			copyRAMFinished = val;
+		}
+
 		inline bool hasFinishedCommiting() {
 			return finishedCommiting;
 		}
@@ -82,6 +87,16 @@ namespace engine {
 			blockMutex.lock();
 
 			waitMasterTransaction.broadcast(&blockMutex);
+
+			blockMutex.unlock();
+		}
+
+		inline void signalCopyFinished() {
+			blockMutex.lock();
+
+			setRAMCopyFinished(true);
+
+			waitCondition.broadcast(&blockMutex);
 
 			blockMutex.unlock();
 		}

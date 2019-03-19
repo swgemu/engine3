@@ -107,7 +107,19 @@ namespace engine {
 
 		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
 
-		int deployUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete, engine::db::berkley::Transaction* transaction);
+		void dispatchUpdateModifiedObjectsThread(int& currentThread, int& lastThreadCount,
+				int& objectsToUpdateCount, engine::db::berkley::Transaction* transaction,
+				Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>* objectsToDelete);
+
+
+		int executeUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete,
+				Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkley::Transaction* transaction);
+
+		int runObjectsMarkedForUpdate(engine::db::berkley::Transaction* transaction,
+				Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
+				Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount);
+
+
 
 		friend class CommitMasterTransactionThread;
 	};

@@ -31,15 +31,15 @@ namespace engine {
 		ObjectHashTable objectMap;
 
 		DistributedObjectMap<SynchronizedHashTable<uint64, DistributedObject*>> helperObjectMap;
-	
+
 	public:
 		DistributedObjectDirectory();
 		~DistributedObjectDirectory();
-		
+
 		DistributedObjectAdapter* add(sys::uint64 objid, DistributedObjectAdapter* adapter);
-	
+
 		DistributedObject* get(sys::uint64 objid);
-		
+
 		DistributedObjectAdapter* remove(sys::uint64 objid);
 
 		void removeHelper(sys::uint64 objid);
@@ -48,11 +48,12 @@ namespace engine {
 
 		DistributedObjectAdapter* getAdapter(uint64 objid);
 
-		void getObjectsMarkedForUpdate(Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
-				Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount);
-
 		inline int getSize() {
 			return objectMap.size();
+		}
+
+		const ObjectHashTable& getObjectHashTable() {
+			return objectMap;
 		}
 
 		HashTable<uint64, DistributedObject* >* getDistributedObjectMap() {

@@ -10,6 +10,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #ifndef PLATFORM_WIN
 #include <unistd.h>
+#include <stdio.h>
+#include <time.h>
 #else
 #include <windows.h>
 #include <windef.h>
@@ -28,7 +30,7 @@ namespace sys {
 
 	class Time {
 	public:
-#if defined(PLATFORM_MAC) || defined(PLATFORM_WIN)
+#if defined(PLATFORM_WIN)
 		typedef int ClockType;
 
 		const static ClockType REAL_TIME = 0;
@@ -105,14 +107,7 @@ namespace sys {
 		}
 
 		inline void updateToCurrentTime(ClockType type = REAL_TIME) {
-			#ifdef PLATFORM_MAC
-				//assert(type == 0);
-
-				struct timeval tv;
-				gettimeofday(&tv, nullptr);
-				TIMEVAL_TO_TIMESPEC(&tv, &ts);
-
-			#elif !defined(PLATFORM_WIN)
+			#if !defined(PLATFORM_WIN)
 				clock_gettime(type, &ts);
 			#else
 				assert(type == 0);
@@ -230,22 +225,7 @@ namespace sys {
 		}
 
 		inline static uint64 currentNanoTime(ClockType type = REAL_TIME) {
-			#ifdef PLATFORM_MAC
-				//assert(type == 0);
-				struct timeval tv;
-				gettimeofday(&tv, nullptr);
-
-				struct timespec cts;
-				TIMEVAL_TO_TIMESPEC(&tv, &cts);
-
-				uint64 time;
-
-				time = cts.tv_sec;
-				time = (time * 1000000000) + (uint64)cts.tv_nsec;
-
-				return time;
-
-			#elif !defined(PLATFORM_WIN)
+			#if !defined(PLATFORM_WIN)
 				struct timespec cts;
 				clock_gettime(type, &cts);
 
@@ -321,8 +301,8 @@ namespace sys {
 			return t.getMiliTime() - getMiliTime();
 		}
 
-		inline int64 miliDifference() const {
-			return Time().getMiliTime() - getMiliTime();
+		inline int64 miliDifference(ClockType type = REAL_TIME) const {
+			return Time(type).getMiliTime() - getMiliTime();
 		}
 
 		inline struct timespec* getTimeSpec() {
