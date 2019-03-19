@@ -33,8 +33,6 @@ LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 }
 
 LocalDatabase::~LocalDatabase() {
-	closeDatabase();
-
 	delete objectsDatabase;
 	objectsDatabase = nullptr;
 }
