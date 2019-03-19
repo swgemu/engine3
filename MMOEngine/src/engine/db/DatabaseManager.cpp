@@ -294,6 +294,8 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 }
 
 void DatabaseManager::closeDatabases() {
+	info("closing databases");
+
 	if (!loaded)
 		return;
 

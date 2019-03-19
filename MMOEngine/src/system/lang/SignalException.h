@@ -33,6 +33,21 @@ public:
 	}
 };
 
+template <class SignalCallbackClass> class SignalCallbackTranslator {
+	private:
+		class SingleTonTranslator {
+			public:
+				SingleTonTranslator() {
+					signal(SignalCallbackClass::GetSignalNumber(), SignalCallbackClass::SignalHandler);
+				}
+		};
+
+	public:
+		SignalCallbackTranslator() {
+			static SingleTonTranslator s_objTranslator;
+		}
+};
+
 class AbortedException : public Exception {
 public:
 	AbortedException(int cause) : Exception() {
