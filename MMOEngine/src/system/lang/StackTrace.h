@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define STACKTRACE_H_
 
 #include "system/platform.h"
+#include "system/lang/String.h"
 
 #ifdef PLATFORM_UNIX
 	#include <execinfo.h>

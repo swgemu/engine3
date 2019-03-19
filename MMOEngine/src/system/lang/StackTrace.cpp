@@ -34,7 +34,6 @@ StackTrace& StackTrace::operator=(const StackTrace& c) {
 }
 
 StackTrace::~StackTrace() {
-
 }
 
 void StackTrace::print() const {
@@ -42,7 +41,10 @@ void StackTrace::print() const {
 	static Logger logger("StackTrace");
 
 	#ifdef PLATFORM_UNIX
-		static const bool enableAddr2Line = Core::getIntProperty("StackTrace.enableArr2Line", 1);
+		static const bool enableAddr2Line = Core::getIntProperty("StackTrace.enableAddr2Line", 1);
+		static const String addr2linePath = Core::getProperty("StackTrace.addr2linePath", "/usr/bin/addr2line");
+		static const String configBinaryName = Core::getProperty("StackTrace.binaryName", binaryName);
+
 		char** tracedSymbols = backtrace_symbols(symbols, count);
 
 		if (tracedSymbols == nullptr) {
@@ -56,7 +58,7 @@ void StackTrace::print() const {
 			#ifdef PLATFORM_MAC
 			command << "atos -p " << Thread::getProcessID();
 			#else
-			command << "/usr/bin/addr2line -e " << binaryName;
+			command << addr2linePath << " -e " << binaryName;
 			#endif
 		#endif
 
