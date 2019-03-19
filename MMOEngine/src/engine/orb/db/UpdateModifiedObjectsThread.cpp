@@ -29,9 +29,9 @@ void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 	while (doRun) {
 		blockMutex.lock();
 
-		waitingToStart = true;
-
 		while (!copyRAMFinished) {
+			waitingToStart = true;
+
 			waitCondition.wait(&blockMutex);
 
 			waitingToStart = false;
