@@ -23,6 +23,10 @@ ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName,
 }
 
 int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode, bool compressed) {
+	if (objKey == 0) {
+		return DB_NOTFOUND;
+	}
+
 	int ret = 0;
 
 	DatabaseEntry key, data;
