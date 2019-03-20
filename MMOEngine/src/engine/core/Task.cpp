@@ -47,7 +47,6 @@ void Task::initialize() {
 #endif
 
 #ifdef COLLECT_TASKSTATISTICS
-	lastElapsedTime = 0;
 	statsSampleRate = 1;
 #endif
 }
@@ -105,15 +104,8 @@ void Task::doExecute() {
 #else
 	ObjectDatabaseManager::instance()->startLocalTransaction();
 
-#ifdef COLLECT_TASKSTATISTICS
-#ifdef CXX11_COMPILER
-	auto start = std::chrono::high_resolution_clock::now();
-#else
 	Timer executionTimer;
-
 	executionTimer.start();
-#endif
-#endif
 
 	try {
 		run();
@@ -124,15 +116,7 @@ void Task::doExecute() {
 		Logger::console.error("unreported exception caught while running a task");
 	}
 
-#ifdef COLLECT_TASKSTATISTICS
-#ifdef CXX11_COMPILER
-	auto end = std::chrono::high_resolution_clock::now();
-
-	lastElapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-#else
 	lastElapsedTime = executionTimer.stop();
-#endif
-#endif
 
 	ObjectDatabaseManager::instance()->commitLocalTransaction();
 #endif

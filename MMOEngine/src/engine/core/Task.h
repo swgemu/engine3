@@ -41,9 +41,10 @@ namespace engine {
 		AtomicLong period;
 
 	#ifdef COLLECT_TASKSTATISTICS
-		uint64 lastElapsedTime;
 		int statsSampleRate;
 	#endif
+
+		uint64 lastElapsedTime = 0;
 
 		int priority;
 		bool runInScheduler = false;
@@ -187,14 +188,14 @@ namespace engine {
 			statsSampleRate = val;
 		}
 
-	  	inline uint64 getLastElapsedTime() const {
-	  		return lastElapsedTime;
-	  	}
-
 		inline int getStatsSampleRate() const {
 			return statsSampleRate;
 		}
 	#endif
+
+		inline uint64 getLastElapsedTime() const {
+	  		return lastElapsedTime;
+	  	}
 
 	#ifdef TRACE_TASKS
 		void setScheduleTrace() {

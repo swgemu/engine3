@@ -39,7 +39,7 @@ namespace engine {
 
 		static String engineConfigName;
 	public:
-		static SynchronizedHashTable<String, String> properties;
+		static SynchronizedHashTable<String, ArrayList<String>> properties;
 		static bool MANAGED_REFERENCE_LOAD;
 
 	public:
@@ -67,6 +67,8 @@ namespace engine {
 		static int getIntProperty(const String& key, int defaultValue = 0);
 		static uint64 getLongProperty(const String& key, uint64 defaultValue = 0);
 		static String getProperty(const String& key, const String& defaultValue = "");
+		static ArrayList<String> getPropertyVector(const String& key);
+
 		static double getDoubleProperty(const String& key, double defaultValue = 0);
 
 		static int initializeProperties(const String& className);

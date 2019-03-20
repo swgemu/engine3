@@ -68,7 +68,7 @@ namespace sys {
 		   bool add(int index, E&& element);
 
 		   template<class ...A>
-			   bool emplace(A&& ...element);
+		   bool emplace(A&& ...element);
 #endif
 
 		   void addAll(const ArrayList<E>& array);
@@ -82,6 +82,7 @@ namespace sys {
 #endif
 
 		   bool contains(const E& element) const;
+		   int find(const E& element) const;
 
 		   void insertElementAt(const E& element, uint32 index);
 #ifdef CXX11_COMPILER
@@ -180,7 +181,7 @@ namespace sys {
 		   inline void createElementAt(E&& o, int index);
 
 		   template<class ...A>
-			   inline void emplaceElement(int idx, A&& ...o);
+		   inline void emplaceElement(int idx, A&& ...o);
 #endif
 
 		   inline void destroyElementAt(int index);
@@ -464,6 +465,16 @@ namespace sys {
 	   return false;
    }
 
+   template<class E> int ArrayList<E>::find(const E& element) const {
+	   for (int i = 0; i < size(); ++i) {
+		   if (element == getUnsafe(i)) {
+			   return i;
+		   }
+	   }
+
+	   return -1;
+   }
+
    template<class E> void ArrayList<E>::insertElementAt(const E& element, uint32 index) {
 	   if (index > (uint32)elementCount)
 		   throw ArrayIndexOutOfBoundsException(index);
@@ -710,7 +721,7 @@ namespace sys {
 	   Integer::toBinaryStream(size, stream);
 
 	   for (int i = 0; i < ArrayList<E>::size(); ++i) {
-		   E* obj = &get(i);
+		   E* obj = &getUnsafe(i);
 
 		   TypeInfo<E>::toBinaryStream(obj, stream);
 	   }

@@ -76,15 +76,27 @@ void TaskWorkerThread::run() {
 
 		currentTask = nullptr;
 
-#ifdef COLLECT_TASKSTATISTICS
 		uint64 elapsedTime = task->getLastElapsedTime();
-#endif
 
 		blockMutex.unlock();
 
-#ifdef COLLECT_TASKSTATISTICS
+		static const bool slowTaskLog = Core::getIntProperty("TaskManager.slowTaskLog", 0);
 		const char* taskName = task->getTaskName();
 
+		if (slowTaskLog) {
+			static uint64 slowTaskLogMs = Core::getIntProperty("TaskManager.slowTaskLogTimeMs", 40);
+
+			if (elapsedTime / 1000000 >= slowTaskLogMs) {
+				static const auto ignoreTasks = Core::getPropertyVector("TaskManager.slowTaskLogIgnore");
+				const String taskNameString = taskName;
+
+				if (!ignoreTasks.contains(taskNameString)) {
+					warning(String(taskName) + " took " + String::valueOf(elapsedTime / 1000000) + "ms");
+				}
+			}
+		}
+
+#ifdef COLLECT_TASKSTATISTICS
 		Locker guard(&tasksStatsGuard);
 
 		Entry<const char*, RunStatistics>* entry = tasksStatistics.getEntry(taskName);
@@ -259,7 +271,7 @@ void TaskWorkerThread::addBDBReadStats(const String& dbName, uint64 elapsedTime)
 
 		++stats.totalRunCount;
 	}
-	
+
 	if (bdbSamplingRate && ((++totalBdbReadCount % bdbSamplingRate) == 0)) {
 		char metricsValue[48];
 		snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);

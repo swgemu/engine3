@@ -7,7 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/lua/Lua.h"
 
-SynchronizedHashTable<String, String> Core::properties;
+SynchronizedHashTable<String, ArrayList<String>> Core::properties;
 UniqueReference<TaskManager*> Core::taskManager;
 bool Core::taskManagerShutDown = false;
 bool Core::MANAGED_REFERENCE_LOAD = true;
@@ -51,7 +51,20 @@ void Core::initializeContext(int logLevel) {
 }
 
 void Core::parsePropertyData(const String& className, const char* name, LuaObject& table) {
-	Core::properties.put((className + ".") + name, Lua::getStringParameter(table.getLuaState()));
+	auto size = table.getTableSize();
+	ArrayList<String> values;
+
+	if (size > 1) {
+		for (int i = 1; i <= size; ++i) {
+			values.emplace(table.getStringAt(i));
+		}
+
+		table.pop();
+	} else {
+		values.emplace(Lua::getStringParameter(table.getLuaState()));
+	}
+
+	Core::properties.put(std::move((className + ".") + name), std::move(values));
 }
 
 int Core::initializeProperties(const String& className) {
@@ -202,38 +215,44 @@ Reference<DistributedObject*> Core::lookupObject(uint64 id) {
 }
 
 int Core::getIntProperty(const String& key, int defaultValue) {
-	auto val = properties.get(key);
+	const auto& val = properties.get(key);
 
 	if (!val.isEmpty()) {
-		return Integer::valueOf(val);
+		return Integer::valueOf(val.get(0));
 	} else {
 		return defaultValue;
 	}
 }
 
 uint64 Core::getLongProperty(const String& key, uint64 defaultValue) {
-	auto val = properties.get(key);
+	const auto& val = properties.get(key);
 
 	if (!val.isEmpty()) {
-		return UnsignedLong::valueOf(val);
+		return UnsignedLong::valueOf(val.get(0));
 	} else {
 		return defaultValue;
 	}
 }
 
+ArrayList<String> Core::getPropertyVector(const String& key) {
+	return properties.get(key);
+}
+
 String Core::getProperty(const String& key, const String& defaultValue) {
-	if (!properties.containsKey(key)) {
+	auto properties = getPropertyVector(key);
+
+	if (properties.isEmpty()) {
 		return defaultValue;
 	}
 
-	return properties.get(key);
+	return properties.get(0);
 }
 
 double Core::getDoubleProperty(const String& key, double defaultValue) {
 	auto val = properties.get(key);
 
 	if (!val.isEmpty()) {
-		return Double::valueOf(val);
+		return Double::valueOf(val.get(0));
 	} else {
 		return defaultValue;
 	}

@@ -15,6 +15,7 @@ namespace engine {
 
 	class TaskManager;
 	class TaskQueue;
+	class Task;
 
 	class TaskWorkerThread : public ServiceThread {
 		Mutex blockMutex;
