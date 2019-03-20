@@ -324,22 +324,22 @@ void Logger::warning(const StringBuffer& msg) const {
 void Logger::getLogType(StringBuffer& buffer, LogLevel type) const {
 	switch (type) {
 		case LogLevel::INFO:
-			buffer << " [" << name << "] INFO - ";
+			buffer << "[" << name << "] INFO - ";
 			return;
 		case LogLevel::DEBUG:
-			buffer << " [" << name << "] DEBUG - ";
+			buffer << "[" << name << "] DEBUG - ";
 			return;
 		case LogLevel::WARNING:
-			buffer << " [" << name << "] WARNING - ";
+			buffer << "[" << name << "] WARNING - ";
 			return;
 		case LogLevel::ERROR:
-			buffer << " [" << name << "] ERROR - ";
+			buffer << "[" << name << "] ERROR - ";
 			return;
 		case LogLevel::FATAL:
-			buffer << " [" << name << "] FATAL - ";
+			buffer << "[" << name << "] FATAL - ";
 			return;
 		default:
-			buffer << " [" << name << "] LOG - ";
+			buffer << "[" << name << "] LOG - ";
 			return;
 	}
 }
@@ -380,7 +380,7 @@ void Logger::getTime(StringBuffer& str, bool getFull) {
 	Thread* currentThread = Thread::getCurrentThread();
 
 	if (currentThread != nullptr && getFull)
-		str << " " << currentThread->getName() << " -";
+		str << " " << currentThread->getName() << " - ";
 }
 
 void Logger::getTime(String& times, bool getFull) {

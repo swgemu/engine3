@@ -9,6 +9,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "MetricsManager.h"
 
+#include <ostream>
+#include <fstream>
+
 #define STATS_MAX_MYSQL_QUERIES 1000
 #define STATS_STATSD_SAMPLE 0
 
@@ -83,15 +86,36 @@ void TaskWorkerThread::run() {
 		static const bool slowTaskLog = Core::getIntProperty("TaskManager.slowTaskLog", 0);
 		const char* taskName = task->getTaskName();
 
-		if (slowTaskLog) {
+		if (taskName && slowTaskLog) {
 			static uint64 slowTaskLogMs = Core::getIntProperty("TaskManager.slowTaskLogTimeMs", 40);
+			static String slowTaskFilename = Core::getProperty("TaskManager.slowTaskLogFile", "");
+			auto elapsedTimeMs = elapsedTime / 1000000;
 
-			if (elapsedTime / 1000000 >= slowTaskLogMs) {
+			if (elapsedTimeMs >= slowTaskLogMs) {
 				static const auto ignoreTasks = Core::getPropertyVector("TaskManager.slowTaskLogIgnore");
 				const String taskNameString = taskName;
 
 				if (!ignoreTasks.contains(taskNameString)) {
-					warning(String(taskName) + " took " + String::valueOf(elapsedTime / 1000000) + "ms");
+					StringBuffer stream;
+					stream << taskNameString << " took " << elapsedTimeMs << "ms";
+
+					if (!slowTaskFilename.isEmpty()) {
+						static String logName = this->getLoggingName();
+
+						static Logger customLogger = []() {
+							Logger log(logName);
+
+							log.setGlobalLogging(false);
+							log.setFileLogger(slowTaskFilename, true);
+							log.setLogLevelToFile(false);
+
+							return log;
+						}();
+
+						customLogger.log(stream.toString());
+					} else {
+						warning(stream.toString());
+					}
 				}
 			}
 		}
