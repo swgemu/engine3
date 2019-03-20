@@ -51,10 +51,12 @@ void Core::initializeContext(int logLevel) {
 }
 
 void Core::parsePropertyData(const String& className, const char* name, LuaObject& table) {
-	auto size = table.getTableSize();
 	ArrayList<String> values;
+	auto luaState = table.getLuaState();
 
-	if (size > 1) {
+	if (!lua_isstring(luaState, -1)) {
+		auto size = table.getTableSize();
+
 		for (int i = 1; i <= size; ++i) {
 			values.emplace(table.getStringAt(i));
 		}
