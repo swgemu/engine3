@@ -5,6 +5,8 @@
 #include "engine/core/Task.h"
 #include "engine/core/TaskWorkerThread.h"
 
+#include "engine/core/Core.h"
+
 #ifdef CXX11_COMPILER
 #include <chrono>
 #endif
@@ -37,15 +39,8 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	if (lockMode == LockMode::READ_UNCOMMITED)
 		cfg.setReadUncommitted(true);
 
-#ifdef COLLECT_TASKSTATISTICS
-#ifdef CXX11_COMPILER
-	auto start = std::chrono::high_resolution_clock::now();
-#else
-	Timer executionTimer(Time::MONOTONIC_TIME);
-
-	executionTimer.start();
-#endif
-#endif
+	Timer profiler;
+	profiler.start();
 
 	do {
 		ret  = -1;
@@ -82,15 +77,54 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 		transaction->commitNoSync();
 	}
 
+	uint64 elapsedTime = profiler.stop();
+
+	static const bool slowLog = Core::getIntProperty("BerkeleyDB.slowQueryLog", 0);
+
+	if (slowLog) {
+		static uint64 slowTaskLogMs = Core::getIntProperty("BerkeleyDB.slowQueryLogMs", 40);
+		static String slowTaskFilename = Core::getProperty("BerkeleyDB.slowQueryLogFile", "");
+
+		auto elapsedTimeMs = elapsedTime / 1000000;
+
+		if (elapsedTimeMs >= slowTaskLogMs) {
+			static const auto ignoreDbs = Core::getPropertyVector("BerkeleyDB.slowQueryLogIgnore");
+			const auto& dbName = getDatabaseFileName();
+
+			if (!ignoreDbs.contains(dbName)) {
+				StringBuffer stream;
+				stream << dbName << " took ";
+
+				if (elapsedTimeMs == 0) {
+					stream << elapsedTime << "ns";
+				} else {
+					stream << elapsedTimeMs << "ms";
+				}
+
+				stream << " to lookup 0x" << hex << objKey;
+
+				if (!slowTaskFilename.isEmpty()) {
+					static Logger customLogger = []() {
+						Logger log("BerkeleyDBSlowQueryLogger");
+
+						log.setGlobalLogging(false);
+						log.setFileLogger(slowTaskFilename, true);
+						log.setLogLevelToFile(false);
+
+						return log;
+					}();
+
+					customLogger.log(stream.toString());
+				} else {
+					warning(stream.toString());
+				}
+
+			}
+		}
+
+	}
+
 #ifdef COLLECT_TASKSTATISTICS
-#ifdef CXX11_COMPILER
-	auto end = std::chrono::high_resolution_clock::now();
-
-	uint64 elapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-#else
-	uint64 elapsedTime = executionTimer.stop();
-#endif
-
 	Thread* thread = Thread::getCurrentThread();
 	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : nullptr;
 

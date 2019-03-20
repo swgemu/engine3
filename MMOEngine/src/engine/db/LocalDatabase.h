@@ -71,15 +71,19 @@ namespace engine {
 		 return objectsDatabase;
 	 }
 
-	 inline void getDatabaseName(String& name) {
-		 name = databaseFileName.replaceFirst(".db", "");
+	 inline void getDatabaseName(String& name) const {
+		 name = getDatabaseName();
+	 }
+
+	 inline String getDatabaseName() const {
+		 return databaseFileName.replaceFirst(".db", "");
 	 }
 
 	 inline const String& getDatabaseFileName() const {
 		 return databaseFileName;
 	 }
 
-	 inline bool hasCompressionEnabled() {
+	 inline bool hasCompressionEnabled() const {
 		 return compression;
 	 }
 
