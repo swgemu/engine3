@@ -97,13 +97,17 @@ void TaskWorkerThread::run() {
 
 				if (!ignoreTasks.contains(taskNameString)) {
 					StringBuffer stream;
-					stream << taskNameString << " took " << elapsedTimeMs << "ms";
+					stream << taskNameString << " took ";
+
+				       	if (elapsedTimeMs == 0) {
+						stream << elapsedTime << "ns";
+					} else {
+						stream << elapsedTimeMs << "ms";
+					}
 
 					if (!slowTaskFilename.isEmpty()) {
-						static String logName = this->getLoggingName();
-
 						static Logger customLogger = []() {
-							Logger log(logName);
+							Logger log("SlowTaskLogger");
 
 							log.setGlobalLogging(false);
 							log.setFileLogger(slowTaskFilename, true);
@@ -111,6 +115,8 @@ void TaskWorkerThread::run() {
 
 							return log;
 						}();
+
+						stream << " in " << getLoggingName();
 
 						customLogger.log(stream.toString());
 					} else {
