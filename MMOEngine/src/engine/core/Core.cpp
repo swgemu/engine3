@@ -114,7 +114,7 @@ int Core::initializeProperties(const String& className) {
 		obj.pop();
 
 	} catch (...) {
-		Logger::console.error("count not initialize engine properties");
+		Logger::console.error("could not initialize engine properties");
 	}
 
 	return count;

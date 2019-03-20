@@ -15,19 +15,13 @@ namespace engine {
         class LambdaFunction {
         protected:
             L lambda;
-            const char *name = nullptr;
 
         public:
             template<class F>
-            LambdaFunction(F&& f, const char* funcName) : lambda(std::forward<F>(f)),
-                                                          name(funcName) {
+            LambdaFunction(F&& f) : lambda(std::forward<F>(f)) {
             }
 
             LambdaFunction() = delete;
-
-            inline const char *getName() {
-                return name;
-            }
 
             inline L& getLambda() {
                 return lambda;
@@ -39,18 +33,14 @@ namespace engine {
 
         public:
             template<class L>
-            LambdaTask(L&& l, const char* name) : function(std::forward<L>(l), name) {
-
+            LambdaTask(L&& l, const char* name) : function(std::forward<L>(l)) {
+		setTaskName(name);
             }
 
             void run() final {
                 auto& lambda = function.getLambda();
 
                 lambda();
-            }
-
-            const char* getTaskName() final {
-                return function.getName();
             }
         };
     }

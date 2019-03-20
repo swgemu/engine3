@@ -45,6 +45,7 @@ namespace engine {
 	#endif
 
 		uint64 lastElapsedTime = 0;
+		String taskName;
 
 		int priority;
 		bool runInScheduler = false;
@@ -83,7 +84,11 @@ namespace engine {
 		void executeInThread();
 
 		virtual const char* getTaskName() {
-			return typeid(*this).name();
+			if (!taskName.isEmpty()) {
+				return taskName.toCharArray();
+			} else {
+				return typeid(*this).name();
+			}
 		}
 
 		int compareTo(PriorityQueueEntry* node) {
@@ -181,6 +186,10 @@ namespace engine {
 
 		inline const String& getCustomTaskQueue() const {
 			return customTaskQueue;
+		}
+
+		inline void setTaskName(const char* name) {
+			taskName = name;
 		}
 
 	#ifdef COLLECT_TASKSTATISTICS
