@@ -30,7 +30,7 @@ Stream* Stream::clone(int startoffs) {
 
 	stream->writeStream(elementData + startoffs, newSize);
 
-	return stream;		
+	return stream;
 }
 
 void Stream::copy(Stream* stream, int startoffs) {
@@ -52,10 +52,10 @@ void Stream::copy(Stream* stream, int startoffs) {
 void Stream::setSize(int len, bool copyContent) {
 	char* oldElementData = elementData;
 	ArrayList<char>::setSize(len, copyContent);
-	
+
 	if (oldElementData != elementData)
 		offset = (offset - oldElementData) + elementData;
-	
+
 	end = elementData + len;
 }
 
@@ -83,7 +83,7 @@ void Stream::shiftOffset(int offs) {
 
 void Stream::clear() {
 	ArrayList<char>::setSize(0);
-	 
+
 	end = offset = elementData;
 }
 

@@ -10,6 +10,7 @@
 #include "LocalDatabase.h"
 #include "DatabaseManager.h"
 #include "ObjectDatabaseManager.h"
+#include "engine/core/Core.h"
 
 using namespace engine::db;
 using namespace engine::db::berkley;
@@ -141,7 +142,9 @@ void LocalDatabase::closeDatabase() {
 
 
 Stream* LocalDatabase::compress(Stream* data) {
-	char outputData[CHUNK_SIZE];// = (char*) malloc(CHUNK_SIZE);
+	static const int zlibChunkSize = Core::getIntProperty("BerkeleyDB.zlibChunkSize", CHUNK_SIZE);
+
+	char outputData[zlibChunkSize];
 	Stream* outputStream  = new Stream();
 
 	try {
@@ -157,13 +160,13 @@ Stream* LocalDatabase::compress(Stream* data) {
 
 		do {
 			packet.next_out = (Bytef* )outputData;
-			packet.avail_out = CHUNK_SIZE;
+			packet.avail_out = zlibChunkSize;
 
 			int ret = deflate(&packet,  Z_FINISH);
 
 			assert(ret == Z_OK || ret == Z_STREAM_END);
 
-			int wrote = CHUNK_SIZE - packet.avail_out;
+			int wrote = zlibChunkSize - packet.avail_out;
 
 			outputStream->writeStream(outputData, wrote);
 
@@ -182,8 +185,10 @@ Stream* LocalDatabase::compress(Stream* data) {
 }
 
 void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decompressedData) {
-	char outputData[CHUNK_SIZE];
-	//char* outputData = (char*) malloc(CHUNK_SIZE);
+	static const int zlibChunkSize = Core::getIntProperty("BerkeleyDB.zlibChunkSize", CHUNK_SIZE);
+
+	decompressedData->reset();
+	std::size_t totalSize = 0;
 
 	try {
 		z_stream packet;
@@ -197,15 +202,17 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 		packet.avail_in = (size);
 
 		do {
-			packet.next_out = (Bytef* )outputData;
-			packet.avail_out = CHUNK_SIZE;
+			decompressedData->extendSize(zlibChunkSize);
+
+			packet.next_out = (Bytef* )decompressedData->getBuffer() + totalSize;
+			packet.avail_out = zlibChunkSize;
 
 			int ret = inflate(&packet, Z_NO_FLUSH);
 
 			if (ret == Z_DATA_ERROR) {
 				Logger::console.error("could not decompress stream from database returning uncompressed");
 
-				decompressedData->writeStream((char*)data, size);
+				//decompressedData->writeStream((char*)data, size);
 
 				inflateEnd(&packet);
 
@@ -214,13 +221,16 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 
 			assert(ret == Z_OK || ret == Z_STREAM_END);
 
-			int wrote = CHUNK_SIZE - packet.avail_out;
+			int wrote = zlibChunkSize - packet.avail_out;
 
-			decompressedData->writeStream(outputData, wrote);
-			//avail_out
+			totalSize += wrote;
 		} while (packet.avail_out == 0);
 
 		inflateEnd(&packet); //close buffer*/
+
+		decompressedData->setSize(totalSize);
+
+		decompressedData->reset();
 	} catch (...) {
 		assert(0 && "LocalDatabase::uncompress");
 	}
