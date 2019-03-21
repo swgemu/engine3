@@ -44,11 +44,15 @@ DatabaseManager::DatabaseManager() : Logger("DatabaseManager") {
 DatabaseManager::~DatabaseManager() {
 	closeDatabases();
 
-	delete databaseDirectory;
-	databaseDirectory = nullptr;
+	if (databaseDirectory) {
+		delete databaseDirectory;
+		databaseDirectory = nullptr;
+	}
 
-	delete databaseEnvironment;
-	databaseEnvironment = nullptr;
+	if (databaseEnvironment) {
+		delete databaseEnvironment;
+		databaseEnvironment = nullptr;
+	}
 
 	//checkpointTask->cancel();
 
@@ -70,28 +74,31 @@ void DatabaseManager::checkpoint() {
 void DatabaseManager::openEnvironment() {
 	MAX_CACHE_SIZE = Core::getIntProperty("DatabaseManager.maxCacheSize", -1);
 
-	EnvironmentConfig config;
+	static const EnvironmentConfig config = [] () {
+		EnvironmentConfig config;
 
-	config.setRecover(Core::getIntProperty("DatabaseManager.recoverEnvironment", 1));
-	config.setAllowCreate(true);
-	config.setInitializeLocking(true);
-	config.setInitializeLogging(true);
+		config.setRecover(Core::getIntProperty("DatabaseManager.recoverEnvironment", 1));
+		config.setAllowCreate(true);
+		config.setInitializeLocking(true);
+		config.setInitializeLogging(true);
 
-	config.setLogAutoRemove(Core::getIntProperty("DatabaseManager.logAutoRemove", 1));
+		config.setLogAutoRemove(Core::getIntProperty("DatabaseManager.logAutoRemove", 1));
 
-	config.setThreaded(true);
+		config.setThreaded(Core::getIntProperty("DatabaseManager.threadedEnvironment", 1));
 
-	config.setThreadCount(Core::getIntProperty("DatabaseManager.threadCount", 512));
+		config.setThreadCount(Core::getIntProperty("DatabaseManager.threadCount", 512));
 
-	config.setTransactional(true);
-	config.setInitializeCache(true);
+		config.setTransactional(true);
+		config.setInitializeCache(true);
 
-	constexpr const uint32 logFileSize = 100 * 1024 * 1024;
+		constexpr const uint32 logFileSize = 100 * 1024 * 1024;
 
-	config.setMaxLogFileSize(Core::getIntProperty("DatabaseManager.logFileSize", logFileSize));
+		config.setMaxLogFileSize(Core::getIntProperty("DatabaseManager.logFileSize", logFileSize));
 
-	config.setLockDetectMode(LockDetectMode::RANDOM);
-	//config.setLockDetectMode(LockDetectMode::YOUNGEST);
+		config.setLockDetectMode(LockDetectMode::RANDOM);
+
+		return config;
+	} ();
 
 	try {
 		databaseEnvironment = new Environment("databases", config);
@@ -457,7 +464,7 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 	assert(transaction != nullptr);
 
 	if ((commitRet = transaction->commitSync()) != 0) {
-		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
+		error("error commiting master berkeley transaction " + String(db_strerror(commitRet)));
 	}
 
 	return commitRet;
@@ -465,8 +472,6 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 
 void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* masterTransaction) {
 	//printf("commiting local transaction\n");
-//	if (this == nullptr)
-//		return;
 
 	if (!loaded)
 		return;
@@ -513,7 +518,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 					info("deadlock detected while trying to putData iterating time " + String::valueOf(iteration));
 					break;
 				} else if (ret != 0) {
-					error("error while trying to putData :" + String::valueOf(db_strerror(ret)));
+					error("error while trying to putData :" + String(db_strerror(ret)));
 				}
 
 			} else {
@@ -556,7 +561,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 		//if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
 		if ((commitRet = berkeleyTransaction->commitSync()) != 0) {
-			error("error commiting berkeley transaction " + String::valueOf(db_strerror(commitRet)));
+			error("error commiting berkeley transaction " + String(db_strerror(commitRet)));
 			assert(0 && "could not commit berkeley transaction");
 		}
 	}
@@ -579,7 +584,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 			delete id;
 	}
 
-	updateObjects->removeAll(oldSize, 50);
+	updateObjects->removeAll(oldSize / 2, 50);
 	transaction->resetCurrentSize();
 }
 
