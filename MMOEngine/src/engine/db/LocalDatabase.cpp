@@ -14,7 +14,23 @@
 using namespace engine::db;
 using namespace engine::db::berkley;
 
-LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression) {
+//ThreadLocal<engine::db::berkley::BerkeleyDatabase*> LocalDatabase::objectsDatabase;
+//
+
+namespace LD3Ns {
+	static bool shutdown = false;
+
+	static void runThreadLocalDtor(void* value) {
+		shutdown = true;
+
+		if (value) {
+			delete reinterpret_cast<engine::db::berkley::BerkeleyDatabase*>(value);
+		}
+	}
+}
+
+LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression) :
+		objectsDatabase() {
 	environment = dbEnv->getBerkeleyEnvironment();
 
 	setLoggingName("LocalDatabase " + dbFileName);
@@ -33,30 +49,47 @@ LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 }
 
 LocalDatabase::~LocalDatabase() {
-	delete objectsDatabase;
-	objectsDatabase = nullptr;
+	//delete objectsDatabase;
+	//objectsDatabase = nullptr;
+}
+
+engine::db::berkley::BerkeleyDatabase* LocalDatabase::getDatabaseHandle() {
+	auto db = objectsDatabase.get();
+
+	if (db == nullptr) {
+		if (!LD3Ns::shutdown) {
+			openDatabase();
+		}
+	}
+
+	return objectsDatabase.get();
 }
 
 void LocalDatabase::openDatabase() {
-	DatabaseConfig config;
-	config.setThreaded(true);
-	//config.setTransactional(true);
-	config.setAllowCreate(true);
-	config.setType(DatabaseType::HASH);
-	config.setReadUncommited(true);
+	static const DatabaseConfig config = [] () {
+		DatabaseConfig config;
+
+		//config.setThreaded(true);
+		//config.setTransactional(true);
+		config.setAllowCreate(true);
+		config.setType(DatabaseType::HASH);
+		config.setReadUncommited(true);
+
+		return config;
+	} ();
 
 	LocalDatabase::openDatabase(config);
 }
 
 int LocalDatabase::sync() {
-	objectsDatabase->sync();
+	getDatabaseHandle()->sync();
 
 	return 0;
 }
 
 int LocalDatabase::truncate() {
 	try {
-		objectsDatabase->truncate(nullptr, false);
+		getDatabaseHandle()->truncate(nullptr, false);
 
 		info("database truncated");
 
@@ -71,16 +104,19 @@ int LocalDatabase::truncate() {
 }
 
 void LocalDatabase::openDatabase(const DatabaseConfig& config) {
-	try {
+	if (objectsDatabase.get() != nullptr) {
+		return;
+	}
 
+	try {
 		Transaction* transaction = environment->beginTransaction(nullptr);
 
-		objectsDatabase = environment->openDatabase(transaction, databaseFileName, "", config);
+		objectsDatabase.set(environment->openDatabase(transaction, databaseFileName, "", config));
 
 		int ret = 0;
 
 		if ((ret = transaction->commit()) != 0) {
-			error(String::valueOf(db_strerror(ret)));
+			error((db_strerror(ret)));
 		}
 
 
@@ -92,11 +128,9 @@ void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 
 void LocalDatabase::closeDatabase() {
 	try {
-
-		objectsDatabase->close(true);
+		getDatabaseHandle()->close(true);
 
 		info("database closed");
-
 	} catch (Exception &e) {
 		error("Error closing database (" + databaseFileName + "):");
 		error(e.getMessage());
@@ -209,10 +243,11 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint
 		ret  = -1;
 		TransactionConfig config = TransactionConfig::DEFAULT;
 		config.setReadUncommitted(true);
+		config.setNoSync(true);
 
 		transaction = environment->beginTransaction(nullptr, config);
 
-		ret = objectsDatabase->get(transaction, &key, &data, lockMode);
+		ret = getDatabaseHandle()->get(transaction, &key, &data, lockMode);
 
 		if (ret == DB_LOCK_DEADLOCK) {
 			info("deadlock detected in LocalDatabase::get.. retrying iteration " + String::valueOf(i));
@@ -233,7 +268,7 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint
 
 		objectData->reset();
 	} else if (ret != DB_NOTFOUND) {
-		error("error in LocalDatabase::getData ret " + String::valueOf(db_strerror(ret)));
+		error("error in LocalDatabase::getData ret " + String(db_strerror(ret)));
 
 		if (transaction != nullptr)
 			transaction->abort();
@@ -324,13 +359,13 @@ int LocalDatabase::tryPutData(Stream* inputKey, Stream* stream, engine::db::berk
 	if (!compression) {
 		data.setData(stream->getBuffer(), stream->size());
 
-		ret = objectsDatabase->put(transaction, &key, &data);
+		ret = getDatabaseHandle()->put(transaction, &key, &data);
 	} else {
 		Stream* compressed = compress(stream);
 
 		data.setData(compressed->getBuffer(), compressed->size());
 
-		ret = objectsDatabase->put(transaction, &key, &data);
+		ret = getDatabaseHandle()->put(transaction, &key, &data);
 
 		delete compressed;
 	}
@@ -344,7 +379,7 @@ int LocalDatabase::tryDeleteData(Stream* inputKey, engine::db::berkley::Transact
 	DatabaseEntry key;
 	key.setData(inputKey->getBuffer(), inputKey->size());
 
-	ret = objectsDatabase->del(transaction, &key);
+	ret = getDatabaseHandle()->del(transaction, &key);
 
 	return ret;
 }

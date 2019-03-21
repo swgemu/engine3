@@ -17,6 +17,7 @@ UpdateModifiedObjectsThread::UpdateModifiedObjectsThread(int id, DOBObjectManage
 	working = false;
 	finishedCommiting = false;
 	waitingToCommit = false;
+	loadedDBHandles = false;
 
 	transaction = nullptr;
 
@@ -40,6 +41,17 @@ void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 			finishedCommiting = false;
 
 			commitObjectsToDatabase();
+
+			if (!loadedDBHandles) {
+				auto dbManager = ObjectDatabaseManager::instance();
+				auto dbCount = dbManager->getTotalDatabaseCount();
+
+				for (int i = 0; i < dbCount; i++) {
+					dbManager->getDatabase(i)->getDatabaseHandle();
+				}
+
+				loadedDBHandles = true;
+			}
 
 			working = false;
 

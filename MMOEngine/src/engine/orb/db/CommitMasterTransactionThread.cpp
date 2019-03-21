@@ -135,7 +135,7 @@ void CommitMasterTransactionThread::commitData() NO_THREAD_SAFETY_ANALYSIS {
 
 	if (DistributedObjectBroker::instance()->isRootBroker()) {
 		ObjectDatabaseManager::instance()->commitTransaction(transaction);
-		ObjectDatabaseManager::instance()->checkpoint();
+		//ObjectDatabaseManager::instance()->checkpoint();
 
 		objectManager->onCommitData();
 	}
