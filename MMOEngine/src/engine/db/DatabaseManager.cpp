@@ -312,8 +312,10 @@ void DatabaseManager::closeDatabases() {
 		delete db;
 	}
 
-	delete databaseDirectory;
-	databaseDirectory = nullptr;
+	if (databaseDirectory)  {
+		delete databaseDirectory;
+		databaseDirectory = nullptr;
+	}
 
 	closeEnvironment();
 
@@ -590,7 +592,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 
 void DatabaseManager::closeEnvironment() {
-	if (!loaded)
+	if (!loaded || !databaseEnvironment)
 		return;
 
 	try {
@@ -598,6 +600,10 @@ void DatabaseManager::closeEnvironment() {
 
 		if (ret != 0) {
 			error("Error closing environment: ");
+		} else {
+			delete databaseEnvironment;
+
+			databaseEnvironment = nullptr;
 		}
 
 	} catch (Exception &e) {
