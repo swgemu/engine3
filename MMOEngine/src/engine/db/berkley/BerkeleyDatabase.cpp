@@ -28,7 +28,7 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 	if (ret != 0)
 		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
 
-	static const int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
+	int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
 
 	dbp->set_pagesize(dbp, pageSize);
 	dbp->set_flags(dbp, DB_CHKSUM);
@@ -89,14 +89,10 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 
 
 BerkeleyDatabase::~BerkeleyDatabase() {
-//	Logger::console.info("deleting bdbd", true);
-
-//these will be freed when the environment dies;
-/*	if (dbp != nullptr) {
+	if (dbp != nullptr) {
 	    int ret = dbp->close(dbp, 0);
 	    dbp = nullptr;
 	}
-	*/
 }
 
 int BerkeleyDatabase::get(Transaction* txn, DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode) {

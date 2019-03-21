@@ -61,7 +61,7 @@ void TaskWorkerThread::run() {
 			do {
 				Thread::sleep(1);
 				Thread::yield();
-			} while (pauseWorker.get(std::memory_order_seq_cst));
+			} while (pauseWorker);
 
 			continue;
 		}

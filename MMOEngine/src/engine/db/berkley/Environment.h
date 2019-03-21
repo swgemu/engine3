@@ -31,8 +31,6 @@ namespace engine {
 
 		DB_ENV* databaseEnvironment;
 
-		Mutex guard;
-
 	public:
 		Environment(const String& directory, const EnvironmentConfig& environmentConfig = EnvironmentConfig::DEFAULT);
 		~Environment();

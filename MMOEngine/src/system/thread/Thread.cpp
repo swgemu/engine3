@@ -42,13 +42,11 @@ void* Thread::executeThread(void* th) {
 
 	impl->run();
 
-	if (threadInitializer)
-		threadInitializer->onThreadEnd(impl);//mysql_thread_end();
-
 	if (impl->isDetached())
 		delete impl;
 
-//	pthread_exit(0);
+	if (threadInitializer)
+		threadInitializer->onThreadEnd(impl);//mysql_thread_end();
 
 	return nullptr;
 }

@@ -34,7 +34,6 @@ namespace engine {
 		AtomicBoolean finishedCommiting;
 		AtomicBoolean waitingToCommit;
 		AtomicBoolean waitingToStart;
-		AtomicBoolean loadedDBHandles;
 
 		engine::db::berkley::Transaction* transaction;
 
@@ -71,9 +70,7 @@ namespace engine {
 		inline void stopWork() {
 			doRun = false;
 
-			signalCopyFinished();
-
-			waitFinishedWork();
+			signalActivity();
 
 			join();
 		}
@@ -117,7 +114,7 @@ namespace engine {
 		inline void waitFinishedWork() {
 			blockMutex.lock();
 
-			while (doRun && waitingToStart && objectsToUpdate != nullptr) {
+			while (waitingToStart && objectsToUpdate != nullptr) {
 				waitCondition.broadcast(&blockMutex);
 				blockMutex.unlock();
 				blockMutex.lock();

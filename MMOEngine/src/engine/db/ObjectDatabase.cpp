@@ -50,7 +50,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 		ret  = -1;
 		transaction = environment->beginTransaction(nullptr, cfg);
 
-		ret = getDatabaseHandle()->get(transaction, &key, &data, lockMode);
+		ret = objectsDatabase->get(transaction, &key, &data, lockMode);
 
 		if (ret == DB_LOCK_DEADLOCK) {
 			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i));
@@ -149,7 +149,7 @@ int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, ui
 
 	int i = 0;
 
-	ret = getDatabaseHandle()->get(nullptr, &key, &data, lockMode);
+	ret = objectsDatabase->get(nullptr, &key, &data, lockMode);
 
 	if (ret == 0) {
 		if (!compression || compressed)
@@ -178,13 +178,13 @@ int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkle
 	if (!compression) {
 		data.setData(stream->getBuffer(), stream->size());
 
-		ret = getDatabaseHandle()->put(transaction, &key, &data);
+		ret = objectsDatabase->put(transaction, &key, &data);
 	} else {
 		Stream* compressed = compress(stream);
 
 		data.setData(compressed->getBuffer(), compressed->size());
 
-		ret = getDatabaseHandle()->put(transaction, &key, &data);
+		ret = objectsDatabase->put(transaction, &key, &data);
 
 		delete compressed;
 	}
@@ -198,7 +198,7 @@ int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transactio
 	DatabaseEntry key;
 	key.setData(&objKey, sizeof(uint64));
 
-	ret = getDatabaseHandle()->del(transaction, &key);
+	ret = objectsDatabase->del(transaction, &key);
 
 	return ret;
 }

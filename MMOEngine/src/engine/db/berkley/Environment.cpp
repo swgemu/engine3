@@ -111,8 +111,6 @@ Environment::~Environment() {
 }
 
 int Environment::close() {
-	Locker locker(&guard);
-
 	int ret = 0;
 
 	if (databaseEnvironment != nullptr) {
@@ -125,8 +123,6 @@ int Environment::close() {
 }
 
 Transaction* Environment::beginTransaction(Transaction* parent, const TransactionConfig& config) {
-	Locker locker(&guard);
-
 	DB_TXN* parentTransaction = nullptr;
 
 	if (parent != nullptr)
@@ -151,22 +147,16 @@ Transaction* Environment::beginTransaction(Transaction* parent, const Transactio
 }
 
 BerkeleyDatabase* Environment::openDatabase(Transaction* txn, const String& fileName, const String& databaseName, const DatabaseConfig& config) {
-	Locker locker(&guard);
-
 	BerkeleyDatabase* database = new BerkeleyDatabase(this, txn, fileName, databaseName, config);
 
 	return database;
 }
 
 int Environment::detectDeadlocks(uint32 lockDetectMode) {
-	Locker locker(&guard);
-
 	return databaseEnvironment->lock_detect(databaseEnvironment, 0, lockDetectMode, nullptr);
 }
 
 void Environment::checkpoint(const CheckpointConfig& config) {
-	Locker locker(&guard);
-
 	uint32 flags = 0;
 
 	if (config.getForce())
@@ -179,8 +169,6 @@ void Environment::checkpoint(const CheckpointConfig& config) {
 }
 
 int Environment::failCheck() {
-	Locker locker(&guard);
-
 	return databaseEnvironment->failchk(databaseEnvironment, 0);
 }
 

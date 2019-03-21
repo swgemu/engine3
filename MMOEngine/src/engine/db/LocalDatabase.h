@@ -21,7 +21,7 @@ namespace engine {
 
  class LocalDatabase : public Logger {
  protected:
-	 ThreadLocal<engine::db::berkley::BerkeleyDatabase*> objectsDatabase;
+	 engine::db::berkley::BerkeleyDatabase* objectsDatabase;
 	 engine::db::berkley::Environment* environment;
 
 	 String databaseFileName;
@@ -67,7 +67,9 @@ namespace engine {
 		 return false;
 	 }
 
-	 engine::db::berkley::BerkeleyDatabase* getDatabaseHandle();
+	 inline engine::db::berkley::BerkeleyDatabase* getDatabaseHandle() {
+		 return objectsDatabase;
+	 }
 
 	 inline void getDatabaseName(String& name) const {
 		 name = getDatabaseName();
