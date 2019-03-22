@@ -113,33 +113,33 @@ void BaseProtocol::encrypt(Packet* pack, bool crc) {
 
 	unsigned nCrcSeed = crcSeed;
 
-    unsigned int *data;
-    if (!crc)
-        nLength += 2;
+	unsigned int *data;
+	if (!crc)
+		nLength += 2;
 
-    if (pData[0] == 0x00) {
-        nLength -= 4;
-        data = (unsigned int*) (pData+2);
-    } else {
-      	nLength -= 3;
-     	data = (unsigned int*) (pData+1);
-    }
+	if (pData[0] == 0x00) {
+		nLength -= 4;
+		data = (unsigned int*) (pData+2);
+	} else {
+		nLength -= 3;
+		data = (unsigned int*) (pData+1);
+	}
 
-    short block_count = (nLength / 4);
-    short byte_count = (nLength % 4);
-    unsigned int itemp;
+	short block_count = (nLength / 4);
+	short byte_count = (nLength % 4);
+	unsigned int itemp;
 
-    for (short count = 0; count< block_count; count++) {
-        *data ^= nCrcSeed;
-        nCrcSeed = *data;
-        data++;
-    }
+	for (short count = 0; count< block_count; count++) {
+		*data ^= nCrcSeed;
+		nCrcSeed = *data;
+		data++;
+	}
 
-    pData = (char*)data;
-    for (short count = 0; count < byte_count; count++) {
-        *pData ^= (char)nCrcSeed;
-        pData++;
-    }
+	pData = (char*)data;
+	for (short count = 0; count < byte_count; count++) {
+		*pData ^= (char)nCrcSeed;
+		pData++;
+	}
 }
 
 void BaseProtocol::decrypt(Packet* pack) {
@@ -150,35 +150,35 @@ void BaseProtocol::decrypt(Packet* pack) {
 		return;
 
 	unsigned int nCrcSeed = crcSeed;
-    unsigned int *data;
+	unsigned int *data;
 
-    if (pData[0] == 0x00) {
+	if (pData[0] == 0x00) {
 		nLength -= 4;
-    	data = (unsigned int*) (pData + 2);
-    } else {
-     	nLength -= 3;
-     	data = (unsigned int*) (pData + 1);
-    }
+		data = (unsigned int*) (pData + 2);
+	} else {
+		nLength -= 3;
+		data = (unsigned int*) (pData + 1);
+	}
 
 	if (nLength <= 0)
 		return;
 
 	short block_count = (nLength / 4);
-    short byte_count = (nLength % 4);
-    unsigned int itemp;
+	short byte_count = (nLength % 4);
+	unsigned int itemp;
 
-    for (short count = 0; count < block_count; count++) {
-    	itemp = *data;
-    	*data ^= nCrcSeed;
-    	nCrcSeed = itemp;
-    	data++;
-    }
+	for (short count = 0; count < block_count; count++) {
+		itemp = *data;
+		*data ^= nCrcSeed;
+		nCrcSeed = itemp;
+		data++;
+	}
 
-    pData = (char*) data;
-    for (short count = 0; count < byte_count; count++) {
-      	*pData ^= nCrcSeed;
-       	pData++;
-    }
+	pData = (char*) data;
+	for (short count = 0; count < byte_count; count++) {
+		*pData ^= nCrcSeed;
+		pData++;
+	}
 }
 
 void BaseProtocol::decompress(Packet* pack) {
@@ -191,47 +191,47 @@ void BaseProtocol::decompress(Packet* pack) {
 	uint16 opcode = *(uint16*)pData;
 	uint16 crc = *(uint16*)(pData + nLength - 2);
 
-    char output[COMPRESSION_BUFFER_MAX];
-    char* outputPtr = output;
-    unsigned long newLength = 0;
+	char output[COMPRESSION_BUFFER_MAX];
+	char* outputPtr = output;
+	unsigned long newLength = 0;
 
-    uint16 offset = 1;
-    if ((uint8)opcode == 0x00) //put offset for standalone or soe_opcoded pkt
-        offset = 2;
+	uint16 offset = 1;
+	if ((uint8)opcode == 0x00) //put offset for standalone or soe_opcoded pkt
+		offset = 2;
 
-    z_stream packet;
-    packet.zalloc = Z_NULL;
-    packet.zfree = Z_NULL;
-    packet.opaque = Z_NULL;
-    packet.avail_in = 0;
-    packet.next_in = Z_NULL;
-    inflateInit(&packet);
-    packet.next_in = (Bytef* )(pData + offset);
-    packet.avail_in = (nLength - offset - 3);
-    //System::out << "WTF - " << offset << " - " << (nLength-offset-2) << "\n";
-    packet.next_out = (Bytef* )output;
-    packet.avail_out = COMPRESSION_BUFFER_MAX;
-    inflate(&packet, Z_FINISH);
-    newLength = packet.total_out;
-    inflateEnd(&packet); //close buffer*/
+	z_stream packet;
+	packet.zalloc = Z_NULL;
+	packet.zfree = Z_NULL;
+	packet.opaque = Z_NULL;
+	packet.avail_in = 0;
+	packet.next_in = Z_NULL;
+	inflateInit(&packet);
+	packet.next_in = (Bytef* )(pData + offset);
+	packet.avail_in = (nLength - offset - 3);
+	//System::out << "WTF - " << offset << " - " << (nLength-offset-2) << "\n";
+	packet.next_out = (Bytef* )output;
+	packet.avail_out = COMPRESSION_BUFFER_MAX;
+	inflate(&packet, Z_FINISH);
+	newLength = packet.total_out;
+	inflateEnd(&packet); //close buffer*/
 
-    //System::out << "size = " << newLength << "\n";
+	//System::out << "size = " << newLength << "\n";
 
-    pack->reset();
+	pack->reset();
 	pack->setSize(newLength + offset + 3, false);
 
-    if (offset == 2) {
-    	pack->insertShort(opcode);
-    } else {
-    	pack->insertByte((uint8) opcode);
-    }
+	if (offset == 2) {
+		pack->insertShort(opcode);
+	} else {
+		pack->insertByte((uint8) opcode);
+	}
 
 	pack->insertStream(outputPtr, newLength);
 
 	pack->insertByte(0x01); //set compression flag
 	pack->insertShort(crc);
 
-   	pack->setOffset(2);
+	pack->setOffset(2);
 }
 
 bool BaseProtocol::compress(Packet* pack) {
@@ -243,59 +243,59 @@ bool BaseProtocol::compress(Packet* pack) {
 
 	char *output = new char[nLength+20]; //size + 20 for zlib header/footers in worst case scenerio
 
-  	uint16 offset;
-  	if ((uint8)opcode == 0x00)
-    	offset = 2;
-  	else
-    	offset = 1;
+	uint16 offset;
+	if ((uint8)opcode == 0x00)
+		offset = 2;
+	else
+		offset = 1;
 
 	z_stream packet;
-   	packet.zalloc = Z_NULL;
-  	packet.zfree = Z_NULL;
-  	packet.opaque = Z_NULL;
-  	packet.avail_in = 0;
-  	packet.next_in = Z_NULL;
-  	deflateInit(&packet, Z_DEFAULT_COMPRESSION);
-  	packet.next_in = (Bytef* )(pData+offset);
-   	packet.avail_in = nLength - offset - 3;
-   	packet.next_out = (Bytef* )output;
-   	packet.avail_out = nLength + 20;
-   	deflate(&packet,  Z_FINISH);
-   	int compSize = packet.total_out;
+	packet.zalloc = Z_NULL;
+	packet.zfree = Z_NULL;
+	packet.opaque = Z_NULL;
+	packet.avail_in = 0;
+	packet.next_in = Z_NULL;
+	deflateInit(&packet, Z_DEFAULT_COMPRESSION);
+	packet.next_in = (Bytef* )(pData+offset);
+	packet.avail_in = nLength - offset - 3;
+	packet.next_out = (Bytef* )output;
+	packet.avail_out = nLength + 20;
+	deflate(&packet,  Z_FINISH);
+	int compSize = packet.total_out;
 
-   	if (compSize + 3 >= nLength) {
-   	//if (false) {
-   		deflateEnd(&packet);
-    	delete [] output;
+	if (compSize + 3 >= nLength) {
+		//if (false) {
+		deflateEnd(&packet);
+		delete [] output;
 
-    	pack->writeByte(pack->getOffset() - 3, 0); //update compression byte to 0
+		pack->writeByte(pack->getOffset() - 3, 0); //update compression byte to 0
 
-      	return false; //We didn't compress it.
-  	} else {
+		return false; //We didn't compress it.
+	} else {
 		pack->reset();
 		pack->setSize(compSize + offset + 3, false);
 
-    	if (offset == 2) {
-    		pack->insertShort(opcode);
-	    } else {
-		   	pack->insertByte((uint8) opcode);
-    	}
+		if (offset == 2) {
+			pack->insertShort(opcode);
+		} else {
+			pack->insertByte((uint8) opcode);
+		}
 
 		pack->insertStream(output, compSize);
 
 		pack->insertByte(0x01); //set compression flag
 		pack->insertShort(crc);
 
-	    pack->reset();
+		pack->reset();
 
-       	deflateEnd(&packet);
+		deflateEnd(&packet);
 
-       	delete [] output;
-       	return true;
-    }
+		delete [] output;
+		return true;
+	}
 
-    return false; //We didn't compress it.
-}
+	return false; //We didn't compress it.
+	}
 
 static const unsigned int crcTable[256] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,

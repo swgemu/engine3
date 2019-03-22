@@ -68,7 +68,10 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 
 	for (int i = 0; i < numberOfThreads; ++i) {
 		TaskWorkerThread* worker = new TaskWorkerThread("TaskWorkerThread-" + queueName + String::valueOf(i), queue, workers.size() % maxCpus, blockDuringSaveEvent);
+
 		worker->setLogLevel(getLogLevel());
+		worker->signalDBHandleInitialize();
+
 		workers.add(worker);
 		localWorkers.add(worker);
 	}
@@ -225,6 +228,15 @@ void TaskManagerImpl::shutdown() {
 	}
 
 	debug("stopped");
+}
+
+void TaskManagerImpl::initalizeDatabaseHandles() {
+	for (auto& worker : workers) {
+//		if (i == 9 || i == 7) //mysql and bas packet handler workers should continue
+//			continue;
+
+		worker->signalDBHandleInitialize();
+	}
 }
 
 Vector<Locker*>* TaskManagerImpl::blockTaskManager() {

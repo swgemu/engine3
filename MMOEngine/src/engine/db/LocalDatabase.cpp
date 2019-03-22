@@ -72,6 +72,7 @@ void LocalDatabase::openDatabase() {
 		config.setAllowCreate(true);
 		config.setType(DatabaseType::HASH);
 		config.setReadUncommited(true);
+		config.setMultiVersionConcurrencyControl(Core::getIntProperty("BerkeleyDB.MVCC", 0));
 
 		return config;
 	} ();
@@ -80,12 +81,16 @@ void LocalDatabase::openDatabase() {
 }
 
 int LocalDatabase::sync() {
+	Locker locker(&Environment::guard);
+
 	getDatabaseHandle()->sync();
 
 	return 0;
 }
 
 int LocalDatabase::truncate() {
+	Locker locker(&Environment::guard);
+
 	try {
 		getDatabaseHandle()->truncate(nullptr, false);
 
@@ -124,6 +129,8 @@ void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 }
 
 void LocalDatabase::closeDatabase() {
+	Locker locker(&Environment::guard);
+
 	try {
 		getDatabaseHandle()->close(true);
 
@@ -357,6 +364,8 @@ void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* tr
 }
 
 int LocalDatabase::tryPutData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
+	//Locker locker(&Environment::guard);
+
 	int ret = -1;
 
 	DatabaseEntry key, data;

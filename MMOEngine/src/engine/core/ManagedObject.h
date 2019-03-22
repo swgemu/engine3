@@ -112,7 +112,11 @@ public:
 
 	void setLastCRCSave(unsigned int crc);
 
-	bool isPersistent();
+	unsigned int getLastSaveTime() const;
+
+	void setLastSaveTime(unsigned int timeval);
+
+	bool isPersistent() const;
 
 	int getPersistenceLevel() const;
 
@@ -177,6 +181,8 @@ protected:
 private:
 	unsigned int lastCRCSave;
 
+	unsigned int lastSaveTime;
+
 protected:
 	ObjectUpdateToDatabaseTask* updateToDatabaseTask;
 
@@ -237,7 +243,11 @@ public:
 
 	void setLastCRCSave(unsigned int crc);
 
-	bool isPersistent();
+	unsigned int getLastSaveTime() const;
+
+	void setLastSaveTime(unsigned int timeval);
+
+	bool isPersistent() const;
 
 	int getPersistenceLevel() const;
 
@@ -320,7 +330,11 @@ public:
 
 	void setLastCRCSave(unsigned int crc);
 
-	bool isPersistent();
+	unsigned int getLastSaveTime() const;
+
+	void setLastSaveTime(unsigned int timeval);
+
+	bool isPersistent() const;
 
 	int getPersistenceLevel() const;
 

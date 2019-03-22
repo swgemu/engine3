@@ -10,7 +10,7 @@
  *	ManagedObjectStub
  */
 
-enum {RPC_UPDATEFORWRITE__ = 3653780595,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_RLOCK__MANAGEDOBJECT_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_NOTIFYLOADFROMDATABASE__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
+enum {RPC_UPDATEFORWRITE__ = 3653780595,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_RLOCK__MANAGEDOBJECT_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_NOTIFYLOADFROMDATABASE__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_GETLASTSAVETIME__,RPC_SETLASTSAVETIME__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
@@ -212,7 +212,7 @@ bool ManagedObject::__notifyDestroy() {
 }
 
 void ManagedObject::__writeObject(ObjectOutputStream* stream) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);
 
@@ -222,7 +222,7 @@ void ManagedObject::__writeObject(ObjectOutputStream* stream) {
 }
 
 void ManagedObject::__writeJSON(JSONSerializationType& j) {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == NULL)) {
 		throw ObjectNotLocalException(this);
 
@@ -262,7 +262,7 @@ bool ManagedObject::parseFromBinaryStream(ObjectInputStream* stream) {
 }
 
 void ManagedObject::notifyLoadFromDatabase() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -286,7 +286,7 @@ DistributedObjectServant* ManagedObject::__getServant() {
 }
 
 void ManagedObject::initializeTransientMembers() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -328,7 +328,7 @@ void ManagedObject::queueUpdateToDatabaseTask() {
 }
 
 void ManagedObject::clearUpdateToDatabaseTask() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
@@ -370,7 +370,36 @@ void ManagedObject::setLastCRCSave(unsigned int crc) {
 	}
 }
 
-bool ManagedObject::isPersistent() {
+unsigned int ManagedObject::getLastSaveTime() const {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETLASTSAVETIME__);
+
+		return method.executeWithUnsignedIntReturn();
+	} else {
+		return _implementation->getLastSaveTime();
+	}
+}
+
+void ManagedObject::setLastSaveTime(unsigned int timeval) {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_SETLASTSAVETIME__INT_);
+		method.addUnsignedIntParameter(timeval);
+
+		method.executeWithVoidReturn();
+	} else {
+		_implementation->setLastSaveTime(timeval);
+	}
+}
+
+bool ManagedObject::isPersistent() const {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
@@ -544,6 +573,8 @@ ManagedObjectImplementation::ManagedObjectImplementation() {
 	lastCRCSave = 0;
 	// engine/core/ManagedObject.idl():  		updateToDatabaseTask = null;
 	updateToDatabaseTask = NULL;
+	// engine/core/ManagedObject.idl():  		lastSaveTime = 0;
+	lastSaveTime = 0;
 }
 
 bool ManagedObjectImplementation::toBinaryStream(ObjectOutputStream* stream) {
@@ -578,7 +609,17 @@ void ManagedObjectImplementation::setLastCRCSave(unsigned int crc) {
 	lastCRCSave = crc;
 }
 
-bool ManagedObjectImplementation::isPersistent() {
+unsigned int ManagedObjectImplementation::getLastSaveTime() const{
+	// engine/core/ManagedObject.idl():  		return lastSaveTime;
+	return lastSaveTime;
+}
+
+void ManagedObjectImplementation::setLastSaveTime(unsigned int timeval) {
+	// engine/core/ManagedObject.idl():  		lastSaveTime = timeval;
+	lastSaveTime = timeval;
+}
+
+bool ManagedObjectImplementation::isPersistent() const{
 	// engine/core/ManagedObject.idl():  		return persistenceLevel != 0;
 	return persistenceLevel != 0;
 }
@@ -744,6 +785,21 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			
 		}
 		break;
+	case RPC_GETLASTSAVETIME__:
+		{
+			
+			unsigned int _m_res = getLastSaveTime();
+			resp->insertInt(_m_res);
+		}
+		break;
+	case RPC_SETLASTSAVETIME__INT_:
+		{
+			unsigned int timeval = inv->getUnsignedIntParameter();
+			
+			setLastSaveTime(timeval);
+			
+		}
+		break;
 	case RPC_ISPERSISTENT__:
 		{
 			
@@ -835,7 +891,15 @@ void ManagedObjectAdapter::setLastCRCSave(unsigned int crc) {
 	(static_cast<ManagedObject*>(stub))->setLastCRCSave(crc);
 }
 
-bool ManagedObjectAdapter::isPersistent() {
+unsigned int ManagedObjectAdapter::getLastSaveTime() const {
+	return (static_cast<ManagedObject*>(stub))->getLastSaveTime();
+}
+
+void ManagedObjectAdapter::setLastSaveTime(unsigned int timeval) {
+	(static_cast<ManagedObject*>(stub))->setLastSaveTime(timeval);
+}
+
+bool ManagedObjectAdapter::isPersistent() const {
 	return (static_cast<ManagedObject*>(stub))->isPersistent();
 }
 

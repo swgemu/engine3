@@ -11,7 +11,7 @@ void BerkeleyCheckpointTask::run() {
 //#ifdef VERSION_PUBLIC
 //uint64 DatabaseManager::MAX_CACHE_SIZE = 500000000; // 500MB
 //#else
-uint64 DatabaseManager::MAX_CACHE_SIZE = -1; // 500MB
+uint64 DatabaseManager::MAX_CACHE_SIZE = -1;
 //#endif
 
 bool DatabaseManager::CONVERT_DATABASES = true;
@@ -81,11 +81,10 @@ void DatabaseManager::openEnvironment() {
 		config.setAllowCreate(true);
 		config.setInitializeLocking(true);
 		config.setInitializeLogging(true);
+		config.setLockDown(Core::getIntProperty("DatabaseManager.lockDownMemory", 0));
 
 		config.setLogAutoRemove(Core::getIntProperty("DatabaseManager.logAutoRemove", 1));
-
 		config.setThreaded(Core::getIntProperty("DatabaseManager.threadedEnvironment", 1));
-
 		config.setThreadCount(Core::getIntProperty("DatabaseManager.threadCount", 512));
 
 		config.setTransactional(true);
@@ -94,7 +93,6 @@ void DatabaseManager::openEnvironment() {
 		constexpr const uint32 logFileSize = 100 * 1024 * 1024;
 
 		config.setMaxLogFileSize(Core::getIntProperty("DatabaseManager.logFileSize", logFileSize));
-
 		config.setLockDetectMode(LockDetectMode::RANDOM);
 
 		return config;
@@ -104,16 +102,15 @@ void DatabaseManager::openEnvironment() {
 		databaseEnvironment = new Environment("databases", config);
 
 		if (databaseEnvironment->failCheck() != 0) {
-			error("Database environment crashed and cant continue, please run db_recover in the databases folder");
-			exit(1);
+			fatal("Database environment crashed and cant continue, please run db_recover in the databases folder");
 		}
 
 	} catch (Exception& e) {
 		error("Error opening environment...");
-		error(e.getMessage());
-		exit(1);
+
+		fatal(e.getMessage());
 	} catch (...) {
-		error("unreported exception caught while trying to open berkeley environment ");
+		fatal("unreported exception caught while trying to open berkeley environment ");
 	}
 }
 

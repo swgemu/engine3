@@ -22,6 +22,8 @@ EnvironmentConfig EnvironmentConfig::DEFAULT;
 Mutex Environment::guard;
 
 namespace BDBNS {
+	static Logger logger("BerkeleyEnvironment");
+
 	void thread_id_bdb (DB_ENV *env, pid_t *pid, db_threadid_t *tid) {
 		if (pid) {
 			*pid = getpid();
@@ -56,10 +58,10 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
 	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
 
-	int shmKey = Core::getIntProperty("BerkeleyDB.envSHMKey", 0);
+	const static int shmKey = Core::getIntProperty("BerkeleyDB.envSHMKey", 0);
 
 	if (shmKey) {
-		String fileName = Core::getProperty("BerkeleyDB.envSHMKeyFile", "databases/err2.file");
+		const String fileName = Core::getProperty("BerkeleyDB.envSHMKeyFile", "databases/err2.file");
 		key_t shm_key = ftok(fileName.toCharArray(), shmKey);
 
 		databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
@@ -88,13 +90,13 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 	if (environmentConfig.getLogAutoRemove())
 		databaseEnvironment->log_set_config(databaseEnvironment, DB_LOG_AUTO_REMOVE, 1);
 
-	int writesConfig = Core::getIntProperty("BerkeleyDB.envMaxSeqWrites", 0);
+	const static int writesConfig = Core::getIntProperty("BerkeleyDB.envMaxSeqWrites", 0);
 
 	if (writesConfig) {
 		int resSleep = databaseEnvironment->set_mp_max_write(databaseEnvironment, writesConfig, Core::getIntProperty("BerkeleyDB.envMaxSeqWriteSleep", 50000));
 
 		if (resSleep != 0) {
-			printf("could not set max writes\n");
+			BDBNS::logger.error("could not set max writes");
 		}
 	}
 }

@@ -34,6 +34,10 @@ namespace engine {
 
 		}
 
+		virtual void initalizeDatabaseHandles() {
+
+		}
+
 		virtual void setLogLevel(int level) {
 
 		}

@@ -24,6 +24,7 @@ class ManagedObject {
 	protected int persistenceLevel;
 
 	private transient unsigned int lastCRCSave;
+	private transient unsigned int lastSaveTime;
 
 	@pointer
 	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
@@ -36,6 +37,8 @@ class ManagedObject {
 		lastCRCSave = 0;
 
 		updateToDatabaseTask = null;
+
+		lastSaveTime = 0;
 	}
 
 	/*@nativeStub
@@ -92,13 +95,11 @@ class ManagedObject {
 	@local
 	@nativeStub
 	@noImplementationDeclaration
-	@dirty
 	public native void writeObject(ObjectOutputStream stream);
 
 	@local
 	@nativeStub
 	@noImplementationDeclaration
-	@dirty
 	public native void writeJSON(@dereferenced JSONSerializationType j);
 
 	@local
@@ -123,6 +124,7 @@ class ManagedObject {
 	 * @pre { this locked }
 	 * @post { this locked }
 	 */
+	@dirty
 	public abstract void notifyLoadFromDatabase() {
 
 	}
@@ -137,11 +139,13 @@ class ManagedObject {
 	@nativeStub
 	public native DistributedObjectServant getServant();
 
+	@dirty
 	public abstract native void initializeTransientMembers();
 
 	public native void updateToDatabase();
 	public abstract native void queueUpdateToDatabaseTask();
 
+	@dirty
 	public void clearUpdateToDatabaseTask() {
 		updateToDatabaseTask = null;
 	}
@@ -157,6 +161,18 @@ class ManagedObject {
 		lastCRCSave = crc;
 	}
 
+	@read
+	@dirty
+	public unsigned int getLastSaveTime() {
+		return lastSaveTime;
+	}
+
+	@dirty
+	public void setLastSaveTime(unsigned int timeval) {
+		lastSaveTime = timeval;
+	}
+
+	@read
 	@dirty
 	public boolean isPersistent() {
 		return persistenceLevel != 0;
@@ -168,6 +184,7 @@ class ManagedObject {
 		return persistenceLevel;
 	}
 
+	@dirty
 	protected void _setClassName(final string name) {
 		_className = name;
 	}

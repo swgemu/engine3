@@ -242,5 +242,6 @@ void ManagedObjectImplementation::initializeTransientMembers() {
 	if (persistenceLevel == 2)
 		queueUpdateToDatabaseTask();
 
+	lastSaveTime = 0;
 	lastCRCSave = 0;
 }

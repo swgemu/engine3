@@ -24,6 +24,7 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 	this->blockDuringSave = blockDuringSave;
 
 	pauseWorker = false;
+	initializeDBHandles = false;
 
 	currentTask = nullptr;
 
@@ -45,10 +46,33 @@ void TaskWorkerThread::start() {
 	ServiceThread::start(false);
 }
 
+void TaskWorkerThread::signalDBHandleInitialize() {
+	initializeDBHandles.set(true, std::memory_order_seq_cst);
+
+	queue->wake();
+}
+
+void checkForDBHandle(AtomicBoolean& initializeDbHandles) {
+	if (initializeDbHandles.get(std::memory_order_seq_cst)) {
+		//info("initializing db handles", true);
+
+		auto dbManager = ObjectDatabaseManager::instance();
+		auto dbCount = dbManager->getTotalDatabaseCount();
+
+		for (int i = 0; i < dbCount; i++) {
+			dbManager->getDatabase(i)->getDatabaseHandle();
+		}
+
+		initializeDbHandles = false;
+	}
+}
+
 void TaskWorkerThread::run() {
 	if (cpu) {
 		assignToCPU(cpu);
 	}
+
+	checkForDBHandle(initializeDBHandles);
 
 	while (doRun) {
 		auto task = queue->pop();
@@ -63,8 +87,12 @@ void TaskWorkerThread::run() {
 				Thread::yield();
 			} while (pauseWorker.get(std::memory_order_seq_cst));
 
+			checkForDBHandle(initializeDBHandles);
+
 			continue;
 		}
+
+		checkForDBHandle(initializeDBHandles);
 
 		try {
 			currentTask = task;

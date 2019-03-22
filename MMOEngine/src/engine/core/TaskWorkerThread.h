@@ -25,6 +25,7 @@ namespace engine {
 		bool blockDuringSave;
 
 		AtomicBoolean pauseWorker;
+		AtomicBoolean initializeDBHandles;
 
 		Task* currentTask;
 
@@ -55,6 +56,8 @@ namespace engine {
 		virtual void run();
 
 		void stop();
+
+		void signalDBHandleInitialize();
 
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<String, RunStatistics> getTasksStatistics();

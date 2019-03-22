@@ -68,7 +68,7 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 	if (ret != 0)
 		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
 
-	int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
+	const static int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
 
 	dbp->set_pagesize(dbp, pageSize);
 	dbp->set_flags(dbp, DB_CHKSUM);

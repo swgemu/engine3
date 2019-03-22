@@ -172,6 +172,8 @@ int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, ui
 }
 
 int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
+	//Locker locker(&Environment::guard);
+
 	int ret = -1;
 
 	DatabaseEntry key, data;
@@ -197,6 +199,8 @@ int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkle
 }
 
 int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction) {
+	//Locker locker(&Environment::guard);
+
 	int ret = -1;
 
 	DatabaseEntry key;

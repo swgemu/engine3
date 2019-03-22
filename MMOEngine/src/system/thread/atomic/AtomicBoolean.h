@@ -44,8 +44,8 @@ namespace sys {
 			return value.load(m);
 		}
 
-		void set(bool val) {
-			value = val;
+		void set(bool val, std::memory_order m = std::memory_order_relaxed) {
+			value.store(val, m);
 		}
 
 		bool operator=(const bool val) {

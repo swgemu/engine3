@@ -48,6 +48,12 @@ namespace engine {
 			maxLogFileSize = 10000; //10mb
 		}
 
+		inline void setLockDown(bool lockDownToMemory) {
+			if (!lockDownToMemory)
+				environmentFlags &= ~DB_LOCKDOWN;
+			else
+				environmentFlags |= DB_LOCKDOWN;
+		}
 
 		inline void setAllowCreate(bool allowCreate) {
 			if (!allowCreate)

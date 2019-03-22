@@ -57,7 +57,7 @@ void TaskQueue::pushRandom(Task* task) {
 void TaskQueue::wake() {
 	condMutex->lock();
 
-	signal(condMutex);
+	broadcast(condMutex);
 
 	condMutex->unlock();
 }
