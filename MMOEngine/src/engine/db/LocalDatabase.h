@@ -63,14 +63,14 @@ namespace engine {
 	 static void uncompress(void* data, uint64 size, ObjectInputStream* decompressedData);
 	 static Stream* compress(Stream* data);
 
-	 virtual bool isObjectDatabase() {
+	 virtual bool isObjectDatabase() const {
 		 return false;
 	 }
 
 	 engine::db::berkley::BerkeleyDatabase* getDatabaseHandle();
 
 	 inline void getDatabaseName(String& name) const {
-		 name = getDatabaseName();
+	 	name = getDatabaseName();
 	 }
 
 	 inline String getDatabaseName() const {

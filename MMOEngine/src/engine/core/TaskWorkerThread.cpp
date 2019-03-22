@@ -129,7 +129,7 @@ void TaskWorkerThread::run() {
 #ifdef COLLECT_TASKSTATISTICS
 		Locker guard(&tasksStatsGuard);
 
-		Entry<const char*, RunStatistics>* entry = tasksStatistics.getEntry(taskName);
+		auto entry = tasksStatistics.getEntry(taskName);
 
 		if (entry == nullptr) {
 			RunStatistics stats;
@@ -188,10 +188,10 @@ void TaskWorkerThread::run() {
 }
 
 #ifdef COLLECT_TASKSTATISTICS
-HashTable<const char*, RunStatistics> TaskWorkerThread::getTasksStatistics() {
+HashTable<String, RunStatistics> TaskWorkerThread::getTasksStatistics() {
 	ReadLocker locker(&tasksStatsGuard);
 
-	HashTable<const char*, RunStatistics> ret = tasksStatistics;
+	auto ret = tasksStatistics;
 
 	return ret;
 }

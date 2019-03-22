@@ -184,10 +184,10 @@ void TaskScheduler::addSchedulerTasks(TaskScheduler* scheduler) {
 	//tasks.addAll(scheduler->tasks);
 }
 
-HashTable<const char*, uint64> TaskScheduler::getTasksCount() {
+HashTable<String, uint64> TaskScheduler::getTasksCount() {
 	ReadLocker guard(&tasksCountGuard);
 
-	HashTable<const char*, uint64> copy = tasksCount;
+	auto copy = tasksCount;
 
 	return copy;
 }

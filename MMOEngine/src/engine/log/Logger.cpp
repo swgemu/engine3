@@ -170,7 +170,7 @@ void Logger::getJSONString(StringBuffer& output, const char* logName, const char
 	output << "}";
 }
 
-void Logger::log(const char *msg, LogLevel type) const {
+void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 	if (logFile == nullptr && globalLogFile == nullptr)
 		return;
 
@@ -199,7 +199,7 @@ void Logger::log(const char *msg, LogLevel type) const {
 
 		(*logFile) << fullMessage;
 
-		if (doSyncLog) {
+		if (doSyncLog || forceSync) {
 			logFile->flush();
 		}
 	} else if (doGlobalLog && globalLogFile != nullptr && globalLogLevel >= type) {
@@ -220,7 +220,7 @@ void Logger::log(const char *msg, LogLevel type) const {
 
 		(*globalLogFile) << fullMessage;
 
-		if (syncGlobalLog) {
+		if (syncGlobalLog || forceSync) {
 			globalLogFile->flush();
 		}
 	}
@@ -262,7 +262,7 @@ void Logger::fatal(const char* msg) const {
 
 	System::out << fullMessage;
 
-	log(msg, LogLevel::FATAL);
+	log(msg, LogLevel::FATAL, true);
 
 	abort();
 }

@@ -32,7 +32,7 @@ namespace engine {
 		int tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction);
 		int tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction);
 
-		bool isObjectDatabase() {
+		bool isObjectDatabase() const {
 			return true;
 		}
 

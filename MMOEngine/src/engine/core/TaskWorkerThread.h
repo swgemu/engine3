@@ -29,7 +29,7 @@ namespace engine {
 		Task* currentTask;
 
 #ifdef COLLECT_TASKSTATISTICS
-		HashTable<const char*, RunStatistics> tasksStatistics;
+		HashTable<String, RunStatistics> tasksStatistics;
 		VectorMap<String, RunStatistics> luaTasksStatistics;
 		VectorMap<String, RunStatistics> bdbReadStatistics;
 		VectorMap<String, RunStatistics> mysqlStatistics;
@@ -57,7 +57,7 @@ namespace engine {
 		void stop();
 
 #ifdef COLLECT_TASKSTATISTICS
-		HashTable<const char*, RunStatistics> getTasksStatistics();
+		HashTable<String, RunStatistics> getTasksStatistics();
 		VectorMap<String, RunStatistics> getLuaTasksStatistics();
 		VectorMap<String, RunStatistics> getBDBReadStatistics();
 		VectorMap<String, RunStatistics> getMysqlStatistics();

@@ -245,6 +245,8 @@ bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* 
 			return false;
 		}
 
+		locker.release();
+
 		key = *reinterpret_cast<uint64*>(this->key.getData());
 
 		if (!localDatabase->hasCompressionEnabled() || compressed)

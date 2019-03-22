@@ -703,15 +703,15 @@ String TaskManagerImpl::getInfo(bool print) {
 	for (int i = 0; i < schedulers.size(); ++i) {
 		TaskScheduler* scheduler = schedulers.get(i);
 
-		HashTable<const char*, uint64> tasksCount = scheduler->getTasksCount();
+		auto tasksCount = scheduler->getTasksCount();
 
 		//lets order them
-		VectorMap<uint64, const char*> ordered;
+		VectorMap<uint64, String> ordered;
 
-		HashTableIterator<const char*, uint64> iterator = tasksCount.iterator();
+		auto iterator = tasksCount.iterator();
 
 		while (iterator.hasNext()) {
-			const char* name;
+			String name;
 			uint64 count;
 
 			iterator.getNextKeyAndValue(name, count);
@@ -744,9 +744,9 @@ String TaskManagerImpl::getInfo(bool print) {
 	for (int i = 0; i < workers.size(); ++i) {
 		TaskWorkerThread* worker = workers.get(i);
 
-		HashTable<const char*, RunStatistics> tasksCount = worker->getTasksStatistics();
-		VectorMap<RunStatistics, const char*> ordered(tasksCount.size(), 2);
-		VectorMap<RunStatisticsOrderedByMaxTime, const char*> orderedByMaxTime(tasksCount.size(), 2);
+		auto tasksCount = worker->getTasksStatistics();
+		VectorMap<RunStatistics, String> ordered(tasksCount.size(), 2);
+		VectorMap<RunStatisticsOrderedByMaxTime, String> orderedByMaxTime(tasksCount.size(), 2);
 
 		//lets order them
 		auto totalRuntimeTasks = orderStatistics(ordered, tasksCount);

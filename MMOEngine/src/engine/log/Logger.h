@@ -92,7 +92,7 @@ namespace engine {
 		void info(const String& msg, bool forcedLog = false) const;
 		void info(const StringBuffer& msg, bool forcedLog = false) const;
 
-		void log(const char *msg, LogLevel type = LogLevel::LOG) const;
+		void log(const char *msg, LogLevel type = LogLevel::LOG, bool forceSync = false) const;
 		void log(const String& msg) const;
 		void log(const StringBuffer& msg) const;
 

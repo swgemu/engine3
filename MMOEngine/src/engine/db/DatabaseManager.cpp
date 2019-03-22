@@ -214,9 +214,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 
 		loaded = true;
 	} catch (Exception& e) {
-		error(e.getMessage());
-
-		assert(0 && "Database exception loading databases");
+		fatal(e.getMessage());
 	}
 
 	if (!managedObjectsWithHashCodeMembers && CONVERT_DATABASES)
@@ -242,8 +240,7 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 		if (!db->isObjectDatabase())
 			continue;
 
-		String name;
-		db->getDatabaseName(name);
+		String name = db->getDatabaseName();
 
 		info("converting database " + name, true);
 
@@ -517,7 +514,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 					berkeleyTransaction->abort();
 					berkeleyTransaction = nullptr;
 
-					info("deadlock detected while trying to putData iterating time " + String::valueOf(iteration));
+					warning("deadlock detected while trying to putData iterating time " + String::valueOf(iteration));
 					break;
 				} else if (ret != 0) {
 					error("error while trying to putData :" + String(db_strerror(ret)));
@@ -530,7 +527,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 					berkeleyTransaction->abort();
 					berkeleyTransaction = nullptr;
 
-					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration));
+					warning("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration));
 					break;
 				} else if (ret != 0 && ret != DB_NOTFOUND) {
 					StringBuffer msg;
@@ -549,8 +546,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 	} while (ret == DB_LOCK_DEADLOCK && iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES);
 
 	if (iteration >= ObjectDatabase::DEADLOCK_MAX_RETRIES) {
-		error("error exceeded deadlock retries shutting down");
-		assert(0 && "error exceeded deadlock retries shutting down");
+		fatal("error exceeded deadlock retries shutting down");
 	}
 
 	/*if (count > 0)
@@ -563,8 +559,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 		//if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
 		if ((commitRet = berkeleyTransaction->commitSync()) != 0) {
-			error("error commiting berkeley transaction " + String(db_strerror(commitRet)));
-			assert(0 && "could not commit berkeley transaction");
+			fatal("error commiting berkeley transaction " + String(db_strerror(commitRet)));
 		}
 	}
 
@@ -617,7 +612,7 @@ void DatabaseManager::closeEnvironment() {
 void DatabaseManager::getDatabaseName(uint16 tableID, String& name) {
 	LocalDatabase* db = getDatabase(tableID);
 
-	db->getDatabaseName(name);
+	name = db->getDatabaseName();
 }
 
 void DatabaseManager::updateLastUsedObjectID(uint64 id) {

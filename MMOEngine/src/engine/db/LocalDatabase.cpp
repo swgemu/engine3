@@ -15,9 +15,6 @@
 using namespace engine::db;
 using namespace engine::db::berkley;
 
-//ThreadLocal<engine::db::berkley::BerkeleyDatabase*> LocalDatabase::objectsDatabase;
-//
-
 namespace LD3Ns {
 	static bool shutdown = false;
 
@@ -122,8 +119,7 @@ void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 
 
 	} catch (Exception& e) {
-		error(e.getMessage());
-		exit(1);
+		fatal(e.getMessage());
 	}
 }
 
@@ -174,7 +170,7 @@ Stream* LocalDatabase::compress(Stream* data) {
 
 		deflateEnd(&packet);
 	} catch (...) {
-		assert(0 && "LocalDatabase::compress");
+		Logger::console.fatal("LocalDatabase::compress");
 	}
 
 	//printf("%d uncompressed -> %d compressed\n", data->size(), outputStream->size());
@@ -232,7 +228,7 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 
 		decompressedData->reset();
 	} catch (...) {
-		assert(0 && "LocalDatabase::uncompress");
+		Logger::console.fatal("LocalDatabase::uncompress");
 	}
 
 	//free(outputData);
@@ -470,6 +466,8 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 			return false;
 		}
 
+		locker.release();
+
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 
 		if (!localDatabase->hasCompressionEnabled() || compressed)
@@ -496,6 +494,8 @@ bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data, uint32 lockMod
 			this->data.setData(nullptr, 0);*/
 			return false;
 		}
+
+		locker.release();
 
 		if (!localDatabase->hasCompressionEnabled()) {
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
@@ -525,6 +525,8 @@ bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key, uint32 lockMode) 
 			return false;
 		}
 
+		locker.release();
+
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 		key->reset();
 
@@ -547,6 +549,8 @@ bool LocalDatabaseIterator::getPrevKeyAndValue(ObjectInputStream* key, ObjectInp
 			this->data.setData(nullptr, 0);*/
 			return false;
 		}
+
+		locker.release();
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 
@@ -575,6 +579,8 @@ bool LocalDatabaseIterator::getPrevKey(ObjectInputStream* key, uint32 lockMode) 
 			return false;
 		}
 
+		locker.release();
+
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 		key->reset();
 
@@ -597,6 +603,8 @@ bool LocalDatabaseIterator::getLastKey(ObjectInputStream* key, uint32 lockMode) 
 			this->data.setData(nullptr, 0);*/
 			return false;
 		}
+
+		locker.release();
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 		key->reset();
@@ -653,6 +661,8 @@ bool LocalDatabaseIterator::getSearchKey(ObjectOutputStream* key, ObjectInputStr
 			return false;
 		}
 
+		locker.release();
+
 /*		if (!localDatabase->hasCompressionEnabled())
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		else
@@ -681,6 +691,8 @@ bool LocalDatabaseIterator::getSearchKeyRange(ObjectInputStream* key, ObjectInpu
 			  this->data.setData(nullptr, 0);*/
 			return false;
 		}
+
+		locker.release();
 
 		key->reset();
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
