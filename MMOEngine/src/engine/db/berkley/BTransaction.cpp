@@ -12,6 +12,8 @@ using namespace engine::db::berkley;
 TransactionConfig TransactionConfig::DEFAULT;
 
 int Transaction::abort() NO_THREAD_SAFETY_ANALYSIS {
+	Locker guard(&Environment::guard);
+
 	int ret = transaction->abort(transaction);
 
 	//transaction = nullptr;
@@ -26,6 +28,8 @@ int Transaction::abort() NO_THREAD_SAFETY_ANALYSIS {
  */
 
 int Transaction::commit(uint32 flags) NO_THREAD_SAFETY_ANALYSIS {
+	Locker guard(&Environment::guard);
+
 	int ret = transaction->commit(transaction, flags);
 
 	//transaction = nullptr;

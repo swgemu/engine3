@@ -397,6 +397,8 @@ int LocalDatabase::tryDeleteData(Stream* inputKey, engine::db::berkley::Transact
 LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database)
 	: Logger("LocalDatabaseIterator") {
 
+	Locker locker(&Environment::guard);
+
 	databaseHandle = database->getDatabaseHandle();
 
 	cursor = databaseHandle->openCursor(transaction);
@@ -409,6 +411,8 @@ LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkley::Transaction* t
 
 LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, const berkley::CursorConfig& config, bool useCurrentThreadTransaction)
 	: Logger("LocalDatabaseIterator") {
+
+	Locker locker(&Environment::guard);
 
 	databaseHandle = database->getDatabaseHandle();
 
@@ -427,6 +431,8 @@ LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, const berk
 
 LocalDatabaseIterator::LocalDatabaseIterator(BerkeleyDatabase* dbHandle)
 	: Logger("LocalDatabaseIterator") {
+	Locker locker(&Environment::guard);
+
 	databaseHandle = dbHandle;
 	Transaction* txn = nullptr; // ObjectDatabaseManager::instance()->getLocalTransaction();
 	cursor = databaseHandle->openCursor(txn);
@@ -440,6 +446,8 @@ LocalDatabaseIterator::~LocalDatabaseIterator() {
 }
 
 void LocalDatabaseIterator::resetIterator() {
+	Locker locker(&Environment::guard);
+
 	if (cursor != nullptr) {
 		cursor->close();
 		delete cursor;
@@ -454,6 +462,8 @@ void LocalDatabaseIterator::resetIterator() {
 
 bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode, bool compressed) {
 	try {
+		Locker locker(&Environment::guard);
+
 		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
 			this->data.setData(nullptr, 0);*/
@@ -479,6 +489,8 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 
 bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data, uint32 lockMode) {
 	try {
+		Locker locker(&Environment::guard);
+
 		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
 			this->data.setData(nullptr, 0);*/
@@ -504,6 +516,8 @@ bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data, uint32 lockMod
 }
 
 bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key, uint32 lockMode) {
+	Locker locker(&Environment::guard);
+
 	try {
 		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
@@ -525,6 +539,8 @@ bool LocalDatabaseIterator::getNextKey(ObjectInputStream* key, uint32 lockMode) 
 }
 
 bool LocalDatabaseIterator::getPrevKeyAndValue(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode) {
+	Locker locker(&Environment::guard);
+
 	try {
 		if (cursor->getPrev(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
@@ -550,6 +566,8 @@ bool LocalDatabaseIterator::getPrevKeyAndValue(ObjectInputStream* key, ObjectInp
 }
 
 bool LocalDatabaseIterator::getPrevKey(ObjectInputStream* key, uint32 lockMode) {
+	Locker locker(&Environment::guard);
+
 	try {
 		if (cursor->getPrev(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
@@ -571,6 +589,8 @@ bool LocalDatabaseIterator::getPrevKey(ObjectInputStream* key, uint32 lockMode) 
 }
 
 bool LocalDatabaseIterator::getLastKey(ObjectInputStream* key, uint32 lockMode) {
+	Locker locker(&Environment::guard);
+
 	try {
 		if (cursor->getLast(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
@@ -593,6 +613,8 @@ bool LocalDatabaseIterator::getLastKey(ObjectInputStream* key, uint32 lockMode) 
 
 
 int LocalDatabaseIterator::putCurrent(ObjectOutputStream* data) {
+	Locker locker(&Environment::guard);
+
 	DatabaseEntry dataEntry;
 
 	int ret = -1;
@@ -619,6 +641,8 @@ int LocalDatabaseIterator::putCurrent(ObjectOutputStream* data) {
 }
 
 bool LocalDatabaseIterator::getSearchKey(ObjectOutputStream* key, ObjectInputStream* data, uint32 lockMode) {
+	Locker locker(&Environment::guard);
+
 	try {
 		DatabaseEntry keyDBE, dataDBE;
 		keyDBE.setData(key->getBuffer(), key->size());
@@ -645,6 +669,8 @@ bool LocalDatabaseIterator::getSearchKey(ObjectOutputStream* key, ObjectInputStr
 }
 
 bool LocalDatabaseIterator::getSearchKeyRange(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode) {
+	Locker locker(&Environment::guard);
+
 	try {
 		this->key.setData(key->getBuffer(), key->size());
 

@@ -83,51 +83,6 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 
 	uint64 elapsedTime = profiler.stop();
 
-	static const bool slowLog = Core::getIntProperty("BerkeleyDB.slowQueryLog", 0);
-
-	if (slowLog) {
-		static uint64 slowTaskLogMs = Core::getIntProperty("BerkeleyDB.slowQueryLogMs", 40);
-		static String slowTaskFilename = Core::getProperty("BerkeleyDB.slowQueryLogFile", "");
-
-		auto elapsedTimeMs = elapsedTime / 1000000;
-
-		if (elapsedTimeMs >= slowTaskLogMs) {
-			static const auto ignoreDbs = Core::getPropertyVector("BerkeleyDB.slowQueryLogIgnore");
-			const auto& dbName = getDatabaseFileName();
-
-			if (!ignoreDbs.contains(dbName)) {
-				StringBuffer stream;
-				stream << dbName << " took ";
-
-				if (elapsedTimeMs == 0) {
-					stream << elapsedTime << "ns";
-				} else {
-					stream << elapsedTimeMs << "ms";
-				}
-
-				stream << " to lookup 0x" << hex << objKey;
-
-				if (!slowTaskFilename.isEmpty()) {
-					static Logger customLogger = []() {
-						Logger log("BerkeleyDBSlowQueryLogger");
-
-						log.setGlobalLogging(false);
-						log.setFileLogger(slowTaskFilename, true);
-						log.setLogLevelToFile(false);
-
-						return log;
-					}();
-
-					customLogger.log(stream.toString());
-				} else {
-					warning(stream.toString());
-				}
-
-			}
-		}
-
-	}
-
 #ifdef COLLECT_TASKSTATISTICS
 	Thread* thread = Thread::getCurrentThread();
 	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : nullptr;
@@ -136,6 +91,55 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 		worker->addBDBReadStats(databaseFileName, elapsedTime);
 	}
 #endif
+
+	static const bool slowLog = Core::getIntProperty("BerkeleyDB.slowQueryLog", 0);
+
+	if (!slowLog) {
+		return ret;
+	}
+
+	static const uint64 slowTaskLogMs = Core::getIntProperty("BerkeleyDB.slowQueryLogMs", 40);
+	static const String slowTaskFilename = Core::getProperty("BerkeleyDB.slowQueryLogFile", "");
+
+	auto elapsedTimeMs = elapsedTime / 1000000;
+
+	if (elapsedTimeMs < slowTaskLogMs) {
+		return ret;
+	}
+
+	static const auto ignoreDbs = Core::getPropertyVector("BerkeleyDB.slowQueryLogIgnore");
+	const auto& dbName = getDatabaseFileName();
+
+	if (ignoreDbs.contains(dbName)) {
+		return ret;
+	}
+
+	StringBuffer stream;
+	stream << dbName << " took ";
+
+	if (elapsedTimeMs == 0) {
+		stream << elapsedTime << "ns";
+	} else {
+		stream << elapsedTimeMs << "ms";
+	}
+
+	stream << " to lookup 0x" << hex << objKey;
+
+	if (!slowTaskFilename.isEmpty()) {
+		static Logger customLogger = []() {
+			Logger log("BerkeleyDBSlowQueryLogger");
+
+			log.setGlobalLogging(false);
+			log.setFileLogger(slowTaskFilename, true);
+			log.setLogLevelToFile(false);
+
+			return log;
+		} ();
+
+		customLogger.log(stream.toString());
+	} else {
+		warning(stream.toString());
+	}
 
 	return ret;
 }
@@ -233,6 +237,8 @@ int ObjectDatabase::deleteData(uint64 objKey, engine::db::berkley::Transaction* 
 
 bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* data, uint32 lockMode, bool compressed) {
 	try {
+		Locker locker(&Environment::guard);
+
 		if (cursor->getNext(&this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
 			this->data.setData(nullptr, 0);*/
@@ -258,6 +264,8 @@ bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* 
 
 int ObjectDatabaseIterator::getNextKeyAndValueMultiple(berkley::DatabaseEntry& data, uint32 lockMode) {
 	int res = 0;
+
+	Locker locker(&Environment::guard);
 
 	try {
 		if ((res = cursor->getNextMultiple(&this->key, &data, lockMode)) != 0) {
@@ -310,6 +318,8 @@ bool ObjectDatabaseIterator::getLastKey(uint64& key, uint32 lockMode) {
 }
 
 bool ObjectDatabaseIterator::getNextKey(uint64& key, uint32 lockMode) {
+	Locker locker(&Environment::guard);
+
 	ObjectInputStream stream(8, 8);
 
 	bool res = LocalDatabaseIterator::getNextKey(&stream, lockMode);

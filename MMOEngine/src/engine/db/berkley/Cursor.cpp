@@ -9,6 +9,7 @@
 
 #include "Cursor.h"
 #include "DatabaseEntry.h"
+#include "engine/db/berkley/Environment.h"
 
 using namespace engine::db::berkley;
 
@@ -28,6 +29,8 @@ Cursor::~Cursor() {
 }
 
 int Cursor::close() {
+	Locker locker(&Environment::guard);
+
 	int ret = dbc->close(dbc);
 
 	dbc = nullptr;

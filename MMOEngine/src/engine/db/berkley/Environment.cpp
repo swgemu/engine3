@@ -19,6 +19,7 @@
 using namespace engine::db::berkley;
 
 EnvironmentConfig EnvironmentConfig::DEFAULT;
+Mutex Environment::guard;
 
 namespace BDBNS {
 	void thread_id_bdb (DB_ENV *env, pid_t *pid, db_threadid_t *tid) {
