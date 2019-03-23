@@ -19,7 +19,7 @@
 using namespace engine::db::berkley;
 
 EnvironmentConfig EnvironmentConfig::DEFAULT;
-Mutex Environment::guard;
+EnvironmentMutex Environment::guard;
 
 namespace BDBNS {
 	static Logger logger("BerkeleyEnvironment");
@@ -38,6 +38,8 @@ namespace BDBNS {
 Environment::Environment(const String& directory, const EnvironmentConfig& environmentConfig) {
 	Environment::directory = directory;
 	Environment::environmentConfig = environmentConfig;
+
+	guard.setEnabled(!environmentConfig.isThreaded());
 
 	int ret = db_env_create(&databaseEnvironment, 0);
 
@@ -61,7 +63,7 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 	const static int shmKey = Core::getIntProperty("BerkeleyDB.envSHMKey", 0);
 
 	if (shmKey) {
-		const String fileName = Core::getProperty("BerkeleyDB.envSHMKeyFile", "databases/err2.file");
+		const static String fileName = Core::getProperty("BerkeleyDB.envSHMKeyFile", "databases/err2.file");
 		key_t shm_key = ftok(fileName.toCharArray(), shmKey);
 
 		databaseEnvironment->set_shm_key(databaseEnvironment, shm_key);
@@ -111,6 +113,30 @@ Environment::~Environment() {
 		  }*/
 
 	}
+}
+
+EnvironmentMutex::EnvironmentMutex() : enabled(false) {
+}
+
+void EnvironmentMutex::lock(bool doLock) {
+	if (!enabled)
+		return;
+
+	Mutex::lock(doLock);
+}
+
+void EnvironmentMutex::lock(Lockable* lockable) {
+	if (!enabled)
+		return;
+
+	Mutex::lock(lockable);
+}
+
+void EnvironmentMutex::unlock(bool doLock) {
+	if (!enabled)
+		return;
+
+	Mutex::unlock(doLock);
 }
 
 int Environment::close() {

@@ -73,6 +73,7 @@ void LocalDatabase::openDatabase() {
 		config.setType(DatabaseType::HASH);
 		config.setReadUncommited(true);
 		config.setMultiVersionConcurrencyControl(Core::getIntProperty("BerkeleyDB.MVCC", 0));
+		config.setReadOnly(Core::getIntProperty("BerkeleyDB.readOnly", 0));
 
 		return config;
 	} ();

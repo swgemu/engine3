@@ -24,6 +24,21 @@ namespace engine {
 	class Transaction;
 	class BerkeleyDatabase;
 
+	class EnvironmentMutex : public Mutex {
+		AtomicBoolean enabled;
+	public:
+		EnvironmentMutex();
+
+		void lock(bool doLock = true) override;
+		void lock(Lockable* lockable) override;
+
+		void unlock(bool doLock = true) override;
+
+		void setEnabled(bool val) {
+			enabled = val;
+		}
+	};
+
 	class Environment {
 	protected:
 		String directory;
@@ -32,7 +47,7 @@ namespace engine {
 		DB_ENV* databaseEnvironment;
 
 	public:
-		static Mutex guard;
+		static EnvironmentMutex guard;
 
 	public:
 		Environment(const String& directory, const EnvironmentConfig& environmentConfig = EnvironmentConfig::DEFAULT);

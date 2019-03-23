@@ -48,6 +48,13 @@ namespace engine {
 			maxLogFileSize = 10000; //10mb
 		}
 
+		inline void setRegister(bool val) {
+			if (!val)
+				environmentFlags &= ~DB_REGISTER;
+			else
+				environmentFlags |= DB_REGISTER;
+		}
+
 		inline void setLockDown(bool lockDownToMemory) {
 			if (!lockDownToMemory)
 				environmentFlags &= ~DB_LOCKDOWN;
@@ -118,6 +125,10 @@ namespace engine {
 				environmentFlags &= ~DB_INIT_MPOOL;
 			else
 				environmentFlags |= DB_INIT_MPOOL;
+		}
+
+		inline bool isThreaded() const {
+			return environmentFlags & DB_THREAD;
 		}
 
 		inline uint32 getEnvironmentFlags() const {

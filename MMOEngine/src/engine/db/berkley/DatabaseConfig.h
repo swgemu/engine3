@@ -48,18 +48,25 @@ namespace engine {
 			databaseType = DatabaseType::UNKNOWN;
 		}
 
-		inline void setAllowCreate(bool allowCreate) {
+		void setAllowCreate(bool allowCreate) {
 			if (!allowCreate)
 				databaseFlags &= ~DB_CREATE;
 			else
 				databaseFlags |= DB_CREATE;
 		}
 
+		void setReadOnly(bool val) {
+			if (!val)
+				databaseFlags &= ~DB_RDONLY;
+			else
+				databaseFlags |= DB_RDONLY;
+		}
+
 		/**
 		 * Enclose the database open within a transaction.
 		 */
 
-		void setTransactional(bool transactional) {
+		void setAutoCommit(bool transactional) {
 			if (transactional)
 				databaseFlags |= DB_AUTO_COMMIT;
 			else
