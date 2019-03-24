@@ -494,3 +494,11 @@ void ObserverPOD::readObject(ObjectInputStream* stream) {
 
 }
 
+void ObserverPOD::writeObjectCompact(ObjectOutputStream* stream) {
+	ManagedObjectPOD::writeObjectCompact(stream);
+
+	TypeInfo<unsigned int >::toBinaryStream(&observerType, stream);
+
+
+}
+

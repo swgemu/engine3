@@ -269,3 +269,9 @@ void ManagedServicePOD::readObject(ObjectInputStream* stream) {
 
 }
 
+void ManagedServicePOD::writeObjectCompact(ObjectOutputStream* stream) {
+	ManagedObjectPOD::writeObjectCompact(stream);
+
+
+}
+

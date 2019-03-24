@@ -561,3 +561,13 @@ void ObservablePOD::readObject(ObjectInputStream* stream) {
 
 }
 
+void ObservablePOD::writeObjectCompact(ObjectOutputStream* stream) {
+	ManagedObjectPOD::writeObjectCompact(stream);
+
+	TypeInfo<ObserverEventMap >::toBinaryStream(&observerEventMap, stream);
+
+	TypeInfo<SortedVector<ManagedReference<ObservablePOD* > > >::toBinaryStream(&observableChildren, stream);
+
+
+}
+

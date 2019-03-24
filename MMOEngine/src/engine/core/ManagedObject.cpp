@@ -1031,3 +1031,9 @@ void ManagedObjectPOD::readObject(ObjectInputStream* stream) {
 
 }
 
+void ManagedObjectPOD::writeObjectCompact(ObjectOutputStream* stream) {
+	TypeInfo<int >::toBinaryStream(&persistenceLevel, stream);
+
+
+}
+

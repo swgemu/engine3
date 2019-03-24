@@ -136,6 +136,7 @@ public:
 	virtual void writeObject(ObjectOutputStream* stream);
 	bool readObjectMember(ObjectInputStream* stream, const uint32& nameHashCode);
 	int writeObjectMembers(ObjectOutputStream* stream);
+	void writeObjectCompact(ObjectOutputStream* stream);
 
 
 

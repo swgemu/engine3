@@ -383,3 +383,9 @@ void FacadePOD::readObject(ObjectInputStream* stream) {
 
 }
 
+void FacadePOD::writeObjectCompact(ObjectOutputStream* stream) {
+	ManagedObjectPOD::writeObjectCompact(stream);
+
+
+}
+

@@ -269,3 +269,9 @@ void ManagedVectorPOD::readObject(ObjectInputStream* stream) {
 
 }
 
+void ManagedVectorPOD::writeObjectCompact(ObjectOutputStream* stream) {
+	ManagedObjectPOD::writeObjectCompact(stream);
+
+
+}
+
