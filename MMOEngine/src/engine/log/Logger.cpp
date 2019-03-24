@@ -250,17 +250,17 @@ void Logger::error(const String& msg) const {
 }
 
 void Logger::error(const StringBuffer& msg) const {
-	String s = msg.toString();
+	const String s = msg.toString();
 	error(s);
 }
 
 void Logger::fatal(const char* msg) const {
 	printTime(false);
 
-	StringBuffer fullMessage;
-	fullMessage << " [" << name << "] FATAL - " << msg << "\n";
+	char newMsg[256];
 
-	System::out << fullMessage;
+	snprintf(newMsg, sizeof(newMsg), " [%s] FATAL - %s\n", name.toCharArray(), msg);
+	System::out << newMsg;
 
 	log(msg, LogLevel::FATAL, true);
 
@@ -272,7 +272,7 @@ void Logger::fatal(const String& msg) const {
 }
 
 void Logger::fatal(const StringBuffer& msg) const {
-	String s = msg.toString();
+	const String s = msg.toString();
 	fatal(s);
 }
 

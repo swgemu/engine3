@@ -39,8 +39,9 @@ namespace engine {
 		void wake();
 
 		void flush();
+		void waitToFinish();
 
-		int size();
+		int size() const;
 
 		const String& getName() const {
 			return name;

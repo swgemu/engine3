@@ -55,7 +55,7 @@ void TaskManagerImpl::initialize() {
 #endif
 }
 
-void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) NO_THREAD_SAFETY_ANALYSIS {
+TaskQueue* TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) NO_THREAD_SAFETY_ANALYSIS {
 	Locker locker(this);
 
 	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
@@ -79,11 +79,13 @@ void TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberO
 	customQueues.put(queueName, taskQueues.size() - 1);
 
 	if (!start)
-		return;
+		return queue;
 
 	for (int i = 0; i < localWorkers.size(); ++i) {
 		localWorkers.get(i)->start();
 	}
+
+	return queue;
 }
 
 void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCount) {
@@ -177,6 +179,39 @@ void TaskManagerImpl::start() {
 	debug(msg);
 }
 
+
+TaskQueue* TaskManagerImpl::getCustomTaskQueue(const String& queueName) {
+	int queueIdx = customQueues.find(queueName);
+
+	if (queueIdx == -1) {
+		return nullptr;
+	}
+
+	int val = customQueues.elementAt(queueIdx).getValue();
+	return taskQueues.get(val);
+}
+
+void TaskManagerImpl::waitForQueueToFinish(const String& queueName) {
+	int queueIdx = customQueues.find(queueName);
+
+	if (queueIdx == -1) {
+		return;
+	}
+
+	int val = customQueues.elementAt(queueIdx).getValue();
+	auto queue = taskQueues.get(val);
+
+	queue->waitToFinish(); //wait for task queue to empty
+
+	for (auto worker : workers) { //wait for last tasks in the workers to complete
+		if (worker->getTaskQueue() != queue) {
+			continue;
+		}
+
+		Locker lock(worker->getBlockMutex());
+	}
+}
+
 void TaskManagerImpl::setLogLevel(int level) {
 	Logger::setLogLevel(static_cast<Logger::LogLevel>(level));
 }
@@ -232,9 +267,6 @@ void TaskManagerImpl::shutdown() {
 
 void TaskManagerImpl::initalizeDatabaseHandles() {
 	for (auto& worker : workers) {
-//		if (i == 9 || i == 7) //mysql and bas packet handler workers should continue
-//			continue;
-
 		worker->signalDBHandleInitialize();
 	}
 }

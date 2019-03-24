@@ -104,6 +104,24 @@ namespace engine {
 		void fatal(const String& msg) const;
 		void fatal(const StringBuffer& msg) const;
 
+		inline void fatal(bool assertion, const char* msg) const {
+			if (!assertion) {
+				fatal(msg);
+			}
+		}
+
+		inline void fatal(bool assertion, const String& msg) const {
+			if (!assertion) {
+				fatal(msg);
+			}
+		}
+
+		inline void fatal(bool assertion, const StringBuffer& msg) const {
+			if (!assertion) {
+				fatal(msg);
+			}
+		}
+
 #ifdef DISABLE_DEBUG_LOG
 		void debug(const char* msg) const {
 		}

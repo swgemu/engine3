@@ -204,7 +204,17 @@ void TaskQueue::flush() {
 	condMutex->unlock();
 }
 
-int TaskQueue::size() {
+void TaskQueue::waitToFinish() {
+	while (!isEmpty()) {
+		Thread::sleep(5);
+
+		Locker locker(condMutex);
+
+		signal(condMutex);
+	}
+}
+
+int TaskQueue::size() const {
 	//condMutex->lock();
 
 	int size = LinkedList<Task*>::size();

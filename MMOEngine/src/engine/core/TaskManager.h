@@ -17,6 +17,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 namespace engine {
   namespace core {
+	class TaskQueue;
 
 	class TaskManager {
 	public:
@@ -30,7 +31,15 @@ namespace engine {
 
 		virtual void shutdown() = 0;
 
-		virtual void initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent = true, bool start = true) {
+		virtual TaskQueue* initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent = true, bool start = true) {
+			return nullptr;
+		}
+
+		virtual TaskQueue* getCustomTaskQueue(const String& queueName) {
+			return nullptr;
+		}
+
+		virtual void waitForQueueToFinish(const String& queueName) {
 
 		}
 

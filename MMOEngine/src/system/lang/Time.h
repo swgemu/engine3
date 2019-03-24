@@ -18,8 +18,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include <pthread.h>
 #endif
 
-#include <time.h>
-
 #include "String.h"
 #include "StringBuffer.h"
 

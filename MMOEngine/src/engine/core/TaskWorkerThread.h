@@ -79,6 +79,10 @@ namespace engine {
 #endif
 		void setPause(bool val);
 
+		TaskQueue* getTaskQueue() const {
+			return queue;
+		}
+
 		TaskWorkerThread* asTaskWorkerThread() {
 			return this;
 		}

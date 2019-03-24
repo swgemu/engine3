@@ -57,8 +57,10 @@ namespace engine {
 
 		void initialize(int workerCount, int schedulerCount, int ioCount);
 
-		void initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent = true, bool start = true);
+		TaskQueue* initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent = true, bool start = true);
+		void waitForQueueToFinish(const String& queueName);
 		void initalizeDatabaseHandles();
+		TaskQueue* getCustomTaskQueue(const String& queueName);
 
 		void start();
 
