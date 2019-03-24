@@ -59,6 +59,10 @@ DatabaseManager::~DatabaseManager() {
 	info("closed");
 }
 
+int DatabaseManager::failCheck() {
+	return databaseEnvironment->failCheck();
+}
+
 void DatabaseManager::checkpoint() {
 	CheckpointConfig checkpointConfig;
 	checkpointConfig.setForce(true);
@@ -87,6 +91,7 @@ void DatabaseManager::openEnvironment() {
 		config.setThreaded(Core::getIntProperty("DatabaseManager.threadedEnvironment", 1));
 		config.setThreadCount(Core::getIntProperty("DatabaseManager.threadCount", 512));
 		config.setRegister(Core::getIntProperty("DatabaseManager.registerEnvironment", 0));
+		config.setPrivate(Core::getIntProperty("DatabaseManager.privateEnvironment", 0));
 
 		config.setTransactional(true);
 		config.setInitializeCache(true);

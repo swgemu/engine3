@@ -192,6 +192,8 @@ namespace engine {
 		void startLocalTransaction();
 		void abortLocalTransaction();
 
+		int failCheck();
+
 		engine::db::berkley::Transaction* startTransaction();
 		int commitTransaction(engine::db::berkley::Transaction* transaction);
 		/**

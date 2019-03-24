@@ -90,6 +90,13 @@ namespace engine {
 				environmentFlags |= DB_RECOVER;
 		}
 
+		inline void setPrivate(bool val) {
+			if (!val)
+				environmentFlags &= ~DB_PRIVATE;
+			else
+				environmentFlags |= DB_PRIVATE;
+		}
+
 		inline void setLogAutoRemove(bool logAutoRemove) {
 			this->logAutoRemove = logAutoRemove;
 		}

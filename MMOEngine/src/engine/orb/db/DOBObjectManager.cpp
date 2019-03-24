@@ -330,6 +330,10 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 		ObjectDatabaseManager::instance()->commitLocalTransaction();
 
+		if (ObjectDatabaseManager::instance()->failCheck()) {
+			fatal("database needs recovery to run");
+		}
+
 		transaction = ObjectDatabaseManager::instance()->startTransaction();
 	}
 
