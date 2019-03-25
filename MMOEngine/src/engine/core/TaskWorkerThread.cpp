@@ -15,6 +15,27 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #define STATS_MAX_MYSQL_QUERIES 1000
 #define STATS_STATSD_SAMPLE 0
 
+namespace TaskManagerNs {
+	void checkForDBHandle(AtomicBoolean& initializeDbHandles) {
+		if (initializeDbHandles.get(std::memory_order_seq_cst)) {
+			static const bool runDBHandleInitialization = Core::getIntProperty("TaskManager.initDBHandles", 1);
+
+			if (runDBHandleInitialization) {
+				//info("initializing db handles", true);
+
+				auto dbManager = ObjectDatabaseManager::instance();
+				auto dbCount = dbManager->getTotalDatabaseCount();
+
+				for (int i = 0; i < dbCount; i++) {
+					dbManager->getDatabase(i)->getDatabaseHandle();
+				}
+			}
+
+			initializeDbHandles = false;
+		}
+	}
+}
+
 TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, bool blockDuringSave) : ServiceThread(s) {
 	setInfoLogLevel();
 	setGlobalLogging(true);
@@ -52,27 +73,12 @@ void TaskWorkerThread::signalDBHandleInitialize() {
 	queue->wake();
 }
 
-void checkForDBHandle(AtomicBoolean& initializeDbHandles) {
-	if (initializeDbHandles.get(std::memory_order_seq_cst)) {
-		//info("initializing db handles", true);
-
-		auto dbManager = ObjectDatabaseManager::instance();
-		auto dbCount = dbManager->getTotalDatabaseCount();
-
-		for (int i = 0; i < dbCount; i++) {
-			dbManager->getDatabase(i)->getDatabaseHandle();
-		}
-
-		initializeDbHandles = false;
-	}
-}
-
 void TaskWorkerThread::run() {
 	if (cpu) {
 		assignToCPU(cpu);
 	}
 
-	checkForDBHandle(initializeDBHandles);
+	TaskManagerNs::checkForDBHandle(initializeDBHandles);
 
 	while (doRun) {
 		auto task = queue->pop();
@@ -87,12 +93,12 @@ void TaskWorkerThread::run() {
 				Thread::yield();
 			} while (pauseWorker.get(std::memory_order_seq_cst));
 
-			checkForDBHandle(initializeDBHandles);
+			TaskManagerNs::checkForDBHandle(initializeDBHandles);
 
 			continue;
 		}
 
-		checkForDBHandle(initializeDBHandles);
+		TaskManagerNs::checkForDBHandle(initializeDBHandles);
 
 		try {
 			currentTask = task;
