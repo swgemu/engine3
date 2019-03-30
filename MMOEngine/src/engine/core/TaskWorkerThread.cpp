@@ -51,6 +51,8 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 
 	mutexWaitTime = 0;
 
+	totalBdbTime = 0;
+
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;
 	totalBdbReadCount = 0;
@@ -102,6 +104,7 @@ void TaskWorkerThread::run() {
 
 		TaskManagerNs::checkForDBHandle(initializeDBHandles);
 		mutexWaitTime = 0;
+		totalBdbTime = 0;
 
 		try {
 			currentTask = task;
@@ -142,7 +145,8 @@ void TaskWorkerThread::run() {
 						stream << elapsedTimeMs << "ms";
 					}
 
-					stream << " and waited on mutexes " << mutexWaitTime << "ns";
+					stream << " from which waited on mutexes for " << mutexWaitTime << "ns";
+					stream << " and spent in bdb " << totalBdbTime << "ns";
 
 					if (!slowTaskFilename.isEmpty()) {
 						static Logger customLogger = []() {
@@ -226,6 +230,53 @@ void TaskWorkerThread::run() {
 	}
 }
 
+void TaskWorkerThread::addBDBReadStats(const String& dbName, uint64 elapsedTime) {
+	totalBdbTime += elapsedTime;
+
+#ifdef COLLECT_TASKSTATISTICS
+	Locker guard(&tasksStatsGuard);
+
+	auto entry = bdbReadStatistics.find(dbName);
+
+	RunStatistics* stats = nullptr;
+
+	if (entry == -1) {
+		RunStatistics stats;
+
+		stats.totalRunCount = 1;
+		stats.totalRunTime = elapsedTime;
+		stats.maxRunTime = elapsedTime;
+		stats.minRunTime = elapsedTime;
+
+		bdbReadStatistics.put(dbName, stats);
+	} else {
+		RunStatistics& stats = bdbReadStatistics.elementAt(entry).getValue();
+
+		stats.totalRunTime += elapsedTime;
+
+		if (stats.maxRunTime < elapsedTime) {
+			stats.maxRunTime = elapsedTime;
+		}
+
+		if (stats.minRunTime > elapsedTime) {
+			stats.minRunTime = elapsedTime;
+		}
+
+		++stats.totalRunCount;
+	}
+
+	if (bdbSamplingRate && ((++totalBdbReadCount % bdbSamplingRate) == 0)) {
+		char metricsValue[48];
+		snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);
+
+		char sampleValue[48];
+		snprintf(sampleValue, 48, "%g", 1.f / bdbSamplingRate);
+
+		MetricsManager::instance()->publish("engine3.tasks.berkeleydb.getdata", metricsValue, "ms", sampleValue);
+	}
+#endif
+}
+
 #ifdef COLLECT_TASKSTATISTICS
 HashTable<String, RunStatistics> TaskWorkerThread::getTasksStatistics() {
 	ReadLocker locker(&tasksStatsGuard);
@@ -306,49 +357,6 @@ void TaskWorkerThread::addLuaTaskStats(const String& taskName, uint64 elapsedTim
 		}
 
 		++stats.totalRunCount;
-	}
-}
-
-void TaskWorkerThread::addBDBReadStats(const String& dbName, uint64 elapsedTime) {
-	Locker guard(&tasksStatsGuard);
-
-	auto entry = bdbReadStatistics.find(dbName);
-
-	RunStatistics* stats = nullptr;
-
-	if (entry == -1) {
-		RunStatistics stats;
-
-		stats.totalRunCount = 1;
-		stats.totalRunTime = elapsedTime;
-		stats.maxRunTime = elapsedTime;
-		stats.minRunTime = elapsedTime;
-
-		bdbReadStatistics.put(dbName, stats);
-	} else {
-		RunStatistics& stats = bdbReadStatistics.elementAt(entry).getValue();
-
-		stats.totalRunTime += elapsedTime;
-
-		if (stats.maxRunTime < elapsedTime) {
-			stats.maxRunTime = elapsedTime;
-		}
-
-		if (stats.minRunTime > elapsedTime) {
-			stats.minRunTime = elapsedTime;
-		}
-
-		++stats.totalRunCount;
-	}
-
-	if (bdbSamplingRate && ((++totalBdbReadCount % bdbSamplingRate) == 0)) {
-		char metricsValue[48];
-		snprintf(metricsValue, 48, "%g", (double) elapsedTime / 1000000);
-
-		char sampleValue[48];
-		snprintf(sampleValue, 48, "%g", 1.f / bdbSamplingRate);
-
-		MetricsManager::instance()->publish("engine3.tasks.berkeleydb.getdata", metricsValue, "ms", sampleValue);
 	}
 }
 

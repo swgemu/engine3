@@ -30,17 +30,14 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	int ret = 0;
 
 	DatabaseEntry key, data;
-
 	key.setData(&objKey, sizeof(uint64));
 
 	int i = 0;
 
 	Transaction* transaction = nullptr;
-
 	TransactionConfig cfg = TransactionConfig::DEFAULT;
-	cfg.setNoSync(true);
 
-	static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+	static const bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
 
 	if (lockMode == LockMode::READ_UNCOMMITED && !mvcc) {
 		cfg.setReadUncommitted(true);
@@ -92,14 +89,12 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 
 	uint64 elapsedTime = profiler.stop();
 
-#ifdef COLLECT_TASKSTATISTICS
-	Thread* thread = Thread::getCurrentThread();
-	TaskWorkerThread* worker = thread ? thread->asTaskWorkerThread() : nullptr;
+	auto thread = Thread::getCurrentThread();
+	auto worker = thread ? thread->asTaskWorkerThread() : nullptr;
 
 	if (worker) {
 		worker->addBDBReadStats(databaseFileName, elapsedTime);
 	}
-#endif
 
 	static const bool slowLog = Core::getIntProperty("BerkeleyDB.slowQueryLog", 0);
 

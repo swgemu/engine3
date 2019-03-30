@@ -27,6 +27,8 @@ namespace LD3Ns {
 	}
 }
 
+int LocalDatabase::DEADLOCK_MAX_RETRIES = 1000;
+
 LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression) :
 		objectsDatabase() {
 	environment = dbEnv->getBerkeleyEnvironment();
@@ -67,11 +69,23 @@ void LocalDatabase::openDatabase() {
 	static const DatabaseConfig config = [] () {
 		DatabaseConfig config;
 
+		DEADLOCK_MAX_RETRIES = Core::getIntProperty("BerkeleyDB.deadlockRetries", DEADLOCK_MAX_RETRIES);
+
 		//config.setThreaded(true);
 		//config.setTransactional(true);
 		config.setAllowCreate(true);
-		config.setType(DatabaseType::HASH);
-		static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+
+		/*typedef enum {
+		  DB_BTREE=1,
+		  DB_HASH=2,
+		  DB_HEAP=6,
+		  DB_RECNO=3,
+		  DB_QUEUE=4,
+		  DB_UNKNOWN=5
+		  } DBTYPE;*/
+
+		config.setType(static_cast<DBTYPE>(Core::getIntProperty("BerkeleyDB.type", static_cast<int>(DatabaseType::HASH))));
+		static const bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
 		config.setReadUncommited(!mvcc);
 		config.setMultiVersionConcurrencyControl(mvcc);
 		config.setReadOnly(Core::getIntProperty("BerkeleyDB.readOnly", 0));
@@ -147,10 +161,11 @@ void LocalDatabase::closeDatabase() {
 
 
 Stream* LocalDatabase::compress(Stream* data) {
-	static const int zlibChunkSize = Core::getIntProperty("BerkeleyDB.zlibChunkSize", CHUNK_SIZE);
+	static const int zlibChunkSize = Core::getIntProperty("BerkeleyDB.zlibCopmressChunkSize", CHUNK_SIZE / 4);
+	static const int compressionLevel = Core::getIntProperty("BerkeleyDB.zlibCompressionLevel", Z_DEFAULT_COMPRESSION);
 
-	char outputData[zlibChunkSize];
 	Stream* outputStream  = new Stream();
+	std::size_t totalSize = 0;
 
 	try {
 		z_stream packet;
@@ -159,23 +174,29 @@ Stream* LocalDatabase::compress(Stream* data) {
 		packet.opaque = Z_NULL;
 		packet.avail_in = 0;
 		packet.next_in = Z_NULL;
-		deflateInit(&packet, Z_DEFAULT_COMPRESSION);
+
+		deflateInit(&packet, compressionLevel);
+
 		packet.next_in = (Bytef* )(data->getBuffer());
 		packet.avail_in = data->size();
 
 		do {
-			packet.next_out = (Bytef* )outputData;
+			outputStream->extendSize(zlibChunkSize);
+
+			packet.next_out = (Bytef* )outputStream->getBuffer() + totalSize;
 			packet.avail_out = zlibChunkSize;
 
-			int ret = deflate(&packet,  Z_FINISH);
+			int ret = deflate(&packet, Z_FINISH);
 
 			assert(ret == Z_OK || ret == Z_STREAM_END);
 
 			int wrote = zlibChunkSize - packet.avail_out;
 
-			outputStream->writeStream(outputData, wrote);
+			totalSize += wrote;
 
 		} while (packet.avail_out == 0);
+
+		outputStream->setSize(totalSize);
 
 		deflateEnd(&packet);
 	} catch (...) {

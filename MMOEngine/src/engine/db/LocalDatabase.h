@@ -39,7 +39,7 @@ namespace engine {
 	 }
 
  public:
-	 const static int DEADLOCK_MAX_RETRIES = 1000;
+	 static int DEADLOCK_MAX_RETRIES;
 
 	 LocalDatabase(engine::db::DatabaseManager* dbEnv, const String& dbFileName, bool compression);
 	 virtual ~LocalDatabase();
