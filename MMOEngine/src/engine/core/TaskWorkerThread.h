@@ -29,6 +29,8 @@ namespace engine {
 
 		Task* currentTask;
 
+		uint64 mutexWaitTime;
+
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<String, RunStatistics> tasksStatistics;
 		VectorMap<String, RunStatistics> luaTasksStatistics;
@@ -78,6 +80,18 @@ namespace engine {
 #endif
 #endif
 		void setPause(bool val);
+
+		inline void addMutexWaitTime(uint64 time) {
+			mutexWaitTime += time;
+		}
+
+		void clearMutexWaitTime() {
+			mutexWaitTime = 0;
+		}
+
+		uint64 getMutexWaitTime() const {
+			return mutexWaitTime;
+		}
 
 		TaskQueue* getTaskQueue() const {
 			return queue;

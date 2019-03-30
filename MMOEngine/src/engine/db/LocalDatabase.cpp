@@ -71,8 +71,9 @@ void LocalDatabase::openDatabase() {
 		//config.setTransactional(true);
 		config.setAllowCreate(true);
 		config.setType(DatabaseType::HASH);
-		config.setReadUncommited(true);
-		config.setMultiVersionConcurrencyControl(Core::getIntProperty("BerkeleyDB.MVCC", 0));
+		static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+		config.setReadUncommited(!mvcc);
+		config.setMultiVersionConcurrencyControl(mvcc);
 		config.setReadOnly(Core::getIntProperty("BerkeleyDB.readOnly", 0));
 
 		return config;
@@ -256,7 +257,10 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint
 	do {
 		ret  = -1;
 		TransactionConfig config = TransactionConfig::DEFAULT;
-		config.setReadUncommitted(true);
+
+		static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+		config.setReadUncommitted(!mvcc);
+		config.setSnapshot(mvcc);
 		config.setNoSync(true);
 
 		transaction = environment->beginTransaction(nullptr, config);
@@ -427,7 +431,15 @@ LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, const berk
 /*	if (useCurrentThreadTransaction)
 		txn = ObjectDatabaseManager::instance()->getLocalTransaction();*/
 
-	cursor = databaseHandle->openCursor(txn, config);
+	auto cfg = config;
+
+	static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+
+	if (mvcc && !config.getFlags()) {
+		cfg.setSnapshot(true);
+	}
+
+	cursor = databaseHandle->openCursor(txn, cfg);
 
 	localDatabase = database;
 
@@ -441,7 +453,16 @@ LocalDatabaseIterator::LocalDatabaseIterator(BerkeleyDatabase* dbHandle)
 
 	databaseHandle = dbHandle;
 	Transaction* txn = nullptr; // ObjectDatabaseManager::instance()->getLocalTransaction();
-	cursor = databaseHandle->openCursor(txn);
+
+	CursorConfig cfg;
+
+	static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+
+	if (mvcc) {
+		cfg.setSnapshot(true);
+	}
+
+	cursor = databaseHandle->openCursor(txn, cfg);
 
 	data.setReuseBuffer(true);
 	key.setReuseBuffer(true);

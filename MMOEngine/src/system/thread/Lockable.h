@@ -20,6 +20,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Thread.h"
 
+#define TRACE_BLOCK_TIME
+
 namespace sys {
   namespace lang {
 	  class Time;
@@ -66,7 +68,7 @@ namespace sys {
 		RELEASE() virtual void unlock(bool doLock = true) = 0;
 
 	protected:
-		inline void lockAcquiring(const char* modifier = "") {
+		inline uint64 lockAcquiring(const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			int cnt = lockCount.increment();
 
@@ -74,9 +76,15 @@ namespace sys {
 				System::out << "(" << Time::currentNanoTime() << " nsec) [" << lockName
 							<< "] acquiring " << modifier << "lock #" << cnt << "\n";
 		#endif
+
+		#ifdef TRACE_BLOCK_TIME
+			return Time::currentNanoTime(Time::MONOTONIC_TIME);
+		#else
+			return 0;
+		#endif
 		}
 
-		inline void lockAcquiring(Lockable* lockable, const char* modifier = "") {
+		inline uint64 lockAcquiring(Lockable* lockable, const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			int cnt = lockCount.increment();
 
@@ -85,9 +93,15 @@ namespace sys {
 							<< " (" << lockable->lockName << ")] acquiring cross "
 							<< modifier << "lock #" << cnt << "\n";
 		#endif
+
+		#ifdef TRACE_BLOCK_TIME
+			return Time::currentNanoTime(Time::MONOTONIC_TIME);
+		#else
+			return 0;
+		#endif
 		}
 
-		inline void lockAcquired(const char* modifier = "") {
+		inline uint64 lockAcquired(const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			currentCount = cnt;
 
@@ -101,10 +115,17 @@ namespace sys {
 				refreshTrace();
 		#endif
 
-			threadLockHolder = Thread::getCurrentThread();
+			if (modifier[0] != 'r')
+				threadLockHolder.set(Thread::getCurrentThread(), std::memory_order_relaxed);
+
+		#ifdef TRACE_BLOCK_TIME
+			return Time::currentNanoTime(Time::MONOTONIC_TIME);
+		#else
+			return 0;
+		#endif
 		}
 
-		inline void lockAcquired(Lockable* lockable, const char* modifier = "") {
+		inline uint64 lockAcquired(Lockable* lockable, const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			currentCount = cnt;
 
@@ -119,11 +140,20 @@ namespace sys {
 				refreshTrace();
 		#endif
 
-			threadLockHolder.set(Thread::getCurrentThread(), std::memory_order_relaxed);
+			if (modifier[0] != 'r')
+				threadLockHolder.set(Thread::getCurrentThread(), std::memory_order_relaxed);
+
+		#ifdef TRACE_BLOCK_TIME
+			return Time::currentNanoTime(Time::MONOTONIC_TIME);
+		#else
+			return 0;
+		#endif
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
-			threadLockHolder.set(nullptr, std::memory_order_relaxed);
+			if (modifier[0] != 'r') {
+				threadLockHolder.set(nullptr, std::memory_order_relaxed);
+			}
 
 		#ifdef TRACE_LOCKS
 			if (modifier[0] != 'r') {

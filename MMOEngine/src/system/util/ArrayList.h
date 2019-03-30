@@ -298,6 +298,10 @@ namespace sys {
 
 	   elementCount = array.elementCount;
 
+	   if (!elementCount) {
+	   	return;
+	   }
+
 	   if (TypeInfo<E>::needConstructor) {
 		   for (int i = 0; i < elementCount; ++i)
 			   createElementAt(array.elementData[i], i);
@@ -616,6 +620,10 @@ namespace sys {
 	   array.removeAll(elementCount, capacityIncrement);
 
 	   array.elementCount = elementCount;
+
+	   if (!elementCount) {
+	   	return;
+	   }
 
 	   if (TypeInfo<E>::needConstructor) {
 		   for (int i = 0; i < elementCount; ++i)

@@ -13,10 +13,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/io/ObjectOutputStream.h"
 #include "system/io/ObjectInputStream.h"
 
-#include <locale>
-#include <codecvt>
-#include <string>
-
 UnicodeString::UnicodeString() : Variable() {
 	create("", 0);
 }
@@ -270,16 +266,6 @@ const char* UnicodeString::toCharArray() const {
 
 const unsigned short* UnicodeString::toWideCharArray() const {
 	return uString;
-}
-
-template <typename T>
-std::string toUTF8(const std::basic_string<T, std::char_traits<T>, std::allocator<T>>& source) {
-	std::string result;
-
-	std::wstring_convert<std::codecvt_utf8_utf16<T>, T> convertor;
-	result = convertor.to_bytes(source);
-
-	return result;
 }
 
 String UnicodeString::toString() const {

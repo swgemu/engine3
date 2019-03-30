@@ -6,13 +6,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "system/lang/Time.h"
 
 #include "Mutex.h"
-
+#include "engine/core/TaskWorkerThread.h"
 
 void Mutex::lock(bool doLock) {
 	if (!doLock)
 		return;
 
-	lockAcquiring();
+	const auto start = lockAcquiring("w");
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_mutex_lock(&mutex);
@@ -39,7 +39,23 @@ void Mutex::lock(bool doLock) {
 		lockTime->updateToCurrentTime();
 	#endif
 
-	lockAcquired();
+	const auto end = lockAcquired("w");
+
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void Mutex::lock(Mutex* m) {
@@ -54,7 +70,7 @@ void Mutex::lock(Mutex* m) {
 		return;
 	}
 
-	lockAcquiring(m);
+	const auto start = lockAcquiring(m, "w");
 
 	while (pthread_mutex_trylock(&mutex)) {
 		#ifndef TRACE_LOCKS
@@ -73,7 +89,23 @@ void Mutex::lock(Mutex* m) {
 		#endif
 	}
 
-	lockAcquired(m);
+	const auto end = lockAcquired(m, "w");
+
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void Mutex::lock(Lockable* lockable) {
@@ -88,7 +120,7 @@ void Mutex::lock(Lockable* lockable) {
 		return;
 	}
 
-	lockAcquiring(lockable);
+	const auto start = lockAcquiring(lockable, "w");
 
 	while (pthread_mutex_trylock(&mutex)) {
 		lockable->unlock();
@@ -99,7 +131,23 @@ void Mutex::lock(Lockable* lockable) {
 		lockable->lock();
 	}
 
-	lockAcquired(lockable);
+	const auto end = lockAcquired(lockable, "w");
+
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 bool Mutex::tryLock() {
@@ -119,7 +167,7 @@ void Mutex::unlock(bool doLock) {
 	if (!doLock)
 		return;
 
-	lockReleasing();
+	lockReleasing("w");
 
 	int res = pthread_mutex_unlock(&mutex);
 	if (res != 0) {
@@ -132,5 +180,6 @@ void Mutex::unlock(bool doLock) {
 		StackTrace::printStackTrace();
 	}
 
-	lockReleased();
+	lockReleased("w");
 }
+

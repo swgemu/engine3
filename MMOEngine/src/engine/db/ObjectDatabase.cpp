@@ -40,8 +40,17 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	TransactionConfig cfg = TransactionConfig::DEFAULT;
 	cfg.setNoSync(true);
 
-	if (lockMode == LockMode::READ_UNCOMMITED)
+	static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+
+	if (lockMode == LockMode::READ_UNCOMMITED && !mvcc) {
 		cfg.setReadUncommitted(true);
+	} else if (mvcc) {
+		cfg.setSnapshot(true);
+
+		lockMode = LockMode::DEFAULT;
+	}
+
+	cfg.setNoSync(true);
 
 	Timer profiler;
 	profiler.start();

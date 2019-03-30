@@ -34,6 +34,8 @@ namespace engine {
 		uint32 threadCount;
 		uint32 lockDetectMode;
 		bool logAutoRemove;
+		bool mvcc;
+		bool direct;
 		int maxLogFileSize;
 
 	public:
@@ -134,6 +136,14 @@ namespace engine {
 				environmentFlags |= DB_INIT_MPOOL;
 		}
 
+		inline void setMultiVersionConcurrencyControl(bool val) {
+			mvcc = val;
+		}
+
+		inline void setDirectAccess(bool val) {
+			direct = val;
+		}
+
 		inline bool isThreaded() const {
 			return environmentFlags & DB_THREAD;
 		}
@@ -156,6 +166,14 @@ namespace engine {
 
 		inline bool getLogAutoRemove() const {
 			return logAutoRemove;
+		}
+
+		inline bool isDirectAccess() const {
+			return direct;
+		}
+
+		inline bool isMVCC() const {
+			return mvcc;
 		}
 
 	};

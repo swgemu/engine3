@@ -49,6 +49,8 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 
 	currentTask = nullptr;
 
+	mutexWaitTime = 0;
+
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;
 	totalBdbReadCount = 0;
@@ -99,6 +101,7 @@ void TaskWorkerThread::run() {
 		}
 
 		TaskManagerNs::checkForDBHandle(initializeDBHandles);
+		mutexWaitTime = 0;
 
 		try {
 			currentTask = task;
@@ -121,8 +124,8 @@ void TaskWorkerThread::run() {
 		const char* taskName = task->getTaskName();
 
 		if (taskName && slowTaskLog) {
-			static uint64 slowTaskLogMs = Core::getIntProperty("TaskManager.slowTaskLogTimeMs", 40);
-			static String slowTaskFilename = Core::getProperty("TaskManager.slowTaskLogFile", "");
+			static const uint64 slowTaskLogMs = Core::getIntProperty("TaskManager.slowTaskLogTimeMs", 40);
+			static const String slowTaskFilename = Core::getProperty("TaskManager.slowTaskLogFile", "");
 			auto elapsedTimeMs = elapsedTime / 1000000;
 
 			if (elapsedTimeMs >= slowTaskLogMs) {
@@ -138,6 +141,8 @@ void TaskWorkerThread::run() {
 					} else {
 						stream << elapsedTimeMs << "ms";
 					}
+
+					stream << " and waited on mutexes " << mutexWaitTime << "ns";
 
 					if (!slowTaskFilename.isEmpty()) {
 						static Logger customLogger = []() {

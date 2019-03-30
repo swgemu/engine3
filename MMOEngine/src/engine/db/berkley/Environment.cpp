@@ -60,6 +60,20 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
 	databaseEnvironment->set_thread_count(databaseEnvironment, threadCount);
 
+	uint32 envFlags = 0;
+
+	if (environmentConfig.isDirectAccess()) {
+		envFlags |= DB_DIRECT_DB;
+	}
+
+	if (environmentConfig.isMVCC()) {
+		envFlags |= DB_MULTIVERSION;
+	}
+
+	if (envFlags) {
+		databaseEnvironment->set_flags(databaseEnvironment, envFlags, 1);
+	}
+
 	const static int shmKey = Core::getIntProperty("BerkeleyDB.envSHMKey", 0);
 
 	if (shmKey) {

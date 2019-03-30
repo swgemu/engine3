@@ -10,6 +10,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "Variable.h"
 
+#include <locale>
+#include <codecvt>
+#include <string>
+
 #ifndef PLATFORM_WIN
 //#define wchar_t unsigned short
 #endif
@@ -92,7 +96,6 @@ namespace sys {
 		const char* toCharArray() const;
 		const unsigned short* toWideCharArray() const;
 
-		String toString() const;
 		bool toString(String& str);
 
 		bool parseFromString(const String& str, int version = 0);
@@ -131,6 +134,18 @@ namespace sys {
 		inline int length() const {
 			return count;
 		}
+
+		String toString() const;
+
+		template <typename T>
+			static std::string toUTF8(const std::basic_string<T, std::char_traits<T>, std::allocator<T>>& source) {
+				std::string result;
+
+				std::wstring_convert<std::codecvt_utf8_utf16<T>, T> convertor;
+				result = convertor.to_bytes(source);
+
+				return result;
+			}
 	};
 
   } // namespace lang

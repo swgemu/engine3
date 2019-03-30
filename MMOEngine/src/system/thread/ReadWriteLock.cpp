@@ -7,11 +7,13 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "ReadWriteLock.h"
 
+#include "engine/core/TaskWorkerThread.h"
+
 void ReadWriteLock::rlock(bool doLock) ACQUIRE_SHARED() {
 	if (!doLock)
 		return;
 
-	lockAcquiring("r");
+	const auto start = lockAcquiring("r");
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_rdlock(&rwlock);
@@ -47,14 +49,29 @@ void ReadWriteLock::rlock(bool doLock) ACQUIRE_SHARED() {
 
 	readLockCount.increment();
 
-	//lockAcquired("r");
+	const auto end = lockAcquired("r");
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void ReadWriteLock::wlock(bool doLock) ACQUIRE() {
 	if (!doLock)
 		return;
 
-	lockAcquiring("w");
+	const auto start = lockAcquiring("w");
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_wrlock(&rwlock);
@@ -90,38 +107,68 @@ void ReadWriteLock::wlock(bool doLock) ACQUIRE() {
 		lockTime->updateToCurrentTime();
 	#endif
 
-	lockAcquired("w");
+	const auto end = lockAcquired("w");
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void ReadWriteLock::wlock(Mutex* lock) ACQUIRE() {
-	lockAcquiring(lock, "w");
+	const auto start = lockAcquiring(lock, "w");
 
-    while (pthread_rwlock_trywrlock(&rwlock)) {
-    	#ifndef TRACE_LOCKS
-			//pthread_mutex_unlock(&(lock->mutex));
+	while (pthread_rwlock_trywrlock(&rwlock)) {
+#ifndef TRACE_LOCKS
+		//pthread_mutex_unlock(&(lock->mutex));
 
-    		lock->unlock();
+		lock->unlock();
 
 #ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
-			Thread::yield();
+		Thread::yield();
 #endif
-      		//pthread_mutex_lock(&(lock->mutex));
+		//pthread_mutex_lock(&(lock->mutex));
 
-			lock->lock();
-		#else
-      		lock->unlock();
+		lock->lock();
+#else
+		lock->unlock();
 
-      		Thread::yield();
+		Thread::yield();
 
-	      	lock->lock();
-	 	#endif
+		lock->lock();
+#endif
 	}
 
-	lockAcquired(lock, "w");
+	const auto end = lockAcquired(lock, "w");
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void ReadWriteLock::rlock(Lockable* lock) ACQUIRE_SHARED() {
-	lockAcquiring(lock, "r");
+	const auto start = lockAcquiring(lock, "r");
 
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
 		lock->unlock();
@@ -135,11 +182,26 @@ void ReadWriteLock::rlock(Lockable* lock) ACQUIRE_SHARED() {
 
 	readLockCount.increment();
 
-	//lockAcquired(lock, "r");
+	const auto end = lockAcquired(lock, "r");
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void ReadWriteLock::rlock(ReadWriteLock* lock) ACQUIRE_SHARED() {
-	lockAcquiring(lock, "r");
+	const auto start = lockAcquiring(lock, "r");
 
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
 		lock->unlock();
@@ -153,7 +215,22 @@ void ReadWriteLock::rlock(ReadWriteLock* lock) ACQUIRE_SHARED() {
 
 	readLockCount.increment();
 
-	//lockAcquired(lock, "r");
+	const auto end = lockAcquired(lock, "r");
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void ReadWriteLock::wlock(ReadWriteLock* lock) ACQUIRE() {
@@ -168,49 +245,80 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) ACQUIRE() {
 		return;
 	}
 
-	#ifdef TRACE_LOCKS
-		if (lock->threadLockHolder == nullptr) {
-			System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking to an unlocked mutex [" << lock->lockName << "]\n";
-			StackTrace::printStackTrace();
+#ifdef TRACE_LOCKS
+	if (lock->threadLockHolder == nullptr) {
+		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross wlocking to an unlocked mutex [" << lock->lockName << "]\n";
+		StackTrace::printStackTrace();
 
-			raise(SIGSEGV);
-		}
-	#endif
+		raise(SIGSEGV);
+	}
+#endif
 
-	lockAcquiring(lock, "w");
+	const auto start = lockAcquiring(lock, "w");
 
-    while (pthread_rwlock_trywrlock(&rwlock)) {
-    	#ifndef TRACE_LOCKS
-  			//pthread_rwlock_unlock(&(lock->rwlock));
-    		lock->unlock();
+	while (pthread_rwlock_trywrlock(&rwlock)) {
+#ifndef TRACE_LOCKS
+		//pthread_rwlock_unlock(&(lock->rwlock));
+		lock->unlock();
 
 #ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
-  			Thread::yield();
+		Thread::yield();
 #endif
-       		//pthread_rwlock_wrlock(&(lock->rwlock));
-  			lock->wlock();
-       	#else
-       		lock->unlock();
-       		lock->wlock();
-       	#endif
+		//pthread_rwlock_wrlock(&(lock->rwlock));
+		lock->wlock();
+#else
+		lock->unlock();
+		lock->wlock();
+#endif
 	}
 
-	lockAcquired(lock, "w");
+	const auto end = lockAcquired(lock, "w");
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
+
 }
 
 void ReadWriteLock::lock(Lockable* lockable) ACQUIRE() {
-	lockAcquiring(lockable, "w");
+	const auto start = lockAcquiring(lockable, "w");
 
-    while (pthread_rwlock_trywrlock(&rwlock)) {
-  		lockable->unlock();
+	while (pthread_rwlock_trywrlock(&rwlock)) {
+		lockable->unlock();
 
 #ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
-  		Thread::yield();
+		Thread::yield();
 #endif
-      	lockable->lock();
+		lockable->lock();
 	}
 
-	lockAcquired(lockable, "w");
+	const auto end = lockAcquired(lockable, "w");
+	const auto diff = end - start;
+
+#ifdef TRACE_BLOCK_TIME
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addMutexWaitTime(diff);
+#endif
 }
 
 void ReadWriteLock::unlock(bool doLock) RELEASE() {
@@ -242,7 +350,7 @@ void ReadWriteLock::unlock(bool doLock) RELEASE() {
 
 //	assert(threadLockHolder == Thread::getCurrentThread());
 
-	lockReleasing();
+	lockReleasing("w");
 
 	int res = pthread_rwlock_unlock(&rwlock);
 	if (res != 0) {
@@ -256,7 +364,7 @@ void ReadWriteLock::unlock(bool doLock) RELEASE() {
 		assert(0 && "unlock failed");
 	}
 
-	lockReleased();
+	lockReleased("w");
 }
 
 void ReadWriteLock::runlock(bool doLock) RELEASE_SHARED() {
@@ -284,7 +392,7 @@ void ReadWriteLock::runlock(bool doLock) RELEASE_SHARED() {
 	threadIDLockHolder = 0;*/
 #endif
 
-	//lockReleasing("r");
+	lockReleasing("r");
 
 	readLockCount.decrement();
 
@@ -301,5 +409,5 @@ void ReadWriteLock::runlock(bool doLock) RELEASE_SHARED() {
 		assert(0 && "runlock failed");
 	}
 
-	lockReleased();
+	lockReleased("r");
 }

@@ -92,13 +92,13 @@ void DatabaseManager::openEnvironment() {
 		config.setThreadCount(Core::getIntProperty("DatabaseManager.threadCount", 512));
 		config.setRegister(Core::getIntProperty("DatabaseManager.registerEnvironment", 0));
 		config.setPrivate(Core::getIntProperty("DatabaseManager.privateEnvironment", 0));
+		config.setMultiVersionConcurrencyControl(Core::getIntProperty("BerkeleyDB.MVCC", 0));
+		config.setDirectAccess(Core::getIntProperty("DatabaseManager.directAccess", 0));
 
 		config.setTransactional(true);
 		config.setInitializeCache(true);
 
-		constexpr const uint32 logFileSize = 100 * 1024 * 1024;
-
-		config.setMaxLogFileSize(Core::getIntProperty("DatabaseManager.logFileSize", logFileSize));
+		config.setMaxLogFileSize(Core::getIntProperty("DatabaseManager.logFileSize", 100 * 1024 * 1024));
 		config.setLockDetectMode(LockDetectMode::RANDOM);
 
 		return config;

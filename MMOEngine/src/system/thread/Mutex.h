@@ -26,7 +26,7 @@ namespace sys {
 			recursiveMutex = false;
 		}
 
-		Mutex(bool recursive) : Lockable() {
+		explicit Mutex(bool recursive) : Lockable() {
 			if (recursive) {
 				pthread_mutexattr_init(&attr);
 
@@ -42,21 +42,21 @@ namespace sys {
 
 		}
 
-		Mutex(const char* s) : Lockable(s) {
+		explicit Mutex(const char* s) : Lockable(s) {
 			pthread_mutex_init(&mutex, nullptr);
 
 			recursiveMutex = false;
 		}
 
-		Mutex(const String& s) : Lockable(s) {
+		explicit Mutex(const String& s) : Lockable(s) {
 			pthread_mutex_init(&mutex, nullptr);
-			
+
 			recursiveMutex = false;
 		}
 
 		Mutex(const Mutex& m) : Lockable() {
 			pthread_mutex_init(&mutex, nullptr);
-			
+
 			recursiveMutex = false;
 		}
 
@@ -68,7 +68,7 @@ namespace sys {
 
 		virtual ~Mutex() {
 			pthread_mutex_destroy(&mutex);
-			
+
 			if (recursiveMutex)
 				pthread_mutexattr_destroy(&attr);
 		}
