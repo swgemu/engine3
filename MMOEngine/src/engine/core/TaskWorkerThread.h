@@ -31,6 +31,7 @@ namespace engine {
 
 		uint64 mutexWaitTime;
 		uint64 totalBdbTime;
+		uint64 totalBdbQueries;
 
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<String, RunStatistics> tasksStatistics;

@@ -311,7 +311,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	auto startBlock = std::chrono::high_resolution_clock::now();
 
-	Vector<Locker*>* lockers = Core::getTaskManager()->blockTaskManager();
+	UniqueReference<Vector<Locker*>*> lockers(Core::getTaskManager()->blockTaskManager());
 
 	auto endBlock = std::chrono::high_resolution_clock::now();
 
@@ -361,7 +361,6 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	onUpdateModifiedObjectsToDatabase();
 
 	Core::getTaskManager()->unblockTaskManager(lockers);
-	delete lockers;
 
 	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, updateModifiedObjectsThreads.size(), objectsToDeleteFromRAM);
 

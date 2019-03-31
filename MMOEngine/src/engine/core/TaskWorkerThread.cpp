@@ -52,6 +52,7 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 	mutexWaitTime = 0;
 
 	totalBdbTime = 0;
+	totalBdbQueries = 0;
 
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;
@@ -105,6 +106,7 @@ void TaskWorkerThread::run() {
 		TaskManagerNs::checkForDBHandle(initializeDBHandles);
 		mutexWaitTime = 0;
 		totalBdbTime = 0;
+		totalBdbQueries = 0;
 
 		try {
 			currentTask = task;
@@ -147,6 +149,7 @@ void TaskWorkerThread::run() {
 
 					stream << " from which waited on mutexes for " << mutexWaitTime << "ns";
 					stream << " and spent in bdb " << totalBdbTime << "ns";
+					stream << " for " << totalBdbQueries << " queries";
 
 					if (!slowTaskFilename.isEmpty()) {
 						static Logger customLogger = []() {
@@ -232,6 +235,7 @@ void TaskWorkerThread::run() {
 
 void TaskWorkerThread::addBDBReadStats(const String& dbName, uint64 elapsedTime) {
 	totalBdbTime += elapsedTime;
+	totalBdbQueries++;
 
 #ifdef COLLECT_TASKSTATISTICS
 	Locker guard(&tasksStatsGuard);

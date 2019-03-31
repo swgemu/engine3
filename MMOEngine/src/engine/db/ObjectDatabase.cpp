@@ -22,7 +22,7 @@ ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName,
 	setLoggingName("ObjectDatabase " + dbFileName);
 }
 
-int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode, bool compressed) {
+int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode, bool compressed, bool readThreadLocalTransaction) {
 	if (objKey == 0) {
 		return DB_NOTFOUND;
 	}
@@ -52,17 +52,31 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	Timer profiler;
 	profiler.start();
 
+	bool abortPreviousLocalTransaction = false;
+	const static bool disableReadLocalTransactions = Core::getIntProperty("DatabaseManager.disableReadLocalTx", 1);
+
+	if (disableReadLocalTransactions) {
+		readThreadLocalTransaction = false;
+	}
+
 	do {
 		ret  = -1;
-		transaction = environment->beginTransaction(nullptr, cfg);
+
+		if (readThreadLocalTransaction) {
+			transaction = ObjectDatabaseManager::instance()->getReadLocalTransaction(abortPreviousLocalTransaction);
+		} else {
+			transaction = environment->beginTransaction(nullptr, cfg);
+		}
 
 		ret = getDatabaseHandle()->get(transaction, &key, &data, lockMode);
 
-		if (ret == DB_LOCK_DEADLOCK) {
+		if (ret == DB_LOCK_DEADLOCK && !readThreadLocalTransaction) {
 			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i));
 			transaction->abort();
 			transaction = nullptr;
 		}
+
+		abortPreviousLocalTransaction = true;
 
 		++i;
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
@@ -77,13 +91,13 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	} else if (ret != DB_NOTFOUND) {
 		error("error in ObjectDatabase::getData ret " + String::valueOf(db_strerror(ret)));
 
-		if (transaction != nullptr)
+		if (!readThreadLocalTransaction && transaction != nullptr)
 			transaction->abort();
 
 		throw DatabaseException("error in ObjectDatabase::getData ret " + String(db_strerror(ret)));
 	}
 
-	if (transaction != nullptr) {
+	if (!readThreadLocalTransaction && transaction != nullptr) {
 		transaction->commitNoSync();
 	}
 

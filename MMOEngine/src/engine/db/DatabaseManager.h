@@ -135,6 +135,7 @@ namespace engine {
 		VectorMap<String, uint16> nameDirectory;
 
 		ThreadLocal<CurrentTransaction*> localTransaction;
+		ThreadLocal<engine::db::berkley::Transaction*> readLocalTransaction;
 
 		LocalDatabase* databaseDirectory;
 
@@ -194,7 +195,7 @@ namespace engine {
 
 		int failCheck();
 
-		engine::db::berkley::Transaction* startTransaction();
+		engine::db::berkley::Transaction* startTransaction(const engine::db::berkley::TransactionConfig& config = berkley::TransactionConfig::DEFAULT);
 		int commitTransaction(engine::db::berkley::Transaction* transaction);
 		/**
 		 * Stores a references to an object while the transaction is alive
@@ -203,6 +204,7 @@ namespace engine {
 		void addTemporaryObject(Object* object);
 
 		CurrentTransaction* getCurrentTransaction();
+		engine::db::berkley::Transaction* getReadLocalTransaction(bool abortPrevious = false);
 
 		void updateLastUsedObjectID(uint64 id);
 		uint64 getLastUsedObjectID();

@@ -38,6 +38,11 @@ namespace engine {
 		}
 
 		ManagedReference(const Reference<O>& r) : Reference<O>(r) {
+#ifdef ODB_REFERENCES
+			auto obj = r.get();
+
+			loadedOID = obj ? obj->_getObjectID() : 0;
+#endif
 		}
 
 #ifdef CXX11_COMPILER
@@ -48,6 +53,11 @@ namespace engine {
 		}
 
 		ManagedReference(Reference<O>&& ref) : Reference<O>(std::move(ref)) {
+#ifdef ODB_REFERENCES
+			auto obj = get();
+
+			loadedOID = obj ? obj->_getObjectID() : 0;
+#endif
 		}
 #endif
 
@@ -58,6 +68,9 @@ namespace engine {
 		}
 
 		ManagedReference(O obj) : Reference<O>(obj) {
+#ifdef ODB_REFERENCES
+			loadedOID = obj ? obj->_getObjectID() : 0;
+#endif
 		}
 
 		ManagedReference& operator=(const ManagedReference& ref) {
@@ -146,7 +159,6 @@ namespace engine {
 		inline int compareTo(const ManagedReference& ref) const {
 #ifdef ODB_REFERENCES
 			if (!Core::MANAGED_REFERENCE_LOAD) {
-				return loadedOID;
 				if (loadedOID < ref.loadedOID)
 					return 1;
 				else if (loadedOID > ref.loadedOID)

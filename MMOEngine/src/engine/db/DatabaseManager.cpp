@@ -384,6 +384,42 @@ LocalDatabase* DatabaseManager::loadLocalDatabase(const String& name, bool creat
 	return instantiateDatabase(name, create, uniqueID, false, compression);
 }
 
+engine::db::berkley::Transaction* DatabaseManager::getReadLocalTransaction(bool abortPrevious) {
+	if (!loaded)
+		return nullptr;
+
+	static const TransactionConfig config = []() {
+		auto config = TransactionConfig::DEFAULT;
+
+		static const bool mvcc  = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+
+		if (mvcc) {
+			config.setSnapshot(true);
+		} else {
+			config.setReadUncommitted(true);
+		}
+
+		return config;
+	} ();
+
+
+	auto transaction = readLocalTransaction.get();
+
+	if (transaction == nullptr) {
+		transaction = startTransaction(config);
+
+		readLocalTransaction.set(transaction);
+	} else if (abortPrevious) {
+		transaction->abort();
+
+		transaction = startTransaction(config);
+
+		readLocalTransaction.set(transaction);
+       	}
+
+	return transaction;
+}
+
 CurrentTransaction* DatabaseManager::getCurrentTransaction() {
 	if (!loaded)
 		return nullptr;
@@ -447,10 +483,7 @@ void DatabaseManager::abortLocalTransaction() {
 	updateObjects->removeAll();
 }
 
-engine::db::berkley::Transaction* DatabaseManager::startTransaction() {
-	TransactionConfig config = TransactionConfig::DEFAULT;
-	//config.setReadUncommitted(true);
-
+engine::db::berkley::Transaction* DatabaseManager::startTransaction(const engine::db::berkley::TransactionConfig& config) {
 	Transaction* transaction = databaseEnvironment->beginTransaction(nullptr, config);
 
 	return transaction;
@@ -477,6 +510,18 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* m
 
 	if (!loaded)
 		return;
+
+	auto readTransaction = readLocalTransaction.get();
+
+	if (readTransaction) {
+		int res = 0;
+
+		if ((res = readTransaction->commitNoSync()) != 0) {
+			warning("error commiting berkeley transaction " + String(db_strerror(res)));
+		}
+
+		readLocalTransaction.set(nullptr);
+	}
 
 	CurrentTransaction* transaction = localTransaction.get();
 
