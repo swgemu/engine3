@@ -542,17 +542,17 @@ bool ObservablePOD::readObjectMember(ObjectInputStream* stream, const uint32& na
 	switch(nameHashCode) {
 	case 0xe6687dd1: //Observable.observerEventMap
 		{
-			ObserverEventMap __observerEventMap;
-			TypeInfo<ObserverEventMap >::parseFromBinaryStream(&__observerEventMap, stream);
-			observerEventMap = std::move(__observerEventMap);
+			ObserverEventMap _mnobserverEventMap;
+			TypeInfo<ObserverEventMap >::parseFromBinaryStream(&_mnobserverEventMap, stream);
+			observerEventMap = std::move(_mnobserverEventMap);
 		}
 		return true;
 
 	case 0xc23a7ce7: //Observable.observableChildren
 		{
-			SortedVector<ManagedReference<ObservablePOD* > > __observableChildren;
-			TypeInfo<SortedVector<ManagedReference<ObservablePOD* > > >::parseFromBinaryStream(&__observableChildren, stream);
-			observableChildren = std::move(__observableChildren);
+			SortedVector<ManagedReference<ObservablePOD* > > _mnobservableChildren;
+			TypeInfo<SortedVector<ManagedReference<ObservablePOD* > > >::parseFromBinaryStream(&_mnobservableChildren, stream);
+			observableChildren = std::move(_mnobservableChildren);
 		}
 		return true;
 

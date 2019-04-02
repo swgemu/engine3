@@ -1013,9 +1013,9 @@ bool ManagedObjectPOD::readObjectMember(ObjectInputStream* stream, const uint32&
 	switch(nameHashCode) {
 	case 0x62b0f0cf: //ManagedObject.persistenceLevel
 		{
-			int __persistenceLevel;
-			TypeInfo<int >::parseFromBinaryStream(&__persistenceLevel, stream);
-			persistenceLevel = std::move(__persistenceLevel);
+			int _mnpersistenceLevel;
+			TypeInfo<int >::parseFromBinaryStream(&_mnpersistenceLevel, stream);
+			persistenceLevel = std::move(_mnpersistenceLevel);
 		}
 		return true;
 

@@ -474,9 +474,9 @@ bool ObserverPOD::readObjectMember(ObjectInputStream* stream, const uint32& name
 	switch(nameHashCode) {
 	case 0x893f1c9: //Observer.observerType
 		{
-			unsigned int __observerType;
-			TypeInfo<unsigned int >::parseFromBinaryStream(&__observerType, stream);
-			observerType = std::move(__observerType);
+			unsigned int _mnobserverType;
+			TypeInfo<unsigned int >::parseFromBinaryStream(&_mnobserverType, stream);
+			observerType = std::move(_mnobserverType);
 		}
 		return true;
 
