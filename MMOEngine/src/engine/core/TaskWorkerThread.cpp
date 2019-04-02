@@ -50,6 +50,7 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 	currentTask = nullptr;
 
 	mutexWaitTime = 0;
+	mutexesAcquired = 0;
 
 	totalBdbTime = 0;
 	totalBdbQueries = 0;
@@ -107,6 +108,7 @@ void TaskWorkerThread::run() {
 		mutexWaitTime = 0;
 		totalBdbTime = 0;
 		totalBdbQueries = 0;
+		mutexesAcquired = 0;
 
 		try {
 			currentTask = task;
@@ -148,6 +150,7 @@ void TaskWorkerThread::run() {
 					}
 
 					stream << " from which waited on mutexes for " << mutexWaitTime << "ns";
+					stream << " to acquire " << mutexesAcquired << " locks";
 					stream << " and spent in bdb " << totalBdbTime << "ns";
 					stream << " for " << totalBdbQueries << " queries";
 

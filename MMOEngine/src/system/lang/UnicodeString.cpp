@@ -312,15 +312,18 @@ bool UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
 
 bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint32 len = stream->readInt();
+	auto buffer = stream->getBuffer() + stream->getOffset();
 
-	unsigned short* uni = new unsigned short[len];
+	stream->shiftOffset(len * 2);
 
-	stream->readStream((char*)uni, len * 2);
+	if (uString) {
+		delete [] uString;
+	}
 
-	clear();
-	append(uni, len);
+	uString = new unsigned short[len + 1];
+	copy(uString, (const unsigned short*) buffer, len);
 
-	delete [] uni;
+	uString[count = len] = 0;
 
 	return true;
 }

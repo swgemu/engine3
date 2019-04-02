@@ -771,13 +771,12 @@ bool String::toBinaryStream(ObjectOutputStream* stream) {
 
 bool String::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint16 len = stream->readShort();
-	char* ascii = new char[len + 1];
-	stream->readStream(ascii, (int) len);
-	ascii[len] = 0;
+	auto buffer = stream->getBuffer() + stream->getOffset();
 
-	*this = String(ascii);
+	stream->shiftOffset(len);
 
-	delete [] ascii;
+	clear();
+	create(buffer, len);
 
 	return true;
 }

@@ -30,6 +30,7 @@ namespace engine {
 		Task* currentTask;
 
 		uint64 mutexWaitTime;
+		uint64 mutexesAcquired;
 		uint64 totalBdbTime;
 		uint64 totalBdbQueries;
 
@@ -85,6 +86,7 @@ namespace engine {
 		void setPause(bool val);
 
 		inline void addMutexWaitTime(uint64 time) {
+			mutexesAcquired++;
 			mutexWaitTime += time;
 		}
 
