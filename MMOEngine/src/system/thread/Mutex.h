@@ -18,59 +18,46 @@ namespace sys {
 	class CAPABILITY("mutex") Mutex : public Lockable {
 		pthread_mutex_t mutex;
 		pthread_mutexattr_t attr;
-		bool recursiveMutex;
 
 	public:
 		Mutex() : Lockable() {
-			pthread_mutex_init(&mutex, nullptr);
-			recursiveMutex = false;
+			pthread_mutexattr_init(&attr);
+			pthread_mutex_init(&mutex, &attr);
 		}
 
 		explicit Mutex(bool recursive) : Lockable() {
+			pthread_mutexattr_init(&attr);
+
 			if (recursive) {
-				pthread_mutexattr_init(&attr);
-
 				pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-
-				pthread_mutex_init(&mutex, &attr);
-
-				recursiveMutex = true;
-			} else {
-				pthread_mutex_init(&mutex, nullptr);
-				recursiveMutex = false;
 			}
+
+			pthread_mutex_init(&mutex, &attr);
 
 		}
 
 		explicit Mutex(const char* s) : Lockable(s) {
-			pthread_mutex_init(&mutex, nullptr);
-
-			recursiveMutex = false;
+			pthread_mutexattr_init(&attr);
+			pthread_mutex_init(&mutex, &attr);
 		}
 
 		explicit Mutex(const String& s) : Lockable(s) {
-			pthread_mutex_init(&mutex, nullptr);
-
-			recursiveMutex = false;
+			pthread_mutexattr_init(&attr);
+			pthread_mutex_init(&mutex, &attr);
 		}
 
 		Mutex(const Mutex& m) : Lockable() {
-			pthread_mutex_init(&mutex, nullptr);
-
-			recursiveMutex = false;
+			pthread_mutexattr_init(&attr);
+			pthread_mutex_init(&mutex, &attr);
 		}
 
 		Mutex& operator=(const Mutex& m) {
-			recursiveMutex = m.recursiveMutex;
-
 			return *this;
 		}
 
-		virtual ~Mutex() {
+		~Mutex() {
 			pthread_mutex_destroy(&mutex);
-
-			if (recursiveMutex)
-				pthread_mutexattr_destroy(&attr);
+			pthread_mutexattr_destroy(&attr);
 		}
 
 		void lock(bool doLock = true) ACQUIRE();

@@ -110,7 +110,7 @@ namespace sys {
    SynchronizedVector<E>& SynchronizedVector<E>::operator=(const SynchronizedVector<E>& array) {
 	   Locker locker(&guard);
 
-	   vector.operator=(array);
+	   vector.operator=(array.getVectorUnsafe());
 
 #ifdef ATOMIC_SYNC_VECTOR_COUNT
 	   count = array.count;

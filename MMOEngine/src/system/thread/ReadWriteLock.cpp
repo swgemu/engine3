@@ -129,24 +129,12 @@ void ReadWriteLock::wlock(Mutex* lock) ACQUIRE() {
 	const auto start = lockAcquiring(lock, "w");
 
 	while (pthread_rwlock_trywrlock(&rwlock)) {
-#ifndef TRACE_LOCKS
-		//pthread_mutex_unlock(&(lock->mutex));
-
 		lock->unlock();
 
 #ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 		Thread::yield();
 #endif
-		//pthread_mutex_lock(&(lock->mutex));
-
 		lock->lock();
-#else
-		lock->unlock();
-
-		Thread::yield();
-
-		lock->lock();
-#endif
 	}
 
 	const auto end = lockAcquired(lock, "w");

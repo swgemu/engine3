@@ -16,33 +16,33 @@ namespace sys {
     template<class E> class HashSetIterator;
 
 	template<class E> class HashSet : public HashTable<E, uint8> {
-		uint8 PRESENT;
-
 	public:
 		HashSet() : HashTable<E, uint8>() {
-			PRESENT = 0;
 		}
 
 		HashSet(int initcap) : HashTable<E, uint8>(initcap) {
-			PRESENT = 0;//new Object();
 		}
 
 		HashSet(const HashSet<E>& h) : HashTable<E, uint8>(h) {
-			PRESENT = h.PRESENT;
 		}
 
-#ifdef CXX11_COMPILER
 		HashSet(HashSet<E>&& h) : HashTable<E, uint8>(std::move(h)) {
-			PRESENT = h.PRESENT;
 		}
-#endif
 
-		virtual ~HashSet() {
-			//delete PRESENT;
+		HashSet<E>& operator=(HashSet<E>&& h) {
+			HashTable<E, uint8>::operator=(std::move(h));
+
+			return *this;
+		}
+
+		HashSet<E>& operator=(const HashSet<E>& h) {
+			HashTable<E, uint8>::operator=(h);
+
+			return *this;
 		}
 
 		void add(const E& obj) {
-			HashTable<E, uint8>::put(obj, PRESENT);
+			HashTable<E, uint8>::put(obj, 0);
 		}
 
 		bool contains(const E& obj) const {
