@@ -43,7 +43,7 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 
 	if (ret != 0) {
 		/* Error handling goes here */
-		throw DatabaseException("unable to open database with ret code " + String(db_strerror(ret));
+		throw DatabaseException("unable to open database with ret code " + String(db_strerror(ret)));
 	}
 
 }
