@@ -18,7 +18,7 @@ cp lib/unix/libengine3*.a ${INSTALL_PATH}/lib/linux64
 
 # create tree on include files
 cd src
-/usr/bin/find . -iname \*.h -o -iname \*.idl -o -iname \*json.hpp | cpio --quiet -ov > tree.cpio
+/usr/bin/find . -iname \*.h -o -iname \*.idl -o -iname \*json.hpp -o -iname \*optional.hpp | cpio --quiet -ov > tree.cpio
 cd ..
 
 # copy files to destination

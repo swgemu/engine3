@@ -96,7 +96,7 @@ namespace sys {
 			return ((oldVal - newVal) & 1);
 		}
 
-		inline uint32 getReferenceCount(std::memory_order o = std::memory_order_acquire) volatile const {
+		inline uint32 getReferenceCount(std::memory_order o = std::memory_order_consume) volatile const {
 			return _references.load(o);
 		}
 

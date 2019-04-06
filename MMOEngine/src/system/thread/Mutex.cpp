@@ -71,22 +71,19 @@ void Mutex::lock(Mutex* m) {
 	}
 
 	const auto start = lockAcquiring(m, "w");
+	auto currentThreadThread = m->getLockHolderThread();
 
 	while (pthread_mutex_trylock(&mutex)) {
-		#ifndef TRACE_LOCKS
-			//pthread_mutex_unlock(&(m->mutex));
-			m->unlock();
+		m->clearCurrentLockHolder();
+
+		pthread_mutex_unlock(&(m->mutex));
 
 #ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 			Thread::yield();
 #endif
-			//pthread_mutex_lock(&(m->mutex));
+		pthread_mutex_lock(&(m->mutex));
 
-			m->lock();
-		#else
-			m->unlock();
-			m->lock();
-		#endif
+		m->setCurrentLockHolder(currentThreadThread);
 	}
 
 	const auto end = lockAcquired(m, "w");

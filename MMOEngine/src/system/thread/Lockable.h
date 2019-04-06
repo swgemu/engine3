@@ -225,6 +225,14 @@ namespace sys {
 		#endif
 		}
 
+		inline void clearCurrentLockHolder() {
+			threadLockHolder.set(nullptr, std::memory_order_relaxed);
+		}
+
+		inline void setCurrentLockHolder(Thread*  thread) {
+			threadLockHolder.set(thread, std::memory_order_relaxed);
+		}
+
 	public:
 		inline bool isLockedByCurrentThread() const {
 			return threadLockHolder.get() == Thread::getCurrentThread();

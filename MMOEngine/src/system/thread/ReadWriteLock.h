@@ -48,6 +48,14 @@ namespace sys {
 
 		void lock(Lockable* lockable) ACQUIRE();
 
+		inline void lock(ReadWriteLock* lockable) ACQUIRE() {
+			wlock(lockable);
+		}
+
+		inline void lock(Mutex* lockable) ACQUIRE() {
+			wlock(lockable);
+		}
+
 		inline bool tryWLock() TRY_ACQUIRE(true) {
 			if (pthread_rwlock_trywrlock(&rwlock) == 0) {
 				lockAcquired("w");

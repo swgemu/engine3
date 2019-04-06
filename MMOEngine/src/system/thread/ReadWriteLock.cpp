@@ -128,13 +128,19 @@ void ReadWriteLock::wlock(bool doLock) ACQUIRE() {
 void ReadWriteLock::wlock(Mutex* lock) ACQUIRE() {
 	const auto start = lockAcquiring(lock, "w");
 
+	auto currentThreadThread = lock->getLockHolderThread();
+
 	while (pthread_rwlock_trywrlock(&rwlock)) {
-		lock->unlock();
+		lock->clearCurrentLockHolder();
+
+		pthread_mutex_unlock(&lock->mutex);
 
 #ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 		Thread::yield();
 #endif
-		lock->lock();
+		pthread_mutex_lock(&lock->mutex);
+
+		lock->setCurrentLockHolder(currentThreadThread);
 	}
 
 	const auto end = lockAcquired(lock, "w");
@@ -244,20 +250,19 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) ACQUIRE() {
 
 	const auto start = lockAcquiring(lock, "w");
 
+	auto currentThreadLockHolder = lock->getLockHolderThread();
+
 	while (pthread_rwlock_trywrlock(&rwlock)) {
-#ifndef TRACE_LOCKS
-		//pthread_rwlock_unlock(&(lock->rwlock));
-		lock->unlock();
+		lock->clearCurrentLockHolder();
+
+		pthread_rwlock_unlock(&(lock->rwlock));
 
 #ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 		Thread::yield();
 #endif
-		//pthread_rwlock_wrlock(&(lock->rwlock));
-		lock->wlock();
-#else
-		lock->unlock();
-		lock->wlock();
-#endif
+		pthread_rwlock_wrlock(&(lock->rwlock));
+
+		lock->setCurrentLockHolder(currentThreadLockHolder);
 	}
 
 	const auto end = lockAcquired(lock, "w");
