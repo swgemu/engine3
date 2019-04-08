@@ -88,7 +88,7 @@ namespace sys {
 
 	template<class K, class V> class HashTable : public Variable {
 	    Entry<K,V>** table;
-		int tableLength;
+	    int tableLength;
 
 	    int count;
 
@@ -99,15 +99,15 @@ namespace sys {
 	    int modCount;
 
 	    virtual int hash(const K& key) const {
-	    	return TypeInfo<K>::hashCode(key);
+		    return TypeInfo<K>::hashCode(key);
 	    }
 
 	protected:
-		V nullValue;
+	    V nullValue;
 
 	public:
 	    HashTable();
-		HashTable(int initialCapacity);
+	    HashTable(int initialCapacity);
 	    HashTable(int initialCapacity, float loadFactor);
 
 	    HashTable(const HashTable<K, V>& table);
@@ -157,15 +157,15 @@ namespace sys {
 	protected:
 	    void init(int initialCapacity, float loadFactor);
 
-	   	void rehash();
+	    void rehash();
 
 	public:
-	 	inline int size() const {
-			return count;
+	    inline int size() const {
+		    return count;
 	    }
 
 	    inline bool isEmpty() const {
-			return count == 0;
+		    return count == 0;
 	    }
 
 	    inline void setNullValue(const V& val) {
@@ -341,14 +341,14 @@ namespace sys {
 		table = newMap;
 
 		for (int i = oldCapacity; i-- > 0 ;) {
-	    	for (Entry<K,V>* old = oldMap[i]; old != nullptr ;) {
+			for (Entry<K,V>* old = oldMap[i]; old != nullptr ;) {
 				Entry<K,V>* e = old;
 				old = old->next;
 
 				int index = (e->hash & 0x7FFFFFFF) % newCapacity;
 				e->next = newMap[index];
 				newMap[index] = e;
-	    	}
+			}
 		}
 
 		tableLength = newCapacity;
@@ -429,9 +429,9 @@ namespace sys {
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
 		for (Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
-	    	if ((e->hash == hashCode) && e->key == key) {
+			if ((e->hash == hashCode) && e->key == key) {
 				return e->value;
-	    	}
+			}
 		}
 
 		return nullValue;
@@ -461,9 +461,9 @@ namespace sys {
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
 		for (Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
-		    if ((e->hash == hashCode) && e->key == key) {
+			if ((e->hash == hashCode) && e->key == key) {
 				return true;
-	    	}
+			}
 		}
 
 		return false;
@@ -497,11 +497,11 @@ namespace sys {
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
 		for (Entry<K,V> *e = table[index], *prev = nullptr; e != nullptr; prev = e, e = e->next) {
-	    	if ((e->hash == hashCode) && e->key == key) {
+			if ((e->hash == hashCode) && e->key == key) {
 				if (prev != nullptr)
-			    	prev->next = e->next;
+					prev->next = e->next;
 				else
-		    		table[index] = e->next;
+					table[index] = e->next;
 
 				count--;
 				V oldValue = e->value;
@@ -510,7 +510,7 @@ namespace sys {
 				delete e;
 
 				return oldValue;
-	    	}
+			}
 		}
 
 		return nullValue;
@@ -621,12 +621,7 @@ namespace sys {
 			V value;
 
 			if (TypeInfo<K>::parseFromBinaryStream(&key, stream) && TypeInfo<V>::parseFromBinaryStream(&value, stream)) {
-#ifdef CXX11_COMPILER
-				if (std::is_move_constructible<K>::value && std::is_move_constructible<V>::value)
-					HashTable<K, V>::put(std::move(key), std::move(value));
-				else
-#endif
-				HashTable<K, V>::put(key, value);
+				HashTable<K, V>::put(std::move(key), std::move(value));
 			}
 		}
 

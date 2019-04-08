@@ -66,6 +66,7 @@ namespace engine {
 		bool logTimeToFile;
 		bool logLevelToFile;
 		bool logJSON;
+		bool logToConsole;
 
 		//Mutex writeLock;
 
@@ -178,6 +179,10 @@ namespace engine {
 
 		inline void setGlobalLogging(bool doLog) {
 			doGlobalLog = doLog;
+		}
+
+		inline void setLogToConsole(bool doLog) {
+			logToConsole = doLog;
 		}
 
 		inline void setSyncFileLogging(bool val) {

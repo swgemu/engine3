@@ -24,6 +24,7 @@ Logger::Logger() {
 	logTimeToFile = true;
 	logLevelToFile = true;
 	logJSON = false;
+	logToConsole = true;
 }
 
 Logger::Logger(const char *s) {
@@ -37,6 +38,7 @@ Logger::Logger(const char *s) {
 	logTimeToFile = true;
 	logLevelToFile = true;
 	logJSON = false;
+	logToConsole = true;
 }
 
 Logger::Logger(const String& s) {
@@ -50,6 +52,7 @@ Logger::Logger(const String& s) {
 	logTimeToFile = true;
 	logLevelToFile = true;
 	logJSON = false;
+	logToConsole = true;
 }
 
 Logger::~Logger() {
@@ -99,13 +102,13 @@ void Logger::setFileLogger(const String& file, bool appendData) {
 }
 
 void Logger::closeGlobalFileLogger() {
+	FileWriter* globalLogFile = Logger::globalLogFile.compareAndSetReturnOld(Logger::globalLogFile.get(), nullptr);
+
 	if (globalLogFile != nullptr) {
 		globalLogFile->close();
 
 		delete globalLogFile->getFile();
-
 		delete globalLogFile;
-		globalLogFile = nullptr;
 	}
 }
 
@@ -121,7 +124,7 @@ void Logger::closeFileLogger() {
 }
 
 void Logger::info(const char *msg, bool forcedLog) const {
-	if (logLevel >= INFO || forcedLog) {
+	if ((logToConsole && logLevel >= INFO) || forcedLog) {
 		printTime(false);
 
 		System::out << " [" << name << "] " << msg << "\n";
@@ -235,12 +238,14 @@ void Logger::log(const StringBuffer& msg) const {
 }
 
 void Logger::error(const char* msg) const {
-	printTime(false);
+	if (logToConsole) {
+		printTime(false);
 
-	StringBuffer fullMessage;
-	System::out << " [" << name << "] ERROR - " << msg << "\n";
+		StringBuffer fullMessage;
+		System::out << " [" << name << "] ERROR - " << msg << "\n";
 
-	System::out << fullMessage;
+		System::out << fullMessage;
+	}
 
 	log(msg, LogLevel::ERROR);
 }
@@ -278,7 +283,7 @@ void Logger::fatal(const StringBuffer& msg) const {
 
 #ifndef DISABLE_DEBUG_LOG
 void Logger::debug(const char* msg) const {
-	if (logLevel >= DEBUG) {
+	if (logToConsole && logLevel >= DEBUG) {
 		printTime(false);
 
 		StringBuffer fullMessage;
@@ -302,12 +307,14 @@ void Logger::debug(const StringBuffer& msg) const {
 #endif
 
 void Logger::warning(const char* msg) const {
-	printTime(false);
+	if (logToConsole) {
+		printTime(false);
 
-	StringBuffer fullMessage;
-	fullMessage << " [" << name << "] WARNING - " << msg << "\n";
+		StringBuffer fullMessage;
+		fullMessage << " [" << name << "] WARNING - " << msg << "\n";
 
-	System::out << fullMessage;
+		System::out << fullMessage;
+	}
 
 	log(msg, LogLevel::WARNING);
 }
