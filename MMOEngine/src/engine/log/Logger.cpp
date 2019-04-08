@@ -102,9 +102,11 @@ void Logger::setFileLogger(const String& file, bool appendData) {
 }
 
 void Logger::closeGlobalFileLogger() {
-	FileWriter* globalLogFile = Logger::globalLogFile.compareAndSetReturnOld(Logger::globalLogFile.get(), nullptr);
+	auto globalLogFile = Logger::globalLogFile.get();
 
-	if (globalLogFile != nullptr) {
+	bool success = Logger::globalLogFile.compareAndSet(globalLogFile, nullptr);
+
+	if (success && globalLogFile != nullptr) {
 		globalLogFile->close();
 
 		delete globalLogFile->getFile();
