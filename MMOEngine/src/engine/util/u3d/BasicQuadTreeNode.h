@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * LightweightQuadTreeNode.h
  *
  *  Created on: 15 de ago. de 2015

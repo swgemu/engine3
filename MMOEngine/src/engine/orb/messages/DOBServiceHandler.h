@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * DistributedObjectBrokerServiceHandler.h
  *
  *  Created on: 03/07/2011

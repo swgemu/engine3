@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * DatabaseEntry.cpp
  *
  *  Created on: 14/02/2010

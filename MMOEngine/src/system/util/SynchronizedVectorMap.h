@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * SynchronizedVectorMap.h
  *
  *  Created on: 20/12/2013

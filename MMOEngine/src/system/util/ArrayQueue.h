@@ -1,3 +1,7 @@
+/*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
 #ifndef ARRAYQUEUE_H_
 #define ARRAYQUEUE_H_
 

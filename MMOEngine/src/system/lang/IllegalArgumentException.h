@@ -1,3 +1,7 @@
+/*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
 #ifndef ILLEGALARGUMENTEXCEPTION_H_
 #define ILLEGALARGUMENTEXCEPTION_H_
 

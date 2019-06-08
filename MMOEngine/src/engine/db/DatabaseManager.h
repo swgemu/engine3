@@ -1,3 +1,7 @@
+/*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
 #ifndef ENGINE_DB_DATABASEMANAGER_H_
 #define ENGINE_DB_DATABASEMANAGER_H_
 

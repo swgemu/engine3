@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2007 <SWGEmu>. All rights reserved.
-Distribution of this file for usage outside of Core3 is prohibited.
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
 */
 
 /*SynchronizedMessageQueue::SynchronizedMessageQueue(int capacity) : ArrayList<Message*>(capacity, 0), Logger("SynchronizedMessageQueue") {

@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * StrongAndWeakReferenceCount.h
  *
  *  Created on: 06/06/2012

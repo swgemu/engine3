@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * DOBObjectManager.cpp
  *
  *  Created on: 20/08/2009

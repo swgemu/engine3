@@ -1,5 +1,5 @@
-# Copyright (C) 2007 <SWGEmu>. All rights reserved.
-# Distribution of this file for usage outside of Core3 is prohibited.
+# Copyright (C) 2007-2019 SWGEmu
+# See file COPYING for copying conditions.
 
 if DEBUG
 AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual

@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * NetStatusResponseTask.h
  *
  *  Created on: 23/06/2012

@@ -1,11 +1,11 @@
-# Copyright (C) 2007 <SWGEmu>. All rights reserved.
-# Distribution of this file for usage outside of Core3 is prohibited.
+# Copyright (C) 2007-2019 SWGEmu
+# See file COPYING for copying conditions.
 
 IDLC = bin/idlc
 
 INSTALL_PATH = /usr/local/engine3
 
-ENGINE_PUB_PATH = /home/theanswer/git/PublicEngine/MMOEngine
+ENGINE_PUB_PATH = $(HOME)/workspace/PublicEngineTest/MMOEngine
 
 IDL_SOURCES = engine/core/ManagedObject.idl \
 			  engine/core/ManagedService.idl \

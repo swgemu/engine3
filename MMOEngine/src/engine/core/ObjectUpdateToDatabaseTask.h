@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * ObjectSaveToDatabaseTask.h
  *
  *  Created on: 16/08/2009

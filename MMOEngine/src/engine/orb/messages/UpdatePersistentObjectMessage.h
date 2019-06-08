@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * UpdatePersistentObjectMessage.h
  *
  *  Created on: 21/08/2009

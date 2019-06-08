@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * lru_cache_using_std_c98.h
  *
  *  Created on: 08/08/2015

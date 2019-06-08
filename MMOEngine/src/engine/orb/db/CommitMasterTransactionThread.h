@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * CommitMasterTransactionThread.h
  *
  *  Created on: 18/02/2012

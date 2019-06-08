@@ -1,3 +1,7 @@
+/*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
 #include "Stream.h"
 
 Stream::Stream() : ArrayList<char>(5, 5) {

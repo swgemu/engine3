@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * SynchronizedLRUCache.h
  *
  *  Created on: 08/08/2015

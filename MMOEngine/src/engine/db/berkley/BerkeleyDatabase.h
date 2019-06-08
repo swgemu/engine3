@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * BerkeleyDatabase.h
  *
  *  Created on: 13/02/2010

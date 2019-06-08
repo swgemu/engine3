@@ -1,3 +1,7 @@
+/*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
 
 /*
 inline MTRand::MTRand(const MTRand::uint32& oneSeed) {

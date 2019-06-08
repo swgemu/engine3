@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * ObjectDatabaseManager.cpp
  *
  *  Created on: 12/11/2010

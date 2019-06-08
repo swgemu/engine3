@@ -1,4 +1,8 @@
 /*
+** Copyright (C) 2007-2019 SWGEmu
+** See file COPYING for copying conditions.
+*/
+/*
  * ObjectUpdateToDatabaseTask.cpp
  *
  *  Created on: 05/10/2009
