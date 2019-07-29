@@ -20,7 +20,7 @@ namespace engine {
 	class TaskScheduler;
 	class Task;
 
-	class TaskManagerImpl : public TaskManager, public Mutex, public Logger {
+	class TaskManagerImpl : public TaskManager, public ReadWriteLock, public Logger {
 		Vector<TaskQueue*> taskQueues;
 
 		Vector<Reference<TaskWorkerThread*> > workers;

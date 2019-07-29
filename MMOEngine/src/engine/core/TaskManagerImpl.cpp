@@ -24,7 +24,7 @@ int TaskManagerImpl::DEFAULT_WORKER_THREADS_PER_QUEUE = 0; //
 int TaskManagerImpl::DEFAULT_SCHEDULER_THREADS = 0;
 int TaskManagerImpl::DEFAULT_IO_SCHEDULERS = 0;
 
-TaskManagerImpl::TaskManagerImpl() : Mutex("TaskManager"), Logger("TaskManager") {
+TaskManagerImpl::TaskManagerImpl() : ReadWriteLock("TaskManager"), Logger("TaskManager") {
 	shuttingDown = false;
 
 #ifdef WITH_STM
@@ -465,7 +465,7 @@ void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
 	if (shuttingDown)
 		return;
 
-	Locker locker(this);
+	ReadLocker locker(this);
 
 	if (task->isScheduled()) {
 #ifdef TRACE_TASKS
@@ -493,7 +493,7 @@ void TaskManagerImpl::scheduleIoTask(Task* task, const Time& time) {
 	if (shuttingDown)
 		return;
 
-	Locker locker(this);
+	ReadLocker locker(this);
 
 	if (task->isScheduled()) {
 #ifdef TRACE_TASKS
@@ -521,7 +521,7 @@ void TaskManagerImpl::scheduleTask(Task* task, uint64 delay) {
 	if (shuttingDown)
 		return;
 
-	Locker locker(this);
+	ReadLocker locker(this);
 
 	if (task->isScheduled()) {
 	#ifdef TRACE_TASKS
@@ -545,7 +545,7 @@ void TaskManagerImpl::scheduleTask(Task* task, const Time& time) {
 	if (shuttingDown)
 		return;
 
-	Locker locker(this);
+	ReadLocker locker(this);
 
 	if (task->isScheduled()) {
 	#ifdef TRACE_TASKS
@@ -606,7 +606,7 @@ void TaskManagerImpl::rescheduleTask(Task* task, const Time& time) {
 }
 
 bool TaskManagerImpl::cancelTask(Task* task) {
-	Locker locker(this);
+	ReadLocker locker(this);
 
 	if (!task->isScheduled())
 		return false;
@@ -729,7 +729,7 @@ void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
 
 
 String TaskManagerImpl::getInfo(bool print) {
-	Locker guard(this);
+	ReadLocker guard(this);
 
 	StringBuffer msg;
 //	msg << "executing tasks - " << getExecutingTaskSize();
