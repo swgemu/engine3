@@ -18,6 +18,10 @@ File::File(const String& pathname) {
 	permissions = 0444;
 }
 
+File::~File() {
+	close();
+}
+
 bool File::open(int access) {
 	String modestr = getModeString(mode, access);
 
@@ -32,7 +36,15 @@ bool File::open(int access) {
 }
 
 bool File::close() {
-	return fclose(fileDescriptor) == 0;
+	if (!fileDescriptor) {
+		return true;
+	}
+
+	bool res = fclose(fileDescriptor) == 0;
+
+	fileDescriptor = nullptr;
+
+	return res;
 }
 
 bool File::deleteFile() {
@@ -51,7 +63,7 @@ FILE* File::getDescriptor() const {
 	return fileDescriptor;
 }
 
-String File::getModeString(int mode, int access) {
+String File::getModeString(int mode, int access) const {
 	String str;
 
 	switch (access) {

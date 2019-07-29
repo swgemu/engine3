@@ -32,7 +32,7 @@ namespace sys {
   		void close() {
   			validateWriteable();
 
-  			file->flush();
+  			//file->flush(); close already does flush internally
 
   			file->close();
   		}

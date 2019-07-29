@@ -36,6 +36,7 @@ namespace sys {
 
 	public:
 		File(const String& pathname);
+		~File();
 
 		bool close();
 
@@ -60,11 +61,11 @@ namespace sys {
   		bool setAppendable();
 
 		// getters
-		inline bool exists() {
+		inline bool exists() const {
 			return fileDescriptor != nullptr;
 		}
 
-		inline const String& getName() {
+		inline const String& getName() const {
 			return name;
 		}
 
@@ -78,7 +79,7 @@ namespace sys {
 
 		static bool doMkdir(const char* path, int mode);
 
-		String getModeString(int mode, int access);
+		String getModeString(int mode, int access) const;
 	};
 
   } // namespace io
