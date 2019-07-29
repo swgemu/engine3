@@ -606,7 +606,7 @@ void TaskManagerImpl::rescheduleTask(Task* task, const Time& time) {
 }
 
 bool TaskManagerImpl::cancelTask(Task* task) {
-	ReadLocker locker(this);
+	Locker locker(this);
 
 	if (!task->isScheduled())
 		return false;
