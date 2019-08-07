@@ -33,7 +33,7 @@ namespace LD3Ns {
 
 int LocalDatabase::DEADLOCK_MAX_RETRIES = 1000;
 
-LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression) :
+LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression, DatabaseType databaseType) :
 		objectsDatabase() {
 	environment = dbEnv->getBerkeleyEnvironment();
 
@@ -46,6 +46,7 @@ LocalDatabase::LocalDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 	objectsDatabase = nullptr;
 
 	this->compression = compression;
+	this->dbType = databaseType;
 
 	//setFileLogger("log/berkeley.log");
 
@@ -64,9 +65,25 @@ engine::db::berkley::BerkeleyDatabase* LocalDatabase::getDatabaseHandle() {
 		if (!LD3Ns::shutdown) {
 			openDatabase();
 		}
+
+		db = objectsDatabase.get();
+	} else {
+		auto last = lastAssociation.get();
+		auto latest = associations.get();
+
+		if (!LD3Ns::shutdown && (last != latest)) {
+			for (uint64 i = last; i < latest; i++) {
+				auto& index = secondaryIndexes.get(i);
+
+				fatal(db->associate(nullptr, index.first->getDatabaseHandle(), index.second,
+				     DB_CREATE) == 0, "error could not associate secondary index");
+			}
+
+			lastAssociation.set(latest);
+		}
 	}
 
-	return objectsDatabase.get();
+	return db;
 }
 
 void LocalDatabase::openDatabase() {
@@ -88,7 +105,7 @@ void LocalDatabase::openDatabase() {
 		  DB_UNKNOWN=5
 		  } DBTYPE;*/
 
-		config.setType(static_cast<DBTYPE>(Core::getIntProperty("BerkeleyDB.type", static_cast<int>(DatabaseType::HASH))));
+		config.setType(static_cast<DBTYPE>(Core::getIntProperty("BerkeleyDB.type", static_cast<int>(berkley::DatabaseType::HASH))));
 		static const bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
 		config.setReadUncommited(!mvcc);
 		config.setMultiVersionConcurrencyControl(mvcc);
@@ -97,7 +114,14 @@ void LocalDatabase::openDatabase() {
 		return config;
 	} ();
 
-	LocalDatabase::openDatabase(config);
+	DatabaseConfig copy = config;
+
+	if (dbType == INDEXDATABASE) {
+		copy.setType(DB_BTREE);
+		copy.setDuplicates(true);
+	}
+
+	LocalDatabase::openDatabase(copy);
 }
 
 int LocalDatabase::sync() {
@@ -134,15 +158,26 @@ void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 	try {
 		Transaction* transaction = environment->beginTransaction(nullptr);
 
-		objectsDatabase.set(environment->openDatabase(transaction, databaseFileName, "", config));
+		//info("opening database type: " + String::valueOf(static_cast<int>(config.getDatabaseType())), true);
+
+		auto db = environment->openDatabase(transaction, databaseFileName, "", config);
+
+		fatal(db, "could not open database " + databaseFileName);
+
+		objectsDatabase.set(db);
+
+		for (auto& index : secondaryIndexes) {
+			fatal(db->associate(transaction, index.first->getDatabaseHandle(), index.second,
+			     DB_CREATE) == 0, "error could not associate secondary index");
+		}
 
 		int ret = 0;
 
 		if ((ret = transaction->commit()) != 0) {
-			error((db_strerror(ret)));
+			fatal((db_strerror(ret)));
 		}
 
-
+		lastAssociation.set(secondaryIndexes.size());
 	} catch (Exception& e) {
 		fatal(e.getMessage());
 	}
@@ -427,6 +462,34 @@ int LocalDatabase::tryDeleteData(Stream* inputKey, engine::db::berkley::Transact
 	ret = getDatabaseHandle()->del(transaction, &key);
 
 	return ret;
+}
+
+void LocalDatabase::reloadParentAssociation() {
+	if (parentDatabase) {
+		parentDatabase->getDatabaseHandle();
+	}
+}
+
+void LocalDatabase::associate(LocalDatabase* secondaryDB, int (*callback)(DB *secondary,
+			    const DBT *key, const DBT *data, DBT *result)) {
+	for (auto& index : secondaryIndexes) {
+		if (index.first == secondaryDB) {
+			return;
+		}
+	}
+
+	secondaryDB->setParentDatabase(this);
+	secondaryIndexes.add(IndexEntry({secondaryDB, callback}));
+
+	auto val = associations.increment();
+	auto db = objectsDatabase.get();
+
+	if (db != nullptr) {
+		fatal(db->associate(nullptr, secondaryDB->getDatabaseHandle(), callback,
+			     DB_CREATE) == 0, "error could not associate secondary index");
+
+		lastAssociation.set(val);
+	}
 }
 
 LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database)

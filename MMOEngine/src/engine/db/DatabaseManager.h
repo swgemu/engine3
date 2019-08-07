@@ -14,6 +14,7 @@
 #include "engine/util/Singleton.h"
 
 #include "ObjectDatabase.h"
+#include "IndexDatabase.h"
 
 #include "berkley/Environment.h"
 
@@ -161,8 +162,6 @@ namespace engine {
 		const static uint64 VERSIONKEY = uint64((uint64)0xFFFFFFFF << 32) + 0xFFFFFFFE;
 		const static uint64 MANAGED_OBJECTS_HASHCODE_MEMBERS = uint64((uint64)0xFFFFFFFF << 32) + 0xFFFFFFFD;
 		const static uint64 COMPRESSION_FLAG = 0x80000000;
-		const static uint32 LOCALDATABASE = 1;
-		const static uint32 OBJECTDATABASE = 2;
 
 		static uint64 MAX_CACHE_SIZE; // max in ram cache per thread
 		static bool CONVERT_DATABASES;
@@ -172,7 +171,7 @@ namespace engine {
 		void closeEnvironment();
 
 	protected:
-		LocalDatabase* instantiateDatabase(const String& name, bool create, uint16 uniqueID, bool objectDatabase, bool compression);
+		LocalDatabase* instantiateDatabase(const String& name, bool create, uint16 uniqueID, LocalDatabase::DatabaseType dbType, bool compression);
 
 	public:
 		DatabaseManager();
@@ -187,7 +186,8 @@ namespace engine {
 		 * @param create create if no database exists with specified uniqueID/name pair
 		 * @param uniqueID if not specified, uniqueID will be set to name.hashCode()
 		 */
-		LocalDatabase* loadLocalDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF, bool compression = true);
+		LocalDatabase* loadLocalDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF, bool compression = true,
+			       	LocalDatabase::DatabaseType dbType = LocalDatabase::DatabaseType::LOCALDATABASE);
 
 		void checkpoint();
 

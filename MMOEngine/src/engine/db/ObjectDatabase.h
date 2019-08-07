@@ -21,10 +21,11 @@ namespace engine {
 	class ObjectDatabase : public LocalDatabase {
 	protected:
 		ObjectDatabase() {
+			dbType = LocalDatabase::OBJECTDATABASE;
 		}
 
 	public:
-		ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression);
+		ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression, DatabaseType databaseType = LocalDatabase::OBJECTDATABASE);
 
 		int getData(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false, bool readThreadLocalTransaction = false);
 		int getDataNoTx(uint64 objKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);

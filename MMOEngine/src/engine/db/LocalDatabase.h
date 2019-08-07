@@ -12,7 +12,11 @@
 #ifndef LOCALDATABASE_H_
 #define LOCALDATABASE_H_
 
+#include <functional>
+#include <map>
+
 #include "system/lang.h"
+#include "system/thread/atomic/AtomicInteger.h"
 
 #include "engine/log/Logger.h"
 
@@ -24,13 +28,31 @@ namespace engine {
  class DatabaseManager;
 
  class LocalDatabase : public Logger {
+ public:
+	 enum DatabaseType {LOCALDATABASE = 1, OBJECTDATABASE, INDEXDATABASE};
+
  protected:
 	 ThreadLocal<engine::db::berkley::BerkeleyDatabase*> objectsDatabase;
+	 LocalDatabase* parentDatabase = nullptr;
+
 	 engine::db::berkley::Environment* environment;
 
 	 String databaseFileName;
 
 	 bool compression;
+
+	 DatabaseType dbType = LOCALDATABASE;
+
+	 class IndexEntry {
+	 public:
+		LocalDatabase* first;
+		int(*second) (DB*, const DBT*, const DBT*, DBT*);
+	 };
+
+	 ArrayList<IndexEntry> secondaryIndexes;
+
+	 AtomicInteger associations;
+	 ThreadLocal<uint64> lastAssociation;
 
  protected:
 	 virtual void closeDatabase();
@@ -45,7 +67,7 @@ namespace engine {
  public:
 	 static int DEADLOCK_MAX_RETRIES;
 
-	 LocalDatabase(engine::db::DatabaseManager* dbEnv, const String& dbFileName, bool compression);
+	 LocalDatabase(engine::db::DatabaseManager* dbEnv, const String& dbFileName, bool compression, DatabaseType databaseType = LOCALDATABASE);
 	 virtual ~LocalDatabase();
 
 	 int getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
@@ -64,12 +86,29 @@ namespace engine {
 
 	 void compressDatabaseEntries(engine::db::berkley::Transaction* transaction);
 
+	 void associate(LocalDatabase* secondaryDB, int (*callback)(DB *secondary,
+				     const DBT *key, const DBT *data, DBT *result));
+
 	 static void uncompress(void* data, uint64 size, ObjectInputStream* decompressedData);
 	 static Stream* compress(Stream* data);
 
 	 virtual bool isObjectDatabase() const {
 		 return false;
 	 }
+
+	 virtual bool isIndexDatabase() const {
+	 	return false;
+	 }
+
+	 DatabaseType getDatabaseType() {
+	 	return dbType;
+	 }
+
+	 void setParentDatabase(LocalDatabase* database) {
+	 	parentDatabase = database;
+	 }
+
+	 void reloadParentAssociation();
 
 	 engine::db::berkley::BerkeleyDatabase* getDatabaseHandle();
 

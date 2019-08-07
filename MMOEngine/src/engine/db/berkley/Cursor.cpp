@@ -72,6 +72,10 @@ int Cursor::getRecordNumber(DatabaseEntry* data, uint32 lockMode) {
 	return dbc->get(dbc, nullptr, data->getDBT(), DB_GET_RECNO | lockMode);
 }
 
+int Cursor::pget(DatabaseEntry* key, DatabaseEntry* primaryKey, DatabaseEntry* data, uint32 flags) {
+	return dbc->pget(dbc, key->getDBT(), primaryKey->getDBT(), data->getDBT(), flags);
+}
+
 int Cursor::put(DatabaseEntry* key, DatabaseEntry* data, uint32 flags) {
 	return dbc->put(dbc, key->getDBT(), data->getDBT(), flags);
 }

@@ -42,6 +42,7 @@ namespace engine {
 	class DatabaseConfig {
 		uint32 databaseFlags;
 		DBTYPE databaseType;
+		bool duplicates;
 
 	public:
 		static DatabaseConfig DEFAULT;
@@ -50,6 +51,7 @@ namespace engine {
 		DatabaseConfig() {
 			databaseFlags = 0;
 			databaseType = DatabaseType::UNKNOWN;
+			duplicates = false;
 		}
 
 		void setAllowCreate(bool allowCreate) {
@@ -64,6 +66,10 @@ namespace engine {
 				databaseFlags &= ~DB_RDONLY;
 			else
 				databaseFlags |= DB_RDONLY;
+		}
+
+		void setDuplicates(bool val) {
+			duplicates = val;
 		}
 
 		/**
@@ -108,6 +114,10 @@ namespace engine {
 
 		inline DBTYPE getDatabaseType() const {
 			return databaseType;
+		}
+
+		inline bool hasDuplicates() const {
+			return duplicates;
 		}
 
 	};

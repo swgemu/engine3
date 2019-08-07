@@ -178,15 +178,22 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 
 			bool compressionFlag = tableType & COMPRESSION_FLAG;
 
-			if ((tableType & 0x7FFFFFFF) == LOCALDATABASE) {
+			if ((tableType & 0x7FFFFFFF) == LocalDatabase::LOCALDATABASE) {
 				db = new LocalDatabase(this, String(dbName + ".db"), compressionFlag);
 
 				if (truncateDatabases)
 					msg << "truncating local database: ";
 				else
 					msg << "loading local database: ";
-			} else {
+			} else if ((tableType & 0x7FFFFFFF) == LocalDatabase::OBJECTDATABASE) {
 				db = new ObjectDatabase(this, String(dbName + ".db"), compressionFlag);
+
+				if (truncateDatabases)
+					msg << "truncating local database: ";
+				else
+					msg << "loading object database: ";
+			} else if ((tableType & 0x7FFFFFFF) == LocalDatabase::INDEXDATABASE) {
+				db = new IndexDatabase(this, String(dbName + ".db"), compressionFlag);
 
 				if (truncateDatabases)
 					msg << "truncating local database: ";
@@ -326,7 +333,8 @@ void DatabaseManager::closeDatabases() {
 	loaded = false;
 }
 
-LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool create, uint16 uniqueID, bool objectDatabase, bool compression) {
+LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool create, uint16 uniqueID,
+		LocalDatabase::DatabaseType dbType, bool compression) {
 	Locker _locker(this);
 
 	if (uniqueID == 0xFFFF)
@@ -343,10 +351,19 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 	if (uniqueID == 0xFFFF)
 		uniqueID = ++lastTableID;
 
-	if (objectDatabase)
-		db = new ObjectDatabase(this, String(name + ".db"), compression);
-	else
-		db = new LocalDatabase(this, String(name + ".db"), compression);
+	switch (dbType) {
+		case LocalDatabase::LOCALDATABASE:
+			db = new LocalDatabase(this, String(name + ".db"), compression);
+			break;
+		case LocalDatabase::OBJECTDATABASE:
+			db = new ObjectDatabase(this, String(name + ".db"), compression);
+			break;
+		case LocalDatabase::INDEXDATABASE:
+			db = new IndexDatabase(this, String(name + ".db"), compression);
+			break;
+		default:
+			error("unkown database type for: " + name);
+	}
 
 	StringBuffer msg;
 	msg << "trying to create database " << name << " with id 0x" << hex << uniqueID;
@@ -363,10 +380,17 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 
 	uint64 fullKey = 0;
 
-	if (objectDatabase)
-		fullKey += OBJECTDATABASE;
-	else
-		fullKey += LOCALDATABASE;
+	switch (dbType) {
+		case LocalDatabase::LOCALDATABASE:
+			fullKey += LocalDatabase::LOCALDATABASE;
+			break;
+		case LocalDatabase::OBJECTDATABASE:
+			fullKey += LocalDatabase::OBJECTDATABASE;
+			break;
+		case LocalDatabase::INDEXDATABASE:
+			fullKey += LocalDatabase::INDEXDATABASE;
+			break;
+	}
 
 	if (compression)
 		fullKey |= COMPRESSION_FLAG;
@@ -384,8 +408,8 @@ LocalDatabase* DatabaseManager::instantiateDatabase(const String& name, bool cre
 	return db;
 }
 
-LocalDatabase* DatabaseManager::loadLocalDatabase(const String& name, bool create, uint16 uniqueID, bool compression) {
-	return instantiateDatabase(name, create, uniqueID, false, compression);
+LocalDatabase* DatabaseManager::loadLocalDatabase(const String& name, bool create, uint16 uniqueID, bool compression, LocalDatabase::DatabaseType dbType) {
+	return instantiateDatabase(name, create, uniqueID, dbType, compression);
 }
 
 engine::db::berkley::Transaction* DatabaseManager::getReadLocalTransaction(bool abortPrevious) {
@@ -752,10 +776,17 @@ int DatabaseManager::compressDatabase(const String& name, engine::db::berkley::T
 
 	uint64 fullKey = 0;
 
-	if (database->isObjectDatabase())
-		fullKey += OBJECTDATABASE;
-	else
-		fullKey += LOCALDATABASE;
+	switch (database->getDatabaseType()) {
+		case LocalDatabase::LOCALDATABASE:
+			fullKey += LocalDatabase::LOCALDATABASE;
+			break;
+		case LocalDatabase::OBJECTDATABASE:
+			fullKey += LocalDatabase::OBJECTDATABASE;
+			break;
+		case LocalDatabase::INDEXDATABASE:
+			fullKey += LocalDatabase::INDEXDATABASE;
+			break;
+	}
 
 	fullKey = fullKey << 32;
 	fullKey += id;
@@ -767,10 +798,17 @@ int DatabaseManager::compressDatabase(const String& name, engine::db::berkley::T
 
 	fullKey = 0;
 
-	if (database->isObjectDatabase())
-		fullKey += OBJECTDATABASE;
-	else
-		fullKey += LOCALDATABASE;
+	switch (database->getDatabaseType()) {
+		case LocalDatabase::LOCALDATABASE:
+			fullKey += LocalDatabase::LOCALDATABASE;
+			break;
+		case LocalDatabase::OBJECTDATABASE:
+			fullKey += LocalDatabase::OBJECTDATABASE;
+			break;
+		case LocalDatabase::INDEXDATABASE:
+			fullKey += LocalDatabase::INDEXDATABASE;
+			break;
+	}
 
 	fullKey |= COMPRESSION_FLAG;
 

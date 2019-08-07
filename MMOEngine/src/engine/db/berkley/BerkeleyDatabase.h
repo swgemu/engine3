@@ -49,6 +49,8 @@ namespace engine {
 		 * Retrieves the key/data pair with the given key.
 		 */
 		int get(Transaction* txn, DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode = LockMode::DEFAULT);
+		int getMultiple(Transaction* txn, DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode = LockMode::DEFAULT);
+		int pGetMultiple(Transaction* txn, DatabaseEntry* key, DatabaseEntry* primaryKey, DatabaseEntry* data, uint32 lockMode = LockMode::DEFAULT);
 
 		/**
 		 * Store the key/data pair into the database.
@@ -85,6 +87,9 @@ namespace engine {
 		 */
 		int compact(Transaction* txn, DB_COMPACT* compactData, uint32 flags);
 
+		int associate(Transaction* txn, BerkeleyDatabase* secondary, int (*callback)(DB *secondary,
+					    const DBT *key, const DBT *data, DBT *result), u_int32_t flags);
+
 		/**
 		 * Returns number of unique keys, returns 0 if it was never calculated
 		 */
@@ -104,7 +109,11 @@ namespace engine {
 
 		inline Environment* getEnvironment() const {
 			return environment;
-		 }
+		}
+
+		inline DB* getDatabaseHandle() const {
+			return dbp;
+		}
 
 		friend class Environment;
 	};

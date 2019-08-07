@@ -37,6 +37,10 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 	dbp->set_pagesize(dbp, pageSize);
 	dbp->set_flags(dbp, DB_CHKSUM);
 
+	if (databaseConfig.hasDuplicates()) {
+		dbp->set_flags(dbp, DB_DUP | DB_DUPSORT);
+	}
+
 	ret = dbp->open(dbp,        /* DB structure pointer */
 			nullptr,       /* Transaction pointer */
 			filename.toCharArray(), /* On-disk file that holds the database. */
@@ -77,6 +81,10 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 	dbp->set_pagesize(dbp, pageSize);
 	dbp->set_flags(dbp, DB_CHKSUM);
 
+	if (databaseConfig.hasDuplicates()) {
+		dbp->set_flags(dbp, DB_DUP | DB_DUPSORT);
+	}
+
 	ret = dbp->open(dbp,        /* DB structure pointer */
 			transaction,       /* Transaction pointer */
 			filename.toCharArray(), /* On-disk file that holds the database. */
@@ -110,6 +118,24 @@ int BerkeleyDatabase::get(Transaction* txn, DatabaseEntry* key, DatabaseEntry* d
 		transaction = txn->getDBTXN();
 
 	return dbp->get(dbp, transaction, key->getDBT(), data->getDBT(), lockMode);
+}
+
+int BerkeleyDatabase::getMultiple(Transaction* txn, DatabaseEntry* key, DatabaseEntry* data, uint32 lockMode) {
+	DB_TXN* transaction = nullptr;
+
+	if (txn != nullptr)
+		transaction = txn->getDBTXN();
+
+	return dbp->get(dbp, transaction, key->getDBT(), data->getDBT(), lockMode | DB_MULTIPLE);
+}
+
+int BerkeleyDatabase::pGetMultiple(Transaction* txn, DatabaseEntry* key, DatabaseEntry* primaryKey, DatabaseEntry* data, uint32 lockMode) {
+	DB_TXN* transaction = nullptr;
+
+	if (txn != nullptr)
+		transaction = txn->getDBTXN();
+
+	return dbp->pget(dbp, transaction, key->getDBT(), primaryKey->getDBT(), data->getDBT(), lockMode | DB_MULTIPLE);
 }
 
 int BerkeleyDatabase::put(Transaction* txn, DatabaseEntry* key, DatabaseEntry* data) {
@@ -262,4 +288,11 @@ uint64 BerkeleyDatabase::count(bool forceCalculation, Transaction* txn) {
 	}
 
 	return -1;
+}
+
+int BerkeleyDatabase::associate(Transaction* txn, BerkeleyDatabase* secondary, int (*callback)(DB *secondary,
+				    const DBT *key, const DBT *data, DBT *result), u_int32_t flags) {
+	//Logger::console.info("associating db", true);
+
+	return dbp->associate(dbp, txn ? txn->getDBTXN() : nullptr, secondary->getDatabaseHandle(), callback, flags);
 }
