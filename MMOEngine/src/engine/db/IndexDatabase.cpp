@@ -27,8 +27,8 @@ IndexDatabase::IndexDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 	try {
 		Locker locker(&berkley::Environment::guard);
 
-		searchID = key;
-		searchKey.setData(&searchID, sizeof(uint64));
+		berkley::DatabaseEntry searchKey;
+		searchKey.setData(&key, sizeof(uint64));
 
 		if (cursor->pGetSet(&searchKey, &this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
@@ -61,9 +61,8 @@ IndexDatabase::IndexDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 	try {
 		Locker locker(&berkley::Environment::guard);
 
-		//berkley::DatabaseEntry searchKey;
-		searchID = key;
-		searchKey.setData(&searchID, sizeof(uint64));
+		berkley::DatabaseEntry searchKey;
+		searchKey.setData(&key, sizeof(uint64));
 
 		if (cursor->pGetNextDup(&searchKey, &this->key, &this->data, lockMode) != 0) {
 			/*this->key.setData(nullptr, 0);
@@ -75,12 +74,14 @@ IndexDatabase::IndexDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 
 		primaryKey = *reinterpret_cast<uint64*>(this->key.getData());
 
-		if (!localDatabase->hasCompressionEnabled() || compressed)
-			data->writeStream((char*)this->data.getData(), this->data.getSize());
-		else
-			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
+		if (data) {
+			if (!localDatabase->hasCompressionEnabled() || compressed)
+				data->writeStream((char*)this->data.getData(), this->data.getSize());
+			else
+				LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
 
-		data->reset();
+			data->reset();
+		}
 	} catch (...) {
 		error("unreported exception caught in IndexDatabaseIterator::getNextKeyAndValue(uint64& key, String& data)");
 	}

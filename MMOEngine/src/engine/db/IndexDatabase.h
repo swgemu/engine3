@@ -35,10 +35,6 @@ namespace engine {
 	};
 
 	class IndexDatabaseIterator : public LocalDatabaseIterator {
-	protected:
-		berkley::DatabaseEntry searchKey;
-		uint64 searchID = 0;
-
 	public:
 		IndexDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database)
 			: LocalDatabaseIterator(transaction, database) {
