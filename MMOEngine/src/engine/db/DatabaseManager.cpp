@@ -412,6 +412,10 @@ LocalDatabase* DatabaseManager::loadLocalDatabase(const String& name, bool creat
 	return instantiateDatabase(name, create, uniqueID, dbType, compression);
 }
 
+IndexDatabase* DatabaseManager::loadIndexDatabase(const String& name, bool create, uint16 uniqueID, bool compression) {
+	return dynamic_cast<IndexDatabase*>(instantiateDatabase(name, create, uniqueID, LocalDatabase::DatabaseType::INDEXDATABASE, compression));
+}
+
 engine::db::berkley::Transaction* DatabaseManager::getReadLocalTransaction(bool abortPrevious) {
 	if (!loaded)
 		return nullptr;
@@ -429,7 +433,6 @@ engine::db::berkley::Transaction* DatabaseManager::getReadLocalTransaction(bool 
 
 		return config;
 	} ();
-
 
 	auto transaction = readLocalTransaction.get();
 

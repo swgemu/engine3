@@ -189,6 +189,8 @@ namespace engine {
 		LocalDatabase* loadLocalDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF, bool compression = true,
 			       	LocalDatabase::DatabaseType dbType = LocalDatabase::DatabaseType::LOCALDATABASE);
 
+		IndexDatabase* loadIndexDatabase(const String& name, bool create, uint16 uniqueID = 0xFFFF, bool compression = true);
+
 		void checkpoint();
 
 		void getDatabaseName(uint16 tableID, String& name);

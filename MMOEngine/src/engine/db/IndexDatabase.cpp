@@ -26,8 +26,8 @@ IndexDatabase::IndexDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
 	       uint32 lockMode, bool compressed) {
 	try {
 		Locker locker(&berkley::Environment::guard);
-		searchID = key;
 
+		searchID = key;
 		searchKey.setData(&searchID, sizeof(uint64));
 
 		if (cursor->pGetSet(&searchKey, &this->key, &this->data, lockMode) != 0) {
