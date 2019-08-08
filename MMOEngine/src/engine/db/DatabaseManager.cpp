@@ -189,16 +189,16 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 				db = new ObjectDatabase(this, String(dbName + ".db"), compressionFlag);
 
 				if (truncateDatabases)
-					msg << "truncating local database: ";
+					msg << "truncating object database: ";
 				else
 					msg << "loading object database: ";
 			} else if ((tableType & 0x7FFFFFFF) == LocalDatabase::INDEXDATABASE) {
 				db = new IndexDatabase(this, String(dbName + ".db"), compressionFlag);
 
 				if (truncateDatabases)
-					msg << "truncating local database: ";
+					msg << "truncating index database: ";
 				else
-					msg << "loading object database: ";
+					msg << "loading index database: ";
 			}
 
 			msg << dbName << " with id 0x" << hex << (uint16)tableID;
