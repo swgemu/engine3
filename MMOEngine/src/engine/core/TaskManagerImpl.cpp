@@ -271,15 +271,13 @@ void TaskManagerImpl::initalizeDatabaseHandles() {
 	}
 }
 
-Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
+Vector<Pair<Locker*, TaskWorkerThread*>>* TaskManagerImpl::blockTaskManager() {
 	//Locker locker(this);
 
-	Vector<Locker*>* lockers = new Vector<Locker*>();
+	auto lockers = new Vector<Pair<Locker*, TaskWorkerThread*>>();
 
+	//signal pause
 	for (int i = 0; i < workers.size(); ++i) {
-//		if (i == 9 || i == 7) //mysql and bas packet handler workers should continue
-//			continue;
-
 		TaskWorkerThread* worker = workers.get(i);
 
 		if (!worker->doBlockWorkerDuringSave())
@@ -288,6 +286,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		worker->setPause(true);
 	}
 
+	//wait for stop
 	for (int i = 0; i < workers.size(); ++i) {
 		TaskWorkerThread* worker = workers.get(i);
 
@@ -297,7 +296,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		Mutex* blockMutex = worker->getBlockMutex();
 
 		Locker* locker = new Locker(blockMutex);
-		lockers->add(locker);
+		lockers->emplace(locker, worker);
 
 		worker->setPause(false);
 	}
@@ -314,12 +313,11 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		Mutex* blockMutex = scheduler->getBlockMutex();
 
 		Locker* locker = new Locker(blockMutex);
-		lockers->add(locker);
+		lockers->emplace(locker, nullptr);
 
 		scheduler->setPause(false);
 	}
 
-//#ifndef VERSION_PUBLIC
 	for (int i = 0; i < ioSchedulers.size(); ++i) {
 		TaskScheduler* scheduler = ioSchedulers.get(i);
 
@@ -332,18 +330,17 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		Mutex* blockMutex = scheduler->getBlockMutex();
 
 		Locker* locker = new Locker(blockMutex);
-		lockers->add(locker);
+		lockers->emplace(locker, nullptr);
 
 		scheduler->setPause(false);
 	}
-//#endif
 
 	return lockers;
 }
 
-void TaskManagerImpl::unblockTaskManager(Vector<Locker*>* lockers) {
+void TaskManagerImpl::unblockTaskManager(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers) {
 	for (int i = 0; i < lockers->size(); ++i)
-		delete lockers->get(i);
+		delete lockers->get(i).first;
 
 	lockers->removeAll();
 }
@@ -783,6 +780,14 @@ String TaskManagerImpl::getInfo(bool print) {
 		info(msg3);
 
 	StringBuffer msg4;
+
+	int totalModifiedCount = 0;
+
+	for (int i = 0; i < workers.size(); ++i) {
+		totalModifiedCount += workers.get(i)->getModifiedObjects();
+	}
+
+	msg4 << "total mod count: " << totalModifiedCount;
 
 #ifdef COLLECT_TASKSTATISTICS
 	for (int i = 0; i < workers.size(); ++i) {

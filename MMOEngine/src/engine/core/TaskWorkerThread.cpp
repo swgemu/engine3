@@ -55,6 +55,8 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 	totalBdbTime = 0;
 	totalBdbQueries = 0;
 
+	modifiedObjects.setNoDuplicateInsertPlan();
+
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;
 	totalBdbReadCount = 0;
@@ -77,6 +79,54 @@ void TaskWorkerThread::signalDBHandleInitialize() {
 	initializeDBHandles.set(true, std::memory_order_seq_cst);
 
 	queue->wake();
+}
+
+void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) {
+	static const uint64 slowTaskLogMs = Core::getIntProperty("TaskManager.slowTaskLogTimeMs", 40);
+	static const String slowTaskFilename = Core::getProperty("TaskManager.slowTaskLogFile", "");
+
+	auto elapsedTimeMs = elapsedTime / 1000000;
+
+	if (elapsedTimeMs < slowTaskLogMs) {
+		return;
+	}
+
+	static const auto ignoreTasks = Core::getPropertyVector("TaskManager.slowTaskLogIgnore");
+	const String taskNameString = taskName;
+
+	if (!ignoreTasks.contains(taskNameString)) {
+		StringBuffer stream;
+		stream << taskNameString << " took ";
+
+		if (elapsedTimeMs == 0) {
+			stream << elapsedTime << "ns";
+		} else {
+			stream << elapsedTimeMs << "ms";
+		}
+
+		stream << " from which waited on mutexes for " << mutexWaitTime << "ns";
+		stream << " to acquire " << mutexesAcquired << " locks";
+		stream << " and spent in bdb " << totalBdbTime << "ns";
+		stream << " for " << totalBdbQueries << " queries";
+
+		if (!slowTaskFilename.isEmpty()) {
+			static Logger customLogger = []() {
+				Logger log("SlowTaskLogger");
+
+				log.setGlobalLogging(false);
+				log.setFileLogger(slowTaskFilename, true);
+				log.setLogLevelToFile(false);
+
+				return log;
+			}();
+
+			stream << " in " << getLoggingName();
+
+			customLogger.log(stream.toString());
+		} else {
+			warning(stream.toString());
+		}
+	}
 }
 
 void TaskWorkerThread::run() {
@@ -109,6 +159,7 @@ void TaskWorkerThread::run() {
 		totalBdbTime = 0;
 		totalBdbQueries = 0;
 		mutexesAcquired = 0;
+	//	modifiedObjects.removeRange(0, modifiedObjects.size());
 
 		try {
 			currentTask = task;
@@ -131,48 +182,7 @@ void TaskWorkerThread::run() {
 		const char* taskName = task->getTaskName();
 
 		if (taskName && slowTaskLog) {
-			static const uint64 slowTaskLogMs = Core::getIntProperty("TaskManager.slowTaskLogTimeMs", 40);
-			static const String slowTaskFilename = Core::getProperty("TaskManager.slowTaskLogFile", "");
-			auto elapsedTimeMs = elapsedTime / 1000000;
-
-			if (elapsedTimeMs >= slowTaskLogMs) {
-				static const auto ignoreTasks = Core::getPropertyVector("TaskManager.slowTaskLogIgnore");
-				const String taskNameString = taskName;
-
-				if (!ignoreTasks.contains(taskNameString)) {
-					StringBuffer stream;
-					stream << taskNameString << " took ";
-
-				       	if (elapsedTimeMs == 0) {
-						stream << elapsedTime << "ns";
-					} else {
-						stream << elapsedTimeMs << "ms";
-					}
-
-					stream << " from which waited on mutexes for " << mutexWaitTime << "ns";
-					stream << " to acquire " << mutexesAcquired << " locks";
-					stream << " and spent in bdb " << totalBdbTime << "ns";
-					stream << " for " << totalBdbQueries << " queries";
-
-					if (!slowTaskFilename.isEmpty()) {
-						static Logger customLogger = []() {
-							Logger log("SlowTaskLogger");
-
-							log.setGlobalLogging(false);
-							log.setFileLogger(slowTaskFilename, true);
-							log.setLogLevelToFile(false);
-
-							return log;
-						}();
-
-						stream << " in " << getLoggingName();
-
-						customLogger.log(stream.toString());
-					} else {
-						warning(stream.toString());
-					}
-				}
-			}
+			logTask(taskName, elapsedTime);
 		}
 
 #ifdef COLLECT_TASKSTATISTICS

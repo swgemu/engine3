@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <chrono>
 
+#include "engine/core/TaskWorkerThread.h"
+
 #include "engine/orb/DistributedObjectBroker.h"
 
 #include "engine/service/proto/BaseProtocol.h"
@@ -313,13 +315,12 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 		return;
 	}
 
-	auto startBlock = std::chrono::high_resolution_clock::now();
+	Timer stopWaitTimer;
+	stopWaitTimer.start();
 
-	UniqueReference<Vector<Locker*>*> lockers(Core::getTaskManager()->blockTaskManager());
+	UniqueReference<Vector<Pair<Locker*, TaskWorkerThread*>>*> lockers(Core::getTaskManager()->blockTaskManager());
 
-	auto endBlock = std::chrono::high_resolution_clock::now();
-
-	uint64 durationOfBlocking = std::chrono::duration_cast<std::chrono::nanoseconds>(endBlock - startBlock).count();
+	uint64 durationOfBlocking = stopWaitTimer.stop();
 
 	info("waited task manager to stop for " + String::valueOf(durationOfBlocking) + " ns", true);
 
@@ -347,6 +348,12 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Vector<DistributedObject*> objectsToUpdate;
 	Vector<DistributedObject*> objectsToDelete;
 	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
+
+	for (auto& entry : *lockers.get()) {
+		if (entry.second != nullptr) {
+			entry.second->takeModifiedObjects();
+		}
+	}
 
 	Timer copy;
 	copy.start();

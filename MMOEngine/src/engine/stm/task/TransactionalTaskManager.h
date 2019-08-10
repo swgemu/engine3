@@ -46,8 +46,8 @@ namespace engine {
   		void rescheduleTask(Task* task, uint64 delay);
   		void rescheduleTask(Task* task, const Time& time);
 
-  		Vector<Locker*>* blockTaskManager();
-  		void unblockTaskManager(Vector<Locker*>* lockers);
+  		Vector<Pair<Locker*, TaskWorkerThread*>>* blockTaskManager();
+  		void unblockTaskManager(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers);
 
   		bool cancelTask(Task* task);
 

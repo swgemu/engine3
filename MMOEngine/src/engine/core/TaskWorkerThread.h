@@ -16,6 +16,7 @@ namespace engine {
 	class TaskManager;
 	class TaskQueue;
 	class Task;
+	class ManagedObject;
 
 	class TaskWorkerThread : public ServiceThread {
 		Mutex blockMutex;
@@ -33,6 +34,8 @@ namespace engine {
 		uint64 mutexesAcquired;
 		uint64 totalBdbTime;
 		uint64 totalBdbQueries;
+
+		SortedVector<void*> modifiedObjects;
 
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<String, RunStatistics> tasksStatistics;
@@ -85,9 +88,23 @@ namespace engine {
 
 		void setPause(bool val);
 
+		void logTask(const char* taskName, uint64 elapsedTime);
+
 		inline void addMutexWaitTime(uint64 time) {
 			mutexesAcquired++;
 			mutexWaitTime += time;
+		}
+
+		inline void addModifiedObject(ManagedObject* object) {
+			modifiedObjects.put(object);
+		}
+
+		SortedVector<void*> takeModifiedObjects() {
+			return std::move(modifiedObjects);
+		}
+
+		int getModifiedObjects() const {
+			return modifiedObjects.size();
 		}
 
 		void clearMutexWaitTime() {

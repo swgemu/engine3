@@ -25,7 +25,8 @@ ObjectHashTable::ObjectHashTable() : HashTable<uint64, DistributedObjectAdapter*
 ObjectHashTable::ObjectHashTable(int initialCapacity) : HashTable<uint64, DistributedObjectAdapter*>(initialCapacity) {
 }
 
-int ObjectHashTable::hash(const uint64& keyValue) const {
+int ObjectHashTable::hash(const uint64& keyValue) const { //actual uint64 hash function instead of the default PoS AtomicLong has
+							// that distributes the buckets evenly
 	uint64 key = keyValue;
 
 	key = (~key) + (key << 18); // key = (key << 18) - key - 1;
@@ -34,10 +35,11 @@ int ObjectHashTable::hash(const uint64& keyValue) const {
 	key = key ^ (key >> 11);
 	key = key + (key << 6);
 	key = key ^ (key >> 22);
+
 	return (int) key;
 }
 
-DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000){
+DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000) {
 }
 
 DistributedObjectDirectory::~DistributedObjectDirectory() {

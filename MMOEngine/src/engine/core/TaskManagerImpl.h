@@ -70,8 +70,8 @@ namespace engine {
 		void setStatsDTaskSampling(int val);
 		void setStatsDBdbSamplingRate(int val);
 
-		Vector<Locker*>* blockTaskManager();
-		void unblockTaskManager(Vector<Locker*>* lockers);
+		Vector<Pair<Locker*, TaskWorkerThread*>>* blockTaskManager();
+		void unblockTaskManager(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers);
 
 #ifdef WITH_STM
 		void retryTaskInSerial(Task* task);

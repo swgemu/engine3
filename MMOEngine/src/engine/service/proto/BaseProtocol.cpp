@@ -241,7 +241,7 @@ bool BaseProtocol::compress(Packet* pack) {
 	uint16 opcode = *(uint16*)pData;
 	uint16 crc = *(uint16*)(pData+nLength-2);
 
-	char *output = new char[nLength+20]; //size + 20 for zlib header/footers in worst case scenerio
+	char output[nLength+20]; //size + 20 for zlib header/footers in worst case scenerio
 
 	uint16 offset;
 	if ((uint8)opcode == 0x00)
@@ -266,7 +266,6 @@ bool BaseProtocol::compress(Packet* pack) {
 	if (compSize + 3 >= nLength) {
 		//if (false) {
 		deflateEnd(&packet);
-		delete [] output;
 
 		pack->writeByte(pack->getOffset() - 3, 0); //update compression byte to 0
 
@@ -290,12 +289,11 @@ bool BaseProtocol::compress(Packet* pack) {
 
 		deflateEnd(&packet);
 
-		delete [] output;
 		return true;
 	}
 
 	return false; //We didn't compress it.
-	}
+}
 
 static const unsigned int crcTable[256] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
@@ -379,7 +377,7 @@ unsigned int BaseProtocol::generateCRC(Stream* stream, uint32 seed) {
 	nCrc = (nCrc >> 8) & 0x00FFFFFF;
 	nCrc ^= crcTable[nIndex & 0xFF];
 	nIndex = (seed >> 24) ^ nCrc;
-	nCrc = (nCrc >> 8) &0x00FFFFFF;
+	nCrc = (nCrc >> 8) & 0x00FFFFFF;
 	nCrc ^= crcTable[nIndex & 0xFF];
 
 	int nLength  = stream->size();

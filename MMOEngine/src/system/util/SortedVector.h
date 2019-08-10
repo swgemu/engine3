@@ -195,38 +195,39 @@ namespace sys {
 		int m = 0, l = 0;
 		int r = Vector<E>::elementCount - 1;
 
-    	while (l <= r) {
-        	//m = (l + r) / 2;
+		while (l <= r) {
+			//m = (l + r) / 2;
 			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
-        	const E& obj = Vector<E>::elementData[m];
-        	int cmp = compare(obj, o);
+			const E& obj = Vector<E>::elementData[m];
+			int cmp = compare(obj, o);
 
-        	if (cmp == 0) {
-        		switch (insertPlan) {
-        		case ALLOW_DUPLICATE:
-        			Vector<E>::add(++m, o);
-					break;
-        		case ALLOW_OVERWRITE:
-        			Vector<E>::set(m, o);
-					break;
-        		default:
-					return -1;
-        		}
+			if (cmp == 0) {
+				switch (insertPlan) {
+					case ALLOW_DUPLICATE:
+						Vector<E>::add(++m, o);
+						break;
+					case ALLOW_OVERWRITE:
+						Vector<E>::set(m, o);
+						break;
+					default:
+						return -1;
+				}
 
-            	return m;
-        	} else if (cmp > 0)
-            	l = m + 1;
-        	else
-            	r = m - 1;
-    	}
+				return m;
+			} else if (cmp > 0) {
+				l = m + 1;
+			} else {
+				r = m - 1;
+			}
+		}
 
-	    if (r == m)
-   		    m++;
+		if (r == m)
+			m++;
 
 		Vector<E>::add(m, o);
 
-    	return m;
+		return m;
 	}
 #ifdef CXX11_COMPILER
 	template<class E> int SortedVector<E>::put(E&& o) {
@@ -234,7 +235,7 @@ namespace sys {
 		int r = Vector<E>::elementCount - 1;
 
 		while (l <= r) {
-				//m = (l + r) / 2;
+			//m = (l + r) / 2;
 			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
 			const E& obj = Vector<E>::elementData[m];
@@ -259,10 +260,11 @@ namespace sys {
 				}
 
 				return m;
-			} else if (cmp > 0)
+			} else if (cmp > 0) {
 				l = m + 1;
-			else
+			} else {
 				r = m - 1;
+			}
 		}
 
 		if (r == m)
@@ -285,25 +287,25 @@ namespace sys {
 		if (ArrayList<E>::size() == 0)
 			return -1;
 
-	    int l = 0, r = Vector<E>::elementCount - 1;
-	    int m = 0, cmp = 0;
+		int l = 0, r = Vector<E>::elementCount - 1;
+		int m = 0, cmp = 0;
 
-	    while (l <= r) {
-        	//m = (l + r) / 2;
+		while (l <= r) {
+			//m = (l + r) / 2;
 			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
-        	const E& obj = Vector<E>::elementData[m];
-        	cmp = compare(obj, o);
+			const E& obj = Vector<E>::elementData[m];
+			cmp = compare(obj, o);
 
-        	if (cmp == 0)
-            	return m;
-        	else if (cmp > 0)
-	            l = m + 1;
-        	else
-	            r = m - 1;
-	    }
+			if (cmp == 0)
+				return m;
+			else if (cmp > 0)
+				l = m + 1;
+			else
+				r = m - 1;
+		}
 
-    	return -1;
+		return -1;
 	}
 
 	template<class E> Object* SortedVector<E>::clone() {

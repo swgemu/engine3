@@ -8,6 +8,7 @@
 
 #include "system/lang.h"
 #include "system/thread/atomic/AtomicTime.h"
+#include "system/lang/Pair.h"
 
 #include "Task.h"
 
@@ -18,6 +19,7 @@
 namespace engine {
   namespace core {
 	class TaskQueue;
+	class TaskWorkerThread;
 
 	class TaskManager {
 	public:
@@ -51,11 +53,11 @@ namespace engine {
 
 		}
 
-		virtual Vector<Locker*>* blockTaskManager() {
+		virtual Vector<Pair<Locker*, TaskWorkerThread*>>* blockTaskManager() {
 			return nullptr;
 		}
 
-		virtual void unblockTaskManager(Vector<Locker*>* lockers) {
+		virtual void unblockTaskManager(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers) {
 
 		}
 

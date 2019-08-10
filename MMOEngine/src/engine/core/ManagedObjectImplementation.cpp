@@ -4,6 +4,7 @@
 */
 #include "ManagedObject.h"
 #include "ObjectUpdateToDatabaseTask.h"
+#include "engine/core/TaskWorkerThread.h"
 
 void ManagedObject::updateForWrite() {
 }
@@ -75,8 +76,34 @@ void ManagedObject::unlock(bool doLock) RELEASE() {
 #ifndef WITH_STM
 	DistributedObjectStub::unlock(doLock);
 
-	if (_getImplementationForRead() == nullptr)
+	auto _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+
+	if (_implementation == nullptr) {
 		__unlock(doLock);
+
+		return;
+	}
+
+	if (!doLock) {
+		return;
+	}
+
+	const static bool enabled = Core::getIntProperty("ObjectManager.saveMode", 0);
+
+	if (!enabled || !_updated || !_implementation->isPersistent())
+		return;
+
+	auto thread = Thread::getCurrentThread();
+
+	if (!thread)
+		return;
+
+	auto worker = thread->asTaskWorkerThread();
+
+	if (!worker)
+		return;
+
+	worker->addModifiedObject(this);
 #endif
 }
 

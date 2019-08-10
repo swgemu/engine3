@@ -45,11 +45,11 @@ void TransactionalTaskManager::scheduleTask(Task* task, uint64 delay) {
 	manager->scheduleTask(task, delay);
 }
 
-Vector<Locker*>* TransactionalTaskManager::blockTaskManager() {
+Vector<Pair<Locker*, TaskWorkerThread*>>* TransactionalTaskManager::blockTaskManager() {
 	return taskManager->blockTaskManager();
 }
 
-void TransactionalTaskManager::unblockTaskManager(Vector<Locker*>* lockers) {
+void TransactionalTaskManager::unblockTaskManager(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers) {
 	taskManager->unblockTaskManager(lockers);
 }
 

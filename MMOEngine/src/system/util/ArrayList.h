@@ -323,16 +323,14 @@ namespace sys {
 
    template<class E> ArrayList<E>::ArrayList(ArrayList<E>&& array) {
 	   elementData = array.elementData;
-
 	   elementCapacity = array.elementCapacity;
-
 	   capacityIncrement = array.capacityIncrement;
-
 	   elementCount = array.elementCount;
 
 	   array.elementData = nullptr;
 	   array.elementCount = 0;
 	   array.capacityIncrement = 0;
+	   array.elementCapacity = 0;
    }
 #endif
 
