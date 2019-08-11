@@ -17,6 +17,8 @@
 #include <process.h>
 #endif
 
+#include "system/util/SortedVector.h"
+
 std::atomic<int> Thread::threadCounter;
 UniqueReference<ThreadInitializer*> Thread::threadInitializer;
 
@@ -64,6 +66,8 @@ pid_t Thread::getProcessID() {
 //#endif
 
 Thread::Thread() {
+	modifiedObjects = nullptr;
+
 	pthread_attr_init(&attributes);
 
 	name = "Thread " + String::valueOf(++threadCounter);
@@ -71,10 +75,31 @@ Thread::Thread() {
 
 Thread::~Thread() {
 	pthread_attr_destroy(&attributes);
+
+	if (modifiedObjects) {
+		delete modifiedObjects;
+	}
 }
 
 void Thread::start() {
 	pthread_create(&thread, &attributes, executeThread, this);
+}
+
+void Thread::addModifiedObject(void* object) {
+	if (!modifiedObjects) {
+		modifiedObjects = new SortedVector<void*>();
+		modifiedObjects->setNoDuplicateInsertPlan();
+	}
+
+	modifiedObjects->put(object);
+}
+
+int Thread::getModifiedObjects() const {
+	if (!modifiedObjects) {
+		return 0;
+	}
+
+	return modifiedObjects->size();
 }
 
 void Thread::cancel() {

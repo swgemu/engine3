@@ -35,8 +35,6 @@ namespace engine {
 		uint64 totalBdbTime;
 		uint64 totalBdbQueries;
 
-		SortedVector<void*> modifiedObjects;
-
 #ifdef COLLECT_TASKSTATISTICS
 		HashTable<String, RunStatistics> tasksStatistics;
 		VectorMap<String, RunStatistics> luaTasksStatistics;
@@ -93,18 +91,6 @@ namespace engine {
 		inline void addMutexWaitTime(uint64 time) {
 			mutexesAcquired++;
 			mutexWaitTime += time;
-		}
-
-		inline void addModifiedObject(ManagedObject* object) {
-			modifiedObjects.put(object);
-		}
-
-		SortedVector<void*> takeModifiedObjects() {
-			return std::move(modifiedObjects);
-		}
-
-		int getModifiedObjects() const {
-			return modifiedObjects.size();
 		}
 
 		void clearMutexWaitTime() {

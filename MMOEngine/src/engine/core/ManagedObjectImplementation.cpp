@@ -84,6 +84,7 @@ void ManagedObject::unlock(bool doLock) RELEASE() {
 		return;
 	}
 
+	/*
 	if (!doLock) {
 		return;
 	}
@@ -95,15 +96,14 @@ void ManagedObject::unlock(bool doLock) RELEASE() {
 
 	auto thread = Thread::getCurrentThread();
 
-	if (!thread)
+	if (!thread) {
+		Logger::console.warning("null current thread in managed object unlock");
+
 		return;
+	}
 
-	auto worker = thread->asTaskWorkerThread();
-
-	if (!worker)
-		return;
-
-	worker->addModifiedObject(this);
+	thread->addModifiedObject(this);
+	*/
 #endif
 }
 
@@ -265,6 +265,8 @@ void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
 
 void ManagedObjectImplementation::setPersistent(int level) {
 	persistenceLevel = level;
+
+	_this.getReferenceUnsafeStaticCast()->_setUpdated(true);
 
 	//queueUpdateToDatabaseTask();
 }

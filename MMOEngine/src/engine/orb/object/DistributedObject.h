@@ -28,7 +28,19 @@ namespace engine {
 
 		ObjectBroker* _objectBroker;
 
-		std::atomic<bool> _updated;
+		class UpdatedHelper {
+		public:
+			DistributedObject* obj = nullptr;
+			std::atomic<bool> _updated{true};
+
+			explicit operator bool() const {
+				return _updated.load(std::memory_order_relaxed);
+			}
+
+			UpdatedHelper& operator=(bool val);
+		};
+
+		UpdatedHelper _updated;
 		bool _markedForDeletion;
 		bool _deletedFromDatabase;
 
@@ -37,7 +49,7 @@ namespace engine {
 
 		virtual ~DistributedObject();
 
-		virtual bool isPersistent() {
+		virtual bool isPersistent() const {
   		    return false;
 		}
 
@@ -55,7 +67,7 @@ namespace engine {
 		}
 
 		inline void _setUpdated(bool var) {
-			_updated.store(var, std::memory_order_relaxed);;
+			_updated = var;
 		}
 
 		inline void _setDeletedFromDatabase(bool val) {
@@ -92,7 +104,7 @@ namespace engine {
 		}
 
 		inline bool _isUpdated() const {
-			return _updated.load(std::memory_order_relaxed);
+			return _updated._updated.load(std::memory_order_relaxed);
 		}
 
 		inline bool _isMarkedForDeletion() const {

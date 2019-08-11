@@ -57,6 +57,7 @@ DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 
 	objectUpdateInProcess = false;
 	totalUpdatedObjects = 0;
+	commitedObjects.setNoDuplicateInsertPlan();
 
 	updateModifiedObjectsTask = new UpdateModifiedObjectsTask();
 	//updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
@@ -233,6 +234,14 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 				managedObject->setLastCRCSave(currentCRC);
 
 				object->_setUpdated(false);
+
+				totalActuallyChangedObjects.increment();
+
+				const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
+
+				if (saveMode) {
+					commitedObjects.put(object);
+				}
 			} else {
 				delete objectData;
 
@@ -349,10 +358,44 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Vector<DistributedObject*> objectsToDelete;
 	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
 
-	for (auto& entry : *lockers.get()) {
-		if (entry.second != nullptr) {
-			entry.second->takeModifiedObjects();
+	//SortedVector<void*> uniqueValues;
+	uniqueModifiedObjectValues.removeAll();
+	uniqueModifiedObjectValues.setNoDuplicateInsertPlan();
+
+	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
+
+	if (saveMode) {
+		auto mainThread = Core::getCoreInstance();
+
+		if (mainThread != nullptr) {
+			auto objects = mainThread->takeModifiedObjects();
+
+			if (objects) {
+				for (auto val : *objects) {
+					uniqueModifiedObjectValues.put(val);
+				}
+
+				delete objects;
+			}
+		} else {
+			warning("No main core instance found for save event");
 		}
+
+		for (auto& entry : *lockers.get()) {
+			if (entry.second != nullptr) {
+				auto objects = entry.second->takeModifiedObjects();
+
+				if (objects) {
+					for (auto val : *objects) {
+						uniqueModifiedObjectValues.put(val);
+					}
+
+					delete objects;
+				}
+			}
+		}
+
+		info("collected " + String::valueOf(uniqueModifiedObjectValues.size()) + " different modified objects from workers", true);
 	}
 
 	Timer copy;
@@ -402,6 +445,8 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 int DOBObjectManager::executeUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete,
 		Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkley::Transaction* transaction) {
 	totalUpdatedObjects = 0;
+	totalActuallyChangedObjects = 0;
+	commitedObjects.removeAll();
 
 	int numberOfThreads = 0;
 
@@ -526,7 +571,19 @@ void DOBObjectManager::finishObjectUpdate() {
 
 	updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
 
-	info("updated objects: " + String::valueOf(totalUpdatedObjects), true);
+	info("marked updated objects: " + String::valueOf(totalUpdatedObjects)
+			+ " commited objects: " + String::valueOf(totalActuallyChangedObjects), true);
+
+	for (auto obj : commitedObjects.getVectorUnsafe()) {
+		if (!uniqueModifiedObjectValues.contains(obj)) {
+			auto managed = reinterpret_cast<ManagedObject*>(obj);
+			auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
+
+			warning("missing object in thread local track 0x"
+					+ String::hexvalueOf(managed->_getObjectID())
+					+ " " + managed->_getName() + " " + managed->_getClassName());
+		}
+	}
 
 	ObjectBrokerAgent::instance()->finishBackup();
 }

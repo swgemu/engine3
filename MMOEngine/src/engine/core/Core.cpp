@@ -12,6 +12,7 @@ UniqueReference<TaskManager*> Core::taskManager;
 bool Core::taskManagerShutDown = false;
 bool Core::MANAGED_REFERENCE_LOAD = true;
 String Core::engineConfigName;
+Core* Core::staticInstance = nullptr;
 
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
 //
@@ -33,6 +34,7 @@ Core::~Core() {
 
 void Core::initializeContext(int logLevel) {
 	taskManager = nullptr;
+	staticInstance = this;
 
 	std::set_new_handler(outOfMemoryHandler);
 
@@ -48,6 +50,10 @@ void Core::initializeContext(int logLevel) {
 	taskManager->initialize();
 
 	taskManager->start();
+}
+
+Core* Core::getCoreInstance() {
+	return staticInstance;
 }
 
 void Core::parsePropertyData(const String& className, const char* name, LuaObject& table) {

@@ -55,7 +55,7 @@ TaskWorkerThread::TaskWorkerThread(const String& s, TaskQueue* queue, int cpu, b
 	totalBdbTime = 0;
 	totalBdbQueries = 0;
 
-	modifiedObjects.setNoDuplicateInsertPlan();
+	//modifiedObjects.setNoDuplicateInsertPlan();
 
 #ifdef COLLECT_TASKSTATISTICS
 	totalTaskRunCount = 0;

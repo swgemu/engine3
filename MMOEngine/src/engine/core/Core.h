@@ -38,6 +38,7 @@ namespace engine {
 		static bool taskManagerShutDown;
 
 		static String engineConfigName;
+		static Core* staticInstance;
 	public:
 		static SynchronizedHashTable<String, ArrayList<String>> properties;
 		static bool MANAGED_REFERENCE_LOAD;
@@ -72,6 +73,8 @@ namespace engine {
 		static double getDoubleProperty(const String& key, double defaultValue = 0);
 
 		static int initializeProperties(const String& className);
+
+		static Core* getCoreInstance();
 	protected:
 		virtual void initializeContext(int logLevel);
 

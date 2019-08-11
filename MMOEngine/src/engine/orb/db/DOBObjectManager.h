@@ -16,6 +16,7 @@
 #include "engine/db/ObjectDatabaseManager.h"
 
 #include "engine/util/ObjectFactory.h"
+#include "system/util/SynchronizedSortedVector.h"
 
 #include "DistributedObjectDirectory.h"
 
@@ -47,6 +48,9 @@ namespace engine {
 		bool objectUpdateInProcess;
 
 		AtomicInteger totalUpdatedObjects;
+		AtomicInteger totalActuallyChangedObjects;
+		SynchronizedSortedVector<void*> commitedObjects;
+		SortedVector<void*> uniqueModifiedObjectValues;
 
 		static int UPDATETODATABASETIME;
 

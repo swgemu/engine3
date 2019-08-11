@@ -14,7 +14,6 @@
 
 #include "system/lang/Runnable.h"
 #include "system/lang/String.h"
-
 #include "system/lang/ref/UniqueReference.h"
 
 #include "atomic/AtomicInteger.h"
@@ -30,6 +29,10 @@ namespace engine {
 }
 
 namespace sys {
+  namespace util {
+	 template<class T> class SortedVector;
+  }
+
   namespace thread {
 
   	 class Lockable;
@@ -90,9 +93,11 @@ namespace sys {
 		static ThreadLocal<Thread*> currentThread;
 		static UniqueReference<ThreadInitializer*> threadInitializer;
 
+	protected:
 		//only used in testing
 		ArrayList<Lockable*> acquiredLockables;
 		ArrayList<LockableTrace> lockableTrace;
+		sys::util::SortedVector<void*>* modifiedObjects = nullptr;
 
 	public:
 		//! allocates a new Thread
@@ -155,6 +160,8 @@ namespace sys {
 			return &lockableTrace;
 		}
 
+		void addModifiedObject(void* object);
+
 		void addAcquiredLockable(Lockable* lockable, Lockable* cross = nullptr, bool monitorLike = false, bool addToTrace = true) {
 			acquiredLockables.add(lockable);
 
@@ -171,6 +178,15 @@ namespace sys {
 		virtual engine::core::TaskWorkerThread* asTaskWorkerThread() {
 			return nullptr;
 		}
+
+		SortedVector<void*>* takeModifiedObjects() {
+			auto copy = modifiedObjects;
+			modifiedObjects = nullptr;
+
+			return copy;
+		}
+
+		int getModifiedObjects() const;
 
 	protected:
 		static void* executeThread(void* th);
