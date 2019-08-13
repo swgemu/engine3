@@ -579,9 +579,14 @@ void DOBObjectManager::finishObjectUpdate() {
 			auto managed = reinterpret_cast<ManagedObject*>(obj);
 			auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
 
-			warning("missing object in thread local track 0x"
-					+ String::hexvalueOf(managed->_getObjectID())
-					+ " " + managed->_getName() + " " + managed->_getClassName());
+			warning("missing object in thread local modified objects list 0x"
+					+ String::hexvalueOf(managed->_getObjectID()) + " " + managed->_getName());
+
+			nlohmann::json obj;
+			impl->writeJSON(obj);
+
+			warning(obj.dump().c_str());
+			//		+ " " + managed->_getName() + " " + managed->_getClassName());
 		}
 	}
 
