@@ -24,16 +24,6 @@
 #endif
 #include "engine/util/json_utils.h"
 
-namespace engine {
-namespace core {
-
-class ObjectUpdateToDatabaseTask;
-
-} // namespace core
-} // namespace engine
-
-using namespace engine::core;
-
 #include "system/lang/Object.h"
 
 #include "system/thread/ReadWriteLock.h"
@@ -106,10 +96,6 @@ public:
 
 	void updateToDatabase();
 
-	void queueUpdateToDatabaseTask();
-
-	void clearUpdateToDatabaseTask();
-
 	unsigned int getLastCRCSave() const;
 
 	void setLastCRCSave(unsigned int crc);
@@ -125,9 +111,7 @@ public:
 	/**
 	 * Sets the persistence level of the object
 	 * level 0 makes the object transient
-	 * level 1 makes the object persistent but its not auto updated
-	 * level 2 makes the object auto update every 5 minutes
-	 * level 3 makes the object update to database after each change (write unlock)
+	 * level 1 makes the object persistent
 	 */
 	void setPersistent(int level);
 
@@ -186,8 +170,6 @@ private:
 	unsigned int lastSaveTime;
 
 protected:
-	ObjectUpdateToDatabaseTask* updateToDatabaseTask;
-
 	String _className;
 
 public:
@@ -237,10 +219,6 @@ public:
 
 	void updateToDatabase();
 
-	virtual void queueUpdateToDatabaseTask();
-
-	void clearUpdateToDatabaseTask();
-
 	unsigned int getLastCRCSave() const;
 
 	void setLastCRCSave(unsigned int crc);
@@ -260,9 +238,7 @@ public:
 	/**
 	 * Sets the persistence level of the object
 	 * level 0 makes the object transient
-	 * level 1 makes the object persistent but its not auto updated
-	 * level 2 makes the object auto update every 5 minutes
-	 * level 3 makes the object update to database after each change (write unlock)
+	 * level 1 makes the object persistent
 	 */
 	void setPersistent(int level);
 
@@ -323,10 +299,6 @@ public:
 	void initializeTransientMembers();
 
 	void updateToDatabase();
-
-	void queueUpdateToDatabaseTask();
-
-	void clearUpdateToDatabaseTask();
 
 	unsigned int getLastCRCSave() const;
 

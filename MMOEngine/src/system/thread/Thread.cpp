@@ -87,7 +87,7 @@ void Thread::start() {
 
 void Thread::addModifiedObject(void* object) {
 	if (!modifiedObjects) {
-		modifiedObjects = new SortedVector<void*>();
+		modifiedObjects = new SortedVector<void*>(5000, 1000);
 		modifiedObjects->setNoDuplicateInsertPlan();
 	}
 

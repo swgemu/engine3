@@ -20,6 +20,8 @@
 
 #include "DistributedObjectDirectory.h"
 
+#include "engine/util/flat_hash_map.hpp"
+
 namespace engine {
 	namespace ORB {
 

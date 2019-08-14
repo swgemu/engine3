@@ -4,13 +4,11 @@
 
 #include "ManagedObject.h"
 
-#include "engine/core/ObjectUpdateToDatabaseTask.h"
-
 /*
  *	ManagedObjectStub
  */
 
-enum {RPC_UPDATEFORWRITE__ = 3653780595,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_RLOCK__MANAGEDOBJECT_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_NOTIFYLOADFROMDATABASE__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_QUEUEUPDATETODATABASETASK__,RPC_CLEARUPDATETODATABASETASK__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_GETLASTSAVETIME__,RPC_SETLASTSAVETIME__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
+enum {RPC_UPDATEFORWRITE__ = 3653780595,RPC_LOCK__BOOL_,RPC_LOCK__MANAGEDOBJECT_,RPC_RLOCK__BOOL_,RPC_RLOCK__MANAGEDOBJECT_,RPC_WLOCK__BOOL_,RPC_WLOCK__MANAGEDOBJECT_,RPC_UNLOCK__BOOL_,RPC_RUNLOCK__BOOL_,RPC_SETLOCKNAME__STRING_,RPC_NOTIFYDESTROY__,RPC_NOTIFYLOADFROMDATABASE__,RPC_INITIALIZETRANSIENTMEMBERS__,RPC_UPDATETODATABASE__,RPC_GETLASTCRCSAVE__,RPC_SETLASTCRCSAVE__INT_,RPC_GETLASTSAVETIME__,RPC_SETLASTSAVETIME__INT_,RPC_ISPERSISTENT__,RPC_GETPERSISTENCELEVEL__,};
 
 ManagedObject::ManagedObject() {
 	ManagedObjectImplementation* _implementation = new ManagedObjectImplementation();
@@ -313,34 +311,6 @@ void ManagedObject::updateToDatabase() {
 	}
 }
 
-void ManagedObject::queueUpdateToDatabaseTask() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
-	if (unlikely(_implementation == NULL)) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, RPC_QUEUEUPDATETODATABASETASK__);
-
-		method.executeWithVoidReturn();
-	} else {
-		_implementation->queueUpdateToDatabaseTask();
-	}
-}
-
-void ManagedObject::clearUpdateToDatabaseTask() {
-	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
-	if (unlikely(_implementation == NULL)) {
-		if (!deployed)
-			throw ObjectNotDeployedException(this);
-
-		DistributedMethod method(this, RPC_CLEARUPDATETODATABASETASK__);
-
-		method.executeWithVoidReturn();
-	} else {
-		_implementation->clearUpdateToDatabaseTask();
-	}
-}
-
 unsigned int ManagedObject::getLastCRCSave() const {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
 	if (unlikely(_implementation == NULL)) {
@@ -573,8 +543,6 @@ ManagedObjectImplementation::ManagedObjectImplementation() {
 	persistenceLevel = 0;
 	// engine/core/ManagedObject.idl():  		lastCRCSave = 0;
 	lastCRCSave = 0;
-	// engine/core/ManagedObject.idl():  		updateToDatabaseTask = null;
-	updateToDatabaseTask = NULL;
 	// engine/core/ManagedObject.idl():  		lastSaveTime = 0;
 	lastSaveTime = 0;
 }
@@ -594,11 +562,6 @@ bool ManagedObjectImplementation::parseFromBinaryStream(ObjectInputStream* strea
 }
 
 void ManagedObjectImplementation::notifyLoadFromDatabase() {
-}
-
-void ManagedObjectImplementation::clearUpdateToDatabaseTask() {
-	// engine/core/ManagedObject.idl():  		updateToDatabaseTask = null;
-	updateToDatabaseTask = NULL;
 }
 
 unsigned int ManagedObjectImplementation::getLastCRCSave() const{
@@ -758,20 +721,6 @@ void ManagedObjectAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			
 		}
 		break;
-	case RPC_QUEUEUPDATETODATABASETASK__:
-		{
-			
-			queueUpdateToDatabaseTask();
-			
-		}
-		break;
-	case RPC_CLEARUPDATETODATABASETASK__:
-		{
-			
-			clearUpdateToDatabaseTask();
-			
-		}
-		break;
 	case RPC_GETLASTCRCSAVE__:
 		{
 			
@@ -875,14 +824,6 @@ void ManagedObjectAdapter::initializeTransientMembers() {
 
 void ManagedObjectAdapter::updateToDatabase() {
 	(static_cast<ManagedObject*>(stub))->updateToDatabase();
-}
-
-void ManagedObjectAdapter::queueUpdateToDatabaseTask() {
-	(static_cast<ManagedObject*>(stub))->queueUpdateToDatabaseTask();
-}
-
-void ManagedObjectAdapter::clearUpdateToDatabaseTask() {
-	(static_cast<ManagedObject*>(stub))->clearUpdateToDatabaseTask();
 }
 
 unsigned int ManagedObjectAdapter::getLastCRCSave() const {

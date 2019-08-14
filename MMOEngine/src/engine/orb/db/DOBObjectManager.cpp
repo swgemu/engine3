@@ -35,6 +35,8 @@
 
 #include "CommitMasterTransactionThread.h"
 
+#include "engine/util/flat_hash_map.hpp"
+
 //#define PRINT_OBJECT_COUNT
 
 int DOBObjectManager::UPDATETODATABASETIME = 300000;
