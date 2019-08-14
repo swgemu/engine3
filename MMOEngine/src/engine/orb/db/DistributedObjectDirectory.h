@@ -48,11 +48,11 @@ namespace engine {
 
 		DistributedObjectAdapter* getAdapter(uint64 objid);
 
-		inline int getSize() {
+		inline int getSize() const {
 			return objectMap.size();
 		}
 
-		const ObjectHashTable& getObjectHashTable() {
+		const ObjectHashTable& getObjectHashTable() const {
 			return objectMap;
 		}
 

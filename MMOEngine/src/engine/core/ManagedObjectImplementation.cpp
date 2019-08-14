@@ -245,36 +245,15 @@ void ManagedObjectImplementation::setLockName(const String& name) {
 }
 
 void ManagedObjectImplementation::updateToDatabase() {
-	/*if (persistenceLevel == 0)
-		return;
-
-	DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
-
-	objectManager->updatePersistentObject(_this);
-
-	queueUpdateToDatabaseTask();*/
-}
-
-void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
-	/*if (updateToDatabaseTask != nullptr || persistenceLevel != 2)
-		return;
-
-	updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);
-	updateToDatabaseTask->schedule();*/
 }
 
 void ManagedObjectImplementation::setPersistent(int level) {
 	persistenceLevel = level;
 
 	_this.getReferenceUnsafeStaticCast()->_setUpdated(true);
-
-	//queueUpdateToDatabaseTask();
 }
 
 void ManagedObjectImplementation::initializeTransientMembers() {
-	if (persistenceLevel == 2)
-		queueUpdateToDatabaseTask();
-
 	lastSaveTime = 0;
 	lastCRCSave = 0;
 }

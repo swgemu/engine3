@@ -17,8 +17,6 @@ include engine.orb.object.DistributedObjectServant;
 
 include engine.util.JSONSerializationType;
 
-import engine.core.ObjectUpdateToDatabaseTask;
-
 @json
 class ManagedObject {
 	protected int persistenceLevel;
@@ -26,17 +24,12 @@ class ManagedObject {
 	private transient unsigned int lastCRCSave;
 	private transient unsigned int lastSaveTime;
 
-	@pointer
-	protected transient ObjectUpdateToDatabaseTask updateToDatabaseTask;
-
 	protected transient string _className; //idlc automatically loads/saves this from streams
 
 	public ManagedObject() {
 		persistenceLevel = 0;
 
 		lastCRCSave = 0;
-
-		updateToDatabaseTask = null;
 
 		lastSaveTime = 0;
 	}
@@ -143,15 +136,8 @@ class ManagedObject {
 	public abstract native void initializeTransientMembers();
 
 	public native void updateToDatabase();
-	public abstract native void queueUpdateToDatabaseTask();
-
-	@dirty
-	public void clearUpdateToDatabaseTask() {
-		updateToDatabaseTask = null;
-	}
 
 	@read
-	@dirty
 	public unsigned int getLastCRCSave() {
 		return lastCRCSave;
 	}
@@ -162,7 +148,6 @@ class ManagedObject {
 	}
 
 	@read
-	@dirty
 	public unsigned int getLastSaveTime() {
 		return lastSaveTime;
 	}
@@ -173,12 +158,10 @@ class ManagedObject {
 	}
 
 	@read
-	@dirty
 	public boolean isPersistent() {
 		return persistenceLevel != 0;
 	}
 
-	@dirty
 	@read
 	public int getPersistenceLevel() {
 		return persistenceLevel;
@@ -192,9 +175,7 @@ class ManagedObject {
 	/**
 	 * Sets the persistence level of the object
 	 * level 0 makes the object transient
-	 * level 1 makes the object persistent but its not auto updated
-	 * level 2 makes the object auto update every 5 minutes
-	 * level 3 makes the object update to database after each change (write unlock)
+	 * level 1 makes the object persistent
 	 */
 	@local
 	public native void setPersistent(int level);

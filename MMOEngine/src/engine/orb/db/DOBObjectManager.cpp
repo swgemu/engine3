@@ -359,7 +359,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
 
 	//SortedVector<void*> uniqueValues;
-	uniqueModifiedObjectValues.removeAll();
+	uniqueModifiedObjectValues.removeAll(localObjectDirectory.getSize(), 1000);
 	uniqueModifiedObjectValues.setNoDuplicateInsertPlan();
 
 	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
@@ -446,7 +446,7 @@ int DOBObjectManager::executeUpdateThreads(Vector<DistributedObject*>* objectsTo
 		Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkley::Transaction* transaction) {
 	totalUpdatedObjects = 0;
 	totalActuallyChangedObjects = 0;
-	commitedObjects.removeAll();
+	commitedObjects.removeAll(localObjectDirectory.getSize(), 1000);
 
 	int numberOfThreads = 0;
 

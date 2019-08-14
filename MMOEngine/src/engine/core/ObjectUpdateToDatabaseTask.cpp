@@ -26,7 +26,6 @@ void ObjectUpdateToDatabaseTask::run() {
 	try {
 		object->wlock();
 
-		object->clearUpdateToDatabaseTask();
 		//object->updateToDatabase();
 
 		object->unlock();
