@@ -204,6 +204,14 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 		if (lastSaveCRC == currentCRC) {
 			object->_setUpdated(false);
 
+			const static bool saveUpdatedTrace = Core::getIntProperty("ObjectManager.trackLastUpdatedTrace", 0);
+
+			if (saveUpdatedTrace) {
+				auto trace = managedObject->getLastModifiedTrace();
+
+				trace->print();
+			}
+
 			delete objectData;
 			return 1;
 		}

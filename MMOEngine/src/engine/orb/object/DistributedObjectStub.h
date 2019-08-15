@@ -82,6 +82,10 @@ namespace engine {
 			return _impl;
 		}
 
+		virtual DistributedObjectServant* _getImplementationForRead() const {
+			return _impl;
+		}
+
 		inline DistributedObjectClassHelper* _getClassHelper() {
 			return _classHelper;
 		}

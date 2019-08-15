@@ -97,6 +97,7 @@ class ManagedObject {
 
 	@local
 	@noImplementationDeclaration
+	@dirty
 	public native void readObject(ObjectInputStream stream);
 
 	@dirty

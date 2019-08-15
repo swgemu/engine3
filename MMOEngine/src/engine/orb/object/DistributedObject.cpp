@@ -18,6 +18,12 @@ DistributedObject::DistributedObject() : Object(), _objectID(0), _objectBroker(n
 DistributedObject::~DistributedObject() {
 }
 
+DistributedObject::UpdatedHelper::~UpdatedHelper() {
+	if (lastModifiedTrace) {
+		delete lastModifiedTrace;
+	}
+}
+
 //dirty impl until i modify idlc
 DistributedObject::UpdatedHelper& DistributedObject::UpdatedHelper::operator=(bool val) {
 	_updated.store(val, std::memory_order_relaxed);
@@ -27,6 +33,16 @@ DistributedObject::UpdatedHelper& DistributedObject::UpdatedHelper::operator=(bo
 
 	/*if (!obj->isPersistent())
 		return *this;*/
+
+	const static bool saveUpdatedTrace = Core::getIntProperty("ObjectManager.trackLastUpdatedTrace", 0);
+
+	if (saveUpdatedTrace) {
+		if (lastModifiedTrace) {
+			delete lastModifiedTrace;
+		}
+
+		lastModifiedTrace = new StackTrace();
+	}
 
 	const static bool enabled = Core::getIntProperty("ObjectManager.saveMode", 0);
 

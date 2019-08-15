@@ -32,6 +32,9 @@ namespace engine {
 		public:
 			DistributedObject* obj = nullptr;
 			std::atomic<bool> _updated{true};
+			StackTrace* lastModifiedTrace = nullptr;
+
+			~UpdatedHelper();
 
 			explicit operator bool() const {
 				return _updated.load(std::memory_order_relaxed);
@@ -109,6 +112,10 @@ namespace engine {
 
 		inline bool _isMarkedForDeletion() const {
 			return _markedForDeletion;
+		}
+
+		inline StackTrace* getLastModifiedTrace() const {
+			return _updated.lastModifiedTrace;
 		}
 	};
 

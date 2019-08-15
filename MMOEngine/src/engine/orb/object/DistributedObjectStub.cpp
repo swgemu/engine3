@@ -9,7 +9,7 @@
 
 DistributedObjectStub::DistributedObjectStub() : DistributedObject() {
 	//_setImplementation(nullptr);
-		
+
 	deployed = false;
 
 	_classHelper = nullptr;
@@ -24,13 +24,13 @@ DistributedObjectStub::DistributedObjectStub() : DistributedObject() {
 DistributedObjectStub::~DistributedObjectStub() {
 	if (!destroyed)
 		undeploy();
-	
+
 	#ifdef TRACE_REFERENCING
 		for (int i = 0; i < traces.size(); ++i) {
 			StackTrace* trace = traces.get(i);
 			delete trace;
 		}
-	
+
 		delete finalizedTrace;
 		finalizedTrace = nullptr;
 	#endif
@@ -41,25 +41,25 @@ DistributedObjectStub::~DistributedObjectStub() {
 }*/
 
 void DistributedObjectStub::_requestServant() {
-	if (_getImplementation() != nullptr)
+	if (_getImplementationForRead() != nullptr)
 		return;
 
 	_getObjectBroker()->requestServant(this);
 }
 
 void DistributedObjectStub::deploy() {
-	if (_getImplementation() == nullptr)
+	if (_getImplementationForRead() == nullptr)
 		throw Exception("unable to deploy object");
-	
+
 	Core::getObjectBroker()->deploy(this);
-	
+
 	deployed = true;
 
 	destroyed = false;
 }
 
 void DistributedObjectStub::deploy(const char* name) {
-	if (_getImplementation() == nullptr)
+	if (_getImplementationForRead() == nullptr)
 		throw Exception("unable to deploy object");
 
 	Core::getObjectBroker()->deploy(name, this);
@@ -70,9 +70,9 @@ void DistributedObjectStub::deploy(const char* name) {
 }
 
 void DistributedObjectStub::deploy(const String& name) {
-	if (_getImplementation() == nullptr)
+	if (_getImplementationForRead() == nullptr)
 		throw Exception("unable to deploy object");
-	
+
 	Core::getObjectBroker()->deploy(name, this);
 
 	deployed = true;
@@ -83,7 +83,7 @@ void DistributedObjectStub::deploy(const String& name) {
 void DistributedObjectStub::deploy(const String& name, uint64 nid) {
 	StringBuffer nameid;
 	nameid << name << nid;
-	
+
 	deploy(nameid.toString());
 
 	destroyed = false;
@@ -107,19 +107,19 @@ bool DistributedObjectStub::undeploy() {
 			broker->undeploy(_name);
 		}
 
-		deployed = false; 
+		deployed = false;
 	} else {
 		//if (_getImplementation() == nullptr)
 			//throw ObjectNotLocalException(this);
-		
+
 		//ObjectBroker::instance()->info("deleting undeployed implementation");
-		
+
 #ifndef WITH_STM
 		_setImplementation(nullptr);
 #endif
 		//_setImplementation(nullptr);
 	}
-	
+
 	destroyed = true;
 
 	return true;
@@ -129,14 +129,14 @@ void DistributedObjectStub::finalize() {
 	#ifdef TRACE_REFERENCING
 		if (finalizedTrace != nullptr) {
 			System::out << "ERROR - object already finalized at\n";
-		
+
 			StackTrace::printStackTrace();
-		
+
 			System::out << "finalized by\n";
-		
+
 			finalizedTrace->print();
-	
-			raise(SIGSEGV);		
+
+			raise(SIGSEGV);
 		}
 
 		finalizedTrace = new StackTrace();
@@ -149,14 +149,14 @@ void DistributedObjectStub::acquire() {
 	#ifdef TRACE_REFERENCING
 		traces.add(new StackTrace());
 	#endif
-		
+
 	Object::acquire();
-		
+
 */	/*StringBuffer msg;
 	msg << "[" << _getName() << "] acquired (" << getReferenceCount() << ")";
 	Logger::console.info(msg);*//*
 }
-	
+
 void DistributedObjectStub::release() {
 	#ifdef TRACE_REFERENCING
 		traces.add(new StackTrace());
@@ -181,13 +181,13 @@ void DistributedObjectStub::printReferenceTrace() const {
 	#ifdef TRACE_REFERENCING
 		for (int i = 0; i < traces.size(); ++i) {
 			StackTrace* trace = traces.get(i);
-		
+
 			Logger::console.info("--------------------------------------------------------------------------", true);
-		
+
 			trace->print();
 			/*String traceoutput;
 			trace->getStackTrace(traceoutput);
-		
+
 			Logger::console.info(traceoutput, true);*/
 		}
 	#endif
