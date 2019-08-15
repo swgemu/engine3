@@ -20,6 +20,8 @@
 
 #include "ThreadLocal.h"
 
+#include "engine/util/flat_hash_map.hpp"
+
 namespace engine {
 	namespace core {
 		class Core;
@@ -97,7 +99,7 @@ namespace sys {
 		//only used in testing
 		ArrayList<Lockable*> acquiredLockables;
 		ArrayList<LockableTrace> lockableTrace;
-		sys::util::SortedVector<void*>* modifiedObjects = nullptr;
+		ska::flat_hash_set<void*>* modifiedObjects = nullptr;
 
 	public:
 		//! allocates a new Thread
@@ -179,7 +181,7 @@ namespace sys {
 			return nullptr;
 		}
 
-		SortedVector<void*>* takeModifiedObjects() {
+		ska::flat_hash_set<void*>* takeModifiedObjects() {
 			auto copy = modifiedObjects;
 			modifiedObjects = nullptr;
 

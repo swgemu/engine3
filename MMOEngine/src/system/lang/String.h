@@ -114,6 +114,7 @@ namespace sys {
 		static String valueOf(float val);
 		static String valueOf(double val);
 		static String valueOf(void* val);
+		static String valueOf(std::size_t val);
 
 		static String hexvalueOf(int val) ;
 		static String hexvalueOf(int64 val);

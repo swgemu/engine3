@@ -59,7 +59,7 @@ DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 
 	objectUpdateInProcess = false;
 	totalUpdatedObjects = 0;
-	commitedObjects.setNoDuplicateInsertPlan();
+	//commitedObjects.setNoDuplicateInsertPlan();
 
 	updateModifiedObjectsTask = new UpdateModifiedObjectsTask();
 	//updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
@@ -360,13 +360,14 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Vector<DistributedObject*> objectsToDelete;
 	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
 
-	//SortedVector<void*> uniqueValues;
-	uniqueModifiedObjectValues.removeAll(localObjectDirectory.getSize(), 1000);
-	uniqueModifiedObjectValues.setNoDuplicateInsertPlan();
+	uniqueModifiedObjectValues.clear();
 
 	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
 
 	if (saveMode) {
+		Timer uniqueModsPerf;
+		uniqueModsPerf.start();
+
 		auto mainThread = Core::getCoreInstance();
 
 		if (mainThread != nullptr) {
@@ -374,7 +375,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 			if (objects) {
 				for (auto val : *objects) {
-					uniqueModifiedObjectValues.put(val);
+					uniqueModifiedObjectValues.emplace(val);
 				}
 
 				delete objects;
@@ -389,7 +390,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 				if (objects) {
 					for (auto val : *objects) {
-						uniqueModifiedObjectValues.put(val);
+						uniqueModifiedObjectValues.emplace(val);
 					}
 
 					delete objects;
@@ -397,7 +398,9 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 			}
 		}
 
-		info("collected " + String::valueOf(uniqueModifiedObjectValues.size()) + " different modified objects from workers", true);
+		auto elapsed = uniqueModsPerf.stopMs();
+
+		info("collected " + String::valueOf((uint64) uniqueModifiedObjectValues.size()) + " different modified objects from workers in " + String::valueOf(elapsed) + "ms", true);
 	}
 
 	Timer copy;
@@ -448,7 +451,8 @@ int DOBObjectManager::executeUpdateThreads(Vector<DistributedObject*>* objectsTo
 		Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkley::Transaction* transaction) {
 	totalUpdatedObjects = 0;
 	totalActuallyChangedObjects = 0;
-	commitedObjects.removeAll(localObjectDirectory.getSize(), 1000);
+	//commitedObjects.removeAll(localObjectDirectory.getSize(), 1000);
+	commitedObjects.objects.clear();
 
 	int numberOfThreads = 0;
 
@@ -502,13 +506,19 @@ void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, i
 	objectsToUpdateCount = 0;
 }
 
+void DOBObjectManager::SynchronizedCommitedObjects::put(void* obj) {
+	Locker locker(&mutex);
+
+	objects.emplace(obj);
+}
+
 int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction* transaction,
 		Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
 		Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
 
 	info("starting object map iteration", true);
 
-	objectsToUpdate.removeAll(localObjectDirectory.getObjectHashTable().size(), 1); //need to make sure no reallocs happen or threads will read garbage data
+	objectsToUpdate.removeAll(localObjectDirectory.getSize(), 1); //need to make sure no reallocs happen or threads will read garbage data
 	objectsToDelete.removeAll(100000, 0);
 
 	info("allocated object map to update size", true);
@@ -576,8 +586,14 @@ void DOBObjectManager::finishObjectUpdate() {
 	info("marked updated objects: " + String::valueOf(totalUpdatedObjects)
 			+ " commited objects: " + String::valueOf(totalActuallyChangedObjects), true);
 
-	for (auto obj : commitedObjects.getVectorUnsafe()) {
-		if (!uniqueModifiedObjectValues.contains(obj)) {
+	Timer perf;
+	perf.start();
+	int i = 0;
+
+	for (auto obj : commitedObjects.objects) {
+		++i;
+
+		if (uniqueModifiedObjectValues.find(obj) == uniqueModifiedObjectValues.end()) {
 			auto managed = reinterpret_cast<ManagedObject*>(obj);
 			auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
 
@@ -591,6 +607,11 @@ void DOBObjectManager::finishObjectUpdate() {
 			//		+ " " + managed->_getName() + " " + managed->_getClassName());
 		}
 	}
+
+	auto elapsedMs = perf.stopMs();
+
+	info("checked " + String::valueOf(i) + " commited objects vs modified objects in "
+		       	+ String::valueOf(elapsedMs) + " ms", true);
 
 	ObjectBrokerAgent::instance()->finishBackup();
 }

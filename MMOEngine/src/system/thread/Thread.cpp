@@ -87,11 +87,11 @@ void Thread::start() {
 
 void Thread::addModifiedObject(void* object) {
 	if (!modifiedObjects) {
-		modifiedObjects = new SortedVector<void*>(5000, 1000);
-		modifiedObjects->setNoDuplicateInsertPlan();
+		modifiedObjects = new ska::flat_hash_set<void*>(); //new SortedVector<void*>(5000, 1000);
+		//modifiedObjects->setNoDuplicateInsertPlan();
 	}
 
-	modifiedObjects->put(object);
+	modifiedObjects->emplace(object);
 }
 
 int Thread::getModifiedObjects() const {

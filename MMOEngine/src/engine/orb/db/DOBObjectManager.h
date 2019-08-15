@@ -6,6 +6,8 @@
 #ifndef DOBOBJECTMANAGER_H_
 #define DOBOBJECTMANAGER_H_
 
+#include "engine/util/flat_hash_map.hpp"
+
 #include "system/platform.h"
 
 #include "engine/core/Task.h"
@@ -19,8 +21,6 @@
 #include "system/util/SynchronizedSortedVector.h"
 
 #include "DistributedObjectDirectory.h"
-
-#include "engine/util/flat_hash_map.hpp"
 
 namespace engine {
 	namespace ORB {
@@ -51,8 +51,18 @@ namespace engine {
 
 		AtomicInteger totalUpdatedObjects;
 		AtomicInteger totalActuallyChangedObjects;
-		SynchronizedSortedVector<void*> commitedObjects;
-		SortedVector<void*> uniqueModifiedObjectValues;
+
+		class SynchronizedCommitedObjects {
+		public:
+			Mutex mutex;
+			ska::flat_hash_set<void*> objects;
+
+			void put(void* obj);
+		};
+
+		SynchronizedCommitedObjects commitedObjects;
+
+		ska::flat_hash_set<void*> uniqueModifiedObjectValues;
 
 		static int UPDATETODATABASETIME;
 

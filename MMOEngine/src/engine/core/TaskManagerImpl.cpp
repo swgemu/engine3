@@ -787,6 +787,12 @@ String TaskManagerImpl::getInfo(bool print) {
 		totalModifiedCount += workers.get(i)->getModifiedObjects();
 	}
 
+	auto mainThread = Core::getCoreInstance();
+
+	if (mainThread) {
+		totalModifiedCount += mainThread->getModifiedObjects();
+	}
+
 	msg4 << "total mod count: " << totalModifiedCount;
 
 #ifdef COLLECT_TASKSTATISTICS

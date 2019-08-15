@@ -135,7 +135,6 @@ namespace sys {
 			  snprintf(buf, 32, "%llu", val);
 #endif
 
-
 			  str = buf;
 		  }
 	  };

@@ -415,6 +415,14 @@ String String::valueOf(uint64 val) {
 	return str;
 }
 
+String String::valueOf(std::size_t val) {
+	String str;
+
+	Long::toString(str, (uint64) val);
+
+	return str;
+}
+
 String String::valueOf(float val) {
 	char buf[40];
 
