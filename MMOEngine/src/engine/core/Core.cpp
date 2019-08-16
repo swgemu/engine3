@@ -223,7 +223,7 @@ Reference<DistributedObject*> Core::lookupObject(uint64 id) {
 }
 
 int Core::getIntProperty(const String& key, int defaultValue) {
-	const auto& val = properties.get(key);
+	const auto val = properties.get(key);
 
 	if (!val.isEmpty()) {
 		return Integer::valueOf(val.get(0));
@@ -232,8 +232,15 @@ int Core::getIntProperty(const String& key, int defaultValue) {
 	}
 }
 
+void Core::setIntProperty(const String& key, int propertyValue) {
+	ArrayList<String> values;
+	values.emplace(String::valueOf(propertyValue));
+
+	properties.put(key, values);
+}
+
 uint64 Core::getLongProperty(const String& key, uint64 defaultValue) {
-	const auto& val = properties.get(key);
+	const auto val = properties.get(key);
 
 	if (!val.isEmpty()) {
 		return UnsignedLong::valueOf(val.get(0));
@@ -247,7 +254,7 @@ ArrayList<String> Core::getPropertyVector(const String& key) {
 }
 
 String Core::getProperty(const String& key, const String& defaultValue) {
-	auto properties = getPropertyVector(key);
+	const auto properties = getPropertyVector(key);
 
 	if (properties.isEmpty()) {
 		return defaultValue;
@@ -257,7 +264,7 @@ String Core::getProperty(const String& key, const String& defaultValue) {
 }
 
 double Core::getDoubleProperty(const String& key, double defaultValue) {
-	auto val = properties.get(key);
+	const auto val = properties.get(key);
 
 	if (!val.isEmpty()) {
 		return Double::valueOf(val.get(0));

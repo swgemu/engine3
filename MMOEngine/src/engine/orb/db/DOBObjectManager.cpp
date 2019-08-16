@@ -202,15 +202,17 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 		uint32 currentCRC = BaseProtocol::generateCRC(objectData);
 
 		if (lastSaveCRC == currentCRC) {
-			object->_setUpdated(false);
-
 			const static bool saveUpdatedTrace = Core::getIntProperty("ObjectManager.trackLastUpdatedTrace", 0);
 
 			if (saveUpdatedTrace) {
 				auto trace = managedObject->getLastModifiedTrace();
 
-				trace->print();
+				if (trace) {
+					trace->print();
+				}
 			}
+
+			object->_setUpdated(false);
 
 			delete objectData;
 			return 1;
@@ -608,10 +610,10 @@ void DOBObjectManager::finishObjectUpdate() {
 			warning("missing object in thread local modified objects list 0x"
 					+ String::hexvalueOf(managed->_getObjectID()) + " " + managed->_getName());
 
-			nlohmann::json obj;
-			impl->writeJSON(obj);
+			nlohmann::json jsonObject;
+			managed->writeJSON(jsonObject);
 
-			warning(obj.dump().c_str());
+			warning(jsonObject.dump().c_str());
 			//		+ " " + managed->_getName() + " " + managed->_getClassName());
 		}
 	}

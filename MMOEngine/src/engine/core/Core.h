@@ -69,6 +69,7 @@ namespace engine {
 		static uint64 getLongProperty(const String& key, uint64 defaultValue = 0);
 		static String getProperty(const String& key, const String& defaultValue = "");
 		static ArrayList<String> getPropertyVector(const String& key);
+		static void setIntProperty(const String& key, int propertyValue);
 
 		static double getDoubleProperty(const String& key, double defaultValue = 0);
 

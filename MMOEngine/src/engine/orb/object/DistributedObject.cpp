@@ -28,8 +28,15 @@ DistributedObject::UpdatedHelper::~UpdatedHelper() {
 DistributedObject::UpdatedHelper& DistributedObject::UpdatedHelper::operator=(bool val) {
 	_updated.store(val, std::memory_order_relaxed);
 
-	if (!val)
+	if (!val) {
+		if (lastModifiedTrace) {
+			delete lastModifiedTrace;
+
+			lastModifiedTrace = nullptr;
+		}
+
 		return *this;
+	}
 
 	/*if (!obj->isPersistent())
 		return *this;*/
