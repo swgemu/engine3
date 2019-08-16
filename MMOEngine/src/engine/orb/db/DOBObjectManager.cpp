@@ -586,18 +586,12 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction
 	return currentThread;
 }
 
-void DOBObjectManager::finishObjectUpdate() {
-	Locker _locker(this);
-
-	objectUpdateInProcess = false;
-
-	updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
-
-	info("marked updated objects: " + String::valueOf(totalUpdatedObjects)
-			+ " commited objects: " + String::valueOf(totalActuallyChangedObjects), true);
+void DOBObjectManager::checkCommitedObjects() {
+	Locker locker(this);
 
 	Timer perf;
 	perf.start();
+
 	int i = 0;
 
 	for (auto obj : commitedObjects.objects) {
@@ -608,20 +602,33 @@ void DOBObjectManager::finishObjectUpdate() {
 			auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
 
 			warning("missing object in thread local modified objects list 0x"
-					+ String::hexvalueOf(managed->_getObjectID()) + " " + managed->_getName());
+					+ String::hexvalueOf(managed->_getObjectID()) + " " + managed->_getName()
+					+ " with " + String::valueOf(managed->getReferenceCount()) + " references left");
 
 			nlohmann::json jsonObject;
 			managed->writeJSON(jsonObject);
 
 			warning(jsonObject.dump().c_str());
-			//		+ " " + managed->_getName() + " " + managed->_getClassName());
 		}
 	}
 
 	auto elapsedMs = perf.stopMs();
 
-	info("checked " + String::valueOf(i) + " commited objects vs modified objects in "
-		       	+ String::valueOf(elapsedMs) + " ms", true);
+	if (i > 0) {
+		info("checked " + String::valueOf(i) + " commited objects vs modified objects in "
+				+ String::valueOf(elapsedMs) + " ms", true);
+	}
+}
+
+void DOBObjectManager::finishObjectUpdate() {
+	Locker _locker(this);
+
+	objectUpdateInProcess = false;
+
+	updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
+
+	info("marked updated objects: " + String::valueOf(totalUpdatedObjects)
+			+ " commited objects: " + String::valueOf(totalActuallyChangedObjects), true);
 
 	ObjectBrokerAgent::instance()->finishBackup();
 }

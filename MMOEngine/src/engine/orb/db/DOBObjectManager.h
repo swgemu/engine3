@@ -120,6 +120,7 @@ namespace engine {
 
 	protected:
 		void finishObjectUpdate();
+		void checkCommitedObjects();
 
 		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
 
