@@ -27,7 +27,9 @@ namespace sys {
   namespace lang {
 
 	class StackTrace {
-		void* symbols[25];
+		constexpr const static int maxSize = 25;
+
+		void* symbols[maxSize];
 
 		int count;
 
@@ -43,11 +45,14 @@ namespace sys {
 
 		void print() const ;
 
-		void getStackTrace(String& trace) const;
-
 		static void printStackTrace();
 
 		bool equals(const StackTrace& trace) const;
+		bool containsAddress(void* address) const;
+
+		int getCount() const {
+			return count;
+		}
 
 		static void setBinaryName(const String& name) {
 			binaryName = name;

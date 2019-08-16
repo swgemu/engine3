@@ -40,22 +40,56 @@
 //#define PRINT_OBJECT_COUNT
 
 int DOBObjectManager::UPDATETODATABASETIME = 300000;
+bool DOBObjectManager::dumpLastModifiedTraces = false;
 
-int MAXOBJECTSTOUPDATEPERTHREAD = 15000;
-int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 2;
-int MIN_UPDATE_THREADS = 2;
-int MAX_UPDATE_THREADS = 8;
+namespace DOB {
+	int MAXOBJECTSTOUPDATEPERTHREAD = 15000;
+	int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 2;
+	int MIN_UPDATE_THREADS = 2;
+	int MAX_UPDATE_THREADS = 8;
+
+	ArrayList<void*> getIgnoreAddresses() {
+		ArrayList<void*> addressVector;
+
+		auto addresses = Core::getPropertyVector("ObjectManager.ignoreModifiedTraces");
+
+		for (const auto& address : addresses) {
+			void* addressPointer = nullptr;
+
+			if (address.beginsWith("0x")) {
+				uint64 val = UnsignedLong::hexvalueOf(address.subString(2));
+
+				addressVector.emplace(reinterpret_cast<void*>(val));
+			}
+		}
+
+		return addressVector;
+	}
+
+	bool containsIgnoreAddress(const StackTrace& trace) {
+		static const auto addresses = getIgnoreAddresses();
+
+		for (const auto& address : addresses) {
+			if (trace.containsAddress(address)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
 
 DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	nextObjectID = Core::getLongProperty("ObjectManager.initialObjectID", 0x1000000); // reserving first ids for snapshot objects
 
 	Core::initializeProperties("ObjectManager");
 
-	INITIALUPDATEMODIFIEDOBJECTSTHREADS = Core::getIntProperty("ObjectManager.initialUpdateModifiedObjectsThreads", INITIALUPDATEMODIFIEDOBJECTSTHREADS);
-	MAXOBJECTSTOUPDATEPERTHREAD = Core::getIntProperty("ObjectManager.maxObjectsToUpdatePerThread", MAXOBJECTSTOUPDATEPERTHREAD);
-	MIN_UPDATE_THREADS = Core::getIntProperty("ObjectManager.minUpdateThreads", MIN_UPDATE_THREADS);
-	MAX_UPDATE_THREADS = Core::getIntProperty("ObjectManager.maxUpdateThreads", MAX_UPDATE_THREADS);
+	DOB::INITIALUPDATEMODIFIEDOBJECTSTHREADS = Core::getIntProperty("ObjectManager.initialUpdateModifiedObjectsThreads", DOB::INITIALUPDATEMODIFIEDOBJECTSTHREADS);
+	DOB::MAXOBJECTSTOUPDATEPERTHREAD = Core::getIntProperty("ObjectManager.maxObjectsToUpdatePerThread", DOB::MAXOBJECTSTOUPDATEPERTHREAD);
+	DOB::MIN_UPDATE_THREADS = Core::getIntProperty("ObjectManager.minUpdateThreads", DOB::MIN_UPDATE_THREADS);
+	DOB::MAX_UPDATE_THREADS = Core::getIntProperty("ObjectManager.maxUpdateThreads", DOB::MAX_UPDATE_THREADS);
 	UPDATETODATABASETIME = Core::getIntProperty("ObjectManager.updateToDatabaseTime", UPDATETODATABASETIME);
+	dumpLastModifiedTraces = Core::getIntProperty("ObjectManager.trackLastUpdatedTrace", 0);
 
 	objectUpdateInProcess = false;
 	totalUpdatedObjects = 0;
@@ -64,7 +98,7 @@ DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	updateModifiedObjectsTask = new UpdateModifiedObjectsTask();
 	//updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
 
-	for (int i = 0; i < INITIALUPDATEMODIFIEDOBJECTSTHREADS; ++i) {
+	for (int i = 0; i < DOB::INITIALUPDATEMODIFIEDOBJECTSTHREADS; ++i) {
 		createUpdateModifiedObjectsThread();
 	}
 
@@ -202,13 +236,12 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 		uint32 currentCRC = BaseProtocol::generateCRC(objectData);
 
 		if (lastSaveCRC == currentCRC) {
-			const static bool saveUpdatedTrace = Core::getIntProperty("ObjectManager.trackLastUpdatedTrace", 0);
-
-			if (saveUpdatedTrace) {
+			if (dumpLastModifiedTraces) {
 				auto trace = managedObject->getLastModifiedTrace();
 
 				if (trace) {
-					trace->print();
+					if (!DOB::containsIgnoreAddress(*trace))
+						trace->print();
 				}
 			}
 
@@ -492,7 +525,7 @@ void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, i
 
 	UpdateModifiedObjectsThread* thread = nullptr;
 
-	if (threadIndex >= MAX_UPDATE_THREADS) {
+	if (threadIndex >= DOB::MAX_UPDATE_THREADS) {
 		threadIndex = threadIndex % updateModifiedObjectsThreads.size();
 	} else if (updateModifiedObjectsThreads.size() <= threadIndex) {
 		createUpdateModifiedObjectsThread();
@@ -564,7 +597,7 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction
 			objectsToUpdateCount++;
 		}
 
-		if (objectsToUpdateCount >= MAXOBJECTSTOUPDATEPERTHREAD) {
+		if (objectsToUpdateCount >= DOB::MAXOBJECTSTOUPDATEPERTHREAD) {
 			dispatchUpdateModifiedObjectsThread(currentThread, lastThreadCount, objectsToUpdateCount, transaction, objectsToUpdate,
 					nullptr);
 		}

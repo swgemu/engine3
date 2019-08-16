@@ -18,19 +18,19 @@ namespace sys {
   namespace thread {
 
 	class SCOPED_CAPABILITY ReadLocker  {
-		ReadWriteLock* lockable;
+		const ReadWriteLock* lockable;
 	public:
 		ReadLocker(ReadLocker&& locker) : lockable(locker.lockable) {
 			locker.lockable = nullptr;
 		}
 
-		ReadLocker(ReadWriteLock* lock) ACQUIRE_SHARED(lock) {
+		ReadLocker(const ReadWriteLock* lock) ACQUIRE_SHARED(lock) {
 			const auto doLock = !lock->isLockedByCurrentThread();
 
 			if (doLock) {
 				lockable = lock;
 
-				lock->rlock();
+				const_cast<ReadWriteLock*>(lock)->rlock();
 			} else {
 				lockable = nullptr;
 			}
@@ -41,14 +41,14 @@ namespace sys {
 
 		~ReadLocker() RELEASE() {
 			if (lockable != nullptr) {
-				lockable->runlock();
+				const_cast<ReadWriteLock*>(lockable)->runlock();
 			}
 		}
 
 	public:
 		inline void release() RELEASE() {
 			if (lockable != nullptr) {
-				lockable->runlock();
+				const_cast<ReadWriteLock*>(lockable)->runlock();
 
 				lockable = nullptr;
 			}

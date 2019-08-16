@@ -65,6 +65,7 @@ namespace engine {
 		ska::flat_hash_set<void*> uniqueModifiedObjectValues;
 
 		static int UPDATETODATABASETIME;
+		static bool dumpLastModifiedTraces;
 
 	public:
 		DOBObjectManager();
@@ -79,6 +80,14 @@ namespace engine {
 
 		static void setUpdateToDatabaseTime(int value) {
 			UPDATETODATABASETIME = value;
+		}
+
+		static void setDumpLastModifiedTraces(bool val) {
+			dumpLastModifiedTraces = val;
+		}
+
+		static bool getDumpLastModifiedTraces() {
+			return dumpLastModifiedTraces;
 		}
 
 		void scheduleUpdateToDatabase();

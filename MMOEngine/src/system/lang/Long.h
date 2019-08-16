@@ -6,6 +6,8 @@
 #ifndef LONG_H_
 #define LONG_H_
 
+#include <stdlib.h>
+
 #include "Integer.h"
 
 #include "String.h"
@@ -175,6 +177,10 @@ namespace sys {
 			  *this = stream->readLong();
 
 			  return true;
+		  }
+
+		  static uint64 hexvalueOf(const String& str) {
+		  	return std::strtoull(str.toCharArray(), nullptr, 16);
 		  }
 
 		  static uint64 valueOf(const String& str) {

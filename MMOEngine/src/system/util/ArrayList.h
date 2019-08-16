@@ -355,16 +355,14 @@ namespace sys {
 	   }
 
 	   elementData = array.elementData;
-
 	   elementCapacity = array.elementCapacity;
-
 	   capacityIncrement = array.capacityIncrement;
-
 	   elementCount = array.elementCount;
 
 	   array.elementData = nullptr;
 	   array.elementCount = 0;
 	   array.capacityIncrement = 0;
+	   array.elementCapacity = 0;
 
 	   return *this;
    }

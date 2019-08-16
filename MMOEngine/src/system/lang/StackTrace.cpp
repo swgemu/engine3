@@ -14,7 +14,7 @@ String StackTrace::binaryName = "core3";
 
 StackTrace::StackTrace() {
 	#ifdef PLATFORM_UNIX
-		count = backtrace(symbols, 25);
+		count = backtrace(symbols, maxSize);
 	#endif
 }
 
@@ -34,6 +34,16 @@ StackTrace& StackTrace::operator=(const StackTrace& c) {
 }
 
 StackTrace::~StackTrace() {
+}
+
+bool StackTrace::containsAddress(void* address) const {
+	for (int i = 0; i < count; ++i) {
+		if (symbols[i] == address) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void StackTrace::print() const {
@@ -87,16 +97,6 @@ void StackTrace::print() const {
 	#endif
 }
 
-void StackTrace::getStackTrace(String& trace) const {
-	StringBuffer out;
-
-	#ifdef PLATFORM_UNIX
-		for (int i = 0; i < count; i++) {
-		}
-	#endif
-
-	trace = out.toString();
-}
 
 void StackTrace::printStackTrace() {
 	StackTrace trace;

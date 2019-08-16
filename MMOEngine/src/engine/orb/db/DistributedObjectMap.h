@@ -14,7 +14,7 @@ namespace engine {
 	template<class ObjectMap>
 	class DistributedObjectMap {
 		ObjectMap objectMap;
-	
+
 	public:
 		DistributedObjectMap() {
 		}
@@ -28,7 +28,7 @@ namespace engine {
 				ref->release();
 			}
 		}
-		
+
 		bool add(sys::uint64 objectID, DistributedObject* object) {
 			bool exists = objectMap.put(objectID, object) != nullptr;
 
@@ -38,7 +38,7 @@ namespace engine {
 
 			return exists;
 		}
-	
+
 		DistributedObject* get(sys::uint64 objectID) {
 			return objectMap.get(objectID);
 		}
@@ -64,7 +64,7 @@ namespace engine {
 
 			return false;
 		}
-		
+
 		void remove(sys::uint64 objectID) {
 			DistributedObject* obj = objectMap.remove(objectID);
 
@@ -75,7 +75,7 @@ namespace engine {
 			//return false;
 		}
 
-		inline int getSize() {
+		inline int getSize() const {
 			return objectMap.size();
 		}
 

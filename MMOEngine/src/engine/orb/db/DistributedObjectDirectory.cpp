@@ -19,6 +19,21 @@ public:
 	}
 };
 
+namespace DOBT {
+	int hash(const uint64& keyValue) {
+		uint64 key = keyValue;
+
+		key = (~key) + (key << 18); // key = (key << 18) - key - 1;
+		key =   key  ^ (key >> 31);
+		key = key * 21;             // key = (key + (key << 2)) + (key << 4);
+		key = key ^ (key >> 11);
+		key = key + (key << 6);
+		key = key ^ (key >> 22);
+
+		return (int) key;
+	}
+}
+
 ObjectHashTable::ObjectHashTable() : HashTable<uint64, DistributedObjectAdapter*>() {
 }
 
@@ -26,17 +41,17 @@ ObjectHashTable::ObjectHashTable(int initialCapacity) : HashTable<uint64, Distri
 }
 
 int ObjectHashTable::hash(const uint64& keyValue) const { //actual uint64 hash function instead of the default PoS AtomicLong has
-							// that distributes the buckets evenly
-	uint64 key = keyValue;
+	return DOBT::hash(keyValue);
+}
 
-	key = (~key) + (key << 18); // key = (key << 18) - key - 1;
-	key =   key  ^ (key >> 31);
-	key = key * 21;             // key = (key + (key << 2)) + (key << 4);
-	key = key ^ (key >> 11);
-	key = key + (key << 6);
-	key = key ^ (key >> 22);
+ObjectHashTableHelper::ObjectHashTableHelper() : HashTable<uint64, DistributedObject*>() {
+}
 
-	return (int) key;
+ObjectHashTableHelper::ObjectHashTableHelper(int initialCapacity) : HashTable<uint64, DistributedObject*>(initialCapacity) {
+}
+
+int ObjectHashTableHelper::hash(const uint64& keyValue) const { //actual uint64 hash function instead of the default PoS AtomicLong has
+	return DOBT::hash(keyValue);
 }
 
 DistributedObjectDirectory::DistributedObjectDirectory() : objectMap(300000) {

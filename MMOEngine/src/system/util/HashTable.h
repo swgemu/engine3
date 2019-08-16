@@ -114,6 +114,7 @@ namespace sys {
 
 	    typedef K key_type;
 	    typedef V value_type;
+	    typedef HashTableIterator<K, V> iterator_type;
 
 #ifdef CXX11_COMPILER
 	    HashTable(HashTable<K, V>&& table);
