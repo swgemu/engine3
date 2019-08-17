@@ -6,7 +6,7 @@
 #ifndef DOBOBJECTMANAGER_H_
 #define DOBOBJECTMANAGER_H_
 
-#include "engine/util/flat_hash_map.hpp"
+#include "engine/util/bytell_hash_map.hpp"
 
 #include "system/platform.h"
 
@@ -55,14 +55,14 @@ namespace engine {
 		class SynchronizedCommitedObjects {
 		public:
 			Mutex mutex;
-			ska::flat_hash_set<void*> objects;
+			ska::bytell_hash_set<void*> objects;
 
 			void put(void* obj);
 		};
 
 		SynchronizedCommitedObjects commitedObjects;
 
-		ska::flat_hash_set<void*> uniqueModifiedObjectValues;
+		ska::bytell_hash_set<void*> uniqueModifiedObjectValues;
 
 		static int UPDATETODATABASETIME;
 		static bool dumpLastModifiedTraces;

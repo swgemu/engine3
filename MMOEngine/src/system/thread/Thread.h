@@ -20,7 +20,7 @@
 
 #include "ThreadLocal.h"
 
-#include "engine/util/flat_hash_map.hpp"
+#include "engine/util/bytell_hash_map.hpp"
 
 namespace engine {
 	namespace core {
@@ -99,7 +99,7 @@ namespace sys {
 		//only used in testing
 		ArrayList<Lockable*> acquiredLockables;
 		ArrayList<LockableTrace> lockableTrace;
-		ska::flat_hash_set<void*>* modifiedObjects = nullptr;
+		ska::bytell_hash_set<void*>* modifiedObjects = nullptr;
 
 	public:
 		//! allocates a new Thread
@@ -181,7 +181,7 @@ namespace sys {
 			return nullptr;
 		}
 
-		ska::flat_hash_set<void*>* takeModifiedObjects() {
+		ska::bytell_hash_set<void*>* takeModifiedObjects() {
 			auto copy = modifiedObjects;
 			modifiedObjects = nullptr;
 
