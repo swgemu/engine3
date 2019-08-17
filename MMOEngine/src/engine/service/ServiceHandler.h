@@ -13,8 +13,10 @@
 namespace engine {
   namespace service {
 
-	class ServiceHandler : public Object {
+	class ServiceHandler : public virtual Object {
 	public:
+		constexpr const static bool is_virtual_object = true;
+
 		virtual ~ServiceHandler() {
 		}
 

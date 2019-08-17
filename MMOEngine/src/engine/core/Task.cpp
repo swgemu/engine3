@@ -41,8 +41,6 @@ Task::~Task() {
 }
 
 void Task::initialize() {
-	taskManager = Core::getTaskManager();
-
 	priority = 3;
 	period = 0;
 
@@ -56,6 +54,12 @@ void Task::initialize() {
 }
 
 void Task::execute() {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->executeTask(this);
 }
 
@@ -127,10 +131,22 @@ void Task::doExecute() {
 }
 
 bool Task::isScheduled() {
+  	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return false;
+	}
+
 	return taskManager->isTaskScheduled(this);
 }
 
 bool Task::cancel() {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return true;
+	}
+
 	return taskManager->cancelTask(this);
 }
 
@@ -143,14 +159,32 @@ bool Task::cancelNonTransactionally() {
 }
 
 void Task::schedule(uint64 delay) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->scheduleTask(this, delay);
 }
 
 void Task::scheduleInIoScheduler(uint64 delay) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->scheduleIoTask(this, delay);
 }
 
 void Task::scheduleInIoScheduler(Time& time) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->scheduleIoTask(this, time);
 }
 
@@ -164,11 +198,23 @@ void Task::scheduleNonTransactionally(uint64 delay) {
 }
 
 void Task::schedule(Time& time) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->scheduleTask(this, time);
 }
 
 void Task::schedulePeriodic(uint64 delay, uint64 period) {
 	setPeriod(period);
+
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
 
 	taskManager->scheduleTask(this, delay);
 }
@@ -176,18 +222,42 @@ void Task::schedulePeriodic(uint64 delay, uint64 period) {
 void Task::schedulePeriodic(Time& time, uint64 period) {
 	setPeriod(period);
 
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->scheduleTask(this, time);
 }
 
 void Task::reschedule(uint64 delay) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->rescheduleTask(this, delay);
 }
 
 void Task::rescheduleInIoScheduler(uint64 delay) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->rescheduleIoTask(this, delay);
 }
 
 void Task::rescheduleInIoScheduler(Time& time) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->rescheduleIoTask(this, time);
 }
 
@@ -200,6 +270,12 @@ void Task::rescheduleNonTransactionally(uint64 delay) {
 }
 
 void Task::reschedule(Time& time) {
+	auto taskManager = Core::getTaskManager();
+
+	if (!taskManager) {
+		return;
+	}
+
 	taskManager->rescheduleTask(this, time);
 }
 

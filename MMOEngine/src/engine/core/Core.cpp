@@ -162,12 +162,12 @@ void Core::start() {
 void Core::shutdownTaskManager() {
 	TaskManager* taskMgr = getTaskManager();
 
-    taskManagerShutDown = true;
+	taskManagerShutDown = true;
 
-    if (taskMgr != nullptr)
-	    taskMgr->shutdown();
+	if (taskMgr != nullptr)
+		taskMgr->shutdown();
 
-    taskManager = nullptr;
+	taskManager = nullptr;
 }
 
 /*void Core::scheduleTask(Task* task, uint64 time) {
@@ -181,18 +181,20 @@ void Core::scheduleTask(Task* task, Time& time) {
 }*/
 
 TaskManager* Core::getTaskManager() {
-	if (taskManager.get() == nullptr) {
+	auto manager = taskManager.get();
+
+	if (manager == nullptr) {
 		if (taskManagerShutDown)
 			return nullptr;
 
 #ifdef WITH_STM
-		taskManager = new TransactionalTaskManager();
+		taskManager = manager = new TransactionalTaskManager();
 #else
-		taskManager = new TaskManagerImpl();
+		taskManager = manager = new TaskManagerImpl();
 #endif
 	}
 
-	return taskManager.get();
+	return manager;
 }
 
 ObjectBroker* Core::getObjectBroker() {

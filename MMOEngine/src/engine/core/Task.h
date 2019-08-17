@@ -30,8 +30,6 @@ namespace engine {
 
 	class Task : public PriorityQueueEntry, public Runnable, public Object {
 	protected:
-		TaskManager* taskManager;
-
 		AtomicReference<TaskScheduler*> taskScheduler;
 
 		AtomicTime nextExecutionTime;

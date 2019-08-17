@@ -35,8 +35,10 @@ namespace engine {
 		void run() {
 			Locker locker(&lock);
 
-			if (client != nullptr)
-				client->requestNetStatus();
+			auto strongRef = client;
+
+			if (strongRef != nullptr)
+				strongRef->requestNetStatus();
 		}
 
 		void clearClient() {

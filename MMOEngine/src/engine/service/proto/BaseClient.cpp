@@ -29,16 +29,16 @@
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;
         uint16 seq;
-        
+
 public:
         AcknowledgeClientPackets(BaseClient* cl, uint16 s) {
                 client = cl;
                 seq = s;
-        }       
-        
+        }
+
         void run() {
                 client->acknowledgeClientPackets(seq);
-        } 
+        }
 };
 
 BaseClient::BaseClient() : DatagramServiceClient(),
@@ -207,8 +207,8 @@ void BaseClient::close() {
 		netRequestEvent.castTo<BaseClientNetStatusRequestEvent*>()->clearClient();
 	}
 
-	Reference<Task*> task = new BaseClientCleanupEvent(this);
-	task->scheduleInIoScheduler();
+	/*Reference<Task*> task = new BaseClientCleanupEvent(this);
+	task->scheduleInIoScheduler();*/
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
@@ -848,7 +848,7 @@ bool BaseClient::validatePacket(Packet* pack) {
 
 	acknowledgeClientPackets(clientSequence++);
 	//Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, clientSequence++), 9);
-		
+
 
 	#ifdef TRACE_CLIENTS
 		StringBuffer msg;
@@ -955,7 +955,7 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 
 void BaseClient::checkupServerPackets(BasePacket* pack) {
 //        return;
-        
+
 	lock();
 
 	try {
@@ -1006,10 +1006,10 @@ void BaseClient::resendPackets() {
 			 << checkupEvent->getCheckupTime() << "]";
 		debug(msg2, true);
 	#endif*/
-	
+
 	if (sequenceBuffer.size() == 0)
 		return;
-	
+
 	float checkupTime = (float) ((float)((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime()) / 1000.f;
 	int maxPacketResent = (int) Math::max(5.f, (float)30000.f * checkupTime / 496.f); //30kb * second assuming 496 packet size
 
@@ -1017,7 +1017,7 @@ void BaseClient::resendPackets() {
 	msg2 << "resending MIN(" << sequenceBuffer.size() << " and " << maxPacketResent << ") packets to \'" << ip << "\' ["
 			<< ((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime() << "]";
 	info(msg2, true);*/
-	
+
 	for (int i = 0; i < Math::min(sequenceBuffer.size(), maxPacketResent); ++i) {
 //	for (int i = 0; i < sequenceBuffer.size(); ++i) {
 //	for (int i = 0; i < MIN(sequenceBuffer.size(), 1); ++i) {
@@ -1046,41 +1046,41 @@ void BaseClient::resendPackets() {
 
 void BaseClient::resendPackets(int seq) {
         return;
-        
+
 	lock();
-	
+
 	int maxPackets = 5;
 
 	for (int i = 0; i < sequenceBuffer.size(); ++i) {
 		BasePacket* packet = sequenceBuffer.get(i);
-	        
+
 	    if (packet->getSequence() != (uint32)seq - 1) {
 			continue;
 	    }
-	        
+
 	    if (!DatagramServiceClient::send(packet)) {
 			StringBuffer msg;
 			msg << "LOSING on resend (" << packet->getSequence() << ") " << packet->toString();
 			debug(msg);
 		}
-		
+
 		packet->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 		++resentPackets;
-		
+
 		break;
 	}
-	
+
 	unlock();
-	
+
 	return;
 
 	for (int i = 0; i < sequenceBuffer.size(); ++i) {
-	
+
 	        if (i >= maxPackets) {
 	                break;
 	        }
-	        
+
 		BasePacket* packet = sequenceBuffer.get(i);
 
 		if (packet->getSequence() == (uint32) seq) {
@@ -1195,7 +1195,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			msg << "ACKNOWLEDGED SEND(" << seq << ") [real = " << realseq << ", ackedseq = " << acknowledgedServerSequence << "]";
 			debug(msg);
 		#endif
-		
+
 		if (realseq < acknowledgedServerSequence) {
 		        unlock();
 		        return;
@@ -1294,7 +1294,7 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 				}
 			} else
 				erroneusTicks = 0;
-				
+
 				*/
 		}
 
@@ -1495,6 +1495,8 @@ void BaseClient::disconnect(bool doLock) {
 
 	//unlock(doLock);
 	locker.release();
+
+	auto service = this->service.get();
 
 	if (service != nullptr) {
 		service->removeConnection(this);

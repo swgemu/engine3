@@ -47,7 +47,7 @@ namespace engine {
 
 	class BaseClient : public DatagramServiceClient, public BaseProtocol, public Mutex {
 	protected:
-		DatagramServiceThread* service;
+		WeakReference<DatagramServiceThread*> service;
 
 		Vector<BasePacket*> sequenceBuffer;
 
