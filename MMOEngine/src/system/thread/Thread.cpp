@@ -105,7 +105,7 @@ void Thread::addModifiedObject(void* object) {
 }
 
 int Thread::getModifiedObjectsCount() const {
-	auto modifoedObjects = this->modifiedObjects;
+	auto modifiedObjects = this->modifiedObjects;
 
 	if (!modifiedObjects) {
 		return 0;
