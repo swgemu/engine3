@@ -271,6 +271,8 @@ void Logger::fatal(const char* msg) const {
 
 	log(msg, LogLevel::FATAL, true);
 
+	System::out.flush();
+
 	abort();
 }
 

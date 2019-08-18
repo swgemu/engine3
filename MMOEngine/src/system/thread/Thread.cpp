@@ -17,7 +17,11 @@
 #include <process.h>
 #endif
 
-#include "system/util/SortedVector.h"
+#include "engine/core/Core.h"
+
+namespace ThreadNs {
+	static Logger threadLogger("Thread");
+}
 
 std::atomic<int> Thread::threadCounter;
 UniqueReference<ThreadInitializer*> Thread::threadInitializer;
@@ -35,6 +39,8 @@ void Thread::initializeThread(Thread* thread) {
 }
 
 void* Thread::executeThread(void* th) {
+	const static int vars = Core::initializeProperties("Thread");
+
 	Thread* impl = (Thread*) th;
 
 	currentThread.set(impl);
@@ -87,19 +93,32 @@ void Thread::start() {
 
 void Thread::addModifiedObject(void* object) {
 	if (!modifiedObjects) {
-		modifiedObjects = new ska::bytell_hash_set<void*>(); //new SortedVector<void*>(5000, 1000);
+		modifiedObjects = new ModifiedObjectsList();
 		//modifiedObjects->setNoDuplicateInsertPlan();
 	}
 
 	modifiedObjects->emplace(object);
+
+	const static int maxCount = Core::getIntProperty("Thread.maxModifiedObjects", 3000000);
+
+	ThreadNs::threadLogger.fatal(modifiedObjects->size() < maxCount, "Exceeded Thread.maxModifiedObjects size");
 }
 
-int Thread::getModifiedObjects() const {
+int Thread::getModifiedObjectsCount() const {
+	auto modifoedObjects = this->modifiedObjects;
+
 	if (!modifiedObjects) {
 		return 0;
 	}
 
 	return modifiedObjects->size();
+}
+
+Thread::ModifiedObjectsList* Thread::takeModifiedObjects() {
+	auto copy = modifiedObjects;
+	modifiedObjects = nullptr;
+
+	return copy;
 }
 
 void Thread::cancel() {

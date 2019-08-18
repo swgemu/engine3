@@ -290,8 +290,11 @@ Vector<Pair<Locker*, TaskWorkerThread*>>* TaskManagerImpl::blockTaskManager() {
 	for (int i = 0; i < workers.size(); ++i) {
 		TaskWorkerThread* worker = workers.get(i);
 
-		if (!worker->doBlockWorkerDuringSave())
+		if (!worker->doBlockWorkerDuringSave()) {
+			worker->fatal(!worker->getModifiedObjectsCount(), "Worker thread that doesnt block during save modified an object!");
+
 			continue;
+		}
 
 		Mutex* blockMutex = worker->getBlockMutex();
 
@@ -784,13 +787,13 @@ String TaskManagerImpl::getInfo(bool print) {
 	int totalModifiedCount = 0;
 
 	for (int i = 0; i < workers.size(); ++i) {
-		totalModifiedCount += workers.get(i)->getModifiedObjects();
+		totalModifiedCount += workers.get(i)->getModifiedObjectsCount();
 	}
 
 	auto mainThread = Core::getCoreInstance();
 
 	if (mainThread) {
-		totalModifiedCount += mainThread->getModifiedObjects();
+		totalModifiedCount += mainThread->getModifiedObjectsCount();
 	}
 
 	msg4 << "total mod count: " << totalModifiedCount;

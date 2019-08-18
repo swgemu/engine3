@@ -47,6 +47,8 @@ namespace sys {
 		void println(const char* str, int length);
 		void println(const String& str);
 
+		void flush();
+
 		PrintStream& operator<< (char ch);
 		PrintStream& operator<< (int val);
 		PrintStream& operator<< (uint32 val);

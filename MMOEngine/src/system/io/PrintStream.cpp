@@ -34,6 +34,10 @@ void PrintStream::print(long val) {
 		printf("%ld", val);
 }
 
+void PrintStream::flush() {
+	fflush(stdout);
+}
+
 void PrintStream::print(int64 val) {
 #ifndef PLATFORM_WIN
 	if (doHex())
