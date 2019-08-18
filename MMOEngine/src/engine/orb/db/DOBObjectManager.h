@@ -63,6 +63,7 @@ namespace engine {
 		SynchronizedCommitedObjects commitedObjects;
 
 		ska::bytell_hash_set<void*> uniqueModifiedObjectValues;
+		int saveCount = 0;
 
 		static int UPDATETODATABASETIME;
 		static bool dumpLastModifiedTraces;

@@ -32,7 +32,7 @@ namespace engine {
 		public:
 			DistributedObject* obj = nullptr;
 			std::atomic<bool> _updated{true};
-			StackTrace* lastModifiedTrace = nullptr;
+			AtomicReference<StackTrace*> lastModifiedTrace = nullptr;
 
 			~UpdatedHelper();
 
@@ -41,6 +41,8 @@ namespace engine {
 			}
 
 			UpdatedHelper& operator=(bool val);
+
+			void clearTrace();
 		};
 
 		UpdatedHelper _updated;

@@ -8,6 +8,8 @@
 
 #include "DistributedObject.h"
 
+#include "engine/orb/db/DOBObjectManager.h"
+
 DistributedObject::DistributedObject() : Object(), _objectID(0), _objectBroker(nullptr),
 	_markedForDeletion(false), _deletedFromDatabase(false) {
 
@@ -19,8 +21,18 @@ DistributedObject::~DistributedObject() {
 }
 
 DistributedObject::UpdatedHelper::~UpdatedHelper() {
-	if (lastModifiedTrace) {
-		delete lastModifiedTrace;
+	auto trace = lastModifiedTrace.get();
+
+	if (trace) {
+		delete trace;
+	}
+}
+
+void DistributedObject::UpdatedHelper::clearTrace() {
+	auto oldTrace = lastModifiedTrace.get();
+
+	if (oldTrace && lastModifiedTrace.compareAndSet(oldTrace, nullptr)) {
+		delete oldTrace;
 	}
 }
 
@@ -29,11 +41,7 @@ DistributedObject::UpdatedHelper& DistributedObject::UpdatedHelper::operator=(bo
 	_updated.store(val, std::memory_order_relaxed);
 
 	if (!val) {
-		if (lastModifiedTrace) {
-			delete lastModifiedTrace;
-
-			lastModifiedTrace = nullptr;
-		}
+		clearTrace();
 
 		return *this;
 	}
@@ -41,14 +49,16 @@ DistributedObject::UpdatedHelper& DistributedObject::UpdatedHelper::operator=(bo
 	/*if (!obj->isPersistent())
 		return *this;*/
 
-	const static bool saveUpdatedTrace = Core::getIntProperty("ObjectManager.trackLastUpdatedTrace", 0);
+	const bool toggle = DOBObjectManager::getDumpLastModifiedTraces();
 
-	if (saveUpdatedTrace) {
-		if (lastModifiedTrace) {
-			delete lastModifiedTrace;
+	if (toggle) {
+		clearTrace();
+
+		auto newTrace = new StackTrace();
+
+		if (!lastModifiedTrace.compareAndSet(nullptr, newTrace)) {
+			delete newTrace;
 		}
-
-		lastModifiedTrace = new StackTrace();
 	}
 
 	const static bool enabled = Core::getIntProperty("ObjectManager.saveMode", 0);

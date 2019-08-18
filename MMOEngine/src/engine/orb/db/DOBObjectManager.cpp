@@ -48,26 +48,30 @@ namespace DOB {
 	int MIN_UPDATE_THREADS = 2;
 	int MAX_UPDATE_THREADS = 8;
 
-	ArrayList<void*> getIgnoreAddresses() {
-		ArrayList<void*> addressVector;
+	const ArrayList<void*>& getIgnoreAddresses() {
+		const static ArrayList<void*> vec = [] () {
+			ArrayList<void*> addressVector;
 
-		auto addresses = Core::getPropertyVector("ObjectManager.ignoreModifiedTraces");
+			const auto addresses = Core::getPropertyVector("ObjectManager.ignoreModifiedTraces");
 
-		for (const auto& address : addresses) {
-			void* addressPointer = nullptr;
+			for (const auto& address : addresses) {
+				void* addressPointer = nullptr;
 
-			if (address.beginsWith("0x")) {
-				uint64 val = UnsignedLong::hexvalueOf(address.subString(2));
+				if (address.beginsWith("0x")) {
+					uint64 val = UnsignedLong::hexvalueOf(address.subString(2));
 
-				addressVector.emplace(reinterpret_cast<void*>(val));
+					addressVector.emplace(reinterpret_cast<void*>(val));
+				}
 			}
-		}
 
-		return addressVector;
+			return addressVector;
+		} ();
+
+		return vec;
 	}
 
 	bool containsIgnoreAddress(const StackTrace& trace) {
-		static const auto addresses = getIgnoreAddresses();
+		const auto& addresses = getIgnoreAddresses();
 
 		for (const auto& address : addresses) {
 			if (trace.containsAddress(address)) {
@@ -236,7 +240,9 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 		uint32 currentCRC = BaseProtocol::generateCRC(objectData);
 
 		if (lastSaveCRC == currentCRC) {
-			if (dumpLastModifiedTraces) {
+			static const auto skipSaves = Core::getIntProperty("ObjectManager.dumpModifiedTracesSkipSaves", 0);
+
+			if (dumpLastModifiedTraces && saveCount >= skipSaves) {
 				auto trace = managedObject->getLastModifiedTrace();
 
 				if (trace) {
@@ -662,6 +668,8 @@ void DOBObjectManager::finishObjectUpdate() {
 
 	info("marked updated objects: " + String::valueOf(totalUpdatedObjects)
 			+ " commited objects: " + String::valueOf(totalActuallyChangedObjects), true);
+
+	saveCount++;
 
 	ObjectBrokerAgent::instance()->finishBackup();
 }

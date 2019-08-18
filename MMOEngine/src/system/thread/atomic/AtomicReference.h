@@ -64,7 +64,7 @@ namespace sys {
 		}
 
 		inline V get(std::memory_order t = std::memory_order_relaxed) const {
-			return (V) value.load(t);
+			return value.load(t);
 		}
 
 		void set(V val, std::memory_order t = std::memory_order_seq_cst) volatile {
@@ -80,7 +80,7 @@ namespace sys {
 		}
 
 		inline bool operator== (const V val) const {
-			return val == (V) value.load(std::memory_order_relaxed);
+			return val == value.load(std::memory_order_relaxed);
 		}
 
 	};
