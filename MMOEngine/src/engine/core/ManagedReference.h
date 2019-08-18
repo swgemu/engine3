@@ -104,6 +104,11 @@ namespace engine {
 
 			Reference<O>::operator=(std::move(ref));
 
+#ifdef ODB_REFERENCES
+			auto obj = get();
+			loadedOID = obj ? obj->_getObjectID() : 0;
+#endif
+
 			return *this;
 		}
 #endif
@@ -127,7 +132,7 @@ namespace engine {
 		}
 
 		template<class B>
-		ManagedReference<B> castTo() {
+		ManagedReference<B> castTo() const {
 			ManagedReference<B> stored;
 
 			stored = dynamic_cast<B>(get());
@@ -147,7 +152,7 @@ namespace engine {
 			if (!Core::MANAGED_REFERENCE_LOAD)
 				return loadedOID;
 #endif
-			auto val = ((DistributedObject*)Reference<O>::object.get());
+			auto val = get();
 
 			if (!val) {
 				return 0;
@@ -167,9 +172,9 @@ namespace engine {
 					return 0;
 			}
 #endif
-			if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() < ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
+			if (get()->_getObjectID() < ref.get()->_getObjectID())
 				return 1;
-			else if (((DistributedObject*)Reference<O>::object.get())->_getObjectID() > ((DistributedObject*)ref.Reference<O>::object.get())->_getObjectID())
+			else if (get()->_getObjectID() > ref.get()->_getObjectID())
 				return -1;
 			else
 				return 0;
@@ -217,7 +222,7 @@ namespace engine {
 
 	template<class O> bool ManagedReference<O>::toString(String& str) {
 		if (Reference<O>::get() != nullptr)
-			str = String::valueOf(((DistributedObject*)Reference<O>::get())->_getObjectID());
+			str = String::valueOf(get()->_getObjectID());
 		else
 			str = String::valueOf(0);
 
@@ -225,7 +230,7 @@ namespace engine {
 	}
 
 	template<class O> bool ManagedReference<O>::parseFromString(const String& str, int version) {
-		Reference<O> obj = Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)).castTo<O>();
+		auto obj = Core::getObjectBroker()->lookUp(UnsignedLong::valueOf(str)).castTo<O>();
 
 		if (obj == nullptr) {
 			updateObject(nullptr);
@@ -252,17 +257,11 @@ namespace engine {
 #else
 		uint64 oid = stream->readLong();
 #endif
-		Reference<DistributedObject*> obj = Core::lookupObject(oid);
+		auto obj = Core::lookupObject(oid).castTo<O>();
 
+		*this = std::move(obj);
 
-		if (obj == nullptr) {
-			updateObject(nullptr);
-			return false;
-		}
-
-		updateObject((O)obj.get());
-
-		return true;
+		return get() != nullptr;
 	}
 
   } // namespace core
