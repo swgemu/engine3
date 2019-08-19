@@ -143,6 +143,10 @@ namespace engine {
 			return Reference<O>::object;
 		}
 
+		explicit operator bool() const {
+			return get() != nullptr;
+		}
+
 		inline O getForUpdate() const {
 			return Reference<O>::object;
 		}

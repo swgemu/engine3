@@ -127,6 +127,10 @@ namespace sys {
 			return object.get() != obj;
 		}
 
+		explicit operator bool() const {
+			return object.get() != nullptr;
+		}
+
 		inline O operator->() const {
 			return object.get();
 		}
@@ -275,7 +279,7 @@ namespace sys {
 		}
 	};
 
-	
+
 
   } // namespace lang
 } // namespace sys
