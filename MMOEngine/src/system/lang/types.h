@@ -88,8 +88,9 @@ public:
 	}
 
 	static String getClassName(const T* val, bool withNamespace = false) {
-#if GCC_VERSION >= 40100
 		const char* name = typeid(*val).name();
+
+#if GCC_VERSION >= 40100
 		int stat;
 		char* demangled = abi::__cxa_demangle(name, 0, 0, &stat);
 
@@ -100,9 +101,8 @@ public:
 
 			return ret;
 		}
-
 #endif
-		return "";
+		return name;
 	}
 
 	/*static bool toString(T* address, sys::lang::String& value) {
