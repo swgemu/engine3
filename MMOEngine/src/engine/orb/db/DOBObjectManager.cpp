@@ -364,6 +364,53 @@ UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread
 	return thread;
 }
 
+void DOBObjectManager::collectModifiedObjectsFromThreads(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers) {
+	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
+
+	if (!saveMode) {
+		return;
+	}
+
+	uniqueModifiedObjectValues.clear();
+
+	Timer uniqueModsPerf;
+	uniqueModsPerf.start();
+
+	auto mainThread = Core::getCoreInstance();
+
+	if (mainThread != nullptr) {
+		auto objects = mainThread->takeModifiedObjects();
+
+		if (objects) {
+			for (const auto& val : *objects) {
+				uniqueModifiedObjectValues.emplace(val);
+			}
+
+			delete objects;
+		}
+	} else {
+		warning("No main core instance found for save event");
+	}
+
+	for (auto& entry : *lockers) {
+		if (entry.second != nullptr) {
+			auto objects = entry.second->takeModifiedObjects();
+
+			if (objects) {
+				for (const auto& val : *objects) {
+					uniqueModifiedObjectValues.emplace(val);
+				}
+
+				delete objects;
+			}
+		}
+	}
+
+	auto elapsed = uniqueModsPerf.stopMs();
+
+	info("collected " + String::valueOf((uint64) uniqueModifiedObjectValues.size()) + " different modified objects from workers in " + String::valueOf(elapsed) + "ms", true);
+}
+
 void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	info("starting saving objects to database", true);
 
@@ -409,48 +456,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Vector<DistributedObject*> objectsToDelete;
 	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
 
-	uniqueModifiedObjectValues.clear();
-
-	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
-
-	if (saveMode) {
-		Timer uniqueModsPerf;
-		uniqueModsPerf.start();
-
-		auto mainThread = Core::getCoreInstance();
-
-		if (mainThread != nullptr) {
-			auto objects = mainThread->takeModifiedObjects();
-
-			if (objects) {
-				for (auto val : *objects) {
-					uniqueModifiedObjectValues.emplace(val);
-				}
-
-				delete objects;
-			}
-		} else {
-			warning("No main core instance found for save event");
-		}
-
-		for (auto& entry : *lockers.get()) {
-			if (entry.second != nullptr) {
-				auto objects = entry.second->takeModifiedObjects();
-
-				if (objects) {
-					for (auto val : *objects) {
-						uniqueModifiedObjectValues.emplace(val);
-					}
-
-					delete objects;
-				}
-			}
-		}
-
-		auto elapsed = uniqueModsPerf.stopMs();
-
-		info("collected " + String::valueOf((uint64) uniqueModifiedObjectValues.size()) + " different modified objects from workers in " + String::valueOf(elapsed) + "ms", true);
-	}
+	collectModifiedObjectsFromThreads(lockers);
 
 	Timer copy;
 	copy.start();
@@ -555,7 +561,7 @@ void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, i
 	objectsToUpdateCount = 0;
 }
 
-void DOBObjectManager::SynchronizedCommitedObjects::put(void* obj) {
+void DOBObjectManager::SynchronizedCommitedObjects::put(DistributedObject* obj) {
 	Locker locker(&mutex);
 
 	objects.emplace(obj);

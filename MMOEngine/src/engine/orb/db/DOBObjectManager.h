@@ -9,6 +9,7 @@
 #include "engine/util/bytell_hash_map.hpp"
 
 #include "system/platform.h"
+#include "system/lang/Pair.h"
 
 #include "engine/core/Task.h"
 
@@ -55,14 +56,14 @@ namespace engine {
 		class SynchronizedCommitedObjects {
 		public:
 			Mutex mutex;
-			ska::bytell_hash_set<void*> objects;
+			ska::bytell_hash_set<DistributedObject*> objects;
 
-			void put(void* obj);
+			void put(DistributedObject* obj);
 		};
 
 		SynchronizedCommitedObjects commitedObjects;
 
-		ska::bytell_hash_set<void*> uniqueModifiedObjectValues;
+		ska::bytell_hash_set<DistributedObject*> uniqueModifiedObjectValues;
 		int saveCount = 0;
 
 		static int UPDATETODATABASETIME;
@@ -131,6 +132,7 @@ namespace engine {
 	protected:
 		void finishObjectUpdate();
 		void checkCommitedObjects();
+		void collectModifiedObjectsFromThreads(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers);
 
 		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
 

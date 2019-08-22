@@ -31,6 +31,10 @@ namespace engine {
 }
 
 namespace sys {
+  namespace lang {
+  	class Object;
+  }
+
   namespace util {
 	 template<class T> class SortedVector;
   }
@@ -95,7 +99,7 @@ namespace sys {
 		static UniqueReference<ThreadInitializer*> threadInitializer;
 
 	protected:
-		using ModifiedObjectsList = ArrayList<void*>;//ska::bytell_hash_set<void*>;
+		using ModifiedObjectsList = ArrayList<Object*>;//ska::bytell_hash_set<void*>;
 		//only used in testing
 		ArrayList<Lockable*> acquiredLockables;
 		ArrayList<LockableTrace> lockableTrace;
@@ -162,7 +166,7 @@ namespace sys {
 			return &lockableTrace;
 		}
 
-		void addModifiedObject(void* object);
+		void addModifiedObject(Object* object);
 
 		void addAcquiredLockable(Lockable* lockable, Lockable* cross = nullptr, bool monitorLike = false, bool addToTrace = true) {
 			acquiredLockables.add(lockable);

@@ -84,6 +84,7 @@ Thread::~Thread() {
 
 	if (modifiedObjects) {
 		delete modifiedObjects;
+		modifiedObjects = nullptr;
 	}
 }
 
@@ -91,7 +92,7 @@ void Thread::start() {
 	pthread_create(&thread, &attributes, executeThread, this);
 }
 
-void Thread::addModifiedObject(void* object) {
+void Thread::addModifiedObject(Object* object) {
 	if (!modifiedObjects) {
 		modifiedObjects = new ModifiedObjectsList();
 		//modifiedObjects->setNoDuplicateInsertPlan();
