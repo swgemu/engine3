@@ -383,7 +383,7 @@ void DOBObjectManager::collectModifiedObjectsFromThreads(Vector<Pair<Locker*, Ta
 
 		if (objects) {
 			for (const auto& val : *objects) {
-				uniqueModifiedObjectValues.emplace(val);
+				uniqueModifiedObjectValues.emplace(static_cast<DistributedObject*>(val));
 			}
 
 			delete objects;
@@ -398,7 +398,7 @@ void DOBObjectManager::collectModifiedObjectsFromThreads(Vector<Pair<Locker*, Ta
 
 			if (objects) {
 				for (const auto& val : *objects) {
-					uniqueModifiedObjectValues.emplace(val);
+					uniqueModifiedObjectValues.emplace(static_cast<DistributedObject*>(val));
 				}
 
 				delete objects;

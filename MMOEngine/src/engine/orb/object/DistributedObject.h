@@ -116,7 +116,7 @@ namespace engine {
 			return _markedForDeletion;
 		}
 
-		inline StackTrace* getLastModifiedTrace() const {
+		inline const StackTrace* getLastModifiedTrace() const {
 			return _updated.lastModifiedTrace;
 		}
 	};
