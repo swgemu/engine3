@@ -386,17 +386,17 @@ String String::subString(int beginIndex, int endIndex) const {
 String String::valueOf(int val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%i", val);
+	int written = snprintf(buf, 20, "%i", val);
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::valueOf(uint32 val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%u", val);
+	int written = snprintf(buf, 20, "%u", val);
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::valueOf(int64 val) {
@@ -426,65 +426,65 @@ String String::valueOf(std::size_t val) {
 String String::valueOf(float val) {
 	char buf[40];
 
-	snprintf(buf, 40, "%g", val);
+	int written = snprintf(buf, 40, "%g", val);
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::valueOf(double val) {
 	char buf[40];
 
-	snprintf(buf, 40, "%g", val);
+	int written = snprintf(buf, 40, "%g", val);
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::valueOf(void* val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%p", val);
+	int written = snprintf(buf, 20, "%p", val);
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::hexvalueOf(int val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%x", val);
+	int written = snprintf(buf, 20, "%x", val);
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::hexvalueOf(uint32 val) {
 	char buf[20];
 
-	snprintf(buf, 20, "%x", val);
+	int written = snprintf(buf, 20, "%x", val);
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::hexvalueOf(int64 val) {
 	char buf[32];
 
 #ifdef PLATFORM_WIN
-	snprintf(buf, 32, "%I64x", val);
+	int written = snprintf(buf, 32, "%I64x", val);
 #else
-	snprintf(buf, 32, "%llx", val);
+	int written = snprintf(buf, 32, "%llx", val);
 #endif
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::hexvalueOf(uint64 val) {
 	char buf[32];
 
 #ifdef PLATFORM_WIN
-	snprintf(buf, 32, "%I64x", val);
+	int written = snprintf(buf, 32, "%I64x", val);
 #else
-	snprintf(buf, 32, "%llx", val);
+	int written = snprintf(buf, 32, "%llx", val);
 #endif
 
-	return String(buf);
+	return String(buf, written);
 }
 
 String String::replaceFirst(const String& regexString, const String& replacement) const {
