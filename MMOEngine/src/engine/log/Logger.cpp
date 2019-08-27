@@ -515,8 +515,8 @@ String Logger::escapeJSON(const String& input) {
 	return output.toString();
 }
 
-LoggerHelper::LoggerHelper(const Logger& logger, int logLevel, bool forcedLog)
-	: logger(logger), logLevel(logLevel), forcedLog(forcedLog) {
+LoggerHelper::LoggerHelper(const Logger& logger, const int logLevel, const bool boolParam)
+	: logger(logger), logLevel(logLevel), boolParam(boolParam) {
 }
 
 LoggerHelper::~LoggerHelper() {
@@ -527,9 +527,9 @@ void LoggerHelper::flush(bool clearStream) {
 	if (stream.length() == 0)
 		return;
 
-	switch(logLevel) {
+	switch (logLevel) {
 		case Logger::LogLevel::FATAL:
-			logger.fatal(forcedLog, stream.toString().toCharArray());
+			logger.fatal(stream.toString().toCharArray());
 			break;
 		case Logger::LogLevel::ERROR:
 			logger.error(stream.toString().toCharArray());
@@ -538,15 +538,16 @@ void LoggerHelper::flush(bool clearStream) {
 			logger.warning(stream.toString().toCharArray());
 			break;
 		case Logger::LogLevel::LOG:
-			logger.log(stream.toString().toCharArray(), Logger::LogLevel::LOG, forcedLog);
+			logger.log(stream.toString().toCharArray(), Logger::LogLevel::LOG, boolParam);
 			break;
 		case Logger::LogLevel::INFO:
-			logger.info(stream.toString().toCharArray(), forcedLog);
+			logger.info(stream.toString().toCharArray(), boolParam);
 			break;
 		case Logger::LogLevel::DEBUG:
 			logger.debug(stream.toString().toCharArray());
 			break;
 		default:
+			logger.fatal("incorrect log level in LoggerHelper");
 			break;
 	}
 

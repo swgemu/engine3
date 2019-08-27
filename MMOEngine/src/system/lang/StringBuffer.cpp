@@ -12,7 +12,7 @@ StringBuffer::StringBuffer() : ArrayList<char>(), streamFlags(SF_none) {
 	streamFlags = SF_none;
 }
 
-StringBuffer::StringBuffer(const String& str) : ArrayList<char>(str.length()) {
+StringBuffer::StringBuffer(const String& str) : ArrayList<char>(str.length(), 0) {
 	streamFlags = SF_none;
 
 	append(str);
@@ -80,6 +80,17 @@ StringBuffer& StringBuffer::append(uint64 val) {
 		str = String::valueOf(val);
 	else
 		str = String::hexvalueOf((int64)val);
+
+	return append(str);
+}
+
+StringBuffer& StringBuffer::append(std::size_t val) {
+	String str;
+
+	if (!doHex())
+		str = String::valueOf(val);
+	else
+		str = String::hexvalueOf((int64) val);
 
 	return append(str);
 }
@@ -328,6 +339,10 @@ StringBuffer& StringBuffer::operator<< (double val) {
 }
 
 StringBuffer& StringBuffer::operator<< (void* val) {
+	return append(val);
+}
+
+StringBuffer& StringBuffer::operator<< (std::size_t val) {
 	return append(val);
 }
 

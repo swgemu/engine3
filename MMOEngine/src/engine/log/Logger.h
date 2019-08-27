@@ -36,23 +36,19 @@ namespace engine {
 	class LoggerHelper {
 	protected:
 		const Logger& logger;
-		int logLevel;
-		bool forcedLog;
+		const int logLevel;
+		const bool boolParam;
 
 		StringBuffer stream;
 
 	public:
-		LoggerHelper(const Logger& logger, int logLevel, bool forcedLog);
+		LoggerHelper(const Logger& logger, const int logLevel, const bool boolParam);
 		~LoggerHelper();
 
 		void flush(bool clearStream = true);
 
 		template<typename T>
-		LoggerHelper& operator<<(const T& a) {
-			stream << a;
-
-			return *this;
-		}
+		LoggerHelper& operator<<(const T& a);
 	};
 
 	class Logger {
@@ -143,6 +139,10 @@ namespace engine {
 
 		LoggerHelper fatal(bool assertion) const {
 			return LoggerHelper(*this, LogLevel::FATAL, assertion);
+		}
+
+		LoggerHelper fatal() const {
+			return LoggerHelper(*this, LogLevel::FATAL, false);
 		}
 
 		inline void fatal(bool assertion, const char* msg) const {
@@ -279,6 +279,17 @@ namespace engine {
 		}
 
 	};
+
+	template<typename T>
+	LoggerHelper& LoggerHelper::operator<<(const T& a) {
+		if (logLevel == Logger::LogLevel::FATAL && boolParam) //do nothing if assertion in FATAL is true
+			return *this;
+
+		//otherwise push message to buffer
+		stream << a;
+
+		return *this;
+	}
 
   } // namespace log
 } // namespace engine

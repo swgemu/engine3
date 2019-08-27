@@ -52,6 +52,7 @@ namespace sys {
 		StringBuffer& append(const char* str, int len);
 		StringBuffer& append(const String& str);
 		StringBuffer& append(const UnicodeString& str);
+		StringBuffer& append(std::size_t val);
 
 		void deleteRange(int start, int end);
 
@@ -109,6 +110,7 @@ namespace sys {
 		StringBuffer& operator<< (float val);
 		StringBuffer& operator<< (double val);
 		StringBuffer& operator<< (void* val);
+		StringBuffer& operator<< (std::size_t val);
 		StringBuffer& operator<< (const char* str);
 		StringBuffer& operator<< (const String& str);
 		StringBuffer& operator<< (const UnicodeString& str);

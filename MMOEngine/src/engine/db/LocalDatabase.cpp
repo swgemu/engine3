@@ -162,7 +162,7 @@ void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 
 		auto db = environment->openDatabase(transaction, databaseFileName, "", config);
 
-		fatal(db, "could not open database " + databaseFileName);
+		fatal(db) << "could not open database " << databaseFileName;
 
 		objectsDatabase.set(db);
 

@@ -37,10 +37,11 @@ namespace sys {
 
 	public:
 		String();
-		String(char* str);
 		String(const char* str);
 		String(const char* str, int len);
 		String(const String& str);
+
+		static const int constexpr npos = -1;
 
 #ifdef CXX11_COMPILER
 		String(String&& str);
@@ -350,12 +351,10 @@ using namespace sys::lang;
 
 bool operator==(char ch, const String& str2);
 bool operator==(const String& str, char ch);
-bool operator==(char* str1, const String& str2);
 bool operator==(const char* str1, const String& str2);
 
 bool operator!=(char ch, const String& str2);
 bool operator!=(const String& str, char ch);
-bool operator!=(char* str1, const String& str2);
 bool operator!=(const char* str1, const String& str2);
 
 String operator+(const String& str1, const String& str2);

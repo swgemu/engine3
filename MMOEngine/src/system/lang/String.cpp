@@ -74,13 +74,6 @@ String::String() {
 	create("", 0);
 }
 
-String::String(char* str) {
-	if (str == nullptr)
-		throw IllegalArgumentException();
-
-	create(str, strlen(str));
-}
-
 String::String(const char* str) {
 	if (str == nullptr)
 		throw IllegalArgumentException();
@@ -243,11 +236,11 @@ int String::compareTo(const String& str) const {
 }
 
 bool String::contains(const char* str) const {
-	return indexOf(str) != -1;
+	return indexOf(str) != npos;
 }
 
 bool String::contains(const String& str) const {
-	return indexOf(str) != -1;
+	return indexOf(str) != npos;
 }
 
 int String::indexOf(char ch) const  {
@@ -256,14 +249,14 @@ int String::indexOf(char ch) const  {
 
 int String::indexOf(char ch, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
-		return -1;
+		return npos;
 
 	const char* position = strchr(begin() + fromIndex, ch);
 
 	if (position != nullptr)
 		return position - begin();
 	else
-		return -1;
+		return npos;
 }
 
 int String::indexOf(const char* str) const {
@@ -272,14 +265,14 @@ int String::indexOf(const char* str) const {
 
 int String::indexOf(const char* str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
-		return -1;
+		return npos;
 
 	const char* position = strstr(begin() + fromIndex, str);
 
 	if (position != nullptr)
 		return position - begin();
 	else
-		return -1;
+		return npos;
 }
 
 int String::indexOf(const String& str) const {
@@ -296,14 +289,14 @@ int String::lastIndexOf(char ch) const  {
 
 int String::lastIndexOf(char ch, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
-		return -1;
+		return npos;
 
 	const char* position = strrchr(begin() + fromIndex, ch);
 
 	if (position != nullptr)
 		return position - begin();
 	else
-		return -1;
+		return npos;
 }
 
 int String::lastIndexOf(const char* str) const {
@@ -312,14 +305,14 @@ int String::lastIndexOf(const char* str) const {
 
 int String::lastIndexOf(const char* str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
-		return -1;
+		return npos;
 
 	const char* position = strrstr(begin() + fromIndex, count - fromIndex, str, strlen(str));
 
 	if (position != nullptr)
 		return position - begin();
 	else
-		return -1;
+		return npos;
 }
 
 int String::lastIndexOf(const String& str) const {
@@ -328,14 +321,14 @@ int String::lastIndexOf(const String& str) const {
 
 int String::lastIndexOf(const String& str, int fromIndex) const {
 	if (fromIndex < 0 || fromIndex >= count)
-		return -1;
+		return npos;
 
 	const char* position = strrstr(begin() + fromIndex, count - fromIndex, str.begin(), str.count);
 
 	if (position != nullptr)
 		return position - begin();
 	else
-		return -1;
+		return npos;
 }
 
 bool String::beginsWith(const char* str) const {
@@ -528,7 +521,7 @@ String String::replaceFirst(const String& regexString, const String& replacement
 
 	int i = pmatch[0].rm_so;
 
-	if (i != -1) {
+	if (i != npos) {
 		if (i > 0 && i + rlen < count)
 			return subString(0, i) + replacement + subString(i + rlen, count);
 		else if (i == 0 && i + rlen < count)
@@ -546,11 +539,11 @@ String String::replaceFirst(const String& regexString, const String& replacement
 String String::replaceAll(const String& regex, const String& replacement) const {
 	StringBuffer str(*this);
 
-	int pos = -1;
+	int pos = npos;
 	int start = 0;
-	int end = -1;
+	int end = npos;
 
-	for (int pos = 0; (pos = str.indexOf(regex, start, end) != -1); ++pos) {
+	for (int pos = 0; (pos = str.indexOf(regex, start, end) != npos); ++pos) {
 		str.replace(start, end, replacement);
 
 		if (str.toString() == replacement)
@@ -561,7 +554,7 @@ String String::replaceAll(const String& regex, const String& replacement) const 
 }
 
 String String::toLowerCase() const {
-	String str(begin());
+	String str(begin(), count);
 
 	for (int i = 0; i < count; ++i) {
 		char ch = begin()[i];
@@ -574,7 +567,7 @@ String String::toLowerCase() const {
 }
 
 String String::toUpperCase() const {
-	String str(begin());
+	String str(begin(), count);
 
 	for (int i = 0; i < count; ++i) {
 		char ch = begin()[i];
@@ -589,7 +582,7 @@ String String::toUpperCase() const {
 String String::trim() const {
 	String str;
 
-	int firstIndex = -1, lastIndex = -1;
+	int firstIndex = npos, lastIndex = npos;
 
 	for (int i = 0; i < count; ++i) {
 		char ch = begin()[i];
@@ -600,7 +593,7 @@ String String::trim() const {
 		}
 	}
 
-	if (firstIndex == -1)
+	if (firstIndex == npos)
 		return String("");
 
 	for (int i = count - 1; i >= 0; --i) {
@@ -909,10 +902,6 @@ bool operator==(const String& str, char ch) {
 	return String(&ch, 1) == str;
 }
 
-bool operator==(char* str1, const String& str2) {
-	return String(str1) == str2;
-}
-
 bool operator==(const char* str1, const String& str2) {
 	return String(str1) == str2;
 }
@@ -922,10 +911,6 @@ bool operator!=(char ch, const String& str2) {
 }
 
 bool operator!=(const char* str1, const String& str2) {
-	return String(str1) != str2;
-}
-
-bool operator!=(char* str1, const String& str2) {
 	return String(str1) != str2;
 }
 
