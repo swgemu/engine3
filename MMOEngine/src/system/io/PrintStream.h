@@ -10,6 +10,7 @@
 
 #include "system/lang/String.h"
 #include "system/lang/StringBuffer.h"
+#include "system/lang/UnicodeString.h"
 
 namespace sys {
   namespace io {
@@ -34,6 +35,7 @@ namespace sys {
 		void print(const char* str);
 		void print(const char* str, int length);
 		void print(const String& str);
+		void print(const UnicodeString& str);
 
 		void println(char ch);
 		void println(int val);
@@ -46,6 +48,7 @@ namespace sys {
 		void println(const char* str);
 		void println(const char* str, int length);
 		void println(const String& str);
+		void println(const UnicodeString& str);
 
 		void flush();
 
@@ -61,6 +64,7 @@ namespace sys {
 		PrintStream& operator<< (const char* str);
 		PrintStream& operator<< (const StringBuffer& msg);
 		PrintStream& operator<< (const String& str);
+		PrintStream& operator<< (const UnicodeString& str);
 		PrintStream& operator<< (const StreamFlags flags);
 
 		PrintStream* operator->() {

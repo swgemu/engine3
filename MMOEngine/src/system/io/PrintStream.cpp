@@ -86,6 +86,12 @@ void PrintStream::print(const String& str) {
 	printf("%s", str.toCharArray());
 }
 
+void PrintStream::print(const UnicodeString& val) {
+	auto str = val.toString();
+
+	printf("%s", str.toCharArray());
+}
+
 void PrintStream::println(char ch) {
 	printf("%c\n", ch);
 }
@@ -159,6 +165,12 @@ void PrintStream::println(const String& str) {
 	printf("%s\n", str.toCharArray());
 }
 
+void PrintStream::println(const UnicodeString& val) {
+	auto str = val.toString();
+
+	printf("%s\n", str.toCharArray());
+}
+
 PrintStream& PrintStream::operator<<(char ch) {
 	print(ch);
 
@@ -226,6 +238,12 @@ PrintStream& PrintStream::operator<<(const StringBuffer& msg) {
 }
 
 PrintStream& PrintStream::operator<<(const String& str) {
+	print(str);
+
+	return *this;
+}
+
+PrintStream& PrintStream::operator<<(const UnicodeString& str) {
 	print(str);
 
 	return *this;

@@ -8,7 +8,7 @@
 
 #include <regex.h>
 
-StringBuffer::StringBuffer() : ArrayList<char>(5, 5) {
+StringBuffer::StringBuffer() : ArrayList<char>(), streamFlags(SF_none) {
 	streamFlags = SF_none;
 }
 
@@ -18,8 +18,10 @@ StringBuffer::StringBuffer(const String& str) : ArrayList<char>(str.length()) {
 	append(str);
 }
 
-StringBuffer::StringBuffer(const StringBuffer& s) : ArrayList<char>(s) {
-	streamFlags = s.streamFlags;
+StringBuffer::StringBuffer(const StringBuffer& s) : ArrayList<char>(s), streamFlags(s.streamFlags) {
+}
+
+StringBuffer::StringBuffer(StringBuffer&& str) : ArrayList<char>(std::move(str)), streamFlags(str.streamFlags) {
 }
 
 StringBuffer::~StringBuffer() {
@@ -57,7 +59,7 @@ StringBuffer& StringBuffer::append(uint32 val) {
 }
 
 StringBuffer& StringBuffer::append(long val) {
-	return append((uint32) val);
+	return append((uint64) val);
 }
 
 StringBuffer& StringBuffer::append(int64 val) {
@@ -115,6 +117,12 @@ StringBuffer& StringBuffer::append(const char* str, int len) {
 
 StringBuffer& StringBuffer::append(const String& str) {
 	return append(str.toCharArray(), str.length());
+}
+
+StringBuffer& StringBuffer::append(const UnicodeString& str) {
+	auto val = str.toString();
+
+	return append(val.toCharArray(), val.length());
 }
 
 void StringBuffer::deleteRange(int start, int end) {
@@ -276,11 +284,15 @@ StringBuffer& StringBuffer::replace(int start, int end, const String& str) {
 }
 
 String StringBuffer::toString() const {
-	return String(elementData, elementCount);
+	if (!elementData) {
+		return String();
+	} else {
+		return String(elementData, elementCount);
+	}
 }
 
 void StringBuffer::toString(String& str) const {
-	str = String(elementData, elementCount);
+	str = toString();
 }
 
 StringBuffer& StringBuffer::operator<< (char ch) {
@@ -325,6 +337,10 @@ StringBuffer& StringBuffer::operator<< (const char* str) {
 
 StringBuffer& StringBuffer::operator<< (const String& str) {
 	return append(str.toCharArray(), str.length());
+}
+
+StringBuffer& StringBuffer::operator<< (const UnicodeString& str) {
+	return append(str);
 }
 
 StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {

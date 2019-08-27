@@ -8,6 +8,7 @@
 #include "system/platform.h"
 
 #include "String.h"
+#include "UnicodeString.h"
 
 #include "system/util/ArrayList.h"
 
@@ -34,8 +35,9 @@ namespace sys {
 		StringBuffer();
 		StringBuffer(const String& str);
 		StringBuffer(const StringBuffer& str);
+		StringBuffer(StringBuffer&& str);
 
-		virtual ~StringBuffer();
+		~StringBuffer();
 
 		StringBuffer& append(char ch);
 		StringBuffer& append(int val);
@@ -49,6 +51,7 @@ namespace sys {
 		StringBuffer& append(const char* str);
 		StringBuffer& append(const char* str, int len);
 		StringBuffer& append(const String& str);
+		StringBuffer& append(const UnicodeString& str);
 
 		void deleteRange(int start, int end);
 
@@ -108,6 +111,7 @@ namespace sys {
 		StringBuffer& operator<< (void* val);
 		StringBuffer& operator<< (const char* str);
 		StringBuffer& operator<< (const String& str);
+		StringBuffer& operator<< (const UnicodeString& str);
 		StringBuffer& operator<< (const StreamFlags flags);
 	};
 

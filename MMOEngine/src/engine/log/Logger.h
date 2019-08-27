@@ -45,6 +45,8 @@ namespace engine {
 		LoggerHelper(const Logger& logger, int logLevel, bool forcedLog);
 		~LoggerHelper();
 
+		void flush(bool clearStream = true);
+
 		template<typename T>
 		LoggerHelper& operator<<(const T& a) {
 			stream << a;

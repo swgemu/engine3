@@ -58,7 +58,6 @@ Logger::Logger(const String& s) {
 Logger::~Logger() {
 	if (logFile != nullptr) {
 		closeFileLogger();
-		delete logFile;
 	}
 }
 
@@ -521,6 +520,10 @@ LoggerHelper::LoggerHelper(const Logger& logger, int logLevel, bool forcedLog)
 }
 
 LoggerHelper::~LoggerHelper() {
+	flush(false);
+}
+
+void LoggerHelper::flush(bool clearStream) {
 	switch(logLevel) {
 		case Logger::LogLevel::FATAL:
 			logger.fatal(forcedLog, stream.toString().toCharArray());
@@ -538,10 +541,14 @@ LoggerHelper::~LoggerHelper() {
 			logger.info(stream.toString().toCharArray(), forcedLog);
 			break;
 		case Logger::LogLevel::DEBUG:
-			logger.log(stream.toString().toCharArray());
+			logger.debug(stream.toString().toCharArray());
 			break;
 		default:
 			break;
+	}
+
+	if (clearStream) {
+		stream.deleteAll();
 	}
 }
 
