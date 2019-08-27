@@ -59,7 +59,7 @@ StringBuffer& StringBuffer::append(uint32 val) {
 }
 
 StringBuffer& StringBuffer::append(long val) {
-	return append((uint64) val);
+	return append((int64) val);
 }
 
 StringBuffer& StringBuffer::append(int64 val) {
