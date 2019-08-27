@@ -31,6 +31,28 @@
 namespace engine {
   namespace log {
 
+	class Logger;
+
+	class LoggerHelper {
+	protected:
+		const Logger& logger;
+		int logLevel;
+		bool forcedLog;
+
+		StringBuffer stream;
+
+	public:
+		LoggerHelper(const Logger& logger, int logLevel, bool forcedLog);
+		~LoggerHelper();
+
+		template<typename T>
+		LoggerHelper& operator<<(const T& a) {
+			stream << a;
+
+			return *this;
+		}
+	};
+
 	class Logger {
 	public:
 		static Logger console;
@@ -93,17 +115,33 @@ namespace engine {
 		void info(const String& msg, bool forcedLog = false) const;
 		void info(const StringBuffer& msg, bool forcedLog = false) const;
 
+		LoggerHelper info(bool forcedLog = false) const {
+			return LoggerHelper(*this, LogLevel::INFO, forcedLog);
+		}
+
 		void log(const char *msg, LogLevel type = LogLevel::LOG, bool forceSync = false) const;
 		void log(const String& msg) const;
 		void log(const StringBuffer& msg) const;
+
+		LoggerHelper log(bool forceSync = false) const {
+			return LoggerHelper(*this, LogLevel::LOG, forceSync);
+		}
 
 		void error(const char* msg) const;
 		void error(const String& msg) const;
 		void error(const StringBuffer& msg) const;
 
+		LoggerHelper error() const {
+			return LoggerHelper(*this, LogLevel::ERROR, false);
+		}
+
 		void fatal(const char* msg) const;
 		void fatal(const String& msg) const;
 		void fatal(const StringBuffer& msg) const;
+
+		LoggerHelper fatal(bool assertion) const {
+			return LoggerHelper(*this, LogLevel::FATAL, assertion);
+		}
 
 		inline void fatal(bool assertion, const char* msg) const {
 			if (!assertion) {
@@ -138,9 +176,17 @@ namespace engine {
 		void debug(const StringBuffer& msg) const;
 #endif
 
+		LoggerHelper debug() const {
+			return LoggerHelper(*this, LogLevel::DEBUG, false);
+		}
+
 		void warning(const char* msg) const;
 		void warning(const String& msg) const;
 		void warning(const StringBuffer& msg) const;
+
+		LoggerHelper warning() const {
+			return LoggerHelper(*this, LogLevel::WARNING, false);
+		}
 
 		static void getTime(String& time, bool getFull = true);
 		static void getTime(StringBuffer& time, bool getFull = true);

@@ -121,6 +121,10 @@ namespace sys {
 		static String hexvalueOf(uint32 val);
 		static String hexvalueOf(uint64 val);
 
+		static const String& valueOf(const String& str) {
+			return str;
+		}
+
 		String replaceFirst(const String& regex, const String& replacement) const ;
 		String replaceAll(const String& regex, const String& replacement) const ;
 

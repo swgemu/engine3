@@ -515,3 +515,33 @@ String Logger::escapeJSON(const String& input) {
 
 	return output.toString();
 }
+
+LoggerHelper::LoggerHelper(const Logger& logger, int logLevel, bool forcedLog)
+	: logger(logger), logLevel(logLevel), forcedLog(forcedLog) {
+}
+
+LoggerHelper::~LoggerHelper() {
+	switch(logLevel) {
+		case Logger::LogLevel::FATAL:
+			logger.fatal(forcedLog, stream.toString().toCharArray());
+			break;
+		case Logger::LogLevel::ERROR:
+			logger.error(stream.toString().toCharArray());
+			break;
+		case Logger::LogLevel::WARNING:
+			logger.warning(stream.toString().toCharArray());
+			break;
+		case Logger::LogLevel::LOG:
+			logger.log(stream.toString().toCharArray(), Logger::LogLevel::LOG, forcedLog);
+			break;
+		case Logger::LogLevel::INFO:
+			logger.info(stream.toString().toCharArray(), forcedLog);
+			break;
+		case Logger::LogLevel::DEBUG:
+			logger.log(stream.toString().toCharArray());
+			break;
+		default:
+			break;
+	}
+}
+
