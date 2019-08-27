@@ -646,9 +646,9 @@ void DOBObjectManager::checkCommitedObjects() {
 			auto managed = reinterpret_cast<ManagedObject*>(obj);
 			auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
 
-			warning("missing object in thread local modified objects list 0x"
-					+ String::hexvalueOf(managed->_getObjectID()) + " " + managed->_getName()
-					+ " with " + String::valueOf(managed->getReferenceCount()) + " references left");
+			warning() << "missing object in thread local modified objects list 0x"
+					<< String::hexvalueOf(managed->_getObjectID()) << " " << managed->_getName()
+					<< " with " << managed->getReferenceCount() << " references left";
 
 			nlohmann::json jsonObject;
 			managed->writeJSON(jsonObject);

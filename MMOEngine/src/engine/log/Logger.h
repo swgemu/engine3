@@ -39,13 +39,15 @@ namespace engine {
 		const int logLevel;
 		const bool boolParam;
 
-		StringBuffer stream;
+		StringBuffer buffer;
 
 	public:
 		LoggerHelper(const Logger& logger, const int logLevel, const bool boolParam);
+		LoggerHelper(LoggerHelper&& loggerHelper);
+
 		~LoggerHelper();
 
-		void flush(bool clearStream = true);
+		void flush(bool clearBuffer = true);
 
 		template<typename T>
 		LoggerHelper& operator<<(const T& a);
@@ -109,7 +111,12 @@ namespace engine {
 
 		void closeFileLogger();
 
-		void info(const char *msg, bool forcedLog = false) const;
+		void info(const char *msg, bool forcedlog) const;
+
+	 	void info(const char *msg) const {
+			info(msg, false);
+		}
+
 		void info(const String& msg, bool forcedLog = false) const;
 		void info(const StringBuffer& msg, bool forcedLog = false) const;
 
@@ -117,7 +124,12 @@ namespace engine {
 			return LoggerHelper(*this, LogLevel::INFO, forcedLog);
 		}
 
-		void log(const char *msg, LogLevel type = LogLevel::LOG, bool forceSync = false) const;
+		void log(const char *msg, LogLevel type, bool forceSync = false) const;
+
+		void log(const char *msg) const {
+			log(msg, LogLevel::LOG);
+		}
+
 		void log(const String& msg) const;
 		void log(const StringBuffer& msg) const;
 
@@ -286,7 +298,7 @@ namespace engine {
 			return *this;
 
 		//otherwise push message to buffer
-		stream << a;
+		buffer << a;
 
 		return *this;
 	}

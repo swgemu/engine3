@@ -242,10 +242,9 @@ void Logger::error(const char* msg) const {
 	if (logToConsole) {
 		printTime(false);
 
-		StringBuffer fullMessage;
 		System::out << " [" << name << "] ERROR - " << msg << "\n";
 
-		System::out << fullMessage;
+		System::out.flush();
 	}
 
 	log(msg, LogLevel::ERROR);
@@ -519,40 +518,44 @@ LoggerHelper::LoggerHelper(const Logger& logger, const int logLevel, const bool 
 	: logger(logger), logLevel(logLevel), boolParam(boolParam) {
 }
 
+LoggerHelper::LoggerHelper(LoggerHelper&& l)
+	: logger(l.logger), logLevel(l.logLevel), boolParam(l.boolParam), buffer(std::move(l.buffer)) {
+}
+
 LoggerHelper::~LoggerHelper() {
 	flush(false);
 }
 
-void LoggerHelper::flush(bool clearStream) {
-	if (stream.length() == 0)
+void LoggerHelper::flush(bool clearBuffer) {
+	if (buffer.length() == 0)
 		return;
 
 	switch (logLevel) {
 		case Logger::LogLevel::FATAL:
-			logger.fatal(stream.toString().toCharArray());
+			logger.fatal(buffer.toString().toCharArray());
 			break;
 		case Logger::LogLevel::ERROR:
-			logger.error(stream.toString().toCharArray());
+			logger.error(buffer.toString().toCharArray());
 			break;
 		case Logger::LogLevel::WARNING:
-			logger.warning(stream.toString().toCharArray());
+			logger.warning(buffer.toString().toCharArray());
 			break;
 		case Logger::LogLevel::LOG:
-			logger.log(stream.toString().toCharArray(), Logger::LogLevel::LOG, boolParam);
+			logger.log(buffer.toString().toCharArray(), Logger::LogLevel::LOG, boolParam);
 			break;
 		case Logger::LogLevel::INFO:
-			logger.info(stream.toString().toCharArray(), boolParam);
+			logger.info(buffer.toString().toCharArray(), boolParam);
 			break;
 		case Logger::LogLevel::DEBUG:
-			logger.debug(stream.toString().toCharArray());
+			logger.debug(buffer.toString().toCharArray());
 			break;
 		default:
 			logger.fatal("incorrect log level in LoggerHelper");
 			break;
 	}
 
-	if (clearStream) {
-		stream.deleteAll();
+	if (clearBuffer) {
+		buffer.deleteAll();
 	}
 }
 
