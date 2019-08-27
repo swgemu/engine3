@@ -524,6 +524,9 @@ LoggerHelper::~LoggerHelper() {
 }
 
 void LoggerHelper::flush(bool clearStream) {
+	if (stream.length() == 0)
+		return;
+
 	switch(logLevel) {
 		case Logger::LogLevel::FATAL:
 			logger.fatal(forcedLog, stream.toString().toCharArray());
