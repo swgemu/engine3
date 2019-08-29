@@ -124,7 +124,7 @@ namespace sys {
 	}
 
 	template<class T> T ThreadLocal<T>::getValue() {
-		return (T) pthread_getspecific(dataKey);
+		return reinterpret_cast<T>(pthread_getspecific(dataKey));
 	}
  }
 }

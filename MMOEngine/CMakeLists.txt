@@ -97,7 +97,7 @@ if (ENGINE_TYPE EQUAL 2)
 	set(CMAKE_CXX_FLAGS "-DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -fno-omit-frame-pointer -DVERSION_PUBLIC -fPIC")
 else ()
 	message(STATUS "Building private engine")
-	set(CMAKE_CXX_FLAGS "-ggdb -DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer")
+	set(CMAKE_CXX_FLAGS "-ggdb -DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer -fPIC")
 
 	if (ENABLE_NATIVE)
 		set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")

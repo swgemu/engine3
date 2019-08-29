@@ -155,8 +155,8 @@ int UnicodeString::compareTo(const UnicodeString& str) const {
 	return 0;
 }
 
-char UnicodeString::operator[](int index) const {
-	return (char) uString[index];
+unsigned char UnicodeString::operator[](int index) const {
+	return uString[index];
 }
 
 void UnicodeString::append(const String& ascii) {
@@ -266,17 +266,6 @@ const char* UnicodeString::toCharArray() const {
 
 const unsigned short* UnicodeString::toWideCharArray() const {
 	return uString;
-}
-
-String UnicodeString::toString() const {
-	std::u16string uStr;
-	uStr.reserve(length());
-
-	for (int i = 0; i < length(); ++i) {
-		uStr.push_back(uString[i]);
-	}
-
-	return toUTF8(uStr).c_str();
 }
 
 bool UnicodeString::toString(String& ascii) {

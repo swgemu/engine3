@@ -175,6 +175,10 @@ void Logger::getJSONString(StringBuffer& output, const char* logName, const char
 }
 
 void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
+	if (onLoggerMessageEvent(type, msg)) {
+		return;
+	}
+
 	if (logFile == nullptr && globalLogFile == nullptr)
 		return;
 
@@ -530,7 +534,7 @@ void LoggerHelper::flush(bool clearBuffer) {
 	if (buffer.length() == 0)
 		return;
 
-	switch (logLevel) {
+	switch (static_cast<Logger::LogLevel>(logLevel)) {
 		case Logger::LogLevel::FATAL:
 			logger.fatal(buffer.toString().toCharArray());
 			break;

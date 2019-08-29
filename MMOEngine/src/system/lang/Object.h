@@ -100,14 +100,14 @@ namespace sys {
 		}
 
 #ifdef CXX11_COMPILER
-	    Object& operator=(Object&& o) {
-		    if (this == &o)
-			    return *this;
+		Object& operator=(Object&& o) {
+			if (this == &o)
+				return *this;
 
-		    assert(o.referenceCounters == nullptr);
+			assert(o.referenceCounters == nullptr);
 
-		    return *this;
-	    }
+			return *this;
+		}
 #endif
 		virtual Object* clone() {
 			assert(0 && "clone method not declared");

@@ -527,7 +527,6 @@ int DOBObjectManager::executeUpdateThreads(Vector<DistributedObject*>* objectsTo
 	}
 
 	return numberOfThreads;
-
 }
 
 void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, int& lastThreadCount,

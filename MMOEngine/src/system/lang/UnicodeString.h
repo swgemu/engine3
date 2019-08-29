@@ -9,6 +9,7 @@
 #include "system/platform.h"
 
 #include "Variable.h"
+#include "String.h"
 
 #include <locale>
 #include <codecvt>
@@ -20,8 +21,6 @@
 
 namespace sys {
   namespace lang {
-
-	class String;
 
 	class UnicodeString : public Variable {
 		unsigned short* uString;
@@ -73,7 +72,7 @@ namespace sys {
 
 		int compareTo(const UnicodeString& str) const;
 
-		char operator[](int index) const;
+		unsigned char operator[](int index) const;
 
 		UnicodeString concat(const UnicodeString& str) const;
 
@@ -102,6 +101,10 @@ namespace sys {
 
 		bool toBinaryStream(sys::io::ObjectOutputStream* stream);
 		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream);
+
+		explicit operator String() const {
+			return toString();
+		}
 
 		inline bool isEmpty() const {
 			return count == 0;
@@ -135,17 +138,26 @@ namespace sys {
 			return count;
 		}
 
-		String toString() const;
-
 		template <typename T>
-			static std::string toUTF8(const std::basic_string<T, std::char_traits<T>, std::allocator<T>>& source) {
-				std::string result;
+		static std::string toUTF8(const std::basic_string<T, std::char_traits<T>, std::allocator<T>>& source) {
+			std::string result;
 
-				std::wstring_convert<std::codecvt_utf8_utf16<T>, T> convertor;
-				result = convertor.to_bytes(source);
+			std::wstring_convert<std::codecvt_utf8_utf16<T>, T> convertor;
+			result = convertor.to_bytes(source);
 
-				return result;
+			return result;
+		}
+
+		String toString() const {
+			std::u16string uStr;
+			uStr.reserve(length());
+
+			for (int i = 0; i < length(); ++i) {
+				uStr.push_back(uString[i]);
 			}
+
+			return toUTF8(uStr).c_str();
+		}
 	};
 
   } // namespace lang

@@ -202,13 +202,13 @@ namespace sys {
 
 		V& next();
 
-		bool hasNext();
+		bool hasNext() const;
 
 		void resetIterator();
 
 		void toConsole();
 
-		inline void setTable(HashTable<K,V>* table) {
+		inline void setTable(const HashTable<K,V>* table) {
 			htable = table;
 		}
 	};
@@ -705,7 +705,7 @@ namespace sys {
 		return getNextValue();
 	}
 
-	template<class K, class V> bool HashTableIterator<K,V>::hasNext() {
+	template<class K, class V> bool HashTableIterator<K,V>::hasNext() const {
 	 	return position < htable->size();
 	}
 
