@@ -16,43 +16,12 @@ bool Logger::syncGlobalLog = false;
 bool Logger::jsonGlobalLog = false;
 
 Logger::Logger() {
-	logFile = nullptr;
-
-	logLevel = LOG;
-	doSyncLog = true;
-	doGlobalLog = true;
-	logTimeToFile = true;
-	logLevelToFile = true;
-	logJSON = false;
-	logToConsole = true;
 }
 
-Logger::Logger(const char *s) {
-	logFile = nullptr;
-
-	name = s;
-
-	logLevel = LOG;
-	doSyncLog = true;
-	doGlobalLog = true;
-	logTimeToFile = true;
-	logLevelToFile = true;
-	logJSON = false;
-	logToConsole = true;
+Logger::Logger(const char *s) : name(s) {
 }
 
-Logger::Logger(const String& s) {
-	logFile = nullptr;
-
-	name = s;
-
-	logLevel = LOG;
-	doSyncLog = true;
-	doGlobalLog = true;
-	logTimeToFile = true;
-	logLevelToFile = true;
-	logJSON = false;
-	logToConsole = true;
+Logger::Logger(const String& s) : name(s) {
 }
 
 Logger::~Logger() {
@@ -175,7 +144,7 @@ void Logger::getJSONString(StringBuffer& output, const char* logName, const char
 }
 
 void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
-	if (onLoggerMessageEvent(type, msg)) {
+	if (callback && callback(type, msg)) {
 		return;
 	}
 

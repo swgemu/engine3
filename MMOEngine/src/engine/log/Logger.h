@@ -27,6 +27,7 @@
 #endif
 
 #include "system/lang.h"
+#include <functional>
 
 namespace engine {
   namespace log {
@@ -69,19 +70,23 @@ namespace engine {
 			DEBUG = 5
 		};
 
-	private:
-		FileWriter* logFile;
+		using LoggerCallback = std::function<int(LogLevel, const char*)>;
 
-		LogLevel logLevel;
-		bool doGlobalLog;
-		bool doSyncLog;
-		bool logTimeToFile;
-		bool logLevelToFile;
+	private:
+		FileWriter* logFile = nullptr;
+
+		LogLevel logLevel = LOG;
+		bool doGlobalLog = true;
+		bool doSyncLog = true;
+		bool logTimeToFile = true;
+		bool logLevelToFile = true;
 
 		String name;
 
-		bool logJSON;
-		bool logToConsole;
+		bool logJSON = false;
+		bool logToConsole = true;
+
+		LoggerCallback callback;
 
 		static AtomicReference<FileWriter*> globalLogFile;
 		static volatile int globalLogLevel;
@@ -94,7 +99,7 @@ namespace engine {
 		Logger(const char *s);
 		Logger(const String& s);
 
-		virtual ~Logger();
+		~Logger();
 
 		static void setGlobalFileLogger(const char* file);
 		static void setGlobalFileLogger(const String& file);
@@ -104,17 +109,13 @@ namespace engine {
 
 		static void closeGlobalFileLogger();
 
-		virtual int onLoggerMessageEvent(int type, const char* message) const {
-			return 0;
-		}
-
 		void setFileLogger(const String& file, bool appendData = false);
 
 		void closeFileLogger();
 
-		void info(const char *msg, bool forcedlog) const;
+		void info(const char* msg, bool forcedlog) const;
 
-	 	void info(const char *msg) const {
+	 	void info(const char* msg) const {
 			info(msg, false);
 		}
 
@@ -268,6 +269,14 @@ namespace engine {
 
 		inline void setLogJSON(bool val) {
 			logJSON = val;
+		}
+
+		inline void setLoggerCallback(LoggerCallback&& funct) {
+			callback = std::move(funct);
+		}
+
+		inline void setLoggerCallback(const LoggerCallback& funct) {
+			callback = funct;
 		}
 
 		// getters
