@@ -213,7 +213,7 @@ namespace engine {
 		}
 
 		bool hasToLog(LogLevel level) const {
-			return logLevel >= level;
+			return logLevel >= level || (doGlobalLog && globalLogFile && globalLogLevel >= level);
 		}
 
 		static void getTime(String& time, bool getFull = true);

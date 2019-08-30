@@ -18,6 +18,8 @@ namespace sys {
   		File* file;
 
   	public:
+		constexpr const static int bufferLength = 64;
+
   		FileWriter(File* file, bool append = false) {
   			file->mkdirs();
 
@@ -46,7 +48,7 @@ namespace sys {
   		int write(const char* str, int len) {
   			validateWriteable();
 
-  			return fwrite((byte*) str, 1, len, file->getDescriptor());
+  			return fwrite(str, 1, len, file->getDescriptor());
   		}
 
   		int write(const char* str, uint32 off, int len) {
@@ -58,59 +60,67 @@ namespace sys {
   		}
 
   		int write(char ch) {
-  			char buf[256];
-
-			buf[0] = ch;
-
-			return write(buf, 1);
+			return write(&ch, 1);
 		}
 
   		int write(int val) {
-  			char buf[256];
+  			char buf[bufferLength];
 
-			sprintf(buf, "%i", val);
+			int written = snprintf(buf, sizeof(buf), "%i", val);
 
-			return write(buf, strlen(buf));
+			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+
+			return write(buf, written);
 		}
 
   		int write(uint32 val) {
-  			char buf[256];
+  			char buf[bufferLength];
 
-			sprintf(buf, "%u", val);
+			int written = snprintf(buf, sizeof(buf), "%u", val);
 
-			return write(buf, strlen(buf));
+			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+
+			return write(buf, written);
 		}
 
   		int write(long val) {
-  			char buf[256];
+  			char buf[bufferLength];
 
-			sprintf(buf, "%ld", val);
+			int written = snprintf(buf, sizeof(buf), "%ld", val);
 
-			return write(buf, strlen(buf));
+			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+
+			return write(buf, written);
 		}
 
   		int write(int64 val) {
-  			char buf[256];
+  			char buf[bufferLength];
 
-			sprintf(buf, "%ld", (long) val);
+			int written = sprintf(buf, "%lld", (long long) val);
 
-			return write(buf, strlen(buf));
+			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+
+			return write(buf, written);
 		}
 
   		int write(uint64 val) {
-  			char buf[256];
+  			char buf[bufferLength];
 
-			sprintf(buf, "%lu", (unsigned long) val);
+			int written = snprintf(buf, sizeof(buf), "%llu", (unsigned long long) val);
 
-			return write(buf, strlen(buf));
+			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+
+			return write(buf, written);
 		}
 
   		int write(float val) {
-  			char buf[256];
+  			char buf[bufferLength];
 
-			sprintf(buf, "%f", val);
+			int written = snprintf(buf, sizeof(buf), "%f", val);
 
-			return write(buf, strlen(buf));
+			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+
+			return write(buf, written);
 		}
 
   		int write(const char* str) {
@@ -122,9 +132,10 @@ namespace sys {
   		}
 
   		int writeLine(const String& str) {
-  			String line = str + "\n";
+  			int written = write(str.toCharArray(), str.length());
+			written += write("\n", 1);
 
-  			return write(line.toCharArray(), line.length());
+			return written;
   		}
 
   		FileWriter& operator<< (char ch) {
@@ -191,8 +202,12 @@ namespace sys {
   			return file;
   		}
 
+		inline const File* getFile() const {
+  			return file;
+  		}
+
   	protected:
-  		void validateWriteable() {
+  		void validateWriteable() const {
   			if (!file->exists())
   				throw FileNotFoundException(file);
   		}
