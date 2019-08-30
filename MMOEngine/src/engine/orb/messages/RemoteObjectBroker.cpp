@@ -15,12 +15,12 @@
 #include "RequestServantMessage.h"
 #include "GetNextFreeObjectIDMessage.h"
 
-RemoteObjectBroker::RemoteObjectBroker(const String& address, int port) {
+RemoteObjectBroker::RemoteObjectBroker(const String& address, int port) : Logger("RemoteObjectBroker") {
 	brokerClient = new DOBServiceClient(address, port);
 	brokerClient->start();
 }
 
-RemoteObjectBroker::RemoteObjectBroker(DOBServiceClient* client) {
+RemoteObjectBroker::RemoteObjectBroker(DOBServiceClient* client) : Logger("RemoteObjectBroker") {
 	brokerClient = client;
 }
 
@@ -28,14 +28,14 @@ RemoteObjectBroker::~RemoteObjectBroker() {
 }
 
 void RemoteObjectBroker::registerClass(const String& name, DistributedObjectClassHelper* helper) {
-	assert(0);
+	fatal("RemoteObjectBroker::registerClass");
 }
 
 void RemoteObjectBroker::deploy(DistributedObjectStub* obj) {
 	Locker locker(this);
 
 	const String& className = obj->_getClassName();
-	assert(!className.isEmpty());
+	fatal(!className.isEmpty()) << "object class name is empty";
 
 	DeployObjectMessage deployMessage(obj->_getName(), className, obj->_getObjectID());
 
@@ -52,7 +52,7 @@ void RemoteObjectBroker::deploy(const String& name, DistributedObjectStub* obj) 
 	Locker locker(this);
 
 	const String& className = obj->_getClassName();
-	assert(!className.isEmpty());
+	fatal(!className.isEmpty()) << "class name is empty";
 
 	DeployObjectMessage deployMessage(name, className, obj->_getObjectID());
 

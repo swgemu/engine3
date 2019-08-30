@@ -74,7 +74,7 @@ namespace engine {
 		}
 
 		// getters
-		inline bool isDeplyoed() {
+		inline bool isDeployed() const {
 			return deployed;
 		}
 

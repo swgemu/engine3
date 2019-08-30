@@ -146,9 +146,7 @@ void DatagramServiceThread::receiveMessages() {
 			error(e.getMessage());
 			e.printStackTrace();
 		} catch (...) {
-			error("unreported Exception caught");
-
-			assert(0);
+			fatal("unreported Exception caught");
 		}
 	}
 }

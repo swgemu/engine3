@@ -14,7 +14,7 @@
 #include "ObjectBrokerAgent.h"
 
 ObjectBrokerAgent::ObjectBrokerAgent() : Logger("ObjectBrokerAgent") {
-	setDebugLogLevel();
+	setInfoLogLevel();
 
 	info("starting up agent");
 
@@ -45,7 +45,7 @@ void ObjectBrokerAgent::startBackup() {
 
 	if (broker->isRootBroker()) {
 		DOBObjectManager* objectManager = broker->getObjectManager();
-		assert(objectManager);
+		fatal(objectManager) << "objectManager is null";
 		objectManager->updateModifiedObjectsToDatabase();
 	} else {
 		info("save events disabled on non root brokers", true);
@@ -61,7 +61,9 @@ void ObjectBrokerAgent::finishBackup() {
 }
 
 void ObjectBrokerAgent::doCommand(ObjectBrokerDirector::Command command) {
-	debug("received command " + String(ObjectBrokerDirector::commandToString((int) command)) + " from director");
+	debug() << "received command " <<
+	       	ObjectBrokerDirector::commandToString((int) command)
+	       	<< " from director";
 
 	switch (command) {
 		case ObjectBrokerDirector::CREATE_BACKUP:
@@ -73,7 +75,7 @@ void ObjectBrokerAgent::doCommand(ObjectBrokerDirector::Command command) {
 void ObjectBrokerAgent::setState(AgentState state) {
 	StateUpdateMessage stateUpdateMessage((int) state);
 
-	debug("sending state update " + String(stateToString((int) state)) + " to director");
+	debug() << "sending state update " << stateToString((int) state) << " to director";
 
 	if (directorPort != nullptr) {
 		directorPort->send(&stateUpdateMessage);

@@ -52,6 +52,14 @@ namespace engine {
 
 		template<typename T>
 		LoggerHelper& operator<<(const T& a);
+
+		StringBuffer& getBuffer() {
+			return buffer;
+		}
+
+		const StringBuffer& getBuffer() const {
+			return buffer;
+		}
 	};
 
 	class Logger {
@@ -204,6 +212,10 @@ namespace engine {
 			return LoggerHelper(*this, LogLevel::WARNING, false);
 		}
 
+		bool hasToLog(LogLevel level) const {
+			return logLevel >= level;
+		}
+
 		static void getTime(String& time, bool getFull = true);
 		static void getTime(StringBuffer& time, bool getFull = true);
 
@@ -300,12 +312,25 @@ namespace engine {
 			return logJSON;
 		}
 
+		inline LoggerCallback& getLoggerCallback() {
+			return callback;
+		}
+
+		inline const LoggerCallback& getLoggerCallback() const {
+			return callback;
+		}
+
 	};
 
 	template<typename T>
 	LoggerHelper& LoggerHelper::operator<<(const T& a) {
-		if (logLevel == Logger::LogLevel::FATAL && boolParam) //do nothing if assertion in FATAL is true
+		if (logLevel == Logger::LogLevel::FATAL) {
+		       	if (boolParam) { //do nothing if assertion in FATAL is true
+				return *this;
+			}
+		} else if (!logger.hasToLog(static_cast<Logger::LogLevel>(logLevel)) && !boolParam) {
 			return *this;
+		}
 
 		//otherwise push message to buffer
 		buffer << a;

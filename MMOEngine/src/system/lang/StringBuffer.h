@@ -85,11 +85,11 @@ namespace sys {
 		void toString(String& str) const;
 
 		// getters
-		inline bool doHex() {
+		inline bool doHex() const {
 			return streamFlags & SF_hex;
 		}
 
-		inline bool doUpperCase() {
+		inline bool doUpperCase() const {
 			return streamFlags & SF_uppercase;
 		}
 

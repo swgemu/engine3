@@ -72,8 +72,8 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 		} else {
 			DOBMessage* queuedMessage = client->getQueuedMessage(message->parseInt());
 
-			broker->debug("DOBMessage(" + String::valueOf(queuedMessage->getSequence()) + "): "
-							+ "reply arrived with content: " + message->toStringData());
+			broker->debug() << "DOBMessage(" << queuedMessage->getSequence() << "): "
+							<< "reply arrived with content: " << message->toStringData();
 
 			queuedMessage->handleReply(message);
 

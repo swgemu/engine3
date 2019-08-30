@@ -249,7 +249,7 @@ void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectS
 	Locker locker(objectManager);
 
 #ifndef WITH_STM
-	assert(!obj->isDeplyoed());
+	fatal(!obj->isDeployed()) << "obj is deployed";
 #endif
 
 	objectManager->createObjectID(name, obj);
@@ -268,7 +268,7 @@ void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectS
 void DistributedObjectBroker::deployRemote(const String& name, DistributedObjectStub* obj) {
 	Locker locker(objectManager);
 
-	assert(!obj->isDeplyoed());
+	fatal(!obj->isDeployed()) << "obj is deployed";
 
 	objectManager->createObjectID(name, obj);
 
@@ -310,7 +310,7 @@ DistributedObjectStub* DistributedObjectBroker::undeployLocal(const String& name
 		}*/
 	#endif
 
-		debug("object \'" + obj->_getName() + "\' undeployed");
+		debug() << "object \'" << obj->_getName() << "\' undeployed";
 	}
 
 	return obj;

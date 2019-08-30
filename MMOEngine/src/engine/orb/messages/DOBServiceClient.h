@@ -18,10 +18,10 @@ namespace engine {
   namespace ORB {
 
 	class RemoteObjectBroker;
-	
+
 	class DOBServiceClient : public StreamServiceClient, public Logger {
 		RemoteObjectBroker* rob;
-		
+
 		SynchronizedHashTable<uint32, DOBMessage*> sentMessageQueue;
 		AtomicInteger sentMessageSequence;
 
@@ -30,17 +30,17 @@ namespace engine {
 		DOBServiceClient(const String& host, int port);
 
 		~DOBServiceClient();
-		
+
 		void run();
 
 		void receiveMessages();
-		
+
 		bool send(DOBMessage* message);
 
 		bool sendAndAcceptReply(DOBMessage* message);
 		bool sendReply(DOBMessage* message);
 		bool sendWithReply(DOBMessage* message);
-		
+
 		bool waitForReply(DOBMessage* message);
 
 		inline RemoteObjectBroker* getRemoteObjectBroker() {
@@ -49,7 +49,7 @@ namespace engine {
 
 		DOBMessage* getQueuedMessage(uint32 sequence) {
 			DOBMessage* message = sentMessageQueue.remove(sequence);
-			assert(message != nullptr);
+			fatal(message != nullptr) << "message is null";
 
 			return message;
 		}

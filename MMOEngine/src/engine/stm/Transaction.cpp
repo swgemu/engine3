@@ -57,8 +57,8 @@ bool Transaction::start() {
 }
 
 bool Transaction::start(Task* task) NO_THREAD_SAFETY_ANALYSIS {
-	assert(setState(INITIAL, UNDECIDED));
-	assert(task != nullptr);
+	fatal(setState(INITIAL, UNDECIDED)) << "could not move to undecided";
+	fatal(task != nullptr) << "task is null";
 
 	Transaction::task = task;
 

@@ -20,7 +20,8 @@
 namespace engine {
 	namespace ORB {
 
-	class CommitMasterTransactionThread : public Thread, public Singleton<CommitMasterTransactionThread>, public Object {
+	class CommitMasterTransactionThread : public Thread, public Singleton<CommitMasterTransactionThread>
+					      , public Object, public Logger {
 		Mutex blockMutex;
 		Condition waitCondition;
 

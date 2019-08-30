@@ -291,8 +291,6 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 				continue;
 			}
 
-			//assert(iterator.putCurrent(newData) == 0);
-
 			objectDatabase->putData(key, newData, nullptr, transaction);
 
 			data.clear();

@@ -55,7 +55,7 @@ void DOBServiceClient::run() {
 void DOBServiceClient::receiveMessages() {
 	Packet packet;
 
-	assert(serviceHandler);
+	fatal(serviceHandler) << "service handler is null";
 
 	int messageSize = 0;
 

@@ -9,12 +9,9 @@
 #include <regex.h>
 
 StringBuffer::StringBuffer() : ArrayList<char>(), streamFlags(SF_none) {
-	streamFlags = SF_none;
 }
 
-StringBuffer::StringBuffer(const String& str) : ArrayList<char>(str.length(), 0) {
-	streamFlags = SF_none;
-
+StringBuffer::StringBuffer(const String& str) : ArrayList<char>(str.length(), 0), streamFlags(SF_none) {
 	append(str);
 }
 

@@ -17,7 +17,7 @@
 
 #include "CommitMasterTransactionThread.h"
 
-CommitMasterTransactionThread::CommitMasterTransactionThread() {
+CommitMasterTransactionThread::CommitMasterTransactionThread() : Logger("CommitMasterTransactionThread") {
 	transaction = nullptr;
 	threads = nullptr;
 
@@ -35,8 +35,8 @@ CommitMasterTransactionThread::~CommitMasterTransactionThread() {
 }
 
 void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
-	assert(workers != nullptr);
-	assert(objectsToCollect != nullptr);
+	fatal(workers != nullptr) << "workers is null";
+	fatal(objectsToCollect != nullptr) << "objectsToCollect is null";
 
 	transaction = trans;
 	threads = workers;

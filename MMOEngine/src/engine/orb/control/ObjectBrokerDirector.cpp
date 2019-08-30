@@ -12,7 +12,7 @@
 #include "ControlMessage.h"
 
 ObjectBrokerDirector::ObjectBrokerDirector() : Logger("ObjectBrokerDirector") {
-	setDebugLogLevel();
+	setInfoLogLevel();
 }
 
 ObjectBrokerDirector::~ObjectBrokerDirector() {
@@ -43,7 +43,7 @@ void ObjectBrokerDirector::doStateUpdate(int state) {
 void ObjectBrokerDirector::handleStateUpdate(ObjectBroker* broker, int state) {
 	Locker locker(this);
 
-	debug("received state update " + String(ObjectBrokerAgent::stateToString((int) state)) + " from agent");
+	debug() << "received state update " << ObjectBrokerAgent::stateToString((int) state) << " from agent";
 
 	if (agentStates.get(broker) == state) {
 		debug("agent is already performing this action");
@@ -51,7 +51,7 @@ void ObjectBrokerDirector::handleStateUpdate(ObjectBroker* broker, int state) {
 		return;
 	}
 
-	assert(!(agentStates.contains(broker) && agentStates.get(broker) == state));
+	fatal(!(agentStates.contains(broker) && agentStates.get(broker) == state)) << "agent states doesnt contain broker";
 
 	int minState = state;
 	int maxState = 0;
@@ -78,7 +78,7 @@ void ObjectBrokerDirector::handleStateUpdate(ObjectBroker* broker, int state) {
 void ObjectBrokerDirector::sendCommand(Command command) {
 	Locker locker(this);
 
-	debug("sending command " + String(commandToString((int) command)) + " to agents");
+	debug() << "sending command " << commandToString((int) command) << " to agents";
 
 	ControlMessage controlMessage((int) command);
 
@@ -103,7 +103,7 @@ void ObjectBrokerDirector::brokerConnected(ObjectBroker* broker) {
 void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 	Locker locker(this);
 
-	info("broker disconnected", true);
+	info(true) << "broker disconnected";
 
 	RemoteObjectBroker* remote = dynamic_cast<RemoteObjectBroker*>(broker);
 

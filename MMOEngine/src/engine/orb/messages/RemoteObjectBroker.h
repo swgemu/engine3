@@ -17,7 +17,7 @@ namespace engine {
 
     class DOBServiceClient;
 
-	class RemoteObjectBroker : public ObjectBroker, public Mutex {
+	class RemoteObjectBroker : public ObjectBroker, public Mutex, public Logger {
 		Reference<DOBServiceClient*> brokerClient;
 		SynchronizedSortedVector<DistributedObject*> deployedObjects;
 
@@ -50,7 +50,7 @@ namespace engine {
 		SynchronizedSortedVector<DistributedObject*>& getDeployedObjects() {
 			return deployedObjects;
 		}
-		
+
 		DOBObjectManager* getObjectManager() {
 			return nullptr;
 		}

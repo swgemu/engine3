@@ -54,7 +54,7 @@ void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 
 	Locker locker(&observerMutex);
 
-	if (!observer->isDeplyoed())
+	if (!observer->isDeployed())
 		observer->deploy();
 
 	auto entry = getEntry(eventType);

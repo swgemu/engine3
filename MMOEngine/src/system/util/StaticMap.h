@@ -35,6 +35,14 @@ namespace sys {
 			return value;
 		}
 
+		const K& getKey() const {
+			return key;
+		}
+
+		const V& getValue() const {
+			return value;
+		}
+
 		void setKey(const K& key) {
 			StaticMapEntry::key = key;
 		}
@@ -43,7 +51,7 @@ namespace sys {
 			StaticMapEntry::value = value;
 		}
 
-		bool hasKey(const K& key) {
+		bool hasKey(const K& key) const {
 			return TypeInfo<K>::compare(key, StaticMapEntry::key);
 		}
 
@@ -51,7 +59,7 @@ namespace sys {
 	};
 
 	template<class K, class V> class StaticMap {
-		static const int MAX_SIZE = 10000;
+		constexpr static const int MAX_SIZE = 10000;
 
 		StaticMapEntry<K, V> entries[MAX_SIZE];
 
