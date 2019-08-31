@@ -582,8 +582,8 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction
 	int currentThread = 0;
 	int lastThreadCount = 0;
 
-	Timer start;
-	start.start();
+	Timer profile;
+	profile.start();
 
 	while (iterator.hasNext()) {
 		DistributedObjectAdapter* adapter = iterator.getNextValue();
@@ -619,13 +619,10 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction
 				&objectsToDelete);
 	}
 
-	auto elapsed = start.stopMs();
+	auto elapsed = profile.stopMs();
 
-	StringBuffer msg;
-	msg << "launched " << currentThread << " workers and marked " << objectsToUpdate.size() << " objects to update and "
+	info(true) << "launched " << currentThread << " workers and marked " << objectsToUpdate.size() << " objects to update and "
 			<< objectsToDelete.size() << " for deletion in " << elapsed << " ms from " << localObjectDirectory.getObjectHashTable().size() << " total objects";
-
-	info(msg.toString(), true);
 
 	return currentThread;
 }
@@ -643,7 +640,7 @@ void DOBObjectManager::checkCommitedObjects() {
 
 		if (uniqueModifiedObjectValues.find(obj) == uniqueModifiedObjectValues.end()) {
 			auto managed = reinterpret_cast<ManagedObject*>(obj);
-			auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
+			//auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
 
 			warning() << "missing object in thread local modified objects list 0x"
 					<< String::hexvalueOf(managed->_getObjectID()) << " " << managed->_getName()
@@ -659,8 +656,8 @@ void DOBObjectManager::checkCommitedObjects() {
 	auto elapsedMs = perf.stopMs();
 
 	if (i > 0) {
-		info("checked " + String::valueOf(i) + " commited objects vs modified objects in "
-				+ String::valueOf(elapsedMs) + " ms", true);
+		info(true) << "checked " << i << " commited objects vs modified objects in "
+				<< elapsedMs << " ms";
 	}
 }
 
@@ -671,8 +668,8 @@ void DOBObjectManager::finishObjectUpdate() {
 
 	updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
 
-	info("marked updated objects: " + String::valueOf(totalUpdatedObjects)
-			+ " commited objects: " + String::valueOf(totalActuallyChangedObjects), true);
+	info(true) << "marked updated objects: " << totalUpdatedObjects
+			<< " commited objects: " << totalActuallyChangedObjects;
 
 	saveCount++;
 

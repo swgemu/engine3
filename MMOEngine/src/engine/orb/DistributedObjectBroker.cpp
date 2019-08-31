@@ -120,7 +120,7 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 	const String& name = obj->_getName();
 
 	if (!isRootBroker()) {
-		debug() << "deploying object \"" << name << "\" remotely";
+		debug() << "deploying object \"" << name << "\" 0x" << hex << objectid << " remotely";
 
 		rootObjectBroker->deploy(obj);
 	}

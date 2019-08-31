@@ -46,6 +46,8 @@ void Core::initializeContext(int logLevel) {
 	Socket::initialize();
 
 	TaskManager* taskManager = getTaskManager();
+	Logger::console.fatal(taskManager) << "task manager null when initializing context";
+
 	taskManager->setLogLevel(logLevel);
 	taskManager->initialize();
 

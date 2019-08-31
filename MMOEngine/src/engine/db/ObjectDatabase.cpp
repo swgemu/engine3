@@ -66,8 +66,6 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 	}
 
 	do {
-		ret  = -1;
-
 		if (readThreadLocalTransaction) {
 			transaction = ObjectDatabaseManager::instance()->getReadLocalTransaction(abortPreviousLocalTransaction);
 		} else {
