@@ -24,13 +24,13 @@ namespace engine {
 		String className;
 		bool found;
 
-	public:	
+	public:
 		LookUpObjectByIDMessage(uint64 objectid) : DOBMessage(LOOKUPOBJECTBYIDMESSAGE, 20), objectid(objectid) {
 			insertLong(objectid);
 
 			found = false;
 		}
-	
+
 		LookUpObjectByIDMessage(Packet* message) : DOBMessage(message) {
 			objectid = message->parseLong();
 
@@ -48,8 +48,8 @@ namespace engine {
 				insertAscii(obj->_getClassName());
 				insertAscii(obj->_getName());
 
-				broker->debug("looked up 0x" + String::valueOf(objectid) + " with name \'"
-						+ obj->_getName() + "\' (" + obj->_getClassName() + ")");
+				broker->debug() << "looked up 0x" << objectid << " with name \'"
+						<< obj->_getName() << "\' (" << obj->_getClassName() << ")";
 			} else
 				insertBoolean(false);
 

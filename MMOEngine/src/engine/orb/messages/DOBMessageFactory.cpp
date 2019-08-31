@@ -51,12 +51,12 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 
 		if (messageType != DOBMessage::REPLYMESSAGE) {
 			DOBMessage* dobMessage = create(messageType, message);
-			assert(dobMessage != nullptr);
+			broker->fatal(dobMessage != nullptr) << "dobMessage is null";
 
 			dobMessage->setClient(client);
 
-			broker->debug("DOBMessage(" + String::valueOf(dobMessage->getSequence()) + "): " + String::valueOf(messageType)
-							+ " arrived with content: " + message->toStringData());
+			broker->debug() << "DOBMessage(" << dobMessage->getSequence() << "): " << messageType
+							<< " arrived with content: " << message->toStringData();
 
 			if (messageType == DOBMessage::CONTROLMESSAGE) {
 				Task* task = new ControlMessageProcessorTask(dobMessage);

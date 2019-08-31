@@ -242,7 +242,7 @@ void Logger::fatal(const char* msg) const {
 
 	log(msg, LogLevel::FATAL, true);
 
-	System::out.flush();
+	fflush(nullptr);
 
 	abort();
 }
@@ -256,7 +256,6 @@ void Logger::fatal(const StringBuffer& msg) const {
 	fatal(s);
 }
 
-#ifndef DISABLE_DEBUG_LOG
 void Logger::debug(const char* msg) const {
 	if (logToConsole && logLevel >= DEBUG) {
 		printTime(false);
@@ -279,7 +278,6 @@ void Logger::debug(const StringBuffer& msg) const {
 	String s = msg.toString();
 	debug(s);
 }
-#endif
 
 void Logger::warning(const char* msg) const {
 	if (logToConsole) {

@@ -143,16 +143,26 @@ namespace sys {
 			return false;
 		}
 
-		inline void acquire() const {
-			if (referenceCounters == nullptr) {
-				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, const_cast<Object*>(this));
+		void createStrongAndWeakReferenceCount() const {
+			auto newCount = new StrongAndWeakReferenceCount(0, 2, const_cast<Object*>(this));
 
-				if (!referenceCounters.compareAndSet(nullptr, newCount)) {
-					delete newCount;
-				}
+			if (!referenceCounters.compareAndSet(nullptr, newCount)) {
+				delete newCount;
+
+				referenceCounters->increaseStrongCount();
+			} else {
+				newCount->increaseStrongCount();
 			}
+		}
 
-			referenceCounters->increaseStrongCount();
+		inline void acquire() const {
+			auto counters = referenceCounters.get();
+
+			if (counters == nullptr) {
+				createStrongAndWeakReferenceCount();
+			} else {
+				counters->increaseStrongCount();
+			}
 		}
 
 		inline bool release() const {
@@ -203,13 +213,13 @@ namespace sys {
 
 		StrongAndWeakReferenceCount* requestWeak() {
 			if (referenceCounters == nullptr) {
-				StrongAndWeakReferenceCount* newCount = new StrongAndWeakReferenceCount(0, 2, this);
+				auto newCount = new StrongAndWeakReferenceCount(0, 2, this);
 
 				if (!referenceCounters.compareAndSet(nullptr, newCount))
 					delete newCount;
 			}
 
-			return (StrongAndWeakReferenceCount*) referenceCounters;
+			return referenceCounters.get();
 		}
 
 		virtual String toString();

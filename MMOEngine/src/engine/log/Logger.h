@@ -7,10 +7,6 @@
 #define LOGGER_H_
 
 #ifdef NDEBUG
-#define DISABLE_DEBUG_LOG
-#endif
-
-#ifdef NDEBUG
 #define E3_INFO(x)
 #define E3_DEBUG(x)
 #define E3_WARNING(x)
@@ -185,20 +181,9 @@ namespace engine {
 			}
 		}
 
-#ifdef DISABLE_DEBUG_LOG
-		void debug(const char* msg) const {
-		}
-
-		void debug(const String& msg) const {
-		}
-
-		void debug(const StringBuffer& msg) const {
-		}
-#else
 		void debug(const char* msg) const;
 		void debug(const String& msg) const;
 		void debug(const StringBuffer& msg) const;
-#endif
 
 		LoggerHelper debug() const {
 			return LoggerHelper(*this, LogLevel::DEBUG, false);

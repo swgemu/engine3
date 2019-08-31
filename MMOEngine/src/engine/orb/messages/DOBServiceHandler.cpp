@@ -55,8 +55,8 @@ void DOBServiceHandler::messageSent(Packet* packet){
 
 	uint32 messageType = message->parseInt(0);
 
-	broker->debug("DOBMessage(" + String::valueOf(message->getSequence()) + "): " + String::valueOf(messageType)
-				  + " sent with content: " + message->toStringData());
+	broker->debug() << "DOBMessage(" << message->getSequence() << "): " << messageType
+				  << " sent with content: " << message->toStringData();
 }
 
 bool DOBServiceHandler::handleError(ServiceClient* client, Exception& e) {

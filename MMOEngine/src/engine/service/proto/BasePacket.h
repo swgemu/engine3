@@ -16,24 +16,24 @@ namespace engine {
 	protected:
 		sys::uint32 sequence;
 		bool doSeq;
-	
+
 		bool doEncr;
 		bool doComp;
 		bool doCRCTest;
-	
+
 		Time timestamp;
 		Time timeout;
-		
+
 		int outOfOrderCount;
-	
+
 	public:
-		BasePacket();	
-		BasePacket(int size);	
+		BasePacket();
+		BasePacket(int size);
 		BasePacket(Packet* pack, uint32 seq);
-	
+
 		virtual ~BasePacket() {
 		}
-		
+
 		void close();
 
 		BasePacket* clone(int startoffs = 0);
@@ -46,7 +46,7 @@ namespace engine {
 			else
 				return false;
 		}
-	
+
 		bool isMultiPacket() {
 			if (parseShort(0) == 0x0300 || parseShort(4) == 0x1900)
 				return true;
@@ -62,56 +62,64 @@ namespace engine {
 		inline void setSequencing(bool seq) {
 			doSeq = seq;
 		}
-	
+
 		inline void setEncryption(bool enc) {
 			doEncr = enc;
 		}
-	
+
 		inline void setCompression(bool comp) {
 			doComp = comp;
 		}
-	
+
 		inline void setCRCChecking(bool crctest) {
 			doCRCTest = crctest;
 		}
-	
+
 		inline void setTimestamp() {
 			timestamp.updateToCurrentTime();
 		}
-	
+
 		inline void setTimeout(uint64 time) {
 			timeout.updateToCurrentTime();
 			timeout.addMiliTime(time);
 		}
-	
+
 		// getters
-		inline sys::uint32 getSequence() {
+		inline sys::uint32 getSequence() const {
 			if (doSeq)
 				return sequence;
 			else
 				return 0xFFFFFFFF;
 		}
-		
-		inline bool doSequencing() {
+
+		inline bool doSequencing() const {
 			return doSeq;
 		}
-	
-		inline bool doEncryption() {
+
+		inline bool doEncryption() const {
 			return doEncr;
 		}
-	
-		inline bool doCompression() {
+
+		inline bool doCompression() const {
 			return doComp;
 		}
-		
-		inline bool doCRCChecking() {
+
+		inline bool doCRCChecking() const {
 			return doCRCTest;
 		}
-	
+
 		inline Time& getTimestamp() {
 			return timestamp;
 		}
-	
+
+		inline const Time& getTimestamp() const {
+			return timestamp;
+		}
+
+		inline const Time& getTimeout() const {
+			return timeout;
+		}
+
 		inline Time& getTimeout() {
 			return timeout;
 		}

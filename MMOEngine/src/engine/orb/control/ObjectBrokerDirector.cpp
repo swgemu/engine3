@@ -29,10 +29,10 @@ void ObjectBrokerDirector::createBackup() {
 void ObjectBrokerDirector::doStateUpdate(int state) {
 	switch (state) {
 	case ObjectBrokerAgent::STARTED:
-		debug("agents started with " + String::valueOf(objectBrokerTable.getBrokerCount()) + " nodes");
+		debug() << "agents started with " << objectBrokerTable.getBrokerCount() << " nodes";
 		break;
 	case ObjectBrokerAgent::BACKUP_STARTED:
-		debug("backup started with " + String::valueOf(objectBrokerTable.getBrokerCount()) + " nodes");
+		debug() << "backup started with " << objectBrokerTable.getBrokerCount() << " nodes";
 		break;
 	case ObjectBrokerAgent::IDLE:
 		debug("node is IDLE");

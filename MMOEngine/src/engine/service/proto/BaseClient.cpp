@@ -284,8 +284,11 @@ void BaseClient::send(Packet* pack, bool doLock) {
 				debug("SEND(RAW) - " + pack->toString());
 			#endif
 
-			if (!DatagramServiceClient::send(pack))
-				debug("LOSING " + pack->toStringData());
+			if (!DatagramServiceClient::send(pack)) {
+			#ifdef TRACE_CLIENTS
+				debug() << "LOSING " << pack->toStringData();
+			#endif
+			}
 		}
 	} catch (SocketException& e) {
 		error("on send()" + e.getMessage());
@@ -310,7 +313,7 @@ void BaseClient::send(BasePacket* pack, bool doLock) {
 #endif
 
 			if (!DatagramServiceClient::send(pack))
-				debug("LOSING " + pack->toStringData());
+				debug() << "LOSING " << pack->toStringData();
 		}
 	} catch (SocketException& e) {
 		error("on send()" + e.getMessage());

@@ -151,9 +151,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 		ioSchedulers.add(scheduler);
 	}
 
-	StringBuffer msg;
-	msg << "initialized";
-	debug(msg);
+	debug("initialized");
 }
 
 void TaskManagerImpl::start() {
@@ -174,11 +172,8 @@ void TaskManagerImpl::start() {
 		scheduler->start();
 	}
 
-	StringBuffer msg;
-	msg << "started";
-	debug(msg);
+	debug("started");
 }
-
 
 TaskQueue* TaskManagerImpl::getCustomTaskQueue(const String& queueName) {
 	int queueIdx = customQueues.find(queueName);

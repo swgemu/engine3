@@ -177,7 +177,7 @@ void Stream::readStream(Stream* stream, int len) {
 	readStream(stream->getBuffer(), stream->size());
 }
 
-String Stream::toStringData() {
+String Stream::toStringData() const {
 	StringBuffer str;
 	str << "Stream [" << size() << "] " << uppercase << hex;
 

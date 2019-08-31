@@ -18,31 +18,31 @@ namespace sys {
 	class Stream : public ArrayList<char> {
 	protected:
 		char *end, *offset;
-		
+
 	public:
-		Stream();	
+		Stream();
 		Stream(int initsize);
 		Stream(int initsize, int capincr);
 		Stream(char *buf, int len);
-		
+
 		virtual ~Stream();
 
 		Stream* clone(int startoffs = 0);
-		
+
 		void copy(Stream* stream, int startoffs = 0);
-		
+
 		void setSize(int len, bool copyContent = true);
-		
+
 		void extendSize(int len, bool copyContent = true);
-		
+
 		void setOffset(int offs);
-	
+
 		void shiftOffset(int offs);
-	
+
 		void clear();
-	
+
 		void reset();
-	
+
 		void removeLastBytes(int len);
 
 		void removeRange(int fromIndex, int toIndex);
@@ -57,26 +57,30 @@ namespace sys {
 
 		void readStream(char* buf, int len);
 		void readStream(Stream* stream, int len);
-		
-		String toStringData();
+
+		String toStringData() const;
 
 		// getters
-		inline int getOffset() {
+		inline int getOffset() const {
 			return offset - elementData;
 		}
-	
-		inline bool hasData() {
+
+		inline bool hasData() const {
 			return offset < end;
 		}
-	
+
 		inline char* getBuffer() {
 			return elementData;
 		}
-		
-		inline int size() {
+
+		inline const char* getBuffer() const {
+			return elementData;
+		}
+
+		inline int size() const {
 			return end - elementData;
 		}
-		
+
 	};
 
   } // namespace io

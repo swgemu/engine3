@@ -19,7 +19,7 @@ namespace sys {
 		StreamFlags streamFlags;
 
 	public:
-		static const char endl = '\n';
+		constexpr static const char endl = '\n';
 
 	public:
 		PrintStream();
@@ -67,16 +67,12 @@ namespace sys {
 		PrintStream& operator<< (const UnicodeString& str);
 		PrintStream& operator<< (const StreamFlags flags);
 
-		PrintStream* operator->() {
-			return this;
-		}
-
 		// getters
-		inline bool doHex() {
+		inline bool doHex() const {
 			return streamFlags & SF_hex;
 		}
 
-		inline bool doUpperCase() {
+		inline bool doUpperCase() const {
 			return streamFlags & SF_uppercase;
 		}
 	};

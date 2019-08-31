@@ -120,7 +120,7 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 	const String& name = obj->_getName();
 
 	if (!isRootBroker()) {
-		debug("deploying object \"" + name + "\" remotely");
+		debug() << "deploying object \"" << name << "\" remotely";
 
 		rootObjectBroker->deploy(obj);
 	}
@@ -130,7 +130,7 @@ void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 
 void DistributedObjectBroker::deploy(const String& name, DistributedObjectStub* obj) {
 	if (!isRootBroker()) {
-		debug("deploying object \"" + name + "\" remotely");
+		debug() << "deploying object \"" << name << "\" remotely";
 
 		rootObjectBroker->deploy(name, obj);
 	}
@@ -148,7 +148,7 @@ Reference<DistributedObject*> DistributedObjectBroker::lookUp(const String& name
 	locker.release();
 
 	if (!isRootBroker()) {
-		debug("looking up object \"" + name + "\" remotely");
+		debug() << "looking up object \"" << name << "\" remotely";
 
 		object = rootObjectBroker->lookUp(name);
 	}
@@ -180,12 +180,12 @@ Reference<DistributedObject*> DistributedObjectBroker::lookUp(uint64 objid) {
 	if (!isRootBroker()) {
 		object = remoteObjectCache.get(objid);
 		if (object != nullptr) {
-			debug("found object 0x" + String::valueOf(objid) + " in remote cache");
+			debug() << "found object 0x" << hex << objid << " in remote cache";
 
 			return object;
 		}
 
-		debug("looking up object 0x" + String::valueOf(objid) + " remotely");
+		debug() << "looking up object 0x" << hex << objid << " remotely";
 
 		return rootObjectBroker->lookUp(objid);
 	}
@@ -224,7 +224,7 @@ bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
 
 DistributedObjectStub* DistributedObjectBroker::undeploy(const String& name) {
 	if (!isRootBroker()) {
-		debug("undeploying object \"" + name + "\" remotely");
+		debug() << "undeploying object \"" << name << "\" remotely";
 
 		rootObjectBroker->undeploy(name);
 	}
@@ -260,7 +260,7 @@ void DistributedObjectBroker::deployLocal(const String& name, DistributedObjectS
 	if (objectManager->addObject(obj) != nullptr) {
 		throw ObjectAlreadyDeployedException(obj);
 	} else
-		debug("object \'" + obj->_getName() + "\' deployed with ID 0x" + String::hexvalueOf((int64)obj->_getObjectID()));
+		debug() << "object \'" << obj->_getName() << "\' deployed with ID 0x" << hex << ((int64)obj->_getObjectID());
 
 	obj->setDeployed(true);
 }
@@ -278,7 +278,8 @@ void DistributedObjectBroker::deployRemote(const String& name, DistributedObject
 	if (remoteObjectCache.add(obj->_getObjectID(), obj)) {
 		throw ObjectAlreadyDeployedException(obj);
 	} else
-		debug("remote object \'" + obj->_getName() + "\' deployed with ID 0x" + String::hexvalueOf((int64)obj->_getObjectID()));
+		debug() << "remote object \'" << obj->_getName() <<
+			"\' deployed with ID 0x" << hex << ((int64)obj->_getObjectID());
 
 	obj->setDeployed(true);
 }
@@ -326,8 +327,7 @@ DistributedObjectStub* DistributedObjectBroker::undeployRemote(const String& nam
 	if (obj != nullptr) {
 		remoteObjectCache.remove(obj->_getObjectID());
 
-
-		debug("remote object \'" + obj->_getName() + "\' undeployed");
+		debug() << "remote object \'" << obj->_getName() << "\' undeployed";
 	}
 
 	return obj;
@@ -345,7 +345,7 @@ DistributedObjectStub* DistributedObjectBroker::createObjectStub(const String& c
 
 	DistributedObjectClassHelper* helper = classMap.get(className);
 	if (helper != nullptr) {
-		debug("class \'" + className + "\' found when creating stub");
+		debug() << "class \'" << className << "\' found when creating stub";
 
 		obj = dynamic_cast<DistributedObjectStub*>(helper->instantiateObject());
 
@@ -353,7 +353,7 @@ DistributedObjectStub* DistributedObjectBroker::createObjectStub(const String& c
 
 		obj->_setObjectBroker(this);
 	} else
-		warning("class \'" + className + "\' is not declared when creating stub");
+		warning() << "class \'" << className << "\' is not declared when creating stub";
 
 	return obj;
 }
@@ -375,7 +375,7 @@ DistributedObjectServant* DistributedObjectBroker::createObjectServant(const Str
 
 	DistributedObjectClassHelper* helper = classMap.get(className);
 	if (helper != nullptr) {
-		debug("class \'" + className + "\' found when creating servant");
+		debug() << "class \'" << className << "\' found when creating servant";
 
 		servant = helper->instantiateServant();
 
