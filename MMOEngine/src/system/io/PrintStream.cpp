@@ -257,6 +257,9 @@ PrintStream& PrintStream::operator<< (const StreamFlags flags) {
 	case ::endl:
 		println("");
 		break;
+	case lowercase:
+		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
+		break;
 	default:
 		streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);
 		break;

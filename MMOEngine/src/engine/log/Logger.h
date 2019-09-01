@@ -35,10 +35,13 @@ namespace engine {
 		const Logger& logger;
 		const int logLevel;
 		const bool boolParam;
+		bool willLog;
 
 		StringBuffer buffer;
 
 	public:
+		LoggerHelper() = delete;
+
 		LoggerHelper(const Logger& logger, const int logLevel, const bool boolParam);
 		LoggerHelper(LoggerHelper&& loggerHelper);
 
@@ -309,11 +312,7 @@ namespace engine {
 
 	template<typename T>
 	LoggerHelper& LoggerHelper::operator<<(const T& a) {
-		if (logLevel == Logger::LogLevel::FATAL) {
-		       	if (boolParam) { //do nothing if assertion in FATAL is true
-				return *this;
-			}
-		} else if (!logger.hasToLog(static_cast<Logger::LogLevel>(logLevel)) && !boolParam) {
+		if (!willLog) {
 			return *this;
 		}
 

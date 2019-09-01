@@ -65,6 +65,20 @@ namespace sys {
 			return (uint32) value;
 		}
 
+		static bool areAlmostEqualRelative(float A, float B, float maxRelDiff = FLT_EPSILON) {
+			float diff = fabs(A - B);
+
+			A = fabs(A);
+			B = fabs(B);
+
+			float largest = (B > A) ? B : A;
+
+			if (diff <= largest * maxRelDiff)
+				return true;
+
+			return false;
+		}
+
 	};
 
   } // namespace lang

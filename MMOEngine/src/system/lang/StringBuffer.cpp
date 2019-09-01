@@ -104,7 +104,13 @@ StringBuffer& StringBuffer::append(double val) {
 	return append(str);
 }
 
-StringBuffer& StringBuffer::append(void* val) {
+StringBuffer& StringBuffer::append(bool val) {
+	String str = String::valueOf(val);
+
+	return append(str);
+}
+
+StringBuffer& StringBuffer::append(const void* val) {
 	String str = String::valueOf(val);
 
 	return append(str);
@@ -335,7 +341,11 @@ StringBuffer& StringBuffer::operator<< (double val) {
 	return append(val);
 }
 
-StringBuffer& StringBuffer::operator<< (void* val) {
+StringBuffer& StringBuffer::operator<< (bool val) {
+	return append(val);
+}
+
+StringBuffer& StringBuffer::operator<< (const void* val) {
 	return append(val);
 }
 
@@ -360,8 +370,11 @@ StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {
 	case dec:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) hex);
 		break;
+	case lowercase:
+		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
+		break;
 	case endl:
-		append("\n");
+		append('\n');
 		break;
 	default:
 		streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);

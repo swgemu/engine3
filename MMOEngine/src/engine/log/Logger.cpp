@@ -242,6 +242,8 @@ void Logger::fatal(const char* msg) const {
 
 	log(msg, LogLevel::FATAL, true);
 
+	StackTrace::printStackTrace();
+
 	fflush(nullptr);
 
 	abort();
@@ -487,10 +489,24 @@ String Logger::escapeJSON(const String& input) {
 
 LoggerHelper::LoggerHelper(const Logger& logger, const int logLevel, const bool boolParam)
 	: logger(logger), logLevel(logLevel), boolParam(boolParam) {
+
+	if (logLevel == Logger::LogLevel::FATAL) {
+		if (boolParam) { //do nothing if assertion in FATAL is true
+			willLog = false;
+
+			return;
+		}
+	} else if (!logger.hasToLog(static_cast<Logger::LogLevel>(logLevel)) && !boolParam) {
+		willLog = false;
+
+		return;
+	}
+
+	willLog = true;
 }
 
 LoggerHelper::LoggerHelper(LoggerHelper&& l)
-	: logger(l.logger), logLevel(l.logLevel), boolParam(l.boolParam), buffer(std::move(l.buffer)) {
+	: logger(l.logger), logLevel(l.logLevel), boolParam(l.boolParam), willLog(l.willLog), buffer(std::move(l.buffer)) {
 }
 
 LoggerHelper::~LoggerHelper() {

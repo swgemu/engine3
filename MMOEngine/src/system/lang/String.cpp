@@ -440,7 +440,15 @@ String String::valueOf(double val) {
 	return String(buf, written);
 }
 
-String String::valueOf(void* val) {
+String String::valueOf(bool val) {
+	if (val) {
+		return String("true", 4);
+	} else {
+		return String("false", 5);
+	}
+}
+
+String String::valueOf(const void* val) {
 	char buf[20];
 
 	int written = snprintf(buf, 20, "%p", val);

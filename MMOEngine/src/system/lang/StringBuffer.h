@@ -20,13 +20,15 @@ namespace sys {
   		SF_dec = 1L << 0,
   		SF_hex = 1L << 1,
   		SF_uppercase = 1L << 2,
-  		SF_endl = 1L << 3
+  		SF_endl = 1L << 3,
+		SF_lowercase = 1L << 4
   	};
 
   	const StreamFlags dec = SF_dec;
   	const StreamFlags hex = SF_hex;
   	const StreamFlags uppercase = SF_uppercase;
   	const StreamFlags endl = SF_endl;
+	const StreamFlags lowercase = SF_lowercase;
 
 	class StringBuffer : private ArrayList<char> {
 		StreamFlags streamFlags;
@@ -47,7 +49,8 @@ namespace sys {
 		StringBuffer& append(uint64 val);
 		StringBuffer& append(float val);
 		StringBuffer& append(double val);
-		StringBuffer& append(void* val);
+		StringBuffer& append(bool val);
+		StringBuffer& append(const void* val);
 		StringBuffer& append(const char* str);
 		StringBuffer& append(const char* str, int len);
 		StringBuffer& append(const String& str);
@@ -109,7 +112,8 @@ namespace sys {
 		StringBuffer& operator<< (uint64 val);
 		StringBuffer& operator<< (float val);
 		StringBuffer& operator<< (double val);
-		StringBuffer& operator<< (void* val);
+		StringBuffer& operator<< (const void* val);
+		StringBuffer& operator<< (bool val);
 		StringBuffer& operator<< (std::size_t val);
 		StringBuffer& operator<< (const char* str);
 		StringBuffer& operator<< (const String& str);
