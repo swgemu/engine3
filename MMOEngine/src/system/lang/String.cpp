@@ -74,6 +74,10 @@ String::String() {
 	create("", 0);
 }
 
+String::String(const ConstString& str) {
+	create(str.begin(), str.size());
+}
+
 String::String(const char* str) {
 	if (str == nullptr)
 		throw IllegalArgumentException();
@@ -82,7 +86,7 @@ String::String(const char* str) {
 }
 
 String::String(const char* str, int len) {
-	if (str == nullptr)
+	if (len && str == nullptr)
 		throw IllegalArgumentException();
 
 	create(str, len);

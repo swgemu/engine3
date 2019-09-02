@@ -8,6 +8,7 @@
 
 #include "system/platform.h"
 #include "Variable.h"
+#include "ConstString.h"
 
 #define SSO_STRING
 
@@ -40,6 +41,7 @@ namespace sys {
 		String(const char* str);
 		String(const char* str, int len);
 		String(const String& str);
+		String(const ConstString& str);
 
 		static const int constexpr npos = -1;
 

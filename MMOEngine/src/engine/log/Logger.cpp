@@ -25,9 +25,7 @@ Logger::Logger(const String& s) : name(s) {
 }
 
 Logger::~Logger() {
-	if (logFile != nullptr) {
-		closeFileLogger();
-	}
+	closeFileLogger();
 }
 
 void Logger::setGlobalFileLogger(const char* file) {
