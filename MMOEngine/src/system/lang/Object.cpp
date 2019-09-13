@@ -198,7 +198,7 @@ void Object::printReferenceHolders() {
 String Object::toString() {
 	char buf[20];
 
-	sprintf(buf, "%p", this);
+	snprintf(buf, 20, "%p", reinterpret_cast<void*>(this));
 
 	return String(buf);
 }

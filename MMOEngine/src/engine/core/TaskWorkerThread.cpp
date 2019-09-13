@@ -81,9 +81,8 @@ void TaskWorkerThread::signalDBHandleInitialize() {
 	queue->wake();
 }
 
-void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) {
+void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) const {
 	static const uint64 slowTaskLogMs = Core::getIntProperty("TaskManager.slowTaskLogTimeMs", 40);
-	static const String slowTaskFilename = Core::getProperty("TaskManager.slowTaskLogFile", "");
 
 	auto elapsedTimeMs = elapsedTime / 1000000;
 
@@ -91,7 +90,9 @@ void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) {
 		return;
 	}
 
+	static const String slowTaskFilename = Core::getProperty("TaskManager.slowTaskLogFile", "");
 	static const auto ignoreTasks = Core::getPropertyVector("TaskManager.slowTaskLogIgnore");
+
 	const String taskNameString = taskName;
 
 	if (!ignoreTasks.contains(taskNameString)) {

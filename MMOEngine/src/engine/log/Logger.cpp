@@ -504,7 +504,8 @@ LoggerHelper::LoggerHelper(const Logger& logger, const int logLevel, const bool 
 }
 
 LoggerHelper::LoggerHelper(LoggerHelper&& l)
-	: logger(l.logger), logLevel(l.logLevel), boolParam(l.boolParam), willLog(l.willLog), buffer(std::move(l.buffer)) {
+	: logger(l.logger), logLevel(l.logLevel), boolParam(l.boolParam),
+	willLog(l.willLog), buffer(std::move(l.buffer)) {
 }
 
 LoggerHelper::~LoggerHelper() {

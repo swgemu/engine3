@@ -21,7 +21,8 @@ namespace sys {
   		SF_hex = 1L << 1,
   		SF_uppercase = 1L << 2,
   		SF_endl = 1L << 3,
-		SF_lowercase = 1L << 4
+		SF_lowercase = 1L << 4,
+		SF_nouppercase = SF_lowercase
   	};
 
   	const StreamFlags dec = SF_dec;
@@ -29,6 +30,7 @@ namespace sys {
   	const StreamFlags uppercase = SF_uppercase;
   	const StreamFlags endl = SF_endl;
 	const StreamFlags lowercase = SF_lowercase;
+	const StreamFlags nouppercase = SF_nouppercase;
 
 	class StringBuffer : private ArrayList<char> {
 		StreamFlags streamFlags;

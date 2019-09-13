@@ -92,7 +92,7 @@ public:
 	 */
 	int getNodeCount() const;
 
-	String toStringData();
+	String toStringData() const;
 
 private:
 	static int _getSubNodeCount(const BasicQuadTreeNode* s);

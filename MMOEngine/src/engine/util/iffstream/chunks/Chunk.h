@@ -106,6 +106,13 @@ namespace engine {
 			str = stream.toString();
 		}
 
+		String readString() {
+			String val;
+			readString(val);
+
+			return val;
+		}
+
 		Matrix4 readMatrix3x4Transform() {
 			Matrix4 mat;
 

@@ -138,7 +138,7 @@ void BasicQuadTreeNode::check () {
 	}
 }
 
-String BasicQuadTreeNode::toStringData() {
+String BasicQuadTreeNode::toStringData() const {
 	StringBuffer s;
 	s << "Node " << this << " (" << (int) minX << ","
 			<< (int) minY << "," << (int) maxX << "," << (int) maxY

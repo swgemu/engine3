@@ -77,6 +77,7 @@ namespace sys {
 		int lastIndexOf(const String& str) const ;
 		int lastIndexOf(const String& str, int fromIndex) const ;
 
+		//sprintf format
 		static String format(const char* format, ...);
 
 		bool beginsWith(const char* str) const ;
@@ -310,7 +311,7 @@ namespace sys {
 	template<uint32 M>
 	class StringHashCodeHelper {
 	public:
-		uint32 value;
+		const uint32 value;
 
 		constexpr StringHashCodeHelper() : value(M) {
 		}

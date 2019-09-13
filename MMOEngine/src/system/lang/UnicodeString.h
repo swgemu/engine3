@@ -139,24 +139,24 @@ namespace sys {
 		}
 
 		template <typename T>
-		static std::string toUTF8(const std::basic_string<T, std::char_traits<T>, std::allocator<T>>& source) {
-			std::string result;
-
+		static String toUTF8(const std::basic_string<T, std::char_traits<T>, std::allocator<T>>& source) {
 			std::wstring_convert<std::codecvt_utf8_utf16<T>, T> convertor;
-			result = convertor.to_bytes(source);
+			auto result = convertor.to_bytes(source);
 
-			return result;
+			return String(result.c_str(), result.length());
 		}
 
 		String toString() const {
 			std::u16string uStr;
-			uStr.reserve(length());
+			auto len = length();
 
-			for (int i = 0; i < length(); ++i) {
+			uStr.reserve(len);
+
+			for (int i = 0; i < len; ++i) {
 				uStr.push_back(uString[i]);
 			}
 
-			return toUTF8(uStr).c_str();
+			return toUTF8(uStr);
 		}
 	};
 

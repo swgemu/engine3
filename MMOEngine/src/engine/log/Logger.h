@@ -59,6 +59,22 @@ namespace engine {
 		const StringBuffer& getBuffer() const {
 			return buffer;
 		}
+
+		const Logger& getLogger() const {
+			return logger;
+		}
+
+		bool getWillLog() const {
+			return willLog;
+		}
+
+		int getLogLevel() const {
+			return logLevel;
+		}
+
+		bool getBoolParam() const {
+			return boolParam;
+		}
 	};
 
 	class Logger {

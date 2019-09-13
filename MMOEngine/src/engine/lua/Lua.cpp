@@ -58,11 +58,12 @@ bool Lua::runFile(const String& filename) {
 
 		if (luaL_loadfile(L, filename.toCharArray()) || lua_pcall(L, 0, 0, 0)) {
 			const char* err = lua_tostring(L, -1);
-			lua_pop(L,1);
 
 			StringBuffer msg;
 			msg << "file:" << filename << " ERROR " << err;
 			info(msg);
+
+			lua_pop(L, 1);
 
 			return false;
 		}
@@ -83,10 +84,11 @@ bool Lua::runFile(const String& filename, lua_State* lState) {
 
 			if (luaL_loadfile(lState, filename.toCharArray()) || lua_pcall(lState, 0, 0, 0)) {
 				const char* err = lua_tostring(lState, -1);
-				lua_pop(lState,1);
 
 				StringBuffer errorMessage;
 				errorMessage << "file:" << filename << " ERROR " << String(err) << "\n";
+
+				lua_pop(lState, 1);
 
 				Logger::console.error(errorMessage);
 
@@ -117,11 +119,12 @@ bool Lua::runString(const String& str) {
 	try {
 		if (luaL_loadbuffer(L, str.toCharArray(), str.length(), "command") || lua_pcall(L, 0, 0, 0)) {
 			const char* err = lua_tostring(L, -1);
-			lua_pop(L,1);
 
 			StringBuffer msg2;
 			msg2 << "ERROR " << err;
 			info(msg2);
+
+			lua_pop(L, 1);
 
 			return false;
 		}
@@ -172,9 +175,13 @@ String Lua::getGlobalString(const String& name) {
 	}
 
 	result = lua_tostring(L, -1);
+	auto size = lua_rawlen(L, -1);
+
+	String val(result, size);
+
 	lua_pop(L, 1);
 
-	return result;
+	return val;
 }
 
 uint32 Lua::getGlobalInt(const String& name) {
@@ -301,10 +308,15 @@ String Lua::getStringParameter(lua_State* lState) {
 		 */
 		return result;
 	}
+
 	result = lua_tostring(lState, -1);
+	auto size = lua_rawlen(lState, -1);
+
+	String val(result, size);
+
 	lua_pop(lState, 1);
 
-	return result;
+	return val;
 }
 
 int32 Lua::getIntParameter(lua_State* lState) {

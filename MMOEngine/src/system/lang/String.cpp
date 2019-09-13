@@ -822,36 +822,26 @@ bool String::toString(String& str) {
 }
 
 String String::format(const char* format, ...) {
-	int formatLength = strlen(format);
+	constexpr static const int BUFFER_SIZE = 2048;
 
-	char* buffer = (char*) malloc(formatLength + 512);
-
-	memcpy(buffer, format, formatLength + 1);
+	char buffer[BUFFER_SIZE];
 
 	va_list args;
 	va_start (args, format);
 
 	//Notice that only when this returned value is non-negative and less than n, the string has been completely written.
-	int res = vsnprintf (buffer, formatLength + 512, format, args);
+	int res = vsnprintf (buffer, BUFFER_SIZE, format, args);
 
-	if (res < 0 || res >= formatLength + 512) {
-		va_end (args);
+	va_end(args);
 
-		free(buffer);
-
+	if (res < 0 || res >= BUFFER_SIZE) {
 		if (res < 0)
 			throw Exception("Encoding error while trying to format string");
 		else
-			throw Exception("Maximum length of format.length() + 512 exceeded");
+			throw Exception("Maximum length of 2048 in String::format exceeded");
 	}
 
-	va_end (args);
-
-	String returnString(buffer);
-
-	free(buffer);
-
-	return returnString;
+	return String(buffer, res);
 }
 
 #ifdef CXX11_COMPILER

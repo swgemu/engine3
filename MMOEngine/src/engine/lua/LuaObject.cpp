@@ -22,18 +22,25 @@ String LuaObject::getStringField(const String& key, const char* defaultValue) {
 
 	lua_pushstring(L, key.toCharArray());
 	lua_gettable(L, -2);
+	std::size_t size = 0;
 
 	if (lua_isnil(L, -1))
 		result = defaultValue;
-	else
+	else {
 		result = lua_tostring(L, -1);
+		size = lua_rawlen(L, -1);
+	}
+
+	String val;
+
+	if (result != nullptr)
+		val = String(result, size);
+	else
+		val = String(defaultValue);
 
 	lua_pop(L, 1);
 
-	if (result != nullptr)
-		return String(result);
-	else
-		return String(defaultValue);
+	return val;
 }
 
 bool LuaObject::getBooleanField(const String& key, bool defaultValue) {
@@ -193,14 +200,14 @@ sys::int32 LuaObject::getSignedIntAt(int idx) {
 
 sys::uint64 LuaObject::getLongAt(int idx) {
 	uint64 result = 0;
-	
+
 	if (idx > (int)getTableSize() || idx < 1)
 		throw ArrayIndexOutOfBoundsException(idx);
-		
+
 	lua_rawgeti(L, -1, idx);
 	result = (uint64)lua_tointeger(L, -1);
 	lua_pop(L, 1);
-	
+
 	return result;
 }
 
@@ -225,12 +232,13 @@ String LuaObject::getStringAt(int idx) {
 
 	lua_rawgeti(L, -1, idx);
 	result = lua_tostring(L, -1);
+	auto size = lua_rawlen(L, -1);
+
+	String val(result, size);
+
 	lua_pop(L, 1);
 
-	if (result)
-		return String(result);
-	else
-		return String("");
+	return val;
 }
 
 float LuaObject::getFloatAt(int idx) {

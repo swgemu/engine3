@@ -54,17 +54,17 @@ namespace sys {
 
 			 //naive impl
 			 static constexpr const char* strstr(const char* X, const char* Y) {
-			 	while (*X != '\0') {
-						if ((*X == *Y) && compare(X, Y))
-							return X;
-						X++;
-					}
+				 while (*X != '\0') {
+					 if ((*X == *Y) && compare(X, Y))
+						 return X;
+					 X++;
+				 }
 
 			 	return nullptr;
 			 }
 
 			 constexpr std::size_t indexOf(const char* str, std::size_t fromIndex = 0) const {
-				 if (fromIndex < 0 || fromIndex >= size())
+				 if (fromIndex >= size())
 					 return npos;
 
 				 auto position = strstr(begin() + fromIndex, str);

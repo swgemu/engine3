@@ -86,7 +86,7 @@ namespace engine {
 
 		void setPause(bool val);
 
-		void logTask(const char* taskName, uint64 elapsedTime);
+		void logTask(const char* taskName, uint64 elapsedTime) const;
 
 		inline void addMutexWaitTime(uint64 time) {
 			mutexesAcquired++;
