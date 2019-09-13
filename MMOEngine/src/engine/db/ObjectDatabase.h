@@ -9,7 +9,7 @@
 
 #include "engine/log/Logger.h"
 
-#include "berkley/BerkeleyDatabase.h"
+#include "berkeley/BerkeleyDatabase.h"
 
 #include "LocalDatabase.h"
 

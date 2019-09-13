@@ -61,7 +61,7 @@
 #include "db/ObjectDatabase.h"
 #include "db/ObjectDatabaseManager.h"
 #include "db/BinaryData.h"
-#include "db/berkley/BerkeleyDatabase.h"
+#include "db/berkeley/BerkeleyDatabase.h"
 
 #include "lua/Lua.h"
 

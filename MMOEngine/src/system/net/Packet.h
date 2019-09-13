@@ -307,11 +307,7 @@ namespace sys {
 
 		inline UnicodeString parseUnicode() {
 			UnicodeString str;
-
-			uint32 len = readInt();
-			shiftOffset(len * 2);
-
-			str.append((unsigned short*) (offset - len * 2), len);
+			parseUnicode(str);
 
 			return str;
 		}

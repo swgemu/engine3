@@ -16,7 +16,7 @@
 #include "ObjectDatabase.h"
 #include "IndexDatabase.h"
 
-#include "berkley/Environment.h"
+#include "berkeley/Environment.h"
 
 //#define LASTOBJECTIDKEY 0xFFFFFFFFFFFFFFFF;
 

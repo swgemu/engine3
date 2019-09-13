@@ -228,7 +228,9 @@ int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
 	if (str.isEmpty() || startPos >= count)
 		return -1;
 
-	for (int i = startPos; i <= count - str.length(); ++i) {
+	constexpr static const int maxLoops = 2048;
+
+	for (int i = startPos; i <= count - str.length() && i < maxLoops; ++i) {
 		if (!memcmp(uString + i, str.toWideCharArray(), str.length() * sizeof(unsigned short)))
 			return i;
 	}
