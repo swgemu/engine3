@@ -193,17 +193,17 @@ namespace sys {
 
 			len -= ret - 1;
 
-			ret = snprintf(&buf[strlen(buf)], len, ".%09ld", ts.tv_nsec);
-			if (ret < 0 || ret >= len)
+			auto ret2 = snprintf(&buf[ret], len, ".%09ld", ts.tv_nsec);
+			if (ret2 < 0 || ret2 >= len)
 				return value;
 
-			len -= ret;
+			len -= ret2;
 
 			char tz[32];
 
 			strftime(tz, sizeof(tz), "%z", &t);
 
-			snprintf(&buf[strlen(buf)], len, "%s", tz);
+			snprintf(&buf[ret + ret2], len, "%s", tz);
 
 			value = buf;
 

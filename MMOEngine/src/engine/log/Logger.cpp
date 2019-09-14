@@ -18,9 +18,6 @@ bool Logger::jsonGlobalLog = false;
 Logger::Logger() {
 }
 
-Logger::Logger(const char *s) : name(s) {
-}
-
 Logger::Logger(const String& s) : name(s) {
 }
 

@@ -119,7 +119,6 @@ namespace engine {
 
 	public:
 		Logger();
-		Logger(const char *s);
 		Logger(const String& s);
 
 		~Logger();

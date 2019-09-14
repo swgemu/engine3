@@ -262,14 +262,28 @@ extern "C" int isinf (double);
 
 namespace sys {
 	typedef unsigned long long uint64;
+	static_assert(sizeof(uint64) == 8, "unsigned long long is not 64bit");
+
 	typedef unsigned int uint32;
+	static_assert(sizeof(uint32) == 4, "usigned int is not 32 bit");
+
 	typedef unsigned short uint16;
+	static_assert(sizeof(uint16) == 2, "unsigned short is not 16 bit");
+
 	typedef unsigned char uint8;
+	static_assert(sizeof(uint8) == 1, "unsigned char is not 8 bit");
 
 	typedef signed long long int64;
+	static_assert(sizeof(int64) == 8, "signed long long is not 64bit");
+
 	typedef signed int int32;
+	static_assert(sizeof(int32) == 4, "signed int is not 32 bit");
+
 	typedef signed short int16;
+	static_assert(sizeof(int16) == 2, "signed short is not 16 bit");
+
 	typedef signed char int8;
+	static_assert(sizeof(int8) == 1, "signed char is not 8 bit");
 
 #ifndef __MINGW32__
 	typedef uint8 byte;

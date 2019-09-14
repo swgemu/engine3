@@ -122,7 +122,7 @@ namespace engine {
 			return &updateObjects;
 		}
 
-		inline uint64 getCurrentSize() {
+		inline uint64 getCurrentSize() const {
 			return currentSize;
 		}
 

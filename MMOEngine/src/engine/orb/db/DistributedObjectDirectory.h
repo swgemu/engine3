@@ -24,7 +24,7 @@ namespace engine {
 
 		ObjectHashTable(int initialCapacity);
 
-		int hash(const uint64& keyValue) const;
+		int hash(const uint64& keyValue) const override;
 	};
 
 	class ObjectHashTableHelper : public HashTable<uint64, DistributedObject*> {
@@ -33,7 +33,7 @@ namespace engine {
 
 		ObjectHashTableHelper(int initialCapacity);
 
-		int hash(const uint64& keyValue) const;
+		int hash(const uint64& keyValue) const override;
 	};
 
 	class DistributedObjectDirectory {

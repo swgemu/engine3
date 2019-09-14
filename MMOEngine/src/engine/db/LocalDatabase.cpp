@@ -318,7 +318,7 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint
 		ret  = -1;
 		TransactionConfig config = TransactionConfig::DEFAULT;
 
-		static bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
+		static const bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
 		config.setReadUncommitted(!mvcc);
 		config.setSnapshot(mvcc);
 		config.setNoSync(true);
@@ -328,7 +328,7 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint
 		ret = getDatabaseHandle()->get(transaction, &key, &data, lockMode);
 
 		if (ret == DB_LOCK_DEADLOCK) {
-			info("deadlock detected in LocalDatabase::get.. retrying iteration " + String::valueOf(i));
+			info() << "deadlock detected in LocalDatabase::get.. retrying iteration " << i;
 
 			transaction->abort();
 			transaction = nullptr;

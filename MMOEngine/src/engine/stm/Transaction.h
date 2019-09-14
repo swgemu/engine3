@@ -44,7 +44,7 @@ namespace engine {
 	};
 
 	class TransactionalObjectHandleVector : public SortedVector<TransactionalObjectHandleBase* > {
-		int compare(const TransactionalObjectHandleBase*& o1, const TransactionalObjectHandleBase*& o2) const {
+		int compare(TransactionalObjectHandleBase* const& o1, TransactionalObjectHandleBase* const& o2) const override {
 			//this needs a specific order based on the header to not create cycle helps
 			return o1->compareTo(o2);
 		}
@@ -302,13 +302,13 @@ namespace engine {
 		O localCopy = transaction_cast<O>(handle->getObjectLocalCopy());
 
 		assert(localCopy != nullptr);
-		
+
 #ifdef MEMORY_PROTECTION
 		ptrdiff_t rel = (ptrdiff_t)localCopy - (ptrdiff_t)0x8000000000;
-		
+
 		assert(!(rel > 0 && rel <= (ptrdiff_t) 0x7e800000));
 #endif
-		
+
 		return localCopy;
 	}
 

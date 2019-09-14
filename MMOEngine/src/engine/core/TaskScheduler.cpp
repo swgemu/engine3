@@ -51,9 +51,7 @@ TaskScheduler::~TaskScheduler() {
 }
 
 void TaskScheduler::start() {
-	StringBuffer msg;
-	msg << "started";
-	info(msg);
+	info() << "started";
 
 	doRun = true;
 	Thread::start();
