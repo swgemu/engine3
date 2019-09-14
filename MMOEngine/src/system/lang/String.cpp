@@ -558,7 +558,7 @@ String String::replaceAll(const String& regex, const String& replacement) const 
 	for (int pos = 0; (pos = str.indexOf(regex, start, end) != npos); ++pos) {
 		str.replace(start, end, replacement);
 
-		if (str.toString() == replacement)
+		if (str == replacement)
 			break;
 	}
 

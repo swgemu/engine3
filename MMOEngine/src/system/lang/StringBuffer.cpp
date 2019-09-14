@@ -181,10 +181,10 @@ int StringBuffer::indexOf(const String& regexString, int& resultStart, int& resu
 		if (reti) {
 			regfree(&regex);
 
-			return -1;
+			return String::npos;
 		}
 	} else
-		return -1;
+		return String::npos;
 
 	regfree(&regex);
 
@@ -383,3 +383,15 @@ StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {
 
 	return *this;
 }
+
+bool operator==(const String& str1, const StringBuffer& str2) {
+	if (str1.length() != str2.length())
+		return false;
+
+	return memcmp(str1.toCharArray(), str2.getBuffer(), str1.length() * sizeof(char)) == 0;
+}
+
+bool operator==(const StringBuffer& str1, const String& str2) {
+	return str2 == str1;
+}
+

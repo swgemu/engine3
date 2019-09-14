@@ -262,23 +262,27 @@ namespace sys {
 		inline void acquireObject() {
 			if (object != nullptr) {
 			#ifdef TRACE_REFERENCES
-				(object.get())->addHolder(id);
+				object.get()->addHolder(id);
 			#endif
-				(object.get())->acquire();
+				object.get()->acquire();
 			}
 		}
 
 		inline void releaseObject() {
 			if (object != nullptr) {
 			#ifdef TRACE_REFERENCES
-				(object.get())->removeHolder(id);
+				object.get()->removeHolder(id);
 			#endif
-				(object.get())->release();
+				object.get()->release();
 				object = nullptr;
 			}
 		}
 	};
 
+	template<class T, class... Args>
+	Reference<T*> makeShared(Args&&... args ) {
+		return Reference<T*>(new T(std::forward<Args>(args)...));
+	}
 
 
   } // namespace lang

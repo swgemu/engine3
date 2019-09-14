@@ -87,6 +87,11 @@ namespace sys {
 			}
 		};
 
+		template<class T, class... Args>
+		UniqueReference<T*> makeUnique(Args&&... args ) {
+			return UniqueReference<T*>(new T(std::forward<Args>(args)...));
+		}
+
 	}
 }
 

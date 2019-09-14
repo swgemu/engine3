@@ -128,4 +128,7 @@ namespace sys {
 
 using namespace sys::lang;
 
+bool operator==(const String& str1, const StringBuffer& str2);
+bool operator==(const StringBuffer& str1, const String& str2);
+
 #endif /*STRINGBUFFER_H_*/

@@ -23,7 +23,7 @@ namespace sys {
   namespace lang {
 
 	class UnicodeString : public Variable {
-		unsigned short* uString;
+		uint16* uString;
 		int count;
 
 	public:
@@ -93,7 +93,7 @@ namespace sys {
 		UnicodeString substr(int beg, int length) const;
 
 		const char* toCharArray() const;
-		const unsigned short* toWideCharArray() const;
+		const uint16* toWideCharArray() const;
 
 		bool toString(String& str);
 

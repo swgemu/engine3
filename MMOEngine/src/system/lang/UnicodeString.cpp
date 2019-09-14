@@ -31,7 +31,7 @@ UnicodeString::UnicodeString(const char* ascii, int len) : Variable() {
 }
 
 UnicodeString::UnicodeString(const UnicodeString& str) : Variable() {
-	uString = new unsigned short[str.count + 1];
+	uString = new uint16[str.count + 1];
 	count = str.count;
 	//wcscpy(uString, str.uString);
 	copy(uString, str.uString);
@@ -47,7 +47,7 @@ void UnicodeString::create(const char* ascii, int len) {
 	//mbstate_t state;
 	//memset(&state, '\0', sizeof (state));
 
-	uString = new unsigned short[len + 1];
+	uString = new uint16[len + 1];
 	//mbsrtowcs(uString, &ascii, len, &state);
 	asciitowide(uString, ascii, len);
 
@@ -177,7 +177,7 @@ void UnicodeString::append(const char* ascii, int len) {
   	//memset (&state, '\0', sizeof (state));
 
   	int ncount = count + len;
-	unsigned short *nuString = new unsigned short[ncount + 1];
+	auto nuString = new uint16[ncount + 1];
 
 	//wmemcpy(nuString, uString, count);
 	copy(nuString, uString, count);
@@ -266,7 +266,7 @@ const char* UnicodeString::toCharArray() const {
 	return (const char*) uString;
 }
 
-const unsigned short* UnicodeString::toWideCharArray() const {
+const uint16* UnicodeString::toWideCharArray() const {
 	return uString;
 }
 
