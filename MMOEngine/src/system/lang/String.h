@@ -375,4 +375,8 @@ String operator+(const String& str1, int i);
 #define STRING_HASHCODE(a) String::hashCode(a)
 #endif
 
+constexpr uint32 operator "" _hashCode(char const* str, std::size_t s) {
+	return String::hashCode(str);
+}
+
 #endif /*STRING_H_*/
