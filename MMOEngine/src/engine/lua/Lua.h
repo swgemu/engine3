@@ -47,6 +47,8 @@ namespace engine {
 
 		static int atPanic(lua_State* L);
 
+		virtual void registerFunction(const char* name, int(*functionPointer)(lua_State*));
+
 		// getters
 
 		// globals

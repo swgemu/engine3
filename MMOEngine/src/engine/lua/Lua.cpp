@@ -43,6 +43,10 @@ void Lua::deinit() {
 	L = nullptr;
 }
 
+void Lua::registerFunction(const char* name, int(*functionPointer)(lua_State*)) {
+	lua_register(L, name, functionPointer);
+}
+
 bool Lua::runFile(const String& filename) {
 	if (filename.isEmpty())
 		return false;

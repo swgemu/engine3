@@ -268,20 +268,14 @@ namespace sys {
 			uint32 len = readShort();
 			shiftOffset(len);
 
-			StringBuffer str;
-			str.append(offset - len, len);
-
-			str.toString(ascii);
+			ascii = String(offset - len, len);
 		}
 
 		inline String parseAscii() {
 			uint32 len = readShort();
 			shiftOffset(len);
 
-			StringBuffer str;
-			str.append(offset - len, len);
-
-			return str.toString();
+			return String(offset - len, len);
 		}
 
 		inline void parseAscii(int offs, String& ascii) {
