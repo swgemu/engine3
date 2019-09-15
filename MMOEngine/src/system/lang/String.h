@@ -113,6 +113,7 @@ namespace sys {
 
 		static String valueOf(int val);
 		static String valueOf(uint32 val);
+		static String valueOf(long val);
 		static String valueOf(int64 val);
 		static String valueOf(uint64 val);
 		static String valueOf(float val);
@@ -121,7 +122,8 @@ namespace sys {
 		static String valueOf(std::size_t val);
 		static String valueOf(bool value);
 
-		static String hexvalueOf(int val) ;
+		static String hexvalueOf(int val);
+		static String hexvalueOf(long val);
 		static String hexvalueOf(int64 val);
 		static String hexvalueOf(uint32 val);
 		static String hexvalueOf(uint64 val);
@@ -191,6 +193,7 @@ namespace sys {
 		String& operator+= (const String& str);
 
 		char& operator[](int i);
+		const char& operator[](int i) const;
 
 		/*
 		 * This allows nasty things like substracting ints from String because it casts to char* i.e:

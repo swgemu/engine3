@@ -260,6 +260,10 @@ extern "C" int isinf (double);
 
 #endif  // USE_LOCK_STYLE_THREAD_SAFETY_ATTRIBUTES
 
+#ifdef __BIG_ENDIAN__
+static_assert(false, "big endian systems are not supported");
+#endif
+
 namespace sys {
 	typedef unsigned long long uint64;
 	static_assert(sizeof(uint64) == 8, "unsigned long long is not 64bit");
@@ -284,6 +288,8 @@ namespace sys {
 
 	typedef signed char int8;
 	static_assert(sizeof(int8) == 1, "signed char is not 8 bit");
+
+	static_assert(sizeof(float) == 4, "float is not 4 bytes long");
 
 #ifndef __MINGW32__
 	typedef uint8 byte;

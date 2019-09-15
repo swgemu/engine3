@@ -390,6 +390,10 @@ String String::valueOf(int val) {
 	return String(buf, written);
 }
 
+String String::valueOf(long val) {
+	return String::valueOf((int64) val);
+}
+
 String String::valueOf(uint32 val) {
 	char buf[20];
 
@@ -470,6 +474,10 @@ String String::hexvalueOf(int val) {
 	assert(written >= 0 && written < 20);
 
 	return String(buf, written);
+}
+
+String String::hexvalueOf(long val) {
+	return String::hexvalueOf((int64) val);
 }
 
 String String::hexvalueOf(uint32 val) {
@@ -779,6 +787,13 @@ String& String::operator+=(const String& str) {
 }
 
 char& String::operator[](int i) {
+	if (i < 0 || i >= count)
+		throw ArrayIndexOutOfBoundsException(i);
+
+	return begin()[i];
+}
+
+const char& String::operator[](int i) const {
 	if (i < 0 || i >= count)
 		throw ArrayIndexOutOfBoundsException(i);
 

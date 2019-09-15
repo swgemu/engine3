@@ -35,73 +35,72 @@ namespace sys {
 		virtual ~ObjectInputStream() {
 		}
 
+		template<typename T>
+		T readPrimitive() {
+			constexpr auto typeSize = sizeof(T);
+
+			shiftOffset(typeSize);
+
+			T val;
+			memcpy(&val, offset - typeSize, typeSize);
+
+			return val;
+		}
+
+		template<typename T>
+		T readPrimitiveFrom(int offs) {
+			constexpr auto typeSize = sizeof(T);
+
+			auto elementOffset = elementData + offs;
+
+			if (elementOffset + typeSize > end)
+				throw StreamIndexOutOfBoundsException(this, offs + typeSize);
+
+			T val;
+			memcpy(&val, elementOffset, typeSize);
+
+			return val;
+		}
+
 		// reading methods
 		inline bool readBoolean() {
-			shiftOffset(1);
-
-			return *(uint8*)(offset-1);
+			return readPrimitive<uint8>();
 		}
 
 		inline uint8 readByte() {
-			shiftOffset(1);
-
-			return *(uint8*)(offset-1);
+			return readPrimitive<uint8>();
 		}
 
 		inline uint8 readByte(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 1 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 1);
-
-			return *(uint8*)(elementOffset);
+			return readPrimitiveFrom<uint8>(offs);
 		}
 
 		inline int8 readSignedByte() {
-			shiftOffset(1);
-
-			return *(int8*)(offset-1);
+			return readPrimitive<int8>();
 		}
 
 		inline int8 readSignedByte(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 1 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 1);
-
-			return *(int8*)(elementOffset);
+			return readPrimitiveFrom<int8>(offs);
 		}
 
 		inline uint16 readShort() {
-			shiftOffset(2);
-
-			return *(uint16*)(offset-2);
+			return readPrimitive<uint16>();
 		}
 
 		inline uint16 readShort(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 2 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 2);
-
-			return *(uint16*)(elementOffset);
+			return readPrimitiveFrom<uint16>(offs);
 		}
 
 		inline int16 readSignedShort(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 2 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 2);
-
-			return *(int16*)(elementOffset);
+			return readPrimitiveFrom<int16>(offs);
 		}
 
 		inline int16 readSignedShort() {
-			shiftOffset(2);
-
-			return *(int16*)(offset-2);
+			return readPrimitive<int16>();
 		}
 
 		inline uint32 readInt() {
-			shiftOffset(4);
-
-			return *(uint32*)(offset-4);
+			return readPrimitive<uint32>();
 		}
 
 		inline uint32 readNetInt() {
@@ -109,73 +108,43 @@ namespace sys {
 		}
 
 		inline uint32 readInt(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 4 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 4);
-
-			return *(uint32*)(elementOffset);
+			return readPrimitiveFrom<uint32>(offs);
 		}
 
 		inline int32 readSignedInt() {
-			shiftOffset(4);
-
-			return *(int32*)(offset-4);
+			return readPrimitive<int32>();
 		}
 
 		inline int32 readSignedInt(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 4 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 4);
-
-			return *(int32*)(elementOffset);
+			return readPrimitiveFrom<int32>(offs);
 		}
 
 		inline uint64 readLong() {
-			shiftOffset(8);
-
-			return *(uint64*)(offset-8);
+			return readPrimitive<uint64>();
 		}
 
 		inline uint64 readLong(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 8 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 8);
-
-			return *(uint64*)(elementOffset);
+			return readPrimitiveFrom<uint64>(offs);
 		}
 
 		inline int64 readSignedLong() {
-			shiftOffset(8);
-
-			return *(int64*)(offset-8);
+			return readPrimitive<int64>();
 		}
 
 		inline int64 readSignedLong(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 8 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 8);
-
-			return *(int64*)(elementOffset);
+			return readPrimitiveFrom<int64>(offs);
 		}
 
 		inline float readFloat() {
-			shiftOffset(4);
-
-			return *(float*)(offset-4);
+			return readPrimitive<float>();
 		}
 
 		inline float readFloat(int offs) {
-			char* elementOffset = elementData + offs;
-			if (elementOffset + 4 > end)
-				throw StreamIndexOutOfBoundsException(this, offs + 4);
-
-			return *(float*)(elementOffset);
+			return readPrimitiveFrom<float>(offs);
 		}
 
 		inline double readDouble() {
-			shiftOffset(sizeof(double));
-
-			return *(double*)(offset-sizeof(double));
+			return readPrimitive<double>();
 		}
 	};
 
