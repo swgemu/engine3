@@ -32,7 +32,11 @@ Logger::Logger(Logger&& logger) : logFile(logger.logFile), logLevel(logger.logLe
 Logger::Logger(const Logger& logger) : logFile(nullptr), logLevel(logger.logLevel),
 	doGlobalLog(logger.doGlobalLog), doSyncLog(logger.doSyncLog), logTimeToFile(logger.logTimeToFile),
 	logLevelToFile(logger.logLevelToFile), name(logger.name), logJSON(logger.logJSON),
-	logToConsole(logger.logToConsole), callback(logger.callback) {
+	logToConsole(logger.logToConsole) {
+
+	if (logger.callback != nullptr) {
+		callback = new LoggerCallback(*logger.callback.get());
+	}
 
 	if (logger.logFile != nullptr) {
 		setFileLogger(logger.logFile->getFile()->getName());
@@ -54,7 +58,10 @@ Logger& Logger::operator=(const Logger& logger) {
        	name = logger.name;
 	logJSON = logger.logJSON;
 	logToConsole = logger.logToConsole;
-       	callback = logger.callback;
+
+	if (logger.callback != nullptr) {
+	       	callback = new LoggerCallback(*logger.callback.get());
+	}
 
 	if (logger.logFile != nullptr) {
 		setFileLogger(logger.logFile->getFile()->getName());
@@ -198,7 +205,7 @@ void Logger::getJSONString(StringBuffer& output, const char* logName, const char
 }
 
 void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
-	if (callback && callback(type, msg)) {
+	if (callback && (*callback.get())(type, msg)) {
 		return;
 	}
 

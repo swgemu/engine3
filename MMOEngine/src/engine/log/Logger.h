@@ -142,7 +142,7 @@ namespace engine {
 		bool logJSON = false;
 		bool logToConsole = true;
 
-		LoggerCallback callback;
+		UniqueReference<LoggerCallback*> callback;
 
 		static AtomicReference<FileWriter*> globalLogFile;
 		static volatile int globalLogLevel;
@@ -326,11 +326,11 @@ namespace engine {
 		}
 
 		inline void setLoggerCallback(LoggerCallback&& funct) {
-			callback = std::move(funct);
+			callback = new LoggerCallback(std::move(funct));
 		}
 
 		inline void setLoggerCallback(const LoggerCallback& funct) {
-			callback = funct;
+			callback = new LoggerCallback(funct);
 		}
 
 		// getters
@@ -354,11 +354,11 @@ namespace engine {
 			return logJSON;
 		}
 
-		inline LoggerCallback& getLoggerCallback() {
+		inline LoggerCallback* getLoggerCallback() {
 			return callback;
 		}
 
-		inline const LoggerCallback& getLoggerCallback() const {
+		inline const LoggerCallback* getLoggerCallback() const {
 			return callback;
 		}
 
