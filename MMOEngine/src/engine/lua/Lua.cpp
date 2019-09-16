@@ -18,6 +18,10 @@ Lua::Lua() : Logger("Lua") {
 	deinitOnDestruction = true;
 }
 
+Lua::Lua(Lua&& lua) : Logger(std::move(lua)), L(lua.L), deinitOnDestruction(lua.deinitOnDestruction) {
+	lua.L = nullptr;
+}
+
 Lua::Lua(lua_State* L) : Logger("Lua") {
 	this->L = L;
 

@@ -128,7 +128,7 @@ bool DOBServiceClient::send(DOBMessage* message) {
 	message->setSequence(sentMessageSequence.increment());
 	message->setSize();
 
-	info("SEND " + message->toStringData());
+	info() << "SEND " << *message;
 	StreamServiceClient::send(message);
 
 	//delete message;
@@ -139,7 +139,7 @@ bool DOBServiceClient::send(DOBMessage* message) {
 bool DOBServiceClient::sendReply(DOBMessage* message) {
 	message->setSize();
 
-	info("SEND " + message->toStringData());
+	info() << "SEND " << *message;
 
 	StreamServiceClient::send(message);
 
@@ -160,7 +160,8 @@ bool DOBServiceClient::sendWithReply(DOBMessage* message) {
 
 	sentMessageQueue.put(sequence, message);
 
-	info("SEND " + message->toStringData());
+	info() << "SEND " << *message;
+
 	return StreamServiceClient::send(message);
 }
 

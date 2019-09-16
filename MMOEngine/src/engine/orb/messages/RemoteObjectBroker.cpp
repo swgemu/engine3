@@ -200,3 +200,4 @@ void RemoteObjectBroker::invokeMethod(DistributedMethod& method, bool asyncMetho
 		brokerClient->send(invocationMessage);
 	}
 }
+

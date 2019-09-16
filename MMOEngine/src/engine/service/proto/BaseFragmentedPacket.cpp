@@ -33,9 +33,8 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 		totalSize = pack->parseNetInt();
 
 		if (totalSize < 0 || totalSize > MAX_COMPLETE_FRAG_SIZE) {
-			String msgData = pack->toStringData();
-
-			Logger::console.error("received fragmented packet with size too big = (" + String::valueOf(totalSize) + ") for frag: " + msgData);
+			Logger::console.error() <<
+				"received fragmented packet with size too big = (" << totalSize << ") for frag: " << *pack;
 
 			return false;
 		} else if (totalSize == 0) {

@@ -23,12 +23,26 @@
 #endif
 
 #include "system/lang.h"
+
+#include <type_traits>
 #include <functional>
 
 namespace engine {
   namespace log {
 
 	class Logger;
+
+	template <typename T>
+	class HasToStringDataMethodSFINAE {
+		typedef char success;
+		struct failure { char x[2]; };
+
+		template <class C> static success test(decltype(&C::toStringData)) ;
+		template <class C> static failure test(...);
+
+	public:
+		enum { value = sizeof(test<T>(0)) == sizeof(char) };
+	};
 
 	class LoggerHelper {
 	protected:
@@ -49,8 +63,27 @@ namespace engine {
 
 		void flush(bool clearBuffer = true);
 
-		template<typename T>
-		LoggerHelper& operator<<(const T& a);
+		template<typename T, std::enable_if_t<HasToStringDataMethodSFINAE<T>::value, int> = 0>
+		LoggerHelper& operator<<(const T& a) {
+			if (!willLog) {
+				return *this;
+			}
+
+			buffer << a.toStringData();
+
+			return *this;
+		}
+
+		template<typename T, std::enable_if_t<!HasToStringDataMethodSFINAE<T>::value, int> = 0>
+		LoggerHelper& operator<<(const T& a) {
+			if (!willLog) {
+				return *this;
+			}
+
+			buffer << a;
+
+			return *this;
+		}
 
 		StringBuffer& getBuffer() {
 			return buffer;
@@ -120,8 +153,14 @@ namespace engine {
 	public:
 		Logger();
 		Logger(const String& s);
+		Logger(const Logger& logger);
+
+		Logger(Logger&& logger);
 
 		~Logger();
+
+		Logger& operator=(const Logger& logger);
+		Logger& operator=(Logger&& logger);
 
 		static void setGlobalFileLogger(const char* file);
 		static void setGlobalFileLogger(const String& file);
@@ -324,18 +363,6 @@ namespace engine {
 		}
 
 	};
-
-	template<typename T>
-	LoggerHelper& LoggerHelper::operator<<(const T& a) {
-		if (!willLog) {
-			return *this;
-		}
-
-		//otherwise push message to buffer
-		buffer << a;
-
-		return *this;
-	}
 
   } // namespace log
 } // namespace engine

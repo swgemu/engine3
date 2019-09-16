@@ -6,10 +6,13 @@
 #ifndef LUAOBJECT_H_
 #define LUAOBJECT_H_
 
-#include "Lua.h"
+#include <lua.hpp>
+
+#include "system/lang.h"
 
 namespace engine {
 namespace lua {
+	class Lua;
 
 	class LuaObject {
 		lua_State* L;
@@ -17,11 +20,11 @@ namespace lua {
 		String objectName;
 
 	public:
-		LuaObject(lua_State* lState, const String& name) : L(lState), objectName(name) {
-		}
+		LuaObject(Lua* lState, const String& name);
+		LuaObject(Lua* lState);
 
-		LuaObject(lua_State* lState) : L(lState) {
-		}
+		LuaObject(lua_State* lState, const String& name);
+		LuaObject(lua_State* lState);
 
 #ifdef CXX11_COMPILER
 		LuaObject(const LuaObject& obj) : L(obj.L), objectName(obj.objectName) {
@@ -100,5 +103,6 @@ namespace lua {
 }
 }
 
+using namespace engine::lua;
 
 #endif /* LUAOBJECT_H_ */

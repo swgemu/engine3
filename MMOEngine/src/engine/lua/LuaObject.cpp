@@ -3,7 +3,24 @@
 ** See file COPYING for copying conditions.
 */
 
+#include "Lua.h"
 #include "LuaObject.h"
+
+LuaObject::LuaObject(Lua* lState, const String& name) : L(lState->getLuaState()), objectName(name) {
+
+}
+
+LuaObject::LuaObject(Lua* lState) : L(lState->getLuaState()) {
+
+}
+
+LuaObject::LuaObject(lua_State* lState, const String& name) : L(lState), objectName(name) {
+
+}
+
+LuaObject::LuaObject(lua_State* lState) : L(lState) {
+
+}
 
 void LuaObject::setField(const String& key, uint64 value) {
 	lua_pushstring(L, key.toCharArray());

@@ -89,7 +89,7 @@ void SocketAddress::clear() {
 	memset(&addr, 0, sizeof(addr));
 }
 
-int SocketAddress::compareTo(SocketAddress* socka) {
+int SocketAddress::compareTo(SocketAddress* socka) const {
 	if (addr.sin_addr.s_addr < socka->addr.sin_addr.s_addr) {
 		return 1;
 	} else if (addr.sin_addr.s_addr > socka->addr.sin_addr.s_addr) {
@@ -108,32 +108,32 @@ struct sockaddr* SocketAddress::getAddress() {
 	return (struct sockaddr*) &addr;
 }
 
-String SocketAddress::getIPAddress() {
+String SocketAddress::getIPAddress() const {
 	return String(inet_ntoa(addr.sin_addr));
 }
 
-uint16 SocketAddress::getPort() {
+uint16 SocketAddress::getPort() const {
 	return htons(addr.sin_port);
 }
 
-String SocketAddress::getFullIPAddress() {
+String SocketAddress::getFullIPAddress() const {
 	StringBuffer ip;
 	ip << inet_ntoa(addr.sin_addr) << ":" << htons(addr.sin_port);
 
 	return ip.toString();
 }
 
-String SocketAddress::getFullPrintableIPAddress() {
+String SocketAddress::getFullPrintableIPAddress() const {
 	StringBuffer ip;
 	ip << inet_ntoa(addr.sin_addr) << "_" << htons(addr.sin_port);
 
 	return ip.toString();
 }
 
-uint64 SocketAddress::getNetworkID() {
+uint64 SocketAddress::getNetworkID() const {
 	return ((uint64) (addr.sin_addr.s_addr) << 32) | addr.sin_port;
 }
 
-uint32 SocketAddress::getIPID() {
+uint32 SocketAddress::getIPID() const {
 	return addr.sin_addr.s_addr;
 }

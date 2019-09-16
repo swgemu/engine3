@@ -313,7 +313,7 @@ void BaseClient::send(BasePacket* pack, bool doLock) {
 #endif
 
 			if (!DatagramServiceClient::send(pack))
-				debug() << "LOSING " << pack->toStringData();
+				debug() << "LOSING " << *pack;
 		}
 	} catch (SocketException& e) {
 		error("on send()" + e.getMessage());

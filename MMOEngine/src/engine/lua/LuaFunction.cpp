@@ -7,13 +7,12 @@
 #include "engine/core/TaskWorkerThread.h"
 
 #include "LuaFunction.h"
-
+#include "Lua.h"
 #include "LuaPanicException.h"
 
 #ifdef CXX11_COMPILER
 #include <chrono>
 #endif
-
 
 LuaFunction::LuaFunction() {
 	L = nullptr;
@@ -21,7 +20,7 @@ LuaFunction::LuaFunction() {
 	numberOfArgsToReturn = 0;
 }
 
-LuaFunction::LuaFunction(lua_State* l, const String& funcName, int argsToReturn) : functionName(funcName) {
+void LuaFunction::init(lua_State* l, const String& funcName, int argsToReturn) {
 	L = l;
 	numberOfArgs = 0;
 	numberOfArgsToReturn = argsToReturn;
@@ -29,7 +28,7 @@ LuaFunction::LuaFunction(lua_State* l, const String& funcName, int argsToReturn)
 	lua_getglobal(L, functionName.toCharArray());
 }
 
-LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn) : functionName(func), object(object) {
+void LuaFunction::init(lua_State* l, const String& object, const String& func, int argsToReturn) {
 	L = l;
 	numberOfArgs = 1;
 	numberOfArgsToReturn = argsToReturn;
@@ -40,6 +39,22 @@ LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func,
 	lua_pushstring(L, func.toCharArray());
 	lua_gettable(L, -2);  /* funx resides at stack index -2 */
 	lua_insert(L, -2);  /* and swap with func... */
+}
+
+LuaFunction::LuaFunction(lua_State* l, const String& funcName, int argsToReturn) : functionName(funcName) {
+	init(l, funcName, argsToReturn);
+}
+
+LuaFunction::LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn) : functionName(func), object(object) {
+	init(l, object, func, argsToReturn);
+}
+
+LuaFunction::LuaFunction(Lua* l, const String& funcName, int argsToReturn) : functionName(funcName) {
+	init(l->getLuaState(), funcName, argsToReturn);
+}
+
+LuaFunction::LuaFunction(Lua* l, const String& object, const String& func, int argsToReturn) : functionName(func), object(object) {
+	init(l->getLuaState(), object, func, argsToReturn);
 }
 
 LuaFunction::LuaFunction(const LuaFunction& func) : Object(), functionName(func.functionName), object(func.object) {

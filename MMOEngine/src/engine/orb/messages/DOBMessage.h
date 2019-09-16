@@ -30,7 +30,7 @@ namespace engine {
 							LOADPERSISTENTOBJECTMESSAGE, UPDATEPERSISTENTOBJECTMESSAGE,
 							GETNEXTFREEOBJECTIDMESSAGE, REQUESTSERVANT, SENDOBJECTDATA };
 
-	public:	
+	public:
 		DOBMessage(uint32 messageType);
 		DOBMessage(uint32 messageType, uint32 initialBufferSize);
 		DOBMessage(Packet* packet);
@@ -50,7 +50,11 @@ namespace engine {
 			return client;
 		}
 
-		uint32 getSequence() {
+		const DOBServiceClient* getClient() const {
+			return client;
+		}
+
+		uint32 getSequence() const {
 			return sequence;
 		}
 

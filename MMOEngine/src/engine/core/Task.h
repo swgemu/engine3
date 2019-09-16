@@ -109,7 +109,7 @@ namespace engine {
 				return cmp;
 		}
 
-		virtual String toStringData() {
+		virtual String toStringData() const {
 			StringBuffer s;
 			s << nextExecutionTime.getMiliTime() << "(ptr = " << this << ")";
 			return s.toString();

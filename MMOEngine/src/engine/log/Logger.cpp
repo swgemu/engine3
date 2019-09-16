@@ -21,6 +21,70 @@ Logger::Logger() {
 Logger::Logger(const String& s) : name(s) {
 }
 
+Logger::Logger(Logger&& logger) : logFile(logger.logFile), logLevel(logger.logLevel),
+	doGlobalLog(logger.doGlobalLog), doSyncLog(logger.doSyncLog), logTimeToFile(logger.logTimeToFile),
+	logLevelToFile(logger.logLevelToFile), name(std::move(logger.name)), logJSON(logger.logJSON),
+	logToConsole(logger.logToConsole), callback(std::move(logger.callback)) {
+
+	logger.logFile = nullptr;
+}
+
+Logger::Logger(const Logger& logger) : logFile(nullptr), logLevel(logger.logLevel),
+	doGlobalLog(logger.doGlobalLog), doSyncLog(logger.doSyncLog), logTimeToFile(logger.logTimeToFile),
+	logLevelToFile(logger.logLevelToFile), name(logger.name), logJSON(logger.logJSON),
+	logToConsole(logger.logToConsole), callback(logger.callback) {
+
+	if (logger.logFile != nullptr) {
+		setFileLogger(logger.logFile->getFile()->getName());
+	}
+}
+
+Logger& Logger::operator=(const Logger& logger) {
+	if (&logger == this)
+		return *this;
+
+	closeFileLogger();
+
+	logFile = logger.logFile;
+       	logLevel = logger.logLevel;
+	doGlobalLog = logger.doGlobalLog;
+       	doSyncLog = logger.doSyncLog;
+       	logTimeToFile = logger.logTimeToFile;
+	logLevelToFile = logger.logLevelToFile;
+       	name = logger.name;
+	logJSON = logger.logJSON;
+	logToConsole = logger.logToConsole;
+       	callback = logger.callback;
+
+	if (logger.logFile != nullptr) {
+		setFileLogger(logger.logFile->getFile()->getName());
+	}
+
+	return *this;
+}
+
+Logger& Logger::operator=(Logger&& logger) {
+	if (&logger == this)
+		return *this;
+
+	closeFileLogger();
+
+	logFile = logger.logFile;
+       	logLevel = logger.logLevel;
+	doGlobalLog = logger.doGlobalLog;
+       	doSyncLog = logger.doSyncLog;
+       	logTimeToFile = logger.logTimeToFile;
+	logLevelToFile = logger.logLevelToFile;
+       	name = std::move(logger.name);
+	logJSON = logger.logJSON;
+	logToConsole = logger.logToConsole;
+       	callback = std::move(logger.callback);
+
+	logger.logFile = nullptr;
+
+	return *this;
+}
+
 Logger::~Logger() {
 	closeFileLogger();
 }
@@ -47,12 +111,7 @@ void Logger::setGlobalFileJson(bool val) {
 }
 
 void Logger::setGlobalFileLogger(const String& file) {
-	if (globalLogFile != nullptr)
-		closeGlobalFileLogger();
-
-	globalLogFile = new FileWriter(new File(file), true);
-
-	starttime.updateToCurrentTime();
+	setGlobalFileLogger(file.toCharArray());
 }
 
 void Logger::setFileLogger(const String& file, bool appendData) {

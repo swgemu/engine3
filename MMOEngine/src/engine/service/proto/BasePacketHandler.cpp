@@ -294,7 +294,8 @@ void BasePacketHandler::handleMultiPacket(BaseClient* client, Packet* pack, bool
 				BaseMessage* fragPiece = new BaseMessage(pack, pack->getOffset(), endOffset);
 
 				if (handleFragmentedPacket(client, fragPiece)) {
-					client->error("could not parse frag in handleMultiPacket: " + pack->toStringData() + " with validatePackets:" + validatePackets);
+					client->error() << "could not parse frag in handleMultiPacket: " << *pack <<
+						" with validatePackets:" << validatePackets;
 				}
 
 				delete fragPiece;
@@ -347,7 +348,8 @@ void BasePacketHandler::processBufferedPackets(BaseClient* client) {
 			pack->setOffset(4);
 			//pack->shiftOffset(4);
 			if (handleFragmentedPacket(client, pack)) {
-				client->error("could not parse frag in processBufferedPackets: " + pack->toStringData());
+				client->error() <<
+					"could not parse frag in processBufferedPackets: " << *pack;
 			}
 		} else
 			handleDataChannelPacket(client, pack);
@@ -436,7 +438,8 @@ void BasePacketHandler::handleDataChannelMultiPacket(BaseClient* client, Packet*
 		message->setTimeStampMili(System::getMiliTime() + 50);
 
 		if (handleFragmentedPacket(client, message)) {
-			client->error("could not parse frag in handleDataChannelMultiPacket: " + pack->toStringData());
+			client->error() <<
+				"could not parse frag in handleDataChannelMultiPacket: " << *pack;
 		}
 
 		delete message;

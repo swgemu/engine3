@@ -89,6 +89,9 @@ namespace sys {
 
 		void toString(String& str) const;
 
+		bool operator==(const StringBuffer& buff) const;
+		bool operator==(const String& str) const;
+
 		// getters
 		inline bool doHex() const {
 			return streamFlags & SF_hex;
@@ -129,6 +132,5 @@ namespace sys {
 using namespace sys::lang;
 
 bool operator==(const String& str1, const StringBuffer& str2);
-bool operator==(const StringBuffer& str1, const String& str2);
 
 #endif /*STRINGBUFFER_H_*/

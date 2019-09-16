@@ -6,10 +6,14 @@
 #ifndef LUAFUNCTION_H_
 #define LUAFUNCTION_H_
 
-#include "Lua.h"
+#include <lua.hpp>
+
+#include "system/lang.h"
 
 namespace engine {
 namespace lua {
+
+	class Lua;
 
 	class LuaFunction : public Object {
 		lua_State* L;
@@ -20,12 +24,20 @@ namespace lua {
 		String functionName;
 		String object;
 
+	protected:
+		void init(lua_State* l, const String& funcName, int argsToReturn);
+		void init(lua_State* l, const String& object, const String& func, int argsToReturn);
+
 	public:
 		//Empty constructor, only to use in testing
 		LuaFunction();
 
+		LuaFunction(Lua* lua, const String& funcName, int argsToReturn);
+		LuaFunction(Lua* lua, const String& object, const String& func, int argsToReturn);
+
 		LuaFunction(lua_State* l, const String& funcName, int argsToReturn);
 		LuaFunction(lua_State* l, const String& object, const String& func, int argsToReturn);
+
 		LuaFunction(const LuaFunction& func);
 
 		virtual ~LuaFunction();
@@ -76,5 +88,7 @@ namespace lua {
 	};
 }
 }
+
+using namespace engine::lua;
 
 #endif /* LUAFUNCTION_H_ */

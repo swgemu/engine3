@@ -33,7 +33,7 @@ Core::~Core() {
 }
 
 void Core::initializeContext(int logLevel) {
-	taskManager = nullptr;
+	Core::taskManager = nullptr;
 	staticInstance = this;
 
 	std::set_new_handler(outOfMemoryHandler);

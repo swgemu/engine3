@@ -185,9 +185,9 @@ String Stream::toStringData() const {
 		unsigned int byte = ((unsigned int) elementData[i]) & 0xFF;
 
 		if ((byte & 0xF0) == 0)
-			str << "0" << hex << byte  << " ";
+			str << "0" << byte  << " ";
 		else
-			str << hex << byte  << " ";
+			str << byte  << " ";
 	}
 
 	return str.toString();
