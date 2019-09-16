@@ -650,7 +650,7 @@ uint64 orderStatistics(M& ordered, S& tasksCount) {
 	}
 
 	return totalRuntime;
-};
+}
 
 uint64 orderStatisticsMap(VectorMap<RunStatistics, String>& ordered, const VectorMap<String, RunStatistics>& tasksCount) {
 	uint64 totalRuntime = 0;
@@ -665,7 +665,7 @@ uint64 orderStatisticsMap(VectorMap<RunStatistics, String>& ordered, const Vecto
 	}
 
 	return totalRuntime;
-};
+}
 
 String formatDots(uint64 n)  {
 	int c;
@@ -720,7 +720,7 @@ void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
 			 << "ns maxRunTime = " << formatDots(stats.maxRunTime)
 			 << "ns totalRunCount = " << formatDots(stats.totalRunCount) << " minRunTime = " << formatDots(stats.minRunTime) << "ns" << endl;
 	}
-};
+}
 
 
 String TaskManagerImpl::getInfo(bool print) {

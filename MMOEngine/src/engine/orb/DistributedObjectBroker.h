@@ -33,7 +33,7 @@
 namespace engine {
   namespace core {
   	class Core;
-  };
+  }
 
   namespace ORB {
 
