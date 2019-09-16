@@ -51,7 +51,7 @@ namespace sys {
 
 		uint32 getIPID() const;
 
-		constexpr std::size_t getAddressSize() const {
+		constexpr static std::size_t getAddressSize() {
 			return sizeof(addr);
 		}
 
