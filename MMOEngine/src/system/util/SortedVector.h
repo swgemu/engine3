@@ -133,7 +133,7 @@ namespace sys {
 
 	template<class E> int SortedVector<E>::lowerBound(const E& o) const {
 		if (ArrayList<E>::size() == 0)
-			return -1;
+			return ArrayList<E>::npos;
 
 		int l = 0, r = Vector<E>::elementCount - 1;
 		int m = 0, cmp = 0;
@@ -149,7 +149,7 @@ namespace sys {
 				l = m + 1;
 
 				if (r < l)
-					return m < ArrayList<E>::size() - 1 ? m + 1 : -1;
+					return m < ArrayList<E>::size() - 1 ? m + 1 : ArrayList<E>::npos;
 			} else {
 				r = m - 1;
 
@@ -158,12 +158,12 @@ namespace sys {
 			}
 		}
 
-		return -1;
+		return ArrayList<E>::npos;
 	}
 
 	template<class E> int SortedVector<E>::upperBound(const E& o) const {
 		if (ArrayList<E>::size() == 0)
-			return -1;
+			return ArrayList<E>::npos;
 
 		int l = 0, r = Vector<E>::elementCount - 1;
 		int m = 0, cmp = 0;
@@ -179,7 +179,7 @@ namespace sys {
 				l = m + 1;
 
 				if (r < l)
-					return m < ArrayList<E>::size() - 1 ? m + 1 : -1;
+					return m < ArrayList<E>::size() - 1 ? m + 1 : ArrayList<E>::npos;
 			} else {
 				r = m - 1;
 
@@ -188,7 +188,7 @@ namespace sys {
 			}
 		}
 
-		return -1;
+		return ArrayList<E>::npos;
 	}
 
 	template<class E> int SortedVector<E>::put(const E& o) {
@@ -211,7 +211,7 @@ namespace sys {
 						Vector<E>::set(m, o);
 						break;
 					default:
-						return -1;
+						return ArrayList<E>::npos;
 				}
 
 				return m;
@@ -256,7 +256,7 @@ namespace sys {
 							Vector<E>::set(m, o);
 						break;
 					default:
-						return -1;
+						return ArrayList<E>::npos;
 				}
 
 				return m;
@@ -280,12 +280,12 @@ namespace sys {
 #endif
 
 	template<class E> bool SortedVector<E>::contains(const E& o) const {
-		return find(o) != -1;
+		return find(o) != ArrayList<E>::npos;
 	}
 
 	template<class E> int SortedVector<E>::find(const E& o) const {
 		if (ArrayList<E>::size() == 0)
-			return -1;
+			return ArrayList<E>::npos;
 
 		int l = 0, r = Vector<E>::elementCount - 1;
 		int m = 0, cmp = 0;
@@ -305,7 +305,7 @@ namespace sys {
 				r = m - 1;
 		}
 
-		return -1;
+		return ArrayList<E>::npos;
 	}
 
 	template<class E> Object* SortedVector<E>::clone() {
@@ -314,7 +314,7 @@ namespace sys {
 
 	template<class E> bool SortedVector<E>::drop(const E& o) {
 		int index = find(o);
-		if (index == -1)
+		if (index == ArrayList<E>::npos)
 			return false;
 
 		//E& oldValue = Vector<E>::elementData[index];

@@ -9,6 +9,7 @@
 #include "system/lang.h"
 #include "system/thread/atomic/AtomicTime.h"
 #include "system/lang/Pair.h"
+#include "system/lang/Function.h"
 
 #include "Task.h"
 
@@ -132,45 +133,45 @@ namespace engine {
 		}
 
 #ifdef CXX11_COMPILER
-		void executeTask(std::function<void()>&& function, const char* name) {
+		void executeTask(Function<void()>&& function, const char* name) {
 			auto taskObject = new LambdaTask(std::move(function), name);
 			taskObject->execute();
 		}
 
-		void executeTask(std::function<void()>&& function, const char* name, const char* customQueue) {
+		void executeTask(Function<void()>&& function, const char* name, const char* customQueue) {
 			auto taskObject = new LambdaTask(std::move(function), name);
 			taskObject->setCustomTaskQueue(customQueue);
 			taskObject->execute();
 		}
 
-		void executeTask(const std::function<void()>& function, const char* name) {
+		void executeTask(const Function<void()>& function, const char* name) {
 			auto taskObject = new LambdaTask(function, name);
 			taskObject->execute();
 		}
 
-		void executeTask(const std::function<void()>& function, const char* name, const char* customQueue) {
+		void executeTask(const Function<void()>& function, const char* name, const char* customQueue) {
 			auto taskObject = new LambdaTask(function, name);
 			taskObject->setCustomTaskQueue(customQueue);
 			taskObject->execute();
 		}
 
-		void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay) {
+		void scheduleTask(Function<void()>&& function, const char* name, uint64 delay) {
 			auto taskObject = new LambdaTask(std::move(function), name);
 			taskObject->schedule(delay);
 		}
 
-		void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay, const char* customQueue) {
+		void scheduleTask(Function<void()>&& function, const char* name, uint64 delay, const char* customQueue) {
 			auto taskObject = new LambdaTask(std::move(function), name);
 			taskObject->setCustomTaskQueue(customQueue);
 			taskObject->schedule(delay);
 		}
 
-		void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
+		void scheduleTask(const Function<void()>& function, const char* name, uint64 delay) {
 			auto taskObject = new LambdaTask(function, name);
 			taskObject->schedule(delay);
 		}
 
-		void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay, const char* customQueue) {
+		void scheduleTask(const Function<void()>& function, const char* name, uint64 delay, const char* customQueue) {
 			auto taskObject = new LambdaTask(function, name);
 			taskObject->setCustomTaskQueue(customQueue);
 			taskObject->schedule(delay);

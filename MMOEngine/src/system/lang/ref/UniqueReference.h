@@ -92,6 +92,8 @@ namespace sys {
 			return UniqueReference<T*>(new T(std::forward<Args>(args)...));
 		}
 
+		static_assert(sizeof(UniqueReference<int*>) == sizeof(int*), "UniqueReference sizeof check failed");
+
 	}
 }
 

@@ -8,6 +8,8 @@
 
 #include <regex.h>
 
+static_assert(String::npos == ArrayList<char>::npos, "String and StringBuffer npos values differ");
+
 StringBuffer::StringBuffer() : ArrayList<char>(), streamFlags(SF_none) {
 }
 
@@ -157,7 +159,7 @@ int StringBuffer::indexOf(char ch, int fromIndex) const {
 			return i;
 	}
 
-	return -1;
+	return npos;
 }
 
 int StringBuffer::indexOf(const String& str) const {
@@ -196,14 +198,14 @@ int StringBuffer::indexOf(const String& regexString, int& resultStart, int& resu
 
 int StringBuffer::indexOf(const String& str, int fromIndex) const {
 	if (str.isEmpty())
-		return -1;
+		return String::npos;
 
 	for (int i = fromIndex; i <= elementCount - str.length(); ++i) {
 		if (!memcmp(elementData + i, str.toCharArray(), str.length() * sizeof(char)))
 			return i;
 	}
 
-	return -1;
+	return String::npos;
 }
 
 StringBuffer& StringBuffer::insert(int offset, char ch) {
@@ -367,14 +369,14 @@ StringBuffer& StringBuffer::operator<< (const UnicodeString& str) {
 
 StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {
 	switch (flags) {
-	case dec:
+	case sys::lang::dec:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) hex);
 		break;
-	case lowercase:
+	case sys::lang::lowercase:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
 		break;
-	case endl:
-		append('\n');
+	case sys::lang::endl:
+		add('\n');
 		break;
 	default:
 		streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);
@@ -403,5 +405,9 @@ bool operator==(const String& str1, const StringBuffer& str2) {
 		return false;
 
 	return memcmp(str1.toCharArray(), str2.getBuffer(), str1.length() * sizeof(char)) == 0;
+}
+
+bool operator!=(const String& str1, const StringBuffer& str2) {
+	return !(str1 == str2);
 }
 

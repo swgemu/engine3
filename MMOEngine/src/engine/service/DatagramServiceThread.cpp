@@ -160,7 +160,7 @@ void DatagramServiceThread::processMessage(Packet* packet, const SocketAddress& 
 void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) {
 	Reference<ServiceClient*> client = nullptr;
 
-	try	{
+	try {
 		uint64 netid = addr.getNetworkID();
 
 		Locker locker(this);

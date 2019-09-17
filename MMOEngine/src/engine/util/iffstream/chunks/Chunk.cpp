@@ -19,8 +19,9 @@ Chunk::Chunk(Chunk* par, uint32 id, uint32 size, char* data) {
 }
 
 Chunk::~Chunk() {
-	while (subChunks.size() > 0)
-		delete subChunks.remove(0);
+	subChunks.forEach([](auto chunk) {
+		delete chunk;
+	});
 }
 
 void Chunk::parseData() {

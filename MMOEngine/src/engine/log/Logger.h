@@ -23,6 +23,7 @@
 #endif
 
 #include "system/lang.h"
+#include "system/lang/Function.h"
 
 #include <type_traits>
 #include <functional>
@@ -126,7 +127,7 @@ namespace engine {
 			DEBUG = 5
 		};
 
-		using LoggerCallback = std::function<int(LogLevel, const char*)>;
+		using LoggerCallback = Function<int(LogLevel, const char*)>;
 
 	private:
 		FileWriter* logFile = nullptr;
@@ -208,9 +209,9 @@ namespace engine {
 			return LoggerHelper(*this, LogLevel::ERROR, false);
 		}
 
-		void fatal(const char* msg) const;
-		void fatal(const String& msg) const;
-		void fatal(const StringBuffer& msg) const;
+		[[ noreturn ]] void fatal(const char* msg) const;
+		[[ noreturn ]] void fatal(const String& msg) const;
+		[[ noreturn ]] void fatal(const StringBuffer& msg) const;
 
 		LoggerHelper fatal(bool assertion) const {
 			return LoggerHelper(*this, LogLevel::FATAL, assertion);

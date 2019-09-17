@@ -35,7 +35,7 @@ void PrintStream::print(long val) {
 }
 
 void PrintStream::flush() {
-	fflush(stdout);
+	::fflush(stdout);
 }
 
 void PrintStream::print(int64 val) {
@@ -251,14 +251,17 @@ PrintStream& PrintStream::operator<<(const UnicodeString& str) {
 
 PrintStream& PrintStream::operator<< (const StreamFlags flags) {
 	switch (flags) {
-	case dec:
+	case sys::lang::dec:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) hex);
 		break;
-	case ::endl:
+	case sys::lang::endl:
 		println("");
 		break;
-	case lowercase:
+	case sys::lang::lowercase:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
+		break;
+	case sys::lang::flush:
+		flush();
 		break;
 	default:
 		streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);

@@ -35,6 +35,14 @@ namespace sys {
 			return (utime) time(0);
 		}
 
+		static void flushStreams() {
+			::fflush(nullptr);
+		}
+
+		[[ noreturn ]] static void abort() {
+			::abort();
+		}
+
 	#ifndef PLATFORM_WIN
 		static inline uint64 getMiliTime() {
 		    uint64 time_in_ms;

@@ -14,6 +14,7 @@
 #include "system/lang/IllegalArgumentException.h"
 #include "system/lang/types.h"
 #include "system/lang/Integer.h"
+#include "system/lang/Function.h"
 
 #ifdef CXX11_COMPILER
 #include <initializer_list>
@@ -50,6 +51,8 @@ namespace sys {
 #ifdef CXX11_COMPILER
 		   ArrayList(ArrayList<E>&& array);
 		   ArrayList(std::initializer_list<E> v);
+
+		   constexpr const static int npos = -1;
 #endif
 
 		   ArrayList<E>& operator=(const ArrayList<E>& array);
@@ -79,8 +82,9 @@ namespace sys {
 		   }
 
 		   void moveAll(ArrayList<E>& array);
-#endif
 
+		   void forEach(const Function<void(E&)>& func, int first = 0, int last = -1);
+#endif
 		   bool contains(const E& element) const;
 		   int find(const E& element) const;
 
@@ -453,6 +457,23 @@ namespace sys {
 		   elementCount += array.size();
 	   }
    }
+
+   template<class E> void ArrayList<E>::forEach(const Function<void(E&)>& func, int first, int last) {
+	   if (last < 0)
+		   last = elementCount;
+
+	   if (last > elementCount)
+		   throw ArrayIndexOutOfBoundsException(last);
+	   else if (first > elementCount || first < 0 || first > last)
+		   throw ArrayIndexOutOfBoundsException(first);
+
+	   for (int i = first; i < last; ++i) {
+		   auto& element = getUnsafe(i);
+
+		   func(element);
+	   }
+   }
+
 #endif
 
    template<class E> bool ArrayList<E>::contains(const E& element) const {
@@ -472,7 +493,7 @@ namespace sys {
 		   }
 	   }
 
-	   return -1;
+	   return npos;
    }
 
    template<class E> void ArrayList<E>::insertElementAt(const E& element, uint32 index) {

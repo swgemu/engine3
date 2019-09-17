@@ -9,7 +9,12 @@ AtomicReference<FileWriter*> Logger::globalLogFile = nullptr;
 
 Time Logger::starttime;
 
-Logger Logger::console("Console");
+Logger Logger::console = []() {
+		Logger log("Console");
+		log.setLogToConsole(true);
+
+		return log;
+	}();
 
 volatile int Logger::globalLogLevel = LogLevel::DEBUG;
 bool Logger::syncGlobalLog = false;
@@ -61,6 +66,8 @@ Logger& Logger::operator=(const Logger& logger) {
 
 	if (logger.callback != nullptr) {
 	       	callback = new LoggerCallback(*logger.callback.get());
+	} else {
+		callback = nullptr;
 	}
 
 	if (logger.logFile != nullptr) {
@@ -158,7 +165,7 @@ void Logger::info(const char *msg, bool forcedLog) const {
 	if ((logToConsole && logLevel >= INFO) || forcedLog) {
 		printTime(false);
 
-		System::out << " [" << name << "] " << msg << "\n";
+		System::out << " [" << name << "] " << msg << endl;
 	}
 
 	log(msg, LogLevel::INFO);
@@ -233,7 +240,7 @@ void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 			getJSONString(fullMessage, name.toCharArray(), msg, type);
 		}
 
-		fullMessage << "\n";
+		fullMessage << endl;
 
 		(*logFile) << fullMessage;
 
@@ -254,7 +261,7 @@ void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 			getJSONString(fullMessage, name.toCharArray(), msg, type);
 		}
 
-		fullMessage << "\n";
+		fullMessage << endl;
 
 		(*globalLogFile) << fullMessage;
 
@@ -276,9 +283,7 @@ void Logger::error(const char* msg) const {
 	if (logToConsole) {
 		printTime(false);
 
-		System::out << " [" << name << "] ERROR - " << msg << "\n";
-
-		System::out.flush();
+		System::out << " [" << name << "] ERROR - " << msg << endl << flush;
 	}
 
 	log(msg, LogLevel::ERROR);
@@ -305,9 +310,8 @@ void Logger::fatal(const char* msg) const {
 
 	StackTrace::printStackTrace();
 
-	fflush(nullptr);
-
-	abort();
+	System::flushStreams();
+	System::abort();
 }
 
 void Logger::fatal(const String& msg) const {
@@ -323,10 +327,7 @@ void Logger::debug(const char* msg) const {
 	if (logToConsole && logLevel >= DEBUG) {
 		printTime(false);
 
-		StringBuffer fullMessage;
-		fullMessage << " [" << name << "] DEBUG - " << msg << "\n";
-
-		System::out << fullMessage;
+		System::out << " [" << name << "] DEBUG - " << msg << endl;
 	}
 
 	//if (logLevel + 1 >= DEBUG)
@@ -346,10 +347,7 @@ void Logger::warning(const char* msg) const {
 	if (logToConsole) {
 		printTime(false);
 
-		StringBuffer fullMessage;
-		fullMessage << " [" << name << "] WARNING - " << msg << "\n";
-
-		System::out << fullMessage;
+		System::out << " [" << name << "] WARNING - " << msg << endl;
 	}
 
 	log(msg, LogLevel::WARNING);

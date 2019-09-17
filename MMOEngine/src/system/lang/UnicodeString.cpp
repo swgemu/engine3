@@ -61,7 +61,8 @@ void UnicodeString::asciitowide(unsigned short* UnicodeString, const char* ascii
 
 void UnicodeString::copy(unsigned short* dest, const unsigned short* src) {
 	for (int i = 0; true; ++i) {
-		unsigned short chr = src[i];
+		unsigned short chr;
+		memcpy(&chr, src + i, sizeof(chr));
 
 		dest[i] = chr;
 
@@ -72,7 +73,8 @@ void UnicodeString::copy(unsigned short* dest, const unsigned short* src) {
 
 void UnicodeString::copy(unsigned short* dest, const unsigned short* src, int len) {
 	for (int i = 0; i < len; ++i) {
-		unsigned short chr = src[i];
+		unsigned short chr;
+		memcpy(&chr, src + i, sizeof(chr));
 
 		dest[i] = chr;
 

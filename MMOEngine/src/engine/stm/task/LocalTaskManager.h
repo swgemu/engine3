@@ -147,19 +147,19 @@ namespace engine {
   		void executeTask(Task* task);
 
 #ifdef CXX11_COMPILER
-		void executeTask(std::function<void()>&& function, const char* name) {
+		void executeTask(Function<void()>&& function, const char* name) {
 			TaskManager::executeTask(std::move(function), name);
 		}
 
-		void executeTask(const std::function<void()>& function, const char* name) {
+		void executeTask(const Function<void()>& function, const char* name) {
 			TaskManager::executeTask(function, name);
 		}
 
-		void scheduleTask(std::function<void()>&& function, const char* name, uint64 delay) {
+		void scheduleTask(Function<void()>&& function, const char* name, uint64 delay) {
 			TaskManager::scheduleTask(std::move(function), name, delay);
 		}
 
-		void scheduleTask(const std::function<void()>& function, const char* name, uint64 delay) {
+		void scheduleTask(const Function<void()>& function, const char* name, uint64 delay) {
 			TaskManager::scheduleTask(function, name, delay);
 		}
 #endif

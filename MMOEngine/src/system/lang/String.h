@@ -18,7 +18,7 @@ namespace sys {
   namespace lang {
 
 	//separating from String to make gdb not print them with every instance
-	class StringHashTable {
+	class StringHashCodeTable {
 	public:
 #ifdef CXX11_COMPILER
 		static constexpr uint32 crctable[256] = {
@@ -154,7 +154,7 @@ namespace sys {
 #ifdef CXX11_COMPILER
 		static constexpr uint32 hashCode(const char* string, uint32 startCRC = 0xFFFFFFFF) {
 			return *string ?
-					hashCode(string + 1, StringHashTable::crctable[((startCRC >> 24) ^ (byte)(*string)) & 0xFF] ^ (startCRC << 8))
+					hashCode(string + 1, StringHashCodeTable::crctable[((startCRC >> 24) ^ (byte)(*string)) & 0xFF] ^ (startCRC << 8))
 					: ~startCRC;
 		}
 #else
@@ -162,7 +162,7 @@ namespace sys {
 			uint32 CRC = startCRC;
 
 			for (; *string; ++string) {
-				CRC = StringHashTable::crctable[((CRC >> 24) ^ static_cast<byte>(*string)) & 0xFF] ^ (CRC << 8);
+				CRC = StringHashCodeTable::crctable[((CRC >> 24) ^ static_cast<byte>(*string)) & 0xFF] ^ (CRC << 8);
 			}
 
 			return ~CRC;

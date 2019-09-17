@@ -9,6 +9,18 @@
 
 #include "exceptions.h"
 
+namespace IffStreamNS {
+	template<typename T>
+	T readPrimitiveFrom(char* elementData, int offs) {
+		T val;
+		memcpy(&val, elementData + offs, sizeof(T));
+
+		return val;
+	}
+}
+
+using namespace IffStreamNS;
+
 IffStream::IffStream() {
 	//fileName = filename;
 
@@ -27,8 +39,9 @@ IffStream::~IffStream() {
 	/*if (file != nullptr && file->exists())
 		close();*/
 
-	while (mainChunks.size() > 0)
-		delete mainChunks.remove(0);
+	mainChunks.forEach([](auto obj) {
+		delete obj;
+	});
 
 	/*delete file;
 	file = nullptr;*/
@@ -76,10 +89,10 @@ void IffStream::loadMainChunks(char* dataBuffer) {
 	uint32 offset = 0;
 
 	while (offset < (dataSize - 4)) {
-		uint32 type = htonl(*(uint32*)(dataBuffer + offset));
+		uint32 type = htonl(readPrimitiveFrom<uint32>(dataBuffer, offset));
 		offset += 4;
 
-		uint32 size = htonl(*(uint32*)(dataBuffer + offset));
+		uint32 size = htonl(readPrimitiveFrom<uint32>(dataBuffer, offset));
 		offset += 4;
 
 		Chunk* chunk = createChunk(nullptr, type, size, dataBuffer + offset);

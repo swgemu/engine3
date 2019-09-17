@@ -284,6 +284,8 @@ namespace sys {
 		return Reference<T*>(new T(std::forward<Args>(args)...));
 	}
 
+	static_assert(sizeof(Reference<Object*>) == sizeof(Object*), "Reference sizeof check failed");
+
 
   } // namespace lang
 } // namespace sys

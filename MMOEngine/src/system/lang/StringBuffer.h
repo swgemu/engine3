@@ -22,6 +22,7 @@ namespace sys {
   		SF_uppercase = 1L << 2,
   		SF_endl = 1L << 3,
 		SF_lowercase = 1L << 4,
+		SF_flush = 1L << 5,
 		SF_nouppercase = SF_lowercase
   	};
 
@@ -31,6 +32,7 @@ namespace sys {
   	const StreamFlags endl = SF_endl;
 	const StreamFlags lowercase = SF_lowercase;
 	const StreamFlags nouppercase = SF_nouppercase;
+	const StreamFlags flush = SF_flush;
 
 	class StringBuffer : private ArrayList<char> {
 		StreamFlags streamFlags;
@@ -92,6 +94,14 @@ namespace sys {
 		bool operator==(const StringBuffer& buff) const;
 		bool operator==(const String& str) const;
 
+		bool operator!=(const StringBuffer& buff) const {
+			return !(operator==(buff));
+		}
+
+		bool operator!=(const String& str) const {
+			return !(operator==(str));
+		}
+
 		// getters
 		inline bool doHex() const {
 			return streamFlags & SF_hex;
@@ -132,5 +142,6 @@ namespace sys {
 using namespace sys::lang;
 
 bool operator==(const String& str1, const StringBuffer& str2);
+bool operator!=(const String& str1, const StringBuffer& str2);
 
 #endif /*STRINGBUFFER_H_*/

@@ -16,7 +16,7 @@ Form::~Form() {
 void Form::parseData() {
 	formType = readNetInt();
 
-	while(Stream::hasData())
+	while (Stream::hasData())
 		parseSubObjects();
 }
 

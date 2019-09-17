@@ -12,7 +12,7 @@
 #include <cstdarg>
 
 #ifndef CXX11_COMPILER
-	const uint32 StringHashTable::crctable[256] = {
+	const uint32 StringHashCodeTable::crctable[256] = {
     0x0000000,
     0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
     0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6,
@@ -67,7 +67,7 @@
     0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 };
 #else
-	constexpr uint32 StringHashTable::crctable[];
+	constexpr uint32 StringHashCodeTable::crctable[];
 #endif
 
 String::String() {
@@ -837,7 +837,7 @@ bool String::toString(String& str) {
 }
 
 String String::format(const char* format, ...) {
-	constexpr static const int BUFFER_SIZE = 2048;
+	constexpr int BUFFER_SIZE = 2048;
 
 	char buffer[BUFFER_SIZE];
 

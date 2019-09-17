@@ -9,7 +9,7 @@
 #ifndef ENGINE3_LAMBDAFUNCTION_H
 #define ENGINE3_LAMBDAFUNCTION_H
 
-#include <functional>
+#include "system/lang/Function.h"
 
 #include "Task.h"
 
@@ -33,7 +33,7 @@ namespace engine {
         };
 
         class LambdaTask : public Task {
-            LambdaFunction<std::function<void()>> function;
+            LambdaFunction<Function<void()>> function;
 
         public:
             template<class L>
