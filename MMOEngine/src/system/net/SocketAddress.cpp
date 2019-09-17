@@ -108,6 +108,10 @@ struct sockaddr* SocketAddress::getAddress() {
 	return (struct sockaddr*) &addr;
 }
 
+const struct sockaddr* SocketAddress::getAddress() const {
+	return (const struct sockaddr*) &addr;
+}
+
 String SocketAddress::getIPAddress() const {
 	return String(inet_ntoa(addr.sin_addr));
 }
@@ -137,3 +141,4 @@ uint64 SocketAddress::getNetworkID() const {
 uint32 SocketAddress::getIPID() const {
 	return addr.sin_addr.s_addr;
 }
+

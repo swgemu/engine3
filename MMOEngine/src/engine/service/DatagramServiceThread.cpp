@@ -76,7 +76,7 @@ class MessageReceiverTask : public Task {
 	SocketAddress address;
 
 public:
-	MessageReceiverTask(DatagramServiceThread* serv, Packet* packet, SocketAddress& addr) {
+	MessageReceiverTask(DatagramServiceThread* serv, Packet* packet, const SocketAddress& addr) {
 		service = serv;
 
 		message = packet->clone();
@@ -151,7 +151,7 @@ void DatagramServiceThread::receiveMessages() {
 	}
 }
 
-void DatagramServiceThread::processMessage(Packet* packet, SocketAddress& addr) {
+void DatagramServiceThread::processMessage(Packet* packet, const SocketAddress& addr) {
 	Reference<Task*> receiverTask = new MessageReceiverTask(this, packet, addr);
 
 	receiverTask->executeInThread();

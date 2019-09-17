@@ -19,15 +19,15 @@ namespace engine {
 
 	public:
 		StreamServiceClient(Socket* sock);
-		StreamServiceClient(Socket* sock, SocketAddress& addr);
+		StreamServiceClient(Socket* sock, const SocketAddress& addr);
 		StreamServiceClient(const String& host, int port);
 
 		virtual ~StreamServiceClient();
-		
+
 		void connect();
 
 		void start();
-		
+
 		void run();
 
 		void stop();
@@ -37,7 +37,7 @@ namespace engine {
 
 		// socket methods
 		int send(Packet* pack);
-	
+
 		bool read(Packet* pack);
 
 		bool recieve(Packet* pack);

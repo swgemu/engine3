@@ -21,7 +21,7 @@ ServiceClient::ServiceClient(Socket* sock) {
 	packetLossChance = 0;
 }
 
-ServiceClient::ServiceClient(Socket* sock, SocketAddress& addr) {
+ServiceClient::ServiceClient(Socket* sock, const SocketAddress& addr) {
 	socket = sock;
 	ServiceClient::addr = addr;
 
@@ -45,16 +45,16 @@ ServiceClient::~ServiceClient() {
 void ServiceClient::close() {
 	if (socket != nullptr) {
 		socket->close();
-		
+
 		delete socket;
 		socket = nullptr;
-	}			
+	}
 }
 
 bool ServiceClient::isAvailable() {
 	if (socket == nullptr)
 		return false;
-	
+
 	return !(errored || disconnected);
 }
 

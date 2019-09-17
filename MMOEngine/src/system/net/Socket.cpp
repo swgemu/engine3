@@ -37,7 +37,7 @@ void Socket::initialize() {
 	#endif
 }
 
-void Socket::bindTo(SocketAddress* bindpoint) {
+void Socket::bindTo(const SocketAddress* bindpoint) {
 	if (bind(fileDescriptor, bindpoint->getAddress(), bindpoint->getAddressSize())) {
 		StringBuffer msg;
 		msg << "unable to bind to socket " << bindpoint->getPort();
@@ -52,10 +52,10 @@ void Socket::listen(int maxconn) {
 
 Socket* Socket::accept() {
 	int handle = ::accept(fileDescriptor, 0, 0);
-	
+
 	if (handle < 0)
 		throw SocketException("failed to accept connection");
-		
+
 	return new Socket(handle);
 }
 
@@ -74,7 +74,7 @@ Socket* Socket::accept(SocketAddress* addr) {
 	return new Socket(handle);
 }
 
-void Socket::connect(SocketAddress* address) {
+void Socket::connect(const SocketAddress* address) {
 	if (::connect(fileDescriptor, address->getAddress(), address->getAddressSize())) {
 		StringBuffer msg;
 		msg << "unable to connect to socket " << address->getPort();
@@ -117,14 +117,14 @@ bool Socket::read(Packet* pack) {
 	if (len < 0) {
 		StringBuffer msg;
 		msg << "error reading from socket";
-			
+
 		throw SocketException(msg.toString());
 	} else if (len == 0)
 		return false;
-			
+
 	pack->setSize(len);
 	pack->reset();
-	
+
 	return true;
 }
 
@@ -144,7 +144,7 @@ int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 
 	if (len < 0)
 		throw SocketException("error reading from socket");
-			
+
 	pack->setSize(len);
 	pack->reset();
 
@@ -157,7 +157,7 @@ int Socket::send(Packet* pack) {
 #else
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE);
 #endif
-		
+
 	if (res < 0/* && errno != EAGAIN*/) {
 		StringBuffer msg;
 		msg << "unable to send data to socket";
@@ -168,7 +168,7 @@ int Socket::send(Packet* pack) {
 	return res;
 }
 
-int Socket::sendTo(Packet* pack, SocketAddress* addr) {
+int Socket::sendTo(Packet* pack, const SocketAddress* addr) {
 	int len = -1;
 
 	do {
@@ -178,13 +178,13 @@ int Socket::sendTo(Packet* pack, SocketAddress* addr) {
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE, addr->getAddress(), addr->getAddressSize());
 #endif
 	} while (len < 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
-		
+
 	if (len < 0)
 		throw SocketException("unable to send data to socket");
 
 	return len;
 }
-	
+
 void Socket::close() {
 	#ifndef PLATFORM_WIN
 		::close(fileDescriptor);
@@ -211,7 +211,7 @@ void Socket::setLingering(int time) {
 	else
 		linger.l_onoff = 1;
 
-	linger.l_linger = time; 
+	linger.l_linger = time;
 
 	result = setsockopt(fileDescriptor, SOL_SOCKET, SO_LINGER, (char*) &linger, sizeof(linger));
 

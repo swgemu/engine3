@@ -27,7 +27,7 @@ namespace engine {
 	public:
 		ServiceClient();
 		ServiceClient(Socket* sock);
-		ServiceClient(Socket* sock, SocketAddress& addr);
+		ServiceClient(Socket* sock, const SocketAddress& addr);
 		ServiceClient(const String& host, int port);
 
 		virtual ~ServiceClient();

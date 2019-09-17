@@ -38,6 +38,7 @@ namespace sys {
 		int compareTo(SocketAddress* addr) const;
 
 		struct sockaddr* getAddress();
+		const struct sockaddr* getAddress() const;
 
 		String getIPAddress() const;
 

@@ -18,7 +18,7 @@ DatagramServiceClient::DatagramServiceClient()
 	doRun = true;
 }
 
-DatagramServiceClient::DatagramServiceClient(const String& host, int port) 
+DatagramServiceClient::DatagramServiceClient(const String& host, int port)
 		: ServiceClient(host, port) {
 	socket = new UDPSocket();
 
@@ -27,7 +27,7 @@ DatagramServiceClient::DatagramServiceClient(const String& host, int port)
 	doRun = true;
 }
 
-DatagramServiceClient::DatagramServiceClient(Socket* sock, SocketAddress& addr) 
+DatagramServiceClient::DatagramServiceClient(Socket* sock, const SocketAddress& addr)
 		: ServiceClient(sock, addr) {
 	serviceHandler = nullptr;
 }

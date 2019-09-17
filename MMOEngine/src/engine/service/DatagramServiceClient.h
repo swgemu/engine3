@@ -20,10 +20,10 @@ namespace engine {
 	public:
 		DatagramServiceClient();
 		DatagramServiceClient(const String& host, int port);
-		DatagramServiceClient(Socket* sock, SocketAddress& addr);
+		DatagramServiceClient(Socket* sock, const SocketAddress& addr);
 
 		virtual ~DatagramServiceClient();
-		
+
 		void stop() {
 			doRun = false;
 		}

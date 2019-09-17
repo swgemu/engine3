@@ -18,8 +18,8 @@ namespace sys {
   }
 
   namespace net {
-	class Packet; 
-	
+	class Packet;
+
 	class Socket : public FileDescriptor {
 	public:
 		Socket();
@@ -27,30 +27,30 @@ namespace sys {
 
 		static void initialize();
 
-		void bindTo(SocketAddress* bindpoint);
-	
+		void bindTo(const SocketAddress* bindpoint);
+
 		void listen(int maxconn);
-	
+
 		Socket* accept();
-	
+
 		Socket* accept(SocketAddress* addr);
-		
-		void connect(SocketAddress* bindpoint);
-	
+
+		void connect(const SocketAddress* bindpoint);
+
 		bool read(Packet* pack);
 
 		bool readAppend(Stream* pack);
-	
+
 		int readFrom(Packet* pack, SocketAddress* addr);
-	
+
 		int send(Packet* pack);
-	
-		int sendTo(Packet* pack, SocketAddress* addr);
-		
+
+		int sendTo(Packet* pack, const SocketAddress* addr);
+
 		void close();
 
 		int shutdown(int how);
-		
+
 		void setLingering(int time);
 
 		void disableLingering();

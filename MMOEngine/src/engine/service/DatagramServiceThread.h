@@ -10,16 +10,16 @@
 
 namespace engine {
   namespace service {
-  	
+
 	class DatagramServiceThread : public ServiceMessageHandlerThread {
 	public:
 		DatagramServiceThread();
 		DatagramServiceThread(const String& s);
-		
+
 		virtual ~DatagramServiceThread();
-		
+
 		void start(int p, int mconn = 10);
-	
+
 		void run();
 
 		void stop();
@@ -28,7 +28,7 @@ namespace engine {
 		// message methods
 		void receiveMessages();
 
-		void processMessage(Packet* packet, SocketAddress& addr);
+		void processMessage(Packet* packet, const SocketAddress& addr);
 
 		void receiveMessage(Packet* packet, SocketAddress& addr);
 
