@@ -115,7 +115,7 @@ void Thread::addDeleteFromDatabaseObject(Object* object) {
 
 	const static int maxCount = Core::getIntProperty("Thread.maxDeleteFromDatabaseObjects", 3000000);
 
-	ThreadNs::threadLogger.fatal(modifiedObjects->size() < maxCount, "Exceeded Thread.maxDeleteFromDatabaseObjects size");
+	ThreadNs::threadLogger.fatal(deletedFromDatabaseObjects->size() < maxCount, "Exceeded Thread.maxDeleteFromDatabaseObjects size");
 }
 
 int Thread::getModifiedObjectsCount() const {
