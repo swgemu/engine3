@@ -245,9 +245,8 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 			if (dumpLastModifiedTraces && saveCount >= skipSaves) {
 				auto trace = managedObject->getLastModifiedTrace();
 
-				if (trace) {
-					if (!DOB::containsIgnoreAddress(*trace))
-						trace->print();
+				if (trace && !DOB::containsIgnoreAddress(*trace)) {
+					trace->print();
 				}
 			}
 
@@ -296,9 +295,7 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 			} else {
 				delete objectData;
 
-				StringBuffer err;
-				err << "unknown database id of objectID 0x" << hex << oid;
-				error(err.toString());
+				error() << "unknown database id of objectID 0x" << hex << oid;
 			}
 
 			/*objectData.escapeString();
@@ -327,9 +324,7 @@ int DOBObjectManager::commitDestroyObjectToDB(uint64 objectID) {
 
 		return 0;
 	} else {
-		StringBuffer msg;
-		msg << "could not delete object id from database table nullptr for id 0x" << hex << objectID;
-		error(msg);
+		error() << "could not delete object id from database table nullptr for id 0x" << hex << objectID;
 	}
 
 	return 1;
@@ -354,7 +349,7 @@ ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
 }
 
 UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread() {
-	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
+	int maxCpus = Math::max(1, (int) System::getOnlineProcessors());
 
 	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(), this, updateModifiedObjectsThreads.size() % maxCpus);
 	thread->start();
@@ -364,7 +359,7 @@ UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread
 	return thread;
 }
 
-void DOBObjectManager::collectModifiedObjectsFromThreads(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers) {
+void DOBObjectManager::collectModifiedObjectsFromThreads(const Vector<Pair<Locker*, TaskWorkerThread*>>& lockers) {
 	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
 
 	if (!saveMode) {
@@ -372,47 +367,60 @@ void DOBObjectManager::collectModifiedObjectsFromThreads(Vector<Pair<Locker*, Ta
 	}
 
 	uniqueModifiedObjectValues.clear();
+	uniqueDeletedFromDbObjectValues.clear();
 
 	Timer uniqueModsPerf;
 	uniqueModsPerf.start();
 
-	auto mainThread = Core::getCoreInstance();
-
-	if (mainThread != nullptr) {
-		auto objects = mainThread->takeModifiedObjects();
+	const static auto addUniqueObjects = [](auto thread, auto& uniqueMap, auto& uniqueDeleteMap) {
+		auto objects = thread->takeModifiedObjects();
 
 		if (objects) {
 			for (const auto& val : *objects) {
-				uniqueModifiedObjectValues.emplace(static_cast<DistributedObject*>(val));
+				uniqueMap.emplace(static_cast<DistributedObject*>(val));
 			}
 
 			delete objects;
 		}
+
+		auto deleteObjects = thread->takeDeleteFromDatabaseObjects();
+
+		if (deleteObjects) {
+			for (const auto& val : *deleteObjects) {
+				uniqueDeleteMap.emplace(static_cast<DistributedObject*>(val));
+			}
+
+			delete deleteObjects;
+		}
+	};
+
+	auto mainThread = Core::getCoreInstance();
+
+	if (mainThread != nullptr) {
+		addUniqueObjects(mainThread, uniqueModifiedObjectValues, uniqueDeletedFromDbObjectValues);
 	} else {
 		warning("No main core instance found for save event");
 	}
 
-	for (auto& entry : *lockers) {
+	for (const auto& entry : lockers) {
 		if (entry.second != nullptr) {
-			auto objects = entry.second->takeModifiedObjects();
-
-			if (objects) {
-				for (const auto& val : *objects) {
-					uniqueModifiedObjectValues.emplace(static_cast<DistributedObject*>(val));
-				}
-
-				delete objects;
-			}
+			addUniqueObjects(entry.second, uniqueModifiedObjectValues, uniqueDeletedFromDbObjectValues);
 		}
 	}
 
 	auto elapsed = uniqueModsPerf.stopMs();
 
-	info("collected " + String::valueOf((uint64) uniqueModifiedObjectValues.size()) + " different modified objects from workers in " + String::valueOf(elapsed) + "ms", true);
+	info(true) << "collected " << uniqueModifiedObjectValues.size() <<
+	       	" different modified objects and " << uniqueDeletedFromDbObjectValues.size()
+		<< " for db delete from workers in "
+		<< elapsed << "ms";
 }
 
 void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	info("starting saving objects to database", true);
+
+	Vector<DistributedObject*> objectsToUpdate;
+	Vector<DistributedObject*> objectsToDelete;
 
 	bool rootBroker = DistributedObjectBroker::instance()->isRootBroker();
 	//ObjectDatabaseManager::instance()->checkpoint();
@@ -422,6 +430,8 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 		return;
 	}
 
+	auto objectsToDeleteFromRAM = new Vector<DistributedObject* >();
+
 	Timer stopWaitTimer;
 	stopWaitTimer.start();
 
@@ -429,7 +439,8 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	uint64 durationOfBlocking = stopWaitTimer.stop();
 
-	info("waited task manager to stop for " + String::valueOf(durationOfBlocking) + " ns", true);
+	info(true) << "waited task manager to stop for "
+	       << durationOfBlocking << " ns";
 
 	Locker _locker(this);
 
@@ -442,9 +453,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 		ObjectDatabaseManager::instance()->commitLocalTransaction();
 
-		if (ObjectDatabaseManager::instance()->failCheck()) {
-			fatal("database needs recovery to run");
-		}
+		fatal(!ObjectDatabaseManager::instance()->failCheck(), "database needs recovery");
 
 		transaction = ObjectDatabaseManager::instance()->startTransaction();
 	}
@@ -452,11 +461,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	if (updateModifiedObjectsTask->isScheduled())
 		updateModifiedObjectsTask->cancel();
 
-	Vector<DistributedObject*> objectsToUpdate;
-	Vector<DistributedObject*> objectsToDelete;
-	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
-
-	collectModifiedObjectsFromThreads(lockers);
+	collectModifiedObjectsFromThreads(*lockers);
 
 	Timer copy;
 	copy.start();
@@ -466,7 +471,8 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	auto copyTime = copy.stopMs();
 
-	info("copied objects into ram in " + String::valueOf(copyTime) + " ms", true);
+	info(true) << "copied objects into ram in "
+	       << copyTime << " ms";
 
 #ifdef WITH_STM
 	TransactionalMemoryManager::instance()->unblockTransactions();
@@ -575,8 +581,6 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction
 	objectsToUpdate.removeAll(localObjectDirectory.getSize(), 1); //need to make sure no reallocs happen or threads will read garbage data
 	objectsToDelete.removeAll(100000, 0);
 
-	info("allocated object map to update size", true);
-
 	auto iterator = localObjectDirectory.getObjectHashTable().iterator();
 	int objectsToUpdateCount = 0;
 	int currentThread = 0;
@@ -643,7 +647,7 @@ void DOBObjectManager::checkCommitedObjects() {
 			//auto impl = static_cast<ManagedObjectImplementation*>(managed->_getImplementationForRead());
 
 			warning() << "missing object in thread local modified objects list 0x"
-					<< String::hexvalueOf(managed->_getObjectID()) << " " << managed->_getName()
+					<< hex << managed->_getObjectID() << dec << " " << managed->_getName()
 					<< " with " << managed->getReferenceCount() << " references left";
 
 			nlohmann::json jsonObject;

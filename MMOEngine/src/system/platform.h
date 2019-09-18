@@ -264,6 +264,8 @@ extern "C" int isinf (double);
 static_assert(false, "big endian systems are not supported");
 #endif
 
+#define E3_ASSERT(expr) (static_cast <bool> (expr) ? void (0) : abort());
+
 namespace sys {
 	typedef unsigned long long uint64;
 	static_assert(sizeof(uint64) == 8, "unsigned long long is not 64bit");

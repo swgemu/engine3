@@ -25,9 +25,6 @@
 #include "system/lang.h"
 #include "system/lang/Function.h"
 
-#include <type_traits>
-#include <functional>
-
 namespace engine {
   namespace log {
 

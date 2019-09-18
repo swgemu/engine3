@@ -105,6 +105,19 @@ void Thread::addModifiedObject(Object* object) {
 	ThreadNs::threadLogger.fatal(modifiedObjects->size() < maxCount, "Exceeded Thread.maxModifiedObjects size");
 }
 
+void Thread::addDeleteFromDatabaseObject(Object* object) {
+	if (!deletedFromDatabaseObjects) {
+		deletedFromDatabaseObjects = new DeleteFromDatabaseObjectsList();
+		//modifiedObjects->setNoDuplicateInsertPlan();
+	}
+
+	deletedFromDatabaseObjects->emplace(object);
+
+	const static int maxCount = Core::getIntProperty("Thread.maxDeleteFromDatabaseObjects", 3000000);
+
+	ThreadNs::threadLogger.fatal(modifiedObjects->size() < maxCount, "Exceeded Thread.maxDeleteFromDatabaseObjects size");
+}
+
 int Thread::getModifiedObjectsCount() const {
 	auto modifiedObjects = this->modifiedObjects;
 
@@ -113,6 +126,23 @@ int Thread::getModifiedObjectsCount() const {
 	}
 
 	return modifiedObjects->size();
+}
+
+int Thread::getDeleteFromDatabaseObjectsCount() const {
+	auto modifiedObjects = this->deletedFromDatabaseObjects;
+
+	if (!modifiedObjects) {
+		return 0;
+	}
+
+	return modifiedObjects->size();
+}
+
+Thread::DeleteFromDatabaseObjectsList* Thread::takeDeleteFromDatabaseObjects() {
+	auto copy = deletedFromDatabaseObjects;
+	deletedFromDatabaseObjects = nullptr;
+
+	return copy;
 }
 
 Thread::ModifiedObjectsList* Thread::takeModifiedObjects() {

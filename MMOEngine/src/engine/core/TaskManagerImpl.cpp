@@ -58,7 +58,7 @@ void TaskManagerImpl::initialize() {
 TaskQueue* TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) NO_THREAD_SAFETY_ANALYSIS {
 	Locker locker(this);
 
-	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
+	int maxCpus = Math::max(1, (int) System::getOnlineProcessors());
 
 	TaskQueue* queue = new TaskQueue(queueName.toCharArray());
 	queue->setLogLevel(getLogLevel());
@@ -93,7 +93,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 
 	Locker locker(this);
 
-	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
+	int maxCpus = Math::max(1, (int) System::getOnlineProcessors());
 
 	if (workerCount == 0) {
 #ifdef VERSION_PUBLIC

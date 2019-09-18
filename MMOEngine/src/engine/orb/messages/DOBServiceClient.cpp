@@ -169,7 +169,7 @@ bool DOBServiceClient::waitForReply(DOBMessage* message) {
 	bool res = message->waitForReply();
 
 	if (!res)
-		error("timeout on message " + String::valueOf(message->getSequence()));
+		error() << "timeout on message " << message->getSequence();
 
 	return res;
 }

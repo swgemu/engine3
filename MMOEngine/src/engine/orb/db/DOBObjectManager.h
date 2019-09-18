@@ -64,6 +64,8 @@ namespace engine {
 		SynchronizedCommitedObjects commitedObjects;
 
 		ska::bytell_hash_set<DistributedObject*> uniqueModifiedObjectValues;
+		ska::bytell_hash_set<DistributedObject*> uniqueDeletedFromDbObjectValues;
+
 		int saveCount = 0;
 
 		static int UPDATETODATABASETIME;
@@ -132,7 +134,7 @@ namespace engine {
 	protected:
 		void finishObjectUpdate();
 		void checkCommitedObjects();
-		void collectModifiedObjectsFromThreads(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers);
+		void collectModifiedObjectsFromThreads(const Vector<Pair<Locker*, TaskWorkerThread*>>& lockers);
 
 		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
 

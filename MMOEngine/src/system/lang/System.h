@@ -43,6 +43,10 @@ namespace sys {
 			::abort();
 		}
 
+		static auto getOnlineProcessors() {
+			return sysconf(_SC_NPROCESSORS_ONLN);
+		}
+
 	#ifndef PLATFORM_WIN
 		static inline uint64 getMiliTime() {
 		    uint64 time_in_ms;

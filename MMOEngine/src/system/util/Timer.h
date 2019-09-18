@@ -7,6 +7,8 @@
 #define TIMER_H_
 
 #include "system/lang/Time.h"
+#include "system/lang/Function.h"
+#include "system/lang/Runnable.h"
 
 namespace sys {
   namespace util {
@@ -40,6 +42,22 @@ namespace sys {
 		clockType = timer.clockType;
 
 		return *this;
+	}
+
+	uint64 run(const sys::lang::Function<void()>& function) {
+		start();
+
+		function();
+
+		return stop();
+	}
+
+	uint64 run(Runnable* runnable) {
+		start();
+
+		runnable->run();
+
+		return stop();
 	}
 
     	void start() {

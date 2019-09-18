@@ -15,7 +15,8 @@
 namespace engine {
   namespace ORB {
 
-    class DOBServiceClient;
+	class DOBServiceClient;
+	class DistributedMethod;
 
 	class RemoteObjectBroker : public ObjectBroker, public Mutex, public Logger {
 		Reference<DOBServiceClient*> brokerClient;

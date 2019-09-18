@@ -100,10 +100,12 @@ namespace sys {
 
 	protected:
 		using ModifiedObjectsList = ArrayList<Object*>;//ska::bytell_hash_set<void*>;
+		using DeleteFromDatabaseObjectsList = ArrayList<Object*>;
 		//only used in testing
 		ArrayList<Lockable*> acquiredLockables;
 		ArrayList<LockableTrace> lockableTrace;
 		ModifiedObjectsList* modifiedObjects = nullptr;
+		DeleteFromDatabaseObjectsList* deletedFromDatabaseObjects = nullptr;
 
 	public:
 		//! allocates a new Thread
@@ -167,6 +169,7 @@ namespace sys {
 		}
 
 		void addModifiedObject(Object* object);
+		void addDeleteFromDatabaseObject(Object* object);
 
 		void addAcquiredLockable(Lockable* lockable, Lockable* cross = nullptr, bool monitorLike = false, bool addToTrace = true) {
 			acquiredLockables.add(lockable);
@@ -186,8 +189,10 @@ namespace sys {
 		}
 
 		ModifiedObjectsList* takeModifiedObjects();
+		DeleteFromDatabaseObjectsList* takeDeleteFromDatabaseObjects();
 
 		int getModifiedObjectsCount() const;
+		int getDeleteFromDatabaseObjectsCount() const;
 
 	protected:
 		static void* executeThread(void* th);

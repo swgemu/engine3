@@ -17,15 +17,15 @@ namespace engine {
 	class DistributedObject;
 
 	class DistributedMethod {
-		const DistributedObject* object;
+		const DistributedObject* object = nullptr;
 
-		sys::uint32 methodID;
-		sys::uint32 invocationID;
+		sys::uint32 methodID = 0;
+		sys::uint32 invocationID = 0;
 
-		DistributedObjectBroker* orb;
+		DistributedObjectBroker* orb = nullptr;
 
-		InvokeMethodMessage* invocationMessage;
-		Packet* response;
+		InvokeMethodMessage* invocationMessage = nullptr;
+		Packet* response = nullptr;
 
 	public:
 		DistributedMethod(const DistributedObject* obj, sys::uint32 methid, bool async = false);

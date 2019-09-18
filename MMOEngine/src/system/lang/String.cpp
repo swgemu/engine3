@@ -808,6 +808,8 @@ char String::charAt(int index) const {
 }
 
 bool String::toBinaryStream(ObjectOutputStream* stream) {
+	E3_ASSERT(count <= UINT16_MAX && "String length exceeded 65k in toBinaryStream");
+
 	stream->writeShort(count);
 
 	stream->writeStream(begin(), count);

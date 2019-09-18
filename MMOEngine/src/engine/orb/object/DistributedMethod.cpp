@@ -15,10 +15,7 @@ DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid
 	object = obj;
 	methodID = methid;
 
-	orb = nullptr;
-
 	invocationMessage = new InvokeMethodMessage(object->_getObjectID(), methid, 0, async);
-	response = nullptr;
 }
 
 DistributedMethod::DistributedMethod(DistributedObjectBroker* broker, InvokeMethodMessage* invmsg) {

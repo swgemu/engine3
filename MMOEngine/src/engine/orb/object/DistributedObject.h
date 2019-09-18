@@ -45,8 +45,20 @@ namespace engine {
 			void clearTrace();
 		};
 
+		class DeleteHelper {
+		public:
+			DistributedObject* obj = nullptr;
+			std::atomic<bool> _delete{false};
+
+			explicit operator bool() const {
+				return _delete.load(std::memory_order_relaxed);
+			}
+
+			DeleteHelper& operator=(bool val);
+		};
+
 		UpdatedHelper _updated;
-		bool _markedForDeletion;
+		DeleteHelper _markedForDeletion;
 		bool _deletedFromDatabase;
 
 	public:
@@ -113,7 +125,7 @@ namespace engine {
 		}
 
 		inline bool _isMarkedForDeletion() const {
-			return _markedForDeletion;
+			return _markedForDeletion._delete.load(std::memory_order_relaxed);
 		}
 
 		inline const StackTrace* getLastModifiedTrace() const {
