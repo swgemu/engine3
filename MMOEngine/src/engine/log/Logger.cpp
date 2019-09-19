@@ -103,7 +103,7 @@ Logger::~Logger() {
 	closeFileLogger();
 }
 
-void Logger::setGlobalFileLogger(const char* file) {
+void Logger::setGlobalFileLogger(const String& file) {
 	if (globalLogFile != nullptr)
 		closeGlobalFileLogger();
 
@@ -122,10 +122,6 @@ void Logger::setGlobalFileLoggerSync(bool val) {
 
 void Logger::setGlobalFileJson(bool val) {
 	jsonGlobalLog = val;
-}
-
-void Logger::setGlobalFileLogger(const String& file) {
-	setGlobalFileLogger(file.toCharArray());
 }
 
 void Logger::setFileLogger(const String& file, bool appendData) {
@@ -219,8 +215,6 @@ void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 	if (logFile == nullptr && globalLogFile == nullptr)
 		return;
 
-	//Locker locker(&writeLock);
-
 	if (logLevel >= type && logFile != nullptr) {
 		FileWriter* logFile = const_cast<FileWriter*>(this->logFile);
 
@@ -294,17 +288,13 @@ void Logger::error(const String& msg) const {
 }
 
 void Logger::error(const StringBuffer& msg) const {
-	const String s = msg.toString();
-	error(s);
+	error(msg.toString());
 }
 
 void Logger::fatal(const char* msg) const {
 	printTime(false);
 
-	char newMsg[256];
-
-	snprintf(newMsg, sizeof(newMsg), " [%s] FATAL - %s\n", name.toCharArray(), msg);
-	System::out << newMsg;
+	System::out << " [" << name << "] FATAL - " << msg << endl;
 
 	log(msg, LogLevel::FATAL, true);
 
@@ -319,8 +309,7 @@ void Logger::fatal(const String& msg) const {
 }
 
 void Logger::fatal(const StringBuffer& msg) const {
-	const String s = msg.toString();
-	fatal(s);
+	fatal(msg.toString());
 }
 
 void Logger::debug(const char* msg) const {
@@ -330,7 +319,6 @@ void Logger::debug(const char* msg) const {
 		System::out << " [" << name << "] DEBUG - " << msg << endl;
 	}
 
-	//if (logLevel + 1 >= DEBUG)
 	log(msg, LogLevel::DEBUG);
 }
 
@@ -339,8 +327,7 @@ void Logger::debug(const String& msg) const {
 }
 
 void Logger::debug(const StringBuffer& msg) const {
-	String s = msg.toString();
-	debug(s);
+	debug(msg.toString());
 }
 
 void Logger::warning(const char* msg) const {
@@ -358,8 +345,7 @@ void Logger::warning(const String& msg) const {
 }
 
 void Logger::warning(const StringBuffer& msg) const {
-	String s = msg.toString();
-	warning(s);
+	warning(msg.toString());
 }
 
 void Logger::getLogType(StringBuffer& buffer, LogLevel type) const {
@@ -410,10 +396,7 @@ void Logger::getTime(StringBuffer& str, bool getFull) {
 	uint64 elapsed = Logger::starttime.miliDifference(time);
 
 	if (getFull) {
-		//str << time.getMiliTime() << " msec ";
-		String formattedTime = time.getFormattedTime();
-		formattedTime = formattedTime.replaceAll("\n", "");
-		str << formattedTime << " [" << time.getMiliTime() << " msec] ";
+		str << time.getFormattedTime() << " [" << time.getMiliTime() << " msec] ";
 	}
 
 	str << "(" << (elapsed / 1000) << " s)";

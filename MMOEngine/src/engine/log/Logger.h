@@ -160,7 +160,6 @@ namespace engine {
 		Logger& operator=(const Logger& logger);
 		Logger& operator=(Logger&& logger);
 
-		static void setGlobalFileLogger(const char* file);
 		static void setGlobalFileLogger(const String& file);
 		static void setGlobalFileLogLevel(LogLevel level);
 		static void setGlobalFileLoggerSync(bool val);

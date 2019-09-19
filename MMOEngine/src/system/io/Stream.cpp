@@ -4,7 +4,7 @@
 */
 #include "Stream.h"
 
-Stream::Stream() : ArrayList<char>(5, 5) {
+Stream::Stream() : ArrayList<char>() {
 	end = offset = elementData;
 }
 
@@ -16,7 +16,7 @@ Stream::Stream(int initsize, int capincr) : ArrayList<char>(initsize, capincr) {
 	end = offset = elementData;
 }
 
-Stream::Stream(char *buf, int len) : ArrayList<char>(len, len / 2) {
+Stream::Stream(const char *buf, int len) : ArrayList<char>(len, len / 2) {
 	end = offset = elementData;
 
 	writeStream(buf, len);
@@ -37,7 +37,7 @@ Stream* Stream::clone(int startoffs) {
 	return stream;
 }
 
-void Stream::copy(Stream* stream, int startoffs) {
+void Stream::copy(Stream* stream, int startoffs) const {
 	int newSize = size() - startoffs;
 
 	stream->reset();
@@ -114,6 +114,10 @@ void Stream::removeRange(int fromIndex, int toIndex) {
 		offset = (offset - oldElementData) + elementData;
 }
 
+void Stream::removeAll(int newSize, int newIncrement) {
+	removeRange(0, size());
+}
+
 // stream manipulation methods
 void Stream::writeStream(const char *buf, int len) {
 	extendSize(len);
@@ -121,18 +125,18 @@ void Stream::writeStream(const char *buf, int len) {
 	memcpy(offset - len, buf, len);
 }
 
-void Stream::writeStream(Stream* stream) {
+void Stream::writeStream(const Stream* stream) {
 	writeStream(stream->getBuffer(), stream->size());
 }
 
-void Stream::writeStream(Stream* stream, int len) {
+void Stream::writeStream(const Stream* stream, int len) {
 	if (len > stream->size())
 		throw StreamIndexOutOfBoundsException(stream, len);
 
 	writeStream(stream->getBuffer(), len);
 }
 
-void Stream::writeStream(Stream* stream, int len, int offs) {
+void Stream::writeStream(const Stream* stream, int len, int offs) {
 	if (len > stream->size())
 		throw StreamIndexOutOfBoundsException(stream, len);
 
@@ -143,7 +147,7 @@ void Stream::writeStream(Stream* stream, int len, int offs) {
 	memcpy(elementData + offs, stream->getBuffer(), len);
 }
 
-void Stream::insertStream(Stream* stream, int len, int offs) {
+void Stream::insertStream(const Stream* stream, int len, int offs) {
 	if (len > stream->size())
 		throw StreamIndexOutOfBoundsException(stream, len);
 

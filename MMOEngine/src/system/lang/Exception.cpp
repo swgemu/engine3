@@ -12,14 +12,19 @@
 Exception::Exception() {
 }
 
-Exception::Exception(const String& msg) {
-	message = msg;
+Exception::Exception(const String& msg) : message(msg) {
 }
 
 Exception::~Exception() {
 }
 
 void Exception::printStackTrace() const {
-	System::out << message << "\n";
+	System::out << message << endl;
 	trace.print();
+
+	System::out << flush;
+}
+
+void Exception::printMessage() const {
+	System::out << message << endl;
 }

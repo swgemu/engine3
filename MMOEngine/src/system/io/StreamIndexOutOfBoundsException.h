@@ -15,19 +15,17 @@ namespace sys {
   namespace io {
 
 	class StreamIndexOutOfBoundsException : public Exception {
-		class Stream* stream;
+		class Stream const* stream;
 
 	public:
-		StreamIndexOutOfBoundsException(Stream* strm, int index) : Exception() {
-			stream = strm;
-
+		StreamIndexOutOfBoundsException(const Stream* strm, int index) : Exception(), stream(strm) {
 			StringBuffer str;
 			str << "StreamIndexOutOfBoundsException at " << index << "\n";
 			message = str.toString();
 			//System::out << message;
 		}
 
-		Stream* getStream() const {
+		const Stream* getStream() const {
 			return stream;
 		}
 

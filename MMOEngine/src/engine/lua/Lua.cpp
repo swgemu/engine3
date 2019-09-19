@@ -67,16 +67,14 @@ bool Lua::runFile(const String& filename) {
 		if (luaL_loadfile(L, filename.toCharArray()) || lua_pcall(L, 0, 0, 0)) {
 			const char* err = lua_tostring(L, -1);
 
-			StringBuffer msg;
-			msg << "file:" << filename << " ERROR " << err;
-			info(msg);
+			info() << "file:" << filename << " ERROR " << err;
 
 			lua_pop(L, 1);
 
 			return false;
 		}
 	} catch (LuaPanicException& e) {
-		error("LuaPanicException while running " + filename);
+		error() << "LuaPanicException while running " << filename;
 		error(e.getMessage());
 
 		return false;
@@ -93,12 +91,9 @@ bool Lua::runFile(const String& filename, lua_State* lState) {
 			if (luaL_loadfile(lState, filename.toCharArray()) || lua_pcall(lState, 0, 0, 0)) {
 				const char* err = lua_tostring(lState, -1);
 
-				StringBuffer errorMessage;
-				errorMessage << "file:" << filename << " ERROR " << String(err) << "\n";
+				Logger::console.error() << "file:" << filename << " ERROR " << err;
 
 				lua_pop(lState, 1);
-
-				Logger::console.error(errorMessage);
 
 				return false;
 			}
@@ -128,16 +123,14 @@ bool Lua::runString(const String& str) {
 		if (luaL_loadbuffer(L, str.toCharArray(), str.length(), "command") || lua_pcall(L, 0, 0, 0)) {
 			const char* err = lua_tostring(L, -1);
 
-			StringBuffer msg2;
-			msg2 << "ERROR " << err;
-			info(msg2);
+			info() << "ERROR " << err;
 
 			lua_pop(L, 1);
 
 			return false;
 		}
 	} catch (LuaPanicException& e) {
-		Logger::console.error("LuaPanicException while " + str);
+		error("LuaPanicException while " + str);
 
 		return false;
 	}
@@ -175,9 +168,7 @@ String Lua::getGlobalString(const String& name) {
 	if (!lua_isstring(L, -1)) {
 		lua_pop(L, 1);
 
-		StringBuffer msg;
-		msg << "invalid String value for: " << name;
-		info(msg);
+		info() << "invalid String value for: " << name;
 
 		return String("");
 	}
@@ -200,9 +191,7 @@ uint32 Lua::getGlobalInt(const String& name) {
 	if (!lua_isnumber(L, -1)) {
 		lua_pop(L, 1);
 
-		StringBuffer msg;
-		msg << "invalid value for: " << name << " expected NUMBER";
-		info(msg);
+		info() << "invalid value for: " << name << " expected NUMBER";
 
 		return 0;
 	}
@@ -221,9 +210,7 @@ uint64 Lua::getGlobalLong(const String& name) {
 	if (!lua_isnumber(L, -1)) {
 		lua_pop(L, 1);
 
-		StringBuffer msg;
-		msg << "invalid value for: " << name << " expected NUMBER";
-		info(msg);
+		info() << "invalid value for: " << name << " expected NUMBER";
 
 		return 0;
 	}
@@ -242,9 +229,7 @@ uint16 Lua::getGlobalShort(const String& name) {
 	if (!lua_isnumber(L, -1)) {
 		lua_pop(L, 1);
 
-		StringBuffer msg;
-		msg << "invalid value for: " << name << " expected NUMBER";
-		info(msg);
+		info() << "invalid value for: " << name << " expected NUMBER";
 
 		return 0;
 	}
@@ -263,9 +248,8 @@ uint8 Lua::getGlobalByte(const String& name) {
 	if (!lua_isnumber(L, -1)) {
 		lua_pop(L, 1);
 
-		StringBuffer msg;
-		msg << "invalid value for: " << name << " expected NUMBER";
-		info(msg);
+		info() << "invalid value for: " << name << " expected NUMBER";
+
 		return 0;
 	}
 
@@ -283,9 +267,8 @@ float Lua::getGlobalFloat(const String& name) {
 	if (!lua_isnumber(L, -1)) {
 		lua_pop(L, 1);
 
-		StringBuffer msg;
-		msg << "invalid value for: " << name << " expected NUMBER";
-		info(msg);
+		info() << "invalid value for: " << name << " expected NUMBER";
+
 		return 0;
 	}
 
@@ -304,10 +287,12 @@ LuaObject Lua::getGlobalObject(const String& name) {
 }
 
 //params passed to funcs
-String Lua::getStringParameter(lua_State* lState) {
+String Lua::getStringParameter(lua_State* lState, int index, bool pop) {
 	const char* result = nullptr;
-	if (!lua_isstring(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isstring(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 		/*
 		StringBuffer msg;
 		msg << "ERROR expected STRING";
@@ -317,20 +302,24 @@ String Lua::getStringParameter(lua_State* lState) {
 		return result;
 	}
 
-	result = lua_tostring(lState, -1);
-	auto size = lua_rawlen(lState, -1);
+	result = lua_tostring(lState, index);
+	auto size = lua_rawlen(lState, index);
 
 	String val(result, size);
 
-	lua_pop(lState, 1);
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return val;
 }
 
-int32 Lua::getIntParameter(lua_State* lState) {
+int32 Lua::getIntParameter(lua_State* lState, int index, bool pop) {
 	int32 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -339,16 +328,21 @@ int32 Lua::getIntParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int32)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (int32)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-uint32 Lua::getUnsignedIntParameter(lua_State* lState) {
+uint32 Lua::getUnsignedIntParameter(lua_State* lState, int index, bool pop) {
 	uint32 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -357,16 +351,21 @@ uint32 Lua::getUnsignedIntParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint32)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (uint32)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-int64 Lua::getLongParameter(lua_State* lState) {
+int64 Lua::getLongParameter(lua_State* lState, int index, bool pop) {
 	int64 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -375,16 +374,21 @@ int64 Lua::getLongParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int64)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (int64)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-uint64 Lua::getUnsignedLongParameter(lua_State* lState) {
+uint64 Lua::getUnsignedLongParameter(lua_State* lState, int index, bool pop) {
 	uint64 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -393,16 +397,21 @@ uint64 Lua::getUnsignedLongParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint64)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (uint64)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-int16 Lua::getShortParameter(lua_State* lState) {
+int16 Lua::getShortParameter(lua_State* lState, int index, bool pop) {
 	int16 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -411,16 +420,21 @@ int16 Lua::getShortParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int16)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (int16)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-uint16 Lua::getUnsignedShortParameter(lua_State* lState) {
+uint16 Lua::getUnsignedShortParameter(lua_State* lState, int index, bool pop) {
 	uint16 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -429,16 +443,21 @@ uint16 Lua::getUnsignedShortParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint16)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (uint16)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-int8 Lua::getByteParameter(lua_State* lState) {
+int8 Lua::getByteParameter(lua_State* lState, int index, bool pop) {
 	int8 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -447,16 +466,21 @@ int8 Lua::getByteParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (int8)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (int8)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-uint8 Lua::getUnsignedByteParameter(lua_State* lState) {
+uint8 Lua::getUnsignedByteParameter(lua_State* lState, int index, bool pop) {
 	uint8 result = 0;
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -465,32 +489,42 @@ uint8 Lua::getUnsignedByteParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (uint8)lua_tointeger(lState, -1);
-	lua_pop(lState, 1);
+	result = (uint8)lua_tointeger(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-bool Lua::getBooleanParameter(lua_State* lState) {
+bool Lua::getBooleanParameter(lua_State* lState, int index, bool pop) {
 	bool result = false;
 
-	if (!lua_isboolean(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isboolean(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		return false;
 	}
 
-	result = lua_toboolean(lState, -1);
-	lua_pop(lState, 1);
+	result = lua_toboolean(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
 
-float Lua::getFloatParameter(lua_State* lState) {
+float Lua::getFloatParameter(lua_State* lState, int index, bool pop) {
 	float result = 0;
 
-	if (!lua_isnumber(lState, -1)) {
-		lua_pop(lState, 1);
+	if (!lua_isnumber(lState, index)) {
+		if (pop) {
+			lua_pop(lState, 1);
+		}
 
 		/*StringBuffer msg;
 		msg << "ERROR expected NUMBER";
@@ -499,8 +533,11 @@ float Lua::getFloatParameter(lua_State* lState) {
 		return 0;
 	}
 
-	result = (float)lua_tonumber(lState, -1);
-	lua_pop(lState, 1);
+	result = (float)lua_tonumber(lState, index);
+
+	if (pop) {
+		lua_pop(lState, 1);
+	}
 
 	return result;
 }
@@ -560,6 +597,10 @@ int Lua::checkStack() {
 
 bool Lua::checkStack(int num) {
 	return (lua_gettop(L) == num);
+}
+
+void Lua::pop(int n) {
+	lua_pop(L, n);
 }
 
 LuaFunction* Lua::createFunction(const String& funcname, int argsThatWillReturn) {

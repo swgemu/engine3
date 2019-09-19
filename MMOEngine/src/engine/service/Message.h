@@ -32,7 +32,7 @@ namespace engine {
 			timestampMili = 0;
 		}
 
-		Message(Packet* packet, ServiceClient* clt) {
+		Message(const Packet* packet, ServiceClient* clt) {
 			packet->copy(this, 0);
 
 			client = clt;
@@ -68,11 +68,7 @@ namespace engine {
 
 			Integer::toBinaryStream(size, stream);
 
-			for (int i = 0; i < size; ++i) {
-			   char* obj = &Packet::get(i);
-
-			   TypeInfo<char>::toBinaryStream(obj, stream);
-			}
+			stream->writeStream(getBuffer(), size);
 
 			return true;
 		}
@@ -84,12 +80,7 @@ namespace engine {
 
 			Integer::parseFromBinaryStream(size, stream);
 
-			for (int i = 0; i < size; ++i) {
-			   char object;
-
-			   if (TypeInfo<char>::parseFromBinaryStream(&object, stream))
-				   add(object);
-			}
+			writeStream(stream, size);
 
 			return true;
 		}

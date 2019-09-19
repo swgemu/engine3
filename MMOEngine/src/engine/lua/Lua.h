@@ -48,6 +48,51 @@ namespace engine {
 		virtual void registerFunction(const char* name, int(*functionPointer)(lua_State*));
 
 		// getters
+		virtual String getString(int index = -1, bool pop = true) {
+			return getStringParameter(L, index, pop);
+		}
+
+		virtual int32 getInt(int index = -1, bool pop = true) {
+			return getIntParameter(L, index, pop);
+		}
+
+		virtual sys::uint32 getUnsignedInt(int index = -1, bool pop = true) {
+			return getUnsignedIntParameter(L, index, pop);
+		}
+
+		virtual int64 getLong(int index = -1, bool pop = true) {
+			return getLongParameter(L, index, pop);
+		}
+
+		virtual uint64 getUnsignedLong(int index = -1, bool pop = true) {
+			return getUnsignedLongParameter(L, index, pop);
+		}
+
+		virtual int16 getShort(int index = -1, bool pop = true) {
+			return getShortParameter(L, index, pop);
+		}
+
+		virtual sys::uint16 getUnsignedShort(int index = -1, bool pop = true) {
+			return getUnsignedShortParameter(L, index, pop);
+		}
+
+		virtual int8 getByte(int index = -1, bool pop = true) {
+			return getByteParameter(L, index, pop);
+		}
+
+		virtual sys::uint8 getUnsignedByte(int index = -1, bool pop = true) {
+			return getUnsignedByteParameter(L, index, pop);
+		}
+
+		virtual float getFloat(int index = -1, bool pop = true) {
+			return getFloatParameter(L, index, pop);
+		}
+
+		virtual bool getBoolean(int index = -1, bool pop = true) {
+			return getBooleanParameter(L, index, pop);
+		}
+
+		virtual void pop(int n);
 
 		// globals
 		virtual bool getGlobalBoolean(const String& name);
@@ -60,17 +105,17 @@ namespace engine {
 		virtual LuaObject getGlobalObject(const String& name);
 
 		// static params
-		static String getStringParameter(lua_State* lState);
-		static int32 getIntParameter(lua_State* lState);
-		static sys::uint32 getUnsignedIntParameter(lua_State* lState);
-		static int64 getLongParameter(lua_State* lState);
-		static uint64 getUnsignedLongParameter(lua_State* lState);
-		static int16 getShortParameter(lua_State* lState);
-		static sys::uint16 getUnsignedShortParameter(lua_State* lState);
-		static int8 getByteParameter(lua_State* lState);
-		static sys::uint8 getUnsignedByteParameter(lua_State* lState);
-		static float getFloatParameter(lua_State* lState);
-		static bool getBooleanParameter(lua_State* lState);
+		static String getStringParameter(lua_State* lState, int index = -1, bool pop = true);
+		static int32 getIntParameter(lua_State* lState, int index = -1, bool pop = true);
+		static sys::uint32 getUnsignedIntParameter(lua_State* lState, int index = -1, bool pop = true);
+		static int64 getLongParameter(lua_State* lState, int index = -1, bool pop = true);
+		static uint64 getUnsignedLongParameter(lua_State* lState, int index = -1, bool pop = true);
+		static int16 getShortParameter(lua_State* lState, int index = -1, bool pop = true);
+		static sys::uint16 getUnsignedShortParameter(lua_State* lState, int index = -1, bool pop = true);
+		static int8 getByteParameter(lua_State* lState, int index = -1, bool pop = true);
+		static sys::uint8 getUnsignedByteParameter(lua_State* lState, int index = -1, bool pop = true);
+		static float getFloatParameter(lua_State* lState, int index = -1, bool pop = true);
+		static bool getBooleanParameter(lua_State* lState, int index = -1, bool pop = true);
 
 		// setters
 		virtual void setGlobalString(const String& name, const String& value);

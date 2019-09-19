@@ -16,10 +16,10 @@ namespace sys {
 	class Packet;
 
 	class PacketIndexOutOfBoundsException : public Exception {
-		Packet* packet;
+		const Packet* packet;
 
 	public:
-		PacketIndexOutOfBoundsException(Packet* pack, int index) : Exception() {
+		PacketIndexOutOfBoundsException(const Packet* pack, int index) : Exception() {
 			packet = pack;
 
 			StringBuffer str;
@@ -27,7 +27,7 @@ namespace sys {
 			message = str.toString();
 		}
 
-		Packet* getPacket() {
+		const Packet* getPacket() const {
 			return packet;
 		}
 

@@ -15,7 +15,7 @@
 namespace sys {
   namespace io {
 
-	class Stream : public ArrayList<char> {
+	class Stream : protected ArrayList<char> {
 	protected:
 		char *end, *offset;
 
@@ -23,13 +23,13 @@ namespace sys {
 		Stream();
 		Stream(int initsize);
 		Stream(int initsize, int capincr);
-		Stream(char *buf, int len);
+		Stream(const char *buf, int len);
 
 		virtual ~Stream();
 
 		Stream* clone(int startoffs = 0);
 
-		void copy(Stream* stream, int startoffs = 0);
+		void copy(Stream* stream, int startoffs = 0) const;
 
 		void setSize(int len, bool copyContent = true);
 
@@ -47,13 +47,15 @@ namespace sys {
 
 		void removeRange(int fromIndex, int toIndex);
 
+		void removeAll(int newSize = 10, int newIncrement = 5);
+
 		// stream manipulation methods
 		void writeStream(const char* buf, int len);
-		void writeStream(Stream* stream);
-		void writeStream(Stream* stream, int len);
-		void writeStream(Stream* stream, int len, int offs);
+		void writeStream(const Stream* stream);
+		void writeStream(const Stream* stream, int len);
+		void writeStream(const Stream* stream, int len, int offs);
 
-		void insertStream(Stream* stream, int len, int offs);
+		void insertStream(const Stream* stream, int len, int offs);
 
 		void readStream(char* buf, int len);
 		void readStream(Stream* stream, int len);
