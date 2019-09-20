@@ -2,8 +2,10 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef STRINGBUFFER_H_
-#define STRINGBUFFER_H_
+
+#pragma once
+
+#include <iostream>
 
 #include "system/platform.h"
 
@@ -144,4 +146,3 @@ using namespace sys::lang;
 bool operator==(const String& str1, const StringBuffer& str2);
 bool operator!=(const String& str1, const StringBuffer& str2);
 
-#endif /*STRINGBUFFER_H_*/
