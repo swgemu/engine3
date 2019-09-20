@@ -6,6 +6,9 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+
+#include "mersenne/MersenneTwister.h"
+
 #include "system/platform.h"
 
 typedef time_t utime;

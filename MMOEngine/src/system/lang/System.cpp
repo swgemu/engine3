@@ -3,8 +3,6 @@
 ** See file COPYING for copying conditions.
 */
 
-#include "mersenne/MersenneTwister.h"
-
 #include "System.h"
 
 ThreadLocal<MTRand*> System::mtrand;

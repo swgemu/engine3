@@ -60,16 +60,17 @@
 // Not thread safe (unless auto-initialization is avoided and each thread has
 // its own MTRand object)
 
-#include <iostream>
-#include <limits.h>
-#include <stdio.h>
+#include <iosfwd>
 #include <time.h>
 #include <math.h>
+#include <limits.h>
+#include <atomic>
 
 class MTRand {
 	// Data
 public:
 	typedef unsigned long uint32; // unsigned integer type, at least 32 bits
+	typedef long int32;
 
 	enum {
 		N = 624
@@ -146,7 +147,7 @@ protected:
 	}
 	MTRand::uint32 twist(const MTRand::uint32& m, const MTRand::uint32& s0,
 			const MTRand::uint32& s1) const {
-		return m ^ (mixBits(s0, s1) >> 1) ^ (-(int32_t) loBit(s1) & 0x9908b0dfUL);
+		return m ^ (mixBits(s0, s1) >> 1) ^ (-(int32) loBit(s1) & 0x9908b0dfUL);
 	}
 	static MTRand::uint32 hash(time_t t, clock_t c);
 };
@@ -283,30 +284,6 @@ inline void MTRand::seed(MTRand::uint32 * const bigSeed,
 	reload();
 }
 
-inline void MTRand::seed() {
-	// Seed the generator with an array from /dev/urandom if available
-	// Otherwise use a hash of time() and clock() values
-
-	// First try getting an array from /dev/urandom
-	FILE* urandom = fopen("/dev/urandom", "rb");
-	if (urandom) {
-		uint32 bigSeed[N];
-		MTRand::uint32 *s = bigSeed;
-		int i = N;
-		bool success = true;
-		while (success && i--)
-			success = fread(s++, sizeof(uint32), 1, urandom);
-		fclose(urandom);
-		if (success) {
-			seed(bigSeed, N);
-			return;
-		}
-	}
-
-	// Was not successful, so use time() and clock() instead
-	seed(hash(time(nullptr), clock()));
-}
-
 inline void MTRand::initialize(const MTRand::uint32 seed) {
 	// Initialize generator state with seed
 	// See Knuth TAOCP Vol 2, 3rd Ed, p.106 for multiplier.
@@ -341,7 +318,7 @@ inline MTRand::uint32 MTRand::hash(time_t t, clock_t c) {
 	// Better than uint32(x) in case x is floating point in [0,1]
 	// Based on code by Lawrence Kirby (fred@genesis.demon.co.uk)
 
-	static MTRand::uint32 differ = 0; // guarantee time-based seeds will change
+	static std::atomic<MTRand::uint32> differ{0}; // guarantee time-based seeds will change
 
 	uint32 h1 = 0;
 	unsigned char *p = (unsigned char *) &t;
@@ -375,24 +352,6 @@ inline void MTRand::load(MTRand::uint32 * const loadArray) {
 	}
 	left = *la;
 	pNext = &state[N - left];
-}
-
-inline std::ostream& operator<<(std::ostream& os, const MTRand& mtrand) {
-	const MTRand::uint32 *s = mtrand.state;
-	int i = mtrand.N;
-	for (; i--; os << *s++ << "\t") {
-	}
-	return os << mtrand.left;
-}
-
-inline std::istream& operator>>(std::istream& is, MTRand& mtrand) {
-	MTRand::uint32 *s = mtrand.state;
-	int i = mtrand.N;
-	for (; i--; is >> *s++) {
-	}
-	is >> mtrand.left;
-	mtrand.pNext = &mtrand.state[mtrand.N - mtrand.left];
-	return is;
 }
 
 #endif  // MERSENNETWISTER_H
