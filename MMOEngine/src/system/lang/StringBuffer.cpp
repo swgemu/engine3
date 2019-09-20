@@ -390,6 +390,9 @@ bool StringBuffer::operator==(const StringBuffer& buff) const {
 	if (buff.length() != length())
 		return false;
 
+	if (buff.length() == 0) //make sure we dont pass nullptr to memcpy in case StringBuffer is empty
+		return true;
+
 	return memcmp(getBuffer(), buff.getBuffer(), length() * sizeof(char)) == 0;
 }
 
@@ -397,12 +400,18 @@ bool StringBuffer::operator==(const String& buff) const {
 	if (buff.length() != length())
 		return false;
 
+	if (buff.length() == 0)
+		return true;
+
 	return memcmp(getBuffer(), buff.toCharArray(), length() * sizeof(char)) == 0;
 }
 
 bool operator==(const String& str1, const StringBuffer& str2) {
 	if (str1.length() != str2.length())
 		return false;
+
+	if (str1.length() == 0)
+		return true;
 
 	return memcmp(str1.toCharArray(), str2.getBuffer(), str1.length() * sizeof(char)) == 0;
 }
