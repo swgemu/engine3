@@ -141,7 +141,23 @@ namespace sys {
 		int lastIndexOf(const String& str, int fromIndex) const ;
 
 		//sprintf format
-		static String format(const char* format, ...);
+		template<std::size_t BufferSize = 1024>
+		static String format(const char* format, ...) {
+			char buffer[BufferSize]; //VLA is not officially supported in cpp
+
+			va_list args;
+			va_start (args, format);
+
+			//Notice that only when this returned value is non-negative and less than n, the string has been completely written.
+			int res = vsnprintf (buffer, sizeof(buffer), format, args);
+
+			va_end(args);
+
+			E3_ASSERT(res >= 0 && "String::format formatting error");
+			E3_ASSERT(static_cast<std::size_t>(res) < sizeof(buffer) && "data could not fit in String::format buffer");
+
+			return String(buffer, res);
+		}
 
 		bool beginsWith(const char* str) const ;
 		bool beginsWith(const String& str) const ;

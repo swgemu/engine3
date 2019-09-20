@@ -838,29 +838,6 @@ bool String::toString(String& str) {
 	return true;
 }
 
-String String::format(const char* format, ...) {
-	constexpr int BUFFER_SIZE = 2048;
-
-	char buffer[BUFFER_SIZE];
-
-	va_list args;
-	va_start (args, format);
-
-	//Notice that only when this returned value is non-negative and less than n, the string has been completely written.
-	int res = vsnprintf (buffer, BUFFER_SIZE, format, args);
-
-	va_end(args);
-
-	if (res < 0 || res >= BUFFER_SIZE) {
-		if (res < 0)
-			throw Exception("Encoding error while trying to format string");
-		else
-			throw Exception("Maximum length of 2048 in String::format exceeded");
-	}
-
-	return String(buffer, res);
-}
-
 #ifdef CXX11_COMPILER
 String& String::operator=(String&& str) {
 	if (this == &str)
