@@ -66,8 +66,6 @@
 #include <time.h>
 #include <math.h>
 
-#include "system/thread/ThreadLocal.h"
-
 class MTRand {
 	// Data
 public:
@@ -148,7 +146,7 @@ protected:
 	}
 	MTRand::uint32 twist(const MTRand::uint32& m, const MTRand::uint32& s0,
 			const MTRand::uint32& s1) const {
-		return m ^ (mixBits(s0, s1) >> 1) ^ (-(int32) loBit(s1) & 0x9908b0dfUL);
+		return m ^ (mixBits(s0, s1) >> 1) ^ (-(int32_t) loBit(s1) & 0x9908b0dfUL);
 	}
 	static MTRand::uint32 hash(time_t t, clock_t c);
 };

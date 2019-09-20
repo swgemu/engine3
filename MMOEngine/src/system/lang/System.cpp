@@ -14,3 +14,16 @@ PrintStream System::out;
 uint32 System::random(unsigned int bucket) {
    	return getMTRand()->randInt(bucket);
 }
+
+MTRand* System::getMTRand() {
+	MTRand* localMT = mtrand.get();
+
+	if (localMT == nullptr) {
+		localMT = new MTRand();
+
+		mtrand.set(localMT);
+	}
+
+	return localMT;
+}
+
