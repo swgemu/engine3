@@ -265,11 +265,11 @@ static_assert(false, "big endian systems are not supported");
 
 namespace sys {
 	[[ noreturn ]] inline void e3_assert(const char* file, int line, const char* func, const char *expression) {
-		fprintf(stderr, "assertion \"%s\" failed: file \"%s\", line %d%s%s\n", expression, file, line, func ? ", function: " : "", func ? func : "");
+		::fprintf(stderr, "assertion \"%s\" failed: file \"%s\", line %d%s%s\n", expression, file, line, func ? ", function: " : "", func ? func : "");
 
-		fflush(nullptr);
+		::fflush(nullptr);
 
-		abort();
+		::abort();
 	}
 
 	#define E3_ASSERT(_expr) (static_cast <bool> (_expr) ? void (0) : e3_assert(__FILE__, __LINE__, __PRETTY_FUNCTION__, #_expr));
