@@ -77,7 +77,6 @@ namespace sys {
 	public:
 
 		Object();
-
 		Object(const Object& obj);
 
 #ifdef CXX11_COMPILER
@@ -226,7 +225,6 @@ namespace sys {
 
 	#ifdef TRACE_REFERENCES
 		void addHolder(uint64 obj);
-
 		void removeHolder(uint64 obj);
 
 		void printReferenceHolders();
@@ -234,7 +232,6 @@ namespace sys {
 
 	protected:
 		virtual void destroy();
-
 		virtual void free();
 
 		friend class sys::mm::MemoryManager;
@@ -248,3 +245,4 @@ namespace sys {
 using namespace sys::lang;
 
 #endif /*OBJECT_H_*/
+

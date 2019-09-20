@@ -23,7 +23,7 @@ Task::Task(uint64 mtime) : PriorityQueueEntry() {
 	nextExecutionTime.addMiliTime(mtime);
 }
 
-Task::Task(Time& time) : PriorityQueueEntry() {
+Task::Task(const Time& time) : PriorityQueueEntry() {
 	initialize();
 
 	nextExecutionTime = time;

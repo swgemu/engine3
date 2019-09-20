@@ -20,6 +20,7 @@ namespace engine {
     template<class O> class ManagedWeakReference;
 
 	template<class O> class ManagedReference : public Reference<O> {
+	protected:
 #ifdef ODB_REFERENCES
 		uint64_t loadedOID = 0;
 #endif
@@ -139,6 +140,24 @@ namespace engine {
 			return stored;
 		}
 
+		template<class B>
+		ManagedReference<B> castMoveTo() {
+			ManagedReference<B> stored;
+			auto castedObject = dynamic_cast<B>(get());
+
+			if (castedObject) {
+				stored.initializeWithoutAcquire(castedObject);
+#ifdef ODB_REFERENCES
+				stored.setLoadedOID(this->loadedOID);
+				this->loadedOID = 0;
+#endif
+
+				this->object = nullptr;
+			}
+
+			return stored;
+		}
+
 		inline O get() const {
 			return Reference<O>::object;
 		}
@@ -151,7 +170,13 @@ namespace engine {
 			return Reference<O>::object;
 		}
 
-		inline uint64_t getObjectID() const {
+#ifdef ODB_REFERENCES
+		inline void setLoadedOID(uint64 val) {
+			loadedOID = val;
+		}
+#endif
+
+		inline uint64 getObjectID() const {
 #ifdef ODB_REFERENCES
 			if (!Core::MANAGED_REFERENCE_LOAD)
 				return loadedOID;
@@ -267,6 +292,12 @@ namespace engine {
 
 		return get() != nullptr;
 	}
+
+	template<class T, class... Args>
+	ManagedReference<T*> makeManagedShared(Args&&... args ) {
+		return ManagedReference<T*>(new T(std::forward<Args>(args)...));
+	}
+
 
   } // namespace core
 } // namespace engine

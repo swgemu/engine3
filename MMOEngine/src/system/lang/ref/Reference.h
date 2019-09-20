@@ -140,6 +140,20 @@ namespace sys {
 		}
 
 		template<class B>
+		Reference<B> castMoveTo() {
+			Reference<B> stored;
+			auto castedObject = dynamic_cast<B>(get());
+
+			if (castedObject) {
+				stored.initializeWithoutAcquire(castedObject);
+
+				this->object = nullptr;
+			}
+
+			return stored;
+		}
+
+		template<class B>
 		Reference<B> castTo() const {
 			Reference<B> stored = dynamic_cast<B>(get());
 			return stored;

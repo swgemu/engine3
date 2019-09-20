@@ -78,7 +78,6 @@ namespace engine {
 		static Core* getCoreInstance();
 	protected:
 		virtual void initializeContext(int logLevel);
-
 		virtual void finalizeContext();
 
 		static void parsePropertyData(const String& className, const char* name, engine::lua::LuaObject& table);

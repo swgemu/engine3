@@ -42,7 +42,6 @@ namespace engine {
 
 		//static
 		static bool runFile(const String& filename, lua_State* lState);
-
 		static int atPanic(lua_State* L);
 
 		virtual void registerFunction(const char* name, int(*functionPointer)(lua_State*));

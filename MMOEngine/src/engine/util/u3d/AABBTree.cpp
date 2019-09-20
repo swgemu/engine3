@@ -24,6 +24,7 @@ AABBTree::AABBTree(const ArrayList<Triangle*>& trilist, int depth, const AABBTre
 AABBTree::~AABBTree() {
 	if (trianglesOwner) {
 		SortedVector<Triangle*> uniqueTriangles;
+		uniqueTriangles.setNoDuplicateInsertPlan();
 
 		getTriangles(uniqueTriangles);
 

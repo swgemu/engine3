@@ -55,7 +55,7 @@ namespace engine {
 	  public:
 		Task();
 		Task(uint64 mtime);
-		Task(Time& time);
+		Task(const Time& time);
 
 		~Task();
 
