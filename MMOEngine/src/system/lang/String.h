@@ -10,6 +10,8 @@
 #include "Variable.h"
 #include "ConstString.h"
 
+#include <cstdarg>
+
 #define SSO_STRING
 
 //#define STRING_INHERIT_VARIABLE

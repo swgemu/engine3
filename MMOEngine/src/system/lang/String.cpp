@@ -9,7 +9,6 @@
 #include "Long.h"
 
 #include <regex.h>
-#include <cstdarg>
 
 #ifndef CXX11_COMPILER
 	const uint32 StringHashCodeTable::crctable[256] = {
