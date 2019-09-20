@@ -35,6 +35,14 @@ namespace sys {
 
 		void finalToken(String& s);
 
+		String getRemainingString() {
+			String str;
+
+			finalToken(str);
+
+			return str;
+		}
+
 		void shiftTokens(int count);
 
 		bool hasMoreTokens();

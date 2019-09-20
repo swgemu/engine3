@@ -120,9 +120,11 @@ void Stream::removeAll(int newSize, int newIncrement) {
 
 // stream manipulation methods
 void Stream::writeStream(const char *buf, int len) {
-	extendSize(len);
+	if (buf != nullptr) {
+		extendSize(len);
 
-	memcpy(offset - len, buf, len);
+		memcpy(offset - len, buf, len);
+	}
 }
 
 void Stream::writeStream(const Stream* stream) {
@@ -137,6 +139,10 @@ void Stream::writeStream(const Stream* stream, int len) {
 }
 
 void Stream::writeStream(const Stream* stream, int len, int offs) {
+	if (stream->getBuffer() == nullptr) {
+		return;
+	}
+
 	if (len > stream->size())
 		throw StreamIndexOutOfBoundsException(stream, len);
 
@@ -148,6 +154,10 @@ void Stream::writeStream(const Stream* stream, int len, int offs) {
 }
 
 void Stream::insertStream(const Stream* stream, int len, int offs) {
+	if (stream->getBuffer() == nullptr) {
+		return;
+	}
+
 	if (len > stream->size())
 		throw StreamIndexOutOfBoundsException(stream, len);
 

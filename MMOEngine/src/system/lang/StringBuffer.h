@@ -28,13 +28,13 @@ namespace sys {
 		SF_nouppercase = SF_lowercase
   	};
 
-  	const StreamFlags dec = SF_dec;
-  	const StreamFlags hex = SF_hex;
-  	const StreamFlags uppercase = SF_uppercase;
-  	const StreamFlags endl = SF_endl;
-	const StreamFlags lowercase = SF_lowercase;
-	const StreamFlags nouppercase = SF_nouppercase;
-	const StreamFlags flush = SF_flush;
+  	constexpr const StreamFlags dec = SF_dec;
+  	constexpr const StreamFlags hex = SF_hex;
+  	constexpr const StreamFlags uppercase = SF_uppercase;
+  	constexpr const StreamFlags endl = SF_endl;
+	constexpr const StreamFlags lowercase = SF_lowercase;
+	constexpr const StreamFlags nouppercase = SF_nouppercase;
+	constexpr const StreamFlags flush = SF_flush;
 
 	class StringBuffer : private ArrayList<char> {
 		StreamFlags streamFlags;

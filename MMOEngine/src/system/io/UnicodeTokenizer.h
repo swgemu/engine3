@@ -41,6 +41,14 @@ namespace sys {
 		void finalToken(String& s);
 		void finalToken(UnicodeString& u);
 
+		UnicodeString getRemainingString() {
+			UnicodeString str;
+
+			finalToken(str);
+
+			return str;
+		}
+
 		void shiftTokens(int count);
 
 		bool hasMoreTokens() const;

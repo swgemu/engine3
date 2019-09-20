@@ -273,6 +273,7 @@ namespace sys {
 	}
 
 	#define E3_ASSERT(_expr) (static_cast <bool> (_expr) ? void (0) : e3_assert(__FILE__, __LINE__, __PRETTY_FUNCTION__, #_expr));
+	#define E3_ABORT(_message) (e3_assert(__FILE__, __LINE__, __PRETTY_FUNCTION__, _message));
 
 	typedef unsigned long long uint64;
 	static_assert(sizeof(uint64) == 8, "unsigned long long is not 64bit");

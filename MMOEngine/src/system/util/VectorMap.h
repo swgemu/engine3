@@ -232,13 +232,13 @@ namespace sys {
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
-			E3_ASSERT(false && "trying to serialize VectorMapEntry with Value type that is not serializable");
+			E3_ABORT("trying to serialize VectorMapEntry with Value type that is not serializable");
 
 			return true;
 		}
 
 		bool parseFromBinaryStream(ObjectInputStream* stream) {
-			E3_ASSERT(false && "trying to deserialize VectorMapEntry with Value type that is not serializable");
+			E3_ABORT("trying to deserialize VectorMapEntry with Value type that is not serializable");
 
 			return false;
 		}
