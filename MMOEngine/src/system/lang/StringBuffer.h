@@ -23,16 +23,14 @@ namespace sys {
   		SF_hex = 1L << 1,
   		SF_uppercase = 1L << 2,
   		SF_endl = 1L << 3,
-		SF_lowercase = 1L << 4,
-		SF_flush = 1L << 5,
-		SF_nouppercase = SF_lowercase
+		SF_nouppercase = 1L << 4,
+		SF_flush = 1L << 5
   	};
 
   	constexpr const StreamFlags dec = SF_dec;
   	constexpr const StreamFlags hex = SF_hex;
   	constexpr const StreamFlags uppercase = SF_uppercase;
   	constexpr const StreamFlags endl = SF_endl;
-	constexpr const StreamFlags lowercase = SF_lowercase;
 	constexpr const StreamFlags nouppercase = SF_nouppercase;
 	constexpr const StreamFlags flush = SF_flush;
 

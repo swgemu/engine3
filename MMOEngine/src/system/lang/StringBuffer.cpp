@@ -380,7 +380,7 @@ StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {
 	case sys::lang::dec:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) hex);
 		break;
-	case sys::lang::lowercase:
+	case sys::lang::nouppercase:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
 		break;
 	case sys::lang::endl:

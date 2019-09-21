@@ -79,6 +79,10 @@ namespace sys {
 			return streamFlags & SF_uppercase;
 		}
 
+		inline StreamType getStreamType() const {
+			return outStream;
+		}
+
 	private:
 		inline const char* upf(const char* lower, const char* upper) const {
 			return doUpperCase() ? upper : lower;

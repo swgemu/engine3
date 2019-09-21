@@ -277,7 +277,7 @@ PrintStream& PrintStream::operator<< (const StreamFlags flags) {
 	case sys::lang::endl:
 		println("");
 		break;
-	case sys::lang::lowercase:
+	case sys::lang::nouppercase:
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
 		break;
 	case sys::lang::flush:

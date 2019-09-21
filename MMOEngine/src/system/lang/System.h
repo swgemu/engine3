@@ -6,17 +6,10 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
-
 #include "mersenne/MersenneTwister.h"
 
 #include "system/platform.h"
-
-typedef time_t utime;
-
-class MTRand;
-
 #include "system/io/PrintStream.h"
-
 #include "system/thread/ThreadLocal.h"
 
 namespace sys {
@@ -34,7 +27,7 @@ namespace sys {
 		static PrintStream err;
 
 		static inline time_t getTime() {
-			return (utime) time(0);
+			return time(0);
 		}
 
 		static void flushStreams() {
