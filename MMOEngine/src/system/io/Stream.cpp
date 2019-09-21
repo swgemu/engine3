@@ -41,8 +41,10 @@ void Stream::copy(Stream* stream, int startoffs) const {
 	int newSize = size() - startoffs;
 
 	stream->reset();
-	stream->writeStream(elementData + startoffs, newSize);
 
+	if (elementData) {
+		stream->writeStream(elementData + startoffs, newSize);
+	}
 
 	/* TA: resetting the offset breaks message->clone() for BaseProtocol
 	 * because it expects the offset to be at the end.
@@ -72,6 +74,8 @@ void Stream::extendSize(int len, bool copyContent) {
 			offset = (offset - oldElementData) + elementData;
 
 		end = offset;
+
+		E3_ASSERT(offset);
 	}
 }
 
@@ -120,7 +124,9 @@ void Stream::removeAll(int newSize, int newIncrement) {
 
 // stream manipulation methods
 void Stream::writeStream(const char *buf, int len) {
-	if (buf != nullptr) {
+	if (len) {
+		E3_ASSERT(buf);
+
 		extendSize(len);
 
 		memcpy(offset - len, buf, len);
@@ -139,12 +145,12 @@ void Stream::writeStream(const Stream* stream, int len) {
 }
 
 void Stream::writeStream(const Stream* stream, int len, int offs) {
+	if (len > stream->size())
+		throw StreamIndexOutOfBoundsException(stream, len);
+
 	if (stream->getBuffer() == nullptr) {
 		return;
 	}
-
-	if (len > stream->size())
-		throw StreamIndexOutOfBoundsException(stream, len);
 
 	if ((elementData + offs + len) > end) {
 		setSize(offs + len);
@@ -154,12 +160,12 @@ void Stream::writeStream(const Stream* stream, int len, int offs) {
 }
 
 void Stream::insertStream(const Stream* stream, int len, int offs) {
+	if (len > stream->size())
+		throw StreamIndexOutOfBoundsException(stream, len);
+
 	if (stream->getBuffer() == nullptr) {
 		return;
 	}
-
-	if (len > stream->size())
-		throw StreamIndexOutOfBoundsException(stream, len);
 
 	if (elementData + offs > end) {
 		writeStream(stream, len);
@@ -180,9 +186,13 @@ void Stream::insertStream(const Stream* stream, int len, int offs) {
 }
 
 void Stream::readStream(char *buf, int len) {
-	shiftOffset(len);
+	if (len) {
+		E3_ASSERT(buf);
 
-	memcpy(buf, offset - len, len);
+		shiftOffset(len);
+
+		memcpy(buf, offset - len, len);
+	}
 }
 
 void Stream::readStream(Stream* stream, int len) {
