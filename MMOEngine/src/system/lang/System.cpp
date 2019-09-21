@@ -7,7 +7,8 @@
 
 ThreadLocal<MTRand*> System::mtrand;
 
-PrintStream System::out;
+PrintStream System::out(stdout);
+PrintStream System::err(stderr);
 
 uint32 System::random(unsigned int bucket) {
    	return getMTRand()->randInt(bucket);

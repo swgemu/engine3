@@ -16,13 +16,16 @@ namespace sys {
   namespace io {
 
 	class PrintStream {
+		typedef decltype(stdout) StreamType;
+
 		StreamFlags streamFlags;
+		StreamType outStream;
 
 	public:
 		constexpr static const char endl = '\n';
 
 	public:
-		PrintStream();
+		PrintStream(StreamType type = stdout);
 
 		void print(char ch);
 		void print(int val);
@@ -76,6 +79,7 @@ namespace sys {
 			return streamFlags & SF_uppercase;
 		}
 
+	private:
 		inline const char* upf(const char* lower, const char* upper) const {
 			return doUpperCase() ? upper : lower;
 		}

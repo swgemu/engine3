@@ -4,82 +4,79 @@
 */
 #include "system/lang/Character.h"
 
-PrintStream::PrintStream() {
-	streamFlags = SF_none;
-	setbuf(stdout, 0);
+PrintStream::PrintStream(StreamType type) : streamFlags(SF_none), outStream(type) {
 }
-
 
 void PrintStream::print(char ch) {
 	if (doUpperCase()) {
 		ch = islower(ch) ? toupper(ch) : ch;
 	}
 
-	printf("%c", ch);
+	fprintf(outStream, "%c", ch);
 }
 
 void PrintStream::print(int val) {
 	if (doHex())
-		printf(upf("%x", "%X"), val);
+		fprintf(outStream, upf("%x", "%X"), val);
 	else
-		printf("%i", val);
+		fprintf(outStream, "%i", val);
 }
 
 void PrintStream::print(uint32 val) {
 	if (doHex())
-		printf(upf("%x", "%X"), val);
+		fprintf(outStream, upf("%x", "%X"), val);
 	else
-		printf("%u", val);
+		fprintf(outStream, "%u", val);
 }
 
 void PrintStream::print(long val) {
 	if (doHex())
-		printf(upf("%lx", "%lX"), val);
+		fprintf(outStream, upf("%lx", "%lX"), val);
 	else
-		printf("%ld", val);
+		fprintf(outStream, "%ld", val);
 }
 
 void PrintStream::flush() {
-	::fflush(stdout);
+	::fflush(outStream);
 }
 
 void PrintStream::print(int64 val) {
 #ifndef PLATFORM_WIN
 	if (doHex())
-		printf(upf("%lldx", "%lldX"), val);
+		fprintf(outStream, upf("%llx", "%llX"), val);
 	else
-		printf("%lld", val);
+		fprintf(outStream, "%lld", val);
 #else
 	if (doHex())
-		printf("%I64dx", val);
+		fprintf(outStream, "%I64dx", val);
 	else
-		printf("%I64d", val);
+		fprintf(outStream, "%I64d", val);
 #endif
 }
 
 void PrintStream::print(uint64 val) {
 #ifndef PLATFORM_WIN
 	if (doHex())
-		printf(upf("%llx", "%llX"), val);
+		fprintf(outStream, upf("%llx", "%llX"), val);
 	else
-		printf("%llu", val);
+		fprintf(outStream, "%llu", val);
 #else
 	if (doHex())
-		printf("%I64ux", val);
+		fprintf(outStream, "%I64ux", val);
 	else
-		printf("%I64u", val);
+		fprintf(outStream, "%I64u", val);
 #endif
 }
 
 void PrintStream::print(float val) {
 	if (doHex())
-		printf(upf("%a", "%A"), val);
+		fprintf(outStream, upf("%a", "%A"), val);
 	else
-		printf(upf("%f", "%F"), val);
+		fprintf(outStream, upf("%f", "%F"), val);
 }
 
 void PrintStream::print(void* val) {
-	printf("%p", val);
+	fprintf(outStream, "%p", val);
 }
 
 void PrintStream::print(const char* str) {
@@ -87,9 +84,9 @@ void PrintStream::print(const char* str) {
 		String upper(str);
 		upper.changeToUpperCase();
 
-		printf("%s", upper.toCharArray());
+		fprintf(outStream, "%s", upper.toCharArray());
 	} else {
-		printf("%s", str);
+		fprintf(outStream, "%s", str);
 	}
 }
 
@@ -98,17 +95,17 @@ void PrintStream::print(const char* str, int length) {
 		String upper(str, length);
 		upper.changeToUpperCase();
 
-		printf("%.*s", upper.length(), upper.toCharArray());
+		fprintf(outStream, "%.*s", upper.length(), upper.toCharArray());
 	} else {
-		printf("%.*s", length, str);
+		fprintf(outStream, "%.*s", length, str);
 	}
 }
 
 void PrintStream::print(const String& str) {
 	if (doUpperCase()) {
-		printf("%s", str.toUpperCase().toCharArray());
+		fprintf(outStream, "%s", str.toUpperCase().toCharArray());
 	} else {
-		printf("%s", str.toCharArray());
+		fprintf(outStream, "%s", str.toCharArray());
 	}
 }
 
@@ -119,79 +116,79 @@ void PrintStream::print(const UnicodeString& val) {
 		str.changeToUpperCase();
 	}
 
-	printf("%s", str.toCharArray());
+	fprintf(outStream, "%s", str.toCharArray());
 }
 
 void PrintStream::println(char ch) {
 	print(ch);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(int val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(uint32 val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(long val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(int64 val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(uint64 val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(float val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(void* val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(const char* str) {
 	print(str);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(const char* str, int length) {
 	print(str, length);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(const String& str) {
 	print(str);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 void PrintStream::println(const UnicodeString& val) {
 	print(val);
 
-	printf("\n");
+	fprintf(outStream, "\n");
 }
 
 PrintStream& PrintStream::operator<<(char ch) {

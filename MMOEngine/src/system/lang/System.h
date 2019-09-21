@@ -30,7 +30,8 @@ namespace sys {
 		static ThreadLocal<MTRand*> mtrand;
 
 	public:
-		static class PrintStream out;
+		static PrintStream out;
+		static PrintStream err;
 
 		static inline time_t getTime() {
 			return (utime) time(0);
