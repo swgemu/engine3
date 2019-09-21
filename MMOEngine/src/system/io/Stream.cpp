@@ -29,6 +29,10 @@ Stream::~Stream() {
 }
 
 Stream* Stream::clone(int startoffs) {
+	if (startoffs) {
+		E3_ASSERT(startoffs < size());
+	}
+
 	int newSize = size() - startoffs;
 	Stream* stream = new Stream(newSize);
 
@@ -38,6 +42,10 @@ Stream* Stream::clone(int startoffs) {
 }
 
 void Stream::copy(Stream* stream, int startoffs) const {
+	if (startoffs) {
+		E3_ASSERT(startoffs < size());
+	}
+
 	int newSize = size() - startoffs;
 
 	stream->reset();
