@@ -124,7 +124,12 @@ namespace engine {
 			DEBUG = 5
 		};
 
-		using LoggerCallback = Function<int(LogLevel, const char*)>;
+		enum CallbackResult {
+			SUCCESS = 0,
+			DONTLOG = 1
+		};
+
+		using LoggerCallback = Function<int(LogLevel level, const char* message)>;
 
 	private:
 		FileWriter* logFile = nullptr;
@@ -328,6 +333,10 @@ namespace engine {
 
 		inline void setLoggerCallback(const LoggerCallback& funct) {
 			callback = new LoggerCallback(funct);
+		}
+
+		inline void clearLoggerCallback() {
+			callback = nullptr;
 		}
 
 		// getters

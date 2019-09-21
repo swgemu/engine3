@@ -22,7 +22,7 @@ namespace sys {
 	class Condition {
 		pthread_mutex_t cmutex;
 		pthread_cond_t cond;
-	
+
 		int signalCount;
 		int waiterCount;
 
@@ -30,7 +30,7 @@ namespace sys {
 		Condition() {
 			//cmutex = PTHREAD_MUTEX_INITIALIZER;
 			pthread_mutex_init(&cmutex, nullptr);
-				
+
 			//cond = PTHREAD_COND_INITIALIZER;
 			pthread_cond_init(&cond, nullptr);
 
@@ -40,16 +40,17 @@ namespace sys {
 
 		virtual ~Condition() {
 			pthread_cond_destroy(&cond);
+			pthread_mutex_destroy(&cmutex);
 		}
-		
+
 		inline void init() {
 			pthread_cond_init(&cond, nullptr);
 		}
-	
+
 		inline int wait(Mutex* m) {
 			return doWait(&(m->mutex));
 		}
-	
+
 		inline int wait() {
 			pthread_mutex_lock(&cmutex);
 
@@ -58,11 +59,11 @@ namespace sys {
 			pthread_mutex_unlock(&cmutex);
 			return res;
 		}
-	
+
 		inline int timedWait(Mutex* m, Time* time) {
 			return doTimedWait(&(m->mutex), time);
 		}
-	
+
 		inline int timedWait(Time* time) {
 			pthread_mutex_lock(&cmutex);
 
@@ -71,28 +72,28 @@ namespace sys {
 			pthread_mutex_unlock(&cmutex);
 			return res;
 		}
-	
+
 		inline void signal(Mutex* m) {
 			doSignal();
 		}
-	
+
 		inline void signal() {
 			pthread_mutex_lock(&cmutex);
 
 			doSignal();
-	
+
 			pthread_mutex_unlock(&cmutex);
 		}
-	
+
 		inline void broadcast(Mutex* m) {
 			doBroadcast();
 		}
-	
+
 		inline void broadcast() {
 			pthread_mutex_lock(&cmutex);
 
 			doBroadcast();
-	
+
 			pthread_mutex_unlock(&cmutex);
 		}
 

@@ -585,6 +585,17 @@ String String::toLowerCase() const {
 	return str;
 }
 
+void String::changeToLowerCase() {
+	auto ptr = begin();
+
+	for (int i = 0; i < count; ++i) {
+		char ch = ptr[i];
+
+		if (isupper(ch))
+			ptr[i] = tolower(ch);
+	}
+}
+
 String String::toUpperCase() const {
 	String str(begin(), count);
 
@@ -596,6 +607,17 @@ String String::toUpperCase() const {
 	}
 
 	return str;
+}
+
+void String::changeToUpperCase() {
+	auto ptr = begin();
+
+	for (int i = 0; i < count; ++i) {
+		char ch = ptr[i];
+
+		if (islower(ch))
+			ptr[i] = toupper(ch);
+	}
 }
 
 String String::trim() const {

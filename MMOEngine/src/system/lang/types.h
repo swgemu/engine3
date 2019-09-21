@@ -12,6 +12,8 @@
 #include <cxxabi.h>
 #endif
 
+#include <type_traits>
+
 #include "String.h"
 
 namespace sys {
@@ -247,5 +249,47 @@ template<> class TypeInfo<double> : public TypeInfoAtomicDouble<double> {};
 template<> class TypeInfo<const char*> : public TypeInfoAtomicPointer<const char*> {};
 template<> class TypeInfo<void*> : public TypeInfoAtomicPointer<void*> {};
 
+namespace SerializationHelpers {
+	template <typename T>
+	class HasSerializationMethodsSFINAE {
+		typedef char success;
+		struct failure { char x[2]; };
+
+		template <class C> static success test(decltype(&C::toBinaryStream)) ;
+		template <class C> static failure test(...);
+
+		template <class C> static success test2(decltype(&C::parseFromBinaryStream)) ;
+		template <class C> static failure test2(...);
+
+	public:
+		enum { all = (sizeof(test<T>(0)) == sizeof(char) && sizeof(test2<T>(0)) == sizeof(char))};
+		enum { toBinary = sizeof(test<T>(0)) == sizeof(char) };
+		enum { fromBinary = sizeof(test2<T>(0)) == sizeof(char) };
+	};
+
+	template<class O, std::enable_if_t<HasSerializationMethodsSFINAE<O>::toBinary
+	   || std::is_fundamental<O>::value, int> = 0>
+	bool toBinary(O* obj, ObjectOutputStream* stream) {
+		return TypeInfo<O>::toBinaryStream(obj, stream);
+	}
+
+	template<class O, std::enable_if_t<!HasSerializationMethodsSFINAE<O>::toBinary
+	   && !std::is_fundamental<O>::value, int> = 0>
+	bool toBinary(O* obj, ObjectOutputStream* stream) {
+		E3_ABORT("calling toBinaryStream on an element that doesnt have it");
+	}
+
+	template<class O, std::enable_if_t<HasSerializationMethodsSFINAE<O>::fromBinary
+	   || std::is_fundamental<O>::value, int> = 0>
+	bool fromBinary(O* obj, ObjectInputStream* stream) {
+		return TypeInfo<O>::parseFromBinaryStream(obj, stream);
+	}
+
+	template<class O, std::enable_if_t<!HasSerializationMethodsSFINAE<O>::fromBinary
+	   && !std::is_fundamental<O>::value, int> = 0>
+	bool fromBinary(O* obj, ObjectInputStream* stream) {
+		E3_ABORT("calling parseFromBinaryStream on an element that doesnt have it");
+	}
+}
 
 #endif /*TYPES_H_*/

@@ -239,7 +239,7 @@ namespace sys {
 	template<class K, class V> V& VectorMap<K, V>::get(const K& key) {
 	 	int pos = find(key);
 
-		if (pos == -1)
+		if (pos == this->npos)
 	 		return nullValue;
 
 	 	VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::getUnsafe(pos);
@@ -249,7 +249,7 @@ namespace sys {
 	template<class K, class V> const V& VectorMap<K, V>::get(const K& key) const {
 		int pos = find(key);
 
-		if (pos == -1)
+		if (pos == this->npos)
 			return nullValue;
 
 		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::getUnsafe(pos);
@@ -258,7 +258,7 @@ namespace sys {
 
 	template<class K, class V> int VectorMap<K, V>::find(const K& key) const {
 		if (ArrayList<VectorMapEntry<K, V> >::elementCount == 0)
-			return -1;
+			return this->npos;
 
 		int l = 0, r = ArrayList<VectorMapEntry<K, V> >::elementCount - 1;
 		int m = 0, cmp = 0;
@@ -277,18 +277,18 @@ namespace sys {
 				r = m - 1;
 		}
 
-		return -1;
+		return this->npos;
 	}
 
 	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) const {
 	 	int idx = find(key);
 
-	 	return idx != -1;
+	 	return idx != this->npos;
 	}
 
 	template<class K, class V> bool VectorMap<K, V>::drop(const K& key) {
 		int pos = find(key);
-		if (pos == -1)
+		if (pos == this->npos)
 			return false;
 
 		SortedVector<VectorMapEntry<K, V> >::remove(pos);

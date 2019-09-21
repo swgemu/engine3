@@ -172,8 +172,7 @@ void Logger::info(const String& msg, bool forcedLog) const {
 }
 
 void Logger::info(const StringBuffer& msg, bool forcedLog) const {
-	String s = msg.toString();
-	info(s, forcedLog);
+	info(msg.toString(), forcedLog);
 }
 
 void Logger::getJSONString(StringBuffer& output, const char* logName, const char* msg, LogLevel type) {

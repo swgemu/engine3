@@ -9,27 +9,32 @@ PrintStream::PrintStream() {
 	setbuf(stdout, 0);
 }
 
+
 void PrintStream::print(char ch) {
+	if (doUpperCase()) {
+		ch = islower(ch) ? toupper(ch) : ch;
+	}
+
 	printf("%c", ch);
 }
 
 void PrintStream::print(int val) {
 	if (doHex())
-		printf("%x", val);
+		printf(upf("%x", "%X"), val);
 	else
 		printf("%i", val);
 }
 
 void PrintStream::print(uint32 val) {
 	if (doHex())
-		printf("%x", val);
+		printf(upf("%x", "%X"), val);
 	else
 		printf("%u", val);
 }
 
 void PrintStream::print(long val) {
 	if (doHex())
-		printf("%ldx", val);
+		printf(upf("%lx", "%lX"), val);
 	else
 		printf("%ld", val);
 }
@@ -41,7 +46,7 @@ void PrintStream::flush() {
 void PrintStream::print(int64 val) {
 #ifndef PLATFORM_WIN
 	if (doHex())
-		printf("%lldx", val);
+		printf(upf("%lldx", "%lldX"), val);
 	else
 		printf("%lld", val);
 #else
@@ -55,7 +60,7 @@ void PrintStream::print(int64 val) {
 void PrintStream::print(uint64 val) {
 #ifndef PLATFORM_WIN
 	if (doHex())
-		printf("%llux", val);
+		printf(upf("%llx", "%llX"), val);
 	else
 		printf("%llu", val);
 #else
@@ -67,7 +72,10 @@ void PrintStream::print(uint64 val) {
 }
 
 void PrintStream::print(float val) {
-	printf("%f", val);
+	if (doHex())
+		printf(upf("%a", "%A"), val);
+	else
+		printf(upf("%f", "%F"), val);
 }
 
 void PrintStream::print(void* val) {
@@ -75,100 +83,115 @@ void PrintStream::print(void* val) {
 }
 
 void PrintStream::print(const char* str) {
-	printf("%s", str);
+	if (doUpperCase()) {
+		String upper(str);
+		upper.changeToUpperCase();
+
+		printf("%s", upper.toCharArray());
+	} else {
+		printf("%s", str);
+	}
 }
 
 void PrintStream::print(const char* str, int length) {
-	printf("%.*s", length, str);
+	if (doUpperCase()) {
+		String upper(str, length);
+		upper.changeToUpperCase();
+
+		printf("%.*s", upper.length(), upper.toCharArray());
+	} else {
+		printf("%.*s", length, str);
+	}
 }
 
 void PrintStream::print(const String& str) {
-	printf("%s", str.toCharArray());
+	if (doUpperCase()) {
+		printf("%s", str.toUpperCase().toCharArray());
+	} else {
+		printf("%s", str.toCharArray());
+	}
 }
 
 void PrintStream::print(const UnicodeString& val) {
 	auto str = val.toString();
 
+	if (doUpperCase()) {
+		str.changeToUpperCase();
+	}
+
 	printf("%s", str.toCharArray());
 }
 
 void PrintStream::println(char ch) {
-	printf("%c\n", ch);
+	print(ch);
+
+	printf("\n");
 }
 
 void PrintStream::println(int val) {
-	if (doHex())
-		printf("%ih", val);
-	else
-		printf("%i", val);
+	print(val);
+
+	printf("\n");
 }
 
 void PrintStream::println(uint32 val) {
-	if (doHex())
-		printf("%uh\n", val);
-	else
-		printf("%u\n", val);
+	print(val);
+
+	printf("\n");
 }
 
 void PrintStream::println(long val) {
-	if (doHex())
-		printf("%ldh\n", val);
-	else
-		printf("%ld\n", val);
+	print(val);
+
+	printf("\n");
 }
 
 void PrintStream::println(int64 val) {
-#ifndef PLATFORM_WIN
-	if (doHex())
-		printf("%lldh", val);
-	else
-		printf("%lld", val);
-#else
-	if (doHex())
-		printf("%I64dh", val);
-	else
-		printf("%I64d", val);
-#endif
+	print(val);
+
+	printf("\n");
 }
 
 void PrintStream::println(uint64 val) {
-#ifndef PLATFORM_WIN
-	if (doHex())
-		printf("%lluh\n", val);
-	else
-		printf("%llu\n", val);
-#else
-	if (doHex())
-		printf("%I64uh\n", val);
-	else
-		printf("%I64u\n", val);
-#endif
+	print(val);
+
+	printf("\n");
 }
 
 void PrintStream::println(float val) {
-	printf("%f\n", val);
+	print(val);
+
+	printf("\n");
 }
 
 void PrintStream::println(void* val) {
-	printf("%p\n", val);
+	print(val);
+
+	printf("\n");
 }
 
 void PrintStream::println(const char* str) {
-	printf("%s\n", str);
+	print(str);
+
+	printf("\n");
 }
 
 void PrintStream::println(const char* str, int length) {
-	printf("%.*s\n", length, str);
+	print(str, length);
+
+	printf("\n");
 }
 
 void PrintStream::println(const String& str) {
-	printf("%s\n", str.toCharArray());
+	print(str);
+
+	printf("\n");
 }
 
 void PrintStream::println(const UnicodeString& val) {
-	auto str = val.toString();
+	print(val);
 
-	printf("%s\n", str.toCharArray());
+	printf("\n");
 }
 
 PrintStream& PrintStream::operator<<(char ch) {

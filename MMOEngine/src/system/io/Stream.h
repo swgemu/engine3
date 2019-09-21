@@ -83,6 +83,13 @@ namespace sys {
 			return end - elementData;
 		}
 
+		inline const char* begin() const {
+			return elementData;
+		}
+
+		inline char* begin() {
+			return elementData;
+		}
 	};
 
   } // namespace io

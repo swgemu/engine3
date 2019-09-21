@@ -75,6 +75,11 @@ namespace sys {
 		inline bool doUpperCase() const {
 			return streamFlags & SF_uppercase;
 		}
+
+		inline const char* upf(const char* lower, const char* upper) const {
+			return doUpperCase() ? upper : lower;
+		}
+
 	};
 
   } // namespace io

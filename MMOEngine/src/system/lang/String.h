@@ -217,8 +217,10 @@ namespace sys {
 		String replaceAll(const String& regex, const String& replacement) const ;
 
 		String toLowerCase() const ;
+		void changeToLowerCase();
 
 		String toUpperCase() const ;
+		void changeToUpperCase();
 
 		String trim() const;
 		String escapeString() const ;

@@ -30,7 +30,7 @@ StringBuffer& StringBuffer::append(char ch) {
 	if (doUpperCase())
 		ch = Character::toUpperCase(ch);
 
-	add(ch);
+	emplace(ch);
 
 	return *this;
 }
@@ -133,6 +133,10 @@ StringBuffer& StringBuffer::append(const char* str, int len) {
 
 StringBuffer& StringBuffer::append(const String& str) {
 	return append(str.toCharArray(), str.length());
+}
+
+StringBuffer& StringBuffer::append(const StringBuffer& str) {
+	return append(str.getBuffer(), str.length());
 }
 
 StringBuffer& StringBuffer::append(const UnicodeString& str) {
@@ -364,6 +368,10 @@ StringBuffer& StringBuffer::operator<< (const String& str) {
 }
 
 StringBuffer& StringBuffer::operator<< (const UnicodeString& str) {
+	return append(str);
+}
+
+StringBuffer& StringBuffer::operator<< (const StringBuffer& str) {
 	return append(str);
 }
 

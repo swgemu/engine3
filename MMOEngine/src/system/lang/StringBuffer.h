@@ -62,6 +62,7 @@ namespace sys {
 		StringBuffer& append(const String& str);
 		StringBuffer& append(const UnicodeString& str);
 		StringBuffer& append(std::size_t val);
+		StringBuffer& append(const StringBuffer& buff);
 
 		void deleteRange(int start, int end);
 
@@ -121,6 +122,22 @@ namespace sys {
 			return ArrayList<char>::begin();
 		}
 
+		inline const char* begin() const {
+			return ArrayList<char>::begin();
+		}
+
+		inline char* begin() {
+			return  ArrayList<char>::begin();
+		}
+
+		inline const char* end() const {
+			return begin() + length();
+		}
+
+		inline char* end() {
+			return begin() + length();
+		}
+
 		StringBuffer& operator<< (char ch);
 		StringBuffer& operator<< (int val);
 		StringBuffer& operator<< (uint32 val);
@@ -135,6 +152,7 @@ namespace sys {
 		StringBuffer& operator<< (const char* str);
 		StringBuffer& operator<< (const String& str);
 		StringBuffer& operator<< (const UnicodeString& str);
+		StringBuffer& operator<< (const StringBuffer& str);
 		StringBuffer& operator<< (const StreamFlags flags);
 	};
 
