@@ -140,6 +140,10 @@ namespace engine {
 			return taskScheduler;
 		}
 
+		inline const TaskScheduler* getTaskScheduler() const {
+			return taskScheduler;
+		}
+
 		inline int getPriroty() const {
 			return priority;
 		}

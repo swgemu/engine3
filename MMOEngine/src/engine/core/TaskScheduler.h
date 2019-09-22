@@ -72,19 +72,19 @@ namespace engine {
 			tasks.repair();
 		}
 
-		inline int getQueueSize() {
+		inline int getQueueSize() const {
 			return tasks.size();
 		}
 
-		inline uint64 getPushedTasks() {
+		inline uint64 getPushedTasks() const {
 			return tasks.getPushedEntries();
 		}
 
-		inline uint64 getPoppedTasks() {
+		inline uint64 getPoppedTasks() const {
 			return tasks.getPoppedEntries();
 		}
 
-		inline uint64 getRemovedTasks() {
+		inline uint64 getRemovedTasks() const {
 			return tasks.getRemovedEntries();
 		}
 

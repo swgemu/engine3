@@ -118,7 +118,6 @@ namespace sys {
 		PriorityQueueEntry* merge1(PriorityQueueEntry* h1, PriorityQueueEntry* h2) const;
 
 		void swapChildren(PriorityQueueEntry* node) const;
-
 		void reclaimMemory(PriorityQueueEntry* node) const;
 	};
 
