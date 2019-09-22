@@ -34,7 +34,7 @@ CommitMasterTransactionThread::~CommitMasterTransactionThread() {
 	}
 }
 
-void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
+void CommitMasterTransactionThread::startWatch(engine::db::berkeley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
 	fatal(workers != nullptr) << "workers is null";
 	fatal(objectsToCollect != nullptr) << "objectsToCollect is null";
 

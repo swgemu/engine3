@@ -18,7 +18,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class TransactionConfig {
 		uint32 transactionFlags;
@@ -116,7 +116,7 @@ namespace engine {
 		}
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

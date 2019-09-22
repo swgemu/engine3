@@ -88,7 +88,7 @@ namespace sys {
 
 				count++;
 			} else {
-				assert(0 && "maximum static map size exceeded");
+				E3_ABORT("maximum static map size exceeded");
 			}
 		}
 

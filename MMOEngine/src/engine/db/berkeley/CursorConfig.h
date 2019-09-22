@@ -18,7 +18,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class CursorConfig {
 		uint32 flags;
@@ -92,7 +92,7 @@ namespace engine {
 
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

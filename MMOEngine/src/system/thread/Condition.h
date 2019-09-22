@@ -15,6 +15,7 @@
 #include <errno.h>
 
 #include "system/lang/Time.h"
+#include "system/thread/Mutex.h"
 
 namespace sys {
   namespace thread {
@@ -60,11 +61,11 @@ namespace sys {
 			return res;
 		}
 
-		inline int timedWait(Mutex* m, Time* time) {
+		inline int timedWait(Mutex* m, const Time* time) {
 			return doTimedWait(&(m->mutex), time);
 		}
 
-		inline int timedWait(Time* time) {
+		inline int timedWait(const Time* time) {
 			pthread_mutex_lock(&cmutex);
 
 			int res = doTimedWait(&cmutex, time);
@@ -116,7 +117,7 @@ namespace sys {
 			return res;
 		}
 
-		inline int doTimedWait(pthread_mutex_t* mutex, Time* time) {
+		inline int doTimedWait(pthread_mutex_t* mutex, const Time* time) {
 			if (signalCount > 0) {
 				--signalCount;
 

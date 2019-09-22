@@ -11,7 +11,7 @@
 
 #include "BTransaction.h"
 
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 TransactionConfig TransactionConfig::DEFAULT;
 

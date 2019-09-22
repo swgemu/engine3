@@ -32,10 +32,10 @@ namespace engine {
 	 enum DatabaseType {LOCALDATABASE = 1, OBJECTDATABASE, INDEXDATABASE};
 
  protected:
-	 ThreadLocal<engine::db::berkley::BerkeleyDatabase*> objectsDatabase;
+	 ThreadLocal<engine::db::berkeley::BerkeleyDatabase*> objectsDatabase;
 	 LocalDatabase* parentDatabase = nullptr;
 
-	 engine::db::berkley::Environment* environment;
+	 engine::db::berkeley::Environment* environment;
 
 	 String databaseFileName;
 
@@ -56,7 +56,7 @@ namespace engine {
 
  protected:
 	 virtual void closeDatabase();
-	 virtual void openDatabase(const engine::db::berkley::DatabaseConfig& dbConfig);
+	 virtual void openDatabase(const engine::db::berkeley::DatabaseConfig& dbConfig);
 	 virtual void openDatabase();
 
 	 const static int CHUNK_SIZE = 16384;
@@ -70,21 +70,21 @@ namespace engine {
 	 LocalDatabase(engine::db::DatabaseManager* dbEnv, const String& dbFileName, bool compression, DatabaseType databaseType = LOCALDATABASE);
 	 virtual ~LocalDatabase();
 
-	 int getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
+	 int getData(Stream* inputKey, ObjectInputStream* objectData, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED, bool compressed = false);
 
 	 //incoming streams will be deleted
-	 int putData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* masterTransaction = nullptr);
-	 int deleteData(Stream* inputKey, engine::db::berkley::Transaction* masterTransaction = nullptr);
+	 int putData(Stream* inputKey, Stream* stream, engine::db::berkeley::Transaction* masterTransaction = nullptr);
+	 int deleteData(Stream* inputKey, engine::db::berkeley::Transaction* masterTransaction = nullptr);
 
 	 //incoming streams wont be deleted
-	 int tryPutData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* transaction);
-	 int tryDeleteData(Stream* inputKey, engine::db::berkley::Transaction* transaction);
+	 int tryPutData(Stream* inputKey, Stream* stream, engine::db::berkeley::Transaction* transaction);
+	 int tryDeleteData(Stream* inputKey, engine::db::berkeley::Transaction* transaction);
 
 	 int sync();
 
 	 int truncate();
 
-	 void compressDatabaseEntries(engine::db::berkley::Transaction* transaction);
+	 void compressDatabaseEntries(engine::db::berkeley::Transaction* transaction);
 
 	 void associate(LocalDatabase* secondaryDB, int (*callback)(DB *secondary,
 				     const DBT *key, const DBT *data, DBT *result));
@@ -110,7 +110,7 @@ namespace engine {
 
 	 void reloadParentAssociation();
 
-	 engine::db::berkley::BerkeleyDatabase* getDatabaseHandle();
+	 engine::db::berkeley::BerkeleyDatabase* getDatabaseHandle();
 
 	 inline void getDatabaseName(String& name) const {
 	 	name = getDatabaseName();
@@ -132,31 +132,31 @@ namespace engine {
 
  class LocalDatabaseIterator : public Logger {
  protected:
-	 engine::db::berkley::Cursor* cursor;
-	 engine::db::berkley::BerkeleyDatabase* databaseHandle;
+	 engine::db::berkeley::Cursor* cursor;
+	 engine::db::berkeley::BerkeleyDatabase* databaseHandle;
 
-	 engine::db::berkley::DatabaseEntry key, data;
+	 engine::db::berkeley::DatabaseEntry key, data;
 
 	 LocalDatabase* localDatabase;
 
  public:
-	 LocalDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database);
-	 LocalDatabaseIterator(LocalDatabase* database, const berkley::CursorConfig& config = berkley::CursorConfig::DEFAULT, bool useCurrentThreadTransaction = false);
-	 LocalDatabaseIterator(engine::db::berkley::BerkeleyDatabase* databaseHandle);
+	 LocalDatabaseIterator(engine::db::berkeley::Transaction* transaction, LocalDatabase* database);
+	 LocalDatabaseIterator(LocalDatabase* database, const berkeley::CursorConfig& config = berkeley::CursorConfig::DEFAULT, bool useCurrentThreadTransaction = false);
+	 LocalDatabaseIterator(engine::db::berkeley::BerkeleyDatabase* databaseHandle);
 	 ~LocalDatabaseIterator();
 
 	 void resetIterator();
 
-	 bool getNextKeyAndValue(ObjectInputStream* keyStream, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_COMMITED, bool compressed = false);
-	 bool getNextValue(ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
-	 bool getNextKey(ObjectInputStream* key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 bool getNextKeyAndValue(ObjectInputStream* keyStream, ObjectInputStream* data, uint32 lockMode = berkeley::LockMode::READ_COMMITED, bool compressed = false);
+	 bool getNextValue(ObjectInputStream* data, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED);
+	 bool getNextKey(ObjectInputStream* key, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED);
 
-	 bool getPrevKey(ObjectInputStream* key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
-	 bool getPrevKeyAndValue(ObjectInputStream* keyStream, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
-	 bool getLastKey(ObjectInputStream* key, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 bool getPrevKey(ObjectInputStream* key, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED);
+	 bool getPrevKeyAndValue(ObjectInputStream* keyStream, ObjectInputStream* data, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED);
+	 bool getLastKey(ObjectInputStream* key, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED);
 
-	 bool getSearchKey(ObjectOutputStream* key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
-	 bool getSearchKeyRange(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode = berkley::LockMode::READ_UNCOMMITED);
+	 bool getSearchKey(ObjectOutputStream* key, ObjectInputStream* data, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED);
+	 bool getSearchKeyRange(ObjectInputStream* key, ObjectInputStream* data, uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED);
 
 	 //data is freed
 	 int putCurrent(ObjectOutputStream* data);

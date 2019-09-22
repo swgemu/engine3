@@ -62,7 +62,7 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
 
-	assert(sendLockFreeBuffer->is_lock_free());
+	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -89,7 +89,7 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
 
-	assert(sendLockFreeBuffer->is_lock_free());
+	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
@@ -122,7 +122,7 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
 
-	assert(sendLockFreeBuffer->is_lock_free());
+	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);

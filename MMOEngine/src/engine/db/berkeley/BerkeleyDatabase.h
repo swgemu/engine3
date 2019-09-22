@@ -23,7 +23,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class Environment;
 	class Cursor;
@@ -95,15 +95,19 @@ namespace engine {
 		 */
 		uint64 count(bool forceCalculation = false, Transaction* txn = nullptr);
 
-		inline String& getDatabaseFile() {
+		inline const String& getDatabaseFile() const {
 			return filename;
 		}
 
-		inline String& getDatabaseName() {
+		inline const String& getDatabaseName() const {
 			return databaseName;
 		}
 
 		inline DatabaseConfig& getDatabaseConfig() {
+			return databaseConfig;
+		}
+
+		inline const DatabaseConfig& getDatabaseConfig() const {
 			return databaseConfig;
 		}
 
@@ -118,7 +122,7 @@ namespace engine {
 		friend class Environment;
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

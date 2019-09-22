@@ -84,7 +84,7 @@ namespace engine {
 
 	class CurrentTransaction  {
 		Vector<UpdateObject> updateObjects;
-		engine::db::berkley::Environment* databaseEnvironment;
+		engine::db::berkeley::Environment* databaseEnvironment;
 
 
 		//stores a references for an object so we dont delete it in the transaction
@@ -93,7 +93,7 @@ namespace engine {
 		uint64 currentSize;
 
 	public:
-		CurrentTransaction(engine::db::berkley::Environment* env) {
+		CurrentTransaction(engine::db::berkeley::Environment* env) {
 			databaseEnvironment = env;
 			currentSize = 0;
 		}
@@ -134,13 +134,13 @@ namespace engine {
 
 	class DatabaseManager : public Logger, public Mutex, public Object {
 	protected:
-		engine::db::berkley::Environment* databaseEnvironment;
+		engine::db::berkeley::Environment* databaseEnvironment;
 
 		VectorMap<uint16, LocalDatabase*> databases;
 		VectorMap<String, uint16> nameDirectory;
 
 		ThreadLocal<CurrentTransaction*> localTransaction;
-		ThreadLocal<engine::db::berkley::Transaction*> readLocalTransaction;
+		ThreadLocal<engine::db::berkeley::Transaction*> readLocalTransaction;
 
 		LocalDatabase* databaseDirectory;
 
@@ -195,14 +195,14 @@ namespace engine {
 
 		void getDatabaseName(uint16 tableID, String& name);
 
-		void commitLocalTransaction(engine::db::berkley::Transaction* transaction = nullptr);
+		void commitLocalTransaction(engine::db::berkeley::Transaction* transaction = nullptr);
 		void startLocalTransaction();
 		void abortLocalTransaction();
 
 		int failCheck();
 
-		engine::db::berkley::Transaction* startTransaction(const engine::db::berkley::TransactionConfig& config = berkley::TransactionConfig::DEFAULT);
-		int commitTransaction(engine::db::berkley::Transaction* transaction);
+		engine::db::berkeley::Transaction* startTransaction(const engine::db::berkeley::TransactionConfig& config = berkeley::TransactionConfig::DEFAULT);
+		int commitTransaction(engine::db::berkeley::Transaction* transaction);
 		/**
 		 * Stores a references to an object while the transaction is alive
 		 * References will be released when the local transaction is commited
@@ -210,16 +210,16 @@ namespace engine {
 		void addTemporaryObject(Object* object);
 
 		CurrentTransaction* getCurrentTransaction();
-		engine::db::berkley::Transaction* getReadLocalTransaction(bool abortPrevious = false);
+		engine::db::berkeley::Transaction* getReadLocalTransaction(bool abortPrevious = false);
 
 		void updateLastUsedObjectID(uint64 id);
 		uint64 getLastUsedObjectID();
 
 		void updateCurrentVersion(uint64 version);
 
-		int compressDatabase(const String& name, engine::db::berkley::Transaction* transaction);
+		int compressDatabase(const String& name, engine::db::berkeley::Transaction* transaction);
 
-		void setManagedObjectsWithHashCodeMembersFlag(engine::db::berkley::Transaction* transaction);
+		void setManagedObjectsWithHashCodeMembersFlag(engine::db::berkeley::Transaction* transaction);
 		void convertDatabasesToHashCodeMembers();
 
 		inline uint64 getCurrentVersion() {
@@ -248,7 +248,7 @@ namespace engine {
 			return databases.size();
 		}
 
-		inline engine::db::berkley::Environment* getBerkeleyEnvironment() {
+		inline engine::db::berkeley::Environment* getBerkeleyEnvironment() {
 			return databaseEnvironment;
 		}
 

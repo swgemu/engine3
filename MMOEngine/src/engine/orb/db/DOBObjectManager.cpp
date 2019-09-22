@@ -446,7 +446,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	objectUpdateInProcess = true;
 
-	engine::db::berkley::Transaction* transaction = nullptr;
+	engine::db::berkeley::Transaction* transaction = nullptr;
 
 	if (rootBroker) {
 		databaseManager->updateLastUsedObjectID(getNextFreeObjectID());
@@ -509,7 +509,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 }
 
 int DOBObjectManager::executeUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete,
-		Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkley::Transaction* transaction) {
+		Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkeley::Transaction* transaction) {
 	totalUpdatedObjects = 0;
 	totalActuallyChangedObjects = 0;
 	//commitedObjects.removeAll(localObjectDirectory.getSize(), 1000);
@@ -536,7 +536,7 @@ int DOBObjectManager::executeUpdateThreads(Vector<DistributedObject*>* objectsTo
 }
 
 void DOBObjectManager::dispatchUpdateModifiedObjectsThread(int& currentThread, int& lastThreadCount,
-		int& objectsToUpdateCount, engine::db::berkley::Transaction* transaction,
+		int& objectsToUpdateCount, engine::db::berkeley::Transaction* transaction,
 		Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>* objectsToDelete) {
 	int threadIndex = currentThread++;
 
@@ -572,7 +572,7 @@ void DOBObjectManager::SynchronizedCommitedObjects::put(DistributedObject* obj) 
 	objects.emplace(obj);
 }
 
-int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkley::Transaction* transaction,
+int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkeley::Transaction* transaction,
 		Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
 		Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
 

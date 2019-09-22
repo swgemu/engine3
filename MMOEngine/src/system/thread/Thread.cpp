@@ -86,6 +86,11 @@ Thread::~Thread() {
 		delete modifiedObjects;
 		modifiedObjects = nullptr;
 	}
+
+	if (deletedFromDatabaseObjects) {
+		delete deletedFromDatabaseObjects;
+		deletedFromDatabaseObjects = nullptr;
+	}
 }
 
 void Thread::start() {
@@ -199,7 +204,7 @@ void Thread::sleep(uint64 millis, uint64 nanos) {
 		nanosleep(&tm, &trem);
 	#else
 		//TODO find appropriate method for win32
-		assert(0 && "Method not supported in windows");
+		E3_ABORT("Method not supported in windows");
 		Sleep(millis);
 	#endif
 }

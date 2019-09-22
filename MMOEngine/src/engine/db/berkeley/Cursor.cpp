@@ -15,7 +15,7 @@
 #include "DatabaseEntry.h"
 #include "engine/db/berkeley/Environment.h"
 
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 CursorConfig CursorConfig::DEFAULT;
 

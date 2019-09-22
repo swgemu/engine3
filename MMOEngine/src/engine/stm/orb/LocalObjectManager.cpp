@@ -37,9 +37,9 @@ void LocalObjectManager::commitObjectChanges() {
 		objectBroker->destroyObject(object);
 	}*/
 
-	info("deployed " + String::valueOf(localObjectDirectory.size())
-			+ ", undeployed " + String::valueOf(undeployedObjects.size())
-			+ ", destroyed " + String::valueOf(destroyedObjects.size()));
+	info() << "deployed " << localObjectDirectory.size()
+			<< ", undeployed " << undeployedObjects.size()
+			<< ", destroyed " << destroyedObjects.size();
 
 	clearObjectChanges();
 }
@@ -73,7 +73,8 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 	assert(!objectName.isEmpty());
 
 	if (lookUp(objectName).get() != nullptr) {
-		warning("object \'" + objectName + "\' (0x" + String::valueOf(obj) + ") already deployed");
+		warning() << "object \'" << objectName <<
+		       	"\' (0x" << obj << ") already deployed";
 
 		/*traces.get(obj->_getObjectID())->print();
 
@@ -88,12 +89,12 @@ void LocalObjectManager::deploy(const String& name, DistributedObjectStub* obj) 
 		//traces.put(obj->_getObjectID(), new StackTrace());
 
 		bool res = localNamingDirectory.put(objectName, obj) == nullptr;
-		assert(res);
+		fatal(res, "localNamingDirectory already contains objectName");
 
 		bool res2 = localObjectDirectory.put(obj->_getObjectID(), obj) == nullptr;
-		assert(res2);
+		fatal(res2, "localObjectDirectory already contains the object id");
 
-		info("object " + objectName + " deployed");
+		info() << "object " << objectName << " deployed";
 
 		undeployedObjects.drop(obj);
 	}

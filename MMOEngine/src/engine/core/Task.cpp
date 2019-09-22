@@ -30,7 +30,7 @@ Task::Task(const Time& time) : PriorityQueueEntry() {
 }
 
 Task::~Task() {
-	assert(!isQueued());
+	E3_ASSERT(!isQueued());
 
 #ifdef TRACE_TASKS
 	if (scheduleTrace != nullptr) {

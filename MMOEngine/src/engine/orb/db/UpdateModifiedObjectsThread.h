@@ -36,7 +36,7 @@ namespace engine {
 		AtomicBoolean waitingToStart;
 		AtomicBoolean loadedDBHandles;
 
-		engine::db::berkley::Transaction* transaction;
+		engine::db::berkeley::Transaction* transaction;
 
 		int cpu;
 
@@ -56,7 +56,7 @@ namespace engine {
 			this->objectsToDelete = objectsToDelete;
 		}
 
-		inline void setTransaction(engine::db::berkley::Transaction* trans) {
+		inline void setTransaction(engine::db::berkeley::Transaction* trans) {
 			transaction = trans;
 		}
 

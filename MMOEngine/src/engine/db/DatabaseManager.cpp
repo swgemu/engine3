@@ -6,7 +6,7 @@
 #include "engine/core/Core.h"
 
 using namespace engine::db;
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 void BerkeleyCheckpointTask::run() {
 	manager->checkpoint();
@@ -414,7 +414,7 @@ IndexDatabase* DatabaseManager::loadIndexDatabase(const String& name, bool creat
 	return dynamic_cast<IndexDatabase*>(instantiateDatabase(name, create, uniqueID, LocalDatabase::DatabaseType::INDEXDATABASE, compression));
 }
 
-engine::db::berkley::Transaction* DatabaseManager::getReadLocalTransaction(bool abortPrevious) {
+engine::db::berkeley::Transaction* DatabaseManager::getReadLocalTransaction(bool abortPrevious) {
 	if (!loaded)
 		return nullptr;
 
@@ -512,13 +512,13 @@ void DatabaseManager::abortLocalTransaction() {
 	updateObjects->removeAll();
 }
 
-engine::db::berkley::Transaction* DatabaseManager::startTransaction(const engine::db::berkley::TransactionConfig& config) {
+engine::db::berkeley::Transaction* DatabaseManager::startTransaction(const engine::db::berkeley::TransactionConfig& config) {
 	Transaction* transaction = databaseEnvironment->beginTransaction(nullptr, config);
 
 	return transaction;
 }
 
-int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transaction) {
+int DatabaseManager::commitTransaction(engine::db::berkeley::Transaction* transaction) {
 	int commitRet;
 
 	/*if ((commitRet = transaction->commitNoSync()) != 0) {
@@ -534,7 +534,7 @@ int DatabaseManager::commitTransaction(engine::db::berkley::Transaction* transac
 	return commitRet;
 }
 
-void DatabaseManager::commitLocalTransaction(engine::db::berkley::Transaction* masterTransaction) {
+void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* masterTransaction) {
 	//printf("commiting local transaction\n");
 
 	if (!loaded)
@@ -738,7 +738,7 @@ void DatabaseManager::updateCurrentVersion(uint64 version) {
 	databaseDirectory->putData(stream, idData);
 }
 
-void DatabaseManager::setManagedObjectsWithHashCodeMembersFlag(engine::db::berkley::Transaction* transaction) {
+void DatabaseManager::setManagedObjectsWithHashCodeMembersFlag(engine::db::berkeley::Transaction* transaction) {
 	if (managedObjectsWithHashCodeMembers)
 		return;
 
@@ -757,7 +757,7 @@ void DatabaseManager::setManagedObjectsWithHashCodeMembersFlag(engine::db::berkl
 	managedObjectsWithHashCodeMembers = true;
 }
 
-int DatabaseManager::compressDatabase(const String& name, engine::db::berkley::Transaction* transaction) {
+int DatabaseManager::compressDatabase(const String& name, engine::db::berkeley::Transaction* transaction) {
 	String unconstName = name;
 
 	uint16 id = nameDirectory.get(name);

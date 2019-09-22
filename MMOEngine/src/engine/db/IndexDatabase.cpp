@@ -25,9 +25,9 @@ IndexDatabase::IndexDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
  bool IndexDatabaseIterator::setKeyAndGetValue(uint64 key, uint64& primaryKey, ObjectInputStream* data,
 	       uint32 lockMode, bool compressed) {
 	try {
-		Locker locker(&berkley::Environment::guard);
+		Locker locker(&berkeley::Environment::guard);
 
-		berkley::DatabaseEntry searchKey;
+		berkeley::DatabaseEntry searchKey;
 		searchKey.setData(&key, sizeof(uint64));
 
 		if (cursor->pGetSet(&searchKey, &this->key, &this->data, lockMode) != 0) {
@@ -59,9 +59,9 @@ IndexDatabase::IndexDatabase(DatabaseManager* dbEnv, const String& dbFileName, b
  bool IndexDatabaseIterator::getNextKeyAndValue(uint64 key, uint64& primaryKey, ObjectInputStream* data,
 	       uint32 lockMode, bool compressed) {
 	try {
-		Locker locker(&berkley::Environment::guard);
+		Locker locker(&berkeley::Environment::guard);
 
-		berkley::DatabaseEntry searchKey;
+		berkeley::DatabaseEntry searchKey;
 		searchKey.setData(&key, sizeof(uint64));
 
 		if (cursor->pGetNextDup(&searchKey, &this->key, &this->data, lockMode) != 0) {

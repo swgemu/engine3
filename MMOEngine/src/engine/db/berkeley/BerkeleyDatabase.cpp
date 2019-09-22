@@ -17,7 +17,7 @@
 
 #include "engine/core/Core.h"
 
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 CheckpointConfig CheckpointConfig::DEFAULT;
 DatabaseConfig DatabaseConfig::DEFAULT;

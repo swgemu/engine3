@@ -12,9 +12,11 @@
 #ifndef CHECKPOINTCONFIG_H_
 #define CHECKPOINTCONFIG_H_
 
+#include "system/lang.h"
+
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class CheckpointConfig {
 		uint32 KBytes;
@@ -56,7 +58,7 @@ namespace engine {
 		}
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

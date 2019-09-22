@@ -20,7 +20,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class Transaction {
 	protected:
@@ -67,7 +67,7 @@ namespace engine {
 
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

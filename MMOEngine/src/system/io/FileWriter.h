@@ -68,7 +68,7 @@ namespace sys {
 
 			int written = snprintf(buf, sizeof(buf), "%i", val);
 
-			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+			E3_ASSERT(written >= 0 && written < static_cast<int>(sizeof(buf)));
 
 			return write(buf, written);
 		}
@@ -78,7 +78,7 @@ namespace sys {
 
 			int written = snprintf(buf, sizeof(buf), "%u", val);
 
-			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+			E3_ASSERT(written >= 0 && written < static_cast<int>(sizeof(buf)));
 
 			return write(buf, written);
 		}
@@ -88,7 +88,7 @@ namespace sys {
 
 			int written = snprintf(buf, sizeof(buf), "%ld", val);
 
-			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+			E3_ASSERT(written >= 0 && written < static_cast<int>(sizeof(buf)));
 
 			return write(buf, written);
 		}
@@ -98,7 +98,7 @@ namespace sys {
 
 			int written = sprintf(buf, "%lld", (long long) val);
 
-			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+			E3_ASSERT(written >= 0 && written < static_cast<int>(sizeof(buf)));
 
 			return write(buf, written);
 		}
@@ -108,7 +108,7 @@ namespace sys {
 
 			int written = snprintf(buf, sizeof(buf), "%llu", (unsigned long long) val);
 
-			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+			E3_ASSERT(written >= 0 && written < static_cast<int>(sizeof(buf)));
 
 			return write(buf, written);
 		}
@@ -118,7 +118,7 @@ namespace sys {
 
 			int written = snprintf(buf, sizeof(buf), "%f", val);
 
-			assert(written >= 0 && written < static_cast<int>(sizeof(buf)));
+			E3_ASSERT(written >= 0 && written < static_cast<int>(sizeof(buf)));
 
 			return write(buf, written);
 		}

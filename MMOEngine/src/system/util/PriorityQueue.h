@@ -35,7 +35,7 @@ namespace sys {
 			//enqueued = false;
 		}
 
-		virtual int compareTo(PriorityQueueEntry* node) = 0;
+		virtual int compareTo(const PriorityQueueEntry* node) const = 0;
 
 		inline void clear() {
 			parentNode = nullptr;
@@ -54,7 +54,7 @@ namespace sys {
 			enqueued = false;
 		}
 
-		inline bool isQueued() {
+		inline bool isQueued() const {
 			return enqueued.load(std::memory_order_relaxed);
 		}
 
@@ -82,7 +82,7 @@ namespace sys {
 		void merge(PriorityQueue& heap);
 
 		const PriorityQueueEntry* peak() const;
-		const PriorityQueueEntry* poll();
+		PriorityQueueEntry* poll();
 
 		bool remove(PriorityQueueEntry* node);
 

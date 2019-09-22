@@ -139,14 +139,14 @@ namespace engine {
 		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
 
 		void dispatchUpdateModifiedObjectsThread(int& currentThread, int& lastThreadCount,
-				int& objectsToUpdateCount, engine::db::berkley::Transaction* transaction,
+				int& objectsToUpdateCount, engine::db::berkeley::Transaction* transaction,
 				Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>* objectsToDelete);
 
 
 		int executeUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete,
-				Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkley::Transaction* transaction);
+				Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkeley::Transaction* transaction);
 
-		int runObjectsMarkedForUpdate(engine::db::berkley::Transaction* transaction,
+		int runObjectsMarkedForUpdate(engine::db::berkeley::Transaction* transaction,
 				Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
 				Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount);
 

@@ -18,7 +18,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class BerkeleyDatabase;
 	class DatabaseEntry;
@@ -245,7 +245,7 @@ namespace engine {
 
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

@@ -20,7 +20,7 @@
 #include <sys/ipc.h>
 #include <sys/types.h>
 
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 EnvironmentConfig EnvironmentConfig::DEFAULT;
 EnvironmentMutex Environment::guard;

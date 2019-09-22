@@ -234,7 +234,7 @@ namespace sys {
 
 				return time;
 			#else
-				assert(0 && "Method not supported in windows");
+				E3_ABORT("Method not supported in windows");
 				return 0;
 			#endif
 		}

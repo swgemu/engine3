@@ -28,7 +28,7 @@ IOProcessor::~IOProcessor() {
 
 void IOProcessor::initialize(int queueLength) {
 #ifdef PLATFORM_LINUX
-	assert(epollFileDescritptor == -1);
+	E3_ASSERT(epollFileDescritptor == -1);
 
 	epollQueueLength = queueLength;
 

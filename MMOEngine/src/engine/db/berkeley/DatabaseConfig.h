@@ -18,7 +18,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class LockMode {
 	public:
@@ -122,7 +122,7 @@ namespace engine {
 
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

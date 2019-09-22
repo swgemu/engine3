@@ -384,7 +384,7 @@ String String::valueOf(int val) {
 
 	int written = snprintf(buf, 20, "%i", val);
 
-	assert(written >= 0 && written < 20);
+	E3_ASSERT(written >= 0 && written < 20);
 
 	return String(buf, written);
 }
@@ -398,7 +398,7 @@ String String::valueOf(uint32 val) {
 
 	int written = snprintf(buf, 20, "%u", val);
 
-	assert(written >= 0 && written < 20);
+	E3_ASSERT(written >= 0 && written < 20);
 
 	return String(buf, written);
 }
@@ -432,7 +432,7 @@ String String::valueOf(float val) {
 
 	int written = snprintf(buf, 40, "%g", val);
 
-	assert(written >= 0 && written < 40);
+	E3_ASSERT(written >= 0 && written < 40);
 
 	return String(buf, written);
 }
@@ -442,7 +442,7 @@ String String::valueOf(double val) {
 
 	int written = snprintf(buf, 40, "%g", val);
 
-	assert(written >= 0 && written < 40);
+	E3_ASSERT(written >= 0 && written < 40);
 
 	return String(buf, written);
 }
@@ -460,7 +460,7 @@ String String::valueOf(const void* val) {
 
 	int written = snprintf(buf, 20, "%p", val);
 
-	assert(written >= 0 && written < 20);
+	E3_ASSERT(written >= 0 && written < 20);
 
 	return String(buf, written);
 }
@@ -470,7 +470,7 @@ String String::hexvalueOf(int val) {
 
 	int written = snprintf(buf, 20, "%x", val);
 
-	assert(written >= 0 && written < 20);
+	E3_ASSERT(written >= 0 && written < 20);
 
 	return String(buf, written);
 }
@@ -484,7 +484,7 @@ String String::hexvalueOf(uint32 val) {
 
 	int written = snprintf(buf, 20, "%x", val);
 
-	assert(written >= 0 && written < 20);
+	E3_ASSERT(written >= 0 && written < 20);
 
 	return String(buf, written);
 }
@@ -498,7 +498,7 @@ String String::hexvalueOf(int64 val) {
 	int written = snprintf(buf, 32, "%llx", val);
 #endif
 
-	assert(written >= 0 && written < 32);
+	E3_ASSERT(written >= 0 && written < 32);
 
 	return String(buf, written);
 }
@@ -512,7 +512,7 @@ String String::hexvalueOf(uint64 val) {
 	int written = snprintf(buf, 32, "%llx", val);
 #endif
 
-	assert(written >= 0 && written < 32);
+	E3_ASSERT(written >= 0 && written < 32);
 
 	return String(buf, written);
 }

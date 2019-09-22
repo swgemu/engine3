@@ -83,7 +83,7 @@ void RequestServantMessage::handleReply(Packet* message) {
 		if (obj != nullptr) {
 			DistributedObjectBroker::instance()->createObjectServant(className, obj, true);
 
-			assert(obj->_getImplementation());
+			E3_ASSERT(obj->_getImplementation());
 
 			Locker locker(obj);
 

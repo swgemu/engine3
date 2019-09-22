@@ -37,8 +37,8 @@ namespace engine {
 			cameFrom = nullptr;
 		}
 
-		int compareTo(PriorityQueueEntry* node) {
-			AStarNode<Node, IDType>* cmp = (AStarNode<Node, IDType>*)node;
+		int compareTo(const PriorityQueueEntry* node) const {
+			const AStarNode<Node, IDType>* cmp = static_cast<const AStarNode<Node, IDType>*>(node);
 
 			if (getF() < cmp->getF())
 				return 1;

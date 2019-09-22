@@ -25,7 +25,7 @@ namespace engine {
 		Mutex blockMutex;
 		Condition waitCondition;
 
-		engine::db::berkley::Transaction* transaction;
+		engine::db::berkeley::Transaction* transaction;
 		Vector<UpdateModifiedObjectsThread*>* threads;
 		Vector<DistributedObject* >* objectsToDeleteFromRam;
 		int numberOfThreads;
@@ -40,7 +40,7 @@ namespace engine {
 
 		void shutdown();
 
-		void startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect);
+		void startWatch(engine::db::berkeley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect);
 
 		void commitData() NO_THREAD_SAFETY_ANALYSIS;
 

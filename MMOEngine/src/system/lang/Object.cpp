@@ -56,7 +56,7 @@ Object::~Object() NO_THREAD_SAFETY_ANALYSIS {
 	auto counters = referenceCounters;
 
 	if (counters != nullptr) {
-		assert((counters->getStrongReferenceCount() % 2) != 0);
+		E3_ASSERT((counters->getStrongReferenceCount() % 2) != 0);
 
 		if (counters->decrementAndTestAndSetWeakCount() != 0) {
 			referenceCounters = nullptr;

@@ -81,7 +81,8 @@ namespace sys {
 
 #ifdef CXX11_COMPILER
 		Object(Object&& o) : referenceCounters(nullptr) {
-			assert(o.referenceCounters == nullptr); // We cant move objects that are referenced
+			E3_ASSERT(o.referenceCounters == nullptr
+					&& "Cant move objects that are referenced");
 
 #ifdef TRACE_REFERENCES
 			referenceHolders = nullptr;
@@ -103,13 +104,14 @@ namespace sys {
 			if (this == &o)
 				return *this;
 
-			assert(o.referenceCounters == nullptr);
+			E3_ASSERT(o.referenceCounters == nullptr
+					&& "Cant move objects that are referenced");
 
 			return *this;
 		}
 #endif
 		virtual Object* clone() {
-			assert(0 && "clone method not declared");
+			E3_ABORT("clone method not declared");
 
 			return nullptr;
 		}

@@ -15,9 +15,8 @@
 #include <chrono>
 #endif
 
-
 using namespace engine::db;
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 ObjectDatabase::ObjectDatabase(DatabaseManager* dbEnv, const String& dbFileName, bool compression, DatabaseType databaseType)
 	: LocalDatabase(dbEnv, dbFileName, compression, databaseType) {
@@ -193,7 +192,7 @@ int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, ui
 	return ret;
 }
 
-int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
+int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkeley::Transaction* transaction) {
 	//Locker locker(&Environment::guard);
 
 	int ret = -1;
@@ -220,7 +219,7 @@ int ObjectDatabase::tryPutData(uint64 objKey, Stream* stream, engine::db::berkle
 	return ret;
 }
 
-int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transaction* transaction) {
+int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkeley::Transaction* transaction) {
 	//Locker locker(&Environment::guard);
 
 	int ret = -1;
@@ -233,7 +232,7 @@ int ObjectDatabase::tryDeleteData(uint64 objKey, engine::db::berkley::Transactio
 	return ret;
 }
 
-int ObjectDatabase::putData(uint64 objKey, Stream* objectData, Object* obj, engine::db::berkley::Transaction* masterTransaction) {
+int ObjectDatabase::putData(uint64 objKey, Stream* objectData, Object* obj, engine::db::berkeley::Transaction* masterTransaction) {
 	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
@@ -250,7 +249,7 @@ int ObjectDatabase::putData(uint64 objKey, Stream* objectData, Object* obj, engi
 	return 0;
 }
 
-int ObjectDatabase::deleteData(uint64 objKey, engine::db::berkley::Transaction* masterTransaction) {
+int ObjectDatabase::deleteData(uint64 objKey, engine::db::berkeley::Transaction* masterTransaction) {
 	ObjectOutputStream* key = new ObjectOutputStream(8, 8);
 	TypeInfo<uint64>::toBinaryStream(&objKey, key);
 
@@ -290,7 +289,7 @@ bool ObjectDatabaseIterator::getNextKeyAndValue(uint64& key, ObjectInputStream* 
 }
 
 
-int ObjectDatabaseIterator::getNextKeyAndValueMultiple(berkley::DatabaseEntry& data, uint32 lockMode) {
+int ObjectDatabaseIterator::getNextKeyAndValueMultiple(berkeley::DatabaseEntry& data, uint32 lockMode) {
 	int res = 0;
 
 	Locker locker(&Environment::guard);

@@ -27,7 +27,7 @@ TimedTaskQueue::TimedTaskQueue() : PriorityQueue(), Condition(), Logger("TaskQue
 TimedTaskQueue::~TimedTaskQueue() {
 	delete condMutex;
 
-	while (Task* task = (Task*) poll()) {
+	while (Task* task = static_cast<Task*>(poll())) {
 		task->release();
 	}
 }
@@ -75,9 +75,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		remove(task, false);
 
 	#ifdef TRACE_TASKS
-		StringBuffer s1;
-		s1 << "adding task " << task->toStringData();
-		info(s1);
+		info() << "adding task " << task->toStringData();
 	#endif
 
 	task->acquire();
@@ -90,13 +88,10 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		return true;
 	}
 
-
 	PriorityQueue::add(task);
 
 	#ifdef TRACE_TASKS
-		StringBuffer s;
-		s << "added task " << task->toStringData();
-		info(s);
+		info() << "added task " << task->toStringData();
 	#endif
 
 	if (PriorityQueue::peak() == task && waitingForTask) {
@@ -117,7 +112,7 @@ bool TimedTaskQueue::addAll(PriorityQueue& queue, bool doLock) {
 		return false;
 	}
 
-	Task* task = (Task*) queue.peak();
+	auto task = queue.peak();
 
 	PriorityQueue::merge(queue);
 
@@ -165,24 +160,20 @@ Task* TimedTaskQueue::get() {
 			return nullptr;
 		}
 
-		Task* task = (Task*) PriorityQueue::peak();
+		const Task* task = static_cast<const Task*>(PriorityQueue::peak());
 		Time time = task->getNextExecutionTime().getTimeObject();
 
 		if (blocked || !time.isFuture())
 			break;
 
 		#ifdef TRACE_TASKS
-			StringBuffer s;
-			s << "scheduling " << task->toStringData();
-			info(s);
+			info() << "scheduling " << task->toStringData();
 		#endif
 
 		int res = timedWait(condMutex, &time);
 
 		#ifdef TRACE_TASKS
-			StringBuffer s2;
-			s2 << "timedwait finished with (" << res << ")";
-			info(s2);
+			info() << "timedwait finished with (" << res << ")";
 		#endif
 
 #ifdef _MSC_VER
@@ -228,7 +219,7 @@ Task* TimedTaskQueue::get() {
 
 	postWait.updateToCurrentTime();
 
-	Task* task = (Task*) PriorityQueue::poll();
+	Task* task = static_cast<Task*>(PriorityQueue::poll());
 
 	bool cleared = task->clearTaskScheduler();
 	assert(cleared);
@@ -237,10 +228,8 @@ Task* TimedTaskQueue::get() {
 		int64 difference = -(postWait.getMiliTime() - task->getNextExecutionTime().getMiliTime());
 
 		if (difference > 10) {
-			StringBuffer msg;
-			msg << "future task happenend " << task->getNextExecutionTime().getMiliTime() << " ("
+			error() << "future task happenend " << task->getNextExecutionTime().getMiliTime() << " ("
 				<< difference << ")";
-			error(msg);
 		}
 	} /*if (!blocked && e->getTimeStamp().miliDifference() > 250) {
 		StringBuffer msg;
@@ -250,9 +239,7 @@ Task* TimedTaskQueue::get() {
 	}*/
 
 	#ifdef TRACE_TASKS
-		StringBuffer s;
-		s << "got task " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
-		info(s);
+		info() << "got task " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
 	#endif
 
 	waitingForTask = false;
@@ -272,9 +259,7 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 		#ifdef TRACE_TASKS
 			//info("wrong taskCheduler when removing task");
 
-			StringBuffer msg;
-			msg << "wrong taskScheduler when remove task->taskScheduler = " << hex << task->getTaskScheduler() << " this->taskScheduler " << hex << taskScheduler;
-			info(msg.toString());
+			info() << "wrong taskScheduler when remove task->taskScheduler = " << hex << task->getTaskScheduler() << " this->taskScheduler " << hex << taskScheduler;
 		#endif
 
 		task->cancel();
@@ -284,7 +269,7 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 		return true;
 	}
 
-	Task* next = (Task*) PriorityQueue::peak();
+	const Task* next = static_cast<const Task*>(PriorityQueue::peak());
 
 	PriorityQueue::remove(task);
 
@@ -295,9 +280,7 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 	task->release();
 
 	#ifdef TRACE_TASKS
-		StringBuffer s;
-		s << "removed task " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
-		info(s);
+		info() << "removed task " << task->getNextExecutionTime().getMiliTime() << " [" << size() << "]";
 	#endif
 
 	if (waitingForTask && next == task) {

@@ -23,7 +23,7 @@
 
 namespace engine {
   namespace db {
-    namespace berkley {
+    namespace berkeley {
 
 	class Transaction;
 	class BerkeleyDatabase;
@@ -85,7 +85,7 @@ namespace engine {
 
 		int failCheck();
 
-		inline DB_ENV* getDatabaseEnvironmentHandle() {
+		inline DB_ENV* getDatabaseEnvironmentHandle() const {
 			return databaseEnvironment;
 		}
 
@@ -93,7 +93,7 @@ namespace engine {
 		static int isAlive(DB_ENV* dbenv, pid_t pid, db_threadid_t tid, u_int32_t flags);
 	};
 
-    } // namespace berkley
+    } // namespace berkeley
   } // namespace db
 } // namespace engine
 

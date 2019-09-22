@@ -36,23 +36,23 @@ namespace engine {
 
 	class IndexDatabaseIterator : public LocalDatabaseIterator {
 	public:
-		IndexDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database)
+		IndexDatabaseIterator(engine::db::berkeley::Transaction* transaction, LocalDatabase* database)
 			: LocalDatabaseIterator(transaction, database) {
 		}
 
-		IndexDatabaseIterator(IndexDatabase* database, const berkley::CursorConfig& config = berkley::CursorConfig::DEFAULT, bool useCurrentThreadTransaction = false)
+		IndexDatabaseIterator(IndexDatabase* database, const berkeley::CursorConfig& config = berkeley::CursorConfig::DEFAULT, bool useCurrentThreadTransaction = false)
 			: LocalDatabaseIterator(database, config, useCurrentThreadTransaction) {
 		}
 
-		IndexDatabaseIterator(engine::db::berkley::BerkeleyDatabase* databaseHandle)
+		IndexDatabaseIterator(engine::db::berkeley::BerkeleyDatabase* databaseHandle)
 			: LocalDatabaseIterator(databaseHandle) {
 		}
 
 		bool setKeyAndGetValue(uint64 key, uint64& primaryKey, ObjectInputStream* data,
-				uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
+				uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED, bool compressed = false);
 
 		bool getNextKeyAndValue(uint64 key, uint64& primaryKey, ObjectInputStream* data,
-				uint32 lockMode = berkley::LockMode::READ_UNCOMMITED, bool compressed = false);
+				uint32 lockMode = berkeley::LockMode::READ_UNCOMMITED, bool compressed = false);
 	};
 
   }

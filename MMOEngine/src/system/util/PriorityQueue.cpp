@@ -49,7 +49,7 @@ const PriorityQueueEntry* PriorityQueue::peak() const {
 	return root;
 }
 
-const PriorityQueueEntry* PriorityQueue::poll() {
+PriorityQueueEntry* PriorityQueue::poll() {
 	if (isEmpty())
 		return nullptr;
 
@@ -66,7 +66,7 @@ const PriorityQueueEntry* PriorityQueue::poll() {
 	oldRoot->setUnqueued();
 
 	auto val = --count >= 0;
-	assert (val);
+	E3_ASSERT (val);
 
 	++poppedEntries;
 
@@ -104,7 +104,7 @@ bool PriorityQueue::remove(PriorityQueueEntry* node) {
 	oldNode->setUnqueued();
 	auto val = --count >= 0;
 
-	assert(val);
+	E3_ASSERT(val);
 
 	++removedEntries;
 
@@ -142,7 +142,7 @@ PriorityQueueEntry* PriorityQueue::merge(PriorityQueueEntry* h1, PriorityQueueEn
 	if (h2 == nullptr)
 		return h1;
 
-	assert(h1 != h2);
+	E3_ASSERT(h1 != h2);
 
 	if (h1->compareTo(h2) > 0)
 		return merge1(h1, h2);
@@ -155,7 +155,7 @@ PriorityQueueEntry* PriorityQueue::merge1(PriorityQueueEntry* h1, PriorityQueueE
 		h1->leftNode = h2;
 		h2->parentNode = h1;
 	} else {
-		assert(h1->rightNode != h2);
+		E3_ASSERT(h1->rightNode != h2);
 
 		h1->rightNode = merge(h1->rightNode, h2);
 		h1->rightNode->parentNode = h1;

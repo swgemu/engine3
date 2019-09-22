@@ -17,7 +17,7 @@
 #include "engine/core/Core.h"
 
 using namespace engine::db;
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 namespace LD3Ns {
 	static bool shutdown = false;
@@ -26,7 +26,7 @@ namespace LD3Ns {
 		shutdown = true;
 
 		if (value) {
-			delete reinterpret_cast<engine::db::berkley::BerkeleyDatabase*>(value);
+			delete reinterpret_cast<engine::db::berkeley::BerkeleyDatabase*>(value);
 		}
 	}
 }
@@ -58,7 +58,7 @@ LocalDatabase::~LocalDatabase() {
 	//objectsDatabase = nullptr;
 }
 
-engine::db::berkley::BerkeleyDatabase* LocalDatabase::getDatabaseHandle() {
+engine::db::berkeley::BerkeleyDatabase* LocalDatabase::getDatabaseHandle() {
 	auto db = objectsDatabase.get();
 
 	if (db == nullptr) {
@@ -105,7 +105,7 @@ void LocalDatabase::openDatabase() {
 		  DB_UNKNOWN=5
 		  } DBTYPE;*/
 
-		config.setType(static_cast<DBTYPE>(Core::getIntProperty("BerkeleyDB.type", static_cast<int>(berkley::DatabaseType::HASH))));
+		config.setType(static_cast<DBTYPE>(Core::getIntProperty("BerkeleyDB.type", static_cast<int>(berkeley::DatabaseType::HASH))));
 		static const bool mvcc = Core::getIntProperty("BerkeleyDB.MVCC", 0);
 		config.setReadUncommited(!mvcc);
 		config.setMultiVersionConcurrencyControl(mvcc);
@@ -362,7 +362,7 @@ int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData, uint
 }
 
 //stream will be deleted
-int LocalDatabase::putData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* masterTransaction) {
+int LocalDatabase::putData(Stream* inputKey, Stream* stream, engine::db::berkeley::Transaction* masterTransaction) {
 	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
@@ -376,7 +376,7 @@ int LocalDatabase::putData(Stream* inputKey, Stream* stream, engine::db::berkley
 	return 0;
 }
 
-int LocalDatabase::deleteData(Stream* inputKey, engine::db::berkley::Transaction* masterTransaction) {
+int LocalDatabase::deleteData(Stream* inputKey, engine::db::berkeley::Transaction* masterTransaction) {
 	ObjectDatabaseManager* databaseManager = ObjectDatabaseManager::instance();
 
 	CurrentTransaction* transaction = databaseManager->getCurrentTransaction();
@@ -394,7 +394,7 @@ int LocalDatabase::deleteData(Stream* inputKey, engine::db::berkley::Transaction
 	return 0;
 }
 
-void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* transaction) {
+void LocalDatabase::compressDatabaseEntries(engine::db::berkeley::Transaction* transaction) {
 	if (compression)
 		return;
 
@@ -428,7 +428,7 @@ void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* tr
 	compression = true;
 }
 
-int LocalDatabase::tryPutData(Stream* inputKey, Stream* stream, engine::db::berkley::Transaction* transaction) {
+int LocalDatabase::tryPutData(Stream* inputKey, Stream* stream, engine::db::berkeley::Transaction* transaction) {
 	//Locker locker(&Environment::guard);
 
 	int ret = -1;
@@ -453,7 +453,7 @@ int LocalDatabase::tryPutData(Stream* inputKey, Stream* stream, engine::db::berk
 	return ret;
 }
 
-int LocalDatabase::tryDeleteData(Stream* inputKey, engine::db::berkley::Transaction* transaction) {
+int LocalDatabase::tryDeleteData(Stream* inputKey, engine::db::berkeley::Transaction* transaction) {
 	int ret = -1;
 
 	DatabaseEntry key;
@@ -492,7 +492,7 @@ void LocalDatabase::associate(LocalDatabase* secondaryDB, int (*callback)(DB *se
 	}
 }
 
-LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkley::Transaction* transaction, LocalDatabase* database)
+LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkeley::Transaction* transaction, LocalDatabase* database)
 	: Logger("LocalDatabaseIterator") {
 
 	Locker locker(&Environment::guard);
@@ -507,7 +507,7 @@ LocalDatabaseIterator::LocalDatabaseIterator(engine::db::berkley::Transaction* t
 	key.setReuseBuffer(true);
 }
 
-LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, const berkley::CursorConfig& config, bool useCurrentThreadTransaction)
+LocalDatabaseIterator::LocalDatabaseIterator(LocalDatabase* database, const berkeley::CursorConfig& config, bool useCurrentThreadTransaction)
 	: Logger("LocalDatabaseIterator") {
 
 	Locker locker(&Environment::guard);

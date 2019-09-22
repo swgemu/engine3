@@ -61,13 +61,13 @@ namespace sys {
 	}
 
     	void start() {
-    		assert(startTime == 0);
+    		E3_ASSERT(startTime == 0);
 
     		startTime = Time::currentNanoTime(clockType);
     	}
 
     	uint64 stop() {
-    		assert(startTime != 0);
+    		E3_ASSERT(startTime != 0);
 
     		elapsedTime = elapsedToNow();
     		startTime = 0;

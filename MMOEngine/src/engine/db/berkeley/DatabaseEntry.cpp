@@ -11,7 +11,7 @@
 
 #include "DatabaseEntry.h"
 
-using namespace engine::db::berkley;
+using namespace engine::db::berkeley;
 
 DatabaseEntry::DatabaseEntry() {
 	memset(&databaseEntry, 0, sizeof(DBT));
