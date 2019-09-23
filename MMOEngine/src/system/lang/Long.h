@@ -112,12 +112,13 @@ namespace sys {
 			  char buf[32];
 
 #ifdef PLATFORM_WIN
-			  snprintf(buf, 32, "%I64d", val);
+			  int written = snprintf(buf, 32, "%I64d", val);
 #else
-			  snprintf(buf, 32, "%lld", val);
+			  int written = snprintf(buf, 32, "%lld", val);
 #endif
+			  E3_ASSERT(written >= 0 && written < 32);
 
-			  str = buf;
+			  str = String(buf, written);
 		  }
 
 		  static String toString(uint64 val) {
@@ -132,12 +133,13 @@ namespace sys {
 			  char buf[32];
 
 #ifdef PLATFORM_WIN
-			  snprintf(buf, 32, "%I64u", val);
+			  int written = snprintf(buf, 32, "%I64u", val);
 #else
-			  snprintf(buf, 32, "%llu", val);
+			  int written = snprintf(buf, 32, "%llu", val);
 #endif
+			  E3_ASSERT(written >= 0 && written < 32);
 
-			  str = buf;
+			  str = String(buf, written);
 		  }
 	  };
 

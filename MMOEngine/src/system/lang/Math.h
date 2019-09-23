@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef MATH_
-#define MATH_
+#pragma once
 
 #include <math.h>
 
@@ -15,10 +14,10 @@ namespace sys {
 
 	class Math {
 	public:
-		static double PI;
-		static double DEG2RAD;
-		static double RAD2DEG;
-		static double E;
+		static const double PI;
+		static const double DEG2RAD;
+		static const double RAD2DEG;
+		static const double E;
 
 		static double sqrt(double number);
 
@@ -85,5 +84,3 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::lang;
-
-#endif /*MATH_*/

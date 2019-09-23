@@ -41,6 +41,8 @@ TaskManagerImpl::~TaskManagerImpl() {
 }
 
 void TaskManagerImpl::initialize() {
+	debug("initializing");
+
 	Core::initializeProperties("TaskManager");
 
 	DEFAULT_SCHEDULER_THREADS = Core::getIntProperty("TaskManager.defaultSchedulerThreads");
@@ -57,6 +59,8 @@ void TaskManagerImpl::initialize() {
 
 TaskQueue* TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) NO_THREAD_SAFETY_ANALYSIS {
 	Locker locker(this);
+
+	debug() << "initializing custom queue" << queueName << " with number of threads: " << numberOfThreads << " and block during save " << blockDuringSaveEvent;
 
 	int maxCpus = Math::max(1, (int) System::getOnlineProcessors());
 
@@ -89,6 +93,8 @@ TaskQueue* TaskManagerImpl::initializeCustomQueue(const String& queueName, int n
 }
 
 void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCount) {
+	debug("initializing");
+
 	ObjectDatabaseManager::instance()->setLogLevel(getLogLevel());
 
 	Locker locker(this);
@@ -157,6 +163,8 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 void TaskManagerImpl::start() {
 	Locker locker(this);
 
+	debug("starting");
+
 	for (int i = 0; i < workers.size(); ++i) {
 		TaskWorkerThread* worker = workers.get(i);
 		worker->start();
@@ -212,6 +220,8 @@ void TaskManagerImpl::setLogLevel(int level) {
 }
 
 void TaskManagerImpl::shutdown() {
+	debug("stopping");
+
 	shuttingDown = true;
 
 	while (!schedulers.isEmpty()) {
@@ -268,6 +278,8 @@ void TaskManagerImpl::initalizeDatabaseHandles() {
 
 Vector<Pair<Locker*, TaskWorkerThread*>>* TaskManagerImpl::blockTaskManager() {
 	//Locker locker(this);
+
+	debug("blocking task manager");
 
 	auto lockers = new Vector<Pair<Locker*, TaskWorkerThread*>>();
 
@@ -337,6 +349,8 @@ Vector<Pair<Locker*, TaskWorkerThread*>>* TaskManagerImpl::blockTaskManager() {
 }
 
 void TaskManagerImpl::unblockTaskManager(Vector<Pair<Locker*, TaskWorkerThread*>>* lockers) {
+	debug("unblocking workers");
+
 	for (int i = 0; i < lockers->size(); ++i)
 		delete lockers->get(i).first;
 

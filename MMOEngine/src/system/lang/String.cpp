@@ -576,7 +576,7 @@ String String::toLowerCase() const {
 	String str(begin(), count);
 
 	for (int i = 0; i < count; ++i) {
-		char ch = begin()[i];
+		char ch = str.begin()[i];
 
 		if (isupper(ch))
 			str.begin()[i] = tolower(ch);
@@ -600,7 +600,7 @@ String String::toUpperCase() const {
 	String str(begin(), count);
 
 	for (int i = 0; i < count; ++i) {
-		char ch = begin()[i];
+		char ch = str.begin()[i];
 
 		if (islower(ch))
 			str.begin()[i] = toupper(ch);

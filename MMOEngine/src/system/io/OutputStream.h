@@ -3,8 +3,9 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef OUTPUTSTREAM_H_
-#define OUTPUTSTREAM_H_
+#pragma once
+
+#include "system/lang.h"
 
 namespace sys {
   namespace io {
@@ -32,4 +33,3 @@ namespace sys {
 
 using namespace sys::io;
 
-#endif /*OUTPUTSTREAM_H_*/

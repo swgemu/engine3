@@ -19,12 +19,12 @@ Exception::~Exception() {
 }
 
 void Exception::printStackTrace() const {
-	System::out << message << endl;
+	System::err << message << endl;
 	trace.print();
 
-	System::out << flush;
+	System::err << flush;
 }
 
 void Exception::printMessage() const {
-	System::out << message << endl;
+	System::err << message << endl;
 }

@@ -14,6 +14,7 @@
 
 namespace sys {
   namespace io {
+	class File;
 
 	class PrintStream {
 		typedef decltype(stdout) StreamType;
@@ -26,6 +27,7 @@ namespace sys {
 
 	public:
 		PrintStream(StreamType type = stdout);
+		PrintStream(File& file);
 
 		void print(char ch);
 		void print(int val);

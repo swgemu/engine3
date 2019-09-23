@@ -74,6 +74,10 @@ namespace sys {
   			mode = BINARY_MODE;
   		}
 
+		inline void setText() {
+			mode = TEXT_MODE;
+		}
+
 	protected:
 		bool open(int access);
 

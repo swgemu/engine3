@@ -4,7 +4,17 @@
 */
 #include "system/lang/Character.h"
 
+#include "File.h"
+
 PrintStream::PrintStream(StreamType type) : streamFlags(SF_none), outStream(type) {
+}
+
+PrintStream::PrintStream(File& file) : streamFlags(SF_none) {
+	file.setText();
+
+	file.setWriteable();
+
+	outStream = file.getDescriptor();
 }
 
 void PrintStream::print(char ch) {

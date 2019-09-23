@@ -113,6 +113,7 @@ UnicodeString& UnicodeString::operator=(const char* ascii) {
 
 UnicodeString& UnicodeString::operator+(const String& ascii) {
 	append(ascii);
+
 	return *this;
 }
 
@@ -124,6 +125,7 @@ UnicodeString& UnicodeString::operator+(const char* ascii) {
 
 UnicodeString& UnicodeString::operator+(const UnicodeString& str) {
 	append(str);
+
 	return *this;
 }
 
@@ -272,7 +274,7 @@ const uint16* UnicodeString::toWideCharArray() const {
 	return uString;
 }
 
-bool UnicodeString::toString(String& ascii) {
+bool UnicodeString::toString(String& ascii) const {
 	StringBuffer str;
 
 	str << '"';

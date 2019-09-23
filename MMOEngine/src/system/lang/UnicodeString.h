@@ -95,7 +95,7 @@ namespace sys {
 		const char* toCharArray() const;
 		const uint16* toWideCharArray() const;
 
-		bool toString(String& str);
+		bool toString(String& str) const;
 
 		bool parseFromString(const String& str, int version = 0);
 

@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef SYS_H_
-#define SYS_H_
+#pragma once
 
 #include "platform.h"
 
@@ -96,4 +95,3 @@
 
 #include "security/Crypto.h"
 
-#endif /*SYS_H_*/

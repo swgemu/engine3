@@ -20,10 +20,10 @@ volatile int Logger::globalLogLevel = LogLevel::DEBUG;
 bool Logger::syncGlobalLog = false;
 bool Logger::jsonGlobalLog = false;
 
-Logger::Logger() {
+Logger::Logger(LogLevel level) : logLevel(level) {
 }
 
-Logger::Logger(const String& s) : name(s) {
+Logger::Logger(const String& s, LogLevel level) : logLevel(level), name(s) {
 }
 
 Logger::Logger(Logger&& logger) : logFile(logger.logFile), logLevel(logger.logLevel),

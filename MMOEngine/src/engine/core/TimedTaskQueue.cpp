@@ -75,7 +75,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		remove(task, false);
 
 	#ifdef TRACE_TASKS
-		info() << "adding task " << task->toStringData();
+		info() << "adding task " << *task;
 	#endif
 
 	task->acquire();
@@ -91,7 +91,7 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 	PriorityQueue::add(task);
 
 	#ifdef TRACE_TASKS
-		info() << "added task " << task->toStringData();
+		info() << "added task " << *task;
 	#endif
 
 	if (PriorityQueue::peak() == task && waitingForTask) {

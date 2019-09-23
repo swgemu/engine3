@@ -14,9 +14,14 @@ bool Core::MANAGED_REFERENCE_LOAD = true;
 String Core::engineConfigName;
 Core* Core::staticInstance = nullptr;
 
+namespace CoreDetail {
+	static Logger logger("Core");
+}
+
 //SignalTranslator<SegmentationFault> g_objSegmentationFaultTranslator;
-//
-//
+
+using namespace CoreDetail;
+
 Core::Core(int logLevel) {
 	initializeContext(logLevel);
 }
@@ -33,6 +38,8 @@ Core::~Core() {
 }
 
 void Core::initializeContext(int logLevel) {
+	logger.debug("initializing context");
+
 	Core::taskManager = nullptr;
 	staticInstance = this;
 
@@ -46,7 +53,7 @@ void Core::initializeContext(int logLevel) {
 	Socket::initialize();
 
 	TaskManager* taskManager = getTaskManager();
-	Logger::console.fatal(taskManager) << "task manager null when initializing context";
+	logger.fatal(taskManager) << "task manager null when initializing context";
 
 	taskManager->setLogLevel(logLevel);
 	taskManager->initialize();
@@ -122,13 +129,15 @@ int Core::initializeProperties(const String& className) {
 		obj.pop();
 
 	} catch (...) {
-		Logger::console.error("could not initialize engine properties");
+		logger.error("could not initialize engine properties");
 	}
 
 	return count;
 }
 
 void Core::finalizeContext() {
+	logger.debug("finalizing context");
+
 	shutdownTaskManager();
 
 	auto threadInitializer = Thread::getThreadInitializer();
@@ -162,6 +171,8 @@ void Core::start() {
 }
 
 void Core::shutdownTaskManager() {
+	logger.debug("shutting down task manager");
+
 	TaskManager* taskMgr = getTaskManager();
 
 	taskManagerShutDown = true;
@@ -215,11 +226,9 @@ ObjectBroker* Core::getObjectBroker() {
 }
 
 void Core::outOfMemoryHandler() {
-	System::out << "OutOfMemoryException\n";
+	E3_ABORT("OutOfMemoryException");
 
 	//StackTrace::printStackTrace();
-
-	exit(1);
 }
 
 Reference<DistributedObject*> Core::lookupObject(uint64 id) {

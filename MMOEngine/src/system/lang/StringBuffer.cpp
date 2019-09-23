@@ -119,9 +119,10 @@ StringBuffer& StringBuffer::append(const void* val) {
 }
 
 StringBuffer& StringBuffer::append(const char* str) {
-	int len = strlen(str);
+	for (int i = 0; str[i] != 0; ++i)
+		append(str[i]);
 
-	return append(str, len);
+	return *this;
 }
 
 StringBuffer& StringBuffer::append(const char* str, int len) {
@@ -384,7 +385,7 @@ StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
 		break;
 	case sys::lang::endl:
-		add('\n');
+		emplace('\n');
 		break;
 	default:
 		streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);

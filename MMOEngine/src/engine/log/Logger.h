@@ -154,8 +154,8 @@ namespace engine {
 		static Time starttime;
 
 	public:
-		Logger();
-		Logger(const String& s);
+		Logger(LogLevel level = LOG);
+		Logger(const String& s, LogLevel level = LOG);
 		Logger(const Logger& logger);
 
 		Logger(Logger&& logger);

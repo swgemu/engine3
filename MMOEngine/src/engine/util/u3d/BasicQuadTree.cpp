@@ -13,9 +13,14 @@
 
 #include "engine/util/u3d/BasicQuadTree.h"
 
+namespace QTNode {
+	static Logger logger("BasicQuadTreeNode", Logger::WARNING);
+}
+
+using namespace QTNode;
 
 BasicQuadTreeNode::BasicQuadTreeNode() {
-	objects.setInsertPlan(SortedVector<QuadTreeEntryInterface*>::NO_DUPLICATE);
+	objects.setNoDuplicateInsertPlan();
 
 	parentNode = nullptr;
 	nwNode = neNode = swNode = seNode = nullptr;
@@ -30,7 +35,7 @@ BasicQuadTreeNode::BasicQuadTreeNode() {
 }
 
 BasicQuadTreeNode::BasicQuadTreeNode(float minx, float miny, float maxx, float maxy, BasicQuadTreeNode *parent) {
-	objects.setInsertPlan(SortedVector<QuadTreeEntryInterface*>::NO_DUPLICATE);
+	objects.setNoDuplicateInsertPlan();
 
 	parentNode = parent;
 	nwNode = neNode = swNode = seNode = nullptr;
@@ -41,9 +46,7 @@ BasicQuadTreeNode::BasicQuadTreeNode(float minx, float miny, float maxx, float m
 	maxY = maxy;
 
 	if (!validateNode() || minX > maxX || minY > maxY) {
-		StringBuffer msg;
-		msg << "[BasicQuadTree] invalid node in create - " << toStringData();
-		Logger::console.error(msg);
+		logger.error() << "[BasicQuadTree] invalid node in create - " << *this;
 	}
 
 	dividerX = (minX + maxX) / 2;
@@ -66,29 +69,29 @@ BasicQuadTreeNode::~BasicQuadTreeNode() {
 
 void BasicQuadTreeNode::addObject(QuadTreeEntryInterface *obj) {
 	if (BasicQuadTree::doLog())
-		System::out << hex << "object [" << obj->getObjectID() <<  "] added to BasicQuadTree"
-		<< toStringData() << "\n";
+		logger.info(true) << hex << "object [" << obj->getObjectID() <<  "] added to BasicQuadTree"
+		<< *this;
 
 	if (!validateNode())
-		System::out << "[BasicQuadTree] invalid node in addObject() - " << toStringData() << "\n";
+		logger.error() << "[BasicQuadTree] invalid node in addObject() - " << *this;
 
 	objects.put(obj);
 
-	assert(obj->getNode() == nullptr);
+	E3_ASSERT(obj->getNode() == nullptr);
 
 	obj->setNode(this);
 }
 
 void BasicQuadTreeNode::removeObject(QuadTreeEntryInterface *obj) {
 	if (!objects.drop(obj)) {
-		System::out << hex << "object [" << obj->getObjectID() <<  "] not found on BasicQuadTree"
-				<< toStringData() << "\n";
+		logger.error() << hex << "object [" << obj->getObjectID() <<  "] not found on BasicQuadTree"
+				<< *this;
 	} else {
 		obj->setNode(nullptr);
 
 		if (BasicQuadTree::doLog())
-			System::out <<  hex << "object [" << obj->getObjectID() <<  "] removed BasicQuadTree"
-			<< toStringData() << "\n";
+			logger.info(true) << hex << "object [" << obj->getObjectID() <<  "] removed BasicQuadTree"
+			<< *this;
 	}
 }
 
@@ -132,7 +135,7 @@ void BasicQuadTreeNode::check () {
 			parentNode->seNode = nullptr;
 
 		if (BasicQuadTree::doLog())
-			System::out << "deleteing node (" << this << ")\n";
+			logger.info(true) << "deleteing node (" << *this << ")";
 
 		delete this;
 	}
@@ -207,8 +210,8 @@ void BasicQuadTree::insert(QuadTreeEntryInterface *obj) {
 
 	try {
 		if (BasicQuadTree::doLog()) {
-			System::out << hex << "object [" << obj->getObjectID() <<  "] inserting\n";
-			System::out << "(" << obj->getPositionX() << ", " << obj->getPositionY() << ")\n";
+			logger.info(true) << hex << "object [" << obj->getObjectID() <<  "] inserting"
+				<< "(" << obj->getPositionX() << ", " << obj->getPositionY() << ")";
 		}
 
 		if (obj->getNode() != nullptr)
@@ -217,9 +220,9 @@ void BasicQuadTree::insert(QuadTreeEntryInterface *obj) {
 		_insert(root, obj);
 
 		if (BasicQuadTree::doLog())
-			System::out << hex << "object [" << obj->getObjectID() <<  "] finished inserting\n";
-	} catch (Exception& e) {
-		System::out << "[BasicQuadTree] error - " << e.getMessage() << "\n";
+			logger.info(true) << hex << "object [" << obj->getObjectID() <<  "] finished inserting";
+	} catch (const Exception& e) {
+		logger.error() << "[BasicQuadTree] error - " << e.getMessage();
 		e.printStackTrace();
 	}
 }
@@ -229,8 +232,8 @@ int BasicQuadTree::inRange(float x, float y, float range,
 
 	try {
 		return _inRange(root, x, y, range, objects);
-	} catch (Exception& e) {
-		System::out << "[BasicQuadTree] " << e.getMessage() << "\n";
+	} catch (const Exception& e) {
+		logger.error() << "[BasicQuadTree] " << e.getMessage();
 		e.printStackTrace();
 	}
 
@@ -239,15 +242,15 @@ int BasicQuadTree::inRange(float x, float y, float range,
 
 void BasicQuadTree::remove(BasicQuadTreeNode* node) {
 	if (!node->validateNode()) {
-		System::out << "[BasicQuadTree] " << " error on remove(BasicQuadTreeNode) - invalid Node"
-				<< node->toStringData() << "\n";
+		logger.error() << "[BasicQuadTree] " << " error on remove(BasicQuadTreeNode) - invalid Node"
+				<< *node;
 
 		return;
 	}
 
 	if (node->parentNode == nullptr) {
-		System::out << "[BasicQuadTree] " << " error on remove(BasicQuadTreeNode) - trying to remove root Node"
-				<< node->toStringData() << "\n";
+		logger.error() << "[BasicQuadTree] " << " error on remove(BasicQuadTreeNode) - trying to remove root Node"
+				<< *node;
 	}
 
 	BasicQuadTreeNode* parent = node->parentNode;
@@ -281,14 +284,14 @@ void BasicQuadTree::remove(QuadTreeEntryInterface *obj) {
 	}*/
 
 	if (BasicQuadTree::doLog())
-		System::out << hex << "object [" << obj->getObjectID() <<  "] removing\n";
+		logger.info(true) << hex << "object [" << obj->getObjectID() <<  "] removing";
 
 	BasicQuadTreeNode* node = obj->getNode();
 
 	if (node != nullptr) {
 		if (!node->validateNode()) {
-			System::out << "[BasicQuadTree] " << obj->getObjectID() << " error on remove() - invalid Node"
-					<< node->toStringData() << "\n";
+			logger.error() << "[BasicQuadTree] " << obj->getObjectID() << " error on remove() - invalid Node"
+					<< *node;
 		}
 
 		node->removeObject(obj);
@@ -296,12 +299,12 @@ void BasicQuadTree::remove(QuadTreeEntryInterface *obj) {
 		node->check();
 		obj->setNode(nullptr);
 	} else {
-		System::out << hex << "object [" << obj->getObjectID() <<  "] ERROR - removing the node\n";
+		logger.error() << hex << "object [" << obj->getObjectID() <<  "] ERROR - removing the node";
 		StackTrace::printStackTrace();
 	}
 
 	if (BasicQuadTree::doLog())
-		System::out << hex << "object [" << obj->getObjectID() <<  "] finished removing\n";
+		logger.info(true) << hex << "object [" << obj->getObjectID() <<  "] finished removing";
 }
 
 void BasicQuadTree::removeAll() {
