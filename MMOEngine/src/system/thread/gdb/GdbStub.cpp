@@ -45,7 +45,7 @@ void GdbStub::printStackTrace() {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* argv[] = {"gdb",
+		char* const argv[] = {"gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "thread",
@@ -55,7 +55,7 @@ void GdbStub::printStackTrace() {
 
 		execvp("gdb", argv);
 
-		assert(0);
+		E3_ABORT("gdb");
 	} else {
 		wait();
 
@@ -77,7 +77,7 @@ void GdbStub::printRegisters() {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* argv[] = {"gdb",
+		char* const argv[] = {"gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info registers",
@@ -86,7 +86,7 @@ void GdbStub::printRegisters() {
 
 		execvp("gdb", argv);
 
-		assert(0);
+		E3_ABORT("gdb");
 	} else {
 		wait();
 
@@ -117,7 +117,7 @@ void GdbStub::printDeadlock() {
 
 		execvp("gdb", argv);
 
-		assert(0);
+		E3_ABORT("gdb");
 	} else {
 		wait();
 
@@ -165,7 +165,7 @@ void GdbStub::printThread(String threadInfo) {
 
 		execvp("gdb", argv);
 
-		assert(0);
+		E3_ABORT("gdb");
 	} else {
 		wait();
 
@@ -196,7 +196,7 @@ void GdbStub::getThreads(Vector<String>& threads) {
 
 		execvp("gdb", argv);
 
-		assert(0);
+		E3_ABORT("gdb");
 	} else {
 		wait();
 

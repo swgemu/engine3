@@ -28,7 +28,7 @@ namespace sys {
 
 		void setBlocking(bool b);
 
-		int getFileDescriptor() {
+		int getFileDescriptor() const {
 			return fileDescriptor;
 		}
 

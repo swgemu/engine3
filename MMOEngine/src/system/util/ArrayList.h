@@ -8,7 +8,6 @@
 
 #include "system/platform.h"
 
-#include "system/lang/String.h"
 #include "system/lang/Math.h"
 #include "system/lang/ArrayIndexOutOfBoundsException.h"
 #include "system/lang/IllegalArgumentException.h"
@@ -40,6 +39,8 @@ namespace sys {
 		   ArrayList(int initsize, int incr);
 		   ArrayList(const ArrayList<E>& array);
 
+		   virtual ~ArrayList();
+
 		   typedef E* iterator;
 		   typedef const E* const_iterator;
 
@@ -52,10 +53,7 @@ namespace sys {
 		   constexpr const static int npos = -1;
 
 		   ArrayList<E>& operator=(const ArrayList<E>& array);
-
 		   ArrayList<E>& operator=(ArrayList<E>&& array);
-
-		   virtual ~ArrayList();
 
 		   bool add(const E& element);
 		   bool add(int index, const E& element);
@@ -86,17 +84,14 @@ namespace sys {
 		   E& getUnsafe(int index) const NO_THREAD_SAFETY_ANALYSIS;
 
 		   E& elementAt(uint32 index) const;
-
 		   E& elementAtUnsafe(uint32 index) const NO_THREAD_SAFETY_ANALYSIS;
 
 		   virtual E remove(int index);
 
 		   bool removeElement(const E& element);
-
 		   void removeElementAt(uint32 index);
 
 		   virtual void removeRange(int fromIndex, int toIndex);
-
 		   virtual void removeAll(int newSize = 10, int newIncrement = 5);
 
 		   bool toBinaryStream(ObjectOutputStream* stream);
@@ -274,7 +269,7 @@ namespace sys {
    }
 
    template<class E> ArrayList<E>::ArrayList(int incr) {
-	   init(incr, incr);
+	   init(incr, 0);
    }
 
    template<class E> ArrayList<E>::ArrayList(int initsize, int incr) {

@@ -341,8 +341,8 @@ static const unsigned int crcTable[256] = {
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-unsigned int BaseProtocol::generateCrc(Packet* pack, int nLength) {
-	char* pData = pack->getBuffer();
+unsigned int BaseProtocol::generateCrc(const Packet* pack, int nLength) {
+	const char* pData = pack->getBuffer();
 
 	unsigned int nCrc = crcTable[(~crcSeed) & 0xFF];
 	nCrc ^= 0x00FFFFFF;
@@ -365,8 +365,8 @@ unsigned int BaseProtocol::generateCrc(Packet* pack, int nLength) {
 	return ~nCrc;
 }
 
-unsigned int BaseProtocol::generateCRC(Stream* stream, uint32 seed) {
-	char* pData = stream->getBuffer();
+unsigned int BaseProtocol::generateCRC(const Stream* stream, uint32 seed) {
+	const char* pData = stream->getBuffer();
 
 	unsigned int nCrc = crcTable[(~seed) & 0xFF];
 	nCrc ^= 0x00FFFFFF;
@@ -395,48 +395,48 @@ void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
-    if (crcLength > 0) {
-        uint32 crc = generateCrc(pack, nLength - crcLength);
-        pData += (nLength-crcLength);
+	if (crcLength > 0) {
+		uint32 crc = generateCrc(pack, nLength - crcLength);
+		pData += (nLength-crcLength);
 
-        /*if (crcLength == 2) {
-            crc = crc & 0xFFFF;
+		/*if (crcLength == 2) {
+		  crc = crc & 0xFFFF;
 
-            pData[1] = (char) ((crc >> 0) & 0xFF);
-            pData[0] = (char) ((crc >> 8) & 0xFF);
-        } else {
+		  pData[1] = (char) ((crc >> 0) & 0xFF);
+		  pData[0] = (char) ((crc >> 8) & 0xFF);
+		  } else {
 
 */
-            for (uint16 i = 0; i < crcLength; i++) {
-                pData[(crcLength - 1) - i] = (char)((crc >> (8 * i)) & 0xFF);
-            }
+		for (uint16 i = 0; i < crcLength; i++) {
+			pData[(crcLength - 1) - i] = (char)((crc >> (8 * i)) & 0xFF);
+		}
 
-    }
+	}
 }
 
-bool BaseProtocol::testCRC(Packet* pack, uint16 crcLength) {
-	char* pData = pack->getBuffer();
+bool BaseProtocol::testCRC(const Packet* pack, uint16 crcLength) {
+	const char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
-    bool crctest = true;
-    if (crcLength > 0) {
-        unsigned int p_crc = generateCrc(pack, nLength - crcLength);
-        unsigned int crc = 0;
-        unsigned int mask = 0;
-        unsigned int pullbyte = 0;
+	bool crctest = true;
+	if (crcLength > 0) {
+		unsigned int p_crc = generateCrc(pack, nLength - crcLength);
+		unsigned int crc = 0;
+		unsigned int mask = 0;
+		unsigned int pullbyte = 0;
 
-        pData = pData + (nLength - crcLength);
-        for (short i = 0; i < crcLength; i++) {
-            pullbyte = (unsigned char) pData[i];
-            crc |=(pullbyte << (((crcLength - 1) - i) * 8));
-            mask <<= 8;
-            mask |= 0xFF;
-        }
+		pData = pData + (nLength - crcLength);
+		for (short i = 0; i < crcLength; i++) {
+			pullbyte = (unsigned char) pData[i];
+			crc |=(pullbyte << (((crcLength - 1) - i) * 8));
+			mask <<= 8;
+			mask |= 0xFF;
+		}
 
-        p_crc &= mask;
-        if (p_crc != crc)
-            crctest = false;
-    }
+		p_crc &= mask;
+		if (p_crc != crc)
+			crctest = false;
+	}
 
-    return crctest;
+	return crctest;
 }

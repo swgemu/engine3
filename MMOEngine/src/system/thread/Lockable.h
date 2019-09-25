@@ -243,7 +243,7 @@ namespace sys {
 		}
 
 		inline Thread* getLockHolderThread() {
-			return (Thread*) threadLockHolder.get();
+			return threadLockHolder.get();
 		}
 
 		// setters

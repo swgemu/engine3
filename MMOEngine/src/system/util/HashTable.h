@@ -98,12 +98,12 @@ namespace sys {
 
 	    int modCount;
 
+	protected:
+	    V nullValue;
+
 	    virtual int hash(const K& key) const {
 		    return TypeInfo<K>::hashCode(key);
 	    }
-
-	protected:
-	    V nullValue;
 
 	public:
 	    HashTable();

@@ -40,7 +40,7 @@ public:
 
 	}
 
-	virtual bool isInRange(float x, float y, float range) {
+	virtual bool isInRange(float x, float y, float range) const {
 		float rangesq = range * range;
 
 		float deltaX = x - getPositionX();
@@ -52,7 +52,7 @@ public:
 			return false;
 	}
 
-	virtual bool isInSWArea(Node* node) {
+	virtual bool isInSWArea(const Node* node) const {
 		float x = getPositionX();
 		float y = getPositionY();
 
@@ -60,7 +60,7 @@ public:
 				y >= node->minY && y < node->dividerY;
 	}
 
-	virtual bool isInSEArea(Node* node) {
+	virtual bool isInSEArea(const Node* node) const {
 		float x = getPositionX();
 		float y = getPositionY();
 
@@ -68,7 +68,7 @@ public:
 				y >= node->minY && y < node->dividerY;
 	}
 
-	virtual bool isInNWArea(Node* node) {
+	virtual bool isInNWArea(const Node* node) const {
 		float x = getPositionX();
 		float y = getPositionY();
 
@@ -76,7 +76,7 @@ public:
 					y >= node->dividerY && y < node->maxY;
 	}
 
-	virtual bool isInArea(Node* node) {
+	virtual bool isInArea(const Node* node) const {
 		float x = getPositionX();
 		float y = getPositionY();
 
@@ -84,12 +84,12 @@ public:
 					(y > node->dividerY && y < node->dividerY);
 	}
 
-	virtual float getPositionX() = 0;
-	virtual float getPositionY() = 0;
+	virtual float getPositionX() const = 0;
+	virtual float getPositionY() const = 0;
 
-	virtual int compareTo(QuadTreeEntryInterfaceBase* obj) = 0;
+	virtual int compareTo(const QuadTreeEntryInterfaceBase* obj) const = 0;
 
-	virtual bool isInQuadTree() {
+	virtual bool isInQuadTree() const {
 		return node != nullptr;
 	}
 
@@ -97,9 +97,13 @@ public:
 		return node;
 	}
 
-	virtual uint64 getObjectID() = 0;
+	virtual const Node* getNode() const {
+		return node;
+	}
 
-	virtual bool isBounding() {
+	virtual uint64 getObjectID() const = 0 ;
+
+	virtual bool isBounding() const {
 		return bounding;
 	}
 

@@ -63,7 +63,7 @@ FILE* File::getDescriptor() const {
 	return fileDescriptor;
 }
 
-String File::getModeString(int mode, int access) const {
+String File::getModeString(int mode, int access) {
 	String str;
 
 	switch (access) {

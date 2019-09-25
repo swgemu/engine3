@@ -36,7 +36,7 @@ namespace sys {
 			return true;
 		}
 
-		bool toString(String& str) {
+		bool toString(String& str) const {
 			str = String::valueOf((unsigned int)get());
 
 			return true;

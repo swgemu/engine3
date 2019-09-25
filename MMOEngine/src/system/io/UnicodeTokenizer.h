@@ -31,7 +31,9 @@ namespace sys {
 
 		int getIntToken();
 		uint32 getHexIntToken();
-		uint64 getLongToken();
+		int64 getLongToken();
+		uint64 getUnsignedLongToken();
+
 		float getFloatToken();
 
 		void getStringToken(String& token);

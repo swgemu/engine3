@@ -21,8 +21,8 @@ namespace engine {
 
 		unsigned int crcSeed;
 
-	    sys::uint32 serverSequence;
-	    sys::uint32 clientSequence;
+		sys::uint32 serverSequence;
+		sys::uint32 clientSequence;
 
 		Time lastNetStatusTimeStamp;
 		uint16 lastRecievedNetStatusTick;
@@ -37,7 +37,7 @@ namespace engine {
 		}
 
 		virtual void prepareSend(BasePacket* pack);
-		
+
 		void prepareSequence(BasePacket* pack);
 		void prepareEncryptionAndCompression(BasePacket* pack);
 
@@ -49,11 +49,11 @@ namespace engine {
 		bool compress(Packet* pack);
 		void decompress(Packet* pack);
 
-		unsigned int generateCrc(Packet* pack, int len);
+		unsigned int generateCrc(const Packet* pack, int len);
 		void appendCRC(Packet* pack, sys::uint16 crcLength = 2);
-		bool testCRC(Packet* pack, sys::uint16 crcLength = 2);
+		bool testCRC(const Packet* pack, sys::uint16 crcLength = 2);
 
-		static unsigned int generateCRC(Stream* stream, uint32 seed = 1);
+		static unsigned int generateCRC(const Stream* stream, uint32 seed = 1);
 
 		// setters
 		inline void setConnectionID(sys::uint32 id) {
@@ -65,11 +65,11 @@ namespace engine {
 		}
 
 		// getters
-		inline sys::uint32 getConnectionID() {
+		inline sys::uint32 getConnectionID() const {
 			return connectionID;
 		}
 
-		inline unsigned int getSeed() {
+		inline unsigned int getSeed() const {
 			return crcSeed;
 		}
 

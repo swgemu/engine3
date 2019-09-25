@@ -46,7 +46,7 @@ void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable,
 
 void ObserverEventMap::registerObserver(uint32 eventType, Observer* observer) {
 	if (observer == nullptr) {
-		System::out << "registering nullptr OBSERVER" << endl;
+		System::err << "registering nullptr OBSERVER" << endl;
 		StackTrace::printStackTrace();
 
 		return;

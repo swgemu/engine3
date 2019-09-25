@@ -38,11 +38,11 @@ namespace sys {
 		}
 
 		// getters
-		inline const String& getHostAddress() {
+		inline const String& getHostAddress() const {
 			return ipaddress;
 		}
 
-		inline const String& getHostName() {
+		inline const String& getHostName() const {
 			return hostname;
 		}
 

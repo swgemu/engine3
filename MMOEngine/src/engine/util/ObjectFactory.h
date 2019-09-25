@@ -47,7 +47,7 @@ namespace engine {
 		typedef BaseClassType (*CreateObjectFunc)();
 
 	public:
-		BaseClassType createObject(UniqueIdType uniqueID) {
+		BaseClassType createObject(UniqueIdType uniqueID) const {
 			if (!objectCreator.containsKey(uniqueID))
 				return nullptr;
 
@@ -67,7 +67,7 @@ namespace engine {
 			return objectCreator.drop(uniqueID);
 		}
 
-		bool containsObject(UniqueIdType uniqueID) {
+		bool containsObject(UniqueIdType uniqueID) const {
 			return objectCreator.containsKey(uniqueID);
 		}
 
@@ -86,7 +86,7 @@ namespace engine {
 		typedef BaseClassType (*CreateObjectFunc)(Param1Type);
 
 	public:
-		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1) {
+		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1) const {
 			if (!objectCreator.containsKey(uniqueID))
 				return nullptr;
 
@@ -106,7 +106,7 @@ namespace engine {
 			return objectCreator.drop(uniqueID);
 		}
 
-		bool containsObject(UniqueIdType uniqueID) {
+		bool containsObject(UniqueIdType uniqueID) const {
 			return objectCreator.containsKey(uniqueID);
 		}
 
@@ -125,7 +125,7 @@ namespace engine {
 		typedef BaseClassType (*CreateObjectFunc)(Param1Type, Param2Type);
 
 	public:
-		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2) {
+		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2) const {
 			if (!objectCreator.containsKey(uniqueID))
 				return nullptr;
 
@@ -145,7 +145,7 @@ namespace engine {
 			return objectCreator.drop(uniqueID);
 		}
 
-		bool containsObject(UniqueIdType uniqueID) {
+		bool containsObject(UniqueIdType uniqueID) const {
 			return objectCreator.containsKey(uniqueID);
 		}
 
@@ -164,7 +164,8 @@ namespace engine {
 		typedef BaseClassType (*CreateObjectFunc)(Param1Type, Param2Type, Param3Type);
 
 	public:
-		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2, Param3Type param3) {
+		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1,
+				Param2Type param2, Param3Type param3) const {
 			if (!objectCreator.containsKey(uniqueID))
 				return nullptr;
 
@@ -184,7 +185,7 @@ namespace engine {
 			return objectCreator.drop(uniqueID);
 		}
 
-		bool containsObject(UniqueIdType uniqueID) {
+		bool containsObject(UniqueIdType uniqueID) const {
 			return objectCreator.containsKey(uniqueID);
 		}
 
@@ -203,7 +204,8 @@ namespace engine {
 		typedef BaseClassType (*CreateObjectFunc)(Param1Type, Param2Type, Param3Type, Param4Type);
 
 	public:
-		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1, Param2Type param2, Param3Type param3, Param4Type param4) {
+		BaseClassType createObject(UniqueIdType uniqueID, Param1Type param1,
+				Param2Type param2, Param3Type param3, Param4Type param4) const {
 			if (!objectCreator.containsKey(uniqueID))
 				return nullptr;
 
@@ -223,7 +225,7 @@ namespace engine {
 			return objectCreator.drop(uniqueID);
 		}
 
-		bool containsObject(UniqueIdType uniqueID) {
+		bool containsObject(UniqueIdType uniqueID) const {
 			return objectCreator.containsKey(uniqueID);
 		}
 

@@ -42,7 +42,7 @@ uint32 Integer::hexvalueOf(const String& str) {
 	return (uint32) (val);
 }
 
-bool Integer::toString(String& str) {
+bool Integer::toString(String& str) const {
 	str = String::valueOf(*this);
 
 	return true;
@@ -74,7 +74,7 @@ void Integer::parseFromBinaryStream(int& val, ObjectInputStream* stream) {
 	val = stream->readSignedInt();
 }
 
-bool UnsignedInteger::toString(String& str) {
+bool UnsignedInteger::toString(String& str) const {
 	str = String::valueOf(*this);
 
 	return true;

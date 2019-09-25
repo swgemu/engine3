@@ -40,22 +40,22 @@ void orbTestLookup() {
 		Reference<TestIDLClass*> object = Core::lookupObject<TestIDLClass>("testCLass1");
 
 		if (object == nullptr) {
-			System::out << "object \'testClass1\' not deployed" << PrintStream::endl;
+			System::out << "object \'testClass1\' not deployed" << endl;
 
 			return;
 		}
 
 		Thread::sleep(15000);
 
-		System::out << "value = " << object->getValue() << PrintStream::endl;
+		System::out << "value = " << object->getValue() << endl;
 
 		object->setValue(4);
 
-		System::out << "value = " << object->getValue() << PrintStream::endl;
+		System::out << "value = " << object->getValue() << endl;
 	} catch (const StreamIndexOutOfBoundsException& e) {
 		e.printStackTrace();
 
-		System::out << e.getStream()->toStringData() << PrintStream::endl;
+		System::out << e.getStream()->toStringData() << endl;
 	} catch (const Exception& e) {
 		e.printStackTrace();
 	}

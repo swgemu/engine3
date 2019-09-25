@@ -83,7 +83,7 @@ void DOBMessageFactory::process(DOBServiceClient* client, Packet* message) {
 	} catch (const StreamIndexOutOfBoundsException& e) {
 		e.printStackTrace();
 
-		System::out << e.getStream()->toStringData() << PrintStream::endl;
+		System::out << e.getStream()->toStringData() << endl;
 	} catch (const Exception& e) {
 		e.printStackTrace();
 	}

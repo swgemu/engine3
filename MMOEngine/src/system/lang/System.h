@@ -3,13 +3,12 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef SYSTEM_H_
-#define SYSTEM_H_
+#pragma once
 
 #include "mersenne/MersenneTwister.h"
 
 #include "system/platform.h"
-#include "system/io/PrintStream.h"
+#include "system/io/TextStream.h"
 #include "system/thread/ThreadLocal.h"
 
 namespace sys {
@@ -23,8 +22,8 @@ namespace sys {
 		static ThreadLocal<MTRand*> mtrand;
 
 	public:
-		static PrintStream out;
-		static PrintStream err;
+		static TextStream out; //stdout
+		static TextStream err; //stderr
 
 		static inline time_t getTime() {
 			return time(0);
@@ -86,4 +85,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*SYSTEM_H_*/

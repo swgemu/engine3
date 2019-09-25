@@ -27,10 +27,20 @@ namespace sys {
 
 		int getIntToken();
 		uint32 getHexIntToken();
-		uint64 getLongToken();
+		int64 getLongToken();
+		uint64 getUnsignedLongToken();
 		float getFloatToken();
 
 		void getStringToken(String& token);
+
+		String getStringToken() {
+			String val;
+
+			getStringToken(val);
+
+			return val;
+		}
+
 		void getStringToken(StringBuffer& token);
 
 		void finalToken(String& s);
@@ -45,7 +55,7 @@ namespace sys {
 
 		void shiftTokens(int count);
 
-		bool hasMoreTokens();
+		bool hasMoreTokens() const;
 
 		inline void setDelimeter(const String& del) {
 			delimiter = del;

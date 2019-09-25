@@ -13,7 +13,7 @@ namespace sys {
 
 	 class String;
 	 //inspired by Scott Schurr for C++ Now! 2012
-	 class ConstString { // constexpr string
+	 class ConstString { // constexpr string view
 		 private:
 			 const char* const p_;
 			 const std::size_t sz_;
@@ -21,6 +21,13 @@ namespace sys {
 			 ConstString() = delete;
 
 			 static const std::size_t constexpr npos = -1;
+
+			 constexpr explicit ConstString(const char* a) : p_(a), sz_(strlen(a)) {
+			 }
+
+
+			 constexpr explicit ConstString(const char* a, std::size_t len) : p_(a), sz_(len) {
+			 }
 
 			 template<std::size_t N>
 			 constexpr ConstString(const char(&a)[N]) :
@@ -38,6 +45,16 @@ namespace sys {
 
 			 constexpr bool contains(const char* str) const {
 			 	return indexOf(str) != npos;
+			 }
+
+			 static constexpr int strlen(const char* a) {
+				int s = 0;
+
+				while (a[s]) {
+					++s;
+				}
+
+				return s;
 			 }
 
 			 static constexpr int compare(const char* x, const char* y) {

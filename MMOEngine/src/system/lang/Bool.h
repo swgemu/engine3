@@ -28,7 +28,7 @@ namespace sys {
 
 		}
 
-		bool toString(String& str) {
+		bool toString(String& str) const {
 			if (get() == true)
 				str = String("true");
 			else

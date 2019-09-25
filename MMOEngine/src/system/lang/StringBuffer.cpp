@@ -385,7 +385,7 @@ StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {
 		streamFlags = (StreamFlags) ((uint32) streamFlags & ~(uint32) uppercase);
 		break;
 	case sys::lang::endl:
-		emplace('\n');
+		append('\n');
 		break;
 	default:
 		streamFlags = (StreamFlags) ((uint32) streamFlags | (uint32) flags);

@@ -37,7 +37,7 @@ namespace sys {
 			return true;
 		}
 
-		bool toString(String& str) {
+		bool toString(String& str) const {
 			str = String::valueOf((int)*this);
 
 			return true;
@@ -77,7 +77,7 @@ namespace sys {
 			return true;
 		}
 
-		bool toString(String& str) {
+		bool toString(String& str) const {
 			str = String::valueOf((uint32)*this);
 
 			return true;

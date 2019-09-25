@@ -40,11 +40,18 @@ float StringTokenizer::getFloatToken() {
 	return (float) atof(token.toCharArray());
 }
 
-uint64 StringTokenizer::getLongToken() {
+int64 StringTokenizer::getLongToken() {
 	String token;
 	nextToken(token);
 
 	return Long::valueOf(token);
+}
+
+uint64 StringTokenizer::getUnsignedLongToken() {
+	String token;
+	nextToken(token);
+
+	return UnsignedLong::valueOf(token);
 }
 
 void StringTokenizer::getStringToken(String& token) {
@@ -125,6 +132,6 @@ void StringTokenizer::shiftTokens(int count) {
 		nextToken(token);
 }
 
-bool StringTokenizer::hasMoreTokens() {
+bool StringTokenizer::hasMoreTokens() const {
 	return index != -1;
 }

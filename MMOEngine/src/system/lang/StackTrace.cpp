@@ -58,7 +58,7 @@ void StackTrace::print() const {
 	char** tracedSymbols = backtrace_symbols(symbols, count);
 
 	if (tracedSymbols == nullptr) {
-		System::out << "error while trying to print stack trace: tracedSymbols == nullptr" << endl;
+		logger.error() << "error while trying to print stack trace: tracedSymbols == nullptr" << endl;
 		return;
 	}
 
@@ -96,7 +96,6 @@ void StackTrace::print() const {
 	cygwin_stackdump();
 #endif
 }
-
 
 void StackTrace::printStackTrace() {
 	StackTrace trace;

@@ -31,7 +31,7 @@ namespace sys {
 
 		}
 
-		bool toString(String& str) {
+		bool toString(String& str) const {
 			str = String::valueOf(*this);
 
 			return true;
@@ -113,7 +113,7 @@ namespace sys {
 
 		}
 
-		bool toString(String& str) {
+		bool toString(String& str) const {
 			str = String::valueOf(*this);
 
 			return true;

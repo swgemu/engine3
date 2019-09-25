@@ -265,7 +265,7 @@ namespace engine {
 
 		static void getJSONString(StringBuffer& output, const char* logName, const char* msg, LogLevel type);
 
-		static void printTime(bool getFull = true);
+		static void printTime(bool getFull = true, bool err = false);
 
 		void getLogType(StringBuffer& buffer, LogLevel type) const;
 		static const char* getLogType(LogLevel type);

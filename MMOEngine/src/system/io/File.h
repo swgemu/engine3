@@ -83,7 +83,7 @@ namespace sys {
 
 		static bool doMkdir(const char* path, int mode);
 
-		String getModeString(int mode, int access) const;
+		static String getModeString(int mode, int access);
 	};
 
   } // namespace io

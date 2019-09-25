@@ -33,7 +33,7 @@ public:
 
 	virtual V run(const Arg1& k, const Arg2& k2) = 0;
 
-	virtual K hash(const Arg1& k, const Arg2& k2) = 0;
+	virtual K hash(const Arg1& k, const Arg2& k2) const = 0;
 };
 
 template<typename A, typename B>
@@ -167,8 +167,8 @@ public:
   // the maximum number of records to be stored
   lru_cache_using_engine3(function_type func, size_t c, int accessCountToPromote = 5)
     	:_fn(func), _capacity(c), minAccessCountForPromoting(accessCountToPromote) {
-    assert(_capacity != 0);
-    assert(minAccessCountForPromoting > 0);
+    E3_ASSERT(_capacity != 0);
+    E3_ASSERT(minAccessCountForPromoting > 0);
   }
 
   virtual ~lru_cache_using_engine3() {
@@ -239,11 +239,11 @@ public:
 	  }
   }
 
-  int getHitCount() {
+  int getHitCount() const {
 	  return hitCount.get();
   }
 
-  int getMissCount() {
+  int getMissCount() const {
 	  return missCount.get();
   }
 
@@ -264,7 +264,7 @@ public:
 	  _key_tracker.erase(it);
   }
 
-  int getSize() {
+  int getSize() const {
 	  return _key_to_value.size();
   }
 
@@ -299,7 +299,7 @@ protected:
   // Purge the least-recently-used element in the cache
   virtual value_type evict() {
 	  // Assert method is never called when cache is empty
-	  assert(!_key_tracker.empty());
+	  E3_ASSERT(!_key_tracker.empty());
 
 	  // Identify least recently used key
 	  // Erase both elements to completely purge record
@@ -353,8 +353,8 @@ public:
   // the maximum number of records to be stored
   lru_cache_using_engine3_2args(function_type func, size_t c, int accessCountToPromote = 5)
     	:_fn(func), _capacity(c), minAccessCountForPromoting(accessCountToPromote) {
-    assert(_capacity != 0);
-    assert(minAccessCountForPromoting > 0);
+    E3_ASSERT(_capacity != 0);
+    E3_ASSERT(minAccessCountForPromoting > 0);
   }
 
   virtual ~lru_cache_using_engine3_2args() {
@@ -446,11 +446,11 @@ public:
 	  _key_tracker.erase(it);
   }
 
-  int getHitCount() {
+  int getHitCount() const {
 	  return hitCount.get();
   }
 
-  int getMissCount() {
+  int getMissCount() const {
 	  return missCount.get();
   }
 
@@ -458,7 +458,7 @@ public:
 	  return &_key_to_value;
   }
 
-  int getSize() {
+  int getSize() const {
 	  return _key_to_value.size();
   }
 
@@ -493,7 +493,7 @@ protected:
   // Purge the least-recently-used element in the cache
   virtual value_type evict() {
 	  // Assert method is never called when cache is empty
-	  assert(!_key_tracker.empty());
+	  E3_ASSERT(!_key_tracker.empty());
 
 	  // Identify least recently used key
 	  // Erase both elements to completely purge record

@@ -37,7 +37,7 @@ namespace sys {
 
 		  }
 
-		  bool toString(String& str) {
+		  bool toString(String& str) const {
 			  str = String::valueOf(*this);
 
 			  return true;
@@ -62,7 +62,16 @@ namespace sys {
 		  }
 
 		  static unsigned int hashCode(uint64 value) {
-			  return (unsigned int)(value ^ (value >> 32));
+			  uint64 key = value;
+
+			  key = (~key) + (key << 18); // key = (key << 18) - key - 1;
+			  key =   key  ^ (key >> 31);
+			  key = key * 21;             // key = (key + (key << 2)) + (key << 4);
+			  key = key ^ (key >> 11);
+			  key = key + (key << 6);
+			  key = key ^ (key >> 22);
+
+			  return (int) key;
 		  }
 
 		  static int64 valueOf(const String& str) {
@@ -157,7 +166,7 @@ namespace sys {
 
 		  }
 
-		  bool toString(String& str) {
+		  bool toString(String& str) const {
 			  str = String::valueOf(*this);
 
 			  return true;
@@ -201,7 +210,7 @@ namespace sys {
 		  }
 
 		  static unsigned int hashCode(int64 value) {
-			  return (unsigned int)(value ^ (value >> 32));
+			  return Long::hashCode(value);
 		  }
 	  };
 

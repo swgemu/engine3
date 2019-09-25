@@ -274,9 +274,9 @@ void Logger::log(const StringBuffer& msg) const {
 
 void Logger::error(const char* msg) const {
 	if (logToConsole) {
-		printTime(false);
+		printTime(false, true);
 
-		System::out << " [" << name << "] ERROR - " << msg << endl << flush;
+		System::err << " [" << name << "] ERROR - " << msg << endl << flush;
 	}
 
 	log(msg, LogLevel::ERROR);
@@ -291,9 +291,9 @@ void Logger::error(const StringBuffer& msg) const {
 }
 
 void Logger::fatal(const char* msg) const {
-	printTime(false);
+	printTime(false, true);
 
-	System::out << " [" << name << "] FATAL - " << msg << endl;
+	System::err << " [" << name << "] FATAL - " << msg << endl;
 
 	log(msg, LogLevel::FATAL, true);
 
@@ -414,12 +414,16 @@ void Logger::getTime(String& times, bool getFull) {
 	times = str.toString();
 }
 
-void Logger::printTime(bool getFull) {
+void Logger::printTime(bool getFull, bool err) {
 	StringBuffer str;
 
 	getTime(str, getFull);
 
-	System::out << str;
+	if (err) {
+		System::err << str;
+	} else {
+		System::out << str;
+	}
 }
 
 uint64 Logger::getElapsedTime() {
