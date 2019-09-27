@@ -30,8 +30,7 @@ StreamServiceClient::~StreamServiceClient() {
 }
 
 void StreamServiceClient::connect() {
-	if (socket == nullptr)
-	{
+	if (socket == nullptr) {
 		socket = new TCPSocket();
 	}
 
@@ -39,7 +38,7 @@ void StreamServiceClient::connect() {
 }
 
 void StreamServiceClient::run() {
-	System::out << "[StreamServiceClient] WARNING - client shouldn't run\n";
+	System::err << "[StreamServiceClient] WARNING - client shouldn't run\n";
 }
 
 void StreamServiceClient::start() {

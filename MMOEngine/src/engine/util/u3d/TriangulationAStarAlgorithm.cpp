@@ -14,7 +14,7 @@
 #include "TriangulationAStarAlgorithm.h"
 #include "Segment.h"
 
-Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint, const Vector3& goalPoint, TriangleNode* source, TriangleNode* target) {
+Vector<const Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint, const Vector3& goalPoint, const TriangleNode* source, const TriangleNode* target) {
 	VectorMap<uint32, AStarNode<TriangleNode, uint32>* > visited(100, 10);
 	visited.setNullValue(nullptr);
 	visited.setNoDuplicateInsertPlan();
@@ -32,16 +32,16 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 		if (target == x->getNode()) {
 			goal = x;
 		} else {
-			const Vector<TriangleNode*>* neighbors = x->getNode()->getNeighbors();
+			auto neighbors = x->getNode()->getNeighbors();
 
 			for (int i = 0; i < neighbors->size(); ++i) {
-				TriangleNode* neighbor = neighbors->getUnsafe(i);
+				const TriangleNode* neighbor = neighbors->getUnsafe(i);
 
 				if (visited.contains(neighbor->getID()))
 					continue;
 
-				Triangle* triangleA = x->getNode();
-				Triangle* triangleB = neighbor;
+				const Triangle* triangleA = x->getNode();
+				const Triangle* triangleB = neighbor;
 
 				const Vector3* pointA = &Vector3::ZERO;
 				const Vector3* pointB = &Vector3::ZERO;
@@ -70,7 +70,7 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 
 				while (parent != nullptr) {
 					currentPath.insertElementAt(parent->getNode(), 0);
-					
+
 					if (parent != parent->getCameFrom())
 						parent = parent->getCameFrom();
 				}
@@ -119,10 +119,10 @@ Vector<Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& startPoint
 		return nullptr;
 	}
 
-	Vector<Triangle*>* path = new Vector<Triangle*>();
+	auto path = new Vector<const Triangle*>();
 	path->add(goal->getNode());
 
-	AStarNode<TriangleNode, uint32>* parent = goal->getCameFrom();
+	const AStarNode<TriangleNode, uint32>* parent = goal->getCameFrom();
 
 	while (parent != nullptr) {
 		path->insertElementAt(parent->getNode(), 0);

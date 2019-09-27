@@ -25,8 +25,8 @@ namespace engine {
 
 		  }
 
-  		  virtual uint32 getID() = 0;
-  		  virtual Vector<TriangleNode*>* getNeighbors() = 0;
+  		  virtual uint32 getID() const = 0;
+  		  virtual const Vector<TriangleNode*>* getNeighbors() const = 0;
   	  };
 
   }

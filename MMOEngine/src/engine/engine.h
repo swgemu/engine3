@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef ENGINE_H_
-#define ENGINE_H_
+#pragma once
 
 #include "system/lang.h"
 
@@ -73,5 +72,3 @@
 #include "util/u3d/Funnel.h"
 #include "util/iffstream/IffStream.h"
 
-
-#endif /*ENGINE_H_*/

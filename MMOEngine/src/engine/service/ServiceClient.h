@@ -85,6 +85,10 @@ namespace engine {
 		inline Socket* getSocket() {
 			return socket;
 		}
+
+		inline const Socket* getSocket() const {
+			return socket;
+		}
 	};
 
   } // namespace service

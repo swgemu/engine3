@@ -157,7 +157,7 @@ namespace engine {
 		void flushSendBuffer(int seq);
 
 	public:
-		inline bool isClientDisconnected() {
+		inline bool isClientDisconnected() const {
 			return clientDisconnected;
 		}
 
@@ -171,19 +171,19 @@ namespace engine {
 		}
 
 		// getters
-		inline String& getAddress() {
+		inline const String& getAddress() const {
 			return ip;
 		}
 
-		inline String getIPAddress() {
+		inline String getIPAddress() const {
 			return addr.getIPAddress();
 		}
 
-		inline int getSentPacketCount() {
+		inline int getSentPacketCount() const {
 			return serverSequence;
 		}
 
-		inline int getResentPacketCount() {
+		inline int getResentPacketCount() const {
 			return resentPackets;
 		}
 

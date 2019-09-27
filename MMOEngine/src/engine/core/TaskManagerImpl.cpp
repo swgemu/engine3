@@ -60,7 +60,7 @@ void TaskManagerImpl::initialize() {
 TaskQueue* TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) NO_THREAD_SAFETY_ANALYSIS {
 	Locker locker(this);
 
-	debug() << "initializing custom queue" << queueName << " with number of threads: " << numberOfThreads << " and block during save " << blockDuringSaveEvent;
+	debug() << "initializing custom queue " << queueName << " with number of threads: " << numberOfThreads << " and block during save: " << blockDuringSaveEvent;
 
 	int maxCpus = Math::max(1, (int) System::getOnlineProcessors());
 

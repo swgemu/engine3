@@ -3,9 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef OBJECT_H_
-#define OBJECT_H_
-
+#pragma once
 #include <atomic>
 
 #include "system/lang/ref/ReferenceCounter.h"
@@ -245,6 +243,4 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::lang;
-
-#endif /*OBJECT_H_*/
 

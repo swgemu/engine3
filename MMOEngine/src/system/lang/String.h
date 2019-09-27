@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef STRING_H_
-#define STRING_H_
+#pragma once
 
 #include "system/platform.h"
 #include "Variable.h"
@@ -148,10 +147,10 @@ namespace sys {
 			char buffer[BufferSize]; //VLA is not officially supported in cpp
 
 			va_list args;
-			va_start (args, format);
+			va_start(args, format);
 
 			//Notice that only when this returned value is non-negative and less than n, the string has been completely written.
-			int res = vsnprintf (buffer, sizeof(buffer), format, args);
+			int res = vsnprintf(buffer, sizeof(buffer), format, args);
 
 			va_end(args);
 
@@ -265,7 +264,6 @@ namespace sys {
 		}
 
 		bool toString(String& str);
-
 		bool parseFromString(const String& str, int version = 0);
 
 		bool toBinaryStream(sys::io::ObjectOutputStream* stream);
@@ -407,4 +405,3 @@ constexpr uint32 operator "" _hashCode(char const* str, std::size_t s) {
 	return String::hashCode(str);
 }
 
-#endif /*STRING_H_*/

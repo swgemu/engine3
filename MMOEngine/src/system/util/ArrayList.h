@@ -73,6 +73,7 @@ namespace sys {
 		   void moveAll(ArrayList<E>& array);
 
 		   void forEach(const Function<void(E&)>& func, int first = 0, int last = -1);
+		   void forEach(const Function<void(E const&)>& func, int first = 0, int last = -1) const;
 
 		   bool contains(const E& element) const;
 		   int find(const E& element) const;
@@ -442,6 +443,22 @@ namespace sys {
 
 	   for (int i = first; i < last; ++i) {
 		   auto& element = getUnsafe(i);
+
+		   func(element);
+	   }
+   }
+
+   template<class E> void ArrayList<E>::forEach(const Function<void(E const&)>& func, int first, int last) const {
+	   if (last < 0)
+		   last = elementCount;
+
+	   if (last > elementCount)
+		   throw ArrayIndexOutOfBoundsException(last);
+	   else if (first > elementCount || first < 0 || first > last)
+		   throw ArrayIndexOutOfBoundsException(first);
+
+	   for (int i = first; i < last; ++i) {
+		   const auto& element = getUnsafe(i);
 
 		   func(element);
 	   }

@@ -163,7 +163,7 @@ namespace engine {
 
 				WeakReference<O>::updateObject(strongRef.get());
 
-				if (strongRef == NULL) {
+				if (strongRef == nullptr) {
 					this->savedObjectID.store(0, std::memory_order_relaxed);
 				}
 			}
@@ -181,7 +181,7 @@ namespace engine {
 
 				WeakReference<O>::updateObject(strongRef.get());
 
-				if (strongRef == NULL) {
+				if (strongRef == nullptr) {
 					this->savedObjectID.store(0, std::memory_order_relaxed);
 				}
 			}

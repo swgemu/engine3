@@ -14,7 +14,7 @@
 
 #include "Funnel.h"
 
-Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPoint, const Vector<Triangle*>* triangleChannel) {
+Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPoint, const Vector<const Triangle*>* triangleChannel) {
 	Vector<Vector3>* path = new Vector<Vector3>();
 
 	path->add(startPoint);
@@ -92,7 +92,7 @@ Vector<Vector3>* Funnel::funnel(const Vector3& startPoint, const Vector3& goalPo
 			}
 		}
 	}
-	
+
 	path->add(goalPoint);
 
 	return path;

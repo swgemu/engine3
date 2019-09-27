@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef VARIABLE_H_
-#define VARIABLE_H_
+#pragma once
 
 #include "system/platform.h"
 
@@ -41,4 +40,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /* VARIABLE_H_ */

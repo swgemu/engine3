@@ -48,9 +48,7 @@ void DatagramServiceThread::start(int p, int mconn) {
 
 	ServiceThread::start();
 
-	StringBuffer msg;
-	msg << "started on port " << port;
-	info(msg);
+	info() << "started on port " << port;
 }
 
 void DatagramServiceThread::stop() {

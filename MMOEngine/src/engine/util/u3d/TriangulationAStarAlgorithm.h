@@ -21,7 +21,7 @@ namespace engine {
 
   class TriangulationAStarAlgorithm {
   public:
-	  static Vector<Triangle*>* search(const Vector3& startPoint, const Vector3& goalPoint, TriangleNode* source, TriangleNode* target);
+	  static Vector<const Triangle*>* search(const Vector3& startPoint, const Vector3& goalPoint, const TriangleNode* source, const TriangleNode* target);
   };
 
 

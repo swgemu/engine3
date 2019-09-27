@@ -74,7 +74,8 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 		ret = getDatabaseHandle()->get(transaction, &key, &data, lockMode);
 
 		if (ret == DB_LOCK_DEADLOCK && !readThreadLocalTransaction) {
-			info("deadlock detected in ObjectDatabse::get.. retrying iteration " + String::valueOf(i));
+			info() << "deadlock detected in ObjectDatabse::get.. retrying iteration " << i;
+
 			transaction->abort();
 			transaction = nullptr;
 		}
@@ -92,7 +93,7 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 
 		objectData->reset();
 	} else if (ret != DB_NOTFOUND) {
-		error("error in ObjectDatabase::getData ret " + String::valueOf(db_strerror(ret)));
+		error() << "error in ObjectDatabase::getData ret " << db_strerror(ret);
 
 		if (!readThreadLocalTransaction && transaction != nullptr)
 			transaction->abort();
@@ -157,9 +158,9 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 			return log;
 		} ();
 
-		customLogger.log(stream.toString());
+		customLogger.log(stream);
 	} else {
-		warning(stream.toString());
+		warning(stream);
 	}
 
 	return ret;
@@ -184,7 +185,7 @@ int ObjectDatabase::getDataNoTx(uint64 objKey, ObjectInputStream* objectData, ui
 
 		objectData->reset();
 	} else if (ret != DB_NOTFOUND) {
-		error("error in ObjectDatabase::getData ret " + String::valueOf(db_strerror(ret)));
+		error() << "error in ObjectDatabase::getData ret " << db_strerror(ret);
 
 		throw DatabaseException("error in ObjectDatabase::getData ret " + String(db_strerror(ret)));
 	}

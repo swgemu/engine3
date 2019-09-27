@@ -34,6 +34,10 @@ namespace engine {
 			radiusSquared(rad * rad) {
 		}
 
+		bool containsPoint(const Vector3 point) const {
+			return (point - getCenter()).length() < getRadius();
+		}
+
 		bool intersects(const Triangle& tri) const;/* {
 			return (tri.distSqrd(origin) <= radiusSquared);
 		}*/

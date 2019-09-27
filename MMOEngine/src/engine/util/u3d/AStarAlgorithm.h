@@ -25,11 +25,11 @@ namespace engine {
 	class AStarNode : public PriorityQueueEntry, public Object {
 		float g, heuristic;
 
-		Node* node;
+		const Node* node;
 
-		AStarNode<Node, IDType>* cameFrom;
+		const AStarNode<Node, IDType>* cameFrom;
 	public:
-		AStarNode(Node* node, float g, float heuristic) {
+		AStarNode(const Node* node, float g, float heuristic) {
 			AStarNode::g = g;
 			AStarNode::heuristic = heuristic;
 			AStarNode::node = node;
@@ -48,7 +48,7 @@ namespace engine {
 				return 0;
 		}
 
-		inline void setCameFrom(AStarNode<Node, IDType>* star) {
+		inline void setCameFrom(const AStarNode<Node, IDType>* star) {
 			cameFrom = star;
 		}
 
@@ -60,7 +60,7 @@ namespace engine {
 			heuristic = h;
 		}
 
-		inline Node* getNode() const {
+		inline const Node* getNode() const {
 			return node;
 		}
 
@@ -68,7 +68,7 @@ namespace engine {
 			return node->getID();
 		}
 
-		inline AStarNode<Node, IDType>* getCameFrom() const {
+		inline const AStarNode<Node, IDType>* getCameFrom() const {
 			return cameFrom;
 		}
 
@@ -91,7 +91,7 @@ namespace engine {
 	class AStarAlgorithm {
 	public:
 		template <class IDType>
-		static Vector<Node*>* search(Graph* graph, Node* source, Node* target) {
+		static Vector<const Node*>* search(const Graph* graph, const Node* source, const Node* target) {
 			VectorMap<IDType, Reference<AStarNode<Node, IDType>* > > openSet;
 			openSet.setAllowDuplicateInsertPlan();
 			openSet.setNullValue(nullptr);
@@ -108,7 +108,7 @@ namespace engine {
 			Reference<AStarNode<Node, IDType>* > goal = nullptr;
 
 			while (openSet.size() > 0) {
-				Reference<AStarNode<Node, IDType>* > x = (AStarNode<Node, IDType>*)const_cast<PriorityQueueEntry*>(priorityQueue.poll());
+				Reference<AStarNode<Node, IDType>* > x = static_cast<AStarNode<Node, IDType>*>(priorityQueue.poll());
 				openSet.drop(x->getID());
 
 				if (TypeInfo<IDType>::compare(x->getID(), target->getID()) == 0) {
@@ -119,10 +119,10 @@ namespace engine {
 				} else {
 					closeSet.put(x->getID(), x);
 
-					Vector<Node*>* neighbors = x->getNode()->getNeighbors();
+					const Vector<Node*>* neighbors = x->getNode()->getNeighbors();
 
 					for (int i = 0; i < neighbors->size(); ++i) {
-						Node* neighbor = neighbors->getUnsafe(i);
+						const Node* neighbor = neighbors->getUnsafe(i);
 
 						const Reference<AStarNode<Node, IDType>* >& visited = closeSet.get(neighbor->getID());
 
@@ -150,10 +150,10 @@ namespace engine {
 			if (goal == nullptr)
 				return nullptr;
 
-			Vector<Node*>* path = new Vector<Node*>();
+			auto path = new Vector<const Node*>();
 			path->add(goal->getNode());
 
-			AStarNode<Node, IDType>* parent = goal->getCameFrom();
+			const AStarNode<Node, IDType>* parent = goal->getCameFrom();
 
 			while (parent != nullptr) {
 				path->insertElementAt(parent->getNode(), 0);

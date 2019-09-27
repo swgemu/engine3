@@ -51,7 +51,7 @@ namespace sys {
 		    time_in_ms = tm.tv_sec; // Avoid overflow by doing mul in 64 bit int
 		    time_in_ms = (time_in_ms * 1000) + (uint64) (tm.tv_usec / 1000.f);
 
-		    return (uint64)time_in_ms;
+		    return time_in_ms;
 		}
 
 		static inline uint64 getMikroTime() {
@@ -63,7 +63,7 @@ namespace sys {
 		    time_in_ms = tm.tv_sec; // Avoid overflow by doing mul in 64 bit int
 		    time_in_ms = (time_in_ms * 1000000) + tm.tv_usec;
 
-		    return (uint64)time_in_ms;
+		    return time_in_ms;
 		}
 	#else
 		static inline uint64 getMiliTime() {
@@ -75,7 +75,10 @@ namespace sys {
 		}
 	#endif
 
-		static uint32 random(unsigned int bucket = 0xFFFFFFFF);
+		static uint32 random(); // integer in [0,2^32-1]
+		static uint32 random(uint32 bucket); //integer in [0,n] for n < 2^32
+		static double frandom(const double& n); // real number in [0, n]
+		static double frandom(); // real number in [0, 1]
 
 		static MTRand* getMTRand();
 	};
