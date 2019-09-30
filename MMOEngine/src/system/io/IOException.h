@@ -2,10 +2,9 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef IOEXCEPTION_H_
-#define IOEXCEPTION_H_
+#pragma once
 
-#include <errno.h>
+#include <cerrno>
 
 #include "system/lang/Exception.h"
 
@@ -36,4 +35,3 @@ namespace sys {
 
 using namespace sys::io;
 
-#endif /*IOEXCEPTION_H_*/

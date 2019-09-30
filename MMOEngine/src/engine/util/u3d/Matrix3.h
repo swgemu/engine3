@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef MATRIX3_H_
-#define MATRIX3_H_
+#pragma once
 
 #include "Vector3.h"
 
@@ -84,4 +83,3 @@ namespace engine {
 
 using namespace engine::util::u3d;
 
-#endif /* MATRIX3_H_ */

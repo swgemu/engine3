@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef STREAM_H_
-#define STREAM_H_
+#pragma once
 
 #include "system/platform.h"
 
@@ -97,4 +96,3 @@ namespace sys {
 
 using namespace sys::io;
 
-#endif /*STREAM_H_*/

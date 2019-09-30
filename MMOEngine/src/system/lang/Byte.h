@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef BYTE_H_
-#define BYTE_H_
+#pragma once
 
 #include "Character.h"
 #include "Integer.h"
@@ -55,5 +54,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-
-#endif /* BYTE_H_ */

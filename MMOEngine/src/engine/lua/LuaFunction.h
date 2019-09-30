@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef LUAFUNCTION_H_
-#define LUAFUNCTION_H_
+#pragma once
 
 #include <lua.hpp>
 
@@ -91,4 +90,3 @@ namespace lua {
 
 using namespace engine::lua;
 
-#endif /* LUAFUNCTION_H_ */

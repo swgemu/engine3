@@ -12,11 +12,22 @@
 #ifndef AABBNODE_H_
 #define AABBNODE_H_
 
+#include "AABB.h"
+
+namespace sys {
+ namespace io {
+ 	class ObjectOutputStream;
+	class ObjectInputStream;
+ }
+}
+
 namespace engine {
  namespace util {
 	namespace u3d {
 
  	struct AABBTreeHeuristic;
+	class Triangle;
+	class Sphere;
 
  	class IntersectionResult {
  		float intersectionDistance;
@@ -48,11 +59,11 @@ namespace engine {
  			return *this;
  		}
 
- 		bool toBinaryStream(ObjectOutputStream* stream) {
+ 		bool toBinaryStream(sys::io::ObjectOutputStream* stream) {
  			return false;
  		}
 
- 		bool parseFromBinaryStream(ObjectInputStream* stream) {
+ 		bool parseFromBinaryStream(sys::io::ObjectInputStream* stream) {
  			return false;
  		}
 

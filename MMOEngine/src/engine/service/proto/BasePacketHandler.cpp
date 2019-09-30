@@ -33,7 +33,7 @@ BasePacketHandler::BasePacketHandler(const String& s, ServiceHandler* handler) :
 }
 
 void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
-	//info("READ - " + pack->toStringData(), true);
+	debug() << "READ - " << *pack;
 
 	try {
 		uint16 opcode = pack->parseShort();
@@ -126,31 +126,27 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			handleDataChannelPacket(client, pack);
 			break;
 		}
-	} catch (Exception& e) {
-		Logger::console.error(e.getMessage());
+	} catch (const Exception& e) {
 		e.printStackTrace();
 	}
 }
 
 void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
-	//client->info("session request recieved");
+	debug("session request recieved");
 
 #if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	uint32 cid = SessionIDRequestMessage::parse(pack);
 
 	Reference<Task*> task = new SessionStartTask(client, cid);
 	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
+	task->execute();
 
-	auto manager = Core::getTaskManager();
-
-	if (manager != nullptr)
-		manager->executeTask(task);
 #else
 
-    SessionIDRequestMessage::parse(pack, client);
+	SessionIDRequestMessage::parse(pack, client);
 
-    Packet* msg = new SessionIDResponseMessage(client);
-    client->send(msg);
+	Packet* msg = new SessionIDResponseMessage(client);
+	client->send(msg);
 #endif
 
     /*
@@ -162,32 +158,26 @@ void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
 }
 
 void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
-	client->info("session request recieved");
+	debug("session request recieved");
 
-    uint32 seed = SessionIDResponseMessage::parse(pack);
+	uint32 seed = SessionIDResponseMessage::parse(pack);
 
 #if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
-    Reference<Task*> task = new SessionResponseTask(client, seed);
+	Reference<Task*> task = new SessionResponseTask(client, seed);
 	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
-	auto manager = Core::getTaskManager();
-
-	if (manager != nullptr)
-		manager->executeTask(task);
+	task->execute();
 #else
-    client->notifyReceivedSeed(seed);
+	client->notifyReceivedSeed(seed);
 #endif
 }
 
 void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
-	client->info("SELF DISCONNECTING CLIENT");
+	debug("SELF DISCONNECTING CLIENT");
 
 #if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new DisconnectTask(client);
 	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
-	auto manager = Core::getTaskManager();
-
-	if (manager != nullptr)
-		manager->executeTask(task);
+	task->execute();
 #else
 	client->setClientDisconnected();
 	client->disconnect();
@@ -200,13 +190,9 @@ void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 #if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new NetStatusResponseTask(client, tick);
 	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
-	auto manager = Core::getTaskManager();
-
-	if (manager != nullptr)
-		manager->executeTask(task);
+	task->execute();
 #else
 	if (client->updateNetStatus(tick)) {
-
 		BasePacket* resp = new NetStatusResponseMessage(tick);
 		client->sendPacket(resp);
 	}
@@ -219,10 +205,7 @@ void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 #if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new OutOfOrderTask(client, seq);
 	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
-	auto manager = Core::getTaskManager();
-
-	if (manager != nullptr)
-		manager->executeTask(task);
+	task->execute();
 #else
 	client->resendPackets(seq);
 #endif
@@ -238,10 +221,7 @@ void BasePacketHandler::doAcknowledge(BaseClient* client, Packet* pack) {
 #if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new AcknowledgeTask(client, seq);
 	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
-	auto manager = Core::getTaskManager();
-
-	if (manager != nullptr)
-		manager->executeTask(task);
+	task->execute();
 #else
 	client->acknowledgeServerPackets(seq);
 #endif
@@ -486,7 +466,7 @@ int BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) 
 			delete fraggedPacket;
 		} /*else if (pack->size() < 485)
 		throw Exception("incomplete fragmented packet");*/
-	} catch (FragmentedPacketParseException& e) {
+	} catch (const FragmentedPacketParseException& e) {
 		error(e.getMessage());
 		return 1;
 	}

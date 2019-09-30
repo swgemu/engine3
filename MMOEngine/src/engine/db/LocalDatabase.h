@@ -100,7 +100,7 @@ namespace engine {
 	 	return false;
 	 }
 
-	 DatabaseType getDatabaseType() {
+	 DatabaseType getDatabaseType() const {
 	 	return dbType;
 	 }
 

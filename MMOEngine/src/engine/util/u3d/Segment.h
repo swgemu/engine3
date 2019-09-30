@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef SEGMENT_H_
-#define SEGMENT_H_
+#pragma once
 
 #include "Vector3.h"
 
@@ -58,5 +57,3 @@ namespace engine {
 
 using namespace engine::util::u3d;
 
-
-#endif /* SEGMENT_H_ */

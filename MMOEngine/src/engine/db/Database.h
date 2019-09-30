@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef DATABASE_H_
-#define DATABASE_H_
+#pragma once
 
 #include "system/lang.h"
 
@@ -118,4 +117,3 @@ public:
 
 using namespace engine::db;
 
-#endif /*DATABASE_H_*/

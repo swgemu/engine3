@@ -7,10 +7,7 @@
 
 #include "BaseProtocol.h"
 
-BaseProtocol::BaseProtocol() : Logger("PROTO") {
-	crcSeed = 0;
-	lastRecievedNetStatusTick = 0;
-	erroneusTicks = 0;
+BaseProtocol::BaseProtocol() : Logger("BaseProtocol") {
 }
 
 void BaseProtocol::prepareSequence(BasePacket* pack) {
@@ -105,7 +102,7 @@ bool BaseProtocol::processRecieve(Packet* pack) {
 	return true;
 }
 
-void BaseProtocol::encrypt(Packet* pack, bool crc) {
+void BaseProtocol::encrypt(Packet* pack, bool crc) const {
 	//info("encrypting packet: " + pack->toStringData(), true);
 
 	char* pData = pack->getBuffer();
@@ -142,7 +139,7 @@ void BaseProtocol::encrypt(Packet* pack, bool crc) {
 	}
 }
 
-void BaseProtocol::decrypt(Packet* pack) {
+void BaseProtocol::decrypt(Packet* pack) const {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
@@ -181,7 +178,7 @@ void BaseProtocol::decrypt(Packet* pack) {
 	}
 }
 
-void BaseProtocol::decompress(Packet* pack) {
+void BaseProtocol::decompress(Packet* pack) const {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
@@ -234,7 +231,7 @@ void BaseProtocol::decompress(Packet* pack) {
 	pack->setOffset(2);
 }
 
-bool BaseProtocol::compress(Packet* pack) {
+bool BaseProtocol::compress(Packet* pack) const {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
@@ -341,7 +338,7 @@ static const unsigned int crcTable[256] = {
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-unsigned int BaseProtocol::generateCrc(const Packet* pack, int nLength) {
+unsigned int BaseProtocol::generateCrc(const Packet* pack, int nLength) const {
 	const char* pData = pack->getBuffer();
 
 	unsigned int nCrc = crcTable[(~crcSeed) & 0xFF];
@@ -391,7 +388,7 @@ unsigned int BaseProtocol::generateCRC(const Stream* stream, uint32 seed) {
 	return ~nCrc;
 }
 
-void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
+void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) const {
 	char* pData = pack->getBuffer();
 	int nLength = pack->size();
 
@@ -414,7 +411,7 @@ void BaseProtocol::appendCRC(Packet* pack, uint16 crcLength) {
 	}
 }
 
-bool BaseProtocol::testCRC(const Packet* pack, uint16 crcLength) {
+bool BaseProtocol::testCRC(const Packet* pack, uint16 crcLength) const {
 	const char* pData = pack->getBuffer();
 	int nLength = pack->size();
 

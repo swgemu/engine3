@@ -3,10 +3,9 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef LONG_H_
-#define LONG_H_
+#pragma once
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "Integer.h"
 
@@ -219,4 +218,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*LONG_H_*/

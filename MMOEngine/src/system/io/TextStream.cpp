@@ -3,7 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "system/lang/Character.h"
 
@@ -13,7 +13,7 @@
 namespace TextStreamDetail {
 	int fprintf(FILE* str, const char* format, ...) {
 		va_list args;
-		va_start (args, format);
+		va_start(args, format);
 
 		int res = ::vfprintf(str, format, args);
 

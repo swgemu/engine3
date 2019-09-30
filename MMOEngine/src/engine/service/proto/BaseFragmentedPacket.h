@@ -14,7 +14,7 @@ namespace engine {
 
 	class FragmentedPacketParseException : public Exception {
 	public:
-		FragmentedPacketParseException(const String& msg) : Exception(msg){
+		FragmentedPacketParseException(const String& msg) : Exception(msg) {
 
 		}
 	};
@@ -34,9 +34,9 @@ namespace engine {
 
 		BasePacket* getFragment();
 
-		bool isComplete();
+		bool isComplete() const;
 
-		bool hasFragments();
+		bool hasFragments() const;
 	};
 
     } // namespace proto

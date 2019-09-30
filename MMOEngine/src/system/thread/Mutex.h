@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef MUTEX_H_
-#define MUTEX_H_
+#pragma once
 
 //#define ENABLE_YIELD_BETWEEN_CROSSLOCK
 
@@ -79,4 +78,3 @@ namespace sys {
 
 using namespace sys::thread;
 
-#endif /*MUTEX_H_*/

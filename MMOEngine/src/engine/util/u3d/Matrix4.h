@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef MATRIX4_H_
-#define MATRIX4_H_
+#pragma once
 
 #include "Vector4.h"
 #include "system/lang/Object.h"
@@ -91,4 +90,3 @@ namespace engine {
 
 using namespace engine::util::u3d;
 
-#endif /* MATRIX4_H_ */

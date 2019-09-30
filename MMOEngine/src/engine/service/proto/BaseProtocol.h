@@ -17,16 +17,16 @@ namespace engine {
 
 	class BaseProtocol : public Logger {
 	protected:
-		sys::uint32 connectionID;
+		sys::uint32 connectionID = 0;
 
-		unsigned int crcSeed;
+		unsigned int crcSeed = 0;
 
-		sys::uint32 serverSequence;
-		sys::uint32 clientSequence;
+		sys::uint32 serverSequence = 0;
+		sys::uint32 clientSequence = 0;
 
 		Time lastNetStatusTimeStamp;
-		uint16 lastRecievedNetStatusTick;
-		uint16 erroneusTicks;
+		uint16 lastRecievedNetStatusTick = 0;
+		uint16 erroneusTicks = 0;
 
 		static const int COMPRESSION_BUFFER_MAX = 800;
 
@@ -43,15 +43,15 @@ namespace engine {
 
 		virtual bool processRecieve(Packet* pack);
 
-		void encrypt(Packet* pack, bool crc);
-		void decrypt(Packet* pack);
+		void encrypt(Packet* pack, bool crc) const;
+		void decrypt(Packet* pack) const;
 
-		bool compress(Packet* pack);
-		void decompress(Packet* pack);
+		bool compress(Packet* pack) const;
+		void decompress(Packet* pack) const;
 
-		unsigned int generateCrc(const Packet* pack, int len);
-		void appendCRC(Packet* pack, sys::uint16 crcLength = 2);
-		bool testCRC(const Packet* pack, sys::uint16 crcLength = 2);
+		unsigned int generateCrc(const Packet* pack, int len) const;
+		void appendCRC(Packet* pack, sys::uint16 crcLength = 2) const;
+		bool testCRC(const Packet* pack, sys::uint16 crcLength = 2) const;
 
 		static unsigned int generateCRC(const Stream* stream, uint32 seed = 1);
 

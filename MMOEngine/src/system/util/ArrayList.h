@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef ARRAYLIST_H_
-#define ARRAYLIST_H_
+#pragma once
 
 #include "system/platform.h"
 
@@ -754,4 +753,3 @@ namespace sys {
 
 using namespace sys::util;
 
-#endif /* ARRAYLIST_H_ */

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <math.h>
+#include <cmath>
 
 #include "system/platform.h"
 
@@ -19,7 +19,9 @@ namespace sys {
 		static const double RAD2DEG;
 		static const double E;
 
-		static double sqrt(double number);
+		static inline double sqrt(double number) {
+			return ::sqrt(number);
+		}
 
 		//static float rsqrt(float number);
 

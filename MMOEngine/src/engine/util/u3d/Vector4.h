@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef VECTOR4_H_
-#define VECTOR4_H_
+#pragma once
 
 #include "system/platform.h"
 #include "system/lang/ArrayIndexOutOfBoundsException.h"
@@ -109,4 +108,3 @@ public:
 
 using namespace engine::util::u3d;
 
-#endif /* VECTOR4_H_ */

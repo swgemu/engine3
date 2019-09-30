@@ -2,8 +2,7 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef CHARACTER_H_
-#define CHARACTER_H_
+#pragma once
 
 #include "system/platform.h"
 
@@ -148,4 +147,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*CHARACTER_H_*/

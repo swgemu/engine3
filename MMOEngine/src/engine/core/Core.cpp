@@ -4,8 +4,11 @@
 */
 
 #include "ManagedReference.h"
+#include "TaskManager.h"
 
 #include "engine/lua/Lua.h"
+
+#include <new>
 
 SynchronizedHashTable<String, ArrayList<String>> Core::properties;
 UniqueReference<TaskManager*> Core::taskManager;

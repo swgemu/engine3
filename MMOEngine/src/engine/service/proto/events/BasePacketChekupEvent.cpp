@@ -6,6 +6,9 @@
 
 #include "BasePacketChekupEvent.h"
 
+#include "engine/service/proto/BasePacket.h"
+#include "engine/service/proto/BaseClient.h"
+
 BasePacketChekupEvent::BasePacketChekupEvent(BaseClient* cl, uint32 time) : Task(time) {
 	client = cl;
 	checkupTime = time;

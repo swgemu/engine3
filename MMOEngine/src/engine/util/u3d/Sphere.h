@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef SPHERE_H_
-#define SPHERE_H_
+#pragma once
 
 #include "Vector3.h"
 #include "Triangle.h"
@@ -68,4 +67,3 @@ namespace engine {
 
 using namespace engine::util::u3d;
 
-#endif /* SPHERE_H_ */

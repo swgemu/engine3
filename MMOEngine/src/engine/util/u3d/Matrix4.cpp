@@ -88,6 +88,7 @@ Vector3 Matrix4::operator*(const Vector3& vec) const {
 }
 
 Matrix4 Matrix4::inverse() const {
+	//Written by Matthew Fisher  https://graphics.stanford.edu/~mdfisher/Code/Engine/Matrix4.cpp.html
 	//
 	// Inversion by Cramer's rule.  Code taken from an Intel publication
 	//

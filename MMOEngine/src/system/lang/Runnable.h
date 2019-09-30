@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef RUNNABLE_H_
-#define RUNNABLE_H_
+#pragma once
 
 namespace sys {
   namespace lang {
@@ -13,9 +12,9 @@ namespace sys {
 	public:
 		virtual ~Runnable() {
 		}
-		
+
 		virtual void run() = 0;
-		
+
 	};
 
   } // namespace lang
@@ -23,4 +22,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*RUNNABLE_H_*/

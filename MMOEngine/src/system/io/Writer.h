@@ -2,9 +2,7 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef WRITER_H_
-#define WRITER_H_
-
+#pragma once
 #include "system/lang/Object.h"
 
 namespace sys {
@@ -33,4 +31,3 @@ namespace sys {
 
 using namespace sys::io;
 
-#endif /*WRITER_H_*/

@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef TRIANGLE_H_
-#define TRIANGLE_H_
+#pragma once
 
 //#define TRIANGLE_INHERITS_VARIABLE
 
@@ -127,4 +126,3 @@ namespace engine {
 using namespace engine::util::u3d;
 
 
-#endif /* TRIANGLE_H_ */

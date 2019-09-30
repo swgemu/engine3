@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef CURSOR_H_
-#define CURSOR_H_
+#pragma once
 
 #include <db.h>
 #include "CursorConfig.h"
@@ -249,4 +248,3 @@ namespace engine {
   } // namespace db
 } // namespace engine
 
-#endif /* CURSOR_H_ */

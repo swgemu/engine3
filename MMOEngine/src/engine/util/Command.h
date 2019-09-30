@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef COMMAND_H_
-#define COMMAND_H_
+#pragma once
 
 namespace engine {
   namespace util {
@@ -27,4 +26,3 @@ namespace engine {
 
 using namespace engine::util;
 
-#endif /* COMMAND_H_ */

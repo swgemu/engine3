@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef LUA_H
-#define LUA_H
+#pragma once
 
 #include "system/lang.h"
 
@@ -147,4 +146,3 @@ namespace engine {
 
 using namespace engine::lua;
 
-#endif  // #ifndef LUA_H

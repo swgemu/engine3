@@ -26,11 +26,19 @@ namespace sys {
 		static TextStream err; //stderr
 
 		static inline time_t getTime() {
-			return time(0);
+			return time(nullptr);
 		}
 
 		static void flushStreams() {
 			::fflush(nullptr);
+		}
+
+		static void flushStream(FILE* stream) {
+			::fflush(stream);
+		}
+
+		static void setStreamBuffer(FILE* str, char* buffer) {
+			::setbuf(str, buffer);
 		}
 
 		[[ noreturn ]] static void abort() {

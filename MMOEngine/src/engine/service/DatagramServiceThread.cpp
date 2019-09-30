@@ -7,6 +7,7 @@
 #include "system/io/IOHandler.h"
 
 #include "engine/core/Core.h"
+#include "engine/core/Task.h"
 
 #include "DatagramServiceThread.h"
 
@@ -34,12 +35,10 @@ void DatagramServiceThread::start(int p, int mconn) {
 		socket = new UDPServerSocket(&addr);
 
 		socket->setBlocking(false);
-	} catch (SocketException& e) {
+	} catch (const SocketException& e) {
 		socket = nullptr;
 
-		StringBuffer msg;
-		msg << "unable to connect to socket on port " << port;
-		error(msg);
+		error() << "unable to connect to socket on port " << port;
 
 		throw ServiceException(e.getMessage());
 	}

@@ -9,6 +9,12 @@
 
 #define MAX_COMPLETE_FRAG_SIZE 1500000
 
+namespace BPDetail {
+	static Logger logger("BaseFragmentedPacket");
+}
+
+using namespace BPDetail;
+
 BaseFragmentedPacket::BaseFragmentedPacket() : BasePacket() {
 	singlePacket = nullptr;
 
@@ -33,17 +39,17 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 		totalSize = pack->parseNetInt();
 
 		if (totalSize < 0 || totalSize > MAX_COMPLETE_FRAG_SIZE) {
-			Logger::console.error() <<
+			logger.error() <<
 				"received fragmented packet with size too big = (" << totalSize << ") for frag: " << *pack;
 
 			return false;
 		} else if (totalSize == 0) {
-			Logger::console.error("fragmented total size totalSize parsed 0!");
+			logger.error("fragmented total size totalSize parsed 0!");
 
 			return false;
 		}
 
-		/*Logger::console.info("received first segment of fragmented packet ("
+		/*logger.info("received first segment of fragmented packet ("
 						+ String::valueOf(seq) + ") - size = " + String::valueOf(totalSize));*/
 	}
 
@@ -55,15 +61,15 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 		readBytes = totalSize - size();
 
 	if (readBytes < 0) {
-		Logger::console.error("error parsing fragmented packet readBytes < 0");
+		logger.error("error parsing fragmented packet readBytes < 0");
 		return false;
 	} /*else {
-		Logger::console.info("readBytes = " + String::valueOf(readBytes), true);
+		logger.info("readBytes = " + String::valueOf(readBytes), true);
 	}*/
 
 	insertStream(pack->getBuffer() + packetOffset, readBytes/* - 3*/);
 
-	/*Logger::console.info("received next segment of fragmented packet ("
+	/*logger.info("received next segment of fragmented packet ("
 				+ String::valueOf(seq) + ") - size = " + String::valueOf(totalSize));*/
 
 	return true;
@@ -95,16 +101,16 @@ BasePacket* BaseFragmentedPacket::getFragment() {
 	return frag;
 }
 
-bool BaseFragmentedPacket::isComplete() {
+bool BaseFragmentedPacket::isComplete() const {
 	int currentSize = size();
 
-	/*Logger::console.info("checking fragmented packet completeness: " + String::valueOf(currentSize)
+	/*logger.info("checking fragmented packet completeness: " + String::valueOf(currentSize)
 			+ " = " + String::valueOf(totalSize));*/
 
 	if (currentSize < totalSize)
 		return false;
 	else if (currentSize == totalSize) {
-		//Logger::console.info("currentSize == totalSize : " + String::valueOf(totalSize), true);
+		//logger.info("currentSize == totalSize : " + String::valueOf(totalSize), true);
 
 		return true;
 	} else
@@ -112,6 +118,6 @@ bool BaseFragmentedPacket::isComplete() {
 				+ ") - size = " + String::valueOf(currentSize));
 }
 
-bool BaseFragmentedPacket::hasFragments() {
+bool BaseFragmentedPacket::hasFragments() const {
 	return totalSize < singlePacket->size();
 }

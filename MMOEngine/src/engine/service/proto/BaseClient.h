@@ -51,9 +51,9 @@ namespace engine {
 
 		Vector<BasePacket*> sequenceBuffer;
 
-		Reference<Task*> checkupEvent;
-		Reference<Task*> netcheckupEvent;
-		Reference<Task*> netRequestEvent;
+		Reference<BasePacketChekupEvent*> checkupEvent;
+		Reference<BaseClientNetStatusCheckupEvent*> netcheckupEvent;
+		Reference<BaseClientNetStatusRequestEvent*> netRequestEvent;
 
 		BaseMultiPacket* bufferedPacket;
 		BaseFragmentedPacket* fragmentedPacket;
@@ -72,7 +72,7 @@ namespace engine {
 
 		Condition connectionEstablishedCondition;
 
-		Reference<Task*> reentrantTask;
+		Reference<BaseClientEvent*> reentrantTask;
 
 		bool clientDisconnected;
 
@@ -140,7 +140,7 @@ namespace engine {
 
 		void disconnect(bool doLock = true);
 
-		void reportStats(bool doLog = false);
+		void reportStats(bool doLog = false) const;
 
 	protected:
 		void close();
@@ -188,6 +188,10 @@ namespace engine {
 		}
 
 		inline BaseMultiPacket* getRawBufferedPacket() {
+			return bufferedPacket;
+		}
+
+		inline const BaseMultiPacket* getRawBufferedPacket() const {
 			return bufferedPacket;
 		}
 

@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef DATABASECONFIG_H_
-#define DATABASECONFIG_H_
+#pragma once
 
 #include <db.h>
 
@@ -126,4 +125,3 @@ namespace engine {
   } // namespace db
 } // namespace engine
 
-#endif /* DATABASECONFIG_H_ */

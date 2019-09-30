@@ -2,8 +2,7 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef PIPE_H_
-#define PIPE_H_
+#pragma once
 
 #include "system/platform.h"
 
@@ -44,4 +43,3 @@ namespace sys {
 
 using namespace sys::io;
 
-#endif /*PIPE_H_*/

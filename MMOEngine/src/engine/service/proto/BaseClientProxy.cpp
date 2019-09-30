@@ -4,6 +4,7 @@
 */
 
 #include "events/BaseClientNetStatusCheckupEvent.h"
+#include "events/BaseClientEvent.h"
 
 #include "BaseClientProxy.h"
 

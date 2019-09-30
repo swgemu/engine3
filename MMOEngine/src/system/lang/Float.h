@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef FLOAT_H_
-#define FLOAT_H_
+#pragma once
 
 #include "BaseTypeVariable.h"
 
@@ -86,4 +85,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*FLOAT_H_*/

@@ -6,6 +6,8 @@
 #ifndef BASEPACKETCHEKUPEVENT_H_
 #define BASEPACKETCHEKUPEVENT_H_
 
+#include "engine/core/Task.h"
+
 namespace engine {
   namespace service {
     namespace proto {
@@ -16,12 +18,12 @@ namespace engine {
   } // namespace service
 } // namespace engine
 
-#include "engine/service/proto/BasePacket.h"
-#include "engine/service/proto/BaseClient.h"
 
 namespace engine {
   namespace service {
     namespace proto {
+	class BaseClient;
+	class BasePacket;
 
 	class BasePacketChekupEvent : public Task {
 		WeakReference<BaseClient*> client;

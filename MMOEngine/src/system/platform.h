@@ -78,8 +78,7 @@
 #include <windows.h>
 #endif
 
-#include <time.h>
-
+#include <ctime>
 #include <cstddef>
 #include <cctype>
 #include <cstring>
@@ -88,8 +87,8 @@
 #include <cmath>
 #include <memory>
 #include <limits>
-#include <float.h>
-#include <assert.h>
+#include <cfloat>
+#include <cassert>
 
 #ifdef PLATFORM_SOLARIS
 #include <Strings.h>

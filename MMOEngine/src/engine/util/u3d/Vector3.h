@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef VECTOR3_H_
-#define VECTOR3_H_
+#pragma once
 
 #include "system/io/Serializable.h"
 #include "system/lang/Math.h"
@@ -398,4 +397,3 @@ namespace engine {
 
 using namespace engine::util::u3d;
 
-#endif /* VECTOR3_H_ */

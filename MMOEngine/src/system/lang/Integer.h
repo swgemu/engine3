@@ -2,8 +2,7 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef INTEGER_H_
-#define INTEGER_H_
+#pragma once
 
 #include "String.h"
 #include "BaseTypeVariable.h"
@@ -120,4 +119,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*INTEGER_H_*/

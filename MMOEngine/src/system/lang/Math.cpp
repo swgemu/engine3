@@ -10,8 +10,8 @@ const double Math::DEG2RAD = M_PI / 180.0f;
 const double Math::RAD2DEG = 180.0f / M_PI;
 const double Math::E = 2.71828182845904523536;
 
-double Math::sqrt(double number) { // from Q3 fix for 64 bit
-	/*long i;
+/*double Math::sqrt(double number) { // from Q3 fix for 64 bit
+	long i;
 	float x, y;
 	const float f = 1.5F;
 
@@ -24,11 +24,10 @@ double Math::sqrt(double number) { // from Q3 fix for 64 bit
 	y  = * (float*) &i;
 	y  = y * (f - (x * y * y));
 	y  = y * (f - (x * y * y));
-	return number * y;*/
-	return ::sqrt(number);
+	return number * y;
 }
 
-/*float Math::rsqrt(float number) {
+float Math::rsqrt(float number) {
 	long i;
 	float x2, y;
 	const float threehalfs = 1.5F;

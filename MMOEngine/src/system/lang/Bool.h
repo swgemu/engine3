@@ -3,9 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef BOOL_H_
-#define BOOL_H_
-
+#pragma once
 #include "BaseTypeVariable.h"
 
 #include "system/io/ObjectOutputStream.h"
@@ -74,5 +72,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-
-#endif /* BOOL_H_ */

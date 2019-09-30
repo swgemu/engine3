@@ -3,15 +3,14 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef TIME_H_
-#define TIME_H_
+#pragma once
 
 #include "system/platform.h"
 
 #ifndef PLATFORM_WIN
 #include <unistd.h>
-#include <stdio.h>
-#include <time.h>
+#include <cstdio>
+#include <ctime>
 #else
 #include <windows.h>
 #include <windef.h>
@@ -346,4 +345,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*TIME_H_*/

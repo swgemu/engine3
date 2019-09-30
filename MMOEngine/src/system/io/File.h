@@ -2,11 +2,9 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef FILE_H_
-#define FILE_H_
+#pragma once
 
 #include "system/platform.h"
-
 #include "system/lang/String.h"
 
 namespace sys {
@@ -25,13 +23,9 @@ namespace sys {
 		int permissions;
 
 		static const int TEXT_MODE = 1;
-
 		static const int BINARY_MODE = 2;
-
 		static const int READONLY_ACCESS = 1;
-
 		static const int WRITEABLE_ACCESS = 2;
-
 		static const int APPENDABLE_ACCESS = 3;
 
 	public:
@@ -91,4 +85,3 @@ namespace sys {
 
 using namespace sys::io;
 
-#endif /*FILE_H_*/

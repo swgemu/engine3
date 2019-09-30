@@ -2,10 +2,9 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
-#ifndef TASK_H_
-#define TASK_H_
+#pragma once
 
-#include <signal.h>
+#include <csignal>
 
 #include "system/lang.h"
 
@@ -241,4 +240,3 @@ namespace engine {
 
 using namespace engine::core;
 
-#endif /* TASK_H_ */

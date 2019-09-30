@@ -4,7 +4,7 @@
 */
 #include <sys/stat.h>
 
-#include <errno.h>
+#include <cerrno>
 
 #include "File.h"
 

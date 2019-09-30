@@ -9,8 +9,7 @@
  *      Author: victor
  */
 
-#ifndef TRANSACTIONCONFIG_H_
-#define TRANSACTIONCONFIG_H_
+#pragma once
 
 #include <db.h>
 
@@ -120,4 +119,3 @@ namespace engine {
   } // namespace db
 } // namespace engine
 
-#endif /* TRANSACTIONCONFIG_H_ */

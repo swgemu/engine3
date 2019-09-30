@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef DOUBLE_H_
-#define DOUBLE_H_
+#pragma once
 
 #include "system/io/ObjectOutputStream.h"
 #include "system/io/ObjectInputStream.h"
@@ -66,5 +65,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-
-#endif /* DOUBLE_H_ */

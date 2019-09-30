@@ -3,9 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef UNICODE_H_
-#define UNICODE_H_
-
+#pragma once
 #include "system/platform.h"
 
 #include "Variable.h"
@@ -167,4 +165,3 @@ using namespace sys::lang;
 
 UnicodeString operator+(const UnicodeString& str1, const UnicodeString& str2);
 
-#endif /*UNICODE_H_*/

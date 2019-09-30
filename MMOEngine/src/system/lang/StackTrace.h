@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef STACKTRACE_H_
-#define STACKTRACE_H_
+#pragma once
 
 #include "system/platform.h"
 #include "system/lang/String.h"
@@ -68,4 +67,3 @@ namespace sys {
 
 using namespace sys::lang;
 
-#endif /*STACKTRACE_H_*/

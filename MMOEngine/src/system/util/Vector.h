@@ -3,8 +3,7 @@
 ** See file COPYING for copying conditions.
 */
 
-#ifndef VECTOR_H_
-#define VECTOR_H_
+#pragma once
 
 #ifdef CXX11_COMPILER
 #include <type_traits>
@@ -175,8 +174,9 @@ namespace sys {
 		   //System::out << obj << "\n";
 
 		   return i + 1;
-	   } else
+	   } else {
 		  // System::out << "WARNING expecting \"}\" in " << str << " at " << i;
+	   }
 
 	   return 0;
    }
@@ -186,4 +186,3 @@ namespace sys {
 
 using namespace sys::util;
 
-#endif /*VECTOR_H_*/
