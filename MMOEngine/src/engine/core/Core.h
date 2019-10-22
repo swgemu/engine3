@@ -68,6 +68,8 @@ namespace engine {
 		static ArrayList<String> getPropertyVector(const String& key);
 		static void setIntProperty(const String& key, int propertyValue);
 
+		static String getPropertiesString();
+
 		static double getDoubleProperty(const String& key, double defaultValue = 0);
 
 		static int initializeProperties(const String& className);

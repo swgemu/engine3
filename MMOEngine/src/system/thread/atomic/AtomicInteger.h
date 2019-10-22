@@ -49,8 +49,16 @@ namespace sys {
 			return ++value;
 		}
 
+		inline uint32 postIncrement() {
+			return value++;
+		}
+
 		inline uint32 decrement() {
 			return --value;
+		}
+
+		inline uint32 postDecrement() {
+			return value--;
 		}
 
 		inline uint32 compareAndSetReturnOld(uint32 oldval, uint32 newval) {

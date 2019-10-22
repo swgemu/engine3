@@ -37,6 +37,29 @@ UnicodeString::UnicodeString(const UnicodeString& str) : Variable() {
 	copy(uString, str.uString);
 }
 
+UnicodeString::UnicodeString(UnicodeString&& str) : Variable(), uString(str.uString), count(str.count) {
+	str.uString = nullptr;
+	str.count = 0;
+}
+
+UnicodeString& UnicodeString::operator=(UnicodeString&& str) {
+	if (this == &str) {
+		return *this;
+	}
+
+	if (uString != nullptr) {
+		delete [] uString;
+	}
+
+	uString = str.uString;
+	count = str.count;
+
+	str.uString = nullptr;
+	str.count = 0;
+
+	return *this;
+}
+
 UnicodeString::~UnicodeString() {
 	if (uString != nullptr) {
 		delete[] uString;

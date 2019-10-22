@@ -123,9 +123,9 @@ void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) const {
 
 			stream << " in " << getLoggingName();
 
-			customLogger.log(stream.toString());
+			customLogger.log(stream);
 		} else {
-			warning(stream.toString());
+			warning(stream);
 		}
 	}
 }
@@ -166,8 +166,7 @@ void TaskWorkerThread::run() {
 			currentTask = task;
 
 			task->doExecute();
-		} catch (Exception& e) {
-			error(e.getMessage());
+		} catch (const Exception& e) {
 			e.printStackTrace();
 		} catch (...) {
 			error("unreported Exception caught");

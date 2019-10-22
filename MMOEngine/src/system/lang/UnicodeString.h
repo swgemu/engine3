@@ -4,6 +4,7 @@
 */
 
 #pragma once
+
 #include "system/platform.h"
 
 #include "Variable.h"
@@ -12,10 +13,6 @@
 #include <locale>
 #include <codecvt>
 #include <string>
-
-#ifndef PLATFORM_WIN
-//#define wchar_t unsigned short
-#endif
 
 namespace sys {
   namespace lang {
@@ -30,37 +27,12 @@ namespace sys {
 		UnicodeString(const String& ascii);
 		UnicodeString(const char* ascii, int len);
 		UnicodeString(const UnicodeString& str);
-
-#ifdef CXX11_COMPILER
-		UnicodeString(UnicodeString&& str) : Variable(), uString(str.uString), count(str.count) {
-			str.uString = nullptr;
-			str.count = 0;
-		}
-#endif
+		UnicodeString(UnicodeString&& str);
 
 		~UnicodeString();
 
 		UnicodeString& operator=(const UnicodeString& str);
-
-#ifdef CXX11_COMPILER
-		UnicodeString& operator=(UnicodeString&& str) {
-			if (this == &str) {
-				return *this;
-			}
-
-			if (uString != nullptr) {
-				delete [] uString;
-			}
-
-			uString = str.uString;
-			count = str.count;
-
-			str.uString = nullptr;
-			str.count = 0;
-
-			return *this;
-		}
-#endif
+		UnicodeString& operator=(UnicodeString&& str);
 		UnicodeString& operator=(const String& ascii);
 		UnicodeString& operator=(const char* ascii);
 

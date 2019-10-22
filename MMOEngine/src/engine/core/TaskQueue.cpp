@@ -11,14 +11,10 @@ TaskQueue::TaskQueue(const char* name) : Condition(), Logger("TaskQueue") {
 
 	if (name != nullptr)
 		this->name = name;
-	//waitingForTask = false;
 
 	condMutex = new Mutex("TaskQueue");
 
-	//setNoDuplicateInsertPlan();
-
 	setLogging(false);
-	//condMutex->setMutexLogging(false);
 }
 
 TaskQueue::~TaskQueue() {
@@ -43,12 +39,9 @@ void TaskQueue::pushRandom(Task* task) {
 	task->acquire();
 
 #ifdef TRACE_TASKS
-	StringBuffer s;
-	s << size() << " tasks in queue";
-	info(s);
+	info() << size() << " tasks in queue";
 #endif
 
-	//if (waitingForTask)
 	signal(condMutex);
 
 	condMutex->unlock();
@@ -75,12 +68,9 @@ void TaskQueue::pushFront(Task* task) {
 	task->acquire();
 
 #ifdef TRACE_TASKS
-	StringBuffer s;
-	s << size() << " tasks in queue";
-	info(s);
+	info() << size() << " tasks in queue";
 #endif
 
-	//if (waitingForTask)
 	signal(condMutex);
 
 	condMutex->unlock();
@@ -99,18 +89,12 @@ void TaskQueue::push(Task* task) {
 	LinkedList<Task*>::add(task);
 
 	#ifdef TRACE_TASKS
-		StringBuffer s;
-		s << size() << " tasks in queue";
-		info(s);
+		info() << size() << " tasks in queue";
 	#endif
 
-	//if (waitingForTask)
-//		broadcast(condMutex);
 	signal(condMutex);
 
 	condMutex->unlock();
-
-//	Thread::yield();
 }
 
 void TaskQueue::pushAll(const Vector<Task*>& tasks) {
@@ -124,12 +108,9 @@ void TaskQueue::pushAll(const Vector<Task*>& tasks) {
 	for (int i = 0; i < tasks.size(); ++i) {
 		LinkedList<Task*>::add(tasks.getUnsafe(i));
 	}
-	//Vector<Task*>::addAll(tasks);
 
 	#ifdef TRACE_TASKS
-		StringBuffer s;
-		s << size() << " tasks in queue";
-		info(s);
+		info() << size() << " tasks in queue";
 	#endif
 
 	if (tasks.size() > 1)
@@ -146,16 +127,6 @@ Task* TaskQueue::pop() {
 	#ifdef TRACE_TASKS
 		info("waiting tasks");
 	#endif
-
-	/*while (isEmpty()) {
-		if (blocked) {
-			condMutex->unlock();
-			return nullptr;
-		}
-
-		//waitingForTask = true;
-		wait(condMutex);
-	}*/
 
 	if (isEmpty()) {
 		if (blocked) {
@@ -176,12 +147,9 @@ Task* TaskQueue::pop() {
 	task->setTaskScheduler(nullptr);
 
 	#ifdef TRACE_TASKS
-		StringBuffer s;
-		s << size() << " tasks remained in queue";
-		info(s);
+		info() << size() << " tasks remained in queue";
 	#endif
 
-	//waitingForTask = false;
 	condMutex->unlock();
 
 	return task;
@@ -192,8 +160,7 @@ void TaskQueue::flush() {
 
 	blocked = true;
 
-	//if (waitingForTask)
-		broadcast(condMutex);
+	broadcast(condMutex);
 
 	while (!isEmpty()) {
 		Task* task = remove(0);

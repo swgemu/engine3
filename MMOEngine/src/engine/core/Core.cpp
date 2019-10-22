@@ -265,6 +265,54 @@ uint64 Core::getLongProperty(const String& key, uint64 defaultValue) {
 	}
 }
 
+String Core::getPropertiesString() {
+	StringBuffer buf;
+	buf << "\"engine3\":{";
+
+	ReadLocker locker(&Core::properties);
+
+	auto properties = *Core::properties.getHashTable();
+
+	locker.release();
+
+	auto iterator = properties.iterator();
+
+	while (iterator.hasNext()) {
+		String* name;
+		ArrayList<String>* values;
+
+		iterator.getNextKeyAndValue(name, values);
+
+		buf << "\"" << *name << "\":";
+
+		if (values->size() > 1) {
+			buf << "{";
+
+			for (int i = 0; i < values->size(); ++i) {
+				const auto& val = values->get(i);
+
+				buf << "\"" << val << "\"";
+
+				if (i + 1 < values->size()) {
+					buf << ",";
+				}
+			}
+
+			buf << "}";
+		} else if (values->size()) {
+			buf << "\"" << values->get(0) << "\"";
+		}
+
+		if (iterator.hasNext()) {
+			buf << ",";
+		}
+	}
+
+	buf << "}";
+
+	return buf.toString();
+}
+
 ArrayList<String> Core::getPropertyVector(const String& key) {
 	return properties.get(key);
 }

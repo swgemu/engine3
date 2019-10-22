@@ -285,10 +285,7 @@ namespace sys {
 			if (elementOffset > end)
 				throw StreamIndexOutOfBoundsException(this, offs + 2);
 
-			StringBuffer str;
-			str.append(elementOffset - len, len);
-
-			str.toString(ascii);
+			ascii = String(elementOffset - len, len);
 		}
 
 		inline void parseUnicode(UnicodeString& str) {

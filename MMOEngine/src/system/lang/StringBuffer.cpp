@@ -395,6 +395,10 @@ StringBuffer& StringBuffer::operator<< (const StreamFlags flags) {
 	return *this;
 }
 
+void StringBuffer::reserve(std::size_t newCapacity) {
+	ensureCapacity(newCapacity);
+}
+
 bool StringBuffer::operator==(const StringBuffer& buff) const {
 	if (buff.length() != length())
 		return false;

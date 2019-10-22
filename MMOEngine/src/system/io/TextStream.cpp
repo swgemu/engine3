@@ -20,7 +20,7 @@ namespace TextStreamDetail {
 		va_end(args);
 
 		if (res < 0) {
-			throw Exception("fprintf returned " + String::valueOf(res));
+			throw Exception("fprintf failed: " + String::valueOf(res));
 		}
 
 		return res;

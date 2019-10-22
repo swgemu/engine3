@@ -475,7 +475,7 @@ int BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) 
 }
 
 void BasePacketHandler::processMessage(Message* msg) {
-	//info("PROCESSING - " + msg->toStringData(), true);
+	debug() << "PROCESSING - " << *msg;
 
 	// FIXME
 	serviceHandler->processMessage(msg);

@@ -192,7 +192,7 @@ void Logger::getJSONString(StringBuffer& output, const char* logName, const char
 	if (currentThread != nullptr)
 		rootObject["thread"]  = currentThread->getName().toCharArray();*/
 
-	output << "{\"@timestamp\":\"" << time.getFormattedTimeFull().toCharArray() << "\","
+	output << "{\"@timestamp\":\"" << time.getFormattedTimeFull() << "\","
 			<< "\"time_msec\":" << time.getMiliTime() << ","
 			<< "\"uptime_secs\":" <<  Logger::starttime.miliDifference(time) / 1000 << ","
 			<< "\"log_level\":\"" << getLogType(type) << "\","

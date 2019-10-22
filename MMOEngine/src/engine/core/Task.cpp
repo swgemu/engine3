@@ -117,7 +117,7 @@ void Task::doExecute() {
 
 	try {
 		run();
-	} catch (Exception& e) {
+	} catch (const Exception& e) {
 		Logger::console.error("exception caught while running a task");
 		e.printStackTrace();
 	} catch (...) {

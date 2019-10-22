@@ -63,8 +63,9 @@ namespace sys {
 		StringBuffer& append(const StringBuffer& buff);
 
 		void deleteRange(int start, int end);
-
 		void deleteAll();
+
+		void reserve(std::size_t newCapacity);
 
 		int indexOf(char ch) const ;
 		int indexOf(char ch, int fromIndex) const ;

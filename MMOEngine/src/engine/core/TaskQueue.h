@@ -21,7 +21,6 @@ namespace engine {
 		Mutex* condMutex;
 
 		bool blocked;
-		//bool waitingForTask;
 		String name;
 
 	public:

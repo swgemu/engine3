@@ -263,7 +263,7 @@ static_assert(false, "big endian systems are not supported");
 #endif
 
 namespace sys {
-	[[ noreturn ]] inline void e3_assert(const char* file, int line, const char* func, const char *expression) {
+	[[ noreturn ]] inline void e3_assert_internal(const char* file, int line, const char* func, const char *expression) {
 		::fprintf(stderr, "assertion \"%s\" failed: file \"%s\", line %d%s%s\n", expression, file, line, func ? ", function: " : "", func ? func : "");
 
 		::fflush(nullptr);
@@ -271,8 +271,8 @@ namespace sys {
 		::abort();
 	}
 
-	#define E3_ASSERT(_expr) (static_cast <bool> (_expr) ? void (0) : e3_assert(__FILE__, __LINE__, __PRETTY_FUNCTION__, #_expr));
-	#define E3_ABORT(_message) (e3_assert(__FILE__, __LINE__, __PRETTY_FUNCTION__, _message));
+	#define E3_ASSERT(_expr) (static_cast <bool> (_expr) ? void (0) : e3_assert_internal(__FILE__, __LINE__, __PRETTY_FUNCTION__, #_expr));
+	#define E3_ABORT(_message) (e3_assert_internal(__FILE__, __LINE__, __PRETTY_FUNCTION__, _message));
 
 	typedef unsigned long long uint64;
 	static_assert(sizeof(uint64) == 8, "unsigned long long is not 64bit");
@@ -315,11 +315,11 @@ namespace sys {
 
 	//#define VECTORS_OUT_OF_BOUNDS_CHECK
 
-	#ifdef DEFAULT_DYNAMIC_CAST
+	//#ifdef DEFAULT_DYNAMIC_CAST
 	#define cast dynamic_cast
-	#else
-	#define cast static_cast
-	#endif
+	//#else
+	//#define cast static_cast
+	//#endif
 
 	//#define LOG_LOCKS
 	//#define TRACE_LOCKS
