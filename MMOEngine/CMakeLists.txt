@@ -16,6 +16,7 @@ option(ENABLE_TSAN "Enables thread sanitizer compiling" OFF)
 option(ENABLE_UBSAN "Enables undefined behavior sanitizer compiling" OFF)
 option(ENABLE_NATIVE "Enables -march=native compiler option" ON)
 option(ENABLE_ODB_REFERENCES "Enables ODB_REFERENCES define" ON)
+option(ENABLE_LOCKFREE_BCLIENT_BUFFERS "Enables lock free base client buffers, requires boost thread" OFF)
 
 # Set cmake find moudles path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake/Modules/")
@@ -58,14 +59,18 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
-find_package(Boost QUIET OPTIONAL_COMPONENTS thread)
+if (ENABLE_ODB_REFERENCES)
+	add_definitions(-DODB_REFERENCES)
+endif()
+
+if (ENABLE_LOCKFREE_BCLIENT_BUFFERS)
+	add_definitions(-DLOCKFREE_BCLIENT_BUFFERS)
+
+	find_package(Boost REQUIRED COMPONENTS thread)
+endif()
 
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
-endif()
-
-if (ENABLE_ODB_REFERENCES)
-	add_definitions(-DODB_REFERENCES)
 endif()
 
 function(check_working_cxx_atomics varname)
@@ -97,7 +102,7 @@ if (ENGINE_TYPE EQUAL 2)
 	set(CMAKE_CXX_FLAGS "-DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -fno-omit-frame-pointer -DVERSION_PUBLIC -fPIC")
 else ()
 	message(STATUS "Building private engine")
-	set(CMAKE_CXX_FLAGS "-ggdb -DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer -fPIC")
+	set(CMAKE_CXX_FLAGS "-ggdb -pedantic -DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer -fPIC")
 
 	if (ENABLE_NATIVE)
 		set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")

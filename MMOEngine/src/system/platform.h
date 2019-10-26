@@ -5,10 +5,6 @@
 
 #pragma once
 
-#ifndef VERSION_PUBLIC
-#define LOCKFREE_BCLIENT_BUFFERS
-#endif
-
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 #include <boost/lockfree/queue.hpp>
 #endif

@@ -74,7 +74,7 @@ pch:
 	cd src && gcc -c $(CXXFLAGS) $(INCLUDES) -o engine/engine.h.gch engine/engine.h
 
 build-cmake:
-	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_LOCKFREE_BCLIENT_BUFFERS=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 
 build-cmake-all:
 	${MAKE} build-cmake-asan
@@ -90,17 +90,17 @@ build-compdb:
 	cd $(BUILD_PATH) && ${MAKE} compdb
 
 build-cmake-asan: force-clean
-	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_ASAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_LOCKFREE_BCLIENT_BUFFERS=ON -DENABLE_ASAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 
 build-cmake-tsan: force-clean
-	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_TSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_LOCKFREE_BCLIENT_BUFFERS=ON -DENABLE_TSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 
 build-cmake-ubsan: force-clean
-	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_UBSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
+	cd $(BUILD_PATH) && cmake -DENGINE_TYPE=1 -DENABLE_LOCKFREE_BCLIENT_BUFFERS=ON -DENABLE_UBSAN=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../ && ${MAKE}
 
 build-ninja:
 	mkdir -p $(BUILD_PATH)/ninja
-	cd $(BUILD_PATH)/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
+	cd $(BUILD_PATH)/ninja && cmake -G Ninja -DENGINE_TYPE=1 -DENABLE_LOCKFREE_BCLIENT_BUFFERS=ON -DCMAKE_INSTALL_PREFIX=/opt/engine3 -DARCH=64 ../../../ && ninja
 
 clean-ninja:
 	rm -rf $(BUILD_PATH)/ninja
