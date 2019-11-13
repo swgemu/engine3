@@ -64,13 +64,14 @@
 #include <time.h>
 #include <math.h>
 #include <limits.h>
+#include <limits>
 #include <atomic>
 
 class MTRand {
 	// Data
 public:
-	typedef unsigned long uint32; // unsigned integer type, at least 32 bits
-	typedef long int32;
+	typedef uint32_t uint32; // unsigned integer type, at least 32 bits
+	typedef int32_t int32;
 
 	enum {
 		N = 624
@@ -108,9 +109,19 @@ public:
 	double randDblExc(const double& n); // real number in (0,n)
 	MTRand::uint32 randInt(); // integer in [0,2^32-1]
 	MTRand::uint32 randInt(const MTRand::uint32& n); // integer in [0,n] for n < 2^32
-	double operator()() {
-		return rand();
-	} // same as rand()
+
+	typedef uint32 result_type;
+	static constexpr result_type min() {
+		return 0;
+	}
+
+	static constexpr result_type max() {
+		return std::numeric_limits<result_type>::max();
+	}
+
+	result_type operator()() {
+		return randInt();
+	}
 
 	// Access to 53-bit random numbers (capacity of IEEE double precision)
 	double rand53(); // real number in [0,1)
