@@ -54,8 +54,8 @@
 // It would be nice to CC: rjwagner@writeme.com and Cokus@math.washington.edu
 // when you write.
 
-#ifndef MERSENNETWISTER_H
-#define MERSENNETWISTER_H
+#ifndef ENGINE3_MERSENNETWISTER_H
+#define ENGINE3_MERSENNETWISTER_H
 
 // Not thread safe (unless auto-initialization is avoided and each thread has
 // its own MTRand object)
@@ -72,6 +72,7 @@ class MTRand {
 public:
 	typedef uint32_t uint32; // unsigned integer type, at least 32 bits
 	typedef int32_t int32;
+	typedef uint32 result_type;
 
 	enum {
 		N = 624
@@ -110,7 +111,6 @@ public:
 	MTRand::uint32 randInt(); // integer in [0,2^32-1]
 	MTRand::uint32 randInt(const MTRand::uint32& n); // integer in [0,n] for n < 2^32
 
-	typedef uint32 result_type;
 	static constexpr result_type min() {
 		return 0;
 	}
@@ -144,22 +144,28 @@ public:
 protected:
 	void initialize(const MTRand::uint32 oneSeed);
 	void reload();
-	MTRand::uint32 hiBit(const MTRand::uint32& u) const {
+
+	static constexpr MTRand::uint32 hiBit(const MTRand::uint32& u) {
 		return u & 0x80000000UL;
 	}
-	MTRand::uint32 loBit(const MTRand::uint32& u) const {
+
+	static constexpr MTRand::uint32 loBit(const MTRand::uint32& u) {
 		return u & 0x00000001UL;
 	}
-	MTRand::uint32 loBits(const MTRand::uint32& u) const {
+
+	static constexpr MTRand::uint32 loBits(const MTRand::uint32& u) {
 		return u & 0x7fffffffUL;
 	}
-	MTRand::uint32 mixBits(const MTRand::uint32& u, const MTRand::uint32& v) const {
+
+	static constexpr MTRand::uint32 mixBits(const MTRand::uint32& u, const MTRand::uint32& v) {
 		return hiBit(u) | loBits(v);
 	}
-	MTRand::uint32 twist(const MTRand::uint32& m, const MTRand::uint32& s0,
-			const MTRand::uint32& s1) const {
+
+	static constexpr MTRand::uint32 twist(const MTRand::uint32& m, const MTRand::uint32& s0,
+			const MTRand::uint32& s1) {
 		return m ^ (mixBits(s0, s1) >> 1) ^ (-(int32) loBit(s1) & 0x9908b0dfUL);
 	}
+
 	static MTRand::uint32 hash(time_t t, clock_t c);
 };
 
@@ -365,7 +371,7 @@ inline void MTRand::load(MTRand::uint32 * const loadArray) {
 	pNext = &state[N - left];
 }
 
-#endif  // MERSENNETWISTER_H
+#endif  // ENGINE3_MERSENNETWISTER_H
 // Change log:
 // v0.1 - First release on 15 May 2000
 //      - Based on code by Makoto Matsumoto, Takuji Nishimura, and Shawn Cokus

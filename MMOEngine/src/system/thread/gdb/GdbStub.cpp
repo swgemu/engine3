@@ -108,7 +108,7 @@ void GdbStub::printDeadlock() {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* argv[] = {"gdb",
+		char* const argv[] = {"gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info registers",
@@ -154,7 +154,7 @@ void GdbStub::printThread(String threadInfo) {
 		char threadCommand[100];
 		sprintf(threadCommand, "thread %i", threadID);
 
-		char* argv[] = {"gdb",
+		char* const argv[] = {"gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", threadCommand,
@@ -187,7 +187,7 @@ void GdbStub::getThreads(Vector<String>& threads) {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* argv[] = {"gdb",
+		char* const argv[] = {"gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info threads",
