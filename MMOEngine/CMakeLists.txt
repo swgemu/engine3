@@ -134,14 +134,14 @@ add_subdirectory(src)
 add_subdirectory(src/testsuite3)
 
 set_source_files_properties(tags PROPERTIES GENERATED true)
-add_custom_target(tags
+add_custom_target(engine3tags
     COMMAND ctags -R --fields=+iaS --extra=+q src/
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 set_source_files_properties(compile_commands.json PROPERTIES GENERATED true)
-add_custom_target(compdb
+add_custom_target(engine3compdb
 	COMMAND compdb -p ${CMAKE_BINARY_DIR} list > compile_commands.json
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_dependencies(compdb engine3)
+add_dependencies(engine3compdb engine3)
 

@@ -60,26 +60,26 @@ else ()
 	install(FILES ../lib/idlc.jar DESTINATION lib)
 endif ()
 
-add_custom_target(idl
-	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_SOURCE_DIR}/lib/idlc.jar org.sr.idlc.compiler.Compiler -sd src anyadEclipse
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+add_custom_target(engine3idl
+	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_CURRENT_SOURCE_DIR}/../lib/idlc.jar org.sr.idlc.compiler.Compiler -sd src anyadEclipse
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../
 	COMMENT "Building idl sources"
 	VERBATIM)
 
 
-add_custom_target(rebuild-idl
-	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_SOURCE_DIR}/lib/idlc.jar org.sr.idlc.compiler.Compiler -rb -sd src anyadEclipse
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+add_custom_target(engine3rebuild-idl
+	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_CURRENT_SOURCE_DIR}/../lib/idlc.jar org.sr.idlc.compiler.Compiler -rb -sd src anyadEclipse
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../
 	COMMENT "Rebuilding idl sources"
 	VERBATIM)
 
-add_dependencies(engine3 idl)
+add_dependencies(engine3 engine3idl)
 
 if (ENGINE_TYPE EQUAL 2 AND NOT APPLE AND NOT (ENABLE_ASAN OR ENABLE_TSAN OR ENABLE_UBSAN))
 	add_custom_command(
 		TARGET engine3 POST_BUILD
 		COMMAND strip --strip-debug lib/unix/libengine3.a
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../
 		VERBATIM)
 endif ()
 
@@ -88,7 +88,7 @@ if (ENABLE_ASAN)
 		TARGET engine3 POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 		$<TARGET_FILE:engine3>
-		${CMAKE_SOURCE_DIR}/lib/unix/libengine3-asan.a)
+		${CMAKE_CURRENT_SOURCE_DIR}/../lib/unix/libengine3-asan.a)
 endif (ENABLE_ASAN)
 
 if (ENABLE_TSAN)
@@ -96,7 +96,7 @@ if (ENABLE_TSAN)
 		TARGET engine3 POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 		$<TARGET_FILE:engine3>
-		${CMAKE_SOURCE_DIR}/lib/unix/libengine3-tsan.a)
+		${CMAKE_CURRENT_SOURCE_DIR}/../lib/unix/libengine3-tsan.a)
 endif (ENABLE_TSAN)
 
 if (ENABLE_UBSAN)
@@ -104,5 +104,5 @@ if (ENABLE_UBSAN)
 		TARGET engine3 POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 		$<TARGET_FILE:engine3>
-		${CMAKE_SOURCE_DIR}/lib/unix/libengine3-ubsan.a)
+		${CMAKE_CURRENT_SOURCE_DIR}/../lib/unix/libengine3-ubsan.a)
 endif (ENABLE_UBSAN)
