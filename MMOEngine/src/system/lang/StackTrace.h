@@ -47,7 +47,7 @@ namespace sys {
 		static void printStackTrace();
 
 		bool equals(const StackTrace& trace) const;
-		bool containsAddress(void* address) const;
+		bool containsAddress(const void* address) const;
 
 		int getCount() const {
 			return count;

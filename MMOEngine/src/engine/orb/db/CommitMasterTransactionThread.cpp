@@ -144,16 +144,15 @@ void CommitMasterTransactionThread::commitData() NO_THREAD_SAFETY_ANALYSIS {
 		objectManager->onCommitData();
 	}
 
-	objectManager->info("master transaction commited", true);
+	objectManager->info(true) << "master transaction commited";
 
 	objectManager->checkCommitedObjects();
 
-	int candidates = objectsToDeleteFromRam->size();
-	objectManager->info("starting garbage collection for " + String::valueOf(candidates) + " candidates", true);
+	objectManager->info(true) << "starting garbage collection for " << objectsToDeleteFromRam->size() << " candidates";
 
 	int objs = garbageCollect(objectManager);
 
-	objectManager->info("deleted from ram " + String::valueOf(objs) + " objects", true);
+	objectManager->info(true) << "deleted from ram " << objs << " objects";
 
 	objectManager->finishObjectUpdate();
 }

@@ -862,7 +862,6 @@ String TaskManagerImpl::getInfo(bool print) {
 		//lets print top 5
 		printStatistics(msg4, mysqlOrdered, false);
 
-
 		msg4 << endl;
 	}
 

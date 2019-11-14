@@ -36,7 +36,7 @@ StackTrace& StackTrace::operator=(const StackTrace& c) {
 StackTrace::~StackTrace() {
 }
 
-bool StackTrace::containsAddress(void* address) const {
+bool StackTrace::containsAddress(const void* address) const {
 	for (int i = 0; i < count; ++i) {
 		if (symbols[i] == address) {
 			return true;
