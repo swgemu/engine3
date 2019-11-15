@@ -159,6 +159,11 @@ namespace sys {
 			return stored;
 		}
 
+		template<class B>
+		B castToPointer() const {
+			return dynamic_cast<B>(get());
+		}
+
 		inline O get() const {
 			return object.get();
 		}

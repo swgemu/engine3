@@ -28,7 +28,7 @@ Facade::~Facade() {
 
 int Facade::initializeSession() {
 	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -42,7 +42,7 @@ int Facade::initializeSession() {
 
 int Facade::cancelSession() {
 	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -56,7 +56,7 @@ int Facade::cancelSession() {
 
 int Facade::clearSession() {
 	FacadeImplementation* _implementation = static_cast<FacadeImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -101,7 +101,7 @@ void FacadeImplementation::finalize() {
 void FacadeImplementation::_initializeImplementation() {
 	_setClassHelper(FacadeHelper::instance());
 
-	_this = nullptr;
+	_this = NULL;
 
 	_serializationHelperMethod();
 }
