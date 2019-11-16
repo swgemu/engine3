@@ -60,6 +60,8 @@ else ()
 	install(FILES ../lib/idlc.jar DESTINATION lib)
 endif ()
 
+set_property(TARGET engine3 PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 add_custom_target(engine3idl
 	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_CURRENT_SOURCE_DIR}/../lib/idlc.jar org.sr.idlc.compiler.Compiler -sd src anyadEclipse
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../

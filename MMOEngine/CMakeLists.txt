@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(CheckCXXSourceCompiles)
+include(CheckCXXCompilerFlag)
 
 option(ENABLE_ASAN "Enables address sanitizer compiling" OFF)
 option(ENABLE_TSAN "Enables thread sanitizer compiling" OFF)
@@ -17,6 +18,7 @@ option(ENABLE_UBSAN "Enables undefined behavior sanitizer compiling" OFF)
 option(ENABLE_NATIVE "Enables -march=native compiler option" ON)
 option(ENABLE_ODB_REFERENCES "Enables ODB_REFERENCES define" ON)
 option(ENABLE_LOCKFREE_BCLIENT_BUFFERS "Enables lock free base client buffers, requires boost thread" OFF)
+option(ENABLE_OMIT_FRAMEPOINTER "Enables -fno-omit-frame-pointer compiler option" ON)
 
 # Set cmake find moudles path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake/Modules/")
@@ -96,36 +98,79 @@ if (NOT HAVE_CXX_ATOMICS_WITHOUT_LIB)
 	find_package(GccAtomic REQUIRED)
 endif()
 
+add_definitions(-DDEFAULT_DYNAMIC_CAST)
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # Define global build gcc compatible flags to check and add if available
+    set(GCCEXTRAFLAGS -Wall
+	-Wextra
+	-Wno-unused
+	-Wno-sign-compare
+	-Wno-multichar
+	-Wno-unused-parameter
+	-Wno-overloaded-virtual
+	-Wno-missing-declarations
+	-Wno-return-std-move
+	-Wno-implicit-fallthrough
+	-Wno-class-memaccess
+	-fcolor-diagnostics)
+
+    foreach(flag_comp ${GCCEXTRAFLAGS})
+	CHECK_CXX_COMPILER_FLAG(${flag_comp} CxxFlag${flag_comp})
+
+	if (CxxFlag${flag_comp})
+		set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag_comp}")
+	endif()
+    endforeach(flag_comp)
+
+    if (ENABLE_ASAN)
+	   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+	   set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=address")
+
+	   message(STATUS "Adress sanitizer enabled")
+    endif(ENABLE_ASAN)
+
+    if (ENABLE_TSAN)
+	   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
+	   set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=thread")
+
+	   message(STATUS "Thread sanitizer enabled")
+    endif(ENABLE_TSAN)
+
+    if (ENABLE_UBSAN)
+	   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+	   set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=undefined")
+
+	   message(STATUS "Undefined behavior sanitizer sanitizer enabled")
+    endif(ENABLE_UBSAN)
+
+    if (ENABLE_NATIVE)
+	   CHECK_CXX_COMPILER_FLAG(-march=native CxxFlagMnative)
+
+	   if (CxxFlagMnative)
+	        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+	   endif (CxxFlagMnative)
+    endif(ENABLE_NATIVE)
+
+    if (ENABLE_OMIT_FRAMEPOINTER)
+	   CHECK_CXX_COMPILER_FLAG(-fno-omit-frame-pointer CxxFlagFramePointer)
+
+	   if (CxxFlagFramePointer)
+           	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
+	   endif (CxxFlagFramePointer)
+    endif()
+endif()
+
+
+
 # Define build flags for public or private engine builds
 if (ENGINE_TYPE EQUAL 2)
 	message(STATUS "Building public engine")
-	set(CMAKE_CXX_FLAGS "-DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -fno-omit-frame-pointer -DVERSION_PUBLIC -fPIC")
+
+	add_definitions(-DVERSION_PUBLIC)
 else ()
 	message(STATUS "Building private engine")
-	set(CMAKE_CXX_FLAGS "-ggdb -pedantic -DDEFAULT_DYNAMIC_CAST -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -Wno-write-strings -Wno-deprecated-register -O2 -fno-omit-frame-pointer -fPIC")
-
-	if (ENABLE_NATIVE)
-		set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-	endif(ENABLE_NATIVE)
 endif ()
-
-if (ENABLE_ASAN)
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -O2 -g")
-	set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=address")
-	message(STATUS "Address sanitizer enabled")
-endif(ENABLE_ASAN)
-
-if (ENABLE_TSAN)
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread -O2 -g")
-	set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=thread")
-	message(STATUS "Thread sanitizer enabled")
-endif(ENABLE_TSAN)
-
-if (ENABLE_UBSAN)
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined -O2 -g")
-	set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fsanitize=undefined")
-	message(STATUS "Undefined behavior sanitizer sanitizer enabled")
-endif(ENABLE_UBSAN)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/unix")
