@@ -19,24 +19,17 @@ IF (DB_LIBRARIES)
     SET(DB_FIND_QUIETLY_LIB TRUE)
 ENDIF (DB_LIBRARIES)
 
-IF (APPLE)
 FIND_PATH(DB_INCLUDE_DIR db.h
         /opt/local/include/db53/
         /usr/local/BerkeleyDB.5.3/include
-        NO_DEFAULT_PATH
-        )
-ELSE ()
-FIND_PATH(DB_INCLUDE_DIR db.h
-        /opt/local/include/db53/
-        /usr/local/BerkeleyDB.5.3/include
+	/usr/local/include
 	/usr/include
         NO_DEFAULT_PATH
         )
-ENDIF ()
 
 FIND_LIBRARY(DB_LIBRARIES
-        NAMES db-5.3
-        PATHS /opt/local/lib/db53 /usr/local/BerkeleyDB.5.3/lib /usr/lib/x86_64-linux-gnu/
+        NAMES db-5.3 db
+        PATHS /opt/local/lib/db53 /usr/local/BerkeleyDB.5.3/lib /usr/lib/x86_64-linux-gnu/ /usr/local/lib
         )
 
 IF (DB_INCLUDE_DIR AND DB_LIBRARIES)
