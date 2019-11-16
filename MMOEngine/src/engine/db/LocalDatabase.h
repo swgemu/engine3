@@ -35,11 +35,11 @@ namespace engine {
 	 ThreadLocal<engine::db::berkeley::BerkeleyDatabase*> objectsDatabase;
 	 LocalDatabase* parentDatabase = nullptr;
 
-	 engine::db::berkeley::Environment* environment;
+	 engine::db::berkeley::Environment* environment = nullptr;
 
 	 String databaseFileName;
 
-	 bool compression;
+	 bool compression = false;
 
 	 DatabaseType dbType = LOCALDATABASE;
 

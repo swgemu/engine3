@@ -75,6 +75,7 @@ Thread::Thread() {
 	modifiedObjects = nullptr;
 
 	pthread_attr_init(&attributes);
+	memset(&thread, 0, sizeof(thread));
 
 	name = "Thread " + String::valueOf(++threadCounter);
 }

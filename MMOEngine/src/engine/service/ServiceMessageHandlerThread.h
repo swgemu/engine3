@@ -17,25 +17,25 @@
 
 namespace engine {
   namespace service {
-  	
+
 	class ServiceMessageHandlerThread : public ServiceThread {
 	protected:
 		ServiceClientMap* clients;
-	
+
 		Socket* socket;
-		int port;
-		
+		int port = 0;
+
 		MessageQueue messageQueue;
-		
+
 		ServiceHandler* serviceHandler;
 
 		ServiceFilter* serviceFilter;
 
 	public:
 		ServiceMessageHandlerThread(const String& s);
-		
+
 		virtual ~ServiceMessageHandlerThread();
-	
+
 		bool removeConnection(ServiceClient* client);
 
 		void removeConnections();
@@ -44,7 +44,7 @@ namespace engine {
 		inline void addMessage(Message* msg) {
 			messageQueue.push(msg);
 		}
-		
+
 		inline Message* getMessage() {
 			return messageQueue.pop();
 		}
@@ -52,7 +52,7 @@ namespace engine {
 		inline void flushMessages() {
 			messageQueue.flush();
 		}
-		
+
 		// getters
 		inline MessageQueue* getMessageQueue() {
 			return &messageQueue;

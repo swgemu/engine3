@@ -10,20 +10,20 @@
 
 namespace engine {
   namespace ORB {
-  	
+
   	class DistributedObjectStub;
 
   	class DistributedObjectClassHelper;
 
 	class DistributedObjectServant : public Object {
 	protected:
-		DistributedObjectClassHelper* _classHelper;
-		
+		DistributedObjectClassHelper* _classHelper = nullptr;
+
 		WeakReference<DistributedObjectStub*> _stub;
-		
+
 	public:
 		DistributedObjectServant();
-		
+
 		virtual ~DistributedObjectServant();
 
 		void setDeployingName(const String& name);
@@ -35,7 +35,7 @@ namespace engine {
 		virtual void _serializationHelperMethod() = 0;
 
 		virtual DistributedObjectStub* _getStub() = 0;
-		
+
 		String toString();
 
 		// setters
@@ -46,7 +46,7 @@ namespace engine {
 		// getters
 		inline DistributedObjectClassHelper* _getClassHelper() {
 			return _classHelper;
-		}	
+		}
 	};
 
   } // namespace ORB

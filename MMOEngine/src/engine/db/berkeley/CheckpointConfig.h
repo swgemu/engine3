@@ -30,7 +30,7 @@ namespace engine {
 		CheckpointConfig() {
 			KBytes = 0;
 			minutes = 0;
-			bool force = false;
+			force = false;
 		}
 
 		inline void setKBytes(uint32 kbytes) {

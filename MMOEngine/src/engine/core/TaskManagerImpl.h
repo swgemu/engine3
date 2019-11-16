@@ -35,8 +35,8 @@ namespace engine {
 		TaskQueue serialTaskQueue;
 #endif
 
-		int workerThreads;
-		int schedulerThreads;
+		int workerThreads = 0;
+		int schedulerThreads = 0;
 
 		AtomicInteger currentTaskScheduler;
 		AtomicInteger currentTaskQueue;

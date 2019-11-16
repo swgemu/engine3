@@ -134,7 +134,7 @@ namespace engine {
 
 	class DatabaseManager : public Logger, public Mutex, public Object {
 	protected:
-		engine::db::berkeley::Environment* databaseEnvironment;
+		engine::db::berkeley::Environment* databaseEnvironment = nullptr;
 
 		VectorMap<uint16, LocalDatabase*> databases;
 		VectorMap<String, uint16> nameDirectory;
@@ -142,19 +142,19 @@ namespace engine {
 		ThreadLocal<CurrentTransaction*> localTransaction;
 		ThreadLocal<engine::db::berkeley::Transaction*> readLocalTransaction;
 
-		LocalDatabase* databaseDirectory;
+		LocalDatabase* databaseDirectory = nullptr;
 
-		uint32 dbEnvironmentFlags;
+		uint32 dbEnvironmentFlags = 0;
 
-		uint16 lastTableID;
-		uint64 currentVersion;
+		uint16 lastTableID = 0;
+		uint64 currentVersion = 0;
 
 		Reference<BerkeleyCheckpointTask*> checkpointTask;
-		uint32 checkpointTime;
+		uint32 checkpointTime = 0;
 
-		bool loaded;
+		bool loaded = false;
 
-		bool managedObjectsWithHashCodeMembers;
+		bool managedObjectsWithHashCodeMembers = true;
 
 	public:
 		const static int CHECKPOINTTIME = 1800000; //msec

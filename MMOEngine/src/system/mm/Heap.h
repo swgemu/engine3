@@ -22,7 +22,7 @@ namespace sys {
 		int flags;
 		off_t offset;
 
-		Allocator* allocator;
+		Allocator* allocator = nullptr;
 
 	public:
 		Heap();

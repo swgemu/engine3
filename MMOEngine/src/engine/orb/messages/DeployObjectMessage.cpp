@@ -9,8 +9,8 @@
 #include "DeployObjectMessage.h"
 
 DeployObjectMessage::DeployObjectMessage(const String& name, const String& classname,
-										 uint64 requestedObjectID) : DOBMessage(DEPLOYOBJECTMESSAGE, 40),
-																	 requestedObjectID(requestedObjectID), deployed(false) {
+					 uint64 requestedObjectID) : DOBMessage(DEPLOYOBJECTMESSAGE, 40),
+					 requestedObjectID(requestedObjectID), deployed(false) {
 	insertAscii(name);
 	insertAscii(classname);
 	insertLong(requestedObjectID);

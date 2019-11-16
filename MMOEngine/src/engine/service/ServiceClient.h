@@ -15,14 +15,14 @@ namespace engine {
 
 	class ServiceClient : public Object {
 	protected:
-		ServiceHandler* serviceHandler;
+		ServiceHandler* serviceHandler = nullptr;
 
 		SocketAddress addr;
-		Socket* socket;
+		Socket* socket = nullptr;
 
-		bool errored, disconnected;
+		bool errored = false, disconnected = false;
 
-		int packetLossChance;
+		int packetLossChance = 0;
 
 	public:
 		ServiceClient();

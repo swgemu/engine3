@@ -32,7 +32,7 @@ namespace engine {
 	protected:
 		DatabaseConfig databaseConfig;
 
-		Environment* environment;
+		Environment* environment = nullptr;
 
 		String filename, databaseName;
 

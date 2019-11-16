@@ -14,12 +14,12 @@ namespace engine {
 
 	class BasePacket : public Message {
 	protected:
-		sys::uint32 sequence;
-		bool doSeq;
+		sys::uint32 sequence = 0;
+		bool doSeq = true;
 
-		bool doEncr;
-		bool doComp;
-		bool doCRCTest;
+		bool doEncr = true;
+		bool doComp = false;
+		bool doCRCTest = true;
 
 		Time timestamp;
 		Time timeout;

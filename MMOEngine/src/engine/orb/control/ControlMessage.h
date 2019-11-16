@@ -18,11 +18,11 @@ namespace engine {
 	class ControlMessage : public DOBMessage {
 		int command;
 
-	public:	
-		ControlMessage(int command) : DOBMessage(CONTROLMESSAGE, 20) {
+	public:
+		ControlMessage(int command) : DOBMessage(CONTROLMESSAGE, 20), command(command) {
 			insertInt(command);
 		}
-	
+
 		ControlMessage(Packet* message) : DOBMessage(message) {
 			command = message->parseInt();
 		}

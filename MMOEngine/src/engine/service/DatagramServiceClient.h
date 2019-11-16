@@ -15,7 +15,7 @@ namespace engine {
 
 	class DatagramServiceClient : public ServiceClient {
 	protected:
-		bool doRun;
+		bool doRun = true;
 
 	public:
 		DatagramServiceClient();

@@ -15,7 +15,7 @@ namespace engine {
 
 	class Form : public Chunk {
 	protected:
-		uint32 formType;
+		uint32 formType = 0;
 
 	public:
 		Form(Chunk* parent, uint32 type, uint32 size, char* data);

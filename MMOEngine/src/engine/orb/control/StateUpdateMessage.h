@@ -20,11 +20,11 @@ namespace engine {
 	class StateUpdateMessage : public DOBMessage {
 		int state;
 
-	public:	
-		StateUpdateMessage(int state) : DOBMessage(STATEUPDATEMESSAGE, 20) {
+	public:
+		StateUpdateMessage(int state) : DOBMessage(STATEUPDATEMESSAGE, 20), state(state) {
 			insertInt(state);
 		}
-	
+
 		StateUpdateMessage(Packet* message) : DOBMessage(message) {
 			state = message->parseInt();
 		}

@@ -551,6 +551,7 @@ LocalDatabaseIterator::LocalDatabaseIterator(BerkeleyDatabase* dbHandle)
 	}
 
 	cursor = databaseHandle->openCursor(txn, cfg);
+	localDatabase = nullptr;
 
 	data.setReuseBuffer(true);
 	key.setReuseBuffer(true);
@@ -589,7 +590,7 @@ bool LocalDatabaseIterator::getNextKeyAndValue(ObjectInputStream* key, ObjectInp
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 
-		if (!localDatabase->hasCompressionEnabled() || compressed)
+		if ((localDatabase && !localDatabase->hasCompressionEnabled()) || compressed)
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		else
 			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
@@ -616,7 +617,7 @@ bool LocalDatabaseIterator::getNextValue(ObjectInputStream* data, uint32 lockMod
 
 		locker.release();
 
-		if (!localDatabase->hasCompressionEnabled()) {
+		if ((localDatabase && !localDatabase->hasCompressionEnabled())) {
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		} else {
 			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
@@ -673,7 +674,7 @@ bool LocalDatabaseIterator::getPrevKeyAndValue(ObjectInputStream* key, ObjectInp
 
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 
-		if (!localDatabase->hasCompressionEnabled())
+		if (localDatabase && !localDatabase->hasCompressionEnabled())
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		else
 			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);
@@ -746,7 +747,7 @@ int LocalDatabaseIterator::putCurrent(ObjectOutputStream* data) {
 
 	int ret = -1;
 
-	if (!localDatabase->hasCompressionEnabled()) {
+	if (localDatabase && !localDatabase->hasCompressionEnabled()) {
 		dataEntry.setData(data->getBuffer(), data->size());
 
 		ret = cursor->putCurrent(&dataEntry);
@@ -816,7 +817,7 @@ bool LocalDatabaseIterator::getSearchKeyRange(ObjectInputStream* key, ObjectInpu
 		key->reset();
 		key->writeStream((char*)this->key.getData(), this->key.getSize());
 
-		if (!localDatabase->hasCompressionEnabled())
+		if (localDatabase && !localDatabase->hasCompressionEnabled())
 			data->writeStream((char*)this->data.getData(), this->data.getSize());
 		else
 			LocalDatabase::uncompress(this->data.getData(), this->data.getSize(), data);

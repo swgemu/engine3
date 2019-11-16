@@ -38,8 +38,8 @@ namespace engine {
 		uint32 threadCount;
 		uint32 lockDetectMode;
 		bool logAutoRemove;
-		bool mvcc;
-		bool direct;
+		bool mvcc = false;
+		bool direct = false;
 		int maxLogFileSize;
 
 	public:

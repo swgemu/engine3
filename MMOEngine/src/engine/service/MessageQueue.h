@@ -21,7 +21,7 @@ namespace engine {
 		Mutex* condMutex;
 
 		bool blocked;
-		bool waitingForMessage;
+		//bool waitingForMessage = false;
 
 	public:
 		MessageQueue();

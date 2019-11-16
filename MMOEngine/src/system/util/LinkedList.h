@@ -20,7 +20,7 @@ namespace sys {
 		ListEntry* next;
 
 	public:
-		ListEntry() : next(nullptr) {
+		ListEntry() : obj{}, next(nullptr) {
 		}
 
 		ListEntry(O obj, ListEntry* e) {

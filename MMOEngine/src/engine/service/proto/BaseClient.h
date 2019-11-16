@@ -74,10 +74,10 @@ namespace engine {
 
 		Reference<BaseClientEvent*> reentrantTask;
 
-		bool clientDisconnected;
+		bool clientDisconnected = false;
 
-		int acknowledgedServerSequence, realServerSequence;
-		int resentPackets;
+		int acknowledgedServerSequence = -1, realServerSequence = 0;
+		int resentPackets = 0;
 
 		bool keepSocket;
 

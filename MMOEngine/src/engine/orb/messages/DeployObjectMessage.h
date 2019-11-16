@@ -26,9 +26,9 @@ namespace engine {
 		uint64 requestedObjectID;
 
 		bool deployed;
-		uint64 objectID;
+		uint64 objectID = 0;
 
-	public:	
+	public:
 		DeployObjectMessage(const String& name, const String& classname, uint64 requestedObjectID);
 		DeployObjectMessage(Packet* message);
 

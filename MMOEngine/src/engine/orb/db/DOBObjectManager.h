@@ -40,7 +40,7 @@ namespace engine {
 
 		AtomicLong nextObjectID;
 
-		ObjectDatabaseManager* databaseManager;
+		ObjectDatabaseManager* databaseManager = nullptr;
 
 		DistributedObjectMap<HashTable<uint64, DistributedObject*>> remoteDeployedObjects;
 

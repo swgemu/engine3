@@ -35,6 +35,8 @@ SocketAddress::SocketAddress(const String& host, int port) {
 
 	bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);*/
 
+	memset(&addr, 0, sizeof(addr));
+
 	struct addrinfo *result = nullptr;
 
 	int error = getaddrinfo(host.toCharArray(), nullptr, nullptr, &result);

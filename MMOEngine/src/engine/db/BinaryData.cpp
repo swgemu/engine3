@@ -74,8 +74,11 @@ bool BinaryData::decode(String& stream) {
         	break;
 
         char *s = (char*) strchr (base64_chars, c);
-	    if (!s)
-    	    return false;
+	if (!s) {
+		delete [] oData;
+
+		return false;
+	}
 
         sys::uint8 byte = (s - base64_chars) << 2;
 
