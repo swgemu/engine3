@@ -81,7 +81,7 @@ namespace engine {
 
 		virtual Reference<DistributedObjectStub*> loadPersistentObject(uint64 objid);
 
-		void createBackup();
+		void createBackup(bool forceFull);
 
 		static void setUpdateToDatabaseTime(int value) {
 			UPDATETODATABASETIME = value;
@@ -99,7 +99,7 @@ namespace engine {
 
 		void cancelUpdateModifiedObjectsTask();
 
-		void updateModifiedObjectsToDatabase();
+		void updateModifiedObjectsToDatabase(bool forceFull);
 
 		virtual void onUpdateModifiedObjectsToDatabase() {
 		}

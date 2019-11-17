@@ -19,24 +19,24 @@ namespace engine {
 
 	class ObjectBrokerDirector : public Logger, public Mutex, public Singleton<ObjectBrokerDirector>, public Object {
 		 ObjectBrokerTable objectBrokerTable;
-	
+
 		 VectorMap<ObjectBroker*, int> agentStates;
 
 	public:
-		 enum Command { CREATE_BACKUP };
+		 enum Command { CREATE_BACKUP, CREATE_FULL_BACKUP };
 
 	public:
 		ObjectBrokerDirector();
 		~ObjectBrokerDirector();
-		
+
 		void start();
 
-		void createBackup();
+		void createBackup(bool full);
 
 		void handleStateUpdate(ObjectBroker* broker, int state);
 
 		void brokerConnected(ObjectBroker* broker);
-	
+
 		void brokerDisconnected(ObjectBroker* broker);
 
 	private:

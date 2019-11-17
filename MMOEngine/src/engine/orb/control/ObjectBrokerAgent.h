@@ -28,7 +28,7 @@ namespace engine {
 
 		void start();
 
-		void startBackup();
+		void startBackup(bool forceFull);
 		void finishBackup();
 
 		void doCommand(ObjectBrokerDirector::Command command);

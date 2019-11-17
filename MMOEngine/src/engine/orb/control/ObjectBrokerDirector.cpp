@@ -22,8 +22,12 @@ void ObjectBrokerDirector::start() {
 	info("running as active director");
 }
 
-void ObjectBrokerDirector::createBackup() {
-	sendCommand(CREATE_BACKUP);
+void ObjectBrokerDirector::createBackup(bool full) {
+	if (full) {
+		sendCommand(CREATE_FULL_BACKUP);
+	} else {
+		sendCommand(CREATE_BACKUP);
+	}
 }
 
 void ObjectBrokerDirector::doStateUpdate(int state) {

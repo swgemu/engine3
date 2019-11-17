@@ -109,9 +109,9 @@ DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	CommitMasterTransactionThread::instance()->start();
 }
 
-void DOBObjectManager::createBackup() {
+void DOBObjectManager::createBackup(bool forceFull) {
 	if (DistributedObjectBroker::instance()->isRootBroker())
-		ObjectBrokerDirector::instance()->createBackup();
+		ObjectBrokerDirector::instance()->createBackup(forceFull);
 	else
 		warning("remote backup creation not implemented yet");
 }
@@ -424,7 +424,7 @@ DOBObjectManager::UpdateCollection DOBObjectManager::collectModifiedObjectsFromT
 	return collection;
 }
 
-void DOBObjectManager::updateModifiedObjectsToDatabase() {
+void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 	info("starting saving objects to database", true);
 
 	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
@@ -477,7 +477,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 
 	auto collection = collectModifiedObjectsFromThreads(*lockers);
 
-	if (saveMode && (saveDeltaCount++ < saveDeltas)) {
+	if (!forceFull && saveMode && (saveDeltaCount++ < saveDeltas)) {
 		info("running delta update", true);
 
 		executeDeltaUpdateThreads(collection, transaction);
