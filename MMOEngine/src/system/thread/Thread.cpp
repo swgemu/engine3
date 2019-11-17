@@ -21,6 +21,11 @@
 
 namespace ThreadNs {
 	static Logger threadLogger("Thread");
+
+	void threadDtor(void*) {
+
+	}
+
 }
 
 std::atomic<int> Thread::threadCounter;
@@ -28,11 +33,8 @@ UniqueReference<ThreadInitializer*> Thread::threadInitializer;
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
 
-void threadDtor(void*) {
 
-}
-
-ThreadLocal<Thread*> Thread::currentThread(threadDtor);
+ThreadLocal<Thread*> Thread::currentThread(ThreadNs::threadDtor);
 
 void Thread::initializeThread(Thread* thread) {
 	currentThread.set(thread);
@@ -46,17 +48,16 @@ void* Thread::executeThread(void* th) {
 	currentThread.set(impl);
 
 	if (threadInitializer)
-		threadInitializer->onThreadStart(impl);//mysql_thread_init();
+		threadInitializer->onThreadStart(impl);
 
 	impl->run();
 
 	if (threadInitializer)
-		threadInitializer->onThreadEnd(impl);//mysql_thread_end();
+		threadInitializer->onThreadEnd(impl);
 
 	if (impl->isDetached())
 		delete impl;
 
-//	pthread_exit(0);
 
 	return nullptr;
 }
@@ -84,11 +85,19 @@ Thread::~Thread() {
 	pthread_attr_destroy(&attributes);
 
 	if (modifiedObjects) {
+		for (auto object : *modifiedObjects) {
+			object->release();
+		}
+
 		delete modifiedObjects;
 		modifiedObjects = nullptr;
 	}
 
 	if (deletedFromDatabaseObjects) {
+		for (auto object : *deletedFromDatabaseObjects) {
+			object->release();
+		}
+
 		delete deletedFromDatabaseObjects;
 		deletedFromDatabaseObjects = nullptr;
 	}
@@ -101,7 +110,6 @@ void Thread::start() {
 void Thread::addModifiedObject(DistributedObject* object) {
 	if (!modifiedObjects) {
 		modifiedObjects = new ModifiedObjectsList();
-		//modifiedObjects->setNoDuplicateInsertPlan();
 	}
 
 	modifiedObjects->emplace(object);
@@ -115,7 +123,6 @@ void Thread::addModifiedObject(DistributedObject* object) {
 void Thread::addDeleteFromDatabaseObject(DistributedObject* object) {
 	if (!deletedFromDatabaseObjects) {
 		deletedFromDatabaseObjects = new DeleteFromDatabaseObjectsList();
-		//modifiedObjects->setNoDuplicateInsertPlan();
 	}
 
 	deletedFromDatabaseObjects->emplace(object);

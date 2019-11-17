@@ -25,7 +25,7 @@ namespace engine {
 
 		Mutex blockMutex;
 		Condition waitCondition;
-		Condition finishedWorkContition;
+		Condition finishedWorkCondition;
 		Condition waitMasterTransaction;
 
 		AtomicBoolean copyRAMFinished;
@@ -124,7 +124,7 @@ namespace engine {
 			}
 
 			if (working)
-				finishedWorkContition.wait(&blockMutex);
+				finishedWorkCondition.wait(&blockMutex);
 
 			blockMutex.unlock();
 		}

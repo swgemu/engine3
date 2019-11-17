@@ -76,7 +76,6 @@ namespace engine {
 		DOBObjectManager();
 
 		virtual ~DOBObjectManager() {
-			//localObjectDirectory.destroyContainingObjects();
 		}
 
 		virtual Reference<DistributedObjectStub*> loadPersistentObject(uint64 objid);
@@ -125,8 +124,6 @@ namespace engine {
 		virtual void createObjectID(const String& name, DistributedObjectStub* object);
 
 		virtual uint64 getNextFreeObjectID();
-
-		//virtual void savePersistentObjects();
 
 		DistributedObjectDirectory* getLocalObjectDirectory() {
 			return &localObjectDirectory;

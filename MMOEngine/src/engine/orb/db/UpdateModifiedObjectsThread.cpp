@@ -58,12 +58,10 @@ void UpdateModifiedObjectsThread::run() NO_THREAD_SAFETY_ANALYSIS {
 			objectsToUpdate = nullptr;
 			objectsToDelete = nullptr;
 
-			finishedWorkContition.broadcast(&blockMutex);
+			finishedWorkCondition.broadcast(&blockMutex);
 		}
 
 		commitTransaction();
-
-		copyRAMFinished = false;
 	}
 }
 
@@ -86,11 +84,15 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 
 		transaction = nullptr;
 
+		copyRAMFinished = false;
+
 		finishedCommiting = true;
 
 		blockMutex.unlock();
 	} else {
 		finishedCommiting = true;
+
+		copyRAMFinished = false;
 
 		blockMutex.unlock();
 

@@ -12,6 +12,7 @@
 #ifndef DOBOBJECTMANAGER_CPP_
 #define DOBOBJECTMANAGER_CPP_
 
+#include <cstddef>
 #include <unistd.h>
 #include <chrono>
 
@@ -55,10 +56,8 @@ namespace DOB {
 			const auto addresses = Core::getPropertyVector("ObjectManager.ignoreModifiedTraces");
 
 			for (const auto& address : addresses) {
-				void* addressPointer = nullptr;
-
 				if (address.beginsWith("0x")) {
-					uint64 val = UnsignedLong::hexvalueOf(address.subString(2));
+					std::ptrdiff_t val = UnsignedLong::hexvalueOf(address.subString(2));
 
 					addressVector.emplace(reinterpret_cast<void*>(val));
 				}
@@ -215,12 +214,6 @@ uint64 DOBObjectManager::getNextFreeObjectID() {
 	return val;
 }
 
-/*void DOBObjectManager::savePersistentObjects() {
-	Locker locker(this);
-
-	localObjectDirectory.savePersistentObjects();
-}*/
-
 int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object) {
 	totalUpdatedObjects.increment();
 
@@ -237,9 +230,7 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 		managedObject->writeObject(objectData);
 
 		uint64 oid = object->_getObjectID();
-
 		uint32 lastSaveCRC = managedObject->getLastCRCSave();
-
 		uint32 currentCRC = BaseProtocol::generateCRC(objectData);
 
 		if (lastSaveCRC == currentCRC) {
@@ -274,14 +265,6 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 			ObjectDatabase* database = getTable(oid);
 
 			if (database != nullptr) {
-				//StringBuffer msg;
-				/*String dbName;
-
-				database->getDatabaseName(dbName);
-
-				msg << "saving to database with table " << dbName << " and object id 0x" << hex << oid;
-					info(msg.toString());*/
-
 				database->putData(oid, objectData, object);
 
 				managedObject->setLastCRCSave(currentCRC);
@@ -300,12 +283,6 @@ int DOBObjectManager::commitUpdatePersistentObjectToDB(DistributedObject* object
 
 				error() << "unknown database id of objectID 0x" << hex << oid;
 			}
-
-			/*objectData.escapeString();
-
-				StringBuffer query;
-				query << "UPDATE objects SET data = '" << objectData << "' WHERE objectid = " << object->_getObjectID() << ";";
-				ServerDatabase::instance()->executeStatement(query);*/
 		}
 	} catch (...) {
 		error("unreported exception caught in ObjectManager::updateToDatabase(SceneObject* object)");
@@ -506,7 +483,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 	_locker.release();
 #endif
 
-	onUpdateModifiedObjectsToDatabase(); //this might cause some chars to remain dirty until next save, but we dont care
+	onUpdateModifiedObjectsToDatabase(); //this might cause some chars to remain dirty in sql until next save, but we dont care
 
 	//cleanup thread object
 	for (auto& entry : collection) {
@@ -580,8 +557,8 @@ int DOBObjectManager::executeUpdateThreads(ArrayList<DistributedObject*>* object
 int DOBObjectManager::executeDeltaUpdateThreads(UpdateCollection& updateObjects, engine::db::berkeley::Transaction* transaction) {
 	totalUpdatedObjects = 0;
 	totalActuallyChangedObjects = 0;
-	//commitedObjects.removeAll(localObjectDirectory.getSize(), 1000);
 	commitedObjects.objects.clear();
+
 	int currentThread = 0;
 	int objectsToUpdateCount = 0;
 	int count = 0;
@@ -600,6 +577,8 @@ int DOBObjectManager::executeDeltaUpdateThreads(UpdateCollection& updateObjects,
 
 	for (auto thread : updateModifiedObjectsThreads) {
 		thread->signalCopyFinished();
+
+		Thread::yield();
 
 		thread->waitFinishedWork();
 	}
