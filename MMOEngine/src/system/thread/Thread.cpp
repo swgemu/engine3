@@ -98,26 +98,28 @@ void Thread::start() {
 	pthread_create(&thread, &attributes, executeThread, this);
 }
 
-void Thread::addModifiedObject(Object* object) {
+void Thread::addModifiedObject(DistributedObject* object) {
 	if (!modifiedObjects) {
 		modifiedObjects = new ModifiedObjectsList();
 		//modifiedObjects->setNoDuplicateInsertPlan();
 	}
 
 	modifiedObjects->emplace(object);
+	object->acquire();
 
 	const static int maxCount = Core::getIntProperty("Thread.maxModifiedObjects", 3000000);
 
 	ThreadNs::threadLogger.fatal(modifiedObjects->size() < maxCount, "Exceeded Thread.maxModifiedObjects size");
 }
 
-void Thread::addDeleteFromDatabaseObject(Object* object) {
+void Thread::addDeleteFromDatabaseObject(DistributedObject* object) {
 	if (!deletedFromDatabaseObjects) {
 		deletedFromDatabaseObjects = new DeleteFromDatabaseObjectsList();
 		//modifiedObjects->setNoDuplicateInsertPlan();
 	}
 
 	deletedFromDatabaseObjects->emplace(object);
+	object->acquire();
 
 	const static int maxCount = Core::getIntProperty("Thread.maxDeleteFromDatabaseObjects", 3000000);
 

@@ -82,9 +82,7 @@ void UpdateModifiedObjectsThread::commitTransaction() NO_THREAD_SAFETY_ANALYSIS 
 
 		uint64 delta = clockTimer.stop();
 
-		StringBuffer msg;
-		msg << "thread " << threadId << " commited objects into database in " << delta / 1000000 << " ms";
-		objectManager->info(msg.toString(), true);
+		objectManager->info(true) << "thread " << threadId << " commited objects into database in " << delta / 1000000 << " ms";
 
 		transaction = nullptr;
 
@@ -112,17 +110,13 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			for (int i = startOffset; i < endOffset; ++i) {
 				DistributedObject* object = objectsToUpdate->get(i);
 
-				if (objectManager->commitUpdatePersistentObjectToDB(object) == 0)
+				if (object->isPersistent() && objectManager->commitUpdatePersistentObjectToDB(object) == 0)
 					++j;
-
-				//Thread::yield();
 			}
 
-			StringBuffer msg;
-			msg << "thread " << threadId << " copied " << j <<  " modified objects into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
-			objectManager->info(msg.toString(), true);
+			objectManager->info(true) << "thread " << threadId << " copied "
+				<< j <<  " modified objects into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
 		}
-
 
 		start.updateToCurrentTime(Time::MONOTONIC_TIME);
 
@@ -136,11 +130,10 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 				}
 			}
 
-			StringBuffer msg;
-			msg << "thread " << threadId << " commited " << objectsToDelete->size() <<  " objects for deletion into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
-			objectManager->info(msg.toString(), true);
+			objectManager->info(true) << "thread " << threadId << " commited "
+				<< objectsToDelete->size() <<  " objects for deletion into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
 		}
-	} catch (Exception& e) {
+	} catch (const Exception& e) {
 		objectManager->error(e.getMessage());
 	} catch (...) {
 		objectManager->error("unreported exception caught");

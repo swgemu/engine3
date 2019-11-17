@@ -83,6 +83,10 @@ void CommitMasterTransactionThread::shutdown() {
 int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
 	int i = 0;
 
+	if (objectsToDeleteFromRam == nullptr) {
+		return i;
+	}
+
 	static const int objectsToDeletePerSleep = Core::getIntProperty("ObjectManager.objectsToDeletePerSleepThrottle", 10000);
 	static const int actualObjectsToDeleteSleep = Core::getIntProperty("ObjectManager.actualObjectsToDeleteSleepThrottle", 100);
 	static const int objectsToDeleteSleep = Core::getIntProperty("ObjectManager.objectsToDeleteSleepThrottle", 25);

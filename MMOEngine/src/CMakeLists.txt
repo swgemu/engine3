@@ -65,14 +65,14 @@ set_property(TARGET engine3 PROPERTY POSITION_INDEPENDENT_CODE ON)
 add_custom_target(engine3idl
 	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_CURRENT_SOURCE_DIR}/../lib/idlc.jar org.sr.idlc.compiler.Compiler -sd src anyadEclipse
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../
-	COMMENT "Building idl sources"
+	COMMENT "Building engine3 idl sources"
 	VERBATIM)
 
 
 add_custom_target(engine3rebuild-idl
 	COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_CURRENT_SOURCE_DIR}/../lib/idlc.jar org.sr.idlc.compiler.Compiler -rb -sd src anyadEclipse
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../
-	COMMENT "Rebuilding idl sources"
+	COMMENT "Rebuilding engine3 idl sources"
 	VERBATIM)
 
 add_dependencies(engine3 engine3idl)

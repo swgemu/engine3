@@ -17,8 +17,8 @@ namespace engine {
 	class UpdateModifiedObjectsThread : public Thread {
 		DOBObjectManager* objectManager;
 
-		Vector<DistributedObject*>* objectsToUpdate;
-		Vector<DistributedObject*>* objectsToDelete;
+		ArrayList<DistributedObject*>* objectsToUpdate;
+		ArrayList<DistributedObject*>* objectsToDelete;
 		int startOffset;
 		int endOffset;
 		int threadId;
@@ -48,11 +48,11 @@ namespace engine {
 		void commitObjectsToDatabase();
 		void commitTransaction() NO_THREAD_SAFETY_ANALYSIS;
 
-		inline void setObjectsToUpdateVector(Vector<DistributedObject*>* objectsToUpdate) {
+		inline void setObjectsToUpdateVector(ArrayList<DistributedObject*>* objectsToUpdate) {
 			this->objectsToUpdate = objectsToUpdate;
 		}
 
-		inline void setObjectsToDeleteVector(Vector<DistributedObject*>* objectsToDelete) {
+		inline void setObjectsToDeleteVector(ArrayList<DistributedObject*>* objectsToDelete) {
 			this->objectsToDelete = objectsToDelete;
 		}
 
@@ -82,7 +82,7 @@ namespace engine {
 			copyRAMFinished = val;
 		}
 
-		inline bool hasFinishedCommiting() {
+		inline bool hasFinishedCommiting() const {
 			return finishedCommiting;
 		}
 

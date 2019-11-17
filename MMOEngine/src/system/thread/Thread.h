@@ -28,6 +28,10 @@ namespace engine {
 
 		class TaskWorkerThread;
 	}
+
+	namespace ORB {
+		class DistributedObject;
+	}
 }
 
 namespace sys {
@@ -99,8 +103,8 @@ namespace sys {
 		static UniqueReference<ThreadInitializer*> threadInitializer;
 
 	protected:
-		using ModifiedObjectsList = ArrayList<Object*>;//ska::bytell_hash_set<void*>;
-		using DeleteFromDatabaseObjectsList = ArrayList<Object*>;
+		using ModifiedObjectsList = ArrayList<engine::ORB::DistributedObject*>;//ska::bytell_hash_set<void*>;
+		using DeleteFromDatabaseObjectsList = ArrayList<engine::ORB::DistributedObject*>;
 		//only used in testing
 		ArrayList<Lockable*> acquiredLockables;
 		ArrayList<LockableTrace> lockableTrace;
@@ -168,8 +172,8 @@ namespace sys {
 			return &lockableTrace;
 		}
 
-		void addModifiedObject(Object* object);
-		void addDeleteFromDatabaseObject(Object* object);
+		void addModifiedObject(engine::ORB::DistributedObject* object);
+		void addDeleteFromDatabaseObject(engine::ORB::DistributedObject* object);
 
 		void addAcquiredLockable(Lockable* lockable, Lockable* cross = nullptr, bool monitorLike = false, bool addToTrace = true) {
 			acquiredLockables.add(lockable);

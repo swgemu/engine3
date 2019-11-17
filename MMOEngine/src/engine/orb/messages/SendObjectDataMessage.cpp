@@ -14,9 +14,9 @@ SendObjectDataMessage::SendObjectDataMessage(uint64 oid, Stream* data) : DOBMess
 }
 
 SendObjectDataMessage::SendObjectDataMessage(Packet* message) : DOBMessage(message) {
-		objectID = message->parseLong();
+	objectID = message->parseLong();
 
-		objectData = nullptr;
+	objectData = nullptr;
 }
 
 void SendObjectDataMessage::execute() {

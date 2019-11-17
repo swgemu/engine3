@@ -67,6 +67,7 @@ namespace engine {
 		ska::bytell_hash_set<DistributedObject*> uniqueDeletedFromDbObjectValues;
 
 		int saveCount = 0;
+		int saveDeltaCount = 0;
 
 		static int UPDATETODATABASETIME;
 		static bool dumpLastModifiedTraces;
@@ -132,23 +133,27 @@ namespace engine {
 		}
 
 	protected:
+		using UpdateCollection = ArrayList<Pair<ArrayList<DistributedObject*>*, ArrayList<DistributedObject*>*>>;
+
 		void finishObjectUpdate();
 		void checkCommitedObjects();
-		void collectModifiedObjectsFromThreads(const Vector<Pair<Locker*, TaskWorkerThread*>>& lockers);
+		UpdateCollection collectModifiedObjectsFromThreads(const Vector<Pair<Locker*, TaskWorkerThread*>>& lockers);
 
 		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
 
 		void dispatchUpdateModifiedObjectsThread(int& currentThread, int& lastThreadCount,
 				int& objectsToUpdateCount, engine::db::berkeley::Transaction* transaction,
-				Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>* objectsToDelete);
+				ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete);
 
 
-		int executeUpdateThreads(Vector<DistributedObject*>* objectsToUpdate, Vector<DistributedObject*>* objectsToDelete,
-				Vector<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkeley::Transaction* transaction);
+		int executeUpdateThreads(ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
+				ArrayList<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkeley::Transaction* transaction);
+
+		int executeDeltaUpdateThreads(UpdateCollection& updateObjects, engine::db::berkeley::Transaction* transaction);
 
 		int runObjectsMarkedForUpdate(engine::db::berkeley::Transaction* transaction,
-				Vector<DistributedObject*>& objectsToUpdate, Vector<DistributedObject*>& objectsToDelete,
-				Vector<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount);
+				ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>& objectsToDelete,
+				ArrayList<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount);
 
 
 
