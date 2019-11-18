@@ -112,7 +112,6 @@ namespace sys {
 #ifdef CXX11_COMPILER
 		String(String&& str);
 #endif
-
 		~String();
 
 		String concat(char ch) const;
@@ -295,13 +294,6 @@ namespace sys {
 			return count == 0;
 		}
 
-	protected:
-		void create(const char* str, int len);
-
-		void clear();
-
-		static char* strrstr(const char* s, int slen, const char* t, int tlen);
-
 		inline const char* begin() const {
 #ifdef SSO_STRING
 			return count < SSO_SIZE ? (const char*) sso : (const char*) value;
@@ -325,6 +317,13 @@ namespace sys {
 		inline char* end() {
 			return begin() + count;
 		}
+
+	protected:
+		void create(const char* str, int len);
+
+		void clear();
+
+		static char* strrstr(const char* s, int slen, const char* t, int tlen);
 
 	public:
 		// getters

@@ -94,7 +94,7 @@ DOBObjectManager::DOBObjectManager() : Logger("ObjectManager") {
 	UPDATETODATABASETIME = Core::getIntProperty("ObjectManager.updateToDatabaseTime", UPDATETODATABASETIME);
 	dumpLastModifiedTraces = Core::getIntProperty("ObjectManager.trackLastUpdatedTrace", 0);
 
-	objectUpdateInProcess = false;
+	objectUpdateInProgress = false;
 	totalUpdatedObjects = 0;
 	//commitedObjects.setNoDuplicateInsertPlan();
 
@@ -413,7 +413,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 	bool rootBroker = DistributedObjectBroker::instance()->isRootBroker();
 	//ObjectDatabaseManager::instance()->checkpoint();
 
-	if (objectUpdateInProcess) {
+	if (objectUpdateInProgress) {
 		error("object manager already updating objects to database... try again later");
 		return;
 	}
@@ -432,7 +432,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 
 	Locker _locker(this);
 
-	objectUpdateInProcess = true;
+	objectUpdateInProgress = true;
 
 	engine::db::berkeley::Transaction* transaction = nullptr;
 
@@ -725,7 +725,7 @@ void DOBObjectManager::checkCommitedObjects() {
 void DOBObjectManager::finishObjectUpdate() {
 	Locker _locker(this);
 
-	objectUpdateInProcess = false;
+	objectUpdateInProgress = false;
 
 	updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
 

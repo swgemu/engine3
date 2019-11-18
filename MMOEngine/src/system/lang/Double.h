@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include "system/io/ObjectOutputStream.h"
 #include "system/io/ObjectInputStream.h"
 
@@ -54,8 +56,7 @@ namespace sys {
 		}
 
 		static uint32 hashCode(double value) {
-			// TODO
-			return (unsigned int)((uint64) value ^ ((uint64) value >> 32));
+			return (uint32) std::hash<double>{}(value);
 		}
 
 	};

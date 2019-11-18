@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include "BaseTypeVariable.h"
 
 #include "String.h"
@@ -60,8 +62,7 @@ namespace sys {
 		}
 
 		static uint32 hashCode(float value) {
-			//TODO
-			return (uint32) value;
+			return (uint32) std::hash<float>{}(value);
 		}
 
 		static bool areAlmostEqualRelative(float A, float B, float maxRelDiff = FLT_EPSILON) {

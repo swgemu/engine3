@@ -10,6 +10,7 @@
 
 #include "system/platform.h"
 #include "system/lang/Pair.h"
+#include "system/thread/atomic/AtomicBoolean.h"
 
 #include "engine/core/Task.h"
 
@@ -48,7 +49,7 @@ namespace engine {
 
 		Vector<UpdateModifiedObjectsThread*> updateModifiedObjectsThreads;
 
-		bool objectUpdateInProcess;
+		AtomicBoolean objectUpdateInProgress;
 
 		AtomicInteger totalUpdatedObjects;
 		AtomicInteger totalActuallyChangedObjects;
