@@ -23,10 +23,10 @@ void GdbStub::initialize(pid_t pid) {
 	processPid = String::valueOf(pid);
 
 	time_t     now = time(0);
-    struct tm  tstruct;
-    char       buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+	struct tm  tstruct;
+	char       buf[80];
+	tstruct = *localtime(&now);
+	strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
 
 	File* file= new File("log/crash_" + processPid + "_" + buf);
 	logFile = new FileWriter(file);
@@ -45,15 +45,12 @@ void GdbStub::printStackTrace() {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* const argv[] = {"gdb",
+		execlp("gdb", "gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "thread",
 				"-ex", "bt full",
-				"-pid", const_cast<char*>(processPid.toCharArray()),
-				nullptr};
-
-		execvp("gdb", argv);
+				"-pid", processPid.toCharArray());
 
 		E3_ABORT("gdb");
 	} else {
@@ -77,14 +74,11 @@ void GdbStub::printRegisters() {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* const argv[] = {"gdb",
+		execlp("gdb", "gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info registers",
-				"-pid", const_cast<char*>(processPid.toCharArray()),
-				nullptr};
-
-		execvp("gdb", argv);
+				"-pid", processPid.toCharArray());
 
 		E3_ABORT("gdb");
 	} else {
@@ -108,14 +102,11 @@ void GdbStub::printDeadlock() {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* const argv[] = {"gdb",
+		execlp("gdb", "gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info registers",
-				"-pid", const_cast<char*>(processPid.toCharArray()),
-				nullptr};
-
-		execvp("gdb", argv);
+				"-pid", processPid.toCharArray());
 
 		E3_ABORT("gdb");
 	} else {
@@ -154,16 +145,13 @@ void GdbStub::printThread(String threadInfo) {
 		char threadCommand[100];
 		sprintf(threadCommand, "thread %i", threadID);
 
-		char* const argv[] = {"gdb",
+		execlp("gdb", "gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", threadCommand,
 				//"-ex", "thread 1",
 				"-ex", "bt full",
-				"-pid", const_cast<char*>(processPid.toCharArray()),
-				nullptr};
-
-		execvp("gdb", argv);
+				"-pid", processPid.toCharArray());
 
 		E3_ABORT("gdb");
 	} else {
@@ -187,14 +175,11 @@ void GdbStub::getThreads(Vector<String>& threads) {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
-		char* const argv[] = {"gdb",
+		execlp("gdb", "gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info threads",
-				"-pid", const_cast<char*>(processPid.toCharArray()),
-				nullptr};
-
-		execvp("gdb", argv);
+				"-pid", processPid.toCharArray());
 
 		E3_ABORT("gdb");
 	} else {

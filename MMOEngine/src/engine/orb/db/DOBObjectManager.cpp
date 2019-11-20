@@ -331,7 +331,8 @@ ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
 UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread() {
 	int maxCpus = Math::max(1, (int) System::getOnlineProcessors());
 
-	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(), this, updateModifiedObjectsThreads.size() % maxCpus);
+	UpdateModifiedObjectsThread* thread = new UpdateModifiedObjectsThread(updateModifiedObjectsThreads.size(),
+			this, updateModifiedObjectsThreads.size() % maxCpus);
 	thread->start();
 
 	updateModifiedObjectsThreads.add(thread);
@@ -360,7 +361,7 @@ DOBObjectManager::UpdateCollection DOBObjectManager::collectModifiedObjectsFromT
 
 		if (objects && trackUniqueObjectsSaveDeltas) {
 			for (const auto& val : *objects) {
-				uniqueMap.emplace(static_cast<DistributedObject*>(val));
+				uniqueMap.emplace(val);
 			}
 		}
 
@@ -368,11 +369,13 @@ DOBObjectManager::UpdateCollection DOBObjectManager::collectModifiedObjectsFromT
 
 		if (deleteObjects && trackUniqueObjectsSaveDeltas) {
 			for (const auto& val : *deleteObjects) {
-				uniqueDeleteMap.emplace(static_cast<DistributedObject*>(val));
+				uniqueDeleteMap.emplace(val);
 			}
 		}
 
-		collection.emplace(make_pair(objects, deleteObjects));
+		if (objects || deleteObjects) {
+			collection.emplace(make_pair(objects, deleteObjects));
+		}
 	};
 
 	auto mainThread = Core::getCoreInstance();
@@ -477,7 +480,8 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 	info(true) << "copied objects into ram in "
 	       << copyTime << " ms";
 
-	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads, updateModifiedObjectsThreads.size(), objectsToDeleteFromRAM);
+	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads,
+			updateModifiedObjectsThreads.size(), objectsToDeleteFromRAM);
 
 #ifndef WITH_STM
 	_locker.release();
@@ -485,12 +489,12 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 
 	onUpdateModifiedObjectsToDatabase(); //this might cause some chars to remain dirty in sql until next save, but we dont care
 
-	//cleanup thread object
+	//cleanup thread objecuts
 	for (auto& entry : collection) {
 		auto objectsToUpdate = entry.first;
 		auto objectsToDelete = entry.second;
 
-		if (objectsToUpdate != nullptr) {
+		if (objectsToUpdate) {
 			for (auto object : *objectsToUpdate) {
 				object->release();
 			}
@@ -570,7 +574,8 @@ int DOBObjectManager::executeDeltaUpdateThreads(UpdateCollection& updateObjects,
 		int lastThreadCount = 0;
 		int objectsToUpdateCount = updateObjects ? updateObjects->size() : 0;
 
-		dispatchUpdateModifiedObjectsThread(currentThread, lastThreadCount, objectsToUpdateCount, transaction, updateObjects, deleteObjects);
+		dispatchUpdateModifiedObjectsThread(currentThread, lastThreadCount,
+				objectsToUpdateCount, transaction, updateObjects, deleteObjects);
 
 		++count;
 	}
@@ -626,8 +631,6 @@ void DOBObjectManager::SynchronizedCommitedObjects::put(DistributedObject* obj) 
 int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkeley::Transaction* transaction,
 		ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>& objectsToDelete,
 		ArrayList<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount) {
-
-	info("starting object map iteration", true);
 
 	objectsToUpdate->removeAll(localObjectDirectory.getSize(), 1); //need to make sure no reallocs happen or threads will read garbage data
 	objectsToDelete.removeAll(100000, 0);

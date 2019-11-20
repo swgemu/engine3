@@ -43,7 +43,7 @@ namespace engine {
 	public:
 		UpdateModifiedObjectsThread(int id, DOBObjectManager* manager, int cpu);
 
-		void run() NO_THREAD_SAFETY_ANALYSIS ;
+		void run() NO_THREAD_SAFETY_ANALYSIS;
 
 		void commitObjectsToDatabase();
 		void commitTransaction() NO_THREAD_SAFETY_ANALYSIS;

@@ -75,7 +75,6 @@ namespace engine {
 
 	public:
 		DOBObjectManager();
-
 		virtual ~DOBObjectManager() {
 		}
 
@@ -152,8 +151,6 @@ namespace engine {
 		int runObjectsMarkedForUpdate(engine::db::berkeley::Transaction* transaction,
 				ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>& objectsToDelete,
 				ArrayList<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount);
-
-
 
 		friend class CommitMasterTransactionThread;
 	};

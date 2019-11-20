@@ -34,13 +34,13 @@ namespace DOBT {
 	}
 }
 
-ObjectHashTable::ObjectHashTable() : HashTable<uint64, DistributedObjectAdapter*>() {
+EngineObjectHashTable::EngineObjectHashTable() : HashTable<uint64, DistributedObjectAdapter*>() {
 }
 
-ObjectHashTable::ObjectHashTable(int initialCapacity) : HashTable<uint64, DistributedObjectAdapter*>(initialCapacity) {
+EngineObjectHashTable::EngineObjectHashTable(int initialCapacity) : HashTable<uint64, DistributedObjectAdapter*>(initialCapacity) {
 }
 
-int ObjectHashTable::hash(const uint64& keyValue) const { //actual uint64 hash function instead of the default PoS AtomicLong has
+int EngineObjectHashTable::hash(const uint64& keyValue) const { //actual uint64 hash function instead of the default PoS AtomicLong has
 	return DOBT::hash(keyValue);
 }
 

@@ -14,15 +14,16 @@
 #include "engine/util/ObjectContainer.h"
 
 #include "system/util/SynchronizedHashTable.h"
+#include "engine/util/bytell_hash_map.hpp"
 
 namespace engine {
   namespace ORB {
 
-	class ObjectHashTable : public HashTable<uint64, DistributedObjectAdapter*> {
+	class EngineObjectHashTable : public HashTable<uint64, DistributedObjectAdapter*> {
 	public:
-		ObjectHashTable();
+		EngineObjectHashTable();
 
-		ObjectHashTable(int initialCapacity);
+		EngineObjectHashTable(int initialCapacity);
 
 		int hash(const uint64& keyValue) const override;
 	};
@@ -37,6 +38,9 @@ namespace engine {
 	};
 
 	class DistributedObjectDirectory {
+	protected:
+		using ObjectHashTable = EngineObjectHashTable;
+
 		ObjectHashTable objectMap;
 
 		DistributedObjectMap<SynchronizedHashTable<uint64, DistributedObject*,
@@ -73,6 +77,7 @@ namespace engine {
 
   } // namespace ORB
 } // namespace engine
+
 
 using namespace engine::ORB;
 

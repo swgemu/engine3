@@ -404,3 +404,4 @@ constexpr uint32 operator "" _hashCode(char const* str, std::size_t s) {
 	return String::hashCode(str);
 }
 
+

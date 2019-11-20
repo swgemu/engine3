@@ -90,10 +90,10 @@ namespace sys {
   			return hashTable.containsKey(key);
   		}
 
-  		void copyFrom(Table* htable) {
+  		void copyFrom(Table& htable) {
   			Locker locker(this);
 
-  			hashTable.copyFrom(htable);
+  			hashTable.copyFrom(*htable);
   		}
 
   		SynchronizedHashTable<K, V, Table>& operator=(const Table& htable) {

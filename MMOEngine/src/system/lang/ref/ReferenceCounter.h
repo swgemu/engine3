@@ -59,7 +59,7 @@ namespace sys {
 			do {
 				oldVal = _references.load(std::memory_order_acquire);
 
-				newVal = oldVal - 1;
+				newVal = oldVal & uint64(0xFFFFFFFFFFFFFFFE);
 			} while (!_references.compare_exchange_weak(oldVal, newVal,
 						std::memory_order_release, std::memory_order_relaxed));
 		}
@@ -85,8 +85,6 @@ namespace sys {
 				oldVal = _references.load(std::memory_order_acquire);
 
 				newVal = oldVal - 2;
-
-				//assert(oldVal >= 2);
 
 				if (newVal == 0)
 					newVal = 1;

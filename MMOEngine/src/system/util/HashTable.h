@@ -55,7 +55,7 @@ namespace sys {
 		}
 
 		Entry(Entry&& e) {
-			Entry::hash = e.hash;
+			Entry::hash = std::move(e.hash);
 			Entry::key = std::move(e.key);
 			Entry::value = std::move(e.value);
 
@@ -135,7 +135,7 @@ namespace sys {
 
 	    bool containsKey(const K& key) const;
 
-	    void copyFrom(HashTable<K, V>* htable);
+	    void copyFrom(const HashTable<K, V>& htable);
 
 	    HashTable<K, V>& operator=(const HashTable<K, V>& htable);
 
@@ -199,6 +199,7 @@ namespace sys {
 
 		void getNextKeyAndValue(K& key, V& value);
 		void getNextKeyAndValue(K*& key, V*& value);
+		void getNextKeyAndValue(const K*& key, const V*& value);
 
 		V& next();
 
@@ -229,7 +230,7 @@ namespace sys {
 	template<class K, class V> HashTable<K,V>::HashTable(const HashTable<K,V>& htable) : Variable() {
 		init(11, 0.75f);
 
-		copyFrom(const_cast<HashTable<K,V>* >(&htable));
+		copyFrom(htable);
 	}
 
 #ifdef CXX11_COMPILER
@@ -248,7 +249,7 @@ namespace sys {
 
 		removeAll();
 
-		copyFrom(const_cast<HashTable<K,V>* >(&htable));
+		copyFrom(htable);
 
 		return *this;
 	}
@@ -283,14 +284,14 @@ namespace sys {
 	}
 #endif
 
-	template<class K, class V> void HashTable<K,V>::copyFrom(HashTable<K,V>* htable) {
-		nullValue = htable->nullValue;
+	template<class K, class V> void HashTable<K,V>::copyFrom(const HashTable<K,V>& htable) {
+		nullValue = htable.nullValue;
 
-		HashTableIterator<K, V> iterator(htable);
+		HashTableIterator<K, V> iterator(&htable);
 
 		while (iterator.hasNext()) {
-			K* key = nullptr;
-			V* value = nullptr;
+			const K* key = nullptr;
+			const V* value = nullptr;
 
 			iterator.getNextKeyAndValue(key, value);
 
@@ -314,8 +315,7 @@ namespace sys {
 		if (initialCapacity == 0) {
 			table = nullptr;
 		} else {
-			table = (Entry<K, V>**) malloc(initialCapacity * sizeof(Entry<K, V>*));
-			memset(table, 0, initialCapacity * sizeof(Entry<K, V>*));
+			table = (Entry<K, V>**) calloc(initialCapacity, sizeof(Entry<K, V>*));
 		}
 
 		tableLength = initialCapacity;
@@ -334,8 +334,7 @@ namespace sys {
 		int newCapacity = oldCapacity * 2 + 1;
 		newCapacity = Math::max(5, newCapacity);
 
-		Entry<K,V>** newMap = (Entry<K, V>**) malloc(newCapacity * sizeof(Entry<K, V>*));
-		memset(newMap, 0, newCapacity * sizeof(Entry<K, V>*));
+		Entry<K,V>** newMap = (Entry<K, V>**) calloc(newCapacity, sizeof(Entry<K, V>*));
 
 		modCount++;
 		threshold = (int) (newCapacity * loadFactor);
@@ -691,6 +690,17 @@ namespace sys {
 	}
 
 	template<class K, class V> void HashTableIterator<K,V>::getNextKeyAndValue(K*& key, V*& value) {
+		while (e == nullptr)
+			e = htable->table[++eIndex];
+
+		key = &e->key;
+		value = &e->value;
+
+		e = e->next;
+		position++;
+	}
+
+	template<class K, class V> void HashTableIterator<K,V>::getNextKeyAndValue(const K*& key, const V*& value) {
 		while (e == nullptr)
 			e = htable->table[++eIndex];
 

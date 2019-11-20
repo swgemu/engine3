@@ -28,7 +28,6 @@ namespace sys {
 
   	public:
   		GdbStub();
-
   		~GdbStub();
 
   		void initialize(pid_t pid);
