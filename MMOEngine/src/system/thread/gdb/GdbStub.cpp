@@ -50,7 +50,7 @@ void GdbStub::printStackTrace() {
 				"-ex", "set pagination off",
 				"-ex", "thread",
 				"-ex", "bt full",
-				"-pid", processPid.toCharArray());
+				"-pid", processPid.toCharArray(), nullptr);
 
 		E3_ABORT("gdb");
 	} else {
@@ -78,7 +78,7 @@ void GdbStub::printRegisters() {
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info registers",
-				"-pid", processPid.toCharArray());
+				"-pid", processPid.toCharArray(), nullptr);
 
 		E3_ABORT("gdb");
 	} else {
@@ -106,7 +106,7 @@ void GdbStub::printDeadlock() {
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info registers",
-				"-pid", processPid.toCharArray());
+				"-pid", processPid.toCharArray(), nullptr);
 
 		E3_ABORT("gdb");
 	} else {
@@ -151,7 +151,7 @@ void GdbStub::printThread(String threadInfo) {
 				"-ex", threadCommand,
 				//"-ex", "thread 1",
 				"-ex", "bt full",
-				"-pid", processPid.toCharArray());
+				"-pid", processPid.toCharArray(), nullptr);
 
 		E3_ABORT("gdb");
 	} else {
@@ -179,7 +179,7 @@ void GdbStub::getThreads(Vector<String>& threads) {
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
 				"-ex", "info threads",
-				"-pid", processPid.toCharArray());
+				"-pid", processPid.toCharArray(), nullptr);
 
 		E3_ABORT("gdb");
 	} else {
