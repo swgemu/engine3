@@ -44,10 +44,10 @@ int DOBObjectManager::UPDATETODATABASETIME = 300000;
 bool DOBObjectManager::dumpLastModifiedTraces = false;
 
 namespace DOB {
-	int MAXOBJECTSTOUPDATEPERTHREAD = 15000;
-	int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 2;
-	int MIN_UPDATE_THREADS = 2;
-	int MAX_UPDATE_THREADS = 8;
+	static int MAXOBJECTSTOUPDATEPERTHREAD = 15000;
+	static int INITIALUPDATEMODIFIEDOBJECTSTHREADS = 2;
+	static int MIN_UPDATE_THREADS = 2;
+	static int MAX_UPDATE_THREADS = 8;
 
 	const ArrayList<void*>& getIgnoreAddresses() {
 		const static ArrayList<void*> vec = [] () {
@@ -340,7 +340,7 @@ UpdateModifiedObjectsThread* DOBObjectManager::createUpdateModifiedObjectsThread
 	return thread;
 }
 
-DOBObjectManager::UpdateCollection DOBObjectManager::collectModifiedObjectsFromThreads(const Vector<Pair<Locker*, TaskWorkerThread*>>& lockers) {
+DOBObjectManager::UpdateCollection DOBObjectManager::collectModifiedObjectsFromThreads(const ArrayList<Pair<Locker*, TaskWorkerThread*>>& lockers) {
 	const static int saveMode = Core::getIntProperty("ObjectManager.saveMode", 0);
 	const static int trackUniqueObjectsSaveDeltas = Core::getIntProperty("ObjectManager.trackUniqueObjectsSaveDeltas", 0);
 

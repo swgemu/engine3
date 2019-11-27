@@ -130,7 +130,7 @@ void Task::doExecute() {
 #endif
 }
 
-bool Task::isScheduled() {
+bool Task::isScheduled() const {
   	auto taskManager = Core::getTaskManager();
 
 	if (!taskManager) {

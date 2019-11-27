@@ -87,9 +87,9 @@ namespace engine {
 
 		void executeTaskFront(Task* task);
 		void executeTaskRandom(Task* task);
-		bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime);
+		bool getNextExecutionTime(const Task* task, AtomicTime& nextExecutionTime);
 
-		bool isTaskScheduled(Task* task);
+		bool isTaskScheduled(const Task* task);
 
 		void scheduleTask(Task* task, uint64 delay = 0);
 		void scheduleTask(Task* task, const Time& time);

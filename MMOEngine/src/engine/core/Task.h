@@ -58,7 +58,7 @@ namespace engine {
 
 		~Task();
 
-		bool isScheduled();
+		bool isScheduled() const;
 
 		bool cancel();
 		bool cancelNonTransactionally();

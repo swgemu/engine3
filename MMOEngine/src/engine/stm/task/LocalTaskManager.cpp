@@ -57,7 +57,7 @@ void LocalTaskManager::executeTask(Task* task) {
 
 }
 
-bool LocalTaskManager::getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) {
+bool LocalTaskManager::getNextExecutionTime(const Task* task, AtomicTime& nextExecutionTime) {
 	TaskAction* action = lastTaskAction.get(task);
 
 	if (action == nullptr)
@@ -187,10 +187,10 @@ Task* LocalTaskManager::getTask() {
 	return nullptr;
 }
 
-bool LocalTaskManager::isTaskScheduled(Task* task) {
+bool LocalTaskManager::isTaskScheduled(const Task* task) {
 	//return scheduledTasks.contains(task);
 
-	TaskAction* action = lastTaskAction.get(task);
+	const TaskAction* action = lastTaskAction.get(task);
 
 	if (action == nullptr)
 		return false;
@@ -202,10 +202,10 @@ bool LocalTaskManager::isTaskScheduled(Task* task) {
 	return false;
 }
 
-bool LocalTaskManager::isTaskCancelled(Task* task) {
+bool LocalTaskManager::isTaskCancelled(const Task* task) {
 	//return cancelledTasks.contains(task);
 
-	TaskAction* action = lastTaskAction.get(task);
+	const TaskAction* action = lastTaskAction.get(task);
 
 	if (action == nullptr)
 		return false;

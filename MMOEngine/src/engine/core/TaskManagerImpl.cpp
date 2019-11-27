@@ -460,13 +460,13 @@ void TaskManagerImpl::executeTasks(const Vector<Task*>& taskList) {
 	taskQueues.get(currentTaskQueue.increment() % DEFAULT_WORKER_QUEUES)->pushAll(taskList);
 }
 
-bool TaskManagerImpl::getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) {
+bool TaskManagerImpl::getNextExecutionTime(const Task* task, AtomicTime& nextExecutionTime) {
 	nextExecutionTime = task->getNextExecutionTime();
 
 	return true;
 }
 
-bool TaskManagerImpl::isTaskScheduled(Task* task) {
+bool TaskManagerImpl::isTaskScheduled(const Task* task) {
 	return task->getTaskScheduler() != nullptr;
 }
 

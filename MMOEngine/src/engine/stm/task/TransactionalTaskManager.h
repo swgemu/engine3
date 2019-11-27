@@ -57,9 +57,9 @@ namespace engine {
   			return taskManager;
   		}
 
-  		bool isTaskScheduled(Task* task);
+  		bool isTaskScheduled(const Task* task);
 
-  		bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime);
+  		bool getNextExecutionTime(const Task* task, AtomicTime& nextExecutionTime);
 
   		void flushTasks();
 

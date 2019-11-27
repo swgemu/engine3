@@ -85,7 +85,7 @@ Task* TransactionalTaskManager::getTask() {
 	return nullptr;
 }
 
-bool TransactionalTaskManager::isTaskScheduled(Task* task) {
+bool TransactionalTaskManager::isTaskScheduled(const Task* task) {
 	LocalTaskManager* manager = getLocalTaskManager();
 
 	if (!manager->isMerging())
@@ -94,7 +94,7 @@ bool TransactionalTaskManager::isTaskScheduled(Task* task) {
 		return taskManager->isTaskScheduled(task);
 }
 
-bool TransactionalTaskManager::getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) {
+bool TransactionalTaskManager::getNextExecutionTime(const Task* task, AtomicTime& nextExecutionTime) {
 	LocalTaskManager* manager = getLocalTaskManager();
 
 	//if (manager->......................................)

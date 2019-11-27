@@ -77,6 +77,12 @@ namespace sys {
     		return elapsedTime;
     	}
 
+	void clear() {
+		startTime = 0;
+		elapsedTime = 0;
+		totalTime = 0;
+	}
+
 	uint64 stopMs() {
     		return stop() / 1000000;
     	}

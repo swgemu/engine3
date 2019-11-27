@@ -22,8 +22,8 @@ namespace engine {
 		   task = nullptr;
 	   }
 
-	   TaskReference(Task* t) {
-		   task = t;
+	   TaskReference(const Task* t) {
+		   task = const_cast<Task*>(t);
 	   }
 
 	   TaskReference(const TaskReference& t) {
@@ -110,11 +110,11 @@ namespace engine {
     		return *this;
     	}
 
-    	inline int getType() {
+    	inline int getType() const {
     		return type;
     	}
 
-    	inline Task* getTask() {
+    	inline Task* getTask() const {
     		return task;
     	}
 
@@ -174,9 +174,9 @@ namespace engine {
 
   		Task* getTask();
 
-  		bool isTaskScheduled(Task* task);
+  		bool isTaskScheduled(const Task* task);
 
-  		bool isTaskCancelled(Task* task);
+  		bool isTaskCancelled(const Task* task);
 
 		void mergeTasks(TaskManagerImpl* manager);
 
@@ -190,7 +190,7 @@ namespace engine {
 
   		int getExecutingTaskSize();
 
-  		bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime);
+  		bool getNextExecutionTime(const Task* task, AtomicTime& nextExecutionTime);
 
   		bool isMerging() {
   			return merging;

@@ -79,6 +79,14 @@ namespace engine {
 			_name = n;
 		}
 
+		inline void _setClassName(String&& n) {
+			_className = std::move(n);
+		}
+
+		inline void _setName(String&& n) {
+			_name = std::move(n);
+		}
+
 		inline void _setObjectID(uint64 id) {
 			_objectID = id;
 		}

@@ -62,7 +62,7 @@ namespace engine {
 
 		}
 
-		virtual bool getNextExecutionTime(Task* task, AtomicTime& nextExecutionTime) = 0;
+		virtual bool getNextExecutionTime(const Task* task, AtomicTime& nextExecutionTime) = 0;
 
 		virtual void executeTask(Task* task) = 0;
 
@@ -80,7 +80,7 @@ namespace engine {
 		}
 #endif
 
-		virtual bool isTaskScheduled(Task* task) = 0;
+		virtual bool isTaskScheduled(const Task* task) = 0;
 
 		virtual void scheduleTask(Task* task, uint64 delay = 0) = 0;
 		virtual void scheduleTask(Task* task, const Time& time) = 0;

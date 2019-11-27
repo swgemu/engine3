@@ -45,16 +45,7 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 		delete serviceHandler;
 		serviceHandler = nullptr;
 	}
-
-	/*if (objectManager != nullptr) {
-		delete objectManager;
-		objectManager = nullptr;
-	}*/
 }
-
-/*ObjectBroker* DistributedObjectBroker::instance() {
-	return Core::getObjectBroker();
-}*/
 
 DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr, int port) {
 	DistributedObjectBroker* inst = DistributedObjectBroker::instance();
@@ -194,9 +185,6 @@ Reference<DistributedObject*> DistributedObjectBroker::lookUp(uint64 objid) {
 }
 
 bool DistributedObjectBroker::destroyObject(DistributedObjectStub* obj) {
-	/*Locker locker(this);
-
-	Locker clocker(objectManager, this);*/
 	if (objectManager == nullptr) {
 		//obj->_setDestroying();
 
@@ -399,3 +387,4 @@ DistributedObjectAdapter* DistributedObjectBroker::getObjectAdapter(uint64 oid) 
 
 	return objectManager->getAdapter(oid);
 }
+

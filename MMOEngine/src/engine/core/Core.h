@@ -103,7 +103,7 @@ namespace engine {
 		if (obj == nullptr)
 			return nullptr;
 		else
-			return obj.castTo<T*>();
+			return obj.castMoveTo<T*>();
 	}
 
   } // namespace core

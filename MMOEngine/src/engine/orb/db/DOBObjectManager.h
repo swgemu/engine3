@@ -134,7 +134,7 @@ namespace engine {
 
 		void finishObjectUpdate();
 		void checkCommitedObjects();
-		UpdateCollection collectModifiedObjectsFromThreads(const Vector<Pair<Locker*, TaskWorkerThread*>>& lockers);
+		UpdateCollection collectModifiedObjectsFromThreads(const ArrayList<Pair<Locker*, TaskWorkerThread*>>& lockers);
 
 		UpdateModifiedObjectsThread* createUpdateModifiedObjectsThread();
 

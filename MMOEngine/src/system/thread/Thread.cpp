@@ -5,6 +5,9 @@
 
 #include "Thread.h"
 
+#include <thread>
+#include <chrono>
+
 #ifndef PLATFORM_WIN
 #include <unistd.h>
 #endif
@@ -187,46 +190,15 @@ void Thread::detach() {
 }
 
 void Thread::sleep(uint64 millis) {
-	#ifndef PLATFORM_WIN
-		struct timespec tm, trem;
-
-		tm.tv_sec = (uint32) millis / 1000;
-		tm.tv_nsec = (uint32) (millis % 1000) * 1000000;
-
-		nanosleep(&tm, &trem);
-	#else
-		Sleep(millis);
-	#endif
+	std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
 
 void Thread::sleep(uint64 millis, uint64 nanos) {
-	#ifndef PLATFORM_WIN
-		struct timespec tm, trem;
-
-		if (millis != 0) {
-			tm.tv_sec = (uint32) millis / 1000;
-			tm.tv_nsec = (uint32) ((millis % 1000) * 1000000 + nanos);
-		} else {
-			tm.tv_sec = 0;
-			tm.tv_nsec = (uint32) nanos;
-		}
-
-		nanosleep(&tm, &trem);
-	#else
-		//TODO find appropriate method for win32
-		E3_ABORT("Method not supported in windows");
-		Sleep(millis);
-	#endif
+	std::this_thread::sleep_for(std::chrono::milliseconds(millis) + std::chrono::nanoseconds(nanos));
 }
 
 void Thread::yield() {
-#ifdef PLATFORM_WIN
-	SwitchToThread();
-#elif defined(PLATFORM_MAC)
-	sched_yield();
-#else
-	pthread_yield();
-#endif
+	std::this_thread::yield();
 }
 
 bool Thread::isDetached() {
