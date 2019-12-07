@@ -89,7 +89,7 @@ namespace sys {
 		StringBuffer& replace(int start, int end, const char* str);
 		StringBuffer& replace(int start, int end, const String& str);
 
-		String toString() const ;
+		String toString() const;
 
 		void toString(String& str) const;
 

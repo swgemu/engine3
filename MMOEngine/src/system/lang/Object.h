@@ -221,7 +221,7 @@ namespace sys {
 			return referenceCounters.get();
 		}
 
-		virtual String toString();
+		virtual String toString() const;
 
 	#ifdef TRACE_REFERENCES
 		void addHolder(uint64 obj);

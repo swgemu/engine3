@@ -132,7 +132,7 @@ namespace engine {
 
 		static Transaction* currentTransaction();
 
-		String toString();
+		String toString() const;
 
 		inline bool isInitial() const {
 			return status == INITIAL;

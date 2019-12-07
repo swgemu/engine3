@@ -60,7 +60,7 @@ namespace sys {
 			  return true;
 		  }
 
-		  static unsigned int hashCode(uint64 value) {
+		  static uint32 hashCode(uint64 value) {
 			  uint64 key = value;
 
 			  key = (~key) + (key << 18); // key = (key << 18) - key - 1;
@@ -70,7 +70,7 @@ namespace sys {
 			  key = key + (key << 6);
 			  key = key ^ (key >> 22);
 
-			  return (int) key;
+			  return (uint32) key;
 		  }
 
 		  static int64 valueOf(const String& str) {
@@ -208,7 +208,7 @@ namespace sys {
 			  return val;
 		  }
 
-		  static unsigned int hashCode(int64 value) {
+		  static uint32 hashCode(int64 value) {
 			  return Long::hashCode(value);
 		  }
 	  };

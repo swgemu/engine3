@@ -36,7 +36,7 @@ namespace engine {
 
 		virtual DistributedObjectStub* _getStub() = 0;
 
-		String toString();
+		String toString() const;
 
 		// setters
 		inline void _setClassHelper(DistributedObjectClassHelper* helper) {

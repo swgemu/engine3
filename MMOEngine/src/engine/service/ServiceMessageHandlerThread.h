@@ -58,7 +58,7 @@ namespace engine {
 			return &messageQueue;
 		}
 
-		inline int getServicePort() {
+		inline int getServicePort() const {
 			return port;
 		}
 

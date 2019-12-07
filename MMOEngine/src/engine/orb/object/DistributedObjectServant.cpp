@@ -15,6 +15,6 @@ void DistributedObjectServant::setDeployingName(const String& name) {
 	_stub.get()->_setName(name);
 }
 
-String DistributedObjectServant::toString() {
+String DistributedObjectServant::toString() const {
 	return _stub.get()->_getName();
 }

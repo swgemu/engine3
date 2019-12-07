@@ -29,9 +29,6 @@ namespace engine {
 		ManagedReference() : Reference<O>() {
 		}
 
-		/*ManagedReference(ManagedReference& ref) : Reference<O>(ref) {
-		}*/
-
 		ManagedReference(const ManagedReference& ref) : Reference<O>(ref) {
 #ifdef ODB_REFERENCES
 			loadedOID = ref.loadedOID;
@@ -233,11 +230,7 @@ namespace engine {
 #endif
 		}
 
-//#ifdef WITH_STM
-//	private:
-//#else
 	public:
-//#endif
 		inline O operator->() const {
 			return Reference<O>::object;
 		}
@@ -247,7 +240,6 @@ namespace engine {
 		}
 
 };
-
 
 	template<class O> bool ManagedReference<O>::toString(String& str) {
 		if (Reference<O>::get() != nullptr)

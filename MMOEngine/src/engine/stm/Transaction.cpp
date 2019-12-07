@@ -276,7 +276,7 @@ void Transaction::deleteObject(Object* object) {
 	reclaimedObjects.add(object);
 }
 
-String Transaction::toString() {
+String Transaction::toString() const {
 	return "Transaction [" + Thread::getCurrentThread()->getName() + "] commited in " + Long::toString(commitTime) + " usec";
 }
 

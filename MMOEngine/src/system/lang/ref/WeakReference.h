@@ -6,6 +6,7 @@
 #ifndef WEAKREFERENCE_H_
 #define WEAKREFERENCE_H_
 
+#include <cstddef>
 #include <functional>
 
 #include "system/lang/Variable.h"
@@ -135,11 +136,11 @@ namespace sys {
 			return obj;
 		}
 
-		inline bool operator==(O obj) {
+		inline bool operator==(const O obj) const {
 			return getReferenceUnsafe() == obj;
 		}
 
-		inline bool operator!=(O obj) {
+		inline bool operator!=(O obj) const {
 			return getReferenceUnsafe() != obj;
 		}
 

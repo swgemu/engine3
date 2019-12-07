@@ -115,7 +115,7 @@ namespace engine {
 			return ref;
 		}
 
-		inline bool operator==(O obj) {
+		inline bool operator==(const O obj) {
 			O ref = getReferenceUnsafe();
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
 
@@ -128,7 +128,7 @@ namespace engine {
 				return ref == obj;
 		}
 
-		inline bool operator!=(O obj) {
+		inline bool operator!=(const O obj) {
 			O ref = getReferenceUnsafe();
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
 
@@ -141,13 +141,13 @@ namespace engine {
 				return ref != obj;
 		}
 
-		inline bool operator!=(const ManagedWeakReference<O>& r) {
+		inline bool operator!=(const ManagedWeakReference<O>& r) const {
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
 
 			return savedObjectID != r.savedObjectID.load(std::memory_order_relaxed);
 		}
 
-		inline bool operator==(const ManagedWeakReference<O>& r) {
+		inline bool operator==(const ManagedWeakReference<O>& r) const {
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
 
 			return savedObjectID == r.savedObjectID.load(std::memory_order_relaxed);;

@@ -195,10 +195,10 @@ void Object::printReferenceHolders() {
 }
 #endif
 
-String Object::toString() {
+String Object::toString() const {
 	char buf[20];
 
-	snprintf(buf, 20, "%p", reinterpret_cast<void*>(this));
+	snprintf(buf, 20, "%p", reinterpret_cast<const void*>(this));
 
 	return String(buf);
 }

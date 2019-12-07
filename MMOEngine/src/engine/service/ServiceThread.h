@@ -39,7 +39,7 @@ namespace engine {
 			doRun = val;
 		}
 
-		inline bool isRunning() {
+		inline bool isRunning() const {
 			return doRun;
 		}
 
@@ -47,7 +47,7 @@ namespace engine {
 			serviceReady = val;
 		}
 
-		inline bool isReady() {
+		inline bool isReady() const {
 			return serviceReady;
 		}
 	};
