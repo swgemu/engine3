@@ -115,7 +115,12 @@ const struct sockaddr* SocketAddress::getAddress() const {
 }
 
 String SocketAddress::getIPAddress() const {
-	return String(inet_ntoa(addr.sin_addr));
+	char buffer[256];
+	buffer[0] = 0;
+
+	auto ret = inet_ntop(AF_INET, &addr.sin_addr, buffer, sizeof(buffer));
+
+	return buffer;
 }
 
 uint16 SocketAddress::getPort() const {
