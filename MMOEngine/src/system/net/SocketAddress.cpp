@@ -129,14 +129,14 @@ uint16 SocketAddress::getPort() const {
 
 String SocketAddress::getFullIPAddress() const {
 	StringBuffer ip;
-	ip << inet_ntoa(addr.sin_addr) << ":" << htons(addr.sin_port);
+	ip << getIPAddress() << ":" << htons(addr.sin_port);
 
 	return ip.toString();
 }
 
 String SocketAddress::getFullPrintableIPAddress() const {
 	StringBuffer ip;
-	ip << inet_ntoa(addr.sin_addr) << "_" << htons(addr.sin_port);
+	ip << getIPAddress() << "_" << htons(addr.sin_port);
 
 	return ip.toString();
 }
