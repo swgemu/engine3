@@ -29,6 +29,12 @@ namespace sys {
 		AtomicBoolean(bool val) : value(val) {
 		}
 
+		AtomicBoolean(AtomicBoolean&& val) : value(val) {
+		}
+
+		AtomicBoolean(const AtomicBoolean& val) : value(val) {
+		}
+
 		~AtomicBoolean() {
 		}
 
@@ -48,8 +54,10 @@ namespace sys {
 			value.store(val, m);
 		}
 
-		bool operator=(const bool val) {
-			return (bool) (value = val);
+		AtomicBoolean& operator=(const bool val) {
+			value = val;
+
+			return *this;
 		}
 
 		bool operator== (const bool val) const {

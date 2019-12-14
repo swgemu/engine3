@@ -148,9 +148,9 @@ namespace engine {
 		UniqueReference<LoggerCallback*> callback;
 
 		static AtomicReference<FileWriter*> globalLogFile;
-		static volatile int globalLogLevel;
-		static bool syncGlobalLog;
-		static bool jsonGlobalLog;
+		static AtomicInteger globalLogLevel;
+		static AtomicBoolean syncGlobalLog;
+		static AtomicBoolean jsonGlobalLog;
 		static Time starttime;
 
 	public:

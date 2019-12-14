@@ -131,7 +131,8 @@ namespace sys {
 	    V& get(const K& key);
 	    const V& get(const K& key) const;
 
-	    Entry<K, V>* getEntry(const K& key) const;
+	    const Entry<K, V>* getEntry(const K& key) const;
+	    Entry<K, V>* getEntry(const K& key);
 
 	    bool containsKey(const K& key) const;
 
@@ -469,7 +470,7 @@ namespace sys {
 		return false;
 	}
 
-	template<class K, class V> Entry<K,V>* HashTable<K,V>::getEntry(const K& key) const {
+	template<class K, class V> Entry<K,V>* HashTable<K,V>::getEntry(const K& key) {
 		if (!count)
 			return nullptr;
 
@@ -477,6 +478,22 @@ namespace sys {
 		int index = (hashCode & 0x7FFFFFFF) % tableLength;
 
 		for (Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
+			if ((e->hash == hashCode) && e->key == key) {
+				return e;
+			}
+		}
+
+		return nullptr;
+	}
+
+	template<class K, class V> const Entry<K,V>* HashTable<K,V>::getEntry(const K& key) const {
+		if (!count)
+			return nullptr;
+
+		int hashCode = hash(key);
+		int index = (hashCode & 0x7FFFFFFF) % tableLength;
+
+		for (const Entry<K,V>* e = table[index]; e != nullptr; e = e->next) {
 			if ((e->hash == hashCode) && e->key == key) {
 				return e;
 			}

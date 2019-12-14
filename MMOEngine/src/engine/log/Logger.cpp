@@ -16,9 +16,9 @@ Logger Logger::console = []() {
 		return log;
 	}();
 
-volatile int Logger::globalLogLevel = LogLevel::DEBUG;
-bool Logger::syncGlobalLog = false;
-bool Logger::jsonGlobalLog = false;
+AtomicInteger Logger::globalLogLevel = LogLevel::DEBUG;
+AtomicBoolean Logger::syncGlobalLog = false;
+AtomicBoolean Logger::jsonGlobalLog = false;
 
 Logger::Logger(LogLevel level) : logLevel(level) {
 }
