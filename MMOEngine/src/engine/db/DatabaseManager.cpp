@@ -72,11 +72,6 @@ void DatabaseManager::checkpoint() {
 	checkpointConfig.setForce(true);
 
 	databaseEnvironment->checkpoint(checkpointConfig);
-
-	/*
-	if (!checkpointTask->isScheduled())
-		checkpointTask->schedule(CHECKPOINTTIME);
-	 */
 }
 
 void DatabaseManager::openEnvironment() {
@@ -115,7 +110,7 @@ void DatabaseManager::openEnvironment() {
 			fatal("Database environment crashed and cant continue, please run db_recover in the databases folder");
 		}
 
-	} catch (Exception& e) {
+	} catch (const Exception& e) {
 		error("Error opening environment...");
 
 		fatal(e.getMessage());
@@ -222,9 +217,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 			inputKey.reset();
 		}
 
-		StringBuffer msg;
-		msg << "loaded database version: " << currentVersion;
-		info(msg);
+		info() << "loaded database version: " << currentVersion;
 
 		loaded = true;
 	} catch (Exception& e) {
@@ -465,9 +458,6 @@ CurrentTransaction* DatabaseManager::getCurrentTransaction() {
 }
 
 void DatabaseManager::addTemporaryObject(Object* object) {
-//	if (this == nullptr)
-//		return;
-
 	if (!loaded)
 		return;
 
@@ -476,10 +466,7 @@ void DatabaseManager::addTemporaryObject(Object* object) {
 }
 
 void DatabaseManager::startLocalTransaction() {
-	/*if (this == nullptr)
-		return;
-
-	if (!loaded)
+	/*if (!loaded)
 		return;
 
 	CurrentTransaction* trans = getCurrentTransaction();
@@ -525,17 +512,17 @@ int DatabaseManager::commitTransaction(engine::db::berkeley::Transaction* transa
 		error("error commiting master berkeley transaction " + String::valueOf(db_strerror(commitRet)));
 	}*/
 
-	assert(transaction != nullptr);
+	E3_ASSERT(transaction != nullptr);
 
 	if ((commitRet = transaction->commitSync()) != 0) {
-		error("error commiting master berkeley transaction " + String(db_strerror(commitRet)));
+		error() << "error commiting master berkeley transaction " << db_strerror(commitRet);
 	}
 
 	return commitRet;
 }
 
 void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* masterTransaction) {
-	//printf("commiting local transaction\n");
+	debug() << "commiting local transaction";
 
 	if (!loaded)
 		return;
@@ -546,7 +533,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* 
 		int res = 0;
 
 		if ((res = readTransaction->commitNoSync()) != 0) {
-			warning("error commiting berkeley transaction " + String(db_strerror(res)));
+			warning() << "error commiting berkeley transaction " << db_strerror(res);
 		}
 
 		readLocalTransaction.set(nullptr);
@@ -591,10 +578,11 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* 
 					berkeleyTransaction->abort();
 					berkeleyTransaction = nullptr;
 
-					warning("deadlock detected while trying to putData iterating time " + String::valueOf(iteration));
+					warning() << "deadlock detected while trying to putData iterating time " << iteration;
+
 					break;
 				} else if (ret != 0) {
-					error("error while trying to putData :" + String(db_strerror(ret)));
+					error() << "error while trying to putData :" << db_strerror(ret);
 				}
 
 			} else {
@@ -604,12 +592,10 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* 
 					berkeleyTransaction->abort();
 					berkeleyTransaction = nullptr;
 
-					warning("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration));
+					warning() << "deadlock detected while trying to deleteData iterating time " << iteration;
 					break;
 				} else if (ret != 0 && ret != DB_NOTFOUND) {
-					StringBuffer msg;
-					msg << "error while trying to deleteData :" << db_strerror(ret);
-					error(msg.toString());
+					error() << "error while trying to deleteData :" << db_strerror(ret);
 				}
 			}
 
@@ -622,12 +608,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* 
 		++iteration;
 	} while (ret == DB_LOCK_DEADLOCK && iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES);
 
-	if (iteration >= ObjectDatabase::DEADLOCK_MAX_RETRIES) {
-		fatal("error exceeded deadlock retries shutting down");
-	}
-
-	/*if (count > 0)
-		printf("\n");*/
+	fatal(iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES) << "exceeded bdb deadlock retries aborting";
 
 	if (ret != 0 && ret != DB_NOTFOUND)
 		berkeleyTransaction->abort();
@@ -636,7 +617,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* 
 
 		//if ((commitRet = berkeleyTransaction->commitNoSync()) != 0) {
 		if ((commitRet = berkeleyTransaction->commitSync()) != 0) {
-			fatal("error commiting berkeley transaction " + String(db_strerror(commitRet)));
+			fatal() << "error commiting berkeley transaction " << db_strerror(commitRet);
 		}
 	}
 
@@ -662,7 +643,6 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* 
 	transaction->resetCurrentSize();
 }
 
-
 void DatabaseManager::closeEnvironment() {
 	if (!loaded || !databaseEnvironment)
 		return;
@@ -678,7 +658,7 @@ void DatabaseManager::closeEnvironment() {
 			databaseEnvironment = nullptr;
 		}
 
-	} catch (Exception &e) {
+	} catch (const Exception &e) {
 		error("Error closing environment: ");
 		error(e.getMessage());
 	} catch (...) {

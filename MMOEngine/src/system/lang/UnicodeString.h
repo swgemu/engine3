@@ -18,8 +18,12 @@ namespace sys {
   namespace lang {
 
 	class UnicodeString : public Variable {
-		uint16* uString;
-		int count;
+	public:
+		using UnicodeCharType = uint16;
+
+	private:
+		UnicodeCharType* uString;
+		uint32 count;
 
 	public:
 		UnicodeString();
@@ -50,20 +54,20 @@ namespace sys {
 		void append(const UnicodeString& uni);
 		void append(const char* ascii);
 		void append(const char* ascii, int len);
-		void append(const unsigned short* str, int len);
+		void append(const UnicodeCharType* str, int len);
 
 		UnicodeString replaceFirst(const UnicodeString& regex, const UnicodeString& replacement) const ;
 
 		void clear();
 
-		int indexOf(unsigned short chr) const;
+		int indexOf(UnicodeCharType chr) const;
 		int indexOf(const UnicodeString& str, int startPos = 0) const;
 
 		UnicodeString subString(int beg, int end) const;
 		UnicodeString substr(int beg, int length) const;
 
 		const char* toCharArray() const;
-		const uint16* toWideCharArray() const;
+		const UnicodeCharType* toWideCharArray() const;
 
 		bool toString(String& str) const;
 
@@ -98,13 +102,13 @@ namespace sys {
 
 	private:
 		void create(const char* ascii, int len);
-		void asciitowide(unsigned short* unicode, const char* ascii, int len);
+		void asciitowide(UnicodeCharType* unicode, const char* ascii, int len);
 
-		void copy(unsigned short* dest, const unsigned short* src);
-		void copy(unsigned short* dest, const unsigned short* src, int len);
+		void copy(UnicodeCharType* dest, const UnicodeCharType* src);
+		void copy(UnicodeCharType* dest, const UnicodeCharType* src, int len);
 
 	public:
-		inline int length() const {
+		inline uint32 length() const {
 			return count;
 		}
 

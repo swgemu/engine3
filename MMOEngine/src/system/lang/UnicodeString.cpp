@@ -18,7 +18,7 @@ UnicodeString::UnicodeString() : Variable() {
 }
 
 UnicodeString::UnicodeString(const char* ascii) : Variable() {
-	int len = strlen(ascii);
+	auto len = strlen(ascii);
 	create(ascii, len);
 }
 
@@ -31,9 +31,9 @@ UnicodeString::UnicodeString(const char* ascii, int len) : Variable() {
 }
 
 UnicodeString::UnicodeString(const UnicodeString& str) : Variable() {
-	uString = new uint16[str.count + 1];
+	uString = new UnicodeCharType[str.count + 1];
 	count = str.count;
-	//wcscpy(uString, str.uString);
+
 	copy(uString, str.uString);
 }
 
@@ -62,7 +62,7 @@ UnicodeString& UnicodeString::operator=(UnicodeString&& str) {
 
 UnicodeString::~UnicodeString() {
 	if (uString != nullptr) {
-		delete[] uString;
+		delete [] uString;
 	}
 }
 
@@ -70,21 +70,21 @@ void UnicodeString::create(const char* ascii, int len) {
 	//mbstate_t state;
 	//memset(&state, '\0', sizeof (state));
 
-	uString = new uint16[len + 1];
+	uString = new UnicodeCharType[len + 1];
 	//mbsrtowcs(uString, &ascii, len, &state);
 	asciitowide(uString, ascii, len);
 
 	uString[count = len] = 0;
 }
 
-void UnicodeString::asciitowide(unsigned short* UnicodeString, const char* ascii, int len) {
+void UnicodeString::asciitowide(UnicodeCharType* UnicodeString, const char* ascii, int len) {
 	for (int i = 0; i < len; ++i)
 		UnicodeString[i] = ascii[i];
 }
 
-void UnicodeString::copy(unsigned short* dest, const unsigned short* src) {
+void UnicodeString::copy(UnicodeCharType* dest, const UnicodeCharType* src) {
 	for (int i = 0; true; ++i) {
-		unsigned short chr;
+		UnicodeCharType chr;
 		memcpy(&chr, src + i, sizeof(chr));
 
 		dest[i] = chr;
@@ -94,9 +94,9 @@ void UnicodeString::copy(unsigned short* dest, const unsigned short* src) {
 	}
 }
 
-void UnicodeString::copy(unsigned short* dest, const unsigned short* src, int len) {
+void UnicodeString::copy(UnicodeCharType* dest, const UnicodeCharType* src, int len) {
 	for (int i = 0; i < len; ++i) {
-		unsigned short chr;
+		UnicodeCharType chr;
 		memcpy(&chr, src + i, sizeof(chr));
 
 		dest[i] = chr;
@@ -108,10 +108,10 @@ void UnicodeString::copy(unsigned short* dest, const unsigned short* src, int le
 
 UnicodeString& UnicodeString::operator=(const UnicodeString& str) {
 	if (this != &str) {
-		delete[] uString;
+		delete [] uString;
 
 		count = str.count;
-		uString = new unsigned short[count + 1];
+		uString = new UnicodeCharType[count + 1];
 
 		//wcscpy(uString, str.uString);
 		copy(uString, str.uString);
@@ -161,10 +161,10 @@ UnicodeString UnicodeString::concat(const UnicodeString& str) const {
 }
 
 int UnicodeString::compareTo(const UnicodeString& str) const {
-	int n = Math::min(str.length(), count);
+	auto n = Math::min(str.length(), count);
 
-	unsigned short* s1 = str.uString;
-	unsigned short* s2 = uString;
+	auto* s1 = str.uString;
+	auto* s2 = uString;
 
 	while (n-- != 0) {
 		if (*s1 < *s2) return -1;
@@ -191,11 +191,12 @@ void UnicodeString::append(const String& ascii) {
 }
 
 void UnicodeString::append(const UnicodeString& uni) {
-	append((unsigned short*) uni.toWideCharArray(), uni.length());
+	append(uni.toWideCharArray(), uni.length());
 }
 
 void UnicodeString::append(const char* ascii) {
-	int len = strlen(ascii);
+	auto len = strlen(ascii);
+
 	append(ascii, len);
 }
 
@@ -203,12 +204,12 @@ void UnicodeString::append(const char* ascii, int len) {
 	//mbstate_t state;
   	//memset (&state, '\0', sizeof (state));
 
-  	int ncount = count + len;
-	auto nuString = new uint16[ncount + 1];
+  	auto ncount = count + len;
+	auto nuString = new UnicodeCharType[ncount + 1];
 
 	//wmemcpy(nuString, uString, count);
 	copy(nuString, uString, count);
-	delete[] uString;
+	delete [] uString;
 
 	//mbsrtowcs(nuString + count, &ascii, len, &state);
 	asciitowide(nuString + count, ascii, len);
@@ -217,16 +218,16 @@ void UnicodeString::append(const char* ascii, int len) {
 	uString[count = ncount] = 0;
 }
 
-void UnicodeString::append(const unsigned short* str, int len) {
+void UnicodeString::append(const UnicodeCharType* str, int len) {
 	//mbstate_t state;
     //memset (&state, '\0', sizeof (state));
 
-  	int ncount = count + len;
-	unsigned short *nuString = new unsigned short[ncount + 1];
+  	auto ncount = count + len;
+	auto* nuString = new UnicodeCharType[ncount + 1];
 
 	//wmemcpy(nuString, uString, count);
 	copy(nuString, uString, count);
-	delete[] uString;
+	delete [] uString;
 
 	//wmemcpy(nuString + count, str, len);
 	copy(nuString + count, str, len);
@@ -235,20 +236,13 @@ void UnicodeString::append(const unsigned short* str, int len) {
 	uString[count = ncount] = 0;
 }
 
-int UnicodeString::indexOf(unsigned short chr) const {
-	for (int i = 0; i < count; ++i) {
+int UnicodeString::indexOf(UnicodeCharType chr) const {
+	for (uint32 i = 0; i < count; ++i) {
 		if (uString[i] == chr)
 			return i;
 	}
 
 	return -1;
-
-	/*unsigned short* pos = wcschr(uString, chr);
-
-	if (pos != nullptr)
-		return (int) (pos - uString);
-	else
-		return -1;*/
 }
 
 int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
@@ -257,8 +251,8 @@ int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
 
 	constexpr static const int maxLoops = 2048;
 
-	for (int i = startPos; i <= count - str.length() && i < maxLoops; ++i) {
-		if (!memcmp(uString + i, str.toWideCharArray(), str.length() * sizeof(unsigned short)))
+	for (uint32 i = startPos; i <= count - str.length() && i < maxLoops; ++i) {
+		if (!memcmp(uString + i, str.toWideCharArray(), str.length() * sizeof(UnicodeCharType)))
 			return i;
 	}
 
@@ -284,16 +278,16 @@ UnicodeString UnicodeString::substr(int beg, int length) const {
 }
 
 void UnicodeString::clear() {
-	delete[] uString;
+	delete [] uString;
 
 	create("", 0);
 }
 
 const char* UnicodeString::toCharArray() const {
-	return (const char*) uString;
+	return reinterpret_cast<const char*>(uString);
 }
 
-const uint16* UnicodeString::toWideCharArray() const {
+const UnicodeString::UnicodeCharType* UnicodeString::toWideCharArray() const {
 	return uString;
 }
 
@@ -338,8 +332,8 @@ bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 		delete [] uString;
 	}
 
-	uString = new unsigned short[len + 1];
-	copy(uString, (const unsigned short*) buffer, len);
+	uString = new UnicodeCharType[len + 1];
+	copy(uString, reinterpret_cast<const UnicodeCharType*>(buffer), len);
 
 	uString[count = len] = 0;
 
@@ -347,7 +341,7 @@ bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 }
 
 UnicodeString UnicodeString::replaceFirst(const UnicodeString& regex, const UnicodeString& replacement) const {
-	int rlen = regex.count;
+	auto rlen = regex.count;
 
 	int i = indexOf(regex);
 
