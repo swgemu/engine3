@@ -15,7 +15,9 @@ Pipe::~Pipe() {
 	close();
 }
 
-void Pipe::create() {
+void Pipe::create(bool autoClose) {
+	doAutoClose = autoClose;
+
 	if (pipe(pipefd) < 0)
 		throw IOException("unable to create pipe");
 
@@ -57,7 +59,7 @@ void Pipe::writeInt(int val) {
 }
 
 int Pipe::read(char* buf, int len) {
-	if (pipefd[1] != -1) {
+	if (doAutoClose && pipefd[1] != -1) {
 		::close(pipefd[1]);
 		pipefd[1] = -1;
 	}
@@ -81,7 +83,7 @@ int Pipe::writeLine(const char* str) {
 }
 
 int Pipe::write(const char* buf, int len) {
-	if (pipefd[0] != -1) {
+	if (doAutoClose && pipefd[0] != -1) {
 		::close(pipefd[0]);
 		pipefd[0] = -1;
 	}

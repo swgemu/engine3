@@ -13,13 +13,14 @@ namespace sys {
 
 	class Pipe : public FileDescriptor {
 		int pipefd[2];
+		bool doAutoClose;
 
 	public:
 		Pipe();
 
 		~Pipe();
 
-		void create();
+		void create(bool autoClose = true);
 
 		void close();
 
