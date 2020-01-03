@@ -25,11 +25,15 @@ void Pipe::create(bool autoClose) {
 }
 
 void Pipe::close() {
-	if (pipefd[0] != -1)
+	if (pipefd[0] != -1) {
 		::close(pipefd[0]);
+		pipefd[0] = -1;
+	}
 
-	if (pipefd[1] != -1)
+	if (pipefd[1] != -1) {
 		::close(pipefd[1]);
+		pipefd[1] = -1;
+	}
 }
 
 int Pipe::readInt() {
