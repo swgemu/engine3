@@ -25,8 +25,11 @@ void Pipe::create(bool autoClose) {
 }
 
 void Pipe::close() {
-	::close(pipefd[0]);
-	::close(pipefd[1]);
+	if (pipefd[0] != -1)
+		::close(pipefd[0]);
+
+	if (pipefd[1] != -1)
+		::close(pipefd[1]);
 }
 
 int Pipe::readInt() {
@@ -80,6 +83,10 @@ int Pipe::writeLine(const char* str) {
 	int len = strlen(str);
 
 	return write(str, len);
+}
+
+int Pipe::write(const String& string) {
+	return write(string.toCharArray(), string.length());
 }
 
 int Pipe::write(const char* buf, int len) {

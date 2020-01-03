@@ -42,6 +42,18 @@ namespace engine {
 		enum { value = sizeof(test<T>(0)) == sizeof(char) };
 	};
 
+	template <typename T>
+	class HasTo_StringMethodSFINAE {
+		typedef char success;
+		struct failure { char x[2]; };
+
+		template <class C> static success test(decltype(&C::to_string)) ;
+		template <class C> static failure test(...);
+
+	public:
+		enum { value = sizeof(test<T>(0)) == sizeof(char) };
+	};
+
 	class LoggerHelper {
 	protected:
 		const Logger& logger;
@@ -72,7 +84,19 @@ namespace engine {
 			return *this;
 		}
 
-		template<typename T, std::enable_if_t<!HasToStringDataMethodSFINAE<T>::value, int> = 0>
+		template<typename T, std::enable_if_t<HasTo_StringMethodSFINAE<T>::value, int> = 0>
+		LoggerHelper& operator<<(const T& a) {
+			if (!willLog) {
+				return *this;
+			}
+
+			buffer << a.to_string();
+
+			return *this;
+		}
+
+		template<typename T, std::enable_if_t<!HasToStringDataMethodSFINAE<T>::value
+			&& !HasTo_StringMethodSFINAE<T>::value, int> = 0>
 		LoggerHelper& operator<<(const T& a) {
 			if (!willLog) {
 				return *this;

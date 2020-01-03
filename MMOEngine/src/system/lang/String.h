@@ -9,6 +9,7 @@
 #include "Variable.h"
 #include "ConstString.h"
 
+#include <string>
 #include <cstdarg>
 
 #define SSO_STRING
@@ -106,6 +107,7 @@ namespace sys {
 		String(const char* str, int len);
 		String(const String& str);
 		String(const ConstString& str);
+		String(const std::string& str);
 
 		static const int constexpr npos = -1;
 
@@ -225,6 +227,11 @@ namespace sys {
 
 		String& operator= (const char* str);
 		String& operator= (const String& str);
+		String& operator= (const std::string& str);
+
+		operator std::string() const {
+			return std::string(toCharArray());
+		}
 
 #ifdef CXX11_COMPILER
 		String& operator=(String&& str);

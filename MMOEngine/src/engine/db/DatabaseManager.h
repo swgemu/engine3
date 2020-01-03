@@ -222,33 +222,33 @@ namespace engine {
 		void setManagedObjectsWithHashCodeMembersFlag(engine::db::berkeley::Transaction* transaction);
 		void convertDatabasesToHashCodeMembers();
 
-		inline uint64 getCurrentVersion() {
+		inline uint64 getCurrentVersion() const {
 			return currentVersion;
 		}
 
-		inline LocalDatabase* getDatabase(uint16 id) {
+		inline LocalDatabase* getDatabase(uint16 id) const {
 			//Locker _locker(this);
 
 			return databases.get(id);
 		}
 
-		inline LocalDatabase* getDatabase(int idx) {
+		inline LocalDatabase* getDatabase(int idx) const {
 			//Locker _locker(this);
 
 			return databases.get(idx);
 		}
 
-		inline uint16 getDatabaseID(const String& name) {
+		inline uint16 getDatabaseID(const String& name) const {
 			//Locker _locker(this);
 
 			return nameDirectory.get(name);
 		}
 
-		inline int getTotalDatabaseCount() {
+		inline int getTotalDatabaseCount() const {
 			return databases.size();
 		}
 
-		inline engine::db::berkeley::Environment* getBerkeleyEnvironment() {
+		inline engine::db::berkeley::Environment* getBerkeleyEnvironment() const {
 			return databaseEnvironment;
 		}
 

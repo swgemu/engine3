@@ -317,7 +317,7 @@ bool UnicodeString::parseFromString(const String& str, int version) {
 bool UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
 	stream->writeInt(count);
 
-	stream->writeStream((char*)uString, count  * 2);
+	stream->writeStream(reinterpret_cast<const char*>(uString), count * 2);
 
 	return true;
 }

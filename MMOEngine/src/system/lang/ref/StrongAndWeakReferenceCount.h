@@ -91,7 +91,7 @@ public:
 		strongReferenceCount.clearLowestBit();
 	}
 
-	inline uint32 getStrongReferenceCount() volatile {
+	inline uint32 getStrongReferenceCount() volatile const {
 		return strongReferenceCount.getReferenceCount();
 	}
 
@@ -99,7 +99,7 @@ public:
 		object = obj;
 	}
 
-	Object* getObject() {
+	Object* getObject() const {
 		return object;
 	}
 

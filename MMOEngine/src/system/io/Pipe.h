@@ -5,6 +5,7 @@
 #pragma once
 
 #include "system/platform.h"
+#include "system/lang/String.h"
 
 #include "FileDescriptor.h"
 
@@ -13,7 +14,7 @@ namespace sys {
 
 	class Pipe : public FileDescriptor {
 		int pipefd[2];
-		bool doAutoClose;
+		bool doAutoClose = false;
 
 	public:
 		Pipe();
@@ -35,6 +36,7 @@ namespace sys {
 		int read(char* buf, int len);
 
 		int write(const char* buf, int len);
+		int write(const String& string);
 
 		void redirectFile(int fd);
 	};

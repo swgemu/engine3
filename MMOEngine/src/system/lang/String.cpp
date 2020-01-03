@@ -73,6 +73,10 @@ String::String() {
 	create("", 0);
 }
 
+String::String(const std::string& str) {
+	create(str.c_str(), str.size());
+}
+
 String::String(const ConstString& str) {
 	create(str.begin(), str.size());
 }
@@ -704,6 +708,14 @@ String& String::operator=(const String& str) {
 	clear();
 
 	create(str.begin(), str.count);
+
+	return *this;
+}
+
+String& String::operator=(const std::string& str) {
+	clear();
+
+	create(str.c_str(), str.size());
 
 	return *this;
 }

@@ -109,7 +109,7 @@ namespace engine {
 		int commitUpdatePersistentObjectToDB(DistributedObject* object);
 		int commitDestroyObjectToDB(uint64 objectID);
 
-		ObjectDatabase* getTable(uint64 objectID);
+		ObjectDatabase* getTable(uint64 objectID) const;
 
 		virtual int updatePersistentObject(DistributedObject* object);
 

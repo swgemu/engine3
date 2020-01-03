@@ -310,7 +310,7 @@ int DOBObjectManager::commitDestroyObjectToDB(uint64 objectID) {
 	return 1;
 }
 
-ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) {
+ObjectDatabase* DOBObjectManager::getTable(uint64 objectID) const {
 	ObjectDatabase* table = nullptr;
 	LocalDatabase* local = nullptr;
 

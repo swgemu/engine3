@@ -23,14 +23,10 @@ namespace sys {
 
 	class Variable {
 	public:
-		inline Variable() {
-		}
-
-		virtual ~Variable() {
-		}
+		Variable() = default;
+		virtual ~Variable() = default;
 
 		virtual bool toBinaryStream(ObjectOutputStream* stream) = 0;
-
 		virtual bool parseFromBinaryStream(ObjectInputStream* stream) = 0;
 
 	};
