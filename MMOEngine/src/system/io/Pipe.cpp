@@ -56,7 +56,9 @@ int Pipe::readLine(char* buf, int len) {
 		}
 	}
 
-	*buf = 0;
+	if (len) {
+		*buf = 0;
+	}
 
 	return count;
 }
