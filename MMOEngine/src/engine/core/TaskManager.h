@@ -178,12 +178,12 @@ namespace engine {
 		}
 
 		void executeTask(Function<void()>&& function, const String& name) {
-			auto taskObject = new LambdaTask(std::move(function), name.toCharArray());
+			auto taskObject = new LambdaTask(std::move(function), name);
 			taskObject->execute();
 		}
 
 		void executeTask(Function<void()>&& function, const String& name, const String& customQueue) {
-			auto taskObject = new LambdaTask(std::move(function), name.toCharArray());
+			auto taskObject = new LambdaTask(std::move(function), name);
 			taskObject->setCustomTaskQueue(customQueue);
 			taskObject->execute();
 		}
