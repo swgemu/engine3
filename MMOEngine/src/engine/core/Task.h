@@ -197,6 +197,14 @@ namespace engine {
 			taskName = name;
 		}
 
+		inline void setTaskName(const String& name) {
+			taskName = name;
+		}
+
+		inline void setTaskName(String&& name) {
+			taskName = std::move(name);
+		}
+
 	#ifdef COLLECT_TASKSTATISTICS
 		void setStatsSample(bool val) {
 			statsSampleRate = val;

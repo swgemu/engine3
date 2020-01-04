@@ -41,6 +41,11 @@ namespace engine {
 		setTaskName(name);
             }
 
+	    template<class L>
+            LambdaTask(L&& l, const String& name) : function(std::forward<L>(l)) {
+		setTaskName(name);
+            }
+
             void run() final {
                 auto& lambda = function.getLambda();
 

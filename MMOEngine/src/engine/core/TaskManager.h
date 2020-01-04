@@ -176,6 +176,50 @@ namespace engine {
 			taskObject->setCustomTaskQueue(customQueue);
 			taskObject->schedule(delay);
 		}
+
+		void executeTask(Function<void()>&& function, const String& name) {
+			auto taskObject = new LambdaTask(std::move(function), name.toCharArray());
+			taskObject->execute();
+		}
+
+		void executeTask(Function<void()>&& function, const String& name, const String& customQueue) {
+			auto taskObject = new LambdaTask(std::move(function), name.toCharArray());
+			taskObject->setCustomTaskQueue(customQueue);
+			taskObject->execute();
+		}
+
+		void executeTask(const Function<void()>& function, const String& name) {
+			auto taskObject = new LambdaTask(function, name);
+			taskObject->execute();
+		}
+
+		void executeTask(const Function<void()>& function, const String& name, const String& customQueue) {
+			auto taskObject = new LambdaTask(function, name);
+			taskObject->setCustomTaskQueue(customQueue);
+			taskObject->execute();
+		}
+
+		void scheduleTask(Function<void()>&& function, const String& name, uint64 delay) {
+			auto taskObject = new LambdaTask(std::move(function), name);
+			taskObject->schedule(delay);
+		}
+
+		void scheduleTask(Function<void()>&& function, const String& name, uint64 delay, const String& customQueue) {
+			auto taskObject = new LambdaTask(std::move(function), name);
+			taskObject->setCustomTaskQueue(customQueue);
+			taskObject->schedule(delay);
+		}
+
+		void scheduleTask(const Function<void()>& function, const String& name, uint64 delay) {
+			auto taskObject = new LambdaTask(function, name);
+			taskObject->schedule(delay);
+		}
+
+		void scheduleTask(const Function<void()>& function, const String& name, uint64 delay, const String& customQueue) {
+			auto taskObject = new LambdaTask(function, name);
+			taskObject->setCustomTaskQueue(customQueue);
+			taskObject->schedule(delay);
+		}
 #endif
 
 
