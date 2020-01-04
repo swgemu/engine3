@@ -16,6 +16,41 @@ Serializable::Serializable() : Object() {
 	addSerializableVariable("_className", &_className);
 }
 
+
+Serializable::Serializable(Serializable&& s) : Object(std::move(s)), _className(std::move(s._className)), _variables(std::move(s._variables)){
+
+}
+
+Serializable::Serializable(const Serializable& s) : Object(s), _className(s._className), _variables(s._variables) {
+
+}
+
+Serializable& Serializable::operator=(const Serializable& s) {
+	if (this == &s) {
+		return *this;
+	}
+
+	Object::operator=(s);
+
+	_className = s._className;
+	_variables = s._variables;
+
+	return *this;
+}
+
+Serializable& Serializable::operator=(Serializable&& s) {
+	if (this == &s) {
+		return *this;
+	}
+
+	Object::operator=(std::move(s));
+
+	_className = std::move(s._className);
+	_variables = std::move(s._variables);
+
+	return *this;
+}
+
 /*void Serializable::writeObject(String& str) {
 	StringBuffer buffer;
 

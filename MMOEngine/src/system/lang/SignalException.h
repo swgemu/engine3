@@ -14,23 +14,26 @@
 
 #include <signal.h>
 
+namespace sys {
+	namespace lang {
+
 template <class SignalExceptionClass> class SignalTranslator {
-private:
-	class SingleTonTranslator {
+	private:
+		class SingleTonTranslator {
+			public:
+				SingleTonTranslator() {
+					signal(SignalExceptionClass::GetSignalNumber(), SignalHandler);
+				}
+
+				static void SignalHandler(int cause) {
+					throw SignalExceptionClass(cause);
+				}
+		};
+
 	public:
-		SingleTonTranslator() {
-			signal(SignalExceptionClass::GetSignalNumber(), SignalHandler);
+		SignalTranslator() {
+			static SingleTonTranslator s_objTranslator;
 		}
-
-		static void SignalHandler(int cause) {
-			throw SignalExceptionClass(cause);
-		}
-	};
-
-public:
-	SignalTranslator() {
-		static SingleTonTranslator s_objTranslator;
-	}
 };
 
 template <class SignalCallbackClass> class SignalCallbackTranslator {
@@ -49,29 +52,32 @@ template <class SignalCallbackClass> class SignalCallbackTranslator {
 };
 
 class AbortedException : public Exception {
-public:
-	AbortedException(int cause) : Exception() {
-		System::out << "Exception aborted with cause " << cause << " at\n";
-		printStackTrace();
+	public:
+		AbortedException(int cause) : Exception() {
+			System::err << "Exception aborted with cause " << cause << " at\n" << flush;
+			printStackTrace();
 
-		exit(1);
-	}
+			exit(1);
+		}
 
-	static int GetSignalNumber() {
-		return SIGABRT;
-	}
+		static int GetSignalNumber() {
+			return SIGABRT;
+		}
 };
 
 class FloatingPointException : public Exception {
-public:
-	FloatingPointException(int) :Exception() {
-		printStackTrace();
-	}
+	public:
+		FloatingPointException(int) :Exception() {
+			printStackTrace();
+		}
 
-	static int GetSignalNumber() {
-		return SIGFPE;
-	}
+		static int GetSignalNumber() {
+			return SIGFPE;
+		}
 };
+
+	}
+}
 
 #endif
 

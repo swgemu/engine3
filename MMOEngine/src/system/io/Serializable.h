@@ -32,10 +32,13 @@ namespace sys {
 			const static bool is_virtual_object = true;
 
 			Serializable();
+			Serializable(const Serializable& s);
+			Serializable(Serializable&& s);
 
-			virtual ~Serializable() {
+			Serializable& operator=(const Serializable& s);
+			Serializable& operator=(Serializable&& s);
 
-			}
+			virtual ~Serializable() = default;
 
 			//virtual void writeObject(String& str);
 			virtual void writeObject(ObjectOutputStream* stream);
