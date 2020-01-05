@@ -330,7 +330,7 @@ namespace sys {
 
 		void clear();
 
-		static char* strrstr(const char* s, int slen, const char* t, int tlen);
+		static const char* strrstr(const char* s, int slen, const char* t, int tlen);
 
 	public:
 		// getters

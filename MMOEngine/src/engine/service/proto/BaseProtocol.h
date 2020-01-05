@@ -28,7 +28,7 @@ namespace engine {
 		uint16 lastRecievedNetStatusTick = 0;
 		uint16 erroneusTicks = 0;
 
-		static const int COMPRESSION_BUFFER_MAX = 800;
+		static constexpr const int COMPRESSION_BUFFER_MAX = 800;
 
 	public:
 		BaseProtocol();

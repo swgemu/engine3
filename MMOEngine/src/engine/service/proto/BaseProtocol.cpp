@@ -43,8 +43,8 @@ void BaseProtocol::prepareEncryptionAndCompression(BasePacket* pack) {
 }
 
 void BaseProtocol::prepareSend(BasePacket* pack) {
-	static const bool disableCompression = Core::getIntProperty("BaseProtocol.disableCompression", 1);
-	static const bool disableEncryption = Core::getIntProperty("BaseProtocol.disableEncryption", 0);
+	static const bool disableCompression = Core::getIntProperty("BaseProtocol.disableSendCompression", 1);
+	static const bool disableEncryption = Core::getIntProperty("BaseProtocol.disableSendEncryption", 0);
 
 	if (disableCompression && pack->doCompression()) {
 		pack->setCompression(false);

@@ -23,7 +23,7 @@ namespace sys {
 				char hex[3];
 
 				for(int i = 0; i < size; i++) {
-					sprintf(hex, "%02x", val[i]);
+					snprintf(hex, sizeof(hex), "%02x", val[i]);
 					sb << hex;
 				}
 
