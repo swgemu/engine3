@@ -6,9 +6,12 @@
 #define CRYPTO_H_
 
 #include "system/platform.h"
+#include "system/lang/String.h"
+#include "system/lang/System.h"
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
+#include <limits>
 
 namespace sys {
 	namespace security {
@@ -58,14 +61,17 @@ namespace sys {
 				return hashToString(res, SHA512_DIGEST_LENGTH);
 			}
 
-			static String randomSalt(uint8 length = 16) {
-				unsigned char buffer[256];
+			template<std::size_t StringLength = 32>
+			static String randomSalt() {
+				constexpr auto bufferBytes = Math::max(static_cast<std::size_t>(1), StringLength / 2);
 
-				for(int i = 0; i < length && i < 256; i++) {
-					buffer[i] = System::random();
+				uint8_t buffer[bufferBytes];
+
+				for (uint32 i = 0; i < bufferBytes; ++i) {
+					buffer[i] = System::random(std::numeric_limits<uint8_t>::max());
 				}
 
-				return hashToString(buffer, length);
+				return hashToString(buffer, bufferBytes);
 			}
 
 

@@ -14,10 +14,10 @@ namespace sys {
 
 	class Math {
 	public:
-		static const double PI;
-		static const double DEG2RAD;
-		static const double RAD2DEG;
-		static const double E;
+		static const constexpr double PI = M_PI;
+		static const constexpr double DEG2RAD = M_PI / 180.0f;
+		static const constexpr double RAD2DEG = 180.0f / M_PI;
+		static const constexpr double E = 2.71828182845904523536;
 
 		static inline double sqrt(double number) {
 			return ::sqrt(number);
@@ -28,27 +28,27 @@ namespace sys {
 		//static float fabs(float f);
 
 		template<typename T>
-		static T clamp(const T& min, const T& value, const T& max) {
+		constexpr static T clamp(const T& min, const T& value, const T& max) {
 			return (value < min) ? min : ((value > max) ? max : value);
 		}
 
 		template<class T>
-		static T linearInterpolate(const T& start, const T& end, float t) {
+		constexpr static T linearInterpolate(const T& start, const T& end, float t) {
 			return ((end - start) * t) + start;
 		}
 
 		template<typename T>
-		static inline T sqr(const T& val) {
+		constexpr static inline T sqr(const T& val) {
 			return val * val;
 		}
 
 		template<typename T>
-		static inline T min(const T& val1, const T& val2) {
+		constexpr static inline T min(const T& val1, const T& val2) {
 			return val1 < val2 ? val1 : val2;
 		}
 
 		template<typename T>
-		static inline T max(const T& val1, const T& val2) {
+		constexpr static inline T max(const T& val1, const T& val2) {
 			return val1 > val2 ? val1 : val2;
 		}
 
@@ -69,11 +69,11 @@ namespace sys {
 			return ::cos(arg);
 		}
 
-		static inline double deg2rad(double degrees) {
+		static constexpr inline double deg2rad(double degrees) {
 			return degrees * DEG2RAD;
 		}
 
-		static inline double rad2deg(double radians) {
+		static constexpr inline double rad2deg(double radians) {
 			return radians * RAD2DEG;
 		}
 

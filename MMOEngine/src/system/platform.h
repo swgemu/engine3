@@ -273,6 +273,9 @@ namespace sys {
 	typedef unsigned long long uint64;
 	static_assert(sizeof(uint64) == 8, "unsigned long long is not 64bit");
 
+	static_assert(sizeof(unsigned long) == 8, "unsigned long is not 64bit");
+	static_assert(sizeof(long) == 8, "long is not 64bit");
+
 	typedef unsigned int uint32;
 	static_assert(sizeof(uint32) == 4, "usigned int is not 32 bit");
 
