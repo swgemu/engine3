@@ -138,7 +138,7 @@ namespace sys {
 
 		static void yield();
 
-		bool isDetached();
+		bool isDetached() const;
 
 		static Thread* getCurrentThread();
 
