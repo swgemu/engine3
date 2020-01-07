@@ -350,6 +350,8 @@ UnicodeString UnicodeString::replaceFirst(const UnicodeString& regex, const Unic
 			return subString(0, i) + replacement + subString(i + rlen, count);
 		else if (i == 0 && i + rlen < count)
 			return replacement + subString(i + rlen, count);
+		else if (i == 0 && i + rlen >= count)
+			return replacement;
 		else if (i > 0 && i + rlen == count)
 			return subString(0, i) + replacement;
 		else
