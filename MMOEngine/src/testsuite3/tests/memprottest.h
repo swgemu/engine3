@@ -8,6 +8,7 @@
 #include "engine/engine.h"
 
 #include "system/mm/Heap.h"
+#include "system/mm/ProtectedHeap.h"
 
 #include "TestClass.h"
 
