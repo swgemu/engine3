@@ -402,8 +402,12 @@ void Logger::getTime(StringBuffer& str, bool getFull) {
 
 	Thread* currentThread = Thread::getCurrentThread();
 
-	if (currentThread != nullptr && getFull)
-		str << " " << currentThread->getName() << " - ";
+	if (getFull) {
+		if (currentThread != nullptr)
+			str << " " << currentThread->getName() << " - ";
+		else
+			str << " Thread 0 - ";
+	}
 }
 
 void Logger::getTime(String& times, bool getFull) {

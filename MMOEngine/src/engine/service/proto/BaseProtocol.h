@@ -19,7 +19,7 @@ namespace engine {
 	protected:
 		sys::uint32 connectionID = 0;
 
-		unsigned int crcSeed = 0;
+		uint32 crcSeed = 0;
 
 		sys::uint32 serverSequence = 0;
 		sys::uint32 clientSequence = 0;
@@ -28,7 +28,7 @@ namespace engine {
 		uint16 lastRecievedNetStatusTick = 0;
 		uint16 erroneusTicks = 0;
 
-		static const int COMPRESSION_BUFFER_MAX = 800;
+		static constexpr const int COMPRESSION_BUFFER_MAX = 800;
 
 	public:
 		BaseProtocol();

@@ -61,7 +61,6 @@ void* Thread::executeThread(void* th) {
 	if (impl->isDetached())
 		delete impl;
 
-
 	return nullptr;
 }
 
@@ -201,7 +200,7 @@ void Thread::yield() {
 	std::this_thread::yield();
 }
 
-bool Thread::isDetached() {
+bool Thread::isDetached() const {
 	int state;
 	pthread_attr_getdetachstate(&attributes, &state);
 

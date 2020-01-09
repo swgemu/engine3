@@ -12,10 +12,10 @@
 
 #include "Math.h"
 
-const double Math::PI = M_PI;
-const double Math::DEG2RAD = M_PI / 180.0f;
-const double Math::RAD2DEG = 180.0f / M_PI;
-const double Math::E = 2.71828182845904523536;
+const constexpr double Math::PI;
+const constexpr double Math::DEG2RAD;
+const constexpr double Math::RAD2DEG;
+const constexpr double Math::E;
 
 /*double Math::sqrt(double number) { // from Q3 fix for 64 bit
 	long i;
