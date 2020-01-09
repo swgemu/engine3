@@ -319,7 +319,9 @@ namespace sys {
 	#define MAX_FLOAT FLT_MAX
 	#define SMALL_NUM  FLT_EPSILON
 
+#ifndef ARRAYLIST_DEFAULT_RAW_REALLOC
 	#define ARRAYLIST_DEFAULT_RAW_REALLOC true
+#endif
 
 	//#define VECTORS_OUT_OF_BOUNDS_CHECK
 

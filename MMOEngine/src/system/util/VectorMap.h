@@ -24,7 +24,7 @@ namespace sys {
 		V value;
 
 	public:
-		VectorMapEntry() {
+		VectorMapEntry() : key{}, value{} {
 		}
 
 		VectorMapEntry(const K& key) : key(key) {
@@ -101,7 +101,8 @@ namespace sys {
 
 	};
 
-	template<class K, class V, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class VectorMap : public SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc> {
+	template<class K, class V, bool RawCopyAndRealloc = ArrayListReallocTrait<V>::value>
+	class VectorMap : public SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc> {
 		V nullValue;
 
 	public:

@@ -11,7 +11,8 @@
 namespace sys {
   namespace util {
 
-	template<class E, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class SortedVector : public Vector<E, RawCopyAndRealloc> {
+	template<class E, bool RawCopyAndRealloc = ArrayListReallocTrait<E>::value>
+	class SortedVector : public Vector<E, RawCopyAndRealloc> {
 	protected:
 		int insertPlan;
 

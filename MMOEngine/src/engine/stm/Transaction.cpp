@@ -16,8 +16,6 @@ ReadWriteLock Transaction::blockLock;
 AtomicInteger HandleCounter::createdHandles;
 AtomicInteger HandleCounter::deletedHandles;
 
-volatile int ArrayCloneCounter::totalCount = 0;
-
 UniqueReference<STMAlgorithm*> Transaction::commitAlgorithm(new FraserSTM());
 
 Transaction::Transaction(uint64 id) : Logger(), task(nullptr) {

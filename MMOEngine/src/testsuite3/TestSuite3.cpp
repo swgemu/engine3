@@ -49,7 +49,7 @@ public:
 
 		using FunctorType = Function<int(const String&)>;
 
-		VectorMap<String, FunctorType, false> test;
+		VectorMap<String, FunctorType> test;
 
 		test.put("b", [this](const String& a) -> int {
 			printf("b\n");

@@ -14,6 +14,8 @@
 #include "system/lang/Integer.h"
 #include "system/lang/Function.h"
 
+#include "system/util/Optional.h"
+
 #include <initializer_list>
 #include <algorithm>
 #include <type_traits>
@@ -22,12 +24,26 @@ namespace sys {
  namespace util {
    template<typename E> class ArrayListReverseIterator;
 
-   class ArrayCloneCounter {
-	   public:
-		   static volatile int totalCount;
+   template<class Entry>
+   class ArrayListReallocTrait {
+   public:
+	   static bool const constexpr value = ARRAYLIST_DEFAULT_RAW_REALLOC;
    };
 
-   template<class E, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class ArrayList {
+   template<class F>
+   class ArrayListReallocTrait<Function<F>> {
+   public:
+	   static bool const constexpr value = false;
+   };
+
+   template<class F>
+   class ArrayListReallocTrait<Optional<F>> {
+   public:
+	   static bool const constexpr value = false;
+   };
+
+   template<class E, bool RawCopyAndRealloc = ArrayListReallocTrait<E>::value> 
+   class ArrayList {
 	   protected:
 		   E* elementData;
 

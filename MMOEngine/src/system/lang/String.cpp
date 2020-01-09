@@ -958,54 +958,6 @@ bool String::parseFromString(const String& str, int version) {
 	return true;
 }
 
-bool operator==(char ch, const String& str2) {
-	return String(&ch, 1) == str2;
-}
-
-bool operator==(const String& str, char ch) {
-	return String(&ch, 1) == str;
-}
-
-bool operator==(const char* str1, const String& str2) {
-	return String(str1) == str2;
-}
-
-bool operator!=(char ch, const String& str2) {
-	return String(&ch, 1) != str2;
-}
-
-bool operator!=(const char* str1, const String& str2) {
-	return String(str1) != str2;
-}
-
-bool operator!=(const String& str, char ch) {
-	return String(&ch, 1) != str;
-}
-
-String operator+(const String& str1, const String& str2) {
-	return str1.concat(str2);
-}
-
-String operator+(const char* str1, const String& str2) {
-	return String(str1).concat(str2);
-}
-
-String operator+(const String& str1, const char* str2) {
-	return str1.concat(str2);
-}
-
-String operator+(const String& str1, char ch) {
-	return str1.concat(ch);
-}
-
-String operator+(char ch, const String& str2) {
-	return String(&ch, 1).concat(str2);
-}
-
-String operator+(const String& str1, int i) {
-	return str1.concat(i);
-}
-
 const char* String::strrstr(const char* s, int slen, const char* t, int tlen) {
 	int i, j;
 
