@@ -15,6 +15,22 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
+if(WIN32)
+	string(TOLOWER ${CMAKE_BUILD_TYPE} E3_BUILD_TYPE)
+
+	message(${E3_BUILD_TYPE})
+
+	message(${CMAKE_BUILD_TYPE})
+
+	if(E3_BUILD_TYPE STREQUAL "debug")
+		set(PTHREAD_LIB_LINK pthreadVCE3d)
+	else()
+		set(PTHREAD_LIB_LINK pthreadVCE3)
+	endif()
+else()
+	set(PTHREAD_LIB_LINK Threads::Threads)
+endif()
+
 # Add libraries
 target_link_libraries(testsuite3
 		engine3
@@ -22,7 +38,7 @@ target_link_libraries(testsuite3
 		${DB_LIBRARIES}
 		${LUA_LIBRARIES}
 		${ZLIB_LIBRARIES}
-		pthreadVCE3d
+		${PTHREAD_LIB_LINK}
 		${GCCLIBATOMIC_LIBRARY}
 		${CMAKE_DL_LIBS}
 		${OPENSSL_LIBRARIES}
