@@ -518,7 +518,11 @@ namespace sys {
 				auto dLast = indexOffset + numMoved + 1;
 
 				while (first != last) {
-					new (&(*--dLast)) E(std::move(*--last));
+					auto obj = --dLast;
+					auto moving = --last;
+
+					new (&(*obj)) E(std::move(*moving));
+					(&(*moving))->~E();
 				}
 		   } else {
 				memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
@@ -545,7 +549,11 @@ namespace sys {
 				auto dLast = indexOffset + numMoved + 1;
 
 				while (first != last) {
-					new (&(*--dLast)) E(std::move(*--last));
+					auto obj = --dLast;
+					auto moving = --last;
+
+					new (&(*obj)) E(std::move(*moving));
+					(&(*moving))->~E();
 				}
 		   } else {
 				memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
@@ -610,7 +618,11 @@ namespace sys {
 			   auto destFirst = indexOffset;
 
 			   while (first != last) {
-					new (&(*destFirst++)) E(std::move(*first++));
+				   auto obj = destFirst++;
+				   auto moving = first++;
+
+					new (&(*obj)) E(std::move(*moving));
+					(&(*moving))->~E();
 			   }
 		   } else {
 			   memmove((void*)indexOffset, (void*)(indexOffset + 1), numMoved * sizeof(E));
@@ -702,6 +714,8 @@ namespace sys {
 				   if (oldData) {
 					   for (auto i = 0; i < elementCount; ++i) {
 						   new (&(elementData[i])) E(std::move(oldData[i]));
+
+						   (&(oldData[i]))->~E();
 					   }
 
 					   free(oldData);
@@ -742,7 +756,11 @@ namespace sys {
 			   auto destFirst = indexOffset;
 
 			   while (first != last) {
-					new (&(*destFirst++)) E(std::move(*first++));
+					auto obj = destFirst++;
+					auto moving = first++;
+
+					new (&(*obj)) E(std::move(*moving));
+					(&(*moving))->~E();
 			   }
 		   } else {
 			   memmove((void*)indexOffset, (void*)(indexOffset + toIndex - fromIndex), numMoved * sizeof(E));
