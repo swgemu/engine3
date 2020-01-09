@@ -17,20 +17,6 @@
 #include "engine/engine.h"
 
 int regexptest() {
-	UnicodeString text = "\\>";
-
-	int index;
-
-	int count = 10;
-	while ((index = text.indexOf("\\>")) >= 0 && --count > 0) {
-		printf("%d\n", index);
-		text = text.replaceFirst("\\>", "");
-	}
-
-	return 0;
-
-
-
 	String testString = "testing\n stuff #1dr #asdf";
 	String simpleString = "#";
 	String regexString = "\n|\r|#";
@@ -48,21 +34,6 @@ int regexptest() {
 	printf("pre replace string:%s\n ", testString.toCharArray());
 	printf("regexp return replaceFirst:%s\n", replaced.toCharArray());
 	printf("regexp return replaceAll:%s\n", replacedAll.toCharArray());
-
-
-
-	std::string l = testString;
-		
-	std::regex word_regex(regexString.toCharArray(), std::regex_constants::extended);
-
-	std::smatch match;
-	if (std::regex_search(l, match, word_regex)) {
-		printf("found std::regex!\n");
-
-		printf("prefix length %d\n", match.prefix().length());
-		printf("suffix length %d\n", match[0].second - match[0].first);
-
-	}
 
 	return 0;
 }

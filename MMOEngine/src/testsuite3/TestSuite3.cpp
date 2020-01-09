@@ -106,7 +106,7 @@ public:
 };
 
 int main(int argc, char* argv[]) {
-
+	StackTrace::setBinaryName("testsuite3");
 
 	try {
 		SortedVector<String> arguments;
