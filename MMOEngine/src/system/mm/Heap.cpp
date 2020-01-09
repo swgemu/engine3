@@ -11,6 +11,8 @@
 
 #ifndef PLATFORM_WIN
 
+#include "Heap.h"
+
 #include <sys/mman.h>
 
 #ifndef PAGESIZE
