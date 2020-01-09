@@ -5,9 +5,14 @@
 
 #pragma once
 
-#include <cmath>
-
 #include "system/platform.h"
+
+#ifdef PLATFORM_WIN
+#define _USE_MATH_DEFINES
+#include <math.h>
+#else
+#include <cmath>
+#endif
 
 namespace sys {
   namespace lang {
