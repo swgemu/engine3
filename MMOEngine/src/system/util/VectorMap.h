@@ -17,8 +17,6 @@
 namespace sys {
   namespace util {
 
-	template<class K, class V> class VectorMap;
-
 	template<class K, class V>
 	class VectorMapEntry {
 	public:
@@ -101,25 +99,24 @@ namespace sys {
 			}
 		}
 
-		friend class VectorMap<K,V>;
 	};
 
-	template<class K, class V> class VectorMap : public SortedVector<VectorMapEntry<K, V> > {
+	template<class K, class V, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class VectorMap : public SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc> {
 		V nullValue;
 
 	public:
 		VectorMap();
 		VectorMap(int initsize, int incr);
-		VectorMap(const VectorMap<K, V>& vector);
+		VectorMap(const VectorMap<K, V, RawCopyAndRealloc>& vector);
 
 #ifdef CXX11_COMPILER
-		VectorMap(VectorMap<K, V>&& vector);
+		VectorMap(VectorMap<K, V, RawCopyAndRealloc>&& vector);
 #endif
 
-		VectorMap<K, V>& operator=(const VectorMap<K, V>& vector);
+		VectorMap<K, V, RawCopyAndRealloc>& operator=(const VectorMap<K, V, RawCopyAndRealloc>& vector);
 
 #ifdef CXX11_COMPILER
-		VectorMap<K, V>& operator=(VectorMap<K, V>&& vector);
+		VectorMap<K, V, RawCopyAndRealloc>& operator=(VectorMap<K, V, RawCopyAndRealloc>&& vector);
 #endif
 
 		virtual ~VectorMap();
@@ -153,120 +150,120 @@ namespace sys {
 
 	};
 
-	template<class K, class V> VectorMap<K, V>::VectorMap()
-			: SortedVector<VectorMapEntry<K, V> >() {
+	template<class K, class V, bool RawCopyAndRealloc> VectorMap<K, V, RawCopyAndRealloc>::VectorMap()
+			: SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>() {
 		setNullValue(TypeInfo<V>::nullValue());
 
-		SortedVector<VectorMapEntry<K, V> >::setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
+		SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::setInsertPlan(SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::ALLOW_OVERWRITE);
 	}
 
-	template<class K, class V> VectorMap<K, V>::VectorMap(int initsize, int incr)
-			: SortedVector<VectorMapEntry<K, V> >(initsize, incr) {
+	template<class K, class V, bool RawCopyAndRealloc> VectorMap<K, V, RawCopyAndRealloc>::VectorMap(int initsize, int incr)
+			: SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>(initsize, incr) {
 		setNullValue(TypeInfo<V>::nullValue());
 
-		SortedVector<VectorMapEntry<K, V> >::setInsertPlan(SortedVector<VectorMapEntry<K, V> >::ALLOW_OVERWRITE);
+		SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::setInsertPlan(SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::ALLOW_OVERWRITE);
 	}
 
-	template<class K, class V> VectorMap<K, V>::VectorMap(const VectorMap<K, V>& vector)
-			: SortedVector<VectorMapEntry<K, V> >(vector) {
+	template<class K, class V, bool RawCopyAndRealloc> VectorMap<K, V, RawCopyAndRealloc>::VectorMap(const VectorMap<K, V, RawCopyAndRealloc>& vector)
+			: SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>(vector) {
 		nullValue = vector.nullValue;
 	}
 
 #ifdef CXX11_COMPILER
-	template<class K, class V> VectorMap<K, V>::VectorMap(VectorMap<K, V>&& vector)
-						: SortedVector<VectorMapEntry<K, V> >(std::move(vector)) {
+	template<class K, class V, bool RawCopyAndRealloc> VectorMap<K, V, RawCopyAndRealloc>::VectorMap(VectorMap<K, V, RawCopyAndRealloc>&& vector)
+						: SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>(std::move(vector)) {
 		nullValue = vector.nullValue;
 	}
 #endif
 
-	template<class K, class V> VectorMap<K, V>& VectorMap<K, V>::operator=(const VectorMap<K, V>& vector) {
+	template<class K, class V, bool RawCopyAndRealloc> VectorMap<K, V, RawCopyAndRealloc>& VectorMap<K, V, RawCopyAndRealloc>::operator=(const VectorMap<K, V, RawCopyAndRealloc>& vector) {
 		if (this == &vector)
 			return *this;
 
 		nullValue = vector.nullValue;
 
-		SortedVector<VectorMapEntry<K, V> >::operator=(vector);
+		SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::operator=(vector);
 
 		return *this;
 	}
 
 #ifdef CXX11_COMPILER
-	template<class K, class V> VectorMap<K, V>& VectorMap<K, V>::operator=(VectorMap<K, V>&& vector) {
+	template<class K, class V, bool RawCopyAndRealloc> VectorMap<K, V, RawCopyAndRealloc>& VectorMap<K, V, RawCopyAndRealloc>::operator=(VectorMap<K, V, RawCopyAndRealloc>&& vector) {
 		if (this == &vector)
 			return *this;
 
 		nullValue = vector.nullValue;
 
-		SortedVector<VectorMapEntry<K, V> >::operator=(std::move(vector));
+		SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::operator=(std::move(vector));
 
 		return *this;
 	}
 #endif
 
-	template<class K, class V> VectorMap<K, V>::~VectorMap() {
+	template<class K, class V, bool RawCopyAndRealloc> VectorMap<K, V, RawCopyAndRealloc>::~VectorMap() {
 
 	}
 
-	template<class K, class V> Object* VectorMap<K, V>::clone() {
-		return new VectorMap<K, V>(*this);
+	template<class K, class V, bool RawCopyAndRealloc> Object* VectorMap<K, V, RawCopyAndRealloc>::clone() {
+		return new VectorMap<K, V, RawCopyAndRealloc>(*this);
 	}
 
-	template<class K, class V> int VectorMap<K, V>::put(const K& key, const V& value) {
-		int res = SortedVector<VectorMapEntry<K, V> >::put(VectorMapEntry<K, V>(key, value));
+	template<class K, class V, bool RawCopyAndRealloc> int VectorMap<K, V, RawCopyAndRealloc>::put(const K& key, const V& value) {
+		int res = SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::put(VectorMapEntry<K, V>(key, value));
 
 	 	return res;
 	}
 #ifdef CXX11_COMPILER
-	template<class K, class V> int VectorMap<K, V>::put(K&& key, V&& value) {
+	template<class K, class V, bool RawCopyAndRealloc> int VectorMap<K, V, RawCopyAndRealloc>::put(K&& key, V&& value) {
 		VectorMapEntry<K, V> e(std::move(key), std::move(value));
 
-		int res = SortedVector<VectorMapEntry<K, V> >::put(std::move(e));
+		int res = SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::put(std::move(e));
 
 		return res;
 	}
 #endif
 
-	template<class K, class V> V& VectorMap<K, V>::get(int index) {
-		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(index);
+	template<class K, class V, bool RawCopyAndRealloc> V& VectorMap<K, V, RawCopyAndRealloc>::get(int index) {
+		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::get(index);
 	 	return entry->value;
 	}
 
-	template<class K, class V> const V& VectorMap<K, V>::get(int index) const {
-		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::get(index);
+	template<class K, class V, bool RawCopyAndRealloc> const V& VectorMap<K, V, RawCopyAndRealloc>::get(int index) const {
+		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::get(index);
 		return entry->value;
 	}
 
-	template<class K, class V> V& VectorMap<K, V>::get(const K& key) {
+	template<class K, class V, bool RawCopyAndRealloc> V& VectorMap<K, V, RawCopyAndRealloc>::get(const K& key) {
 	 	int pos = find(key);
 
 		if (pos == this->npos)
 	 		return nullValue;
 
-	 	VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::getUnsafe(pos);
+	 	VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::getUnsafe(pos);
 	 	return entry->value;
 	}
 
-	template<class K, class V> const V& VectorMap<K, V>::get(const K& key) const {
+	template<class K, class V, bool RawCopyAndRealloc> const V& VectorMap<K, V, RawCopyAndRealloc>::get(const K& key) const {
 		int pos = find(key);
 
 		if (pos == this->npos)
 			return nullValue;
 
-		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V> >::getUnsafe(pos);
+		VectorMapEntry<K, V>* entry = &SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::getUnsafe(pos);
 		return entry->value;
 	}
 
-	template<class K, class V> int VectorMap<K, V>::find(const K& key) const {
-		if (ArrayList<VectorMapEntry<K, V> >::elementCount == 0)
+	template<class K, class V, bool RawCopyAndRealloc> int VectorMap<K, V, RawCopyAndRealloc>::find(const K& key) const {
+		if (ArrayList<VectorMapEntry<K, V>, RawCopyAndRealloc>::elementCount == 0)
 			return this->npos;
 
-		int l = 0, r = ArrayList<VectorMapEntry<K, V> >::elementCount - 1;
+		int l = 0, r = ArrayList<VectorMapEntry<K, V>, RawCopyAndRealloc>::elementCount - 1;
 		int m = 0, cmp = 0;
 
 		while (l <= r) {
-			m = ((unsigned int)l + (unsigned int)r) >> 1;
+			m = ((uint32)l + (uint32)r) >> 1;
 
-			const VectorMapEntry<K, V>& obj = ArrayList<VectorMapEntry<K, V> >::elementData[m];
+			const VectorMapEntry<K, V>& obj = ArrayList<VectorMapEntry<K, V>, RawCopyAndRealloc>::elementData[m];
 			cmp = TypeInfo<K>::compare(obj.getKey(), key);
 
 			if (cmp == 0)
@@ -280,23 +277,24 @@ namespace sys {
 		return this->npos;
 	}
 
-	template<class K, class V> bool VectorMap<K, V>::contains(const K& key) const {
+	template<class K, class V, bool RawCopyAndRealloc> bool VectorMap<K, V, RawCopyAndRealloc>::contains(const K& key) const {
 	 	int idx = find(key);
 
 	 	return idx != this->npos;
 	}
 
-	template<class K, class V> bool VectorMap<K, V>::drop(const K& key) {
+	template<class K, class V, bool RawCopyAndRealloc> bool VectorMap<K, V, RawCopyAndRealloc>::drop(const K& key) {
 		int pos = find(key);
+
 		if (pos == this->npos)
 			return false;
 
-		SortedVector<VectorMapEntry<K, V> >::remove(pos);
+		SortedVector<VectorMapEntry<K, V>, RawCopyAndRealloc>::remove(pos);
 
 	 	return true;
 	}
 
-	template<class K, class V> int VectorMap<K, V>::compare(const VectorMapEntry<K, V>& e1, const VectorMapEntry<K, V>& e2) const {
+	template<class K, class V, bool RawCopyAndRealloc> int VectorMap<K, V, RawCopyAndRealloc>::compare(const VectorMapEntry<K, V>& e1, const VectorMapEntry<K, V>& e2) const {
 		return TypeInfo<K>::compare(e1.key, e2.key);
 	}
 

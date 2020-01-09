@@ -7,6 +7,7 @@
 #pragma once
 
 #include "system/platform.h"
+#include <stdexcept>
 
 namespace sys {
  namespace lang {

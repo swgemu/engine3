@@ -10,7 +10,9 @@
 
 #include <pthread.h>
 
+#ifndef PLATFORM_WIN
 #include <sys/time.h>
+#endif
 
 #include <errno.h>
 

@@ -10,9 +10,11 @@
  */
 
 #include "engine/engine.h"
+#ifndef PLATFORM_WIN
 #include "tests/memprottest.h"
 #include "tests/stmtest.h"
 #include "tests/stmmemtest.h"
+#endif
 //#include "tests/qtstmtest.h"
 #include "tests/referencetest.h"
 #include "tests/allocatorhook.h"
@@ -43,19 +45,68 @@ public:
 	}
 
 	void run() {
+		StackTrace::setBinaryName("testsuite3");
+
+		using FunctorType = Function<int(const String&)>;
+
+		VectorMap<String, FunctorType, false> test;
+
+		test.put("b", [this](const String& a) -> int {
+			printf("b\n");
+			return 0;
+			});
+
+		test.put("c", [this](const String& a) -> int {
+			printf("c\n");
+			return 0;
+			});
+
+		test.put("d", [this](const String& a) -> int {
+			printf("d\n");
+			return 0;
+			});
+
+		test.put("e", [this](const String& a) -> int {
+			printf("e\n");
+			return 0;
+			});
+
+
+		test.put("f", [this](const String& a) -> int {
+			printf("f\n");
+			return 0;
+			});
+
+		test.put("g", [this](const String& a) -> int {
+			printf("g\n");
+			return 0;
+			});
+
+		test.put("asdf", [this](const String& a) -> int {
+			printf("asdf\n");
+			return 0;
+			});
+
+
+		test.get("asdf")("a");
+
+
+		test.removeRange(1, 4);
+
+		test.removeElementAt(0);
+
+
 		for (auto i = 0; i < 5; ++i) {
 			System::out << "ok then" << ha << endl;
 
-			Core::getTaskManager()->scheduleTask([this] () { ha.increment(); System::out << "test" << ha << endl; }, "TEstTask", 800);
-
-			//Thread::sleep(1000);
+			Core::getTaskManager()->scheduleTask([this] () { auto incr = ha.increment(); System::out << "test" << incr << endl; }, "TEstTask", 800);
 		}
 	}
 
 };
 
 int main(int argc, char* argv[]) {
-	StackTrace::setBinaryName("testsuite3");
+
 
 	try {
 		SortedVector<String> arguments;
@@ -68,23 +119,22 @@ int main(int argc, char* argv[]) {
 
 		core->run();
 		Thread::sleep(1000);
-		//return 0;
-
-		//StackTrace::setBinaryName("testsuite3");
 
 		if (!arguments.isEmpty()) {
+#ifndef PLATFORM_WIN
 			if (arguments.contains("stmtest"))
 				testTransactions();
 			else if (arguments.contains("memtest"))
 				testMemoryProtection();
 			else if (arguments.contains("stmmemtest"))
 				testSTMMemory();
-			else if (arguments.contains("qtstmtest")) {
+			else if (arguments.contains("memfiletest"))
+				testMemoryMappedFile();
+#endif
+			if (arguments.contains("qtstmtest")) {
 				//testQTSTM();
 			} else if (arguments.contains("referencetest")) {
 				referenceTest();
-			} else if (arguments.contains("memfiletest")) {
-				testMemoryMappedFile();
 			} else if (arguments.contains("qtboundingtest")) {
 				//testQTBounding();
 			} else if (arguments.contains("timeserialize")) {

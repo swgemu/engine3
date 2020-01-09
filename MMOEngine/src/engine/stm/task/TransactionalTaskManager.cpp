@@ -5,6 +5,8 @@
 
 #include "engine/stm/TransactionalObjectHeader.h"
 
+#include "engine/core/TaskManagerImpl.h"
+
 void TransactionalTaskManager::initialize() {
 	taskManager = new TaskManagerImpl();
 	taskManager->setLoggingName("TransactionalTaskmanager");

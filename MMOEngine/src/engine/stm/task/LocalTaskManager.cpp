@@ -3,6 +3,10 @@
 ** See file COPYING for copying conditions.
 */
 
+#include "engine/core/TaskManagerImpl.h"
+#include "engine/core/TaskScheduler.h"
+#include "engine/core/TaskWorkerThread.h"
+
 #include "LocalTaskManager.h"
 
 LocalTaskManager::LocalTaskManager() {

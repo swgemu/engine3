@@ -193,14 +193,17 @@ namespace sys {
 		String subString(int beginIndex, int endIndex) const ;
 
 		static String valueOf(int val);
-		static String valueOf(uint32 val);
+		static String valueOf(uint32_t val);
 		static String valueOf(long val);
 		static String valueOf(int64 val);
 		static String valueOf(uint64 val);
 		static String valueOf(float val);
 		static String valueOf(double val);
 		static String valueOf(const void* val);
+		static String valueOf(const char* val);
+#ifndef PLATFORM_WIN
 		static String valueOf(std::size_t val);
+#endif
 		static String valueOf(bool value);
 
 		static String hexvalueOf(int val);
@@ -281,6 +284,54 @@ namespace sys {
 
 		char& operator[](int i);
 		const char& operator[](int i) const;
+
+		friend bool operator==(char ch, const String& str2) {
+			return String(&ch, 1) == str2;
+		}
+
+		friend bool operator==(const String& str, char ch) {
+			return String(&ch, 1) == str;
+		}
+
+		friend bool operator==(const char* str1, const String& str2) {
+			return String(str1) == str2;
+		}
+
+		friend bool operator!=(char ch, const String& str2) {
+			return String(&ch, 1) != str2;
+		}
+
+		friend bool operator!=(const String& str, char ch) {
+			return String(&ch, 1) != str;
+		}
+
+		friend bool operator!=(const char* str1, const String& str2) {
+			return String(str1) != str2;
+		}
+
+		friend String operator+(const String& str1, const String& str2) {
+			return str1.concat(str2);
+		}
+
+		friend String operator+(const char* str1, const String& str2) {
+			return String(str1).concat(str2);
+		}
+
+		friend String operator+(const String& str1, const char* str2) {
+			return str1.concat(str2);
+		}
+
+		friend String operator+(const String& str1, char ch) {
+			return str1.concat(ch);
+		}
+
+		friend String operator+(char ch, const String& str2) {
+			return String(&ch, 1).concat(str2);
+		}
+
+		friend String operator+(const String& str1, int i) {
+			return str1.concat(i);
+		}
 
 		/*
 		 * This allows nasty things like substracting ints from String because it casts to char* i.e:
@@ -384,21 +435,6 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::lang;
-
-bool operator==(char ch, const String& str2);
-bool operator==(const String& str, char ch);
-bool operator==(const char* str1, const String& str2);
-
-bool operator!=(char ch, const String& str2);
-bool operator!=(const String& str, char ch);
-bool operator!=(const char* str1, const String& str2);
-
-String operator+(const String& str1, const String& str2);
-String operator+(const char* str1, const String& str2);
-String operator+(const String& str1, const char* str2);
-String operator+(const String& str1, char ch);
-String operator+(char ch, const String& str2);
-String operator+(const String& str1, int i);
 
 #ifdef CXX11_COMPILER
 //forces the hash code to be calculated at compile time of a const string

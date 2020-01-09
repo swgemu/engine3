@@ -7,6 +7,9 @@
 
 #include "GdbStub.h"
 
+
+#ifndef PLATFORM_WIN
+
 GdbStub::GdbStub() : logFile(nullptr) {
 }
 
@@ -214,3 +217,5 @@ void GdbStub::parseOutput(Vector<String>& lines) {
 		lines.add(str);
 	}
 }
+
+#endif

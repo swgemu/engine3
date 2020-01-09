@@ -149,13 +149,13 @@ void DatagramServiceThread::receiveMessages() {
 }
 
 void DatagramServiceThread::processMessage(Packet* packet, const SocketAddress& addr) {
-	Reference<Task*> receiverTask = new MessageReceiverTask(this, packet, addr);
+	Reference<MessageReceiverTask*> receiverTask = new MessageReceiverTask(this, packet, addr);
 
 	receiverTask->executeInThread();
 }
 
 void DatagramServiceThread::receiveMessage(Packet* packet, SocketAddress& addr) {
-	Reference<ServiceClient*> client = nullptr;
+	Reference<ServiceClient*> client;
 
 	try {
 		uint64 netid = addr.getNetworkID();

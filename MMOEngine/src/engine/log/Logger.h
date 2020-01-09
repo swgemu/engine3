@@ -136,6 +136,10 @@ namespace engine {
 	public:
 		static Logger console;
 
+#ifdef PLATFORM_WIN
+#undef ERROR
+#endif
+
 		enum LogLevel {
 			NONE = -1,
 

@@ -13,7 +13,13 @@
 #define DOBOBJECTMANAGER_CPP_
 
 #include <cstddef>
+
+#include "system/platform.h"
+
+#ifndef PLATFORM_WIN
 #include <unistd.h>
+#endif
+
 #include <chrono>
 
 #include "engine/core/TaskWorkerThread.h"

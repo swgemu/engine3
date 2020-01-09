@@ -5,6 +5,8 @@
 
 #include "MemoryMappedFile.h"
 
+#ifndef PLATFORM_WIN
+
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -43,3 +45,5 @@ void MemoryMappedFile::openDevice() {
 
 	printf("[MemoryMappedFiles] file %s created on fd %u\n", fileName, deviceFD);
 }
+
+#endif

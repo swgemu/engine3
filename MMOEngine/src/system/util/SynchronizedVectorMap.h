@@ -20,7 +20,7 @@
 
 namespace sys {
  namespace util {
- 	 template<class K, class V> class VectorMap;
+ 	 template<class K, class V, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class VectorMap;
 
  	 template<class K, class V>
  	 class SynchronizedVectorMap : public Object {

@@ -39,10 +39,6 @@ namespace sys {
   	class Object;
   }
 
-  namespace util {
-	 template<class T> class SortedVector;
-  }
-
   namespace thread {
 
   	 class Lockable;

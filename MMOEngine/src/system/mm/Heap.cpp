@@ -9,6 +9,8 @@
 
 #include "DLAllocator.h"
 
+#ifndef PLATFORM_WIN
+
 #include <sys/mman.h>
 
 #ifndef PAGESIZE
@@ -82,3 +84,5 @@ void Heap::setAnonymous() {
 	flags |= MAP_ANONYMOUS;
 #endif
 }
+
+#endif

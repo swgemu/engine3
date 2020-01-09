@@ -48,7 +48,11 @@ void StreamServiceThread::stop() {
 	if (socket != nullptr) {
 		setRunning(false);
 
+#ifndef PLATFORM_WIN
 		socket->shutdown(SHUT_RDWR);
+#else
+		socket->shutdown(SD_BOTH);
+#endif
 		socket->close();
 
 		ServiceThread::stop(true);

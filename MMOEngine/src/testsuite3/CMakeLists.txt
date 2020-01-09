@@ -11,6 +11,10 @@ include_directories(..)
 # Create testsuite3 binary
 add_executable(testsuite3 ${testsuite3_sources})
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 # Add libraries
 target_link_libraries(testsuite3
 		engine3
@@ -18,7 +22,7 @@ target_link_libraries(testsuite3
 		${DB_LIBRARIES}
 		${LUA_LIBRARIES}
 		${ZLIB_LIBRARIES}
-		Threads::Threads
+		pthreadVCE3d
 		${GCCLIBATOMIC_LIBRARY}
 		${CMAKE_DL_LIBS}
 		${OPENSSL_LIBRARIES}

@@ -6,6 +6,7 @@
 
 #include "Pipe.h"
 
+
 Pipe::Pipe() {
 	pipefd[0] = -1;
 	pipefd[1] = -1;
@@ -16,15 +17,18 @@ Pipe::~Pipe() {
 }
 
 void Pipe::create(bool autoClose) {
+#ifndef PLATFORM_WIN
 	doAutoClose = autoClose;
 
 	if (pipe(pipefd) < 0)
 		throw IOException("unable to create pipe");
 
 	fileDescriptor = pipefd[0];
+#endif
 }
 
 void Pipe::close() {
+#ifndef PLATFORM_WIN
 	if (pipefd[0] != -1) {
 		::close(pipefd[0]);
 		pipefd[0] = -1;
@@ -34,6 +38,7 @@ void Pipe::close() {
 		::close(pipefd[1]);
 		pipefd[1] = -1;
 	}
+#endif
 }
 
 int Pipe::readInt() {
@@ -44,6 +49,8 @@ int Pipe::readInt() {
 
 int Pipe::readLine(char* buf, int len) {
 	int count = 0;
+
+#ifndef PLATFORM_WIN
 	for (; count < len; ++count, ++buf) {
 		if (read(buf, 1) == 0)
 			break;
@@ -59,6 +66,7 @@ int Pipe::readLine(char* buf, int len) {
 	if (len) {
 		*buf = 0;
 	}
+#endif
 
 	return count;
 }
@@ -68,6 +76,7 @@ void Pipe::writeInt(int val) {
 }
 
 int Pipe::read(char* buf, int len) {
+#ifndef PLATFORM_WIN
 	if (doAutoClose && pipefd[1] != -1) {
 		::close(pipefd[1]);
 		pipefd[1] = -1;
@@ -83,6 +92,9 @@ int Pipe::read(char* buf, int len) {
 	//printf("read %i bytes from pipe\n", result);
 
 	return result;
+#else
+	return 0;
+#endif;
 }
 
 int Pipe::writeLine(const char* str) {
@@ -96,6 +108,7 @@ int Pipe::write(const String& string) {
 }
 
 int Pipe::write(const char* buf, int len) {
+#ifndef PLATFORM_WIN
 	if (doAutoClose && pipefd[0] != -1) {
 		::close(pipefd[0]);
 		pipefd[0] = -1;
@@ -109,8 +122,13 @@ int Pipe::write(const char* buf, int len) {
 		throw IOException("unable to write to pipe");
 
 	return result;
+#else
+	return 0;
+#endif
 }
 
 void Pipe::redirectFile(int fd) {
+#ifndef PLATFORM_WIN
 	dup2(pipefd[1], fd);
+#endif
 }

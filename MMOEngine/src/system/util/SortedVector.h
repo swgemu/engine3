@@ -11,7 +11,7 @@
 namespace sys {
   namespace util {
 
-	template<class E> class SortedVector : public Vector<E> {
+	template<class E, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class SortedVector : public Vector<E, RawCopyAndRealloc> {
 	protected:
 		int insertPlan;
 
@@ -29,17 +29,17 @@ namespace sys {
 	public:
 		SortedVector();
 		SortedVector(int initsize, int incr);
-		SortedVector(const SortedVector<E>& vector);
+		SortedVector(const SortedVector<E, RawCopyAndRealloc>& vector);
 
 #ifdef CXX11_COMPILER
 		SortedVector(std::initializer_list<E> l);
-		SortedVector(SortedVector<E>&& vector);
+		SortedVector(SortedVector<E, RawCopyAndRealloc>&& vector);
 #endif
 
-		SortedVector<E>& operator=(const SortedVector<E>& vector);
+		SortedVector<E, RawCopyAndRealloc>& operator=(const SortedVector<E, RawCopyAndRealloc>& vector);
 
 #ifdef CXX11_COMPILER
-		SortedVector<E>& operator=(SortedVector<E>&& vector);
+		SortedVector<E, RawCopyAndRealloc>& operator=(SortedVector<E, RawCopyAndRealloc>&& vector);
 #endif
 
 		virtual int put(const E& o);
@@ -81,20 +81,20 @@ namespace sys {
 
 	};
 
-	template<class E> SortedVector<E>::SortedVector() : Vector<E>() {
+	template<class E, bool RawCopyAndRealloc> SortedVector<E, RawCopyAndRealloc>::SortedVector() : Vector<E, RawCopyAndRealloc>() {
 		insertPlan = ALLOW_DUPLICATE;
 	}
 
-	template<class E> SortedVector<E>::SortedVector(int initsize, int incr) : Vector<E>(initsize, incr) {
+	template<class E, bool RawCopyAndRealloc> SortedVector<E, RawCopyAndRealloc>::SortedVector(int initsize, int incr) : Vector<E, RawCopyAndRealloc>(initsize, incr) {
 		insertPlan = ALLOW_DUPLICATE;
 	}
 
-	template<class E> SortedVector<E>::SortedVector(const SortedVector<E>& vector) : Vector<E>(vector) {
+	template<class E, bool RawCopyAndRealloc> SortedVector<E, RawCopyAndRealloc>::SortedVector(const SortedVector<E, RawCopyAndRealloc>& vector) : Vector<E, RawCopyAndRealloc>(vector) {
 		insertPlan = vector.insertPlan;
 	}
 
 #ifdef CXX11_COMPILER
-	template<class E> SortedVector<E>::SortedVector(std::initializer_list<E> l) : Vector<E>(l.size(), 5) {
+	template<class E, bool RawCopyAndRealloc> SortedVector<E, RawCopyAndRealloc>::SortedVector(std::initializer_list<E> l) : Vector<E, RawCopyAndRealloc>(l.size(), 5) {
 		insertPlan = ALLOW_DUPLICATE;
 
 		for (auto it = l.begin(); it != l.end(); ++it) {
@@ -102,54 +102,53 @@ namespace sys {
 		}
 	}
 
-	template<class E> SortedVector<E>::SortedVector(SortedVector<E>&& vector) : Vector<E>(std::move(vector)) {
+	template<class E, bool RawCopyAndRealloc> SortedVector<E, RawCopyAndRealloc>::SortedVector(SortedVector<E, RawCopyAndRealloc>&& vector) : Vector<E, RawCopyAndRealloc>(std::move(vector)) {
 		insertPlan = vector.insertPlan;
 	}
 #endif
 
-	template<class E> SortedVector<E>& SortedVector<E>::operator=(const SortedVector<E>& vector) {
+	template<class E, bool RawCopyAndRealloc> SortedVector<E, RawCopyAndRealloc>& SortedVector<E, RawCopyAndRealloc>::operator=(const SortedVector<E, RawCopyAndRealloc>& vector) {
 		if (this == &vector)
 			return *this;
 
 		insertPlan = vector.getInsertPlan();
 
-		Vector<E>::operator=(vector);
+		Vector<E, RawCopyAndRealloc>::operator=(vector);
 
 		return *this;
 	}
 
 #ifdef CXX11_COMPILER
-	template<class E> SortedVector<E>& SortedVector<E>::operator=(SortedVector<E>&& vector) {
+	template<class E, bool RawCopyAndRealloc> SortedVector<E, RawCopyAndRealloc>& SortedVector<E, RawCopyAndRealloc>::operator=(SortedVector<E, RawCopyAndRealloc>&& vector) {
 		if (this == &vector)
 			return *this;
 
 		insertPlan = vector.getInsertPlan();
 
-		Vector<E>::operator=(std::move(vector));
+		Vector<E, RawCopyAndRealloc>::operator=(std::move(vector));
 
 		return *this;
 	}
 #endif
 
-	template<class E> int SortedVector<E>::lowerBound(const E& o) const {
-		if (ArrayList<E>::size() == 0)
-			return ArrayList<E>::npos;
+	template<class E, bool RawCopyAndRealloc> int SortedVector<E, RawCopyAndRealloc>::lowerBound(const E& o) const {
+		if (ArrayList<E, RawCopyAndRealloc>::size() == 0)
+			return ArrayList<E, RawCopyAndRealloc>::npos;
 
-		int l = 0, r = Vector<E>::elementCount - 1;
+		int l = 0, r = Vector<E, RawCopyAndRealloc>::elementCount - 1;
 		int m = 0, cmp = 0;
 
 		while (l <= r) {
-			//m = (l + r) / 2;
-			m = ((unsigned int)l + (unsigned int)r) >> 1;
+			m = ((uint32)l + (uint32)r) >> 1;
 
-			const E& obj = Vector<E>::elementData[m];
+			const E& obj = Vector<E, RawCopyAndRealloc>::elementData[m];
 			cmp = compare(obj, o);
 
 			if (cmp > 0) {
 				l = m + 1;
 
 				if (r < l)
-					return m < ArrayList<E>::size() - 1 ? m + 1 : ArrayList<E>::npos;
+					return m < ArrayList<E, RawCopyAndRealloc>::size() - 1 ? m + 1 : ArrayList<E, RawCopyAndRealloc>::npos;
 			} else {
 				r = m - 1;
 
@@ -158,28 +157,27 @@ namespace sys {
 			}
 		}
 
-		return ArrayList<E>::npos;
+		return ArrayList<E, RawCopyAndRealloc>::npos;
 	}
 
-	template<class E> int SortedVector<E>::upperBound(const E& o) const {
-		if (ArrayList<E>::size() == 0)
-			return ArrayList<E>::npos;
+	template<class E, bool RawCopyAndRealloc> int SortedVector<E, RawCopyAndRealloc>::upperBound(const E& o) const {
+		if (ArrayList<E, RawCopyAndRealloc>::size() == 0)
+			return ArrayList<E, RawCopyAndRealloc>::npos;
 
-		int l = 0, r = Vector<E>::elementCount - 1;
+		int l = 0, r = Vector<E, RawCopyAndRealloc>::elementCount - 1;
 		int m = 0, cmp = 0;
 
 		while (l <= r) {
-			//m = (l + r) / 2;
-			m = ((unsigned int)l + (unsigned int)r) >> 1;
+			m = ((uint32)l + (uint32)r) >> 1;
 
-			const E& obj = Vector<E>::elementData[m];
+			const E& obj = Vector<E, RawCopyAndRealloc>::elementData[m];
 			cmp = compare(obj, o);
 
 			if (cmp == 0 || cmp > 0) {
 				l = m + 1;
 
 				if (r < l)
-					return m < ArrayList<E>::size() - 1 ? m + 1 : ArrayList<E>::npos;
+					return m < ArrayList<E, RawCopyAndRealloc>::size() - 1 ? m + 1 : ArrayList<E, RawCopyAndRealloc>::npos;
 			} else {
 				r = m - 1;
 
@@ -188,30 +186,29 @@ namespace sys {
 			}
 		}
 
-		return ArrayList<E>::npos;
+		return ArrayList<E, RawCopyAndRealloc>::npos;
 	}
 
-	template<class E> int SortedVector<E>::put(const E& o) {
+	template<class E, bool RawCopyAndRealloc> int SortedVector<E, RawCopyAndRealloc>::put(const E& o) {
 		int m = 0, l = 0;
-		int r = Vector<E>::elementCount - 1;
+		int r = Vector<E, RawCopyAndRealloc>::elementCount - 1;
 
 		while (l <= r) {
-			//m = (l + r) / 2;
-			m = ((unsigned int)l + (unsigned int)r) >> 1;
+			m = ((uint32)l + (uint32)r) >> 1;
 
-			const E& obj = Vector<E>::elementData[m];
+			const E& obj = Vector<E, RawCopyAndRealloc>::elementData[m];
 			int cmp = compare(obj, o);
 
 			if (cmp == 0) {
 				switch (insertPlan) {
 					case ALLOW_DUPLICATE:
-						Vector<E>::add(++m, o);
+						Vector<E, RawCopyAndRealloc>::add(++m, o);
 						break;
 					case ALLOW_OVERWRITE:
-						Vector<E>::set(m, o);
+						Vector<E, RawCopyAndRealloc>::set(m, o);
 						break;
 					default:
-						return ArrayList<E>::npos;
+						return ArrayList<E, RawCopyAndRealloc>::npos;
 				}
 
 				return m;
@@ -225,38 +222,37 @@ namespace sys {
 		if (r == m)
 			m++;
 
-		Vector<E>::add(m, o);
+		Vector<E, RawCopyAndRealloc>::add(m, o);
 
 		return m;
 	}
 #ifdef CXX11_COMPILER
-	template<class E> int SortedVector<E>::put(E&& o) {
+	template<class E, bool RawCopyAndRealloc> int SortedVector<E, RawCopyAndRealloc>::put(E&& o) {
 		int m = 0, l = 0;
-		int r = Vector<E>::elementCount - 1;
+		int r = Vector<E, RawCopyAndRealloc>::elementCount - 1;
 
 		while (l <= r) {
-			//m = (l + r) / 2;
-			m = ((unsigned int)l + (unsigned int)r) >> 1;
+			m = ((uint32)l + (uint32)r) >> 1;
 
-			const E& obj = Vector<E>::elementData[m];
+			const E& obj = Vector<E, RawCopyAndRealloc>::elementData[m];
 			int cmp = compare(obj, o);
 
 			if (cmp == 0) {
 				switch (insertPlan) {
 					case ALLOW_DUPLICATE:
 						if (std::is_move_constructible<E>::value)
-							Vector<E>::add(++m, std::move(o));
+							Vector<E, RawCopyAndRealloc>::add(++m, std::move(o));
 						else
-							Vector<E>::add(++m, o);
+							Vector<E, RawCopyAndRealloc>::add(++m, o);
 						break;
 					case ALLOW_OVERWRITE:
 						if (std::is_move_constructible<E>::value)
-							Vector<E>::set(m, std::move(o));
+							Vector<E, RawCopyAndRealloc>::set(m, std::move(o));
 						else
-							Vector<E>::set(m, o);
+							Vector<E, RawCopyAndRealloc>::set(m, o);
 						break;
 					default:
-						return ArrayList<E>::npos;
+						return ArrayList<E, RawCopyAndRealloc>::npos;
 				}
 
 				return m;
@@ -271,30 +267,30 @@ namespace sys {
 			m++;
 
 		if (std::is_move_constructible<E>::value)
-			Vector<E>::add(m, std::move(o));
+			Vector<E, RawCopyAndRealloc>::add(m, std::move(o));
 		else
-			Vector<E>::add(m, o);
+			Vector<E, RawCopyAndRealloc>::add(m, o);
 
 		return m;
 	}
 #endif
 
-	template<class E> bool SortedVector<E>::contains(const E& o) const {
-		return find(o) != ArrayList<E>::npos;
+	template<class E, bool RawCopyAndRealloc> bool SortedVector<E, RawCopyAndRealloc>::contains(const E& o) const {
+		return find(o) != ArrayList<E, RawCopyAndRealloc>::npos;
 	}
 
-	template<class E> int SortedVector<E>::find(const E& o) const {
-		if (ArrayList<E>::size() == 0)
-			return ArrayList<E>::npos;
+	template<class E, bool RawCopyAndRealloc> int SortedVector<E, RawCopyAndRealloc>::find(const E& o) const {
+		if (ArrayList<E, RawCopyAndRealloc>::size() == 0)
+			return ArrayList<E, RawCopyAndRealloc>::npos;
 
-		int l = 0, r = Vector<E>::elementCount - 1;
+		int l = 0, r = Vector<E, RawCopyAndRealloc>::elementCount - 1;
 		int m = 0, cmp = 0;
 
 		while (l <= r) {
 			//m = (l + r) / 2;
 			m = ((unsigned int)l + (unsigned int)r) >> 1;
 
-			const E& obj = Vector<E>::elementData[m];
+			const E& obj = Vector<E, RawCopyAndRealloc>::elementData[m];
 			cmp = compare(obj, o);
 
 			if (cmp == 0)
@@ -305,21 +301,21 @@ namespace sys {
 				r = m - 1;
 		}
 
-		return ArrayList<E>::npos;
+		return ArrayList<E, RawCopyAndRealloc>::npos;
 	}
 
-	template<class E> Object* SortedVector<E>::clone() {
-		return new SortedVector<E>(*this);
+	template<class E, bool RawCopyAndRealloc> Object* SortedVector<E, RawCopyAndRealloc>::clone() {
+		return new SortedVector<E, RawCopyAndRealloc>(*this);
 	}
 
-	template<class E> bool SortedVector<E>::drop(const E& o) {
+	template<class E, bool RawCopyAndRealloc> bool SortedVector<E, RawCopyAndRealloc>::drop(const E& o) {
 		int index = find(o);
-		if (index == ArrayList<E>::npos)
+		if (index == ArrayList<E, RawCopyAndRealloc>::npos)
 			return false;
 
-		//E& oldValue = Vector<E>::elementData[index];
+		//E& oldValue = Vector<E, RawCopyAndRealloc>::elementData[index];
 
-		Vector<E>::remove(index);
+		Vector<E, RawCopyAndRealloc>::remove(index);
 		return true;
 	}
 

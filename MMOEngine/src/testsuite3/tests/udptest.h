@@ -50,7 +50,7 @@ public:
 			datagramService->setHandler(new DatagramHandler());
 
 			datagramService->start(45555, 100);
-			sleep(1);
+			Thread::sleep(1);
 
 			Packet packet;
 			packet.insertInt(1);
@@ -65,7 +65,7 @@ public:
 				printf("send resulted in %i\n", length);
 			}
 
-			sleep(5);
+			Thread::sleep(5);
 		} catch (const Exception& e) {
 			e.printStackTrace();
 		}

@@ -30,7 +30,7 @@ BerkeleyDatabase::BerkeleyDatabase(const String& filename, const String& databas
 	int ret = db_create(&dbp, nullptr, 0);
 
 	if (ret != 0)
-		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
+		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(db_strerror(ret)));
 
 	static const int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
 
@@ -74,7 +74,7 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 	int ret = db_create(&dbp, dbenvp, 0);
 
 	if (ret != 0)
-		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(ret));
+		throw DatabaseException("unable to create database handle with ret code " + String::valueOf(db_strerror(ret)));
 
 	const static int pageSize = Core::getIntProperty("BerkeleyDB.dbPageSize", 16384);
 
@@ -95,7 +95,7 @@ BerkeleyDatabase::BerkeleyDatabase(Environment* env, Transaction* txn, const Str
 
 	if (ret != 0) {
 		/* Error handling goes here */
-		throw DatabaseException("unable to open database with ret code " + String::valueOf(ret));
+		throw DatabaseException("unable to open database with ret code " + String::valueOf(db_strerror(ret)));
 	}
 }
 
@@ -169,7 +169,7 @@ Cursor* BerkeleyDatabase::openCursor(Transaction* txn, const CursorConfig& confi
 	int ret = dbp->cursor(dbp, transaction, &cursorp, flags);
 
 	if (ret != 0) {
-		throw DatabaseException("error opening cursor with ret " + String::valueOf(ret));
+		throw DatabaseException("error opening cursor with ret " + String::valueOf(db_strerror(ret)));
 	}
 
 	Cursor* cursor = new Cursor(this, cursorp, config);
@@ -180,7 +180,7 @@ void BerkeleyDatabase::sync() {
 	int ret = dbp->sync(dbp, 0);
 
 	if (ret != 0)
-		throw DatabaseException("error while synching to disk with ret " + String::valueOf(ret));
+		throw DatabaseException("error while synching to disk with ret " + String::valueOf(db_strerror(ret)));
 }
 
 void BerkeleyDatabase::close(bool noSync) {
@@ -209,7 +209,7 @@ int BerkeleyDatabase::truncate(Transaction* txn, bool countRecords) {
 	int ret = dbp->truncate(dbp, txnid, &recordCount, 0);
 
 	if (ret != 0)
-		throw DatabaseException("error while truncating table with ret " + String::valueOf(ret));
+		throw DatabaseException("error while truncating table with ret " + String::valueOf(db_strerror(ret)));
 
 	if (countRecords)
 		return recordCount;
@@ -284,7 +284,7 @@ uint64 BerkeleyDatabase::count(bool forceCalculation, Transaction* txn) {
 	}
 
 	if (ret != 0) {
-		throw DatabaseException("error BerkeleyDatabase::count with ret " + String::valueOf(ret));
+		throw DatabaseException("error BerkeleyDatabase::count with ret " + String::valueOf(db_strerror(ret)));
 	}
 
 	return -1;

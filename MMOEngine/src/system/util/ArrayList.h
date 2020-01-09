@@ -15,6 +15,8 @@
 #include "system/lang/Function.h"
 
 #include <initializer_list>
+#include <algorithm>
+#include <type_traits>
 
 namespace sys {
  namespace util {
@@ -25,7 +27,7 @@ namespace sys {
 		   static volatile int totalCount;
    };
 
-   template<class E> class ArrayList {
+   template<class E, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class ArrayList {
 	   protected:
 		   E* elementData;
 
@@ -36,7 +38,7 @@ namespace sys {
 		   ArrayList();
 		   ArrayList(int incr);
 		   ArrayList(int initsize, int incr);
-		   ArrayList(const ArrayList<E>& array);
+		   ArrayList(const ArrayList<E, RawCopyAndRealloc>& array);
 
 		   virtual ~ArrayList();
 
@@ -46,13 +48,13 @@ namespace sys {
 		   typedef ArrayListReverseIterator<E> reverse_iterator;
 		   typedef ArrayListReverseIterator<const E> const_reverse_iterator;
 
-		   ArrayList(ArrayList<E>&& array);
+		   ArrayList(ArrayList<E, RawCopyAndRealloc>&& array);
 		   ArrayList(std::initializer_list<E> v);
 
 		   constexpr const static int npos = -1;
 
-		   ArrayList<E>& operator=(const ArrayList<E>& array);
-		   ArrayList<E>& operator=(ArrayList<E>&& array);
+		   ArrayList<E, RawCopyAndRealloc>& operator=(const ArrayList<E, RawCopyAndRealloc>& array);
+		   ArrayList<E, RawCopyAndRealloc>& operator=(ArrayList<E, RawCopyAndRealloc>&& array);
 
 		   bool add(const E& element);
 		   bool add(int index, const E& element);
@@ -63,13 +65,13 @@ namespace sys {
 		   template<class ...A>
 		   bool emplace(A&& ...element);
 
-		   void addAll(const ArrayList<E>& array);
+		   void addAll(const ArrayList<E, RawCopyAndRealloc>& array);
 
-		   void addAll(ArrayList<E>&& array) {
+		   void addAll(ArrayList<E, RawCopyAndRealloc>&& array) {
 			   moveAll(array);
 		   }
 
-		   void moveAll(ArrayList<E>& array);
+		   void moveAll(ArrayList<E, RawCopyAndRealloc>& array);
 
 		   void forEach(const Function<void(E&)>& func, int first = 0, int last = -1);
 		   void forEach(const Function<void(E const&)>& func, int first = 0, int last = -1) const;
@@ -103,7 +105,7 @@ namespace sys {
 		   void setElementAt(uint32 index, E&& element);
 		   void setElementAt(uint32 index, const E& element);
 
-		   void clone(ArrayList<E>& array) const ;
+		   void clone(ArrayList<E, RawCopyAndRealloc>& array) const ;
 
 		   iterator begin() {
 			   return elementData;
@@ -265,34 +267,35 @@ namespace sys {
 
 	   };
 
-   template<class E> ArrayList<E>::ArrayList() : elementData(nullptr), elementCapacity(0), capacityIncrement(0), elementCount(0) {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>::ArrayList() : elementData(nullptr), elementCapacity(0), capacityIncrement(0), elementCount(0) {
    }
 
-   template<class E> ArrayList<E>::ArrayList(int incr) {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>::ArrayList(int incr) {
 	   init(incr, 0);
    }
 
-   template<class E> ArrayList<E>::ArrayList(int initsize, int incr) {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>::ArrayList(int initsize, int incr) {
 	   init(initsize, incr);
    }
 
-   template<class E> ArrayList<E>::ArrayList(const ArrayList<E>& array) {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>::ArrayList(const ArrayList<E, RawCopyAndRealloc>& array) {
 	   init(array.elementCapacity, array.capacityIncrement);
 
 	   elementCount = array.elementCount;
 
 	   if (!elementCount) {
-	   	return;
+	   		return;
 	   }
 
-	   if (TypeInfo<E>::needConstructor) {
+	   if (!std::is_trivially_copyable<E>::value) {
 		   for (int i = 0; i < elementCount; ++i)
 			   createElementAt(array.elementData[i], i);
-	   } else
+	   } else {
 		   memcpy((void*)elementData, (void*)array.elementData, elementCount * sizeof(E));
+	   }
    }
 
-   template<class E> ArrayList<E>::ArrayList(std::initializer_list<E> v)  {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>::ArrayList(std::initializer_list<E> v)  {
 	   init(v.size(), 5);
 
 	   elementCount = v.size();
@@ -303,7 +306,7 @@ namespace sys {
 	   }
    }
 
-   template<class E> ArrayList<E>::ArrayList(ArrayList<E>&& array) {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>::ArrayList(ArrayList<E, RawCopyAndRealloc>&& array) {
 	   elementData = array.elementData;
 	   elementCapacity = array.elementCapacity;
 	   capacityIncrement = array.capacityIncrement;
@@ -315,7 +318,7 @@ namespace sys {
 	   array.elementCapacity = 0;
    }
 
-   template<class E> ArrayList<E>& ArrayList<E>::operator=(const ArrayList<E>& array) {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>& ArrayList<E, RawCopyAndRealloc>::operator=(const ArrayList<E, RawCopyAndRealloc>& array) {
 	   if (this == &array)
 		   return *this;
 
@@ -324,7 +327,7 @@ namespace sys {
 	   return *this;
    }
 
-   template<class E> ArrayList<E>& ArrayList<E>::operator=(ArrayList<E>&& array) {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>& ArrayList<E, RawCopyAndRealloc>::operator=(ArrayList<E, RawCopyAndRealloc>&& array) {
 	   if (this == &array)
 		   return *this;
 
@@ -347,7 +350,7 @@ namespace sys {
 	   return *this;
    }
 
-   template<class E> ArrayList<E>::~ArrayList() {
+   template<class E, bool RawCopyAndRealloc> ArrayList<E, RawCopyAndRealloc>::~ArrayList() {
 	   if (elementData != nullptr) {
 		   destroyElements();
 
@@ -355,7 +358,7 @@ namespace sys {
 	   }
    }
 
-   template<class E> void ArrayList<E>::init(int initsize, int incr) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::init(int initsize, int incr) {
 	   if (!initsize) {
 		   elementCapacity = 0;
 		   elementData = nullptr;
@@ -368,40 +371,40 @@ namespace sys {
 	   capacityIncrement = incr;
    }
 
-   template<class E> bool ArrayList<E>::add(const E& element) {
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::add(const E& element) {
 	   ensureCapacity(elementCount + 1);
 
 	   createElementAt(element, elementCount++);
 	   return true;
    }
 
-   template<class E> bool ArrayList<E>::add(E&& element) {
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::add(E&& element) {
 	   ensureCapacity(elementCount + 1);
 
 	   createElementAt(std::move(element), elementCount++);
 	   return true;
    }
 
-   template<class E>
-   template<class ...A> bool ArrayList<E>::emplace(A&& ...element) {
+   template<class E, bool RawCopyAndRealloc>
+   template<class ...A> bool ArrayList<E, RawCopyAndRealloc>::emplace(A&& ...element) {
 	   ensureCapacity(elementCount + 1);
 
 	   emplaceElement(elementCount++, std::forward<A>(element)...);
 	   return true;
    }
 
-   template<class E> bool ArrayList<E>::add(int index, E&& element) {
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::add(int index, E&& element) {
 	   insertElementAt(std::move(element), index);
 	   return true;
    }
 
-   template<class E> bool ArrayList<E>::add(int index, const E& element) {
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::add(int index, const E& element) {
 	   insertElementAt(element, index);
 	   return true;
    }
 
-   template<class E> void ArrayList<E>::addAll(const ArrayList<E>& array) {
-	   if (TypeInfo<E>::needConstructor) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::addAll(const ArrayList<E, RawCopyAndRealloc>& array) {
+	   if (!std::is_trivially_copyable<E>::value) {
 		   for (int i = 0; i < array.size(); ++i) {
 			   const E& element = array.getUnsafe(i);
 
@@ -416,8 +419,8 @@ namespace sys {
 	   }
    }
 
-   template<class E> void ArrayList<E>::moveAll(ArrayList<E>& array) {
-	   if (TypeInfo<E>::needConstructor) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::moveAll(ArrayList<E, RawCopyAndRealloc>& array) {
+	   if (!std::is_trivially_copyable<E>::value) {
 		   for (int i = 0; i < array.size(); ++i) {
 			   E& element = array.getUnsafe(i);
 
@@ -431,7 +434,7 @@ namespace sys {
 	   }
    }
 
-   template<class E> void ArrayList<E>::forEach(const Function<void(E&)>& func, int first, int last) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::forEach(const Function<void(E&)>& func, int first, int last) {
 	   if (last < 0)
 		   last = elementCount;
 
@@ -447,7 +450,7 @@ namespace sys {
 	   }
    }
 
-   template<class E> void ArrayList<E>::forEach(const Function<void(E const&)>& func, int first, int last) const {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::forEach(const Function<void(E const&)>& func, int first, int last) const {
 	   if (last < 0)
 		   last = elementCount;
 
@@ -463,7 +466,7 @@ namespace sys {
 	   }
    }
 
-   template<class E> bool ArrayList<E>::contains(const E& element) const {
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::contains(const E& element) const {
 	   for (int i = 0; i < size(); ++i) {
 		   if (element == getUnsafe(i)) {
 			   return true;
@@ -473,7 +476,7 @@ namespace sys {
 	   return false;
    }
 
-   template<class E> int ArrayList<E>::find(const E& element) const {
+   template<class E, bool RawCopyAndRealloc> int ArrayList<E, RawCopyAndRealloc>::find(const E& element) const {
 	   for (int i = 0; i < size(); ++i) {
 		   if (element == getUnsafe(i)) {
 			   return i;
@@ -483,7 +486,7 @@ namespace sys {
 	   return npos;
    }
 
-   template<class E> void ArrayList<E>::insertElementAt(const E& element, uint32 index) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::insertElementAt(const E& element, uint32 index) {
 	   if (index > (uint32)elementCount)
 		   throw ArrayIndexOutOfBoundsException(index);
 
@@ -492,14 +495,25 @@ namespace sys {
 	   int numMoved = elementCount - index;
 	   if (numMoved > 0) {
 		   E* indexOffset = elementData + index;
-		   memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
+
+		   if (!RawCopyAndRealloc && !std::is_trivially_copyable<E>::value) {
+				auto first = indexOffset;
+				auto last = indexOffset + numMoved;
+				auto dLast = indexOffset + numMoved + 1;
+
+				while (first != last) {
+					new (&(*--dLast)) E(std::move(*--last));
+				}
+		   } else {
+				memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
+		   }
 	   }
 
 	   createElementAt(element, index);
 	   elementCount++;
    }
 
-   template<class E> void ArrayList<E>::insertElementAt(E&& element, uint32 index) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::insertElementAt(E&& element, uint32 index) {
 	   if (index > (uint32)elementCount)
 		   throw ArrayIndexOutOfBoundsException(index);
 
@@ -508,33 +522,44 @@ namespace sys {
 	   int numMoved = elementCount - index;
 	   if (numMoved > 0) {
 		   E* indexOffset = elementData + index;
-		   memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
+
+		   if (!RawCopyAndRealloc && !std::is_trivially_copyable<E>::value) {
+				auto first = indexOffset;
+				auto last = indexOffset + numMoved;
+				auto dLast = indexOffset + numMoved + 1;
+
+				while (first != last) {
+					new (&(*--dLast)) E(std::move(*--last));
+				}
+		   } else {
+				memmove((void*)(indexOffset + 1), (void*)indexOffset, numMoved * sizeof(E));
+		   }
 	   }
 
 	   createElementAt(std::move(element), index);
 	   elementCount++;
    }
 
-   template<class E> E& ArrayList<E>::get(int index) const {
+   template<class E, bool RawCopyAndRealloc> E& ArrayList<E, RawCopyAndRealloc>::get(int index) const {
 	   return elementAt(index);
    }
 
-   template<class E> E& ArrayList<E>::elementAt(uint32 index) const {
+   template<class E, bool RawCopyAndRealloc> E& ArrayList<E, RawCopyAndRealloc>::elementAt(uint32 index) const {
 	   if (index >= (uint32) elementCount)
 		   throw ArrayIndexOutOfBoundsException(index);
 
 	   return elementData[index];
    }
 
-   template<class E> E& ArrayList<E>::getUnsafe(int index) const NO_THREAD_SAFETY_ANALYSIS {
+   template<class E, bool RawCopyAndRealloc> E& ArrayList<E, RawCopyAndRealloc>::getUnsafe(int index) const NO_THREAD_SAFETY_ANALYSIS {
 	   return elementAtUnsafe(index);
    }
 
-   template<class E> E& ArrayList<E>::elementAtUnsafe(uint32 index) const NO_THREAD_SAFETY_ANALYSIS {
+   template<class E, bool RawCopyAndRealloc> E& ArrayList<E, RawCopyAndRealloc>::elementAtUnsafe(uint32 index) const NO_THREAD_SAFETY_ANALYSIS {
 	   return elementData[index];
    }
 
-   template<class E> E ArrayList<E>::remove(int index) {
+   template<class E, bool RawCopyAndRealloc> E ArrayList<E, RawCopyAndRealloc>::remove(int index) {
 	   E oldValue(std::move(get(index)));
 
 	   removeElementAt(index);
@@ -542,7 +567,7 @@ namespace sys {
 	   return std::move(oldValue);
    }
 
-   template<class E> bool ArrayList<E>::removeElement(const E& element) {
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::removeElement(const E& element) {
 	   for (int i = 0; i < elementCount; ++i) {
 		   if (elementData[i] == element) {
 			   removeElementAt(i);
@@ -553,7 +578,7 @@ namespace sys {
 	   return false;
    }
 
-   template<class E> void ArrayList<E>::removeElementAt(uint32 index) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::removeElementAt(uint32 index) {
 	   if (index >= (uint32)elementCount)
 		   throw ArrayIndexOutOfBoundsException(index);
 
@@ -562,13 +587,24 @@ namespace sys {
 	   int numMoved = elementCount - index - 1;
 	   if (numMoved > 0) {
 		   E* indexOffset = elementData + index;
-		   memmove((void*)indexOffset, (void*)(indexOffset + 1), numMoved * sizeof(E));
+
+		   if (!RawCopyAndRealloc && !std::is_trivially_copyable<E>::value) {
+			   auto first = indexOffset + 1;
+			   auto last = indexOffset + 1 + numMoved;
+			   auto destFirst = indexOffset;
+
+			   while (first != last) {
+					new (&(*destFirst++)) E(std::move(*first++));
+			   }
+		   } else {
+			   memmove((void*)indexOffset, (void*)(indexOffset + 1), numMoved * sizeof(E));
+		   }
 	   }
 
 	   --elementCount;
    }
 
-   template<class E> void ArrayList<E>::removeAll(int newSize, int newIncrement) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::removeAll(int newSize, int newIncrement) {
 	   if (elementData) {
 		   destroyElements();
 
@@ -578,7 +614,7 @@ namespace sys {
 	   init(newSize, newIncrement);
    }
 
-   template<class E> E ArrayList<E>::set(int index, const E& element) {
+   template<class E, bool RawCopyAndRealloc> E ArrayList<E, RawCopyAndRealloc>::set(int index, const E& element) {
 	   E oldValue = get(index);
 
 	   setElementAt(index, element);
@@ -587,7 +623,7 @@ namespace sys {
    }
 
 
-   template<class E> E ArrayList<E>::set(int index, E&& element) {
+   template<class E, bool RawCopyAndRealloc> E ArrayList<E, RawCopyAndRealloc>::set(int index, E&& element) {
 	   E oldValue = get(index);
 
 	   setElementAt(index, std::move(element));
@@ -595,7 +631,7 @@ namespace sys {
 	   return oldValue;
    }
 
-   template<class E> void ArrayList<E>::setElementAt(uint32 index, E&& element) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::setElementAt(uint32 index, E&& element) {
 	   if (index >= (uint32)elementCount)
 		   throw ArrayIndexOutOfBoundsException(index);
 
@@ -603,7 +639,7 @@ namespace sys {
 	   createElementAt(std::move(element), index);
    }
 
-   template<class E> void ArrayList<E>::setElementAt(uint32 index, const E& element) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::setElementAt(uint32 index, const E& element) {
 	   if (index >= (uint32)elementCount)
 		   throw ArrayIndexOutOfBoundsException(index);
 
@@ -611,23 +647,23 @@ namespace sys {
 	   createElementAt(element, index);
    }
 
-   template<class E> void ArrayList<E>::clone(ArrayList<E>& array) const {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::clone(ArrayList<E, RawCopyAndRealloc>& array) const {
 	   array.removeAll(elementCount, capacityIncrement);
 
 	   array.elementCount = elementCount;
 
 	   if (!elementCount) {
-	   	return;
+			return;
 	   }
 
-	   if (TypeInfo<E>::needConstructor) {
+	   if (!std::is_trivially_copyable<E>::value) {
 		   for (int i = 0; i < elementCount; ++i)
 			   array.createElementAt(elementData[i], i);
 	   } else
 		   memcpy((void*)array.elementData, (void*)elementData, elementCount * sizeof(E));
    }
 
-   template<class E> void ArrayList<E>::ensureCapacity(int minCapacity, bool copyContent) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::ensureCapacity(int minCapacity, bool copyContent) {
 	   int oldCapacity = elementCapacity;
 
 	   if (minCapacity > oldCapacity) {
@@ -644,7 +680,23 @@ namespace sys {
 			   newCapacity = minCapacity;
 
 		   if (copyContent && elementData) {
-			   elementData = (E*) realloc(elementData, (elementCapacity = newCapacity) * sizeof(E));
+			   if (!RawCopyAndRealloc && !std::is_trivially_copyable<E>::value) {
+				   elementData = (E*) malloc((elementCapacity = newCapacity) * sizeof(E));
+
+				   if (oldData) {
+					   for (auto i = 0; i < elementCount; ++i) {
+						   new (&(elementData[i])) E(std::move(oldData[i]));
+					   }
+
+					   free(oldData);
+				   }
+			   } else {
+				   auto val = (E*) realloc(elementData, (elementCapacity = newCapacity) * sizeof(E));
+
+				   E3_ASSERT(val);
+
+				   elementData = val;
+			   }
 		   } else {
 			   elementData = (E*) malloc((elementCapacity = newCapacity) * sizeof(E));
 
@@ -654,7 +706,7 @@ namespace sys {
 	   }
    }
 
-   template<class E> void ArrayList<E>::removeRange(int fromIndex, int toIndex) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::removeRange(int fromIndex, int toIndex) {
 	   if (fromIndex < 0)
 		   throw ArrayIndexOutOfBoundsException(fromIndex);
 	   else if (toIndex > elementCount)
@@ -668,60 +720,70 @@ namespace sys {
 	   if (numMoved > 0) {
 		   E* indexOffset = elementData + fromIndex;
 
-		   memmove((void*)indexOffset, (void*)(indexOffset + toIndex - fromIndex), numMoved * sizeof(E));
+		   if (!RawCopyAndRealloc && !std::is_trivially_copyable<E>::value) {
+			   auto first = indexOffset + toIndex - fromIndex;
+			   auto last = indexOffset + toIndex - fromIndex + numMoved;
+			   auto destFirst = indexOffset;
+
+			   while (first != last) {
+					new (&(*destFirst++)) E(std::move(*first++));
+			   }
+		   } else {
+			   memmove((void*)indexOffset, (void*)(indexOffset + toIndex - fromIndex), numMoved * sizeof(E));
+		   }
 	   }
 
 	   elementCount -= toIndex - fromIndex;
    }
 
-   template<class E> void ArrayList<E>::setSize(int newSize, bool copyContent) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::setSize(int newSize, bool copyContent) {
 	   if (newSize > elementCount)
 		   ensureCapacity(newSize, copyContent);
 
 	   elementCount = newSize;
    }
 
-   template<class E> void ArrayList<E>::createElementAt(const E& o, int index) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::createElementAt(const E& o, int index) {
 	   if (TypeInfo<E>::needConstructor)
 		   new (&(elementData[index])) E(o);
 	   else
 		   elementData[index] = o;
    }
 
-   template<class E> void ArrayList<E>::createElementAt(E&& o, int index) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::createElementAt(E&& o, int index) {
 	   if (TypeInfo<E>::needConstructor)
 		   new (&(elementData[index])) E(std::move(o));
 	   else
 		   elementData[index] = std::move(o);
    }
 
-   template<class E>
-   template<class ...A> void ArrayList<E>::emplaceElement(int index, A&& ...o) {
+   template<class E, bool RawCopyAndRealloc>
+   template<class ...A> void ArrayList<E, RawCopyAndRealloc>::emplaceElement(int index, A&& ...o) {
 	   new (&(elementData[index])) E(std::forward<A>(o)...);
    }
 
-   template<class E> void ArrayList<E>::destroyElementAt(int index) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::destroyElementAt(int index) {
 	   if (TypeInfo<E>::needConstructor)
 		   (&(elementData[index]))->~E();
    }
 
-   template<class E> void ArrayList<E>::destroyElementRange(int fromIndex, int toIndex) {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::destroyElementRange(int fromIndex, int toIndex) {
 	   if (TypeInfo<E>::needConstructor) {
 		   for (int i = fromIndex; i < toIndex; ++i)
 			   destroyElementAt(i);
 	   }
    }
 
-   template<class E> void ArrayList<E>::destroyElements() {
+   template<class E, bool RawCopyAndRealloc> void ArrayList<E, RawCopyAndRealloc>::destroyElements() {
 	   destroyElementRange(0, elementCount);
    }
 
-   template<class E> bool ArrayList<E>::toBinaryStream(ObjectOutputStream* stream) {
-	   int size = ArrayList<E>::size();
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::toBinaryStream(ObjectOutputStream* stream) {
+	   int size = ArrayList<E, RawCopyAndRealloc>::size();
 
 	   Integer::toBinaryStream(size, stream);
 
-	   for (int i = 0; i < ArrayList<E>::size(); ++i) {
+	   for (int i = 0; i < ArrayList<E, RawCopyAndRealloc>::size(); ++i) {
 		   E* obj = &getUnsafe(i);
 
 		   TypeInfo<E>::toBinaryStream(obj, stream);
@@ -730,8 +792,8 @@ namespace sys {
 	   return true;
    }
 
-   template<class E> bool ArrayList<E>::parseFromBinaryStream(ObjectInputStream* stream) {
-	   ArrayList<E>::removeAll();
+   template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::parseFromBinaryStream(ObjectInputStream* stream) {
+	   ArrayList<E, RawCopyAndRealloc>::removeAll();
 
 	   int size;
 
@@ -741,7 +803,7 @@ namespace sys {
 		   E object;
 
 		   if (TypeInfo<E>::parseFromBinaryStream(&object, stream)) {
-		 	ArrayList<E>::emplace(std::move(object));
+		 		ArrayList<E, RawCopyAndRealloc>::emplace(std::move(object));
 		   }
 	   }
 

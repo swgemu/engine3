@@ -12,9 +12,25 @@
 #ifndef REGEXPTEST_H_
 #define REGEXPTEST_H_
 
+#include <regex>
+
 #include "engine/engine.h"
 
 int regexptest() {
+	UnicodeString text = "\\>";
+
+	int index;
+
+	int count = 10;
+	while ((index = text.indexOf("\\>")) >= 0 && --count > 0) {
+		printf("%d\n", index);
+		text = text.replaceFirst("\\>", "");
+	}
+
+	return 0;
+
+
+
 	String testString = "testing\n stuff #1dr #asdf";
 	String simpleString = "#";
 	String regexString = "\n|\r|#";
@@ -34,6 +50,19 @@ int regexptest() {
 	printf("regexp return replaceAll:%s\n", replacedAll.toCharArray());
 
 
+
+	std::string l = testString;
+		
+	std::regex word_regex(regexString.toCharArray(), std::regex_constants::extended);
+
+	std::smatch match;
+	if (std::regex_search(l, match, word_regex)) {
+		printf("found std::regex!\n");
+
+		printf("prefix length %d\n", match.prefix().length());
+		printf("suffix length %d\n", match[0].second - match[0].first);
+
+	}
 
 	return 0;
 }

@@ -3,6 +3,13 @@
 ** See file COPYING for copying conditions.
 */
 
+#include "system/platform.h"
+
+#ifdef PLATFORM_WIN
+#define _USE_MATH_DEFINES
+#include <cmath>
+#endif
+
 #include "Math.h"
 
 const double Math::PI = M_PI;

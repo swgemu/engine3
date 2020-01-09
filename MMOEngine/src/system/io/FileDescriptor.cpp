@@ -3,7 +3,11 @@
 ** See file COPYING for copying conditions.
 */
 
+#include "system/platform.h"
+
+#ifndef PLATFORM_WIN
 #include <sys/ioctl.h>
+#endif
 
 #include "system/lang/StringBuffer.h"
 

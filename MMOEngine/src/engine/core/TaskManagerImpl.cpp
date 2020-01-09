@@ -3,15 +3,18 @@
 ** See file COPYING for copying conditions.
 */
 
+#include "system/platform.h"
+
+#ifndef PLATFORM_WIN
 #include <unistd.h>
+#endif
+
+#include "TaskWorkerThread.h"
+#include "TaskScheduler.h"
 
 #include "engine/db/ObjectDatabaseManager.h"
 
-#include "TaskWorkerThread.h"
-
 #include "TaskManagerImpl.h"
-
-#include "TaskScheduler.h"
 
 #include "Core.h"
 
@@ -60,9 +63,10 @@ void TaskManagerImpl::initialize() {
 TaskQueue* TaskManagerImpl::initializeCustomQueue(const String& queueName, int numberOfThreads, bool blockDuringSaveEvent, bool start) NO_THREAD_SAFETY_ANALYSIS {
 	Locker locker(this);
 
-	debug() << "initializing custom queue " << queueName << " with number of threads: " << numberOfThreads << " and block during save: " << blockDuringSaveEvent;
-
 	int maxCpus = Math::max(1, (int) System::getOnlineProcessors());
+
+	debug() << "initializing custom queue " << queueName << " with number of threads: " << numberOfThreads << " and block during save: " << blockDuringSaveEvent
+		<< " and max cpus: " << maxCpus;
 
 	TaskQueue* queue = new TaskQueue(queueName.toCharArray());
 	queue->setLogLevel(getLogLevel());

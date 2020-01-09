@@ -100,6 +100,10 @@ namespace sys {
 			return compareTo(str) != 0;
 		}
 
+		friend UnicodeString operator+(const UnicodeString& str1, const UnicodeString& str2) {
+			return str1.concat(str2);
+		}
+
 	private:
 		void create(const char* ascii, int len);
 		void asciitowide(UnicodeCharType* unicode, const char* ascii, int len);
@@ -138,6 +142,4 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::lang;
-
-UnicodeString operator+(const UnicodeString& str1, const UnicodeString& str2);
 

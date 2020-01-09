@@ -42,6 +42,11 @@ namespace sys {
 			return val * val;
 		}
 
+#ifdef PLATFORM_WIN
+#undef min
+#undef max
+#endif
+
 		template<typename T>
 		static inline T min(const T& val1, const T& val2) {
 			return val1 < val2 ? val1 : val2;

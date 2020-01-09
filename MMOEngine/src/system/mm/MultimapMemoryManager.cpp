@@ -13,6 +13,8 @@ AtomicReference<MultimapMemoryManager*> MultimapMemoryManager::inst;
 
 AtomicInteger MultimapMemoryManager::heapCount;
 
+#ifndef PLATFORM_WIN
+
 extern int __data_start, _end;
 
 MultimapMemoryManager::~MultimapMemoryManager() {
@@ -151,3 +153,5 @@ void MultimapMemoryManager::destroyHeap(int heapID)
 	ioctl(deviceFD, MULTIMMAP_DESTROY, heapID);
 #endif
 }
+
+#endif

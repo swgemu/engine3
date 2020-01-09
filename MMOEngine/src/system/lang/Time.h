@@ -15,6 +15,7 @@
 #include <windows.h>
 #include <windef.h>
 #include <pthread.h>
+#include <ctime>
 #endif
 
 #include "String.h"
@@ -166,6 +167,7 @@ namespace sys {
 		}
 
 		String getFormattedTime() const {
+#ifndef PLATFORM_WIN
 			char str[100];
 
 			char* ret = ctime_r(&ts.tv_sec, str);
@@ -174,6 +176,14 @@ namespace sys {
 				return String(ret, strlen(str) - 1);
 			else
 				return String("");
+#else
+			char* ret = ctime(&ts.tv_sec);
+
+			if (ret != nullptr)
+				return String(ret, strlen(ret) - 1);
+			else
+				return String("");
+#endif
 		}
 
 		String getFormattedTimeFull() const {
@@ -182,9 +192,17 @@ namespace sys {
 			String value;
 			char buf[128];
 			int len = sizeof(buf);
-
+			
+#ifndef PLATFORM_WIN
 			if (localtime_r(&(ts.tv_sec), &t) == nullptr)
 				return value;
+#else
+			auto retval = localtime(&(ts.tv_sec));
+			if (retval == nullptr)
+				return value;
+
+			t = *retval;
+#endif
 
 			ret = strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &t);
 			if (ret <= 0)
@@ -233,8 +251,12 @@ namespace sys {
 
 				return time;
 			#else
-				E3_ABORT("Method not supported in windows");
-				return 0;
+				auto now = std::chrono::system_clock::now();
+
+				auto nanos = std::chrono::time_point_cast<std::chrono::nanoseconds>(now);
+				auto epoch = nanos.time_since_epoch();
+				auto val = std::chrono::duration_cast<std::chrono::nanoseconds>(epoch);
+				return val.count();
 			#endif
 		}
 

@@ -74,7 +74,7 @@ void DatagramServiceClient::recieveMessages() {
 			if (!isAvailable())
 				return;
 
-			Reference<Task*> receiverTask = new ClientMessageReceiverTask(this, &packet);
+			Reference<ClientMessageReceiverTask*> receiverTask = new ClientMessageReceiverTask(this, &packet);
 			receiverTask->executeInThread();
 		} catch (SocketException& e) {
 			System::out << e.getMessage() << "\n";

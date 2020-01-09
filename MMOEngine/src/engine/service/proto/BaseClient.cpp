@@ -1360,7 +1360,7 @@ bool BaseClient::connect() {
 
 		debug("sending session request");
 
-		Reference<Task*> task = new ConnectTask(this);
+		Reference<ConnectTask*> task = new ConnectTask(this);
 		task->execute();
 
 		if (crcSeed == 0) {

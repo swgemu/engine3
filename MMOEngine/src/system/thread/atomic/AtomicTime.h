@@ -258,6 +258,7 @@ namespace sys {
 		}
 
 		String getFormattedTime() const {
+#ifndef PLATFORM_WIN
 			char str[100];
 			auto ts = this->ts.load(std::memory_order_relaxed);
 			char* ret = ctime_r(&ts.tv_sec, str);
@@ -266,6 +267,15 @@ namespace sys {
 				return String(ret, strlen(str) - 1);
 			else
 				return String("");
+#else
+			auto ts = this->ts.load(std::memory_order_relaxed);
+			char* str = ctime(&ts.tv_sec);
+
+			if (str != nullptr)
+				return String(str, strlen(str) - 1);
+			else
+				return String("");
+#endif
 		}
 
 		String getFormattedTimeFull() const {
@@ -276,8 +286,16 @@ namespace sys {
 			int len = sizeof(buf);
 			auto ts = this->ts.load(std::memory_order_relaxed);
 
+#ifndef PLATFORM_WIN
 			if (localtime_r(&(ts.tv_sec), &t) == nullptr)
 				return value;
+#else
+			auto retval = localtime(&(ts.tv_sec));
+			if (retval == nullptr)
+				return value;
+
+			t = *retval;
+#endif
 
 			ret = strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &t);
 			if (ret <= 0)

@@ -3,6 +3,11 @@
 ** See file COPYING for copying conditions.
 */
 
+
+#include "engine/core/TaskScheduler.h"
+#include "engine/core/TaskWorkerThread.h"
+#include "engine/core/TaskManagerImpl.h"
+
 #include "engine/core/Core.h"
 
 #include "TransactionalMemoryManager.h"

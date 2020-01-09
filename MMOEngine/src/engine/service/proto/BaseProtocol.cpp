@@ -238,7 +238,11 @@ bool BaseProtocol::compress(Packet* pack) const {
 	uint16 opcode = *(uint16*)pData;
 	uint16 crc = *(uint16*)(pData+nLength-2);
 
+#ifndef PLATFORM_WIN
 	char output[nLength+20]; //size + 20 for zlib header/footers in worst case scenerio
+#else
+	char* output = (char*) _malloca(nLength + 20); //size + 20 for zlib header/footers in worst case scenerio
+#endif
 
 	uint16 offset;
 	if ((uint8)opcode == 0x00)

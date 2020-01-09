@@ -5,6 +5,7 @@
 
 #include "ManagedReference.h"
 #include "TaskManager.h"
+#include "TaskManagerImpl.h"
 
 #include "engine/lua/Lua.h"
 

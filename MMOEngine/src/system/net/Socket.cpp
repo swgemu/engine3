@@ -152,7 +152,9 @@ int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 }
 
 int Socket::send(Packet* pack) {
-#ifndef PLATFORM_MAC
+#ifdef PLATFORM_WIN
+	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), 0);
+#elif(PLATFORM_MAC)
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL);
 #else
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE);
@@ -172,7 +174,9 @@ int Socket::sendTo(Packet* pack, const SocketAddress* addr) {
 	int len = -1;
 
 	do {
-#ifndef PLATFORM_MAC
+#ifdef PLATFORM_WIN
+		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), 0, addr->getAddress(), addr->getAddressSize());
+#elif(PLATFORM_MAC)
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize());
 #else
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE, addr->getAddress(), addr->getAddressSize());
@@ -194,11 +198,7 @@ void Socket::close() {
 }
 
 int Socket::shutdown(int how) {
-#ifndef PLATFORM_WIN
 	return ::shutdown(fileDescriptor, how);
-#else
-	return shutdown(fileDescriptor, how);
-#endif
 }
 
 void Socket::setLingering(int time) {

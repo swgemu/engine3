@@ -17,7 +17,10 @@
 #include "engine/core/Core.h"
 #include <thread>
 
+#ifndef PLATFORM_WIN
 #include <sys/ipc.h>
+#endif
+
 #include <sys/types.h>
 
 using namespace engine::db::berkeley;
@@ -34,7 +37,11 @@ namespace BDBNS {
 		}
 
 		if (tid) {
+#ifndef PLATFORM_WIN
 			*tid = pthread_self();
+#else
+			* tid = 0;
+#endif
 		}
 	}
 }
@@ -80,6 +87,7 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 
 	const static int shmKey = Core::getIntProperty("BerkeleyDB.envSHMKey", 0);
 
+#ifndef PLATFORM_WIN
 	if (shmKey) {
 		const static String fileName = Core::getProperty("BerkeleyDB.envSHMKeyFile", "databases/err2.file");
 		key_t shm_key = ftok(fileName.toCharArray(), shmKey);
@@ -90,6 +98,9 @@ Environment::Environment(const String& directory, const EnvironmentConfig& envir
 	} else {
 		ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags(), 0);
 	}
+#else
+	ret = databaseEnvironment->open(databaseEnvironment, directory.toCharArray(), environmentConfig.getEnvironmentFlags(), 0);
+#endif
 
 	if (ret != 0)
 		throw DatabaseException("unable to open environment handle with ret code " + String(db_strerror(ret)));
@@ -232,11 +243,12 @@ int Environment::failCheck() {
 }
 
 int Environment::isAlive(DB_ENV* dbenv, pid_t pid, db_threadid_t tid, u_int32_t flags) {
-/*	if (pid != Thread::getProcessID())
+#ifdef PLATFORM_WIN
+	if (pid != Thread::getProcessID())
 		return 0;
 
-	return 1; // still running*/
-
+	return 1; // still running
+#else
 	int alive = 0;
 
 	if (pid == getpid()) {
@@ -248,4 +260,5 @@ int Environment::isAlive(DB_ENV* dbenv, pid_t pid, db_threadid_t tid, u_int32_t 
 	}
 
 	return alive;
+#endif
 }

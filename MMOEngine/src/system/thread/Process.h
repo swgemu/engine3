@@ -8,6 +8,8 @@
 
 #include "system/platform.h"
 
+#ifndef PLATFORM_WIN
+
 #include "system/lang/Runnable.h"
 
 #include "system/io/Pipe.h"
@@ -45,5 +47,7 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::thread;
+
+#endif
 
 #endif /* PROCESS_H_ */

@@ -19,43 +19,43 @@ namespace sys {
    template<class E> class SynchronizedVector;
    template<class E> class SynchronizedSortedVector;
 
-   template<class E> class Vector : public ArrayList<E>, public Object {
+   template<class E, bool RawCopyAndRealloc = ARRAYLIST_DEFAULT_RAW_REALLOC> class Vector : public ArrayList<E, RawCopyAndRealloc>, public Object {
    public:
        Vector();
        Vector(int incr);
        Vector(int initsize, int incr);
-       Vector(const Vector<E>& vector);
+       Vector(const Vector<E, RawCopyAndRealloc>& vector);
 
 #ifdef CXX11_COMPILER
        Vector(std::initializer_list<E> l);
-       Vector(Vector<E>&& vector);
+       Vector(Vector<E, RawCopyAndRealloc>&& vector);
 #endif
 
-       Vector<E>& operator=(const Vector<E>& vector);
+       Vector<E, RawCopyAndRealloc>& operator=(const Vector<E, RawCopyAndRealloc>& vector);
 
 #ifdef CXX11_COMPILER
-       Vector<E>& operator=(Vector<E>&& vector);
+       Vector<E, RawCopyAndRealloc>& operator=(Vector<E, RawCopyAndRealloc>&& vector);
 #endif
 
-       void addAll(const Vector<E>& array) {
-	       ArrayList<E>::addAll(array);
+       void addAll(const Vector<E, RawCopyAndRealloc>& array) {
+	       ArrayList<E, RawCopyAndRealloc>::addAll(array);
        }
 
 #ifdef CXX11_COMPILER
-       void addAll(Vector<E>&& array) {
-	       ArrayList<E>::moveAll(array);
+       void addAll(Vector<E, RawCopyAndRealloc>&& array) {
+	       ArrayList<E, RawCopyAndRealloc>::moveAll(array);
        }
 #endif
 
        ~Vector();
 
-       void clone(Vector<E>& vector) const ;
+       void clone(Vector<E, RawCopyAndRealloc>& vector) const ;
 
        bool toBinaryStream(ObjectOutputStream* stream);
 
        bool parseFromBinaryStream(ObjectInputStream* stream);
 
-       bool operator==(const Vector<E>& v) const;
+       bool operator==(const Vector<E, RawCopyAndRealloc>& v) const;
 
        Object* clone();
 
@@ -66,73 +66,73 @@ namespace sys {
 
    };
 
-   template<class E> Vector<E>::Vector() : ArrayList<E>() {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>::Vector() : ArrayList<E, RawCopyAndRealloc>() {
    }
 
-   template<class E> Vector<E>::Vector(int incr) : ArrayList<E>(10, incr) {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>::Vector(int incr) : ArrayList<E, RawCopyAndRealloc>(10, incr) {
    }
 
-   template<class E> Vector<E>::Vector(int initsize, int incr) : ArrayList<E>(initsize, incr) {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>::Vector(int initsize, int incr) : ArrayList<E, RawCopyAndRealloc>(initsize, incr) {
    }
 
-   template<class E> Vector<E>::Vector(const Vector<E>& vector) : ArrayList<E>(vector), Object() {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>::Vector(const Vector<E, RawCopyAndRealloc>& vector) : ArrayList<E, RawCopyAndRealloc>(vector), Object() {
    }
 
 #ifdef CXX11_COMPILER
-   template<class E> Vector<E>::Vector(std::initializer_list<E> l) : ArrayList<E>(l), Object() {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>::Vector(std::initializer_list<E> l) : ArrayList<E, RawCopyAndRealloc>(l), Object() {
    }
 
-   template<class E> Vector<E>::Vector(Vector<E>&& vector) : ArrayList<E>(std::move(vector)), Object() {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>::Vector(Vector<E, RawCopyAndRealloc>&& vector) : ArrayList<E, RawCopyAndRealloc>(std::move(vector)), Object() {
    }
 #endif
 
-   template<class E> Vector<E>& Vector<E>::operator=(const Vector<E>& vector) {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>& Vector<E, RawCopyAndRealloc>::operator=(const Vector<E, RawCopyAndRealloc>& vector) {
 	   if (this == &vector)
 		   return *this;
 
-	   ArrayList<E>::operator=(vector);
+	   ArrayList<E, RawCopyAndRealloc>::operator=(vector);
 
 	   return *this;
    }
 
 #ifdef CXX11_COMPILER
-   template<class E> Vector<E>& Vector<E>::operator=(Vector<E>&& vector) {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>& Vector<E, RawCopyAndRealloc>::operator=(Vector<E, RawCopyAndRealloc>&& vector) {
 	   if (this == &vector)
 		   return *this;
 
-	   ArrayList<E>::operator=(std::move(vector));
+	   ArrayList<E, RawCopyAndRealloc>::operator=(std::move(vector));
 
 	   return *this;
    }
 #endif
 
-   template<class E> Vector<E>::~Vector() {
+   template<class E, bool RawCopyAndRealloc> Vector<E, RawCopyAndRealloc>::~Vector() {
    }
 
-   template<class E> void Vector<E>::clone(Vector<E>& array) const {
-	   ArrayList<E>::clone(array);
+   template<class E, bool RawCopyAndRealloc> void Vector<E, RawCopyAndRealloc>::clone(Vector<E, RawCopyAndRealloc>& array) const {
+	   ArrayList<E, RawCopyAndRealloc>::clone(array);
    }
 
-   template<class E> bool Vector<E>::toBinaryStream(ObjectOutputStream* stream) {
-	   return ArrayList<E>::toBinaryStream(stream);
+   template<class E, bool RawCopyAndRealloc> bool Vector<E, RawCopyAndRealloc>::toBinaryStream(ObjectOutputStream* stream) {
+	   return ArrayList<E, RawCopyAndRealloc>::toBinaryStream(stream);
    }
 
-   template<class E> bool Vector<E>::parseFromBinaryStream(ObjectInputStream* stream) {
-	   return ArrayList<E>::parseFromBinaryStream(stream);
+   template<class E, bool RawCopyAndRealloc> bool Vector<E, RawCopyAndRealloc>::parseFromBinaryStream(ObjectInputStream* stream) {
+	   return ArrayList<E, RawCopyAndRealloc>::parseFromBinaryStream(stream);
    }
 
-   template<class E> Object* Vector<E>::clone() {
-	   return new Vector<E>(*this);
+   template<class E, bool RawCopyAndRealloc> Object* Vector<E, RawCopyAndRealloc>::clone() {
+	   return new Vector<E, RawCopyAndRealloc>(*this);
    }
 
-   template<class E>  bool Vector<E>::operator==(const Vector<E>& v) const {
+   template<class E, bool RawCopyAndRealloc>  bool Vector<E, RawCopyAndRealloc>::operator==(const Vector<E, RawCopyAndRealloc>& v) const {
 	   if (this == &v)
 		   return true;
 
 	   return false;
    }
 
-   template<class E> int Vector<E>::getObjectData(const String& str, String& obj) {
+   template<class E, bool RawCopyAndRealloc> int Vector<E, RawCopyAndRealloc>::getObjectData(const String& str, String& obj) {
 	   int opening = str.indexOf("{");
 
 	   if (opening == -1)

@@ -11,6 +11,8 @@
 #include "system/io/TextStream.h"
 #include "system/thread/ThreadLocal.h"
 
+#include <thread>
+
 namespace sys {
   namespace lang {
 
@@ -46,7 +48,11 @@ namespace sys {
 		}
 
 		static auto getOnlineProcessors() {
-			return sysconf(_SC_NPROCESSORS_ONLN);
+			auto val = std::thread::hardware_concurrency();
+
+			E3_ASSERT(val);
+
+			return val;
 		}
 
 	#ifndef PLATFORM_WIN

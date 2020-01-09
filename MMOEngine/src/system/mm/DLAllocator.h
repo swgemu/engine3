@@ -8,6 +8,8 @@
 
 #include "system/platform.h"
 
+#ifndef PLATFORM_WIN
+
 #include "Allocator.h"
 
 namespace sys {
@@ -41,5 +43,7 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::mm;
+
+#endif
 
 #endif /* DLALLOCATOR_H_ */

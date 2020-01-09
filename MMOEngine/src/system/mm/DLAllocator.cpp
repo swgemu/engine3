@@ -5,6 +5,9 @@
 
 #include "DLAllocator.h"
 
+#ifndef PLATFORM_WIN
+
+
 #define USE_DL_PREFIX 1
 #define USE_LOCKS 1
 #define MSPACES 1
@@ -50,3 +53,4 @@ void DLAllocator::free(void* mem) {
 size_t DLAllocator::sizeOf(void* mem) {
 	return chunksize(mem2chunk(mem));
 }
+#endif

@@ -48,7 +48,7 @@ namespace engine {
 			void initializeStatsDConnection(const char* hostname, int port);
 
 			Result publish(const char* name, const char* value, const char* type, const char* sampleTime = nullptr);
-			Result publish(const Metrics& metrics);
+			Result publish(const engine::Metrics& metrics);
 
 			void setGlobalPrefix(const String& prefix) {
 				globalPrefix = prefix;

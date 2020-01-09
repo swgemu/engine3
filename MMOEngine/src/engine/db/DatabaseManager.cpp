@@ -650,19 +650,15 @@ void DatabaseManager::closeEnvironment() {
 	try {
 		int ret = databaseEnvironment->close();
 
-		if (ret != 0) {
-			error("Error closing environment: ");
-		} else {
-			delete databaseEnvironment;
+		fatal(!ret) << "Error closing environment: ";
 
-			databaseEnvironment = nullptr;
-		}
-
+		delete databaseEnvironment;
+		databaseEnvironment = nullptr;
 	} catch (const Exception &e) {
 		error("Error closing environment: ");
-		error(e.getMessage());
+		fatal(e.getMessage());
 	} catch (...) {
-		error("unreported exception caught while trying to close environment");
+		fatal("unreported exception caught while trying to close environment");
 	}
 }
 

@@ -111,6 +111,11 @@ public:
 	MTRand::uint32 randInt(); // integer in [0,2^32-1]
 	MTRand::uint32 randInt(const MTRand::uint32& n); // integer in [0,n] for n < 2^32
 
+#ifdef PLATFORM_WIN
+#undef min
+#undef max
+#endif
+
 	static constexpr result_type min() {
 		return 0;
 	}

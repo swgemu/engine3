@@ -19,7 +19,7 @@ void MetricsManager::initializeStatsDConnection(const char* hostname, int port) 
 	client = newClient;
 }
 
-MetricsManager::Result MetricsManager::publish(const Metrics& metrics) {
+MetricsManager::Result MetricsManager::publish(const engine::Metrics& metrics) {
 	return publish(metrics.name, metrics.value, metrics.type, metrics.sampleTime);
 }
 

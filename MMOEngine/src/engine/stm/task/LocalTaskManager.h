@@ -7,9 +7,13 @@
 #define LOCALTASKMANAGER_H_
 
 #include "engine/core/Task.h"
-
 #include "engine/core/TaskManager.h"
-#include "engine/core/TaskManagerImpl.h"
+
+namespace engine {
+    namespace core {
+        class TaskManagerImpl;
+    }
+}
 
 namespace engine {
   namespace stm {

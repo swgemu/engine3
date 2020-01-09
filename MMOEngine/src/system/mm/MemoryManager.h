@@ -12,9 +12,6 @@
 
 #include "system/mm/ObjectCloner.h"
 
-#include "system/mm/Heap.h"
-#include "system/mm/ProtectedHeap.h"
-
 namespace sys {
   namespace mm {
 
@@ -43,6 +40,7 @@ namespace sys {
 
   } // namespace mm
 } // namespace sys
+
 
 using namespace sys::mm;
 

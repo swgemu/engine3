@@ -357,7 +357,3 @@ UnicodeString UnicodeString::replaceFirst(const UnicodeString& regex, const Unic
 	} else
 		return *this;
 }
-
-UnicodeString operator+(const UnicodeString& str1, const UnicodeString& str2) {
-	return str1.concat(str2);
-}

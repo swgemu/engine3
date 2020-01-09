@@ -4,6 +4,12 @@
 */
 #include <sys/stat.h>
 
+#include "system/platform.h"
+
+#ifdef PLATFORM_WIN
+#include <direct.h>
+#endif
+
 #include <cerrno>
 
 #include "File.h"
@@ -96,9 +102,18 @@ bool File::doMkdir(const char* path, int mode) {
 
 	if (stat(path, &st) != 0) {
 		/* Directory does not exist */
-		if (::mkdir(path, (mode_t) (mode | 0711)) != 0)
+#ifndef PLATFORM_WIN
+		if (::mkdir(path, (mode_t)(mode | 0711)) != 0)
+#else
+		if (_mkdir(path) != 0)
+#endif
 			status = -1;
+#ifdef PLATFORM_WIN
+	} else {
+#else
 	} else if (!S_ISDIR(st.st_mode)) {
+
+#endif
 		errno = ENOTDIR;
 		status = -1;
 	}

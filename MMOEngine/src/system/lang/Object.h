@@ -42,9 +42,7 @@ namespace sys {
 	}
 
 	namespace util {
-		template<class O> class SortedVector;
 		template<class E> class HashSet;
-		template<class K, class V> class VectorMap;
 	}
 }
 

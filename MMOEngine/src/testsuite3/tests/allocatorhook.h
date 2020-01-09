@@ -15,6 +15,8 @@
 #include "system/mm/AllocationReplacement.h"
 #include "system/mm/MemoryMappedFile.h"
 
+#ifndef PLATFORM_WIN
+
 void testMemoryMappedFile() {
 	MemoryMappedFile* mmapped = new MemoryMappedFile("memory_mapped_file.mm", 512 * 4096);
 	mmapped->create();
@@ -37,5 +39,7 @@ void testMemoryMappedFile() {
 
 	printf("done\n");
 }
+
+#endif
 
 #endif /* ALLOCATORHOOK_H_ */

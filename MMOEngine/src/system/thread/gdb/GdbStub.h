@@ -8,6 +8,9 @@
 
 #include "system/thread/Process.h"
 
+
+#ifndef PLATFORM_WIN
+
 #include "system/lang/String.h"
 
 #include "system/io/FileWriter.h"
@@ -52,5 +55,7 @@ namespace sys {
 } // namespace sys
 
 using namespace sys::thread;
+
+#endif
 
 #endif /* CHILDPROCESS_H_ */

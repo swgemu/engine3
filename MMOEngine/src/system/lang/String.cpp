@@ -8,7 +8,11 @@
 
 #include "Long.h"
 
+#ifndef PLATFORM_WIN
 #include <regex.h>
+#else
+#include <regex>
+#endif
 
 #ifndef CXX11_COMPILER
 const uint32 StringHashCodeTable::crctable[256] = {
@@ -423,6 +427,7 @@ String String::valueOf(uint64 val) {
 	return str;
 }
 
+#ifndef PLATFORM_WIN
 String String::valueOf(std::size_t val) {
 	String str;
 
@@ -430,6 +435,7 @@ String String::valueOf(std::size_t val) {
 
 	return str;
 }
+#endif
 
 String String::valueOf(float val) {
 	char buf[40];
@@ -467,6 +473,10 @@ String String::valueOf(const void* val) {
 	E3_ASSERT(written >= 0 && written < 20);
 
 	return String(buf, written);
+}
+
+String String::valueOf(const char* val) {
+	return String(val);
 }
 
 String String::hexvalueOf(int val) {
@@ -522,6 +532,7 @@ String String::hexvalueOf(uint64 val) {
 }
 
 String String::replaceFirst(const String& regexString, const String& replacement) const {
+#ifndef PLATFORM_WIN
 	regex_t regex;
 	regmatch_t pmatch[1];
 
@@ -557,6 +568,31 @@ String String::replaceFirst(const String& regexString, const String& replacement
 			return regexString;
 	} else
 		return *this;
+#else
+		std::string l = regexString.toCharArray();
+		std::regex word_regex(l, std::regex_constants::extended);
+
+		std::string fullLine = *this;
+
+		std::smatch match;
+		if (std::regex_search(fullLine, match, word_regex)) {
+			int i = match.prefix().length();
+			int rlen = match[0].second - match[0].first;
+
+			if (i > 0 && i + rlen < count)
+				return subString(0, i) + replacement + subString(i + rlen, count);
+			else if (i == 0 && i + rlen < count)
+				return replacement + subString(i + rlen, count);
+			else if (i == 0 && i + rlen == count)
+				return replacement;
+			else if (i > 0 && i + rlen == count)
+				return subString(0, i) + replacement;
+			else
+				return regexString;
+		} else {
+			return *this;
+		}
+#endif
 }
 
 String String::replaceAll(const String& regex, const String& replacement) const {
@@ -920,54 +956,6 @@ bool String::parseFromString(const String& str, int version) {
 	buffer.toString(*this);
 
 	return true;
-}
-
-bool operator==(char ch, const String& str2) {
-	return String(&ch, 1) == str2;
-}
-
-bool operator==(const String& str, char ch) {
-	return String(&ch, 1) == str;
-}
-
-bool operator==(const char* str1, const String& str2) {
-	return String(str1) == str2;
-}
-
-bool operator!=(char ch, const String& str2) {
-	return String(&ch, 1) != str2;
-}
-
-bool operator!=(const char* str1, const String& str2) {
-	return String(str1) != str2;
-}
-
-bool operator!=(const String& str, char ch) {
-	return String(&ch, 1) != str;
-}
-
-String operator+(const String& str1, const String& str2) {
-	return str1.concat(str2);
-}
-
-String operator+(const char* str1, const String& str2) {
-	return String(str1).concat(str2);
-}
-
-String operator+(const String& str1, const char* str2) {
-	return str1.concat(str2);
-}
-
-String operator+(const String& str1, char ch) {
-	return str1.concat(ch);
-}
-
-String operator+(char ch, const String& str2) {
-	return String(&ch, 1).concat(str2);
-}
-
-String operator+(const String& str1, int i) {
-	return str1.concat(i);
 }
 
 char* String::strrstr(const char* s, int slen, const char* t, int tlen) {

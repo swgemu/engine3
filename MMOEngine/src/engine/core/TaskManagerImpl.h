@@ -12,6 +12,7 @@
 
 #include "TaskManager.h"
 #include "TaskQueue.h"
+#include "engine/core/TaskWorkerThread.h"
 
 namespace engine {
   namespace core {

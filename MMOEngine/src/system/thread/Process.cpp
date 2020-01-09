@@ -2,10 +2,12 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
+#include "Process.h"
+
+#ifndef PLATFORM_WIN
 #include <sys/wait.h>
 #include <signal.h>
 
-#include "Process.h"
 
 Process::Process() : pid(0) {
 	initialize();
@@ -26,3 +28,5 @@ void Process::wait() {
 void Process::signal(int sig) {
 	kill(pid, sig);
 }
+
+#endif

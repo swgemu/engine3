@@ -6,7 +6,11 @@
 
 #include "Character.h"
 
+#ifndef PLATFORM_WIN
 #include <regex.h>
+#else
+#include <regex>
+#endif
 
 static_assert(String::npos == ArrayList<char>::npos, "String and StringBuffer npos values differ");
 
@@ -83,6 +87,7 @@ StringBuffer& StringBuffer::append(uint64 val) {
 	return append(str);
 }
 
+#ifndef PLATFORM_WIN
 StringBuffer& StringBuffer::append(std::size_t val) {
 	String str;
 
@@ -93,6 +98,7 @@ StringBuffer& StringBuffer::append(std::size_t val) {
 
 	return append(str);
 }
+#endif
 
 StringBuffer& StringBuffer::append(float val) {
 	String str = String::valueOf(val);
@@ -172,6 +178,7 @@ int StringBuffer::indexOf(const String& str) const {
 }
 
 int StringBuffer::indexOf(const String& regexString, int& resultStart, int& resultEnd, int fromIndex) const {
+#ifndef PLATFORM_WIN
 	String val = toString();
 
 	if (fromIndex >= val.length())
@@ -199,6 +206,29 @@ int StringBuffer::indexOf(const String& regexString, int& resultStart, int& resu
 	resultEnd = pmatch[0].rm_eo;
 
 	return reti;
+#else
+	std::string l = regexString.toCharArray();
+	std::regex word_regex(l, std::regex_constants::extended);
+
+	auto str = toString();
+
+	if (fromIndex >= str.length())
+		throw ArrayIndexOutOfBoundsException(fromIndex);
+
+	std::string fullLine = str.begin() + fromIndex;
+
+	std::smatch match;
+	if (std::regex_search(fullLine, match, word_regex)) {
+		int i = match.prefix().length();
+
+		resultStart = match.prefix().length();
+		resultEnd = resultStart + (match[0].second - match[0].first);
+		
+		return match.size();
+	} else {
+		return npos;
+	}
+#endif
 }
 
 int StringBuffer::indexOf(const String& str, int fromIndex) const {
@@ -356,9 +386,11 @@ StringBuffer& StringBuffer::operator<< (const void* val) {
 	return append(val);
 }
 
+#ifndef PLATFORM_WIN
 StringBuffer& StringBuffer::operator<< (std::size_t val) {
 	return append(val);
 }
+#endif
 
 StringBuffer& StringBuffer::operator<< (const char* str) {
 	return append(str);
@@ -418,18 +450,3 @@ bool StringBuffer::operator==(const String& buff) const {
 
 	return memcmp(getBuffer(), buff.toCharArray(), length() * sizeof(char)) == 0;
 }
-
-bool operator==(const String& str1, const StringBuffer& str2) {
-	if (str1.length() != str2.length())
-		return false;
-
-	if (str1.length() == 0)
-		return true;
-
-	return memcmp(str1.toCharArray(), str2.getBuffer(), str1.length() * sizeof(char)) == 0;
-}
-
-bool operator!=(const String& str1, const StringBuffer& str2) {
-	return !(str1 == str2);
-}
-

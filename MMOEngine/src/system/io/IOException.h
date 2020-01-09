@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cerrno>
+#include <string.h>
 
 #include "system/lang/Exception.h"
 
@@ -14,13 +15,20 @@ namespace sys {
 	class IOException : public Exception {
 	public:
 		IOException(const String& msg) {
-			char str[256];
 #ifdef PLATFORM_MAC
+			char str[256];
+
 			int val = strerror_r(errno, str, 256);
 
 			message = msg + " (" + String::valueOf(errno) + ": " + str  +  ")";
 #else
+#ifndef PLATFORM_WIN
+			char str[256];
+
 			char* val = strerror_r(errno, str, 256);
+#else
+			auto val = "";// strerror_s(str, 256, errno);
+#endif
 
 			message = msg + " (" + String::valueOf(errno) + ": " + val  +  ")";
 #endif

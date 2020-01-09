@@ -2,6 +2,11 @@
 ** Copyright (C) 2007-2019 SWGEmu
 ** See file COPYING for copying conditions.
 */
+
+#include "system/platform.h"
+
+#ifndef PLATFORM_WIN
+
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
@@ -201,3 +206,5 @@ void ChildProcess::printDeadlock() {
 		gdb.printThread(threads.get(i));
 	}
 }
+
+#endif

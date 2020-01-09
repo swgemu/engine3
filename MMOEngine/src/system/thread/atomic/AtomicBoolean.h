@@ -38,10 +38,6 @@ namespace sys {
 		~AtomicBoolean() {
 		}
 
-		static bool compareAndSet(volatile bool* address, bool oldval, bool newval) {
-			return __sync_bool_compare_and_swap(address, oldval, newval);
-		}
-
 		bool compareAndSet(bool oldval, bool newval) {
 			return value.compare_exchange_strong(oldval, newval);
 		}

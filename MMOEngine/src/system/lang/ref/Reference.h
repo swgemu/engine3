@@ -119,13 +119,46 @@ namespace sys {
 			return object.get();
 		}
 
-		inline bool operator==(O obj) const {
-			return object.get() == obj;
+		bool operator==(const O val) const {
+			return object.get() == val;
 		}
 
-		inline bool operator!=(O obj) const {
-			return object.get() != obj;
+		bool operator!=(const O val) const {
+			return object.get() != val;
 		}
+
+		bool operator==(const std::nullptr_t) const {
+			return object.get() == nullptr;
+		}
+
+		bool operator!=(const std::nullptr_t) const {
+			return object.get() != nullptr;
+		}
+
+		/*
+		friend bool operator==(const O obj2, const Reference<O>& obj) {
+			return obj.object.get() == obj2;
+		}
+
+		friend bool operator==(const Reference<O>& obj, const O obj2) {
+			return obj.object.get() == obj2;
+		}
+
+		friend bool operator==(const Reference<O>& obj, const Reference<O>& obj2) {
+			return obj.object.get() == obj2.object.get();
+		}
+
+		friend bool operator!=(const Reference<O>& obj2, const Reference<O>& obj) {
+			return obj.object.get() != obj2.object.get();
+		}
+
+		friend bool operator!=(const O obj2, const Reference<O>& obj) {
+			return obj.object.get() != obj2;
+		}
+
+		friend bool operator!=(const Reference<O>& obj, const O obj2) {
+			return obj.object.get() != obj2;
+		}*/
 
 		explicit operator bool() const {
 			return object.get() != nullptr;

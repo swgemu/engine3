@@ -59,7 +59,9 @@ namespace sys {
 		StringBuffer& append(const char* str, int len);
 		StringBuffer& append(const String& str);
 		StringBuffer& append(const UnicodeString& str);
+#ifndef PLATFORM_WIN
 		StringBuffer& append(std::size_t val);
+#endif
 		StringBuffer& append(const StringBuffer& buff);
 
 		void deleteRange(int start, int end);
@@ -147,12 +149,28 @@ namespace sys {
 		StringBuffer& operator<< (double val);
 		StringBuffer& operator<< (const void* val);
 		StringBuffer& operator<< (bool val);
+#ifndef PLATFORM_WIN
 		StringBuffer& operator<< (std::size_t val);
+#endif
 		StringBuffer& operator<< (const char* str);
 		StringBuffer& operator<< (const String& str);
 		StringBuffer& operator<< (const UnicodeString& str);
 		StringBuffer& operator<< (const StringBuffer& str);
 		StringBuffer& operator<< (const StreamFlags flags);
+
+		friend bool operator==(const String& str1, const StringBuffer& str2) {
+			if (str1.length() != str2.length())
+				return false;
+
+			if (str1.length() == 0)
+				return true;
+
+			return memcmp(str1.toCharArray(), str2.getBuffer(), str1.length() * sizeof(char)) == 0;
+		}
+
+		friend bool operator!=(const String& str1, const StringBuffer& str2) {
+			return !(str1 == str2);
+		}
 	};
 
   } // namespace lang
@@ -160,6 +178,5 @@ namespace sys {
 
 using namespace sys::lang;
 
-bool operator==(const String& str1, const StringBuffer& str2);
-bool operator!=(const String& str1, const StringBuffer& str2);
+
 
