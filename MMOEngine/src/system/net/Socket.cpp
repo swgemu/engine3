@@ -155,9 +155,9 @@ int Socket::send(Packet* pack) {
 #ifdef PLATFORM_WIN
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), 0);
 #elif(PLATFORM_MAC)
-	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL);
-#else
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE);
+#else
+	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL);
 #endif
 
 	if (res < 0/* && errno != EAGAIN*/) {
@@ -177,9 +177,9 @@ int Socket::sendTo(Packet* pack, const SocketAddress* addr) {
 #ifdef PLATFORM_WIN
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), 0, addr->getAddress(), addr->getAddressSize());
 #elif(PLATFORM_MAC)
-		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize());
-#else
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE, addr->getAddress(), addr->getAddressSize());
+#else
+		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize());
 #endif
 	} while (len < 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
 

@@ -94,7 +94,7 @@ int Pipe::read(char* buf, int len) {
 	return result;
 #else
 	return 0;
-#endif;
+#endif
 }
 
 int Pipe::writeLine(const char* str) {
