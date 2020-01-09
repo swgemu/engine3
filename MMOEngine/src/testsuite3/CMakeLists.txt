@@ -18,10 +18,6 @@ find_package(Threads REQUIRED)
 if(WIN32)
 	string(TOLOWER ${CMAKE_BUILD_TYPE} E3_BUILD_TYPE)
 
-	message(${E3_BUILD_TYPE})
-
-	message(${CMAKE_BUILD_TYPE})
-
 	if(E3_BUILD_TYPE STREQUAL "debug")
 		set(PTHREAD_LIB_LINK pthreadVCE3d)
 	else()
