@@ -740,15 +740,15 @@ void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
 	}
 }
 
-
 String TaskManagerImpl::getInfo(bool print) {
 	ReadLocker guard(this);
 
 	StringBuffer msg;
-//	msg << "executing tasks - " << getExecutingTaskSize();
 
 	for (int i = 0; i < taskQueues.size(); ++i) {
-		msg << "executing tasks in queue" << i << " " << taskQueues.get(i)->size() << endl;
+		auto queue = taskQueues.get(i);
+
+		msg << "executing tasks in queue " << i << " " << queue->getName() << ": " << queue->size() << endl;
 	}
 
 	if (print)
@@ -776,7 +776,7 @@ String TaskManagerImpl::getInfo(bool print) {
 			ordered.put(count, name);
 		}
 
-		msg2 << "scheduled tasks in scheduler " << i << ": " << scheduler->getQueueSize();
+		msg2 << "scheduled tasks in scheduler " << i << " " << scheduler->getLoggingName() << ": " << scheduler->getQueueSize();
 		msg2 << " pushed: " << scheduler->getPushedTasks() << " popped: " << scheduler->getPoppedTasks() << " removed: " << scheduler->getRemovedTasks() << endl;
 
 		//lets print top 5

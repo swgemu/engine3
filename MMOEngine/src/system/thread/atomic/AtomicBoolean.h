@@ -29,10 +29,10 @@ namespace sys {
 		AtomicBoolean(bool val) : value(val) {
 		}
 
-		AtomicBoolean(AtomicBoolean&& val) : value(val) {
+		AtomicBoolean(AtomicBoolean&& val) : value(val.value.load(std::memory_order_seq_cst)) {
 		}
 
-		AtomicBoolean(const AtomicBoolean& val) : value(val) {
+		AtomicBoolean(const AtomicBoolean& val) : value(val.value.load(std::memory_order_seq_cst)) {
 		}
 
 		~AtomicBoolean() {
@@ -61,7 +61,7 @@ namespace sys {
 		}
 
 		operator bool() const {
-			return value.load(std::memory_order_relaxed);
+			return value.load(std::memory_order_seq_cst);
 		}
 
 		bool toBinaryStream(sys::io::ObjectOutputStream* stream) NO_THREAD_SAFETY_ANALYSIS {

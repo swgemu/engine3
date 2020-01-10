@@ -81,9 +81,8 @@ void TaskScheduler::run() {
 			blockMutex.unlock();
 
 			do {
-				Thread::sleep(0, 1);
-				Thread::yield();
-			} while (pause);
+				Thread::sleep(1);
+			} while (pause.get(std::memory_order_seq_cst));
 
 			continue;
 		}
@@ -95,7 +94,7 @@ void TaskScheduler::run() {
 				task->executeInThread();
 			}
 
-		} catch (Exception& e) {
+		} catch (const Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();
 		} catch (...) {
@@ -130,9 +129,8 @@ void TaskScheduler::run() {
 
 		task->release();
 
-		while (pause) {
+		while (pause.get(std::memory_order_seq_cst)) {
 			Thread::sleep(1);
-			Thread::yield();
 
 			continue;
 		}

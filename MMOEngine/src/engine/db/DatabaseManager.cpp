@@ -650,7 +650,9 @@ void DatabaseManager::closeEnvironment() {
 	try {
 		int ret = databaseEnvironment->close();
 
-		fatal(!ret) << "Error closing environment: ";
+		if (ret) {
+			warning() << "Error closing environment: " << db_strerror(ret);
+		}
 
 		delete databaseEnvironment;
 		databaseEnvironment = nullptr;

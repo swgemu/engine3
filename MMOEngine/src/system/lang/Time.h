@@ -23,18 +23,20 @@
 
 #include "Long.h"
 
+#include <chrono>
+
 namespace sys {
   namespace lang {
 
 	class Time {
 	public:
 #if defined(PLATFORM_WIN)
-		typedef int ClockType;
-
-		const static ClockType REAL_TIME = 0;
-		const static ClockType THREAD_TIME = 0;
-		const static ClockType PROCESS_TIME = 0;
-		const static ClockType MONOTONIC_TIME = 0;
+		enum ClockType {
+			REAL_TIME,
+			THREAD_TIME,
+			PROCESS_TIME,
+			MONOTONIC_TIME
+		};
 #else
 		typedef clockid_t ClockType;
 
@@ -45,15 +47,6 @@ namespace sys {
 #endif
 	private:
 		struct timespec ts;
-
-	#ifdef PLATFORM_WIN
-		#define TIMESPEC_TO_FILETIME_OFFSET (((LONGLONG)27111902u << 32) + (LONGLONG)3577643008u)
-
-		static void filetime_to_timespec(const FILETIME *ft, struct timespec *ts) {
-			ts->tv_sec = (int)((*(LONGLONG *)ft - TIMESPEC_TO_FILETIME_OFFSET) / 10000000u);
-			ts->tv_nsec = (int)((*(LONGLONG *)ft - TIMESPEC_TO_FILETIME_OFFSET - ((LONGLONG)ts->tv_sec * (LONGLONG)10000000u)) * 100);
-		}
-	#endif
 
 	public:
 		explicit Time(ClockType type = REAL_TIME) noexcept {
@@ -105,18 +98,20 @@ namespace sys {
 		}
 
 		inline void updateToCurrentTime(ClockType type = REAL_TIME) {
-			#if !defined(PLATFORM_WIN)
+			#if !defined(PLATFORM_WIN) && !defined(PLATFORM_MAC)
 				clock_gettime(type, &ts);
 			#else
-				assert(type == 0);
-
-				FILETIME ft;
-				SYSTEMTIME st;
-
-				GetSystemTime(&st);
-				SystemTimeToFileTime(&st, &ft);
-
-				filetime_to_timespec(&ft, &ts);
+				switch (type) {
+				case REAL_TIME:
+					this->ts = timepointToTimespec(std::chrono::system_clock::now());
+					break;
+				case MONOTONIC_TIME:
+					this->ts = timepointToTimespec(std::chrono::steady_clock::now());
+					break;
+				default:
+					this->ts = timepointToTimespec(std::chrono::high_resolution_clock::now());
+					break;
+				}
 			#endif
 		}
 
@@ -240,7 +235,7 @@ namespace sys {
 		}
 
 		inline static uint64 currentNanoTime(ClockType type = REAL_TIME) {
-			#if !defined(PLATFORM_WIN)
+			#if !defined(PLATFORM_WIN) && !defined(PLATFORM_MAC)
 				struct timespec cts;
 				clock_gettime(type, &cts);
 
@@ -251,12 +246,14 @@ namespace sys {
 
 				return time;
 			#else
-				auto now = std::chrono::system_clock::now();
-
-				auto nanos = std::chrono::time_point_cast<std::chrono::nanoseconds>(now);
-				auto epoch = nanos.time_since_epoch();
-				auto val = std::chrono::duration_cast<std::chrono::nanoseconds>(epoch);
-				return val.count();
+				switch (type) {
+				case REAL_TIME:
+					return convertTimePointToNanos(std::chrono::system_clock::now());
+				case MONOTONIC_TIME:
+					return convertTimePointToNanos(std::chrono::steady_clock::now());
+				default:
+					return convertTimePointToNanos(std::chrono::high_resolution_clock::now());
+				}
 			#endif
 		}
 
@@ -281,6 +278,35 @@ namespace sys {
 				ts.tv_sec++;
 				ts.tv_nsec -= 1000000000;
 			}
+		}
+
+		template<typename convert_clock_type,
+				typename convert_duration_type>
+		static timespec timepointToTimespec(const std::chrono::time_point<convert_clock_type, convert_duration_type>& tp)
+		{
+			using namespace std::chrono;
+
+			auto secs = time_point_cast<seconds>(tp);
+			auto ns = time_point_cast<nanoseconds>(tp) -
+				time_point_cast<nanoseconds>(secs);
+
+			struct timespec ts;
+
+			ts.tv_sec = static_cast<decltype(ts.tv_sec)>(secs.time_since_epoch().count());
+			ts.tv_nsec = static_cast<decltype(ts.tv_nsec)>(ns.count());
+
+			return ts;
+		}
+
+		template<typename NowType>
+		static auto convertTimePointToNanos(const NowType& now) {
+			using namespace std::chrono;
+
+			auto nanos = time_point_cast<nanoseconds>(now);
+			auto epoch = nanos.time_since_epoch();
+			auto val = duration_cast<nanoseconds>(epoch);
+
+			return val.count();
 		}
 
 	public:
