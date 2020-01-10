@@ -24,6 +24,11 @@ namespace sys {
  namespace util {
    template<typename E> class ArrayListReverseIterator;
 
+   class ArrayListNoReallocTrait {
+   public:
+	   static bool const constexpr value = false;
+   };
+
    template<class Entry>
    class ArrayListReallocTrait {
    public:
@@ -33,13 +38,13 @@ namespace sys {
    template<class F>
    class ArrayListReallocTrait<Function<F>> {
    public:
-	   static bool const constexpr value = false;
+	   static bool const constexpr value = ArrayListNoReallocTrait::value;
    };
 
    template<class F>
    class ArrayListReallocTrait<Optional<F>> {
    public:
-	   static bool const constexpr value = false;
+	   static bool const constexpr value = ArrayListNoReallocTrait::value;
    };
 
    template<class E, bool RawCopyAndRealloc = ArrayListReallocTrait<E>::value> 
