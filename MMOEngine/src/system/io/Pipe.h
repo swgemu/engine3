@@ -9,11 +9,24 @@
 
 #include "FileDescriptor.h"
 
+#ifdef PLATFORM_WIN
+#include <namedpipeapi.h>
+#endif
+
 namespace sys {
   namespace io {
 
 	class Pipe : public FileDescriptor {
-		int pipefd[2];
+	public:
+#ifndef PLATFORM_WIN
+		using PipeType = int;
+#else
+		using PipeType = HANDLE;
+#endif
+
+	private:
+		PipeType pipefd[2];
+
 		bool doAutoClose = false;
 
 	public:
@@ -38,7 +51,10 @@ namespace sys {
 		int write(const char* buf, int len);
 		int write(const String& string);
 
-		void redirectFile(int fd);
+		void redirectFile(PipeType fd);
+
+	private:
+		static void closePipe(PipeType& pipe);
 	};
 
   } // namespace io

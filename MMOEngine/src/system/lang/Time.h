@@ -282,8 +282,7 @@ namespace sys {
 
 		template<typename convert_clock_type,
 				typename convert_duration_type>
-		static timespec timepointToTimespec(const std::chrono::time_point<convert_clock_type, convert_duration_type>& tp)
-		{
+		static timespec timepointToTimespec(const std::chrono::time_point<convert_clock_type, convert_duration_type>& tp) {
 			using namespace std::chrono;
 
 			auto secs = time_point_cast<seconds>(tp);
