@@ -30,7 +30,7 @@ namespace sys {
 
 	class Time {
 	public:
-#if defined(PLATFORM_WIN)
+#if defined(PLATFORM_WIN) || defined(PLATFORM_MAC)
 		enum ClockType {
 			REAL_TIME,
 			THREAD_TIME,
