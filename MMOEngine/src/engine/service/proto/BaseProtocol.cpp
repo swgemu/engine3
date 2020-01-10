@@ -13,7 +13,7 @@ BaseProtocol::BaseProtocol() : Logger("BaseProtocol") {
 }
 
 void BaseProtocol::prepareSequence(BasePacket* pack) {
-        pack->close();
+	pack->close();
 
 	debug() << "SEND - " << *pack;
 
@@ -263,6 +263,10 @@ bool BaseProtocol::compress(Packet* pack) const {
 
 		pack->writeByte(pack->getOffset() - 3, 0); //update compression byte to 0
 
+#ifdef PLATFORM_WIN
+		_freea(output);
+#endif
+
 		return false; //We didn't compress it.
 	} else {
 		pack->reset();
@@ -282,6 +286,10 @@ bool BaseProtocol::compress(Packet* pack) const {
 		pack->reset();
 
 		deflateEnd(&packet);
+
+#ifdef PLATFORM_WIN
+		_freea(output);
+#endif
 
 		return true;
 	}
