@@ -97,6 +97,10 @@ bool File::mkdir() {
 }
 
 bool File::doMkdir(const char* path, int mode) {
+#ifndef S_ISDIR
+#define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
+#endif
+
 	struct stat st;
 	int status = 0;
 
@@ -108,17 +112,16 @@ bool File::doMkdir(const char* path, int mode) {
 		if (_mkdir(path) != 0)
 #endif
 			status = -1;
-#ifdef PLATFORM_WIN
-	} else {
-#else
 	} else if (!S_ISDIR(st.st_mode)) {
-
-#endif
 		errno = ENOTDIR;
 		status = -1;
 	}
 
 	return status != -1;
+}
+
+char File::directorySeparator() {
+	return '/';
 }
 
 bool File::mkdirs() {

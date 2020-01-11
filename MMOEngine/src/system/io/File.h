@@ -72,10 +72,12 @@ namespace sys {
 			mode = TEXT_MODE;
 		}
 
+		static bool doMkdir(const char* path, int mode);
+
+		static char directorySeparator();
+
 	protected:
 		bool open(int access);
-
-		static bool doMkdir(const char* path, int mode);
 
 		static String getModeString(int mode, int access);
 	};
