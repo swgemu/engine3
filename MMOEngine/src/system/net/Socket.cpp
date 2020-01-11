@@ -154,10 +154,12 @@ int Socket::readFrom(Packet* pack, SocketAddress* addr) {
 int Socket::send(Packet* pack) {
 #ifdef PLATFORM_WIN
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), 0);
-#elif(PLATFORM_MAC)
+#else
+#ifdef PLATFORM_MAC
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE);
 #else
 	int res = ::send(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL);
+#endif
 #endif
 
 	if (res < 0/* && errno != EAGAIN*/) {
@@ -176,10 +178,12 @@ int Socket::sendTo(Packet* pack, const SocketAddress* addr) {
 	do {
 #ifdef PLATFORM_WIN
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), 0, addr->getAddress(), addr->getAddressSize());
-#elif(PLATFORM_MAC)
+#else
+#ifdef PLATFORM_MAC
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), SO_NOSIGPIPE, addr->getAddress(), addr->getAddressSize());
 #else
 		len = sendto(fileDescriptor, pack->getBuffer(), pack->size(), MSG_NOSIGNAL, addr->getAddress(), addr->getAddressSize());
+#endif
 #endif
 	} while (len < 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
 
