@@ -48,6 +48,34 @@ namespace sys {
 	private:
 		struct timespec ts;
 
+		template<typename convert_clock_type,
+			typename convert_duration_type>
+			static timespec timepointToTimespec(const std::chrono::time_point<convert_clock_type, convert_duration_type>& tp) {
+			using namespace std::chrono;
+
+			auto secs = time_point_cast<seconds>(tp);
+			auto ns = time_point_cast<nanoseconds>(tp) -
+				time_point_cast<nanoseconds>(secs);
+
+			struct timespec ts;
+
+			ts.tv_sec = static_cast<decltype(ts.tv_sec)>(secs.time_since_epoch().count());
+			ts.tv_nsec = static_cast<decltype(ts.tv_nsec)>(ns.count());
+
+			return ts;
+		}
+
+		template<typename NowType>
+		static auto convertTimePointToNanos(const NowType& now) {
+			using namespace std::chrono;
+
+			auto nanos = time_point_cast<nanoseconds>(now);
+			auto epoch = nanos.time_since_epoch();
+			auto val = duration_cast<nanoseconds>(epoch);
+
+			return val.count();
+		}
+
 	public:
 		explicit Time(ClockType type = REAL_TIME) noexcept {
 			updateToCurrentTime(type);
@@ -278,34 +306,6 @@ namespace sys {
 				ts.tv_sec++;
 				ts.tv_nsec -= 1000000000;
 			}
-		}
-
-		template<typename convert_clock_type,
-				typename convert_duration_type>
-		static timespec timepointToTimespec(const std::chrono::time_point<convert_clock_type, convert_duration_type>& tp) {
-			using namespace std::chrono;
-
-			auto secs = time_point_cast<seconds>(tp);
-			auto ns = time_point_cast<nanoseconds>(tp) -
-				time_point_cast<nanoseconds>(secs);
-
-			struct timespec ts;
-
-			ts.tv_sec = static_cast<decltype(ts.tv_sec)>(secs.time_since_epoch().count());
-			ts.tv_nsec = static_cast<decltype(ts.tv_nsec)>(ns.count());
-
-			return ts;
-		}
-
-		template<typename NowType>
-		static auto convertTimePointToNanos(const NowType& now) {
-			using namespace std::chrono;
-
-			auto nanos = time_point_cast<nanoseconds>(now);
-			auto epoch = nanos.time_since_epoch();
-			auto val = duration_cast<nanoseconds>(epoch);
-
-			return val.count();
 		}
 
 	public:
