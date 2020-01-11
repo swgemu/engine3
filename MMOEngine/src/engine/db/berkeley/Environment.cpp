@@ -40,7 +40,7 @@ namespace BDBNS {
 #ifndef PLATFORM_WIN
 			*tid = pthread_self();
 #else
-			* tid = 0;
+			*tid = GetCurrentThreadId();
 #endif
 		}
 	}
