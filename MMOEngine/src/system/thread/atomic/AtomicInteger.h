@@ -79,8 +79,8 @@ namespace sys {
 			return value.load(m);
 		}
 
-		void set(uint32 val) {
-			value = val;
+		void set(uint32 val, std::memory_order m = std::memory_order_seq_cst) {
+			value.store(val, m);
 		}
 
 		uint32 operator=(const uint32 val) {
