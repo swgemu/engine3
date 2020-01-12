@@ -26,10 +26,10 @@ namespace sys {
 			template<std::size_t StringLength = 32>
 			static String randomSalt();
 
-			static String hashToString(uint8* val, std::size_t size);
-			
 		private:
 			static void onOpenSSLRandomFail(uint64 errorCode);
+
+			static String hashToString(uint8* val, std::size_t size);
 		};
 	}
 

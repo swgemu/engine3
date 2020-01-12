@@ -12,10 +12,11 @@
 #include <openssl/md5.h>
 
 #include "engine/log/Logger.h"
+#include "system/thread/Mutex.h"
 
 namespace CryptoDetail {
-	static engine::log::Logger logger("Crypto");
-	static Mutex mutex;
+	static const engine::log::Logger logger("Crypto");
+	static Mutex cryptoMutex;
 }
 
 using namespace CryptoDetail;
@@ -64,7 +65,7 @@ String Crypto::SHA512Hash(const String& str) {
 }
 
 uint64 Crypto::randomOpenSSLBytes(uint8* bytes, std::size_t size) {
-	Locker guard(&mutex);
+	Locker guard(&cryptoMutex);
 
 	int rc = RAND_bytes(bytes, size);
 	auto err = ERR_get_error();
