@@ -7,10 +7,13 @@
 
 #include "Lua.h"
 
-extern "C" {
+#include "LuaPanicException.h"
+
+namespace LuaNamespace {
+	static Logger logger("Lua", Lua::INFO);
 }
 
-#include "LuaPanicException.h"
+using namespace LuaNamespace;
 
 Lua::Lua() : Logger("Lua") {
 	L = nullptr;
@@ -55,9 +58,7 @@ bool Lua::runFile(const String& filename) {
 	if (filename.isEmpty())
 		return false;
 
-	/*StringBuffer msg;
-	msg << "Loading lua file: " << filename;
-	info(msg);*/
+	debug() << "Loading lua file: " << filename;
 
 	if (!L)
 		init();
@@ -73,7 +74,7 @@ bool Lua::runFile(const String& filename) {
 
 			return false;
 		}
-	} catch (LuaPanicException& e) {
+	} catch (const LuaPanicException& e) {
 		error() << "LuaPanicException while running " << filename;
 		error(e.getMessage());
 
@@ -86,12 +87,12 @@ bool Lua::runFile(const String& filename) {
 bool Lua::runFile(const String& filename, lua_State* lState) {
 	try {
 		if (!filename.isEmpty()) {
-			//System::out << "Loading lua file: " << filename << "\n";
+			logger.debug() << "Loading lua file: " << filename;
 
 			if (luaL_loadfile(lState, filename.toCharArray()) || lua_pcall(lState, 0, 0, 0)) {
 				const char* err = lua_tostring(lState, -1);
 
-				Logger::console.error() << "file:" << filename << " ERROR " << err;
+				logger.error() << "file:" << filename << " ERROR " << err;
 
 				lua_pop(lState, 1);
 
@@ -99,8 +100,8 @@ bool Lua::runFile(const String& filename, lua_State* lState) {
 			}
 		}
 	} catch (const LuaPanicException& e) {
-		Logger::console.error("LuaPanicException while running " + filename);
-		Logger::console.error(e.getMessage());
+		logger.error("LuaPanicException while running " + filename);
+		logger.error(e.getMessage());
 
 		return false;
 	}
@@ -112,7 +113,7 @@ bool Lua::runString(const String& str) {
 	if (str.isEmpty())
 		return false;
 
-	info() << "Loading lua String: " << str << endl;
+	debug() << "Loading lua String: " << str;
 
 	if (!L)
 		init();
@@ -121,7 +122,7 @@ bool Lua::runString(const String& str) {
 		if (luaL_loadbuffer(L, str.toCharArray(), str.length(), "command") || lua_pcall(L, 0, 0, 0)) {
 			const char* err = lua_tostring(L, -1);
 
-			info() << "ERROR " << err;
+			error() << err;
 
 			lua_pop(L, 1);
 
@@ -150,12 +151,39 @@ int Lua::atPanic(lua_State* L) {
 
 // getters
 bool Lua::getGlobalBoolean(const String& name) {
-	String result = getGlobalString(name);
+	const char* result = nullptr;
 
-	if (result == "true")
-		return true;
-	else
-		return false;
+	lua_getglobal(L, name.toCharArray());
+
+	if (!lua_isstring(L, -1)) {
+		if (!lua_isboolean(L, -1)) {
+			lua_pop(L, 1);
+
+			info() << "invalid boolean value for: " << name;
+
+			return false;
+		} else {
+			bool res = lua_toboolean(L, -1);
+
+			lua_pop(L, 1);
+
+			return res;
+		}
+	} else {
+		result = lua_tostring(L, -1);
+		auto size = lua_rawlen(L, -1);
+
+		String val(result, size);
+
+		lua_pop(L, 1);
+
+		String result = val.toLowerCase();
+
+		if (result == "true")
+			return true;
+		else
+			return false;
+	}
 }
 
 String Lua::getGlobalString(const String& name) {

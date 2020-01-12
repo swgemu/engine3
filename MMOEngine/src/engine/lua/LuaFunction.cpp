@@ -14,6 +14,12 @@
 #include <chrono>
 #endif
 
+namespace LuaFunctionNamespace {
+	static Logger luaLogger("LuaFunction", Lua::INFO);
+}
+
+using namespace LuaFunctionNamespace;
+
 LuaFunction::LuaFunction() {
 	L = nullptr;
 	numberOfArgs = 0;
@@ -175,11 +181,12 @@ lua_State* LuaFunction::callFunction() {
 #endif
 
 		if (result != 0) {
-			Logger::console.error("Error running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
+			luaLogger.error() << "Error running function " << getFunctionName() << " " << String(lua_tostring(getLuaState(), -1));
+
 			return nullptr;
 		}
-	} catch (LuaPanicException& e) {
-		Logger::console.error("LuaPanicException running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
+	} catch (const LuaPanicException& e) {
+		luaLogger.error() << "LuaPanicException running function " << getFunctionName() << " " << String(lua_tostring(getLuaState(), -1));
 
 		return nullptr;
 	}
