@@ -11,6 +11,9 @@
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
+#include <openssl/rand.h>
+#include <openssl/err.h>
+
 #include <limits>
 
 namespace sys {
@@ -61,19 +64,39 @@ namespace sys {
 				return hashToString(res, SHA512_DIGEST_LENGTH);
 			}
 
+			static uint64 randomBytes(uint8_t* bytes, uint32 size) {
+				int rc = RAND_bytes(bytes, size);
+				unsigned long err = ERR_get_error();
+
+				if (rc != 1) {
+					/* RAND_bytes failed */
+					/* `err` is valid    */
+					return err;
+				} else {
+					return 0;
+				}
+			}
+
 			template<std::size_t StringLength = 32>
 			static String randomSalt() {
 				constexpr auto bufferBytes = Math::max(static_cast<std::size_t>(1), StringLength / 2);
 
 				uint8_t buffer[bufferBytes];
 
-				for (uint32 i = 0; i < bufferBytes; ++i) {
-					buffer[i] = System::random(std::numeric_limits<uint8_t>::max());
+				uint64 res = Crypto::randomBytes(buffer, bufferBytes);
+
+				if (res) {
+					static Logger logger("Crypto");
+
+					logger.warning() << "OpenSSL could not generate random bytes, using mt19937";
+
+					for (uint32 i = 0; i < bufferBytes; ++i) {
+						buffer[i] = System::random(std::numeric_limits<uint8_t>::max());
+					}
 				}
 
 				return hashToString(buffer, bufferBytes);
 			}
-
 
 		};
 	}
