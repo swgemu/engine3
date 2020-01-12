@@ -11,123 +11,109 @@
 #include "system/lang/Runnable.h"
 
 namespace sys {
-  namespace util {
+	namespace util {
 
-    class Timer {
-    	uint64 startTime;
-    	uint64 elapsedTime;
+		class Timer {
+			uint64 startTime = 0;
+			uint64 elapsedTime = 0;
 
-    	uint64 totalTime;
+			uint64 totalTime = 0;
 
-	Time::ClockType clockType;
+			Time::ClockType clockType = Time::MONOTONIC_TIME;
 
-    public:
-    	Timer(Time::ClockType type = Time::MONOTONIC_TIME) : startTime(0),
-		elapsedTime(0), totalTime(0), clockType(type) {
+		public:
+			explicit Timer(Time::ClockType type) : clockType(type) {
+			}
 
-    	}
+			Timer() = default;
+			Timer(const Timer& timer) = default;
 
-	Timer(const Timer& timer) : startTime(timer.startTime), elapsedTime(timer.elapsedTime),
-				    totalTime(timer.totalTime), clockType(timer.clockType) {
-	}
+			Timer& operator=(const Timer& timer) = default;
 
-	Timer& operator=(const Timer& timer) {
-		if (this == &timer) {
-			return *this;
-		}
+			uint64 run(const sys::lang::Function<void()>& function) {
+				start();
 
-		startTime = timer.startTime;
-		elapsedTime = timer.elapsedTime;
-		totalTime = timer.totalTime;
-		clockType = timer.clockType;
+				function();
 
-		return *this;
-	}
+				return stop();
+			}
 
-	uint64 run(const sys::lang::Function<void()>& function) {
-		start();
+			uint64 run(Runnable* runnable) {
+				start();
 
-		function();
+				runnable->run();
 
-		return stop();
-	}
+				return stop();
+			}
 
-	uint64 run(Runnable* runnable) {
-		start();
+			void start() {
+				E3_ASSERT(startTime == 0);
 
-		runnable->run();
+				startTime = Time::currentNanoTime(clockType);
+			}
 
-		return stop();
-	}
+			uint64 stop() {
+				E3_ASSERT(startTime != 0);
 
-    	void start() {
-    		E3_ASSERT(startTime == 0);
+				elapsedTime = elapsedToNow();
+				startTime = 0;
 
-    		startTime = Time::currentNanoTime(clockType);
-    	}
+				totalTime += elapsedTime;
 
-    	uint64 stop() {
-    		E3_ASSERT(startTime != 0);
+				return elapsedTime;
+			}
 
-    		elapsedTime = elapsedToNow();
-    		startTime = 0;
+			void clear() {
+				startTime = 0;
+				elapsedTime = 0;
+				totalTime = 0;
+			}
 
-    		totalTime += elapsedTime;
+			uint64 stopMs() {
+				return stop() / 1000000;
+			}
 
-    		return elapsedTime;
-    	}
+			uint64 elapsedToNow() const {
+				if (startTime != 0)
+					return Time::currentNanoTime(clockType) - startTime;
+				else
+					return 0;
+			}
 
-	void clear() {
-		startTime = 0;
-		elapsedTime = 0;
-		totalTime = 0;
-	}
+			uint64 elapsedMs() const {
+				return elapsedToNow() / 1000000;
+			}
 
-	uint64 stopMs() {
-    		return stop() / 1000000;
-    	}
+			uint64 getStartTime() const {
+				return startTime;
+			}
 
-    	uint64 elapsedToNow() const {
-    		if (startTime != 0)
-    			return Time::currentNanoTime(clockType) - startTime;
-    		else
-    			return 0;
-    	}
+			uint64 getElapsedTime() const {
+				return elapsedTime;
+			}
 
-	uint64 elapsedMs() const {
-    		return elapsedToNow() / 1000000;
-    	}
+			uint64 getTotalTime() const {
+				return totalTime;
+			}
 
-    	uint64 getStartTime() const {
-    		return startTime;
-    	}
+			uint64 getStartTimeMs() const {
+				return startTime / 1000000;
+			}
 
-    	uint64 getElapsedTime() const {
-    		return elapsedTime;
-    	}
+			uint64 getElapsedTimeMs() const {
+				return elapsedTime / 1000000;
+			}
 
-    	uint64 getTotalTime() const {
-    		return totalTime;
-    	}
+			uint64 getTotalTimeMs() const {
+				return totalTime / 1000000;
+			}
 
-	uint64 getStartTimeMs() const {
-    		return startTime / 1000000;
-    	}
+			Time::ClockType getClockType() const {
+				return clockType;
+			}
+		};
 
-    	uint64 getElapsedTimeMs() const {
-    		return elapsedTime / 1000000;
-    	}
-
-    	uint64 getTotalTimeMs() const {
-    		return totalTime / 1000000;
-    	}
-
-	Time::ClockType getClockType() const {
-		return clockType;
-	}
-    };
-
-  } // namespace util
+	} // namespace util
 } // namespace sys
 
 using namespace sys::util;
