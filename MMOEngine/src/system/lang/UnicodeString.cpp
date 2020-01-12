@@ -246,7 +246,7 @@ int UnicodeString::indexOf(UnicodeCharType chr) const {
 }
 
 int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
-	if (str.isEmpty() || startPos >= count)
+	if (str.isEmpty() || startPos >= count || count < str.length())
 		return -1;
 
 	constexpr static const int maxLoops = 2048;
