@@ -8,6 +8,7 @@
 #include "system/platform.h"
 #include "system/lang/String.h"
 #include "system/lang/System.h"
+#include "engine/log/Logger.h"
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
