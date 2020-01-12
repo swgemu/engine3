@@ -12,12 +12,6 @@
 #include <limits>
 #include <cstddef>
 
-namespace engine {
-	namespace log {
-		class Logger;
-	}
-}
-
 namespace sys {
 	namespace security {
 		class Crypto {
@@ -33,7 +27,8 @@ namespace sys {
 			static String randomSalt();
 
 			static String hashToString(uint8* val, std::size_t size);
-
+			
+			static void onOpenSSLRandomFail(uint64 errorCode);
 		};
 	}
 
@@ -46,10 +41,6 @@ namespace sys {
 		uint64 res = Crypto::randomOpenSSLBytes(buffer, bufferBytes);
 
 		if (res) {
-			static engine::log::Logger logger("Crypto");
-
-			logger.warning() << "OpenSSL could not generate random bytes, using mt19937";
-
 			for (std::size_t i = 0; i < bufferBytes; ++i) {
 				buffer[i] = System::random(std::numeric_limits<uint8_t>::max());
 			}

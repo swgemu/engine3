@@ -3,8 +3,6 @@
 ** See file COPYING for copying conditions.
 */
 
-#include "engine/log/Logger.h"
-
 #include "Crypto.h"
 
 #include <openssl/rand.h>
@@ -12,6 +10,14 @@
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
+
+#include "engine/log/Logger.h"
+
+namespace CryptoDetail {
+	static engine::log::Logger logger("Crypto");
+}
+
+using namespace CryptoDetail;
 
 String Crypto::hashToString(uint8* val, std::size_t size) {
 	StringBuffer sb;
@@ -63,8 +69,15 @@ uint64 Crypto::randomOpenSSLBytes(uint8* bytes, std::size_t size) {
 	if (rc != 1) {
 		/* RAND_bytes failed */
 		/* `err` is valid    */
+
+		onOpenSSLRandomFail(err);
+
 		return err;
 	} else {
 		return 0;
 	}
+}
+
+void Crypto::onOpenSSLRandomFail(uint64 errorCode) {
+	logger.warning() << "OpenSSL could not generate random bytes with code: " << errorCode;
 }
