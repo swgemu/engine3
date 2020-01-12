@@ -28,6 +28,7 @@ namespace sys {
 
 			static String hashToString(uint8* val, std::size_t size);
 			
+		private:
 			static void onOpenSSLRandomFail(uint64 errorCode);
 		};
 	}
