@@ -97,6 +97,28 @@ void StackTrace::print() const {
 #endif
 }
 
+String StackTrace::toStringData() {
+#ifdef PLATFORM_UNIX
+	char** tracedSymbols = backtrace_symbols(symbols, count);
+
+	if (tracedSymbols == nullptr) {
+		logger.error() << "error while trying to print stack trace: tracedSymbols == nullptr";
+		return String();
+	}
+
+	StringBuffer lines;
+	for (int i = 0; i < count; ++i) {
+		lines << tracedSymbols[i] << endl;
+	}
+
+	free(tracedSymbols);
+
+	return lines.toString();
+#else
+	return String();
+#endif
+}
+
 void StackTrace::printStackTrace() {
 	StackTrace trace;
 	trace.print();

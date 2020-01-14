@@ -42,7 +42,8 @@ namespace sys {
 
 		~StackTrace();
 
-		void print() const ;
+		void print() const;
+		String toStringData();
 
 		static void printStackTrace();
 
