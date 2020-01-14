@@ -12,6 +12,12 @@
 
 String StackTrace::binaryName = "core3";
 
+namespace StackTraceNs {
+	static const Logger logger("StackTrace");
+}
+
+using namespace StackTraceNs;
+
 StackTrace::StackTrace() {
 	#ifdef PLATFORM_UNIX
 		count = backtrace(symbols, maxSize);
@@ -48,7 +54,6 @@ bool StackTrace::containsAddress(const void* address) const {
 
 void StackTrace::print() const {
 	static const int initializeProperties = Core::initializeProperties("StackTrace");
-	static Logger logger("StackTrace");
 
 #ifdef PLATFORM_UNIX
 	static const bool enableAddr2Line = Core::getIntProperty("StackTrace.enableAddr2Line", 1);
