@@ -58,6 +58,31 @@ LocalDatabase::~LocalDatabase() {
 	//objectsDatabase = nullptr;
 }
 
+void LocalDatabase::associateIndexTransactional(BerkeleyDatabase* db, LocalDatabase* db2, AssociationBDBCallback callback) {
+	Transaction* transaction = nullptr;
+
+	int i = 0, ret = -1;
+
+	do {
+		transaction = environment->beginTransaction(nullptr);
+
+		ret = db->associate(transaction, db2->getDatabaseHandle(), callback, DB_CREATE);
+
+		if (ret == DB_LOCK_DEADLOCK) {
+			info() << "deadlock detected in LocalDatabase::get.. retrying iteration " << i;
+
+			transaction->abort();
+			transaction = nullptr;
+		}
+
+		++i;
+	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
+
+	fatal(ret == 0) << "could not associate secondary index to database";
+
+	fatal(transaction->commit() == 0) << "could not commit transaction to associate secondary index";
+}
+
 engine::db::berkeley::BerkeleyDatabase* LocalDatabase::getDatabaseHandle() {
 	auto db = objectsDatabase.get();
 
@@ -75,8 +100,7 @@ engine::db::berkeley::BerkeleyDatabase* LocalDatabase::getDatabaseHandle() {
 			for (uint64 i = last; i < latest; i++) {
 				auto& index = secondaryIndexes.get(i);
 
-				fatal(db->associate(nullptr, index.first->getDatabaseHandle(), index.second,
-				     DB_CREATE) == 0, "error could not associate secondary index");
+				associateIndexTransactional(db, index.first, index.second);
 			}
 
 			lastAssociation.set(latest);
@@ -140,7 +164,7 @@ int LocalDatabase::truncate() {
 
 		info("database truncated");
 
-	} catch (Exception &e) {
+	} catch (const Exception &e) {
 		error("Error truncating database (" + databaseFileName + "):");
 		error(e.getMessage());
 	} catch (...) {
@@ -178,7 +202,7 @@ void LocalDatabase::openDatabase(const DatabaseConfig& config) {
 		}
 
 		lastAssociation.set(secondaryIndexes.size());
-	} catch (Exception& e) {
+	} catch (const Exception& e) {
 		fatal(e.getMessage());
 	}
 }
@@ -190,7 +214,7 @@ void LocalDatabase::closeDatabase() {
 		getDatabaseHandle()->close(true);
 
 		info("database closed");
-	} catch (Exception &e) {
+	} catch (const Exception &e) {
 		error("Error closing database (" + databaseFileName + "):");
 		error(e.getMessage());
 	} catch (...) {
@@ -485,8 +509,7 @@ void LocalDatabase::associate(LocalDatabase* secondaryDB, int (*callback)(DB *se
 	auto db = objectsDatabase.get();
 
 	if (db != nullptr) {
-		fatal(db->associate(nullptr, secondaryDB->getDatabaseHandle(), callback,
-			     DB_CREATE) == 0, "error could not associate secondary index");
+		associateIndexTransactional(db, secondaryDB, callback);
 
 		lastAssociation.set(val);
 	}

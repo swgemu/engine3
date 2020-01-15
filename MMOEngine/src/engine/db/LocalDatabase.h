@@ -31,6 +31,8 @@ namespace engine {
  public:
 	 enum DatabaseType {LOCALDATABASE = 1, OBJECTDATABASE, INDEXDATABASE};
 
+	 using AssociationBDBCallback = int(*) (DB*, const DBT*, const DBT*, DBT*);
+
  protected:
 	 ThreadLocal<engine::db::berkeley::BerkeleyDatabase*> objectsDatabase;
 	 LocalDatabase* parentDatabase = nullptr;
@@ -63,6 +65,8 @@ namespace engine {
 
 	 LocalDatabase() {
 	 }
+
+	 void associateIndexTransactional(berkeley::BerkeleyDatabase* db, LocalDatabase* db2, AssociationBDBCallback callback);
 
  public:
 	 static int DEADLOCK_MAX_RETRIES;
