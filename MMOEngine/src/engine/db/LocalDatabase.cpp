@@ -69,7 +69,7 @@ void LocalDatabase::associateIndexTransactional(BerkeleyDatabase* db, LocalDatab
 		ret = db->associate(transaction, db2->getDatabaseHandle(), callback, DB_CREATE);
 
 		if (ret == DB_LOCK_DEADLOCK) {
-			info() << "deadlock detected in LocalDatabase::get.. retrying iteration " << i;
+			info() << "deadlock detected in LocalDatabase::associateIndexTransactional retrying iteration " << i;
 
 			transaction->abort();
 			transaction = nullptr;
