@@ -179,6 +179,15 @@ void ManagedObject::writeJSON(JSONSerializationType& j) {
 		_implementation->writeJSON(j);
 }
 
+String ManagedObjectImplementation::toStringData() const {
+	JSONSerializationType jsonData;
+	// TODO Need to fix this when we get writeJSON migrated to const
+	auto obj = const_cast<ManagedObjectImplementation*>(this);
+	obj->writeJSON(jsonData);
+	jsonData["_oid"] = _this.getReferenceUnsafeStaticCast()->_getObjectID();
+	return jsonData.dump();
+}
+
 DistributedObjectServant* ManagedObject::getServant() {
 #ifdef WITH_STM
 	return header->getForDirty();

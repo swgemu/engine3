@@ -229,6 +229,16 @@ void ManagedObject::__writeJSON(JSONSerializationType& j) {
 	}
 }
 
+String ManagedObject::toStringData() const {
+	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementationForRead());
+	if (unlikely(_implementation == nullptr)) {
+		throw ObjectNotLocalException(this);
+
+	} else {
+		return _implementation->toStringData();
+	}
+}
+
 void ManagedObject::readObject(ObjectInputStream* stream) {
 	ManagedObjectImplementation* _implementation = static_cast<ManagedObjectImplementation*>(_getImplementation());
 	if (unlikely(_implementation == nullptr)) {

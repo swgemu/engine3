@@ -77,6 +77,8 @@ public:
 
 	void writeJSON(JSONSerializationType& j);
 
+	String toStringData() const;
+
 	void readObject(ObjectInputStream* stream);
 
 	bool toBinaryStream(ObjectOutputStream* stream);
@@ -201,6 +203,8 @@ public:
 	void setLockName(const String& name);
 
 	bool notifyDestroy();
+
+	String toStringData() const;
 
 	bool toBinaryStream(ObjectOutputStream* stream);
 

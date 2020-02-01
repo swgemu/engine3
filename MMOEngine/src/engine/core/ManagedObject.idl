@@ -95,6 +95,10 @@ class ManagedObject {
 	@noImplementationDeclaration
 	public native void writeJSON(@dereferenced JSONSerializationType j);
 
+	@read
+	@local
+	public native string toStringData();
+
 	@local
 	@noImplementationDeclaration
 	@dirty
