@@ -15,6 +15,7 @@ namespace sys {
   namespace io {
 
   	class FileWriter : public Writer {
+	protected:
   		File* file;
 
   	public:

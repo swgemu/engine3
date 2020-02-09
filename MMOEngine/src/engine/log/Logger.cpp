@@ -5,7 +5,7 @@
 
 #include "Logger.h"
 
-AtomicReference<FileWriter*> Logger::globalLogFile = nullptr;
+AtomicReference<FileLogWriter*> Logger::globalLogFile = nullptr;
 
 Time Logger::starttime;
 
@@ -103,11 +103,14 @@ Logger::~Logger() {
 	closeFileLogger();
 }
 
-void Logger::setGlobalFileLogger(const String& file) {
+void Logger::setGlobalFileLogger(const String& file, uint32 rotateSizeMB) {
 	if (globalLogFile != nullptr)
 		closeGlobalFileLogger();
 
-	globalLogFile = new FileWriter(new File(file), true);
+	globalLogFile = new FileLogWriter(new File(file), true);
+
+	globalLogFile->setSynchronized(false);
+	globalLogFile->setRotateSizeMB(rotateSizeMB);
 
 	starttime.updateToCurrentTime();
 }
@@ -130,7 +133,7 @@ void Logger::setFileLogger(const String& file, bool appendData) {
 
 	File* fileObject = new File(file);
 
-	logFile = new FileWriter(fileObject, appendData);
+	logFile = new FileLogWriter(fileObject, appendData);
 }
 
 void Logger::closeGlobalFileLogger() {
@@ -215,8 +218,6 @@ void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 		return;
 
 	if (logLevel >= type && logFile != nullptr) {
-		FileWriter* logFile = const_cast<FileWriter*>(this->logFile);
-
 		StringBuffer fullMessage;
 
 		if (!logJSON) {
@@ -241,8 +242,6 @@ void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 			logFile->flush();
 		}
 	} else if (doGlobalLog && globalLogFile != nullptr && globalLogLevel >= type) {
-		FileWriter* globalLogFile = const_cast<FileWriter*>(this->globalLogFile.get());
-
 		StringBuffer fullMessage;
 
 		if (!jsonGlobalLog) {
@@ -595,4 +594,3 @@ void LoggerHelper::flush(bool clearBuffer) {
 		buffer.deleteAll();
 	}
 }
-

@@ -44,6 +44,8 @@ namespace sys {
 
 		bool mkdir();
 		bool mkdirs();
+		const String getBaseName() const;
+		const String getDirName() const;
 
 		int seek(long offset, int origin = SEEK_SET);
 		long size();
@@ -75,6 +77,10 @@ namespace sys {
 		static bool doMkdir(const char* path, int mode);
 
 		static char directorySeparator();
+
+		static bool mkpath(const String& path, int permissions = 0755);
+
+		bool reopen();
 
 	protected:
 		bool open(int access);

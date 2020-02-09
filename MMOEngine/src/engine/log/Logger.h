@@ -24,6 +24,7 @@
 
 #include "system/lang.h"
 #include "system/lang/Function.h"
+#include "system/thread/Mutex.h"
 
 namespace engine {
   namespace log {
@@ -160,7 +161,7 @@ namespace engine {
 		using LoggerCallback = Function<int(LogLevel level, const char* message)>;
 
 	private:
-		FileWriter* logFile = nullptr;
+		mutable FileLogWriter* logFile = nullptr;
 
 		LogLevel logLevel = LOG;
 		bool doGlobalLog = true;
@@ -175,7 +176,7 @@ namespace engine {
 
 		UniqueReference<LoggerCallback*> callback;
 
-		static AtomicReference<FileWriter*> globalLogFile;
+		static AtomicReference<FileLogWriter*> globalLogFile;
 		static AtomicInteger globalLogLevel;
 		static AtomicBoolean syncGlobalLog;
 		static AtomicBoolean jsonGlobalLog;
@@ -193,7 +194,7 @@ namespace engine {
 		Logger& operator=(const Logger& logger);
 		Logger& operator=(Logger&& logger);
 
-		static void setGlobalFileLogger(const String& file);
+		static void setGlobalFileLogger(const String& file, uint32 rotateSizeMB = 100);
 		static void setGlobalFileLogLevel(LogLevel level);
 		static void setGlobalFileLoggerSync(bool val);
 		static void setGlobalFileJson(bool val);
@@ -353,6 +354,27 @@ namespace engine {
 
 		inline void setLogJSON(bool val) {
 			logJSON = val;
+		}
+
+		inline void setLogSynchronized(bool synchronized) {
+			if (logFile == nullptr)
+				return;
+
+			logFile->setSynchronized(synchronized);
+		}
+
+		inline void setRotateLogSizeMB(uint32 maxSizeMB) {
+			if (logFile == nullptr)
+				return;
+
+			logFile->setRotateSizeMB(maxSizeMB);
+		}
+
+		inline void setRotatePrefix(String prefix) {
+			if (logFile == nullptr)
+				return;
+
+			logFile->setRotatePrefix(prefix);
 		}
 
 		inline void setLoggerCallback(LoggerCallback&& funct) {

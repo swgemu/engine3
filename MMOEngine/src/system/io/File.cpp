@@ -12,7 +12,12 @@
 
 #include <cerrno>
 
+#include <libgen.h>
+
 #include "File.h"
+
+#include "system/thread/Mutex.h"
+#include "system/thread/Locker.h"
 
 File::File(const String& pathname) {
 	name = pathname;
@@ -29,6 +34,7 @@ File::~File() {
 }
 
 bool File::open(int access) {
+	File::access = access;
 	String modestr = getModeString(mode, access);
 
 	if (fileDescriptor == nullptr)
@@ -36,7 +42,16 @@ bool File::open(int access) {
 	else
 		fileDescriptor = freopen(name.toCharArray(), modestr.toCharArray(), fileDescriptor);
 
-//	File::mode = mode;
+	return fileDescriptor != nullptr;
+}
+
+bool File::reopen() {
+	if (!fileDescriptor) {
+		return false;
+	}
+
+	String modestr = getModeString(mode, access);
+	fileDescriptor = freopen(name.toCharArray(), modestr.toCharArray(), fileDescriptor);
 
 	return fileDescriptor != nullptr;
 }
@@ -125,12 +140,15 @@ char File::directorySeparator() {
 }
 
 bool File::mkdirs() {
+	return mkpath(getDirName(), permissions | 0110);
+}
+
+bool File::mkpath(const String& path, int permissions) {
 	char* pp;
 	char* sp;
 	bool status = true;
 
-	const char* path = name.toCharArray();
-	char* copypath = strdup(path);
+	char* copypath = strdup(path.toCharArray());
 
 	pp = copypath;
 	while (status && (sp = strchr(pp, '/')) != 0) {
@@ -144,11 +162,41 @@ bool File::mkdirs() {
 		pp = sp + 1;
 	}
 
-	/*if (status && pp != copypath)
-		status = doMkdir(path, permissions);*/
+	if (status && pp != copypath)
+		status = doMkdir(path.toCharArray(), permissions);
 
 	free(copypath);
 	return (status);
+}
+
+const String File::getBaseName() const {
+	static Mutex guard;
+	Locker lock(&guard);
+
+	String copypath = name;
+	String result;
+	auto filename = ::basename(copypath.begin());
+
+	if (filename != nullptr) {
+		result = String(filename);
+	}
+
+	return result;
+}
+
+const String File::getDirName() const {
+	static Mutex guard;
+	Locker lock(&guard);
+
+	String copypath = name;
+	String result;
+	auto dirname = ::dirname(copypath.begin());
+
+	if (dirname != nullptr) {
+		result = String(dirname);
+	}
+
+	return result;
 }
 
 int File::seek(long offset, int origin) {

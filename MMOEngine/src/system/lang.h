@@ -49,6 +49,7 @@
 #include "io/FileOutputStream.h"
 #include "io/FileReader.h"
 #include "io/FileWriter.h"
+#include "io/FileLogWriter.h"
 #include "io/BufferedReader.h"
 #include "io/StringTokenizer.h"
 #include "io/UnicodeTokenizer.h"

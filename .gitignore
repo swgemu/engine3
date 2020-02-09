@@ -1,7 +1,10 @@
 MMOEngine/autom4te.cache
+MMOEngine/build/unix/Makefile
 MMOEngine/build/unix/CMakeFiles
 MMOEngine/build/unix/confpCfaQz
 MMOEngine/build/unix/src
 MMOEngine/build/unix32/CMakeFiles
 MMOEngine/build/unix32/src
 MMOEngine/lib/unix/libengine3*a
+*.swp
+*~
