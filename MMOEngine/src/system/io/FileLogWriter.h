@@ -19,7 +19,11 @@ namespace io {
 		String rotatePrefix = "zArchive/"; // Default to {dir}/zArchive/{filename}
 
 	public:
-		FileLogWriter(File* file, bool append = false) : FileWriter(file, append) {
+		FileLogWriter(File* file, bool append = false, bool rotateAtStart = false) : FileWriter(file, append) {
+			if (rotateAtStart) {
+				rotatefile();
+			}
+
 			currentLoggedBytes.set(file->size());
 		}
 

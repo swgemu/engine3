@@ -103,11 +103,11 @@ Logger::~Logger() {
 	closeFileLogger();
 }
 
-void Logger::setGlobalFileLogger(const String& file, uint32 rotateSizeMB) {
+void Logger::setGlobalFileLogger(const String& file, uint32 rotateSizeMB, bool rotateOnOpen) {
 	if (globalLogFile != nullptr)
 		closeGlobalFileLogger();
 
-	globalLogFile = new FileLogWriter(new File(file), true);
+	globalLogFile = new FileLogWriter(new File(file), true, rotateOnOpen);
 
 	globalLogFile->setSynchronized(false);
 	globalLogFile->setRotateSizeMB(rotateSizeMB);
@@ -127,13 +127,13 @@ void Logger::setGlobalFileJson(bool val) {
 	jsonGlobalLog = val;
 }
 
-void Logger::setFileLogger(const String& file, bool appendData) {
+void Logger::setFileLogger(const String& file, bool appendData, bool rotateOnOpen) {
 	if (logFile != nullptr)
 		closeFileLogger();
 
 	File* fileObject = new File(file);
 
-	logFile = new FileLogWriter(fileObject, appendData);
+	logFile = new FileLogWriter(fileObject, appendData, rotateOnOpen);
 }
 
 void Logger::closeGlobalFileLogger() {

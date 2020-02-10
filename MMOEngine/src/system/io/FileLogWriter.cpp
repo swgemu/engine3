@@ -5,6 +5,9 @@
 
 #include "FileLogWriter.h"
 
+#include <cerrno>
+#include <string.h>
+
 int FileLogWriter::write(const char* str, int len) {
 	validateWriteable();
 
@@ -56,8 +59,20 @@ void FileLogWriter::rotatefile() const {
 	int err = std::rename(fileName.toCharArray(), destFileName.toCharArray());
 
 	if (err != 0) {
+		char buf[1024];
+#ifdef PLATFORM_MAC
+		char* msg = buf;
+		strerror_r(errno, buf, sizeof(buf));
+#else // PLATFORM_MAC
+#ifndef PLATFORM_WIN
+		char* msg = strerror_r(errno, buf, sizeof(buf));
+#else // PLATFORM_WIN
+		char* msg = "<unknown on windows>";
+#endif // PLATFORM_WIN
+#endif // PLATFORM_MAC
+
 		// Need to avoid loop of calling logger that calls us, but we also need someone to notice this issue and resolve it
-		System::err << "WARNING: Failed to rotate " << fileName << " to " << destFileName << " err=" << err << endl;
+		System::err << "WARNING: Failed to rotate " << fileName << " to " << destFileName << " errno=" << errno << " (" << msg << ")" << endl;
 	} else {
 #if DEBUG_FILELOGWRITER
 		System::out << "Rotated " << fileName << " to " << destFileName << " size=" << currentLoggedBytes << endl;

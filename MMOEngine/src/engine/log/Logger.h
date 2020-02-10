@@ -194,14 +194,14 @@ namespace engine {
 		Logger& operator=(const Logger& logger);
 		Logger& operator=(Logger&& logger);
 
-		static void setGlobalFileLogger(const String& file, uint32 rotateSizeMB = 100);
+		static void setGlobalFileLogger(const String& file, uint32 rotateSizeMB = 100, bool rotateOnOpen = false);
 		static void setGlobalFileLogLevel(LogLevel level);
 		static void setGlobalFileLoggerSync(bool val);
 		static void setGlobalFileJson(bool val);
 
 		static void closeGlobalFileLogger();
 
-		void setFileLogger(const String& file, bool appendData = false);
+		void setFileLogger(const String& file, bool appendData = false, bool rotateOnOpen = false);
 
 		void closeFileLogger();
 
@@ -375,6 +375,13 @@ namespace engine {
 				return;
 
 			logFile->setRotatePrefix(prefix);
+		}
+
+		inline void rotateLogFile() {
+			if (logFile == nullptr)
+				return;
+
+			logFile->rotatefile();
 		}
 
 		inline void setLoggerCallback(LoggerCallback&& funct) {
