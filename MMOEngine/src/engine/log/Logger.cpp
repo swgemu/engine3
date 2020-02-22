@@ -4,6 +4,7 @@
 */
 
 #include "Logger.h"
+#include <atomic>
 
 AtomicReference<FileLogWriter*> Logger::globalLogFile = nullptr;
 
@@ -54,17 +55,17 @@ Logger& Logger::operator=(const Logger& logger) {
 
 	closeFileLogger();
 
-       	logLevel = logger.logLevel;
+	logLevel = logger.logLevel;
 	doGlobalLog = logger.doGlobalLog;
-       	doSyncLog = logger.doSyncLog;
-       	logTimeToFile = logger.logTimeToFile;
+	doSyncLog = logger.doSyncLog;
+	logTimeToFile = logger.logTimeToFile;
 	logLevelToFile = logger.logLevelToFile;
-       	name = logger.name;
+	name = logger.name;
 	logJSON = logger.logJSON;
 	logToConsole = logger.logToConsole;
 
 	if (logger.callback != nullptr) {
-	       	callback = new LoggerCallback(*logger.callback.get());
+		callback = new LoggerCallback(*logger.callback.get());
 	} else {
 		callback = nullptr;
 	}
@@ -149,13 +150,16 @@ void Logger::closeGlobalFileLogger() {
 }
 
 void Logger::closeFileLogger() {
-	if (logFile != nullptr) {
-		logFile->close();
+	auto oldLogFile = logFile.get(std::memory_order_seq_cst);
 
-		delete logFile->getFile();
+	bool success = logFile.compareAndSet(oldLogFile, nullptr);
 
-		delete logFile;
-		logFile = nullptr;
+	if (success && oldLogFile != nullptr) {
+		oldLogFile->close();
+
+		delete oldLogFile->getFile();
+
+		delete oldLogFile;
 	}
 }
 

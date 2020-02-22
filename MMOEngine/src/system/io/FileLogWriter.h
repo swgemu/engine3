@@ -39,7 +39,7 @@ namespace io {
 			rotatePrefix = prefix; // Setup rotate to {dir}{prefix}{filename}
 		}
 
-		int write(const char* str, int len);
+		int write(const char* str, int len) override;
 		void rotatefile() const;
 	};
 } // namespace io

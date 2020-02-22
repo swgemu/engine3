@@ -161,7 +161,7 @@ namespace engine {
 		using LoggerCallback = Function<int(LogLevel level, const char* message)>;
 
 	private:
-		mutable FileLogWriter* logFile = nullptr;
+		mutable AtomicReference<FileLogWriter*> logFile = nullptr;
 
 		LogLevel logLevel = LOG;
 		bool doGlobalLog = true;
