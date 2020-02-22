@@ -133,7 +133,9 @@ void Logger::setFileLogger(const String& file, bool appendData, bool rotateOnOpe
 
 	File* fileObject = new File(file);
 
-	logFile = new FileLogWriter(fileObject, appendData, rotateOnOpen);
+	auto obj = new FileLogWriter(fileObject, appendData, rotateOnOpen);
+
+	logFile.set(obj);
 }
 
 void Logger::closeGlobalFileLogger() {

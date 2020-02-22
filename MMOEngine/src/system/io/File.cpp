@@ -172,8 +172,8 @@ bool File::mkpath(const String& path, int permissions) {
 }
 
 const String File::getBaseName() const {
-	static Mutex guard;
-	Locker lock(&guard);
+	static std::mutex guard;
+	std::unique_lock<std::mutex> lock(guard);
 
 	String copypath = name;
 	String result;
