@@ -54,7 +54,6 @@ Logger& Logger::operator=(const Logger& logger) {
 
 	closeFileLogger();
 
-	logFile = logger.logFile;
        	logLevel = logger.logLevel;
 	doGlobalLog = logger.doGlobalLog;
        	doSyncLog = logger.doSyncLog;
