@@ -217,6 +217,9 @@ void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 		return;
 	}
 
+	auto logFile = this->logFile.get(std::memory_order_seq_cst);
+	auto globalLogFile = this->globalLogFile.get(std::memory_order_seq_cst);
+
 	if (logFile == nullptr && globalLogFile == nullptr)
 		return;
 
