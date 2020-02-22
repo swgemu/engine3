@@ -19,6 +19,8 @@
 #include "system/thread/Mutex.h"
 #include "system/thread/Locker.h"
 
+#include <mutex>
+
 File::File(const String& pathname) {
 	name = pathname;
 
@@ -185,8 +187,8 @@ const String File::getBaseName() const {
 }
 
 const String File::getDirName() const {
-	static Mutex guard;
-	Locker lock(&guard);
+	static std::mutex guard;
+	std::unique_lock<std::mutex> lock(guard);
 
 	String copypath = name;
 	String result;
