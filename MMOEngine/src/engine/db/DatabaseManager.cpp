@@ -220,7 +220,7 @@ void DatabaseManager::loadDatabases(bool truncateDatabases) {
 		info() << "loaded database version: " << currentVersion;
 
 		loaded = true;
-	} catch (Exception& e) {
+	} catch (const Exception& e) {
 		fatal(e.getMessage());
 	}
 

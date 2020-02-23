@@ -20,7 +20,7 @@ using namespace engine::db;
 using namespace engine::db::berkeley;
 
 namespace LD3Ns {
-	static bool shutdown = false;
+	static AtomicBoolean shutdown = false;
 
 	static void runThreadLocalDtor(void* value) {
 		shutdown = true;

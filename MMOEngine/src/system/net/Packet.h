@@ -290,10 +290,10 @@ namespace sys {
 
 		inline void parseUnicode(UnicodeString& str) {
 			uint32 len = readInt();
-			shiftOffset(len * 2);
+			shiftOffset(len * UnicodeString::UnicodeCharSize::value);
 
 			str.clear();
-			str.append((unsigned short*) (offset - len * 2), len);
+			str.append(reinterpret_cast<UnicodeString::UnicodeCharType*>((offset - len * UnicodeString::UnicodeCharSize::value)), len);
 		}
 
 		inline UnicodeString parseUnicode() {
@@ -311,7 +311,7 @@ namespace sys {
 				throw StreamIndexOutOfBoundsException(this, offs + 4);
 
 			str.clear();
-			str.append((unsigned short*) (elementOffset - len * 2), len);
+			str.append(reinterpret_cast<UnicodeString::UnicodeCharType*>((elementOffset - len * UnicodeString::UnicodeCharSize::value)), len);
 		}
 
 		inline void parseStream(char *buf, int len) {

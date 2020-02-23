@@ -317,7 +317,7 @@ bool UnicodeString::parseFromString(const String& str, int version) {
 bool UnicodeString::toBinaryStream(ObjectOutputStream* stream) {
 	stream->writeInt(count);
 
-	stream->writeStream(reinterpret_cast<const char*>(uString), count * 2);
+	stream->writeStream(toCharArray(), count * UnicodeCharSize::value);
 
 	return true;
 }
@@ -326,7 +326,7 @@ bool UnicodeString::parseFromBinaryStream(ObjectInputStream* stream) {
 	uint32 len = stream->readInt();
 	auto buffer = stream->getBuffer() + stream->getOffset();
 
-	stream->shiftOffset(len * 2);
+	stream->shiftOffset(len * UnicodeCharSize::value);
 
 	if (uString) {
 		delete [] uString;

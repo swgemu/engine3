@@ -11,6 +11,7 @@
 
 #include <string>
 #include <cstdarg>
+#include <type_traits>
 
 #define SSO_STRING
 
@@ -22,7 +23,6 @@ namespace sys {
 	//separating from String to make gdb not print them with every instance
 	class StringHashCodeTable {
 	public:
-#ifdef CXX11_COMPILER
 		static constexpr uint32 crctable[256] = {
 				0x0000000,
 				0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
@@ -77,9 +77,6 @@ namespace sys {
 				0x933EB0BB, 0x97FFAD0C, 0xAFB010B1, 0xAB710D06, 0xA6322BDF,
 				0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 		};
-#else
-		static const uint32 crctable[256];
-#endif
 	};
 
 #ifdef STRING_INHERIT_VARIABLE
@@ -109,12 +106,13 @@ namespace sys {
 		String(const ConstString& str);
 		String(const std::string& str);
 
+		String(String&& str);
+		~String();
+
 		static const int constexpr npos = -1;
 
-#ifdef CXX11_COMPILER
-		String(String&& str);
-#endif
-		~String();
+		using StringCharType = char;
+		using StringCharSize = std::integral_constant<decltype(sizeof(StringCharType)), sizeof(StringCharType)>;
 
 		String concat(char ch) const;
 		String concat(int i) const;
@@ -122,30 +120,32 @@ namespace sys {
 		String concat(const char* str, int len) const;
 		String concat(const String& str) const;
 
-		bool contains(const char* str) const ;
-		bool contains(const String& str) const ;
+		bool contains(const char* str) const;
+		bool contains(const String& str) const;
 
 		int compareTo(const char* str) const;
 		int compareTo(const String& str) const;
 
-		int indexOf(char ch) const ;
-		int indexOf(char ch, int fromIndex) const ;
-		int indexOf(const char* str) const ;
-		int indexOf(const char* str, int fromIndex) const ;
-		int indexOf(const String& str) const ;
-		int indexOf(const String& str, int fromIndex) const ;
+		int indexOf(char ch) const;
+		int indexOf(char ch, int fromIndex) const;
+		int indexOf(const char* str) const;
+		int indexOf(const char* str, int fromIndex) const;
+		int indexOf(const String& str) const;
+		int indexOf(const String& str, int fromIndex) const;
 
-		int lastIndexOf(char ch) const ;
-		int lastIndexOf(char ch, int fromIndex) const ;
-		int lastIndexOf(const char* str) const ;
-		int lastIndexOf(const char* str, int fromIndex) const ;
-		int lastIndexOf(const String& str) const ;
-		int lastIndexOf(const String& str, int fromIndex) const ;
+		int regexIndexOf(const String& regex) const;
+
+		int lastIndexOf(char ch) const;
+		int lastIndexOf(char ch, int fromIndex) const;
+		int lastIndexOf(const char* str) const;
+		int lastIndexOf(const char* str, int fromIndex) const;
+		int lastIndexOf(const String& str) const;
+		int lastIndexOf(const String& str, int fromIndex) const;
 
 		//sprintf format
-		template<std::size_t BufferSize = 1024>
+		template<std::size_t BufferSize = 256>
 		static String format(const char* format, ...) {
-			char buffer[BufferSize]; //VLA is not officially supported in cpp
+			char buffer[BufferSize];
 
 			va_list args;
 			va_start(args, format);
@@ -161,36 +161,24 @@ namespace sys {
 			return String(buffer, res);
 		}
 
-		bool beginsWith(const char* str) const ;
-		bool beginsWith(const String& str) const ;
+		bool beginsWith(const char* str) const;
+		bool beginsWith(const String& str) const;
 
-		bool endsWith(const char* str) const ;
-		bool endsWith(const String& str) const ;
+		bool endsWith(const char* str) const;
+		bool endsWith(const String& str) const;
 
 		uint32 hashCode() const;
 
-#ifdef CXX11_COMPILER
 		static constexpr uint32 hashCode(const char* string, uint32 startCRC = 0xFFFFFFFF) {
 			return *string ?
 					hashCode(string + 1, StringHashCodeTable::crctable[((startCRC >> 24) ^ (byte)(*string)) & 0xFF] ^ (startCRC << 8))
 					: ~startCRC;
 		}
-#else
-		static uint32 hashCode(const char* string, uint32 startCRC = 0xFFFFFFFF) {
-			uint32 CRC = startCRC;
-
-			for (; *string; ++string) {
-				CRC = StringHashCodeTable::crctable[((CRC >> 24) ^ static_cast<byte>(*string)) & 0xFF] ^ (CRC << 8);
-			}
-
-			return ~CRC;
-		}
-#endif
 
 		static uint32 hashCode(const String& str);
 
-		String subString(int beginIndex) const ;
-		String subString(int beginIndex, int endIndex) const ;
+		String subString(int beginIndex) const;
+		String subString(int beginIndex, int endIndex) const;
 
 		static String valueOf(int val);
 		static String valueOf(uint32_t val);
@@ -219,14 +207,14 @@ namespace sys {
 		String replaceFirst(const String& regex, const String& replacement) const ;
 		String replaceAll(const String& regex, const String& replacement) const ;
 
-		String toLowerCase() const ;
+		String toLowerCase() const;
 		void changeToLowerCase();
 
-		String toUpperCase() const ;
+		String toUpperCase() const;
 		void changeToUpperCase();
 
 		String trim() const;
-		String escapeString() const ;
+		String escapeString() const;
 
 		String& operator= (const char* str);
 		String& operator= (const String& str);
@@ -236,9 +224,7 @@ namespace sys {
 			return std::string(toCharArray());
 		}
 
-#ifdef CXX11_COMPILER
 		String& operator=(String&& str);
-#endif
 
 		bool operator== (const char* str) const {
 			return compareTo(str) == 0;
@@ -390,17 +376,6 @@ namespace sys {
 		}
 	};
 
-#ifdef CXX11_COMPILER
-	template<uint32 M>
-	class StringHashCodeHelper {
-	public:
-		const uint32 value;
-
-		constexpr StringHashCodeHelper() : value(M) {
-		}
-	};
-#endif
-
 #ifndef STRING_INHERIT_VARIABLE
 	class SerializableString : public String, public Variable {
 #else
@@ -436,12 +411,8 @@ namespace sys {
 
 using namespace sys::lang;
 
-#ifdef CXX11_COMPILER
 //forces the hash code to be calculated at compile time of a const string
-#define STRING_HASHCODE(a) StringHashCodeHelper<String::hashCode(a)>().value
-#else
-#define STRING_HASHCODE(a) String::hashCode(a)
-#endif
+#define STRING_HASHCODE(a) std::integral_constant<uint32, String::hashCode(a)>::value
 
 constexpr uint32 operator "" _hashCode(char const* str, std::size_t s) {
 	return String::hashCode(str);

@@ -13,6 +13,7 @@
 #include <locale>
 #include <codecvt>
 #include <string>
+#include <type_traits>
 
 namespace sys {
   namespace lang {
@@ -20,6 +21,7 @@ namespace sys {
 	class UnicodeString : public Variable {
 	public:
 		using UnicodeCharType = uint16;
+		using UnicodeCharSize = std::integral_constant<decltype(sizeof(UnicodeCharType)), sizeof(UnicodeCharType)>;
 
 	private:
 		UnicodeCharType* uString;
@@ -104,6 +106,26 @@ namespace sys {
 			return str1.concat(str2);
 		}
 
+		inline UnicodeCharType* begin() {
+			return uString;
+		}
+
+		inline const UnicodeCharType* begin() const {
+			return uString;
+		}
+
+		inline UnicodeCharType* end() {
+			return uString + count;
+		}
+
+		inline const UnicodeCharType* end() const {
+			return uString + count;
+		}
+
+		inline uint32 length() const {
+			return count;
+		}
+
 	private:
 		void create(const char* ascii, int len);
 		void asciitowide(UnicodeCharType* unicode, const char* ascii, int len);
@@ -111,32 +133,25 @@ namespace sys {
 		void copy(UnicodeCharType* dest, const UnicodeCharType* src);
 		void copy(UnicodeCharType* dest, const UnicodeCharType* src, int len);
 
-	public:
-		inline uint32 length() const {
-			return count;
-		}
-
-		template <typename T>
-		static String toUTF8(const std::basic_string<T, std::char_traits<T>, std::allocator<T>>& source) {
-			std::wstring_convert<std::codecvt_utf8_utf16<T>, T> convertor;
-			auto result = convertor.to_bytes(source);
+		template<UnicodeCharSize::value_type CharTypeSize, std::enable_if_t<CharTypeSize == sizeof(std::u16string::value_type), int> = 0>
+		String convertToString() const {
+			std::wstring_convert<std::codecvt_utf8_utf16<std::u16string::value_type>, std::u16string::value_type> convertor;
+			auto result = convertor.to_bytes(reinterpret_cast<const std::u16string::value_type*>(begin()), reinterpret_cast<const std::u16string::value_type*>(end()));
 
 			return String(result.c_str(), result.length());
 		}
 
+		template<UnicodeCharSize::value_type CharTypeSize, std::enable_if_t<CharTypeSize == String::StringCharSize::value, int> = 0>
+		String convertToString() const {
+			return String(toCharArray(), count);
+		}
+
+	public:
 		String toString() const {
-			std::u16string uStr;
-			auto len = length();
-
-			uStr.reserve(len);
-
-			for (int i = 0; i < len; ++i) {
-				uStr.push_back(uString[i]);
-			}
-
-			return toUTF8(uStr);
+			return convertToString<UnicodeCharSize::value>();
 		}
 	};
+
 
   } // namespace lang
 } // namespace sys
