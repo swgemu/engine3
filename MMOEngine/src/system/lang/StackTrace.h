@@ -22,6 +22,12 @@
 	#undef LINE_TRACING
 #endif*/
 
+namespace engine {
+namespace log {
+	class Logger;
+}
+};
+
 namespace sys {
   namespace lang {
 
@@ -61,6 +67,8 @@ namespace sys {
 		static const String& getBinaryName() {
 			return binaryName;
 		}
+
+		static engine::log::Logger* getLogger();
 	};
 
   } // namespace lang

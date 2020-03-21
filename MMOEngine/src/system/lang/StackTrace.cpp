@@ -13,7 +13,7 @@
 String StackTrace::binaryName = "core3";
 
 namespace StackTraceNs {
-	static const Logger logger("StackTrace");
+	static Logger logger("StackTrace");
 }
 
 using namespace StackTraceNs;
@@ -27,6 +27,10 @@ StackTrace::StackTrace() {
 StackTrace::StackTrace(const StackTrace& c) {
 	count = c.count;
 	memcpy(symbols, c.symbols, sizeof(void*) * c.count);
+}
+
+Logger* StackTrace::getLogger() {
+	return &StackTraceNs::logger;
 }
 
 StackTrace& StackTrace::operator=(const StackTrace& c) {
