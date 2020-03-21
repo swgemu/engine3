@@ -30,8 +30,16 @@ int FileLogWriter::write(const char* str, int len) {
 	return result;
 }
 
-void FileLogWriter::rotatefile() const {
-	if (file == nullptr || maxLoggedBytes == 0 || !rotateMutex.tryLock()) {
+void FileLogWriter::rotatefile(bool force) const {
+	if (!force && maxLoggedBytes == 0) {
+		return;
+	}
+
+	if(file == nullptr || !rotateMutex.tryLock()) {
+		return;
+	}
+
+	if (file->size() == 0) {
 		return;
 	}
 

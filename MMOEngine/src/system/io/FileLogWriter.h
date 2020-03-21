@@ -21,7 +21,7 @@ namespace io {
 	public:
 		FileLogWriter(File* file, bool append = false, bool rotateAtStart = false) : FileWriter(file, append) {
 			if (rotateAtStart) {
-				rotatefile();
+				rotatefile(true);
 			}
 
 			currentLoggedBytes.set(file->size());
@@ -40,7 +40,7 @@ namespace io {
 		}
 
 		int write(const char* str, int len) override;
-		void rotatefile() const;
+		void rotatefile(bool force = false) const;
 	};
 } // namespace io
 } // namespace sys
