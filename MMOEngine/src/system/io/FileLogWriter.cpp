@@ -35,7 +35,7 @@ void FileLogWriter::rotatefile(bool force) const {
 		return;
 	}
 
-	if(file == nullptr || !rotateMutex.tryLock()) {
+	if(file == nullptr || !file->exists() || !rotateMutex.tryLock()) {
 		return;
 	}
 

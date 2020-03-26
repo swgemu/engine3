@@ -24,7 +24,7 @@ namespace io {
 				rotatefile(true);
 			}
 
-			currentLoggedBytes.set(file->size());
+			currentLoggedBytes.set(file->exists() ? file->size() : 0);
 		}
 
 		inline void setSynchronized(bool synchronized) {

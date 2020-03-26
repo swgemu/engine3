@@ -48,7 +48,7 @@ bool File::open(int access) {
 }
 
 bool File::reopen() {
-	if (!fileDescriptor) {
+	if (fileDescriptor == nullptr) {
 		return false;
 	}
 
@@ -59,7 +59,7 @@ bool File::reopen() {
 }
 
 bool File::close() {
-	if (!fileDescriptor) {
+	if (fileDescriptor == nullptr) {
 		return true;
 	}
 
@@ -79,6 +79,10 @@ int File::deleteFile(const char* name) {
 }
 
 void File::flush() {
+	if (fileDescriptor == nullptr) {
+		return;
+	}
+
 	fflush(fileDescriptor);
 }
 
@@ -202,10 +206,18 @@ const String File::getDirName() const {
 }
 
 int File::seek(long offset, int origin) {
+	if (fileDescriptor == nullptr) {
+		return -1;
+	}
+
 	return fseek(fileDescriptor, offset, origin);
 }
 
 long File::size() {
+	if (fileDescriptor == nullptr) {
+		return -1;
+	}
+
 	long currentOffset = ftell(fileDescriptor);
 
 	fseek(fileDescriptor, 0L, SEEK_END);
