@@ -115,8 +115,9 @@ void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) const {
 				Logger log("SlowTaskLogger");
 
 				log.setGlobalLogging(false);
-				log.setFileLogger(slowTaskFilename, true);
+				log.setFileLogger(slowTaskFilename, true, true);
 				log.setLogLevelToFile(false);
+				log.setRotateLogSizeMB(Core::getIntProperty("TaskManager.slowTaskLogMB", 100));
 
 				return log;
 			}();

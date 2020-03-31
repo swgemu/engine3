@@ -152,8 +152,9 @@ int ObjectDatabase::getData(uint64 objKey, ObjectInputStream* objectData, uint32
 			Logger log("BerkeleyDBSlowQueryLogger");
 
 			log.setGlobalLogging(false);
-			log.setFileLogger(slowTaskFilename, true);
+			log.setFileLogger(slowTaskFilename, true, true);
 			log.setLogLevelToFile(false);
+			log.setRotateLogSizeMB(Core::getIntProperty("BerkeleyDB.slowQueryLogMB", 100));
 
 			return log;
 		} ();
