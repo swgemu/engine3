@@ -80,10 +80,14 @@ void FileLogWriter::rotatefile(bool force) const {
 #endif // PLATFORM_MAC
 
 		// Need to avoid loop of calling logger that calls us, but we also need someone to notice this issue and resolve it
-		System::err << "WARNING: Failed to rotate " << fileName << " to " << destFileName << " errno=" << errno << " (" << msg << ")" << endl;
+		StringBuffer errMsg;
+		errMsg << "WARNING: Failed to rotate " << fileName << " to " << destFileName << " errno=" << errno << " (" << msg << ")" << endl;
+		std::cout << errMsg.toString().toCharArray();
 	} else {
 #if DEBUG_FILELOGWRITER
-		System::out << "Rotated " << fileName << " to " << destFileName << " size=" << currentLoggedBytes << endl;
+		StringBuffer errMsg;
+		errMsg << "Rotated " << fileName << " to " << destFileName << " size=" << currentLoggedBytes << endl;
+		std::cout << errMsg.toString().toCharArray();
 #endif // DEBUG_FILELOGWRITER
 		file->reopen();
 	}
