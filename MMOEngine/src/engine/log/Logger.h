@@ -405,7 +405,7 @@ namespace engine {
 			return name;
 		}
 
-		inline FileWriter* getFileLogger() const {
+		inline FileLogWriter* getFileLogger() const {
 			return logFile;
 		}
 
