@@ -30,7 +30,8 @@ Logger::Logger(const String& s, LogLevel level) : logLevel(level), name(s) {
 Logger::Logger(Logger&& logger) : logFile(logger.logFile), logLevel(logger.logLevel),
 	doGlobalLog(logger.doGlobalLog), doSyncLog(logger.doSyncLog), logTimeToFile(logger.logTimeToFile),
 	logLevelToFile(logger.logLevelToFile), name(std::move(logger.name)), logJSON(logger.logJSON),
-	logToConsole(logger.logToConsole), callback(std::move(logger.callback)) {
+	logToConsole(logger.logToConsole), callback(std::move(logger.callback)),
+	rotatePrefix(std::move(logger.rotatePrefix)), rotateLogSizeMB(logger.rotateLogSizeMB) {
 
 	logger.logFile = nullptr;
 }
@@ -38,7 +39,7 @@ Logger::Logger(Logger&& logger) : logFile(logger.logFile), logLevel(logger.logLe
 Logger::Logger(const Logger& logger) : logFile(nullptr), logLevel(logger.logLevel),
 	doGlobalLog(logger.doGlobalLog), doSyncLog(logger.doSyncLog), logTimeToFile(logger.logTimeToFile),
 	logLevelToFile(logger.logLevelToFile), name(logger.name), logJSON(logger.logJSON),
-	logToConsole(logger.logToConsole) {
+	logToConsole(logger.logToConsole), rotatePrefix(logger.rotatePrefix), rotateLogSizeMB(logger.rotateLogSizeMB) {
 
 	if (logger.callback != nullptr) {
 		callback = new LoggerCallback(*logger.callback.get());
@@ -63,6 +64,8 @@ Logger& Logger::operator=(const Logger& logger) {
 	name = logger.name;
 	logJSON = logger.logJSON;
 	logToConsole = logger.logToConsole;
+	rotatePrefix = logger.rotatePrefix;
+	rotateLogSizeMB = logger.rotateLogSizeMB;
 
 	if (logger.callback != nullptr) {
 		callback = new LoggerCallback(*logger.callback.get());
@@ -84,15 +87,17 @@ Logger& Logger::operator=(Logger&& logger) {
 	closeFileLogger();
 
 	logFile = logger.logFile;
-       	logLevel = logger.logLevel;
+	logLevel = logger.logLevel;
 	doGlobalLog = logger.doGlobalLog;
-       	doSyncLog = logger.doSyncLog;
-       	logTimeToFile = logger.logTimeToFile;
+	doSyncLog = logger.doSyncLog;
+	logTimeToFile = logger.logTimeToFile;
 	logLevelToFile = logger.logLevelToFile;
-       	name = std::move(logger.name);
+	name = std::move(logger.name);
 	logJSON = logger.logJSON;
 	logToConsole = logger.logToConsole;
-       	callback = std::move(logger.callback);
+	callback = std::move(logger.callback);
+	rotatePrefix = std::move(logger.rotatePrefix);
+	rotateLogSizeMB = logger.rotateLogSizeMB;
 
 	logger.logFile = nullptr;
 
@@ -134,6 +139,11 @@ void Logger::setFileLogger(const String& file, bool appendData, bool rotateOnOpe
 	File* fileObject = new File(file);
 
 	auto obj = new FileLogWriter(fileObject, appendData, rotateOnOpen);
+
+	if (obj != nullptr) {
+		obj->setRotatePrefix(rotatePrefix);
+		obj->setRotateSizeMB(rotateLogSizeMB);
+	}
 
 	logFile.set(obj);
 }

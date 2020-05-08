@@ -176,6 +176,9 @@ namespace engine {
 
 		UniqueReference<LoggerCallback*> callback;
 
+		String rotatePrefix = "zArchive/"; // Default to {dir}/zArchive/{filename}
+		uint32 rotateLogSizeMB = 0;
+
 		static AtomicReference<FileLogWriter*> globalLogFile;
 		static AtomicInteger globalLogLevel;
 		static AtomicBoolean syncGlobalLog;
@@ -364,17 +367,19 @@ namespace engine {
 		}
 
 		inline void setRotateLogSizeMB(uint32 maxSizeMB) {
-			if (logFile == nullptr)
-				return;
+			rotateLogSizeMB = maxSizeMB;
 
-			logFile->setRotateSizeMB(maxSizeMB);
+			if (logFile != nullptr) {
+				logFile->setRotateSizeMB(rotateLogSizeMB);
+			}
 		}
 
 		inline void setRotatePrefix(String prefix) {
-			if (logFile == nullptr)
-				return;
+			rotatePrefix = prefix;
 
-			logFile->setRotatePrefix(prefix);
+			if (logFile != nullptr) {
+				logFile->setRotatePrefix(rotatePrefix);
+			}
 		}
 
 		inline void rotateLogFile() {
