@@ -161,7 +161,7 @@ namespace engine {
 		using LoggerCallback = Function<int(LogLevel level, const char* message)>;
 
 	private:
-		mutable AtomicReference<FileLogWriter*> logFile = nullptr;
+		mutable Reference<FileLogWriter*> logFile = nullptr;
 
 		LogLevel logLevel = LOG;
 		bool doGlobalLog = true;
@@ -179,7 +179,7 @@ namespace engine {
 		String rotatePrefix = "zArchive/"; // Default to {dir}/zArchive/{filename}
 		uint32 rotateLogSizeMB = 0;
 
-		static AtomicReference<FileLogWriter*> globalLogFile;
+		static Reference<FileLogWriter*> globalLogFile;
 		static AtomicInteger globalLogLevel;
 		static AtomicBoolean syncGlobalLog;
 		static AtomicBoolean jsonGlobalLog;

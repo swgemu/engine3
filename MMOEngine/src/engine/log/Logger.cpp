@@ -6,7 +6,7 @@
 #include "Logger.h"
 #include <atomic>
 
-AtomicReference<FileLogWriter*> Logger::globalLogFile = nullptr;
+Reference<FileLogWriter*> Logger::globalLogFile = nullptr;
 
 Time Logger::starttime;
 
@@ -112,7 +112,7 @@ void Logger::setGlobalFileLogger(const String& file, uint32 rotateSizeMB, bool r
 	if (globalLogFile != nullptr)
 		closeGlobalFileLogger();
 
-	globalLogFile = new FileLogWriter(new File(file), true, rotateOnOpen);
+	globalLogFile = FileLogWriter::getWriter(file, true, rotateOnOpen);
 
 	globalLogFile->setSynchronized(false);
 	globalLogFile->setRotateSizeMB(rotateSizeMB);
@@ -136,42 +136,33 @@ void Logger::setFileLogger(const String& file, bool appendData, bool rotateOnOpe
 	if (logFile != nullptr)
 		closeFileLogger();
 
-	File* fileObject = new File(file);
-
-	auto obj = new FileLogWriter(fileObject, appendData, rotateOnOpen);
+	auto obj = FileLogWriter::getWriter(file, appendData, rotateOnOpen);
 
 	if (obj != nullptr) {
 		obj->setRotatePrefix(rotatePrefix);
 		obj->setRotateSizeMB(rotateLogSizeMB);
 	}
 
-	logFile.set(obj);
+	logFile = obj;
 }
 
 void Logger::closeGlobalFileLogger() {
-	auto globalLogFile = Logger::globalLogFile.get();
+	auto globalLogFile = Logger::globalLogFile;
 
 	bool success = Logger::globalLogFile.compareAndSet(globalLogFile, nullptr);
 
 	if (success && globalLogFile != nullptr) {
 		globalLogFile->close();
-
-		delete globalLogFile->getFile();
-		delete globalLogFile;
 	}
 }
 
 void Logger::closeFileLogger() {
-	auto oldLogFile = logFile.get(std::memory_order_seq_cst);
+	auto oldLogFile = logFile;
 
 	bool success = logFile.compareAndSet(oldLogFile, nullptr);
 
 	if (success && oldLogFile != nullptr) {
 		oldLogFile->close();
-
-		delete oldLogFile->getFile();
-
-		delete oldLogFile;
 	}
 }
 
@@ -229,8 +220,8 @@ void Logger::log(const char *msg, LogLevel type, bool forceSync) const {
 		return;
 	}
 
-	auto logFile = this->logFile.get(std::memory_order_seq_cst);
-	auto globalLogFile = this->globalLogFile.get(std::memory_order_seq_cst);
+	auto logFile = this->logFile.get();
+	auto globalLogFile = this->globalLogFile.get();
 
 	if (logFile == nullptr && globalLogFile == nullptr)
 		return;

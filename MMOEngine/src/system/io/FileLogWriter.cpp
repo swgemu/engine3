@@ -4,9 +4,56 @@
 */
 
 #include "FileLogWriter.h"
+#include "system/thread/Locker.h"
 
 #include <cerrno>
 #include <string.h>
+
+Mutex FileLogWriter::fileWritersMutex;
+VectorMap<String, Reference<FileLogWriter*>> FileLogWriter::fileWriters;
+
+FileLogWriter::FileLogWriter(File* file, bool append, bool rotateAtStart) : FileWriter(file, append) {
+	if (rotateAtStart) {
+		rotatefile(true);
+	}
+
+	currentLoggedBytes.set(file->exists() ? file->size() : 0);
+}
+
+FileLogWriter::~FileLogWriter() {
+	if (file != nullptr) {
+		file->close();
+		delete file;
+	}
+}
+
+void FileLogWriter::close() {
+	Locker guard(&fileWritersMutex);
+
+	auto fileName = file->getName();
+	auto writer = fileWriters.get(fileName);
+
+	if (writer != nullptr && writer->getReferenceCount() <= 4) {
+		fileWriters.drop(fileName);
+		file->close();
+	}
+}
+
+Reference<FileLogWriter*> FileLogWriter::getWriter(const String& fileName, bool append, bool rotateAtStart) {
+	Locker guard(&fileWritersMutex);
+
+	auto writer = fileWriters.get(fileName);
+
+	if (writer == nullptr) {
+		writer = new FileLogWriter(new File(fileName), append, rotateAtStart);
+
+		if (writer != nullptr) {
+			fileWriters.put(fileName, writer);
+		}
+	}
+
+	return writer;
+}
 
 int FileLogWriter::write(const char* str, int len) {
 	validateWriteable();

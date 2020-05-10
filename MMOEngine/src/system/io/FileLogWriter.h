@@ -6,6 +6,8 @@
 #pragma once
 
 #include "FileWriter.h"
+#include "system/util/VectorMap.h"
+#include "system/lang/ref/Reference.h"
 
 namespace sys {
 namespace io {
@@ -18,14 +20,14 @@ namespace io {
 		uint32 maxLoggedBytes = 0;
 		String rotatePrefix = "zArchive/"; // Default to {dir}/zArchive/{filename}
 
-	public:
-		FileLogWriter(File* file, bool append = false, bool rotateAtStart = false) : FileWriter(file, append) {
-			if (rotateAtStart) {
-				rotatefile(true);
-			}
+		static Mutex fileWritersMutex;
+		static VectorMap<String, Reference<FileLogWriter*>> fileWriters;
 
-			currentLoggedBytes.set(file->exists() ? file->size() : 0);
-		}
+		FileLogWriter(File* file, bool append = false, bool rotateAtStart = false);
+		~FileLogWriter();
+
+	public:
+		static Reference<FileLogWriter*> getWriter(const String& fileName, bool append = false, bool rotateAtStart = false);
 
 		inline void setSynchronized(bool synchronized) {
 			doSynchronized = synchronized;
@@ -39,6 +41,7 @@ namespace io {
 			rotatePrefix = prefix; // Setup rotate to {dir}{prefix}{filename}
 		}
 
+		void close() override;
 		int write(const char* str, int len) override;
 		void rotatefile(bool force = false) const;
 	};
