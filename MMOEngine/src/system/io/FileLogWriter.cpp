@@ -8,7 +8,7 @@
 #include <cerrno>
 #include <string.h>
 
-Mutex FileLogWriter::fileWritersMutex;
+std::mutex FileLogWriter::fileWritersMutex;
 VectorMap<String, Reference<FileLogWriter*>> FileLogWriter::fileWriters;
 
 FileLogWriter::FileLogWriter(File* file, bool append, bool rotateAtStart) : FileWriter(file, append) {
@@ -27,7 +27,7 @@ FileLogWriter::~FileLogWriter() {
 }
 
 void FileLogWriter::close() {
-	std::unique_lock<std::mutex> guard(&fileWritersMutex);
+	std::unique_lock<std::mutex> guard(fileWritersMutex);
 
 	auto fileName = file->getName();
 	auto writer = fileWriters.get(fileName);
@@ -39,7 +39,7 @@ void FileLogWriter::close() {
 }
 
 Reference<FileLogWriter*> FileLogWriter::getWriter(const String& fileName, bool append, bool rotateAtStart) {
-	std::unique_lock<std::mutex> guard(&fileWritersMutex);
+	std::unique_lock<std::mutex> guard(fileWritersMutex);
 
 	auto writer = fileWriters.get(fileName);
 

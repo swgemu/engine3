@@ -8,6 +8,7 @@
 #include "FileWriter.h"
 #include "system/util/VectorMap.h"
 #include "system/lang/ref/Reference.h"
+#include <mutex>
 
 namespace sys {
 namespace io {
