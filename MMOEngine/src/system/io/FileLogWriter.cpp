@@ -4,7 +4,6 @@
 */
 
 #include "FileLogWriter.h"
-#include "system/thread/Locker.h"
 
 #include <cerrno>
 #include <string.h>
@@ -28,7 +27,7 @@ FileLogWriter::~FileLogWriter() {
 }
 
 void FileLogWriter::close() {
-	Locker guard(&fileWritersMutex);
+	std::unique_lock<std::mutex> guard(&fileWritersMutex);
 
 	auto fileName = file->getName();
 	auto writer = fileWriters.get(fileName);
@@ -40,7 +39,7 @@ void FileLogWriter::close() {
 }
 
 Reference<FileLogWriter*> FileLogWriter::getWriter(const String& fileName, bool append, bool rotateAtStart) {
-	Locker guard(&fileWritersMutex);
+	std::unique_lock<std::mutex> guard(&fileWritersMutex);
 
 	auto writer = fileWriters.get(fileName);
 
