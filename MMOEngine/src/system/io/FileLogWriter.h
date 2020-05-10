@@ -21,9 +21,6 @@ namespace io {
 		uint32 maxLoggedBytes = 0;
 		String rotatePrefix = "zArchive/"; // Default to {dir}/zArchive/{filename}
 
-		static std::mutex fileWritersMutex;
-		static VectorMap<String, Reference<FileLogWriter*>> fileWriters;
-
 		FileLogWriter(File* file, bool append = false, bool rotateAtStart = false);
 		~FileLogWriter();
 

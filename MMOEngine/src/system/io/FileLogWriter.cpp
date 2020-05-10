@@ -8,8 +8,19 @@
 #include <cerrno>
 #include <string.h>
 
-std::mutex FileLogWriter::fileWritersMutex;
-VectorMap<String, Reference<FileLogWriter*>> FileLogWriter::fileWriters;
+namespace FileLogWriterNamespace {
+	std::mutex& getMutex() {
+		static std::mutex mutex;
+
+		return mutex;
+	}
+
+	VectorMap<String, Reference<FileLogWriter*>>& getFileMap() {
+		static VectorMap<String, Reference<FileLogWriter*>> map;
+
+		return map;
+	}
+}
 
 FileLogWriter::FileLogWriter(File* file, bool append, bool rotateAtStart) : FileWriter(file, append) {
 	if (rotateAtStart) {
@@ -27,27 +38,29 @@ FileLogWriter::~FileLogWriter() {
 }
 
 void FileLogWriter::close() {
-	std::unique_lock<std::mutex> guard(fileWritersMutex);
+	std::unique_lock<std::mutex> guard(FileLogWriterNamespace::getMutex());
 
+	auto& filemap = FileLogWriterNamespace::getFileMap();
 	auto fileName = file->getName();
-	auto writer = fileWriters.get(fileName);
+	auto writer = filemap.get(fileName);
 
 	if (writer != nullptr && writer->getReferenceCount() <= 4) {
-		fileWriters.drop(fileName);
+		filemap.drop(fileName);
 		file->close();
 	}
 }
 
 Reference<FileLogWriter*> FileLogWriter::getWriter(const String& fileName, bool append, bool rotateAtStart) {
-	std::unique_lock<std::mutex> guard(fileWritersMutex);
+	std::unique_lock<std::mutex> guard(FileLogWriterNamespace::getMutex());
 
-	auto writer = fileWriters.get(fileName);
+	auto& filemap = FileLogWriterNamespace::getFileMap();
+	auto writer = filemap.get(fileName);
 
 	if (writer == nullptr) {
 		writer = new FileLogWriter(new File(fileName), append, rotateAtStart);
 
 		if (writer != nullptr) {
-			fileWriters.put(fileName, writer);
+			filemap.put(fileName, writer);
 		}
 	}
 
