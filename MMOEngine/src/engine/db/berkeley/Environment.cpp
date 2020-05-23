@@ -147,25 +147,25 @@ Environment::~Environment() {
 EnvironmentMutex::EnvironmentMutex() : enabled(false) {
 }
 
-void EnvironmentMutex::lock(bool doLock) {
+void EnvironmentMutex::lock(bool doLock, const char* file, const char* function, int line) {
 	if (!enabled)
 		return;
 
-	Mutex::lock(doLock);
+	Mutex::lock(doLock, file, function, line);
 }
 
-void EnvironmentMutex::lock(Lockable* lockable) {
+void EnvironmentMutex::lock(Lockable* lockable, const char* file, const char* function, int line) {
 	if (!enabled)
 		return;
 
-	Mutex::lock(lockable);
+	Mutex::lock(lockable, file, function, line);
 }
 
-void EnvironmentMutex::unlock(bool doLock) {
+void EnvironmentMutex::unlock(bool doLock,  const char* file, const char* function, int line) {
 	if (!enabled)
 		return;
 
-	Mutex::unlock(doLock);
+	Mutex::unlock(doLock, file, function, line);
 }
 
 int Environment::close() {

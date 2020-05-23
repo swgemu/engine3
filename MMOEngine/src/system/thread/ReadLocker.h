@@ -24,19 +24,19 @@ namespace sys {
 			locker.lockable = nullptr;
 		}
 
-		ReadLocker(const ReadWriteLock* lock) ACQUIRE_SHARED(lock) {
+		ReadLocker(const ReadWriteLock* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE_SHARED(lock) {
 			const auto doLock = !lock->isLockedByCurrentThread();
 
 			if (doLock) {
 				lockable = lock;
 
-				const_cast<ReadWriteLock*>(lock)->rlock();
+				const_cast<ReadWriteLock*>(lock)->rlock(true, file, function, line);
 			} else {
 				lockable = nullptr;
 			}
 		}
 
-	       	ReadLocker(const ReadLocker&) = delete;
+		ReadLocker(const ReadLocker&) = delete;
 		ReadLocker& operator=(const ReadLocker&) = delete;
 
 		~ReadLocker() RELEASE() {

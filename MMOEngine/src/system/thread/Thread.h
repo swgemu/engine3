@@ -91,6 +91,7 @@ namespace sys {
 		pthread_attr_t attributes;
 
 		String name;
+		int threadNumber;
 
 		static std::atomic<int> threadCounter;
 		static pthread_once_t initThread;
@@ -158,6 +159,10 @@ namespace sys {
 
 		const String& getName() {
 			return name;
+		}
+
+		inline int getThreadNumber() {
+			return threadNumber;
 		}
 
 		ArrayList<Lockable*>* getAcquiredLockables() {

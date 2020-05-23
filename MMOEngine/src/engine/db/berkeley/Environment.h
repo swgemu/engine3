@@ -33,10 +33,10 @@ namespace engine {
 	public:
 		EnvironmentMutex();
 
-		void lock(bool doLock = true) override;
-		void lock(Lockable* lockable) override;
+		void lock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) override;
+		void lock(Lockable* lockable, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) override;
 
-		void unlock(bool doLock = true) override;
+		void unlock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) override;
 
 		void setEnabled(bool val) {
 			enabled = val;

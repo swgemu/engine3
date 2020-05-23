@@ -34,31 +34,33 @@ namespace sys {
 			pthread_rwlock_destroy(&rwlock);
 		}
 
-		inline void lock(bool doLock = true) ACQUIRE() {
-			wlock(doLock);
+		inline void lock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE() {
+			wlock(doLock, file, function, line);
 		}
 
-		virtual void rlock(bool doLock = true) ACQUIRE_SHARED();
+		virtual void rlock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE_SHARED();
 
-		virtual void wlock(bool doLock = true) ACQUIRE();
-		virtual void wlock(Mutex* lock) ACQUIRE();
-		virtual void wlock(ReadWriteLock* lock) ACQUIRE();
-		virtual void rlock(ReadWriteLock* lock) ACQUIRE_SHARED();
-		virtual void rlock(Lockable* lock)  ACQUIRE_SHARED();
+		virtual void wlock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE();
+		virtual void wlock(Mutex* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE();
+		virtual void wlock(ReadWriteLock* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE();
+		virtual void rlock(ReadWriteLock* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE_SHARED();
+		virtual void rlock(Lockable* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE())  ACQUIRE_SHARED();
 
-		void lock(Lockable* lockable) ACQUIRE();
+		void lock(Lockable* lockable, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE();
 
-		inline void lock(ReadWriteLock* lockable) ACQUIRE() {
-			wlock(lockable);
+		inline void lock(ReadWriteLock* lockable, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE() {
+			wlock(lockable, file, function, line);
 		}
 
-		inline void lock(Mutex* lockable) ACQUIRE() {
-			wlock(lockable);
+		inline void lock(Mutex* lockable, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE() {
+			wlock(lockable, file, function, line);
 		}
 
-		inline bool tryWLock() TRY_ACQUIRE(true) {
+		inline bool tryWLock(const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) TRY_ACQUIRE(true) {
+			lockAcquiring("w", file, function, line);
+
 			if (pthread_rwlock_trywrlock(&rwlock) == 0) {
-				lockAcquired("w");
+				lockAcquired("w", file, function, line);
 
 				return true;
 			} else {
@@ -66,9 +68,9 @@ namespace sys {
 			}
 		}
 
-		void unlock(bool doLock = true) RELEASE();
+		void unlock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) RELEASE();
 
-		virtual void runlock(bool doLock = true) RELEASE_SHARED();
+		virtual void runlock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) RELEASE_SHARED();
 
 		inline bool destroy() {
 			pthread_rwlock_wrlock(&rwlock);

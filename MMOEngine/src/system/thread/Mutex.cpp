@@ -8,40 +8,34 @@
 #include "Mutex.h"
 #include "engine/core/TaskWorkerThread.h"
 
-void Mutex::lock(bool doLock) {
+void Mutex::lock(bool doLock, const char* file, const char* function, int line) {
 	if (!doLock)
 		return;
 
-	const auto start = lockAcquiring("w");
+	const auto start = lockAcquiring("w", file, function, line);
 
-	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
-		int res = pthread_mutex_lock(&mutex);
+#ifdef TRACK_LOCKS
 
-		if (res != 0)
-	#ifdef TRACE_LOCKS
-			System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
-	#else
-			System::out << "(" << Time::currentNanoTime() << " nsec) lock() failed on Mutex (" << res << ")\n";
-	#endif
-	#else
-		Time start;
-		start.addMiliTime(10000);
+	Time tryUntil;
+	tryUntil.addMiliTime(TRACK_LOCKS_INITIAL_TIMEOUT);
 
-		while (pthread_mutex_timedlock(&mutex, start.getTimeSpec())) {
-			if (!doTrace)
-				continue;
+	int lockResult = 0;
+	int delay = TRACK_LOCKS_RETRY_BASE;
 
-			traceDeadlock();
+	while ((lockResult = pthread_mutex_timedlock(&mutex, tryUntil.getTimeSpec())) == ETIMEDOUT) {
+		traceDeadlock("w", file, function, line);
 
-			start.addMiliTime(1000);
-		}
+		tryUntil.addMiliTime(delay + System::random(TRACK_LOCKS_RETRY_JITTER));
+		delay = delay < 60000 ? delay + delay : 60000;
+	}
 
-		lockTime->updateToCurrentTime();
-	#endif
+#else // not TRACK_LOCKS
 
-	const auto end = lockAcquired("w");
+	int lockResult = pthread_mutex_lock(&mutex);
 
-	const auto diff = end - start;
+#endif // TRACK_LOCKS
+
+	const auto end = lockAcquired("w", file, function, line);
 
 #ifdef TRACE_BLOCK_TIME
 	auto thread = Thread::getCurrentThread();
@@ -54,41 +48,63 @@ void Mutex::lock(bool doLock) {
 	if (!worker)
 		return;
 
-	worker->addMutexWaitTime(diff);
+	worker->addMutexWaitTime(end - start);
 #endif
 }
 
-void Mutex::lock(Mutex* m) {
-	if (this == m) {
-#ifdef TRACE_LOCKS
-		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself [" << lockName << "]\n";
-#else
-		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself\n";
-#endif
+void Mutex::lock(Mutex* m, const char* file, const char* function, int line) {
+	const auto start = lockAcquiring(m, "w", file, function, line);
 
-		StackTrace::printStackTrace();
-		return;
-	}
+	auto currentLockHolder = m->getLockHolderThread();
 
-	const auto start = lockAcquiring(m, "w");
-	auto currentThreadThread = m->getLockHolderThread();
+#ifdef TRACK_LOCKS
 
-	while (pthread_mutex_trylock(&mutex)) {
-		m->clearCurrentLockHolder();
+	Time tryUntil;
+
+	int lockResult = 0;
+	int delay = TRACK_LOCKS_RETRY_BASE;
+
+	while ((lockResult = pthread_mutex_trylock(&mutex)) != 0) {
+		m->clearCurrentLockHolder("w", currentLockHolder);
 
 		pthread_mutex_unlock(&(m->mutex));
 
-#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
-			Thread::yield();
-#endif
-		pthread_mutex_lock(&(m->mutex));
+		CROSSLOCK_YIELD();
 
-		m->setCurrentLockHolder(currentThreadThread);
+		tryUntil.addMiliTime(TRACK_LOCKS_INITIAL_TIMEOUT);
+
+		while ((lockResult = pthread_mutex_timedlock(&(m->mutex), tryUntil.getTimeSpec())) == ETIMEDOUT) {
+			traceDeadlock("w", file, function, line);
+
+			tryUntil.addMiliTime(delay + System::random(TRACK_LOCKS_RETRY_JITTER));
+			delay = delay < 60000 ? delay + delay : 60000;
+		}
+
+		if (lockResult != 0) {
+			m->logLockResult("w", currentLockHolder, file, function, line, lockResult);
+			assert(0 && "cross wlock Mutex failed");
+		}
+
+		m->setCurrentLockHolder("w", currentLockHolder, file, function, line);
 	}
 
-	const auto end = lockAcquired(m, "w");
+#else // not TRACK_LOCKS
 
-	const auto diff = end - start;
+	while (pthread_mutex_trylock(&mutex)) {
+		m->clearCurrentLockHolder("w", currentLockHolder);
+
+		pthread_mutex_unlock(&(m->mutex));
+
+		CROSSLOCK_YIELD();
+
+		pthread_mutex_lock(&(m->mutex));
+
+		m->setCurrentLockHolder("w", currentLockHolder, file, function, line);
+	}
+
+#endif // TRACK_LOCKS
+
+	const auto end = lockAcquired(m, "w", file, function, line);
 
 #ifdef TRACE_BLOCK_TIME
 	auto thread = Thread::getCurrentThread();
@@ -101,36 +117,27 @@ void Mutex::lock(Mutex* m) {
 	if (!worker)
 		return;
 
-	worker->addMutexWaitTime(diff);
+	worker->addMutexWaitTime(end - start);
 #endif
 }
 
-void Mutex::lock(Lockable* lockable) {
+void Mutex::lock(Lockable* lockable, const char* file, const char* function, int line) {
 	if (this == lockable) {
-#ifdef TRACE_LOCKS
-		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself [" << lockName << "]\n";
-#else
-		System::out << "(" << Time::currentNanoTime() << " nsec) ERROR: cross locking itself \n";
-#endif
-
-		StackTrace::printStackTrace();
+		logLockError("w", "ERROR - mutext cross locking with itself", file, function, line);
 		return;
 	}
 
-	const auto start = lockAcquiring(lockable, "w");
+	const auto start = lockAcquiring(lockable, "w", file, function, line);
 
 	while (pthread_mutex_trylock(&mutex)) {
 		lockable->unlock();
 
-#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
-		Thread::yield();
-#endif
+		CROSSLOCK_YIELD();
+
 		lockable->lock();
 	}
 
-	const auto end = lockAcquired(lockable, "w");
-
-	const auto diff = end - start;
+	const auto end = lockAcquired(lockable, "w", file, function, line);
 
 #ifdef TRACE_BLOCK_TIME
 	auto thread = Thread::getCurrentThread();
@@ -143,40 +150,49 @@ void Mutex::lock(Lockable* lockable) {
 	if (!worker)
 		return;
 
-	worker->addMutexWaitTime(diff);
+	worker->addMutexWaitTime(end - start);
 #endif
 }
 
-bool Mutex::tryLock() {
-	return pthread_mutex_trylock(&mutex) == 0;
+bool Mutex::tryLock(const char* file, const char* function, int line) {
+	lockAcquiring("w", file, function, line);
+
+	if (pthread_mutex_trylock(&mutex) == 0) {
+		lockAcquired("w", file, function, line);
+		return true;
+	}
+
+	return false;
 }
 
 #ifndef PLATFORM_MAC
-bool Mutex::tryLock(uint64 millis) {
+bool Mutex::tryLock(uint64 millis, const char* file, const char* function, int line) {
 	Time timeout;
 	timeout.addMiliTime(millis);
 
-	return pthread_mutex_timedlock(&mutex, timeout.getTimeSpec()) == 0;
+	lockAcquiring("w", file, function, line);
+
+	if (pthread_mutex_timedlock(&mutex, timeout.getTimeSpec()) == 0) {
+		lockAcquired("w", file, function, line);
+		return true;
+	}
+
+	return false;
 }
 #endif
 
-void Mutex::unlock(bool doLock) {
+void Mutex::unlock(bool doLock, const char* file, const char* function, int line) {
 	if (!doLock)
 		return;
 
-	lockReleasing("w");
+	lockReleasing("w", file, function, line);
 
-	int res = pthread_mutex_unlock(&mutex);
-	if (res != 0) {
-#ifdef TRACE_LOCKS
-		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex \'" << lockName << "\' (" << res << ")\n";
-#else
-		System::out << "(" << Time::currentNanoTime() << " nsec) unlock() failed on Mutex (" << res << ")\n";
-#endif
+	int unlockResult = pthread_mutex_unlock(&mutex);
 
-		StackTrace::printStackTrace();
+	if (unlockResult != 0) {
+		logLockResult("w", file, function, line, unlockResult);
+		assert(0 && "Mutex::unlock failed");
 	}
 
-	lockReleased("w");
+	lockReleased("w", file, function, line);
 }
-

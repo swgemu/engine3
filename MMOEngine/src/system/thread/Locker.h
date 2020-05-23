@@ -16,7 +16,6 @@ namespace sys {
 	  //use templates someday
 	  class SCOPED_CAPABILITY Locker  {
 		  Lockable* lockable;
-
 	public:
 		  Locker(Locker&& locker) : lockable(locker.lockable) {
 		  	locker.lockable = nullptr;
@@ -26,61 +25,43 @@ namespace sys {
 		  Locker& operator=(const Locker&) = delete;
 
 
-		  Locker(Lockable* lock) ACQUIRE(lock) {
+		  Locker(Lockable* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
 				  lockable = lock;
 
-				  lock->lock();
+				  lock->lock(true, file, function, line);
 			  } else {
 				  lockable = nullptr;
 			  }
 		  }
 
-		  Locker(Mutex* lock) ACQUIRE(lock) {
+		  Locker(Mutex* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
 				  lockable = lock;
 
-				  lock->lock();
+				  lock->lock(true, file, function, line);
 			  } else {
 				  lockable = nullptr;
 			  }
 		  }
 
-		  Locker(ReadWriteLock* lock) ACQUIRE(lock) {
+		  Locker(ReadWriteLock* lock, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
 				  lockable = lock;
 
-				  lock->lock();
+				  lock->lock(true, file, function, line);
 			  } else {
 				  lockable = nullptr;
 			  }
 		  }
 
-		  Locker(Mutex* lock, Mutex* cross) ACQUIRE(lock) {
-			  const auto doLock = !lock->isLockedByCurrentThread();
-
-			  if (doLock) {
-				  lockable = lock;
-
-				  if (lock != cross) {
-					  assert(cross->isLockedByCurrentThread());
-
-					  lock->lock(cross);
-				  } else {
-					  lock->lock();
-				  }
-			  } else {
-				  lockable = nullptr;
-			  }
-		  }
-
-		 Locker(ReadWriteLock* lock, ReadWriteLock* cross) ACQUIRE(lock) {
+		  Locker(Mutex* lock, Mutex* cross, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
@@ -89,7 +70,25 @@ namespace sys {
 				  if (lock != cross) {
 					  assert(cross->isLockedByCurrentThread());
 
-					  lock->lock(cross);
+					  lock->lock(cross, file, function, line);
+				  } else {
+					  lock->lock(true, file, function, line);
+				  }
+			  } else {
+				  lockable = nullptr;
+			  }
+		  }
+
+		 Locker(ReadWriteLock* lock, ReadWriteLock* cross, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
+			  const auto doLock = !lock->isLockedByCurrentThread();
+
+			  if (doLock) {
+				  lockable = lock;
+
+				  if (lock != cross) {
+					  assert(cross->isLockedByCurrentThread());
+
+					  lock->lock(cross, file, function, line);
 				  } else {
 					  lock->lock();
 				  }
@@ -98,7 +97,7 @@ namespace sys {
 			  }
 		  }
 
-		 Locker(ReadWriteLock* lock, Mutex* cross) ACQUIRE(lock) {
+		 Locker(ReadWriteLock* lock, Mutex* cross, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
@@ -107,7 +106,7 @@ namespace sys {
 				  if (static_cast<Lockable*>(lock) != static_cast<Lockable*>(cross)) {
 					  assert(cross->isLockedByCurrentThread());
 
-					  lock->lock(cross);
+					  lock->lock(cross, file, function, line);
 				  } else {
 					  lock->lock();
 				  }
@@ -116,7 +115,7 @@ namespace sys {
 			  }
 		  }
 
-		 Locker(Mutex* lock, ReadWriteLock* cross) ACQUIRE(lock) {
+		 Locker(Mutex* lock, ReadWriteLock* cross, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
@@ -125,7 +124,7 @@ namespace sys {
 				  if (static_cast<Lockable*>(lock) != static_cast<Lockable*>(cross)) {
 					  assert(cross->isLockedByCurrentThread());
 
-					  lock->lock(cross);
+					  lock->lock(cross, file, function, line);
 				  } else {
 					  lock->lock();
 				  }
@@ -134,7 +133,7 @@ namespace sys {
 			  }
 		  }
 
-		  Locker(Lockable* lock, Lockable* cross) ACQUIRE(lock) {
+		  Locker(Lockable* lock, Lockable* cross, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE(lock) {
 			  const auto doLock = !lock->isLockedByCurrentThread();
 
 			  if (doLock) {
@@ -143,7 +142,7 @@ namespace sys {
 				  if (lock != cross) {
 					  assert(cross->isLockedByCurrentThread());
 
-					  lock->lock(cross);
+					  lock->lock(cross, file, function, line);
 				  } else {
 					  lock->lock();
 				  }
@@ -158,9 +157,9 @@ namespace sys {
 			  }
 		  }
 
-		  inline void release() RELEASE() {
+		  inline void release(const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) RELEASE() {
 			  if (lockable != nullptr) {
-				  lockable->unlock();
+				  lockable->unlock(true, file, function, line);
 
 				  lockable = nullptr;
 			  }

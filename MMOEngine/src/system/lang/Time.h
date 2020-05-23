@@ -357,6 +357,15 @@ namespace sys {
 			return &ts;
 		}
 
+		static inline Time fromNanoTime(uint64 when) {
+			Time newTime;
+
+			newTime.ts.tv_sec = (long) (when / 1000000000);
+			newTime.ts.tv_nsec = (long) (when % 1000000000);
+
+			return newTime;
+		}
+
 		friend class AtomicTime;
 
 	};

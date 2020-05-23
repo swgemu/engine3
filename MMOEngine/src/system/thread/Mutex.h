@@ -5,8 +5,6 @@
 
 #pragma once
 
-//#define ENABLE_YIELD_BETWEEN_CROSSLOCK
-
 #include "Lockable.h"
 
 namespace sys {
@@ -59,15 +57,15 @@ namespace sys {
 			pthread_mutexattr_destroy(&attr);
 		}
 
-		void lock(bool doLock = true) ACQUIRE();
-		void lock(Mutex* m) ACQUIRE();
-		void lock(Lockable* lockable) ACQUIRE();
+		void lock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE();
+		void lock(Mutex* m, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE();
+		void lock(Lockable* lockable, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) ACQUIRE();
 
-		bool tryLock() TRY_ACQUIRE(true);
+		bool tryLock(const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) TRY_ACQUIRE(true);
 
-		bool tryLock(uint64 time) TRY_ACQUIRE(true);
+		bool tryLock(uint64 time, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) TRY_ACQUIRE(true);
 
-		void unlock(bool doLock = true) RELEASE();
+		void unlock(bool doLock = true, const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()) RELEASE();
 
 		friend class Condition;
 		friend class ReadWriteLock;

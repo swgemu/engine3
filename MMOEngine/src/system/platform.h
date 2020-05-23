@@ -332,7 +332,7 @@ namespace sys {
 	//#endif
 
 	//#define LOG_LOCKS
-	//#define TRACE_LOCKS
+	//#define TRACK_LOCKS // See system/thread/Lockable.h for more options
 
 	//#define TRACE_REFERENCING
 	#define LINE_TRACING

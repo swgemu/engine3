@@ -80,7 +80,9 @@ Thread::Thread() {
 	pthread_attr_init(&attributes);
 	memset(&thread, 0, sizeof(thread));
 
-	name = "Thread " + String::valueOf(++threadCounter);
+	threadNumber = ++threadCounter;
+
+	name = "Thread " + String::valueOf(threadNumber);
 }
 
 Thread::~Thread() {

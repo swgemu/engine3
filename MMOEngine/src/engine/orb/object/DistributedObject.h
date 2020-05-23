@@ -89,6 +89,7 @@ namespace engine {
 
 		inline void _setObjectID(uint64 id) {
 			_objectID = id;
+			setTargetOID(id);
 		}
 
 		inline void _setUpdated(bool var) {
