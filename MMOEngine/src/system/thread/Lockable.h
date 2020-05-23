@@ -22,7 +22,7 @@
 
 #define TRACE_BLOCK_TIME
 
-#define TRACK_LOCKS
+// #define TRACK_LOCKS
 
 #if defined(TRACK_LOCKS) && defined(PLATFORM_CYGWIN)
 #undef TRACK_LOCKS // Not supported on cygwin build
