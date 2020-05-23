@@ -115,10 +115,6 @@ namespace thread {
 			return false;
 		}
 
-		static const String format(const LockHolder* holder) {
-			return format(holder->getType(), holder->getThreadNumber(), holder->getFile(), holder->getFunction(), holder->getLine(), holder->getLockSequence());
-		}
-
 		static const String format(char type, int16 threadNumber, const char* file, const char* function, int line, uint32 time = 0);
 
 		static uint32 getTotalLocks() {

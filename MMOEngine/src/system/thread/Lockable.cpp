@@ -153,20 +153,6 @@ void Lockable::clearCurrentLockHolder(const char* modifier, Thread* thread) {
 
 #endif // TRACK_LOCKS_MAX_HISTORY
 
-#if 0
-	if (modifier[0] != 'r') {
-		StringBuffer buf;
-
-		buf << "ERROR - " << __FUNCTION__ << " unable to find locker matching " << modifier[0] << "Lock, [Thread " << threadNumber << "]";
-
-		logLockMessage(buf.toString());
-
-		StackTrace::printStackTrace();
-
-		__asm__("int $3");
-	}
-#endif
-
 #endif // TRACK_LOCKS
 }
 
