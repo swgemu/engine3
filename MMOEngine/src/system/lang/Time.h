@@ -380,6 +380,16 @@ namespace sys {
 		SerializableTime(const SerializableTime& time) : Time(time), Variable() {
 		}
 
+		SerializableTime& operator=(const SerializableTime& time) {
+			if (this == &time) {
+				return *this;
+			}
+
+			Time::operator=(time);
+
+			return *this;
+		}
+
 		SerializableTime& operator=(const Time& time) {
 			Time::operator=(time);
 
