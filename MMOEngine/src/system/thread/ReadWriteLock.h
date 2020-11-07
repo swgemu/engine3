@@ -30,6 +30,10 @@ namespace sys {
 			pthread_rwlock_init(&rwlock, nullptr);
 		}
 
+		ReadWriteLock& operator=(const ReadWriteLock& lock) {
+			return *this;
+		}
+
 		~ReadWriteLock() {
 			pthread_rwlock_destroy(&rwlock);
 		}
