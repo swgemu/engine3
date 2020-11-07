@@ -175,6 +175,16 @@ namespace sys {
 
 		  }
 
+		  UnsignedLong& operator=(const UnsignedLong& val) {
+		  	if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<uint64>::operator=(val);
+
+			return *this;
+		  }
+
 		  bool toString(String& str) const {
 			  str = String::valueOf(*this);
 
