@@ -186,17 +186,7 @@ namespace engine {
 			return values;
 		}
 
-		Vector3& operator = (const Vector3& v) {
-			if (this == &v) {
-				return *this;
-			}
-
-			values[0] = v.values[0];
-			values[1] = v.values[1];
-			values[2] = v.values[2];
-
-			return *this;
-		}
+		Vector3& operator = (const Vector3& v)  = default;
 
 		inline Vector3& operator = (const float scalar) {
 			values[0] = scalar;
