@@ -39,6 +39,17 @@ namespace engine {
 		 mBounds[1] = aab.mBounds[1];
 	 }
 
+	 AABB& operator=(const AABB& aabb) {
+	 	if (this == &aabb) {
+			return *this;
+		}
+
+		mBounds[0] = aabb.mBounds[0];
+		mBounds[1] = aabb.mBounds[1];
+
+		return *this;
+	 }
+
 	 bool toBinaryStream(ObjectOutputStream* stream) {
 		 mBounds[0].toBinaryStream(stream);
 		 mBounds[1].toBinaryStream(stream);
