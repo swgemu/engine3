@@ -26,6 +26,16 @@ namespace sys {
 
 		}
 
+		inline Bool& operator=(const Bool& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<bool>::operator=(val);
+
+			return *this;
+		}
+
 		bool toString(String& str) const {
 			if (get() == true)
 				str = String("true");

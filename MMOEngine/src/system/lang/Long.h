@@ -36,6 +36,16 @@ namespace sys {
 
 		  }
 
+		  inline Long& operator=(const Long& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<int64>::operator=(val);
+
+	 		return *this;
+		  }
+
 		  bool toString(String& str) const {
 			  str = String::valueOf(*this);
 

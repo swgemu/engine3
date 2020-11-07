@@ -27,6 +27,16 @@ namespace sys {
 
 		}
 
+		inline Double& operator=(const Double& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<double>::operator=(val);
+
+			return *this;
+		}
+
 		bool parseFromString(const String& str, int version = 0) {
 			*this = valueOf(str);
 

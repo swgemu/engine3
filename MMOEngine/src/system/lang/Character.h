@@ -30,6 +30,16 @@ namespace sys {
 
 		}
 
+		inline Character& operator=(const Character& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<char>::operator=(val);
+
+			return *this;
+		}
+
 		bool toString(String& str) const {
 			str = String::valueOf(*this);
 
