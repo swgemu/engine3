@@ -386,6 +386,16 @@ namespace engine {
 		SerializableVector3(const Vector3& vec) : Vector3(vec) {
 		}
 
+		SerializableVector3& operator=(const SerializableVector3& v) {
+			if (this == &v) {
+				return *this;
+			}
+
+			Vector3::operator=(v);
+
+			return *this;
+		}
+
 		SerializableVector3& operator=(const Vector3& v) {
 			Vector3::operator=(v);
 
