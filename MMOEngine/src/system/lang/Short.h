@@ -81,6 +81,16 @@ namespace sys {
 
 		}
 
+		inline UnsignedShort& operator=(const UnsignedShort& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<uint16>::operator=(val);
+
+			return *this;
+		}
+
 		bool parseFromString(const String& str, int version = 0) {
 			*this = (int16) UnsignedInteger::valueOf(str);
 

@@ -20,7 +20,20 @@ namespace sys {
 		}
 
 		inline Byte(unsigned char val) : UnsignedCharacter(val) {
+		}
 
+		inline Byte(const Byte& val) : UnsignedCharacter(val) {
+		}
+
+		Byte& operator=(const Byte& b)
+		{
+			if (this == &b) {
+				return *this;
+			}
+
+			UnsignedCharacter::operator=(b);
+
+			return *this;
 		}
 
 		bool toBinaryStream(ObjectOutputStream* stream) {
