@@ -79,6 +79,7 @@ void LocalDatabase::associateIndexTransactional(BerkeleyDatabase* db, LocalDatab
 	} while (ret == DB_LOCK_DEADLOCK && i < DEADLOCK_MAX_RETRIES);
 
 	fatal(ret == 0) << "could not associate secondary index to database";
+	fatal(transaction != nullptr) << "transaction failed";
 
 	fatal(transaction->commit() == 0) << "could not commit transaction to associate secondary index";
 }
@@ -231,7 +232,7 @@ Stream* LocalDatabase::compress(Stream* data) {
 	std::size_t totalSize = 0;
 
 	try {
-		z_stream packet;
+		z_stream packet{};
 		packet.zalloc = Z_NULL;
 		packet.zfree = Z_NULL;
 		packet.opaque = Z_NULL;
@@ -280,7 +281,7 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 	std::size_t totalSize = 0;
 
 	try {
-		z_stream packet;
+		z_stream packet{};
 		packet.zalloc = Z_NULL;
 		packet.zfree = Z_NULL;
 		packet.opaque = Z_NULL;

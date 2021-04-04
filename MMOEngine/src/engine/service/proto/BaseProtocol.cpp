@@ -193,7 +193,7 @@ void BaseProtocol::decompress(Packet* pack) const {
 	if ((uint8)opcode == 0x00) //put offset for standalone or soe_opcoded pkt
 		offset = 2;
 
-	z_stream packet;
+	z_stream packet{};
 	packet.zalloc = Z_NULL;
 	packet.zfree = Z_NULL;
 	packet.opaque = Z_NULL;
@@ -244,7 +244,7 @@ bool BaseProtocol::compress(Packet* pack) const {
 	else
 		offset = 1;
 
-	z_stream packet;
+	z_stream packet{};
 	packet.zalloc = Z_NULL;
 	packet.zfree = Z_NULL;
 	packet.opaque = Z_NULL;

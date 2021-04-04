@@ -99,6 +99,7 @@ void FileLogWriter::rotatefile(bool force) const {
 	}
 
 	if (file->size() == 0) {
+		rotateMutex.unlock();
 		return;
 	}
 
