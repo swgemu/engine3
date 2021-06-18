@@ -605,8 +605,28 @@ void Lua::setGlobalBoolean(const String& name, const bool value) {
 	lua_setglobal(L, name.toCharArray());
 }
 
-bool Lua::checkStack(lua_State* lState, int num) {
-	return (lua_gettop(lState) == num);
+bool Lua::checkStack(Lua* lua, int num, LUA_CAPTURE_CALLER_ARGS) {
+	if (lua == nullptr) {
+		return num == 0;
+	}
+
+	return Lua::checkStack(lua->getLuaState(), num, LUA_CAPTURE_CALLER_PASS);
+}
+
+bool Lua::checkStack(lua_State* lState, int num, LUA_CAPTURE_CALLER_ARGS) {
+	if (lState == nullptr)
+		return num == 0;
+
+	int stackSize = lua_gettop(lState);
+
+	if (stackSize > num) {
+		logger.error()
+			<< "Lua::checkStack FAILED: stackSize " << stackSize << " > " << num
+			<< "; Called from: " << file <<  ":" << line <<" " << function << "()"
+			<< endl << dumpStack(lState);
+	}
+
+	return (stackSize == num);
 }
 
 int Lua::checkStack(lua_State* lState) {
@@ -621,8 +641,8 @@ int Lua::checkStack() {
 	return (lua_gettop(L));
 }
 
-bool Lua::checkStack(int num) {
-	return (lua_gettop(L) == num);
+bool Lua::checkStack(int num, LUA_CAPTURE_CALLER_ARGS) {
+	return checkStack(L, num, LUA_CAPTURE_CALLER_PASS);
 }
 
 void Lua::pop(int n) {
@@ -639,6 +659,81 @@ LuaFunction* Lua::createFunction(const String& object, const String& func, int a
 	LuaFunction* function = new LuaFunction(L, object, func, argsThatWillReturn);
 
 	return function;
+}
+
+void Lua::dumpLuaValue(lua_State* L, StringBuffer& dumpBuffer, int index, int indent) {
+	if (L == nullptr) {
+		dumpBuffer << "<lua_State is nullptr>" << endl;
+		return;
+	}
+
+	int luaType = lua_type(L, index);
+
+	switch (luaType) {
+	case LUA_TBOOLEAN:
+		dumpBuffer << " = " << (bool)lua_toboolean(L, index) << endl;
+		break;
+
+	case LUA_TNUMBER:
+		if (lua_isinteger(L, index)) {
+			dumpBuffer << " = " << (uint64)lua_tointeger(L, index) << endl;
+		} else {
+			dumpBuffer << " = " << (lua_Number)lua_tonumber(L, index) << "f" << endl;
+		}
+		break;
+
+	case LUA_TSTRING:
+		dumpBuffer << " = '" << (String)lua_tostring(L, index) << "'" << endl;
+		break;
+
+	case LUA_TTABLE:
+		dumpBuffer << " = {" << endl;
+		lua_pushvalue(L, index);
+		lua_pushnil(L);
+		indent++;
+		while (lua_next(L, -2)) {
+			lua_pushvalue(L, -2);
+			for (int i = 0;i <= indent;i++) {
+				dumpBuffer << "    ";
+			}
+			dumpBuffer << "[" << (String)lua_tostring(L, -1) << "]";
+			dumpLuaValue(L, dumpBuffer, -2, indent);
+			lua_pop(L, 2);
+		}
+		for (int i = 0;i < indent;i++) {
+			dumpBuffer << "    ";
+		}
+		dumpBuffer << "}" << endl;
+		lua_pop(L, 1);
+		indent--;
+		break;
+
+	default:
+		dumpBuffer << "\tUnknown type: " << lua_typename(L, luaType) << endl;
+		break;
+	}
+}
+
+String Lua::dumpStack(lua_State* L) {
+	if (L == nullptr) {
+		return "<lua_State is nullptr>";
+	}
+
+	StringBuffer stack;
+
+	stack << "START LuaStack(" << hex << L << ")" << endl;
+
+	int stackSize = lua_gettop(L);
+
+	for (int i = 0;i < stackSize; i++) {
+		stack << "(" << i << ")";
+
+		Lua::dumpLuaValue(L, stack, i);
+	}
+
+	stack << "END LuaStack(" << hex << L << ")" << endl;
+
+	return stack.toString();
 }
 
 //Field

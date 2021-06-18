@@ -17,6 +17,28 @@
 
 #include "engine/log/Logger.h"
 
+#if !defined(use_builtin_FILE)
+#if defined(__clang__)
+#if __has_builtin(__builtin_FILE)
+#define use_builtin_FILE 1
+#else
+#define use_builtin_FILE 0
+#endif
+#else
+#if defined(__GNUC__) || defined(__GNUG__)
+#define use_builtin_FILE 1
+#endif
+#endif
+#endif
+
+#if use_builtin_FILE
+#define LUA_CAPTURE_CALLER_DECLARE const char* file = __builtin_FILE(), const char* function = __builtin_FUNCTION(), int line = __builtin_LINE()
+#else
+#define LUA_CAPTURE_CALLER_DECLARE const char* file = "unknown", const char* function = "unknown", int line = 0
+#endif
+#define LUA_CAPTURE_CALLER_ARGS const char* file, const char* function, int line
+#define LUA_CAPTURE_CALLER_PASS file, function, line
+
 namespace engine {
   namespace lua {
 
@@ -125,12 +147,13 @@ namespace engine {
 		virtual void setGlobalBoolean(const String& name, const bool value);
 
 		//statics
-		static bool checkStack(lua_State* lState, int num);
+		static bool checkStack(Lua* lua, int num, LUA_CAPTURE_CALLER_DECLARE);
+		static bool checkStack(lua_State* lState, int num, LUA_CAPTURE_CALLER_DECLARE);
 		static int checkStack(lua_State* lState);
 
 		virtual lua_State* getLuaState();
 		virtual int checkStack();
-		virtual bool checkStack(int num);
+		virtual bool checkStack(int num, LUA_CAPTURE_CALLER_DECLARE);
 
 		virtual LuaFunction* createFunction(const String& funcname, int argsThatWillReturn);
 		virtual LuaFunction* createFunction(const String& object, const String& func, int argsThatWillReturn);
@@ -139,6 +162,8 @@ namespace engine {
 			deinitOnDestruction = val;
 		}
 
+		static void dumpLuaValue(lua_State* L, StringBuffer& dumpBuffer, int index, int indent = 0);
+		static String dumpStack(lua_State* L);
 	};
 
   } // namespace lua
