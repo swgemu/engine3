@@ -608,7 +608,7 @@ void DatabaseManager::commitLocalTransaction(engine::db::berkeley::Transaction* 
 		++iteration;
 	} while (ret == DB_LOCK_DEADLOCK && iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES);
 
-	fatal(iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES) << "exceeded bdb deadlock retries aborting";
+	fatal((iteration < ObjectDatabase::DEADLOCK_MAX_RETRIES) && berkeleyTransaction) << "exceeded bdb deadlock retries aborting";
 
 	if (ret != 0 && ret != DB_NOTFOUND)
 		berkeleyTransaction->abort();

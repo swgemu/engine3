@@ -86,7 +86,9 @@ namespace sys {
 			ts.tv_nsec = 0;
 		}
 
-		Time(const Time& time) = default;
+		Time(const Time& time) {
+			ts = time.ts;
+		}
 
 		bool toString(String& str) const {
 			StringBuffer msg;
@@ -164,7 +166,15 @@ namespace sys {
 			checkForOverflow();
 		}
 
-		Time& operator=(const Time& t) = default;
+		Time& operator=(const Time& t) {
+			if (this == &t) {
+				return *this;
+			}
+
+			ts = t.ts;
+
+			return *this;
+		}
 
 		Time& operator=(uint32 seconds) {
 			ts.tv_sec = seconds;
@@ -215,7 +225,7 @@ namespace sys {
 			String value;
 			char buf[128];
 			int len = sizeof(buf);
-			
+
 #ifndef PLATFORM_WIN
 			if (localtime_r(&(ts.tv_sec), &t) == nullptr)
 				return value;
@@ -377,6 +387,16 @@ namespace sys {
 		}
 
 		SerializableTime(const SerializableTime& time) : Time(time), Variable() {
+		}
+
+		SerializableTime& operator=(const SerializableTime& time) {
+			if (this == &time) {
+				return *this;
+			}
+
+			Time::operator=(time);
+
+			return *this;
 		}
 
 		SerializableTime& operator=(const Time& time) {

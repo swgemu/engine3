@@ -28,6 +28,16 @@ namespace sys {
 				initialize(val.object);
 			}
 
+			inline BaseTypeVariable& operator=(const BaseTypeVariable& val) {
+				if (this == &val) {
+					return *this;
+				}
+
+				initialize(val.object);
+
+				return *this;
+			}
+
 			virtual int compareTo(const BaseTypeVariable& val) const {
 				if (object < val.object)
 					return 1;

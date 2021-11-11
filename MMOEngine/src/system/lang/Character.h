@@ -30,6 +30,16 @@ namespace sys {
 
 		}
 
+		inline Character& operator=(const Character& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<char>::operator=(val);
+
+			return *this;
+		}
+
 		bool toString(String& str) const {
 			str = String::valueOf(*this);
 
@@ -110,6 +120,16 @@ namespace sys {
 
 		inline UnsignedCharacter(const UnsignedCharacter& val) : BaseTypeVariable<unsigned char>(val) {
 
+		}
+
+		inline UnsignedCharacter& operator=(const UnsignedCharacter& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<unsigned char>::operator=(val);
+
+			return *this;
 		}
 
 		bool toString(String& str) const {

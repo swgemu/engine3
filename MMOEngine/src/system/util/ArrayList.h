@@ -47,7 +47,7 @@ namespace sys {
 	   static bool const constexpr value = ArrayListNoReallocTrait::value;
    };
 
-   template<class E, bool RawCopyAndRealloc = ArrayListReallocTrait<E>::value> 
+   template<class E, bool RawCopyAndRealloc = ArrayListReallocTrait<E>::value>
    class ArrayList {
 	   protected:
 		   E* elementData;
@@ -593,7 +593,7 @@ namespace sys {
 
 	   removeElementAt(index);
 
-	   return std::move(oldValue);
+	   return oldValue;
    }
 
    template<class E, bool RawCopyAndRealloc> bool ArrayList<E, RawCopyAndRealloc>::removeElement(const E& element) {

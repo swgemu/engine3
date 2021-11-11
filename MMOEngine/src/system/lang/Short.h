@@ -31,6 +31,16 @@ namespace sys {
 
 		}
 
+		inline Short& operator=(const Short& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<int16>::operator=(val);
+
+			return *this;
+		}
+
 		bool parseFromString(const String& str, int version = 0) {
 			*this = (int16) Integer::valueOf(str);
 
@@ -69,6 +79,16 @@ namespace sys {
 
 		inline UnsignedShort(uint16 val) : BaseTypeVariable<uint16>(val) {
 
+		}
+
+		inline UnsignedShort& operator=(const UnsignedShort& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<uint16>::operator=(val);
+
+			return *this;
 		}
 
 		bool parseFromString(const String& str, int version = 0) {

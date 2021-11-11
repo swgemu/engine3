@@ -24,6 +24,16 @@ namespace sys {
 
 		}
 
+		inline Integer& operator=(const Integer& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<int>::operator=(val);
+
+			return *this;
+		}
+
 		bool toString(String& str) const;
 
 		bool toBinaryStream(ObjectOutputStream* stream);

@@ -36,6 +36,16 @@ namespace sys {
 
 		  }
 
+		  inline Long& operator=(const Long& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<int64>::operator=(val);
+
+	 		return *this;
+		  }
+
 		  bool toString(String& str) const {
 			  str = String::valueOf(*this);
 
@@ -163,6 +173,16 @@ namespace sys {
 
 		  inline UnsignedLong(const UnsignedLong& val) : BaseTypeVariable<uint64>(val) {
 
+		  }
+
+		  UnsignedLong& operator=(const UnsignedLong& val) {
+		  	if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<uint64>::operator=(val);
+
+			return *this;
 		  }
 
 		  bool toString(String& str) const {

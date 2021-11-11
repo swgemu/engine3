@@ -67,7 +67,20 @@ namespace engine {
 			object = i.object;
 		}
 
-		uint32 getSize() {
+		UpdateObject& operator=(const UpdateObject& o) {
+			if (this == &o) {
+				return *this;
+			}
+
+			stream = o.stream;
+			key = o.key;
+			database = o.database;
+			object = o.object;
+
+			return *this;
+		}
+
+		uint32 getSize() const {
 			if (key && stream) {
 				return stream->size() + key->size();
 			} else {

@@ -33,6 +33,16 @@ namespace sys {
 
 		}
 
+		inline Float& operator=(const Float& val) {
+			if (this == &val) {
+				return *this;
+			}
+
+			BaseTypeVariable<float>::operator=(val);
+
+			return *this;
+		}
+
 		bool parseFromString(const String& str, int version = 0) {
 			*this = valueOf(str);
 

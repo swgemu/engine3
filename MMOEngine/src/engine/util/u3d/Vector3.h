@@ -186,7 +186,7 @@ namespace engine {
 			return values;
 		}
 
-		Vector3& operator = (const Vector3& v) = default;
+		Vector3& operator = (const Vector3& v)  = default;
 
 		inline Vector3& operator = (const float scalar) {
 			values[0] = scalar;
@@ -374,6 +374,16 @@ namespace engine {
 		}
 
 		SerializableVector3(const Vector3& vec) : Vector3(vec) {
+		}
+
+		SerializableVector3& operator=(const SerializableVector3& v) {
+			if (this == &v) {
+				return *this;
+			}
+
+			Vector3::operator=(v);
+
+			return *this;
 		}
 
 		SerializableVector3& operator=(const Vector3& v) {

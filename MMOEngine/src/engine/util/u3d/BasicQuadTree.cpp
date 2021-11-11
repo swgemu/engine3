@@ -251,6 +251,8 @@ void BasicQuadTree::remove(BasicQuadTreeNode* node) {
 	if (node->parentNode == nullptr) {
 		logger.error() << "[BasicQuadTree] " << " error on remove(BasicQuadTreeNode) - trying to remove root Node"
 				<< *node;
+
+		return;
 	}
 
 	BasicQuadTreeNode* parent = node->parentNode;
