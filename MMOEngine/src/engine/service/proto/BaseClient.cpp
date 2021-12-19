@@ -28,39 +28,33 @@ namespace {
 	static Logger logger("BaseClient", Logger::WARNING);
 
 	int getMaxBufferPacketsTickCount() {
-		static bool init = true;
-		static const int value = Core::getIntProperty("BaseClient.maxBufferPacketsTickCount", 500);
-
-		if (init) {
-			init = false;
+		static const int setting = []() {
+			int value = Core::getIntProperty("BaseClient.maxBufferPacketsTickCount", 500);
 			logger.info(true) << "BaseClient.maxBufferPacketsTickCount = " << value;
-		}
+			return value;
+		} ();
 
-		return value;
+		return setting;
 	}
 
 	int getInitialLockfreeBufferCapacity() {
-		static bool init = true;
-		static const int value = Core::getIntProperty("BaseClient.initialLockfreeBufferCapacity", 500);
-
-		if (init) {
-			init = false;
+		static const int setting = []() {
+			int value = Core::getIntProperty("BaseClient.initialLockfreeBufferCapacity", 500);
 			logger.info(true) << "BaseClient.initialLockfreeBufferCapacity = " << value;
-		}
+			return value;
+		} ();
 
-		return value;
+		return setting;
 	}
 
 	int getMaxSentPacketsPerTick() {
-		static bool init = true;
-		static const int value = Core::getIntProperty("BaseClient.maxSentPacketsPerTick", 20);
-
-		if (init) {
-			init = false;
+		static const int setting = []() {
+			int value = Core::getIntProperty("BaseClient.maxSentPacketsPerTick", 20);
 			logger.info(true) << "BaseClient.maxSentPacketsPerTick = " << value;
-		}
+			return value;
+		} ();
 
-		return value;
+		return setting;
 	}
 }
 #endif // LOCKFREE_BCLIENT_BUFFERS
