@@ -8,6 +8,8 @@
 #include "ServiceThread.h"
 
 ServiceThread::ServiceThread(const String& s) : Thread(), Mutex(s + "Thread"), Logger(s) {
+	threadName = s;
+
 	setRunning(false);
 }
 
@@ -27,6 +29,8 @@ void ServiceThread::start(bool waitForStartup) {
 		setReady(true);
 
 	Thread::start();
+
+	Thread::setThreadName(threadName);
 
 	if (waitForStartup)
 		while (!isReady()) ;

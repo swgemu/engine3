@@ -139,6 +139,8 @@ namespace sys {
 		static Thread* getCurrentThread();
 
 		// setters
+		void setThreadName(const String& name);
+
 		void setDetached();
 
 		void setJoinable();

@@ -211,6 +211,18 @@ Thread* Thread::getCurrentThread() {
 	return currentThread.get();
 }
 
+void Thread::setThreadName(const String& name) {
+	String shortName = name;
+
+	// The thread name is a meaningful C language string, whose length
+	// is restricted to 16 characters, including the terminating null byte ('\0')
+	if (shortName.length() > 15) {
+		shortName = name.subString(shortName.length() - 15, shortName.length());
+	}
+
+	pthread_setname_np(thread, shortName.toCharArray());
+}
+
 void Thread::setDetached() {
 	pthread_attr_setdetachstate(&attributes, PTHREAD_CREATE_DETACHED);
 }
