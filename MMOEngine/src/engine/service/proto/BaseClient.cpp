@@ -5,6 +5,7 @@
 
 //#define TRACE_CLIENTS
 
+#include "engine/log/Logger.h"
 #include "engine/core/Core.h"
 
 #include "BaseClient.h"
@@ -22,9 +23,47 @@
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
-#define MAX_BUFFER_PACKETS_TICK_COUNT 500
-#define INITIAL_LOCKFREE_BUFFER_CAPACITY 500
-#define MAX_SENT_PACKETS_PER_TICK 20
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+namespace {
+	static Logger logger("BaseClient", Logger::WARNING);
+
+	int getMaxBufferPacketsTickCount() {
+		static bool init = true;
+		static const int value = Core::getIntProperty("BaseClient.maxBufferPacketsTickCount", 500);
+
+		if (init) {
+			init = false;
+			logger.info(true) << "BaseClient.maxBufferPacketsTickCount = " << value;
+		}
+
+		return value;
+	}
+
+	int getInitialLockfreeBufferCapacity() {
+		static bool init = true;
+		static const int value = Core::getIntProperty("BaseClient.initialLockfreeBufferCapacity", 500);
+
+		if (init) {
+			init = false;
+			logger.info(true) << "BaseClient.initialLockfreeBufferCapacity = " << value;
+		}
+
+		return value;
+	}
+
+	int getMaxSentPacketsPerTick() {
+		static bool init = true;
+		static const int value = Core::getIntProperty("BaseClient.maxSentPacketsPerTick", 20);
+
+		if (init) {
+			init = false;
+			logger.info(true) << "BaseClient.maxSentPacketsPerTick = " << value;
+		}
+
+		return value;
+	}
+}
+#endif // LOCKFREE_BCLIENT_BUFFERS
 
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;
@@ -60,7 +99,9 @@ BaseClient::BaseClient() : DatagramServiceClient(),
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	Core::initializeProperties("BaseClient");
+
+	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
 	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
@@ -87,7 +128,9 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	Core::initializeProperties("BaseClient");
+
+	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
 	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
@@ -120,7 +163,9 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	Core::initializeProperties("BaseClient");
+
+	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
 	fatal(sendLockFreeBuffer->is_lock_free(), "boost lock free buffer is not lock free");
 #endif
@@ -670,8 +715,8 @@ void BaseClient::run() {
 	lock();
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	while ((i++ < MAX_BUFFER_PACKETS_TICK_COUNT)
-			&& (j < MAX_SENT_PACKETS_PER_TICK)
+	while ((i++ < getMaxBufferPacketsTickCount())
+			&& (j < getMaxSentPacketsPerTick())
 			&& sendLockFreeBuffer->pop(incomingPack)) {
 		try {
 			BasePacket* pack;
@@ -708,8 +753,8 @@ void BaseClient::run() {
 		}
 	}
 
-	if (i >= MAX_BUFFER_PACKETS_TICK_COUNT) {
-		warning() << "more than " << MAX_BUFFER_PACKETS_TICK_COUNT << " packets in sendLockFreeBuffer on BaseClient tick";
+	if (i >= getMaxBufferPacketsTickCount()) {
+		warning() << "more than " << getMaxBufferPacketsTickCount() << " packets in sendLockFreeBuffer on BaseClient tick";
 	}
 
 	sendReliablePackets();
