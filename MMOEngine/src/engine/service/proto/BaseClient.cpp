@@ -93,7 +93,7 @@ BaseClient::BaseClient() : DatagramServiceClient(),
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	Core::initializeProperties("BaseClient");
+	const static int vars = Core::initializeProperties("BaseClient");
 
 	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
@@ -122,7 +122,7 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	Core::initializeProperties("BaseClient");
+	const static int vars = Core::initializeProperties("BaseClient");
 
 	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
@@ -157,7 +157,7 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
    	setGlobalLogging(true);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	Core::initializeProperties("BaseClient");
+	const static int vars = Core::initializeProperties("BaseClient");
 
 	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
