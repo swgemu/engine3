@@ -20,7 +20,7 @@
 
 #include "system/lang/Math.h"
 
-#define BASECLIENT_WORKER_THREADS 8
+int TaskManagerImpl::BASECLIENT_WORKER_THREADS = 8;
 
 int TaskManagerImpl::DEFAULT_WORKER_QUEUES = 0;
 int TaskManagerImpl::DEFAULT_WORKER_THREADS_PER_QUEUE = 0; //
@@ -48,6 +48,8 @@ void TaskManagerImpl::initialize() {
 
 	Core::initializeProperties("TaskManager");
 
+	BASECLIENT_WORKER_THREADS = Core::getIntProperty("TaskManager.baseClientWorkerThreads", BASECLIENT_WORKER_THREADS);
+
 	DEFAULT_SCHEDULER_THREADS = Core::getIntProperty("TaskManager.defaultSchedulerThreads");
 	DEFAULT_WORKER_THREADS_PER_QUEUE = Core::getIntProperty("TaskManager.defaultWorkerThreadsPerQueue");
 	DEFAULT_WORKER_QUEUES = Core::getIntProperty("TaskManager.defaultWorkerQueues");
@@ -56,7 +58,7 @@ void TaskManagerImpl::initialize() {
 	initialize(DEFAULT_WORKER_QUEUES, DEFAULT_SCHEDULER_THREADS, DEFAULT_IO_SCHEDULERS);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	initializeCustomQueue("_baseclient", BASECLIENT_WORKER_THREADS, true, false);
+	initializeCustomQueue("BaseClient", BASECLIENT_WORKER_THREADS, true, false);
 #endif
 }
 
@@ -499,7 +501,7 @@ void TaskManagerImpl::scheduleIoTask(Task* task, uint64 delay) {
 		return;
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	task->setCustomTaskQueue("_baseclient");
+	task->setCustomTaskQueue("BaseClient");
 #endif
 
 	locker.release();
@@ -527,7 +529,7 @@ void TaskManagerImpl::scheduleIoTask(Task* task, const Time& time) {
 		return;
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	task->setCustomTaskQueue("_baseclient");
+	task->setCustomTaskQueue("BaseClient");
 #endif
 
 	locker.release();

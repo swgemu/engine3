@@ -20,7 +20,7 @@
 #include "events/OutOfOrderTask.h"
 #include "events/AcknowledgeTask.h"
 
-#define BASE_PACKET_HANDLER_TASK_QUEUE "_baseclient"
+#define BASE_PACKET_HANDLER_TASK_QUEUE "BaseClient"
 
 //#define MULTI_THREADED_BASE_PACKET_HANDLER
 
