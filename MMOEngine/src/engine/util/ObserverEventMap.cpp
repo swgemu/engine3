@@ -13,7 +13,7 @@
 #include "Observer.h"
 
 void ObserverEventMap::notifyObservers(uint32 eventType, Observable* observable, ManagedObject* arg1, int64 arg2) {
-	Locker locker(&observerMutex);
+	ReadLocker locker(&observerMutex);
 
 	auto entry = getEntry(eventType);
 
@@ -98,7 +98,7 @@ void ObserverEventMap::dropObserver(uint32 eventType, Observer* observer) {
 }
 
 SortedVector<ManagedReference<Observer*> > ObserverEventMap::getObservers(uint32 eventType) const {
-	Locker locker(&observerMutex);
+	ReadLocker locker(&observerMutex);
 
 	/*if (!containsKey(eventType))
 		return nullptr;
@@ -114,12 +114,7 @@ SortedVector<ManagedReference<Observer*> > ObserverEventMap::getObservers(uint32
 }
 
 int ObserverEventMap::getObserverCount(uint32 eventType) const {
-	Locker locker(&observerMutex);
-
-	/*if (!containsKey(eventType))
-		return nullptr;
-
-	SortedVector<ManagedReference<Observer*> >* observers = &get(eventType);//&elementAt(index).getValue();*/
+	ReadLocker locker(&observerMutex);
 
 	auto entry = getEntry(eventType);
 
@@ -129,4 +124,20 @@ int ObserverEventMap::getObserverCount(uint32 eventType) const {
 	auto observers = &entry->getValue();
 
 	return observers->size();
+}
+
+int ObserverEventMap::getFullObserverCount() const {
+	ReadLocker locker(&observerMutex);
+
+	auto iterator = this->iterator();
+
+	int count = 0;
+
+	while (iterator.hasNext()) {
+		const auto& entry = iterator.getNextValue();
+
+		count += entry.size();
+	}
+
+	return count;
 }

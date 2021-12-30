@@ -26,7 +26,7 @@ using namespace engine::util;
 #include "engine/core/ManagedReference.h"
 
 class ObserverEventMap : public HashTable<uint32, SortedVector<ManagedReference<Observer*> > > {
-	mutable Mutex observerMutex;
+	mutable ReadWriteLock observerMutex;
 
 public:
 	ObserverEventMap() {
@@ -46,6 +46,7 @@ public:
 	SortedVector<ManagedReference<Observer*> > getObservers(uint32 eventType) const;
 
 	int getObserverCount(uint32 eventType) const;
+	int getFullObserverCount() const;
 };
 
 

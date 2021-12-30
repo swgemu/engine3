@@ -161,7 +161,7 @@ Task* TimedTaskQueue::get() {
 		}
 
 		const Task* task = static_cast<const Task*>(PriorityQueue::peak());
-		Time time = task->getNextExecutionTime().getTimeObject();
+		Time time = task->getNextExecutionTime();
 
 		if (blocked || !time.isFuture())
 			break;

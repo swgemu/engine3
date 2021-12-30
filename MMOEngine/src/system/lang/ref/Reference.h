@@ -12,6 +12,7 @@
 
 #include "system/thread/atomic/AtomicReference.h"
 #include "system/thread/atomic/AtomicInteger.h"
+#include <atomic>
 
 namespace sys {
   namespace lang {
@@ -306,7 +307,7 @@ namespace sys {
 		}
 
 		inline void initializeObject(O obj) {
-			object = obj;
+			object.set(obj, std::memory_order_relaxed);
 
 			acquireObject();
 		}
@@ -326,7 +327,7 @@ namespace sys {
 				object.get()->removeHolder(id);
 			#endif
 				object.get()->release();
-				object = nullptr;
+				object.set(nullptr, std::memory_order_relaxed);
 			}
 		}
 	};

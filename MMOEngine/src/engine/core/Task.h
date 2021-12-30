@@ -31,7 +31,7 @@ namespace engine {
 	protected:
 		AtomicReference<TaskScheduler*> taskScheduler;
 
-		AtomicTime nextExecutionTime;
+		Time nextExecutionTime;
 
 		String customTaskQueue;
 
@@ -130,7 +130,7 @@ namespace engine {
 				nextExecutionTime.addMiliTime(mtime);
 		}
 
-		inline const AtomicTime& getNextExecutionTime() const {
+		inline const Time& getNextExecutionTime() const {
 			return nextExecutionTime;
 		}
 
