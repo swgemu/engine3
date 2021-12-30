@@ -91,6 +91,7 @@ namespace sys {
 		pthread_attr_t attributes;
 
 		String name;
+		String customName;
 
 		static std::atomic<int> threadCounter;
 		static pthread_once_t initThread;
@@ -110,12 +111,15 @@ namespace sys {
 	public:
 		//! allocates a new Thread
 		Thread();
+		Thread(const String& name);
 		virtual ~Thread();
 
 		static pid_t getProcessID();
 
 		//! causes this thread to begin execution
 		virtual void start();
+
+		void startWithCustomName(const String& name);
 
 		//! causes this thread to be cancelled
 		void cancel();
@@ -139,6 +143,8 @@ namespace sys {
 		static Thread* getCurrentThread();
 
 		// setters
+		void setCustomThreadName(const String& name);
+
 		void setDetached();
 
 		void setJoinable();

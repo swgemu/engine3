@@ -5,6 +5,7 @@
 
 //#define TRACE_CLIENTS
 
+#include "engine/log/Logger.h"
 #include "engine/core/Core.h"
 
 #include "BaseClient.h"
@@ -22,9 +23,51 @@
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
-#define MAX_BUFFER_PACKETS_TICK_COUNT 500
-#define INITIAL_LOCKFREE_BUFFER_CAPACITY 500
-#define MAX_SENT_PACKETS_PER_TICK 20
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+namespace {
+	static Logger logger("BaseClient", Logger::WARNING);
+
+	int getMaxBufferPacketsTickCount() {
+		static const int setting = []() {
+			int value = Core::getIntProperty("BaseClient.maxBufferPacketsTickCount", 500);
+			logger.info(true) << "BaseClient.maxBufferPacketsTickCount = " << value;
+			return value;
+		} ();
+
+		return setting;
+	}
+
+	int getInitialLockfreeBufferCapacity() {
+		static const int setting = []() {
+			int value = Core::getIntProperty("BaseClient.initialLockfreeBufferCapacity", 500);
+			logger.info(true) << "BaseClient.initialLockfreeBufferCapacity = " << value;
+			return value;
+		} ();
+
+		return setting;
+	}
+
+	int getMaxSentPacketsPerTick() {
+		static const int setting = []() {
+			int value = Core::getIntProperty("BaseClient.maxSentPacketsPerTick", 20);
+			logger.info(true) << "BaseClient.maxSentPacketsPerTick = " << value;
+			return value;
+		} ();
+
+		return setting;
+	}
+
+	int getMaxOutstandingPackets() {
+		static const int setting = []() {
+			int value = Core::getIntProperty("BaseClient.maxOutstandingPackets", getInitialLockfreeBufferCapacity() * 10);
+			logger.info(true) << "BaseClient.maxOutstandingPackets = " << value;
+			return value;
+		} ();
+
+		return setting;
+	}
+}
+#endif // LOCKFREE_BCLIENT_BUFFERS
 
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;
@@ -41,8 +84,9 @@ public:
         }
 };
 
-BaseClient::BaseClient() : DatagramServiceClient(),
-		BaseProtocol(), Mutex(true) {
+void BaseClient::initializeCommon(const String& addr) {
+    ip = addr;
+
 	bufferedPacket = nullptr;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
 
@@ -56,76 +100,34 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 
 	keepSocket = false;
 
-	setDebugLogLevel();
-   	setGlobalLogging(true);
+	setLockName("BaseClient " + ip);
+	setLoggingName("BaseClient " + ip);
+	setLogToConsole(false);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
+	const static int vars = Core::initializeProperties("BaseClient");
+
+	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
 	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
+}
+
+BaseClient::BaseClient() : DatagramServiceClient(),
+		BaseProtocol(), Mutex(true) {
+	initializeCommon("-");
 }
 
 BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(addr, port),
 		BaseProtocol(), Mutex(true) {
-	bufferedPacket = nullptr;
-	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
-
-	fragmentedPacket = nullptr;
-
-	checkupEvent = nullptr;
-	netcheckupEvent = nullptr;
-	netRequestEvent = nullptr;
-
-	reentrantTask = new BaseClientEvent(this);
-
-	keepSocket = false;
-
-	setInfoLogLevel();
-   	setGlobalLogging(true);
-
-#ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
-
-	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
-#endif
-
-   	//reentrantTask->schedulePeriodic(10, 10);
+	initializeCommon(addr);
 }
 
 BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClient(sock, addr),
 		BaseProtocol(), Mutex(true) {
-	bufferedPacket = nullptr;
-
-	fragmentedPacket = nullptr;
-
-	checkupEvent = nullptr;
-	netcheckupEvent = nullptr;
-	netRequestEvent = nullptr;
-
-	reentrantTask = new BaseClientEvent(this);
-
-  	ip = addr.getFullIPAddress();
-   	setLockName("Client " + ip);
-   	//setMutexLogging(false);
-
-   	/*String prip = addr.getFullPrintableIPAddress();
-   	setFileLogger("log/" + prip);*/
-
-	keepSocket = true;
-
-	setInfoLogLevel();
-   	setGlobalLogging(true);
-
-#ifdef LOCKFREE_BCLIENT_BUFFERS
-	sendLockFreeBuffer = new packet_buffer_t(INITIAL_LOCKFREE_BUFFER_CAPACITY);
-
-	fatal(sendLockFreeBuffer->is_lock_free(), "boost lock free buffer is not lock free");
-#endif
-
-   	//reentrantTask->schedulePeriodic(10, 10);
+	initializeCommon(addr.getFullIPAddress());
 }
 
 BaseClient::~BaseClient() {
@@ -265,7 +267,7 @@ void BaseClient::close() {
 
 	acknowledgedServerSequence = -1;
 
-	reportStats();
+	reportStats(true);
 
 	closeFileLogger();
 
@@ -670,8 +672,8 @@ void BaseClient::run() {
 	lock();
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	while ((i++ < MAX_BUFFER_PACKETS_TICK_COUNT)
-			&& (j < MAX_SENT_PACKETS_PER_TICK)
+	while ((i++ < getMaxBufferPacketsTickCount())
+			&& (j < getMaxSentPacketsPerTick())
 			&& sendLockFreeBuffer->pop(incomingPack)) {
 		try {
 			BasePacket* pack;
@@ -708,8 +710,9 @@ void BaseClient::run() {
 		}
 	}
 
-	if (i >= MAX_BUFFER_PACKETS_TICK_COUNT) {
-		warning() << "more than " << MAX_BUFFER_PACKETS_TICK_COUNT << " packets in sendLockFreeBuffer on BaseClient tick";
+	if (i >= getMaxBufferPacketsTickCount()) {
+		warning() << "more than " << getMaxBufferPacketsTickCount() << " packets in sendLockFreeBuffer on BaseClient tick";
+		reportStats(true);
 	}
 
 	sendReliablePackets();
@@ -773,8 +776,15 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 //      resendPackets();
 
-		if (sendBuffer.size() > 6000) {
-			error() << "WARNING - send buffer overload [" << sendBuffer.size() << "]";
+		auto outstandingCount = sendBuffer.size();
+
+		if (outstandingCount > maxOutstanding) {
+			maxOutstanding = outstandingCount;
+			reportStats(true);
+		}
+
+		if (outstandingCount > getMaxOutstandingPackets()) {
+			error() << "WARNING - send buffer overload [" << outstandingCount << "], disconnecting.";
 
 			disconnect(false);
 		}
@@ -826,6 +836,8 @@ bool BaseClient::validatePacket(Packet* pack) {
 		#ifdef TRACE_CLIENTS
    			debug() << "OUT of order READ(" << seq << ") expected " << clientSequence;
 		#endif
+
+		numOutOfOrder++;
 
 		return false;
 	} /*else
@@ -1463,20 +1475,20 @@ void BaseClient::disconnect(bool doLock) {
 }
 
 void BaseClient::reportStats(bool doLog) const {
+	if (serverSequence == 0) {
+		return;
+	}
+
 	int packetloss;
+
 	if (serverSequence == 0 || resentPackets == 0)
 		packetloss = 0;
 	else
 	 	packetloss = (100 * resentPackets) / (serverSequence + resentPackets);
 
-	//if (packetloss > 15)
-	//	doLog = true;
-
-	StringBuffer msg;
-	msg << "STATS: sent = " << serverSequence << ", resent = " << resentPackets << " [" << packetloss << "%]";
-
-	if (doLog)
-		info(msg);
-	else
-		debug(msg);
+	info(packetloss > 5)
+		<< "STATS: sent = " << serverSequence
+		<< ", resent = " << resentPackets << " [" << packetloss << "%]"
+		<< ", maxOutstanding = " << maxOutstanding
+		<< ", numOutOfOrder = " << numOutOfOrder;
 }

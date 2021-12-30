@@ -18,6 +18,7 @@ namespace engine {
 	class ServiceThread : public Thread, public Mutex, public Logger, public virtual Object {
 	protected:
 		AtomicBoolean doRun, serviceReady;
+		String threadName;
 
 	public:
 		constexpr const static bool is_virtual_object = true;

@@ -7,7 +7,7 @@
 
 #include "ServiceThread.h"
 
-ServiceThread::ServiceThread(const String& s) : Thread(), Mutex(s + "Thread"), Logger(s) {
+ServiceThread::ServiceThread(const String& s) : Thread(s), Mutex(s + "Thread"), Logger(s) {
 	setRunning(false);
 }
 

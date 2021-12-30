@@ -81,6 +81,11 @@ Thread::Thread() {
 	memset(&thread, 0, sizeof(thread));
 
 	name = "Thread " + String::valueOf(++threadCounter);
+	customName = name.replaceFirst(" ", "-");
+}
+
+Thread::Thread(const String& name) : Thread() {
+	setCustomThreadName(name);
 }
 
 Thread::~Thread() {
@@ -107,6 +112,14 @@ Thread::~Thread() {
 
 void Thread::start() {
 	pthread_create(&thread, &attributes, executeThread, this);
+
+	pthread_setname_np(thread, customName.toCharArray());
+}
+
+void Thread::startWithCustomName(const String& name) {
+	setCustomThreadName(name);
+
+	start();
 }
 
 void Thread::addModifiedObject(DistributedObject* object) {
@@ -209,6 +222,25 @@ bool Thread::isDetached() const {
 
 Thread* Thread::getCurrentThread() {
 	return currentThread.get();
+}
+
+void Thread::setCustomThreadName(const String& name) {
+	String shortName = name;
+
+	// Heuristic shortening of well known names...
+	shortName = shortName.replaceFirst("DistributedObject", "DObj-");
+	shortName = shortName.replaceFirst("TaskWorkerThread-", "TW-");
+	shortName = shortName.replaceAll("Task", "Tk");
+	shortName = shortName.replaceAll("Worker", "Wk");
+	shortName = shortName.replaceAll("Thread", "");
+
+	// The thread name is a meaningful C language string, whose length
+	// is restricted to 16 characters, including the terminating null byte ('\0')
+	if (shortName.length() > 15) {
+		shortName = shortName.subString(shortName.length() - 15, shortName.length());
+	}
+
+	customName = shortName;
 }
 
 void Thread::setDetached() {

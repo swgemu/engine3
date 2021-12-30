@@ -45,7 +45,8 @@ namespace engine {
 		AtomicBoolean shuttingDown;
 
 	public:
-	    	static int DEFAULT_WORKER_QUEUES;
+		static int BASECLIENT_WORKER_THREADS;
+		static int DEFAULT_WORKER_QUEUES;
 		static int DEFAULT_WORKER_THREADS_PER_QUEUE;
 		static int DEFAULT_SCHEDULER_THREADS;
 		static int DEFAULT_IO_SCHEDULERS;

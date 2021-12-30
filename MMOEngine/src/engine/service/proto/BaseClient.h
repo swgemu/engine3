@@ -78,6 +78,8 @@ namespace engine {
 
 		int acknowledgedServerSequence = -1, realServerSequence = 0;
 		int resentPackets = 0;
+		int maxOutstanding = 0;
+		int numOutOfOrder = 0;
 
 		bool keepSocket;
 
@@ -197,6 +199,8 @@ namespace engine {
 
 		friend class engine::stm::TransactionalBaseClientManager;
 
+	private:
+		void initializeCommon(const String& addr);
 	};
 
     } // namespace proto

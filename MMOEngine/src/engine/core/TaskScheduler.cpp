@@ -29,7 +29,7 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	setGlobalLogging(true);
 }
 
-TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
+TaskScheduler::TaskScheduler(const String& s) : Thread(s), Logger(s) {
 	taskManager = nullptr;
 
 	doRun = false;
