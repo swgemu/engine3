@@ -10,7 +10,7 @@
  *	ObservableStub
  */
 
-enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 3221949456,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_,RPC_ADDOBSERVABLECHILD__OBSERVABLE_,RPC_DROPOBSERVEABLECHILD__OBSERVABLE_};
+enum {RPC_NOTIFYOBSERVERS__INT_MANAGEDOBJECT_LONG_ = 3221949456,RPC_REGISTEROBSERVER__INT_OBSERVER_,RPC_DROPOBSERVER__INT_OBSERVER_,RPC_GETOBSERVERCOUNT__INT_,RPC_GETFULLOBSERVERCOUNT__,RPC_ADDOBSERVABLECHILD__OBSERVABLE_,RPC_DROPOBSERVEABLECHILD__OBSERVABLE_};
 
 Observable::Observable() : ManagedObject(DummyConstructorParameter::instance()) {
 	ObservableImplementation* _implementation = new ObservableImplementation();
@@ -30,7 +30,7 @@ Observable::~Observable() {
 
 void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, long long arg2) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -47,7 +47,7 @@ void Observable::notifyObservers(unsigned int eventType, ManagedObject* arg1, lo
 
 void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -63,7 +63,7 @@ void Observable::registerObserver(unsigned int eventType, Observer* observer) {
 
 void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -79,7 +79,7 @@ void Observable::dropObserver(unsigned int eventType, Observer* observer) {
 
 int Observable::getObserverCount(unsigned int eventType) const {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementationForRead());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -92,9 +92,23 @@ int Observable::getObserverCount(unsigned int eventType) const {
 	}
 }
 
+int Observable::getFullObserverCount() const {
+	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementationForRead());
+	if (unlikely(_implementation == NULL)) {
+		if (!deployed)
+			throw ObjectNotDeployedException(this);
+
+		DistributedMethod method(this, RPC_GETFULLOBSERVERCOUNT__);
+
+		return method.executeWithSignedIntReturn();
+	} else {
+		return _implementation->getFullObserverCount();
+	}
+}
+
 void Observable::addObservableChild(Observable* observable) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -109,7 +123,7 @@ void Observable::addObservableChild(Observable* observable) {
 
 void Observable::dropObserveableChild(Observable* observable) {
 	ObservableImplementation* _implementation = static_cast<ObservableImplementation*>(_getImplementation());
-	if (unlikely(_implementation == nullptr)) {
+	if (unlikely(_implementation == NULL)) {
 		if (!deployed)
 			throw ObjectNotDeployedException(this);
 
@@ -155,7 +169,7 @@ void ObservableImplementation::finalize() {
 void ObservableImplementation::_initializeImplementation() {
 	_setClassHelper(ObservableHelper::instance());
 
-	_this = nullptr;
+	_this = NULL;
 
 	_serializationHelperMethod();
 }
@@ -325,6 +339,11 @@ int ObservableImplementation::getObserverCount(unsigned int eventType) const{
 	return (&observerEventMap)->getObserverCount(eventType);
 }
 
+int ObservableImplementation::getFullObserverCount() const{
+	// engine/util/Observable.idl():  		return observerEventMap.getFullObserverCount();
+	return (&observerEventMap)->getFullObserverCount();
+}
+
 void ObservableImplementation::addObservableChild(Observable* observable) {
 	// engine/util/Observable.idl():  		observableChildren.put(observable);
 	(&observableChildren)->put(observable);
@@ -386,6 +405,13 @@ void ObservableAdapter::invokeMethod(uint32 methid, DistributedMethod* inv) {
 			resp->insertSignedInt(_m_res);
 		}
 		break;
+	case RPC_GETFULLOBSERVERCOUNT__:
+		{
+			
+			int _m_res = getFullObserverCount();
+			resp->insertSignedInt(_m_res);
+		}
+		break;
 	case RPC_ADDOBSERVABLECHILD__OBSERVABLE_:
 		{
 			Observable* observable = static_cast<Observable*>(inv->getObjectParameter());
@@ -421,6 +447,10 @@ void ObservableAdapter::dropObserver(unsigned int eventType, Observer* observer)
 
 int ObservableAdapter::getObserverCount(unsigned int eventType) const {
 	return (static_cast<Observable*>(stub))->getObserverCount(eventType);
+}
+
+int ObservableAdapter::getFullObserverCount() const {
+	return (static_cast<Observable*>(stub))->getFullObserverCount();
 }
 
 void ObservableAdapter::addObservableChild(Observable* observable) {

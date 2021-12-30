@@ -46,6 +46,11 @@ class Observable extends ManagedObject {
 		return observerEventMap.getObserverCount(eventType);
 	}
 
+	@read
+	public int getFullObserverCount() {
+		return observerEventMap.getFullObserverCount();
+	}
+
 	public void addObservableChild(Observable observable) {
 		observableChildren.put(observable);
 	}

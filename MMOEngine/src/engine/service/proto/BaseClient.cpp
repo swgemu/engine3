@@ -23,7 +23,6 @@
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
-#ifdef LOCKFREE_BCLIENT_BUFFERS
 namespace {
 	static Logger logger("BaseClient", Logger::WARNING);
 
@@ -67,7 +66,6 @@ namespace {
 		return setting;
 	}
 }
-#endif // LOCKFREE_BCLIENT_BUFFERS
 
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;

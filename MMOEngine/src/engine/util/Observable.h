@@ -49,13 +49,15 @@ class Observable : public ManagedObject {
 public:
 	Observable();
 
-	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = nullptr, long long arg2 = 0);
+	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = NULL, long long arg2 = 0);
 
 	void registerObserver(unsigned int eventType, Observer* observer);
 
 	void dropObserver(unsigned int eventType, Observer* observer);
 
 	int getObserverCount(unsigned int eventType) const;
+
+	int getFullObserverCount() const;
 
 	void addObservableChild(Observable* observable);
 
@@ -93,13 +95,15 @@ public:
 
 	ObservableImplementation(DummyConstructorParameter* param);
 
-	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = nullptr, long long arg2 = 0);
+	void notifyObservers(unsigned int eventType, ManagedObject* arg1 = NULL, long long arg2 = 0);
 
 	void registerObserver(unsigned int eventType, Observer* observer);
 
 	void dropObserver(unsigned int eventType, Observer* observer);
 
 	int getObserverCount(unsigned int eventType) const;
+
+	int getFullObserverCount() const;
 
 	void addObservableChild(Observable* observable);
 
@@ -156,6 +160,8 @@ public:
 	void dropObserver(unsigned int eventType, Observer* observer);
 
 	int getObserverCount(unsigned int eventType) const;
+
+	int getFullObserverCount() const;
 
 	void addObservableChild(Observable* observable);
 
