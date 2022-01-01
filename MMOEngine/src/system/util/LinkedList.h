@@ -35,7 +35,7 @@ namespace sys {
 		ListEntry<O>* head;
 		ListEntry<O>* current;
 
-		std::atomic<int> count;
+		std::atomic<int> count{};
 
 	public:
 		LinkedList();
@@ -87,7 +87,6 @@ namespace sys {
 
 	template<class O> LinkedList<O>::LinkedList() {
 		current = nullptr;
-		count = 0;
 
 		head = new ListEntry<O>();
 	}
@@ -108,23 +107,21 @@ namespace sys {
 	template<class O> void LinkedList<O>::add(O& obj) {
 		ListEntry<O>* e = new ListEntry<O>(obj, nullptr);
 
-		if (count.load(std::memory_order_relaxed) == 0)
+		if (count.load(std::memory_order_acquire) == 0)
 			head->next = e;
 		else
 			current->next = e;
 
 		current = e;
 
-		count++;
+		count.fetch_add(1, std::memory_order_release);
 	}
 
 	template<class O> void LinkedList<O>::add(int index, O& obj) {
-		if ((int) count.load(std::memory_order_relaxed) < index + 1 || index < 0)
+		if ((int) count.load(std::memory_order_acquire) < index + 1 || index < 0)
 			throw ArrayIndexOutOfBoundsException(index);
 
 		ListEntry<O>* newEntry = new ListEntry<O>(obj, nullptr);
-
-		//if (count =)
 
 		ListEntry<O>* e = head;
 
@@ -141,10 +138,7 @@ namespace sys {
 
 		e->next = newEntry;
 
-		/*O obj = o->obj;
-		delete o;*/
-
-		count++;
+		count.fetch_add(1, std::memory_order_release);
 	}
 
 	template<class O> O& LinkedList<O>::get(int index) const {
@@ -160,7 +154,7 @@ namespace sys {
 	}
 
 	template<class O> O LinkedList<O>::remove(int index) {
-		if ((int) count.load(std::memory_order_relaxed) < index + 1 || index < 0)
+		if ((int) count.load(std::memory_order_acquire) < index + 1 || index < 0)
 			throw ArrayIndexOutOfBoundsException(index);
 
 		ListEntry<O>* e = head;
@@ -176,7 +170,7 @@ namespace sys {
 			O obj = o->obj;
 			delete o;
 
-			--count;
+			count.fetch_sub(1, std::memory_order_release);
 
 			return obj;
 		}

@@ -47,11 +47,11 @@ namespace sys {
 		}
 
 		inline void setQueued() {
-			enqueued = true;
+			enqueued.store(true, std::memory_order_relaxed);
 		}
 
 		inline void setUnqueued() {
-			enqueued = false;
+			enqueued.store(false, std::memory_order_relaxed);
 		}
 
 		inline bool isQueued() const {
