@@ -62,6 +62,10 @@ namespace engine {
 			return port;
 		}
 
+		inline Socket* getSocket() const {
+			return socket;
+		}
+
 		// setters
 		void setHandler(ServiceHandler* handler) {
 			serviceHandler = handler;
