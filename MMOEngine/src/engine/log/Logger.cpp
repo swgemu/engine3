@@ -544,6 +544,26 @@ String Logger::escapeJSON(const String& input) {
 	return output.toString();
 }
 
+String Logger::nsToString(uint64 nanos, bool truncate) {
+	StringBuffer output;
+
+	if (truncate) {
+		output << (uint64)(nanos / 1000000);
+	} else {
+		output << (double)(nanos) / 1000000.0;
+	}
+
+	output << " ms";
+
+	return output.toString();
+}
+
+String Logger::msToString(uint64 milli) {
+	StringBuffer output;
+	output << milli << " ms";
+	return output.toString();
+}
+
 LoggerHelper::LoggerHelper(const Logger& logger, const int logLevel, const bool boolParam)
 	: logger(logger), logLevel(logLevel), boolParam(boolParam) {
 

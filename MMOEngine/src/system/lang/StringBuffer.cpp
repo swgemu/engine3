@@ -38,7 +38,9 @@ StringBuffer& StringBuffer::append(char ch) {
 StringBuffer& StringBuffer::append(int val) {
 	String str;
 
-	if (!doHex())
+	if (doCommas())
+		str = String::withCommas(val);
+	else if (!doHex())
 		str = String::valueOf(val);
 	else
 		str = String::hexvalueOf(val);
@@ -49,7 +51,9 @@ StringBuffer& StringBuffer::append(int val) {
 StringBuffer& StringBuffer::append(uint32 val) {
 	String str;
 
-	if (!doHex())
+	if (doCommas())
+		str = String::withCommas(val);
+	else if (!doHex())
 		str = String::valueOf(val);
 	else
 		str = String::hexvalueOf((int)val);
@@ -64,7 +68,9 @@ StringBuffer& StringBuffer::append(long val) {
 StringBuffer& StringBuffer::append(int64 val) {
 	String str;
 
-	if (!doHex())
+	if (doCommas())
+		str = String::withCommas(val);
+	else if (!doHex())
 		str = String::valueOf(val);
 	else
 		str = String::hexvalueOf(val);
@@ -75,7 +81,9 @@ StringBuffer& StringBuffer::append(int64 val) {
 StringBuffer& StringBuffer::append(uint64 val) {
 	String str;
 
-	if (!doHex())
+	if (doCommas())
+		str = String::withCommas(val);
+	else if (!doHex())
 		str = String::valueOf(val);
 	else
 		str = String::hexvalueOf((int64)val);
@@ -87,7 +95,9 @@ StringBuffer& StringBuffer::append(uint64 val) {
 StringBuffer& StringBuffer::append(std::size_t val) {
 	String str;
 
-	if (!doHex())
+	if (doCommas())
+		str = String::withCommas((uint64) val);
+	else if (!doHex())
 		str = String::valueOf(val);
 	else
 		str = String::hexvalueOf((int64) val);
@@ -216,7 +226,9 @@ StringBuffer& StringBuffer::insert(int offset, char ch) {
 StringBuffer& StringBuffer::insert(int offset, int val) {
 	String str;
 
-	if (!doHex())
+	if (doCommas())
+		str = String::withCommas(val);
+	else if (!doHex())
 		str = String::valueOf(val);
 	else
 		str = String::hexvalueOf(val);

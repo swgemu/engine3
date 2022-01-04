@@ -200,6 +200,12 @@ namespace sys {
 		static String hexvalueOf(uint32 val);
 		static String hexvalueOf(uint64 val);
 
+		static String withCommas(int val);
+		static String withCommas(long val);
+		static String withCommas(int64 val);
+		static String withCommas(uint32 val);
+		static String withCommas(uint64 val);
+
 		static const String& valueOf(const String& str) {
 			return str;
 		}

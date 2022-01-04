@@ -24,7 +24,8 @@ namespace sys {
   		SF_uppercase = 1L << 2,
   		SF_endl = 1L << 3,
 		SF_nouppercase = 1L << 4,
-		SF_flush = 1L << 5
+		SF_flush = 1L << 5,
+		SF_commas = 1L << 6
   	};
 
   	constexpr const StreamFlags dec = SF_dec;
@@ -33,6 +34,7 @@ namespace sys {
   	constexpr const StreamFlags endl = SF_endl;
 	constexpr const StreamFlags nouppercase = SF_nouppercase;
 	constexpr const StreamFlags flush = SF_flush;
+	constexpr const StreamFlags commas = SF_commas;
 
 	class StringBuffer : private ArrayList<char> {
 		StreamFlags streamFlags;
@@ -113,6 +115,10 @@ namespace sys {
 
 		inline bool doUpperCase() const {
 			return streamFlags & SF_uppercase;
+		}
+
+		inline bool doCommas() const {
+			return streamFlags & SF_commas;
 		}
 
 		inline int length() const {

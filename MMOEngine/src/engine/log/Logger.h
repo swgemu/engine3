@@ -307,6 +307,9 @@ namespace engine {
 		static String escapeJSON(const String& input);
 		static String unescapeJSON(const String& input);
 
+		static String nsToString(uint64 nanos, bool truncate = false);
+		static String msToString(uint64 milli);
+
 		// setters
 		inline void setLogging(bool doLog) {
 			if (doLog)

@@ -468,6 +468,60 @@ String String::hexvalueOf(uint64 val) {
 	return String(buf, written);
 }
 
+String String::withCommas(int val) {
+	return withCommas((int64)val);
+}
+
+String String::withCommas(long val) {
+	return withCommas((int64)val);
+}
+
+String String::withCommas(int64 val) {
+	std::ostringstream buf;
+	buf << val;
+	std::string src = buf.str();
+	std::string out;
+	std::size_t i = 0;
+
+	for (auto pos = src.rbegin(); pos != src.rend(); ++pos) {
+		if (i % 3 == 0 && i != 0) {
+			out.push_back(',');
+		}
+		++i;
+
+		out.push_back(*pos);
+	}
+
+	std::reverse (out.begin(), out.end());
+
+	return String(out);
+}
+
+String String::withCommas(uint32 val) {
+	return withCommas((uint64)val);
+}
+
+String String::withCommas(uint64 val) {
+	std::ostringstream buf;
+	buf << val;
+	std::string src = buf.str();
+	std::string out;
+	std::size_t i = 0;
+
+	for (auto pos = src.rbegin(); pos != src.rend(); ++pos) {
+		if (i % 3 == 0 && i != 0) {
+			out.push_back(',');
+		}
+		++i;
+
+		out.push_back(*pos);
+	}
+
+	std::reverse (out.begin(), out.end());
+
+	return String(out);
+}
+
 String String::replaceFirst(const String& regexString, const String& replacement) const {
 	std::regex word_regex(regexString.begin(), std::regex_constants::extended);
 	std::match_results<const char*> match;
