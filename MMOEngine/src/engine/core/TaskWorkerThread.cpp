@@ -97,17 +97,10 @@ void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) const {
 
 	if (!ignoreTasks.contains(taskNameString)) {
 		StringBuffer stream;
-		stream << taskNameString << " took ";
-
-		if (elapsedTimeMs == 0) {
-			stream << elapsedTime << "ns";
-		} else {
-			stream << elapsedTimeMs << "ms";
-		}
-
-		stream << " from which waited on mutexes for " << mutexWaitTime << "ns";
-		stream << " to acquire " << mutexesAcquired << " locks";
-		stream << " and spent in bdb " << totalBdbTime << "ns";
+		stream << taskNameString << " took " << nsToString(elapsedTimeMs);
+		stream << " from which waited on mutexes for " << nsToString(mutexWaitTime);
+		stream << " to acquire " << commas << mutexesAcquired << " locks";
+		stream << " and spent in bdb " << nsToString(totalBdbTime);
 		stream << " for " << totalBdbQueries << " queries";
 
 		if (!slowTaskFilename.isEmpty()) {

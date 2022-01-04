@@ -117,7 +117,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			}
 
 			objectManager->info(true) << "thread " << threadId << " copied "
-				<< j <<  " modified objects into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
+				<< commas << j << " modified objects into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
 		}
 
 		start.updateToCurrentTime(Time::MONOTONIC_TIME);
@@ -133,7 +133,7 @@ void UpdateModifiedObjectsThread::commitObjectsToDatabase() {
 			}
 
 			objectManager->info(true) << "thread " << threadId << " commited "
-				<< objectsToDelete->size() <<  " objects for deletion into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
+				<< commas << objectsToDelete->size() <<  " objects for deletion into ram in " << start.miliDifference(Time::MONOTONIC_TIME) << " ms";
 		}
 	} catch (const Exception& e) {
 		objectManager->error(e.getMessage());

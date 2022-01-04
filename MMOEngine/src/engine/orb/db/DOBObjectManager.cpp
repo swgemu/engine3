@@ -434,10 +434,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 
 	UniqueReference<Vector<Pair<Locker*, TaskWorkerThread*>>*> lockers(Core::getTaskManager()->blockTaskManager());
 
-	uint64 durationOfBlocking = stopWaitTimer.stop();
-
-	info(true) << "waited task manager to stop for "
-	       << durationOfBlocking << " ns";
+	info(true) << "waited for task manager to stop for " << nsToString(stopWaitTimer.stop());
 
 	Locker _locker(this);
 
@@ -685,8 +682,8 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkeley::Transactio
 
 	auto elapsed = profile.stopMs();
 
-	info(true) << "launched " << currentThread << " workers and marked " << objectsToUpdate->size() << " objects to update and "
-			<< objectsToDelete.size() << " for deletion in " << elapsed << " ms from " << localObjectDirectory.getObjectHashTable().size() << " total objects";
+	info(true) << "launched " << currentThread << " workers and marked " << commas << objectsToUpdate->size() << " objects to update and "
+			<< objectsToDelete.size() << " for deletion in " << msToString(elapsed) << " from " << localObjectDirectory.getObjectHashTable().size() << " total objects";
 
 	return currentThread;
 }
@@ -738,7 +735,7 @@ void DOBObjectManager::finishObjectUpdate() {
 
 	updateModifiedObjectsTask->schedule(UPDATETODATABASETIME);
 
-	info(true) << "marked updated objects: " << totalUpdatedObjects
+	info(true) << "marked updated objects: " << commas << totalUpdatedObjects
 			<< " commited objects: " << totalActuallyChangedObjects;
 
 	saveCount++;
