@@ -97,7 +97,7 @@ void TaskWorkerThread::logTask(const char* taskName, uint64 elapsedTime) const {
 
 	if (!ignoreTasks.contains(taskNameString)) {
 		StringBuffer stream;
-		stream << taskNameString << " took " << nsToString(elapsedTimeMs);
+		stream << taskNameString << " took " << msToString(elapsedTimeMs);
 		stream << " from which waited on mutexes for " << nsToString(mutexWaitTime);
 		stream << " to acquire " << commas << mutexesAcquired << " locks";
 		stream << " and spent in bdb " << nsToString(totalBdbTime);
