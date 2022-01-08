@@ -8,3 +8,4 @@ MMOEngine/build/unix32/src
 MMOEngine/lib/unix/libengine3*a
 *.swp
 *~
+compile_commands.json

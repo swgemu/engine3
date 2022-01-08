@@ -13,6 +13,8 @@
 #define DOBOBJECTMANAGER_CPP_
 
 #include <cstddef>
+#include <sstream>
+#include <iomanip>
 
 #include "system/platform.h"
 
@@ -43,8 +45,6 @@
 #include "CommitMasterTransactionThread.h"
 
 #include "engine/util/flat_hash_map.hpp"
-
-//#define PRINT_OBJECT_COUNT
 
 int DOBObjectManager::UPDATETODATABASETIME = 300000;
 bool DOBObjectManager::dumpLastModifiedTraces = false;
@@ -513,25 +513,6 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(bool forceFull) {
 			delete objectsToDelete;
 		}
 	}
-
-#ifdef PRINT_OBJECT_COUNT
-	VectorMap<int, String> orderedMap(inRamClassCount.size(), 0);
-	orderedMap.setAllowDuplicateInsertPlan();
-
-	for (int i = 0; i < inRamClassCount.size(); ++i) {
-		const String& name = inRamClassCount.elementAt(i).getKey();
-		int val = inRamClassCount.elementAt(i).getValue();
-
-		orderedMap.put(val, name);
-	}
-
-	for (int i = 0; i < orderedMap.size(); ++i) {
-		const String& name = orderedMap.elementAt(i).getValue();
-		int val = orderedMap.elementAt(i).getKey();
-
-		printf("%s\t%d\n", name.toCharArray(), val);
-	}
-#endif
 }
 
 int DOBObjectManager::executeUpdateThreads(ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
@@ -543,19 +524,56 @@ int DOBObjectManager::executeUpdateThreads(ArrayList<DistributedObject*>* object
 
 	int numberOfThreads = 0;
 
-#ifdef PRINT_OBJECT_COUNT
+	const static int reportTopInRam = Core::getIntProperty("ObjectManager.reportTopInRam", 0);
+
 	VectorMap<String, int> inRamClassCount;
 	inRamClassCount.setNullValue(0);
 
-	numberOfThreads = runObjectsMarkedForUpdate(transaction, objectsToUpdate, *objectsToDelete, *objectsToDeleteFromRAM, &inRamClassCount);
-#else
-	numberOfThreads = runObjectsMarkedForUpdate(transaction, objectsToUpdate, *objectsToDelete, *objectsToDeleteFromRAM, nullptr);
-#endif
+	if (reportTopInRam > 0) {
+		numberOfThreads = runObjectsMarkedForUpdate(transaction, objectsToUpdate, *objectsToDelete, *objectsToDeleteFromRAM, &inRamClassCount);
+	} else {
+		numberOfThreads = runObjectsMarkedForUpdate(transaction, objectsToUpdate, *objectsToDelete, *objectsToDeleteFromRAM, nullptr);
+	}
 
 	for (auto thread : updateModifiedObjectsThreads) {
 		thread->signalCopyFinished();
 
 		thread->waitFinishedWork();
+	}
+
+	if (inRamClassCount.size() > 0) {
+		VectorMap<int, String> orderedMap(inRamClassCount.size(), 0);
+		orderedMap.setAllowDuplicateInsertPlan();
+
+		int max = 0;
+		for (int i = 0; i < inRamClassCount.size(); ++i) {
+			const String& name = inRamClassCount.elementAt(i).getKey();
+			int val = inRamClassCount.elementAt(i).getValue();
+
+			if (val > max) {
+				max = val;
+			}
+
+			orderedMap.put(val, name);
+		}
+
+		info(true) << "Top " << reportTopInRam << " objects in RAM:";
+
+		auto valWidth = String::withCommas(max).length();
+
+		for (int i = orderedMap.size() - 1, topN = 1;i >= 0 && topN <= reportTopInRam; --i, ++topN) {
+			const String& name = orderedMap.elementAt(i).getValue();
+			String valCommas = String::withCommas(orderedMap.elementAt(i).getKey());
+
+			std::ostringstream row;
+			row << " "
+				<< std::setfill(' ')
+				<< std::setw(2) << topN << ")  "
+				<< std::setw(valWidth) << valCommas.toCharArray() << "  "
+				<< name.toCharArray();
+
+			info(true) << row.str();
+		}
 	}
 
 	return numberOfThreads;
