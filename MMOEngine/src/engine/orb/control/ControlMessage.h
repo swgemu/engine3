@@ -17,20 +17,23 @@ namespace engine {
 
 	class ControlMessage : public DOBMessage {
 		int command;
+		int flags;
 
 	public:
-		ControlMessage(int command) : DOBMessage(CONTROLMESSAGE, 20), command(command) {
+		ControlMessage(int command, int flags) : DOBMessage(CONTROLMESSAGE, 20), command(command) {
 			insertInt(command);
+			insertInt(flags);
 		}
 
 		ControlMessage(Packet* message) : DOBMessage(message) {
 			command = message->parseInt();
+			flags = message->parseInt();
 		}
 
 		void execute() {
 			ObjectBrokerAgent* agent = ObjectBrokerAgent::instance();
 
-			agent->doCommand((ObjectBrokerDirector::Command) command);
+			agent->doCommand((ObjectBrokerDirector::Command) command, flags);
 		}
 	};
 

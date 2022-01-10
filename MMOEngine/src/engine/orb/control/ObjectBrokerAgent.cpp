@@ -36,7 +36,7 @@ void ObjectBrokerAgent::start() {
 	setState(STARTED);
 }
 
-void ObjectBrokerAgent::startBackup(bool forceFull) {
+void ObjectBrokerAgent::startBackup(int flags) {
 	info("creating backup");
 
 	setState(BACKUP_STARTED);
@@ -47,7 +47,7 @@ void ObjectBrokerAgent::startBackup(bool forceFull) {
 		DOBObjectManager* objectManager = broker->getObjectManager();
 		fatal(objectManager) << "objectManager is null";
 
-		objectManager->updateModifiedObjectsToDatabase(forceFull);
+		objectManager->updateModifiedObjectsToDatabase(flags);
 	} else {
 		info("save events disabled on non root brokers", true);
 
@@ -61,18 +61,15 @@ void ObjectBrokerAgent::finishBackup() {
 	setState(IDLE);
 }
 
-void ObjectBrokerAgent::doCommand(ObjectBrokerDirector::Command command) {
+void ObjectBrokerAgent::doCommand(ObjectBrokerDirector::Command command, int flags) {
 	debug() << "received command " <<
-	       	ObjectBrokerDirector::commandToString((int) command)
-	       	<< " from director";
+			ObjectBrokerDirector::commandToString((int) command, flags)
+			<< " from director";
 
-	switch (command) {
-		case ObjectBrokerDirector::CREATE_BACKUP:
-			startBackup(false);
-			break;
-		case ObjectBrokerDirector::CREATE_FULL_BACKUP:
-			startBackup(true);
-			break;
+	if (command == ObjectBrokerDirector::CREATE_BACKUP) {
+		startBackup(flags);
+	} else {
+		error() << "ObjectBrokerAgent::doCommand: Unknown command=" << command << ", flags=" << flags;
 	}
 }
 

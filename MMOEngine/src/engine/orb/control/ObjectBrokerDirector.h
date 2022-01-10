@@ -23,7 +23,7 @@ namespace engine {
 		 VectorMap<ObjectBroker*, int> agentStates;
 
 	public:
-		 enum Command { CREATE_BACKUP, CREATE_FULL_BACKUP };
+		 enum Command { CREATE_BACKUP };
 
 	public:
 		ObjectBrokerDirector();
@@ -31,7 +31,7 @@ namespace engine {
 
 		void start();
 
-		void createBackup(bool full);
+		void createBackup(int flags);
 
 		void handleStateUpdate(ObjectBroker* broker, int state);
 
@@ -40,11 +40,11 @@ namespace engine {
 		void brokerDisconnected(ObjectBroker* broker);
 
 	private:
-		void sendCommand(Command command);
+		void sendCommand(Command command, int flags);
 
 		void doStateUpdate(int state);
 
-		static const char* commandToString(int state);
+		static const char* commandToString(int command, int flags);
 
 		friend class ObjectBrokerAgent;
 		friend class SingletonWrapper<ObjectBrokerDirector>;

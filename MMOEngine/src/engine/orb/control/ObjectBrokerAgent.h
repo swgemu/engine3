@@ -28,10 +28,10 @@ namespace engine {
 
 		void start();
 
-		void startBackup(bool forceFull);
+		void startBackup(int flags);
 		void finishBackup();
 
-		void doCommand(ObjectBrokerDirector::Command command);
+		void doCommand(ObjectBrokerDirector::Command command, int flags);
 
 		void setState(AgentState state);
 

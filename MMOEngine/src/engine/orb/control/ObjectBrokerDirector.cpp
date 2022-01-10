@@ -5,6 +5,8 @@
 
 #include "engine/orb/DistributedObjectBroker.h"
 
+#include "engine/orb/db/DOBObjectManager.h"
+
 #include "engine/orb/messages/RemoteObjectBroker.h"
 
 #include "ObjectBrokerAgent.h"
@@ -22,12 +24,8 @@ void ObjectBrokerDirector::start() {
 	info("running as active director");
 }
 
-void ObjectBrokerDirector::createBackup(bool full) {
-	if (full) {
-		sendCommand(CREATE_FULL_BACKUP);
-	} else {
-		sendCommand(CREATE_BACKUP);
-	}
+void ObjectBrokerDirector::createBackup(int flags) {
+	sendCommand(CREATE_BACKUP, flags);
 }
 
 void ObjectBrokerDirector::doStateUpdate(int state) {
@@ -79,12 +77,12 @@ void ObjectBrokerDirector::handleStateUpdate(ObjectBroker* broker, int state) {
 	}
 }
 
-void ObjectBrokerDirector::sendCommand(Command command) {
+void ObjectBrokerDirector::sendCommand(Command command, int flags) {
 	Locker locker(this);
 
-	debug() << "sending command " << commandToString((int) command) << " to agents";
+	debug() << "sending command " << commandToString((int) command, flags) << " to agents";
 
-	ControlMessage controlMessage((int) command);
+	ControlMessage controlMessage((int) command, flags);
 
 	HashSetIterator<ObjectBroker*> iter = objectBrokerTable.iterator();
 	while (iter.hasNext()) {
@@ -93,7 +91,7 @@ void ObjectBrokerDirector::sendCommand(Command command) {
 			DOBServiceClient* agentPort = static_cast<RemoteObjectBroker*>(broker)->getBrokerClient();
 			agentPort->send(&controlMessage);
 		} else {
-			ObjectBrokerAgent::instance()->doCommand(command);
+			ObjectBrokerAgent::instance()->doCommand(command, flags);
 		}
 	}
 }
@@ -129,11 +127,23 @@ void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 	agentStates.drop(broker);
 }
 
-const char* ObjectBrokerDirector::commandToString(int command) {
+const char* ObjectBrokerDirector::commandToString(int command, int flags) {
+	StringBuffer asStr;
+
 	switch (command) {
 	case CREATE_BACKUP:
-		return "CREATE BACKUP";
+		asStr
+			<< "CREATE BACKUP, FLAGS = "
+			<< ((flags & DOBObjectManager::SAVE_DELTA) ? " DELTA" : "")
+			<< ((flags & DOBObjectManager::SAVE_FULL) ? " FULL" : "")
+			<< ((flags & DOBObjectManager::SAVE_DEBUG) ? " DEBUG" : "")
+			<< ((flags & DOBObjectManager::SAVE_DUMP) ? " DUMP" : "")
+			<< ((flags & DOBObjectManager::SAVE_REPORT) ? " REPORT" : "");
+		break;
 	default:
-		return "";
+		asStr << "<unknown cmd " << command << ", flags = " << flags << ">";
+		break;
 	}
+
+	return asStr.toString().toCharArray();
 }
