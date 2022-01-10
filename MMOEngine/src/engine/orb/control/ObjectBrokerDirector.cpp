@@ -127,7 +127,7 @@ void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 	agentStates.drop(broker);
 }
 
-const char* ObjectBrokerDirector::commandToString(int command, int flags) {
+const String ObjectBrokerDirector::commandToString(int command, int flags) {
 	StringBuffer asStr;
 
 	switch (command) {
@@ -145,5 +145,5 @@ const char* ObjectBrokerDirector::commandToString(int command, int flags) {
 		break;
 	}
 
-	return asStr.toString().toCharArray();
+	return asStr.toString();
 }

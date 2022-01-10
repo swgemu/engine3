@@ -489,6 +489,10 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(int flags) {
 	info(true) << "copied objects into ram in "
 	       << copyTime << " ms";
 
+	if (flags & (SAVE_FULL | SAVE_DUMP)) {
+		dumpSnapshot(&objectsToUpdate, &objectsToDelete, objectsToDeleteFromRAM, flags);
+	}
+
 	CommitMasterTransactionThread::instance()->startWatch(transaction, &updateModifiedObjectsThreads,
 			updateModifiedObjectsThreads.size(), objectsToDeleteFromRAM);
 
@@ -521,6 +525,71 @@ void DOBObjectManager::updateModifiedObjectsToDatabase(int flags) {
 	}
 }
 
+void DOBObjectManager::dumpSnapshot(ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
+		        ArrayList<DistributedObject* >* objectsToDeleteFromRAM, int flags) {
+
+	if (!(flags & SAVE_DUMP)) {
+		return;
+	}
+
+	StringBuffer details;
+	details
+		<< " objectsToUpdate = " << commas << objectsToUpdate->size()
+		<< "; objectsToDelete = " << objectsToDelete->size()
+		<< "; objectsToDeleteFromRAM = " << objectsToDeleteFromRAM->size()
+		<< "; flags = " << flags;
+
+	info(true) << "dumpSnapshot:" << details;
+
+	Timer profile;
+	profile.start();
+
+	Time timeStart;
+	StringBuffer fileName;
+	fileName << "log/save-dump-" << timeStart.getMiliTime() << ".log";
+	File dumpFile(fileName.toString());
+	FileWriter dumpWriter(&dumpFile, false);
+
+	StringBuffer header;
+
+	header << "# START v1; uptme = " << Logger::getElapsedTime() << "; time = " << timeStart.getMiliTime() << ";" << details << "\n";
+	header << "oid\toperation\trefs\tclassName\n";
+
+	dumpWriter << header;
+
+	auto fmtRow = [&](String op, DistributedObject* obj) {
+		StringBuffer row;
+		row << obj->_getObjectID() << "\t"
+			<< op << "\t"
+			<< obj->getReferenceCount() << "\t"
+			<< TypeInfo<DistributedObject>::getClassName(obj, false)
+			<< "\n";
+
+		dumpWriter << row;
+	};
+
+	for (auto obj : *objectsToUpdate) {
+		fmtRow("Update", obj);
+	}
+
+	for (auto obj : *objectsToDelete) {
+		fmtRow("Delete", obj);
+	}
+
+	for (auto obj : *objectsToDeleteFromRAM) {
+		fmtRow("DeleteFromRAM", obj);
+	}
+
+	auto elapsedMs = profile.stopMs();
+
+	StringBuffer endLine;
+	endLine << "# END elapsedTime = " << msToString(elapsedMs);
+	dumpWriter << endLine;
+	dumpWriter.close();
+
+	info(true) << "dumpSnapshot: Dumped to " << fileName << " in " << msToString(elapsedMs);
+}
+
 int DOBObjectManager::executeUpdateThreads(ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
 		ArrayList<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkeley::Transaction* transaction, int flags) {
 	totalUpdatedObjects = 0;
@@ -530,7 +599,12 @@ int DOBObjectManager::executeUpdateThreads(ArrayList<DistributedObject*>* object
 
 	int numberOfThreads = 0;
 
-	const static int reportTopInRam = Core::getIntProperty("ObjectManager.reportTopInRam", 0);
+	const static int reportTopInRam = Core::getIntProperty("ObjectManager.reportTopInRam", 20);
+	const static bool alwaysReportTopInRam = Core::getIntProperty("ObjectManager.AlwaysReportTopInRam", 0);
+
+	if (alwaysReportTopInRam) {
+		flags |= SAVE_REPORT;
+	}
 
 	VectorMap<String, int> inRamClassCount;
 	inRamClassCount.setNullValue(0);

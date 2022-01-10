@@ -150,7 +150,6 @@ namespace engine {
 				int& objectsToUpdateCount, engine::db::berkeley::Transaction* transaction,
 				ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete, int flags);
 
-
 		int executeUpdateThreads(ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
 				ArrayList<DistributedObject* >* objectsToDeleteFromRAM, engine::db::berkeley::Transaction* transaction, int flags);
 
@@ -159,6 +158,9 @@ namespace engine {
 		int runObjectsMarkedForUpdate(engine::db::berkeley::Transaction* transaction,
 				ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>& objectsToDelete,
 				ArrayList<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount, int flags);
+
+		void dumpSnapshot(ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
+				ArrayList<DistributedObject* >* objectsToDeleteFromRAM, int flags);
 
 		friend class CommitMasterTransactionThread;
 	};

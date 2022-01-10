@@ -44,7 +44,7 @@ namespace engine {
 
 		void doStateUpdate(int state);
 
-		static const char* commandToString(int command, int flags);
+		static const String commandToString(int command, int flags);
 
 		friend class ObjectBrokerAgent;
 		friend class SingletonWrapper<ObjectBrokerDirector>;
