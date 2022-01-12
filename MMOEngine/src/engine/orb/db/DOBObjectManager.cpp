@@ -584,7 +584,7 @@ void DOBObjectManager::dumpSnapshot(ArrayList<DistributedObject*>* objectsToUpda
 
 	StringBuffer endLine;
 	endLine << "# END elapsedTime = " << msToString(elapsedMs);
-	dumpWriter << endLine;
+	dumpWriter << endLine << "\n";
 	dumpWriter.close();
 
 	info(true) << "dumpSnapshot: Dumped to " << fileName << " in " << msToString(elapsedMs);
