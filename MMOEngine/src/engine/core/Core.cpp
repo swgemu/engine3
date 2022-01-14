@@ -12,6 +12,7 @@
 #include <new>
 
 SynchronizedHashTable<String, ArrayList<String>> Core::properties;
+AtomicInteger Core::propertiesVersion = 0;
 UniqueReference<TaskManager*> Core::taskManager;
 bool Core::taskManagerShutDown = false;
 bool Core::MANAGED_REFERENCE_LOAD = true;
@@ -89,9 +90,7 @@ void Core::parsePropertyData(const String& className, const char* name, LuaObjec
 }
 
 int Core::initializeProperties(const String& className) {
-	static Mutex guard;
-
-	Locker locker(&guard);
+	Locker locker(&properties);
 	int count = 0;
 
 	try {
@@ -135,6 +134,8 @@ int Core::initializeProperties(const String& className) {
 	} catch (...) {
 		logger.error("could not initialize engine properties");
 	}
+
+	propertiesVersion.increment();
 
 	return count;
 }
@@ -249,13 +250,6 @@ int Core::getIntProperty(const String& key, int defaultValue) {
 	}
 }
 
-void Core::setIntProperty(const String& key, int propertyValue) {
-	ArrayList<String> values;
-	values.emplace(String::valueOf(propertyValue));
-
-	properties.put(key, values);
-}
-
 uint64 Core::getLongProperty(const String& key, uint64 defaultValue) {
 	const auto val = properties.get(key);
 
@@ -266,10 +260,67 @@ uint64 Core::getLongProperty(const String& key, uint64 defaultValue) {
 	}
 }
 
-String Core::getPropertiesString() {
-	StringBuffer buf;
-	buf << "\"engine3\":{";
+bool Core::hasProperty(const String& key) {
+	return !properties.get(key).isEmpty();
+}
 
+void Core::setIntProperty(const String& key, int propertyValue) {
+	ArrayList<String> values;
+	values.emplace(String::valueOf(propertyValue));
+
+	Locker locker(&properties);
+	properties.put(key, values);
+	propertiesVersion.increment();
+}
+
+void Core::setLongProperty(const String& key, uint64 propertyValue) {
+	ArrayList<String> values;
+	values.emplace(String::valueOf(propertyValue));
+
+	Locker locker(&properties);
+	properties.put(key, values);
+	propertiesVersion.increment();
+}
+
+void Core::setProperty(const String& key, const String& propertyValue) {
+	ArrayList<String> values;
+	values.emplace(propertyValue);
+
+	Locker locker(&properties);
+	properties.put(key, values);
+	propertiesVersion.increment();
+}
+
+void Core::setVectorProperty(const String& key, const ArrayList<String>& propertyValue) {
+	ArrayList<String> values;
+	values.addAll(propertyValue);
+
+	Locker locker(&properties);
+	properties.put(key, values);
+	propertiesVersion.increment();
+}
+
+bool Core::getPropertyAsJSON(const String& key, nlohmann::json& jsonData) {
+	const auto values = getPropertyVector(key);
+
+	if (values.isEmpty()) {
+		return false;
+	}
+
+	if (values.size() > 1) {
+		jsonData = nlohmann::json::array();
+
+		for (int i = 0; i < values.size(); ++i) {
+			jsonData.push_back(values.get(i));
+		}
+	} else {
+		jsonData = values.get(0);
+	}
+
+	return true;
+}
+
+String Core::getPropertiesString() {
 	ReadLocker locker(&Core::properties);
 
 	auto properties = *Core::properties.getHashTable();
@@ -278,38 +329,54 @@ String Core::getPropertiesString() {
 
 	auto iterator = properties.iterator();
 
+	VectorMap<String, String> outputMap(properties.size(), 0);
+	outputMap.setAllowDuplicateInsertPlan();
+
 	while (iterator.hasNext()) {
 		String* name;
 		ArrayList<String>* values;
+		StringBuffer asStr;
 
 		iterator.getNextKeyAndValue(name, values);
 
-		buf << "\"" << *name << "\":";
-
 		if (values->size() > 1) {
-			buf << "{";
+			asStr << "{";
 
 			for (int i = 0; i < values->size(); ++i) {
 				const auto& val = values->get(i);
 
-				buf << "\"" << val << "\"";
+				asStr << "\"" << val << "\"";
 
 				if (i + 1 < values->size()) {
-					buf << ",";
+					asStr << ",";
 				}
 			}
 
-			buf << "}";
+			asStr << "}";
 		} else if (values->size()) {
-			buf << "\"" << values->get(0) << "\"";
+			asStr << "\"" << values->get(0) << "\"";
 		}
 
-		if (iterator.hasNext()) {
-			buf << ",";
+		outputMap.put(*name, asStr.toString());
+	}
+
+	StringBuffer buf;
+
+	buf << "{" << endl << "  \"Engine3\": {" << endl;
+
+	for (int i = 0; i < outputMap.size(); ++i) {
+		auto element = outputMap.elementAt(i);
+
+		buf << "  \"" << element.getKey() << "\": " << element.getValue();
+
+		if (i < outputMap.size() - 1) {
+			buf << "," << endl;
+		} else {
+			buf << endl;
 		}
 	}
 
-	buf << "}";
+	buf << "}," << endl << "  \"PropertiesVersion\": " << propertiesVersion.get() << endl << "}" << endl;
 
 	return buf.toString();
 }
@@ -337,4 +404,3 @@ double Core::getDoubleProperty(const String& key, double defaultValue) {
 		return defaultValue;
 	}
 }
-
