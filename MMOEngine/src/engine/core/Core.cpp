@@ -10,6 +10,7 @@
 #include "engine/lua/Lua.h"
 
 #include <new>
+#include <regex>
 
 SynchronizedHashTable<String, ArrayList<String>> Core::properties;
 AtomicInteger Core::propertiesVersion = 0;
@@ -300,21 +301,61 @@ void Core::setVectorProperty(const String& key, const ArrayList<String>& propert
 	propertiesVersion.increment();
 }
 
-bool Core::getPropertyAsJSON(const String& key, nlohmann::json& jsonData) {
-	const auto values = getPropertyVector(key);
+void writeJSONPath(StringTokenizer& tokens, nlohmann::json& jsonData, const nlohmann::json& jsonValue) {
+	String nextName;
+	tokens.getStringToken(nextName);
 
-	if (values.isEmpty()) {
-		return false;
-	}
-
-	if (values.size() > 1) {
-		jsonData = nlohmann::json::array();
-
-		for (int i = 0; i < values.size(); ++i) {
-			jsonData.push_back(values.get(i));
+	if (tokens.hasMoreTokens()) {
+		if (jsonData[nextName].is_null()) {
+			jsonData[nextName] = nlohmann::json::object();
 		}
+		writeJSONPath(tokens, jsonData[nextName], jsonValue);
 	} else {
-		jsonData = values.get(0);
+		jsonData[nextName] = jsonValue;
+	}
+}
+
+bool Core::getPropertyAsJSON(const String& target, nlohmann::json& jsonData) {
+	ReadLocker locker(&Core::properties);
+
+	auto properties = *Core::properties.getHashTable();
+
+	locker.release();
+
+	auto iterator = properties.iterator();
+
+	try {
+		auto re = std::regex((target + "(?:\\..*$|$)").toCharArray());
+		jsonData = nlohmann::json::object();
+
+		while (iterator.hasNext()) {
+			String* key;
+			ArrayList<String>* values;
+			nlohmann::json jsonValue;
+
+			iterator.getNextKeyAndValue(key, values);
+
+			if (!values->isEmpty()) {
+				if (values->size() > 1) {
+					jsonValue = nlohmann::json::array();
+
+					for (int i = 0; i < values->size(); ++i) {
+						jsonData.push_back(values->get(i));
+					}
+				} else {
+					jsonValue = values->get(0);
+				}
+			}
+
+			if (std::regex_search(key->toCharArray(), re)) {
+				StringTokenizer tokenizer(*key);
+				tokenizer.setDelimeter(".");
+				writeJSONPath(tokenizer, jsonData, jsonValue);
+			}
+		}
+	} catch(Exception& e) {
+		Logger::console.error() << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << "(" << target << "): " << e.getMessage();
+		return false;
 	}
 
 	return true;

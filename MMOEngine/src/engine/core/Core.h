@@ -67,7 +67,7 @@ namespace engine {
 		static uint64 getLongProperty(const String& key, uint64 defaultValue = 0);
 		static String getProperty(const String& key, const String& defaultValue = "");
 		static ArrayList<String> getPropertyVector(const String& key);
-		static bool getPropertyAsJSON(const String& key, nlohmann::json& jsonData);
+		static bool getPropertyAsJSON(const String& target, nlohmann::json& jsonData);
 
 		static bool hasProperty(const String& key);
 		static void setIntProperty(const String& key, int propertyValue);
