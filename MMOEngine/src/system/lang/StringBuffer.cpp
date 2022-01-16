@@ -107,13 +107,23 @@ StringBuffer& StringBuffer::append(std::size_t val) {
 #endif
 
 StringBuffer& StringBuffer::append(float val) {
-	String str = String::valueOf(val);
+	String str;
+
+	if (doCommas())
+		str = String::withCommas(val, precision);
+	else
+		str = String::valueOf(val);
 
 	return append(str);
 }
 
 StringBuffer& StringBuffer::append(double val) {
-	String str = String::valueOf(val);
+	String str;
+
+	if (doCommas())
+		str = String::withCommas(val, precision);
+	else
+		str = String::valueOf(val);
 
 	return append(str);
 }

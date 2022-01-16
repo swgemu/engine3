@@ -205,6 +205,8 @@ namespace sys {
 		static String withCommas(int64 val);
 		static String withCommas(uint32 val);
 		static String withCommas(uint64 val);
+		static String withCommas(float val, int precision = -1);
+		static String withCommas(double val, int precision = -1);
 
 		static const String& valueOf(const String& str) {
 			return str;

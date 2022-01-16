@@ -47,6 +47,8 @@ namespace sys {
 
 		~StringBuffer();
 
+		int precision = 2;
+
 		StringBuffer& append(char ch);
 		StringBuffer& append(int val);
 		StringBuffer& append(uint32 val);

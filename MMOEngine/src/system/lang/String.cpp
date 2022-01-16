@@ -522,6 +522,32 @@ String String::withCommas(uint64 val) {
 	return String(out);
 }
 
+String String::withCommas(float val, int precision) {
+	return withCommas((double)val, precision);
+}
+
+String String::withCommas(double val, int precision) {
+	auto out_int = withCommas((uint64) val);
+	long double dec = val - (uint64)val;
+
+	if (dec == 0.0) {
+		return out_int;
+	}
+
+	std::ostringstream buf;
+	buf.precision(precision < 1 ? std::numeric_limits<double>::max_digits10 - 1 : precision);
+	buf << dec;
+	std::string out_dec = buf.str();
+
+	int ofs = out_dec.find('.');
+
+	if (ofs == -1) {
+		return out_int;
+	}
+
+	return out_int + out_dec.substr(ofs);
+}
+
 String String::replaceFirst(const String& regexString, const String& replacement) const {
 	std::regex word_regex(regexString.begin(), std::regex_constants::extended);
 	std::match_results<const char*> match;
