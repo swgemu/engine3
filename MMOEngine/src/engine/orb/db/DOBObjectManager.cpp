@@ -835,16 +835,34 @@ int DOBObjectManager::executeUpdateThreads(ArrayList<DistributedObject*>* object
 		orderedMap.setAllowDuplicateInsertPlan();
 
 		int max = 0;
+		int total = 0;
 		for (int i = 0; i < inRamClassCount.size(); ++i) {
 			const String& name = inRamClassCount.elementAt(i).getKey();
 			int val = inRamClassCount.elementAt(i).getValue();
+
+			if (name.beginsWith("is")) {
+				continue;
+			}
 
 			if (val > max) {
 				max = val;
 			}
 
+			total += val;
+
 			orderedMap.put(val, name);
 		}
+
+		auto TotalIsPersistent = inRamClassCount.get("isPersistent");
+		auto TotalIsNotPersistent = inRamClassCount.get("isNotPersistent");
+		int percentPersistent = (double)(TotalIsPersistent) / total * 100;
+		int percentNotPersistent = (double)TotalIsNotPersistent / total * 100;
+
+		info(true) << "InRamObjects:" << commas
+			<< " total=" << total
+			<< "; isPersistent=" << TotalIsPersistent << " (" << percentPersistent << "%)"
+			<< "; isNotPersistent=" << TotalIsNotPersistent << " (" << percentNotPersistent << "%)"
+			;
 
 		info(true) << "Top " << reportTopInRam << " objects in RAM:";
 
@@ -964,6 +982,12 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkeley::Transactio
 			String className = TypeInfo<DistributedObject>::getClassName(dobObject, false);
 
 			inRamClassCount->put(className, inRamClassCount->get(className) + 1);
+
+			if (dobObject->isPersistent()) {
+				inRamClassCount->put("isPersistent", inRamClassCount->get("isPersistent") + 1);
+			} else {
+				inRamClassCount->put("isNotPersistent", inRamClassCount->get("isNotPersistent") + 1);
+			}
 		}
 
 		ManagedObject* managedObject = static_cast<ManagedObject*>(dobObject);
