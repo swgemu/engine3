@@ -20,7 +20,9 @@
 
 #include "Thread.h"
 
+#ifndef TRACE_REFERENCES
 #define TRACE_BLOCK_TIME
+#endif
 
 namespace sys {
   namespace lang {

@@ -151,7 +151,7 @@ void Object::free() {
 }
 
 #ifdef TRACE_REFERENCES
-void Object::addHolder(uint64 obj) {
+void Object::addHolder(uint64 obj) const {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
 #endif
@@ -166,7 +166,7 @@ void Object::addHolder(uint64 obj) {
 	referenceHolders->put(obj, trace);
 }
 
-void Object::removeHolder(uint64 obj) {
+void Object::removeHolder(uint64 obj) const {
 #ifndef WITH_STM
 	Locker locker(&referenceMutex);
 #endif
@@ -182,7 +182,7 @@ void Object::removeHolder(uint64 obj) {
 	}
 }
 
-void Object::printReferenceHolders() {
+void Object::printReferenceHolders() const {
 	if (referenceHolders == nullptr) {
 		return;
 	}

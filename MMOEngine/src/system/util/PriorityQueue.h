@@ -23,9 +23,9 @@ namespace sys {
 		PriorityQueueEntry* leftNode;
 		PriorityQueueEntry* rightNode;
 
-		int	npl;
+		int	npl{};
 
-		std::atomic<bool> enqueued;
+		std::atomic<bool> enqueued{false};
 
 	public:
 		PriorityQueueEntry(PriorityQueueEntry* parent = nullptr, PriorityQueueEntry* lnode = nullptr,
@@ -43,7 +43,7 @@ namespace sys {
 			leftNode = nullptr;
 			rightNode = nullptr;
 
-			enqueued = false;
+			setUnqueued();
 		}
 
 		inline void setQueued() {

@@ -43,6 +43,7 @@ namespace sys {
 
 	namespace util {
 		template<class E> class HashSet;
+		template<class K, class V, bool RawCopyAndRealloc> class VectorMap;
 	}
 }
 
@@ -64,8 +65,8 @@ namespace sys {
 #endif
 
 	#ifdef TRACE_REFERENCES
-		Mutex referenceMutex;
-		sys::util::VectorMap<uint64, StackTrace*>* referenceHolders;
+		mutable Mutex referenceMutex;
+		mutable sys::util::VectorMap<uint64, StackTrace*, true>* referenceHolders;
 	#endif
 
 	public:
@@ -222,10 +223,10 @@ namespace sys {
 		virtual String toString() const;
 
 	#ifdef TRACE_REFERENCES
-		void addHolder(uint64 obj);
-		void removeHolder(uint64 obj);
+		void addHolder(uint64 obj) const;
+		void removeHolder(uint64 obj) const;
 
-		void printReferenceHolders();
+		void printReferenceHolders() const;
 	#endif
 
 	protected:

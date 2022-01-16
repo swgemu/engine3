@@ -271,9 +271,7 @@ namespace sys {
 				(obj)->acquire();
 
 				#ifdef TRACE_REFERENCES
-				Object* castedObject = dynamic_cast<Object*>(obj);
-
-				castedObject->addHolder(id);
+				obj->addHolder(id);
 				#endif
 			}
 
@@ -283,9 +281,7 @@ namespace sys {
 				if (object.compareAndSetWeak(oldobj, obj)) {
 					if (oldobj != nullptr) {
 						#ifdef TRACE_REFERENCES
-						Object* castedObject = dynamic_cast<Object*>(oldobj);
-
-						castedObject->removeHolder(id);
+						oldobj->removeHolder(id);
 						#endif
 
 						(oldobj)->release();
@@ -337,7 +333,9 @@ namespace sys {
 		return Reference<T*>(new T(std::forward<Args>(args)...));
 	}
 
+#ifndef TRACE_REFERENCES
 	static_assert(sizeof(Reference<Object*>) == sizeof(Object*), "Reference sizeof check failed");
+#endif //TRACE_REFERENCES
 
 
   } // namespace lang

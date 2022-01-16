@@ -12,8 +12,6 @@ PriorityQueueEntry::PriorityQueueEntry(PriorityQueueEntry* parent,
 	rightNode = rnode;
 
 	npl = np;
-
-	enqueued = false;
 }
 
 PriorityQueue::PriorityQueue() {
