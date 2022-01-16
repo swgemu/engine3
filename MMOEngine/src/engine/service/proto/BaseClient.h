@@ -83,6 +83,8 @@ namespace engine {
 
 		bool keepSocket;
 
+		AtomicBoolean firstStatusReport = false;
+
 	public:
 		static const int NETSTATUSCHECKUP_TIMEOUT = 50000;
 		static const int NETSTATUSREQUEST_TIME = 5000;
@@ -134,7 +136,7 @@ namespace engine {
 
 		virtual void notifyReceivedSeed(sys::uint32 seed);
 
-		void disconnect(const String& msg, bool doLock);
+		void disconnect(const String& msg, bool doLock = false);
 
 		inline void disconnect(const char* msg, bool doLock = false) {
 			disconnect(String(msg), doLock);
@@ -142,7 +144,7 @@ namespace engine {
 
 		void disconnect(bool doLock = true);
 
-		void reportStats(bool doLog = false) const;
+		void reportStats(const String& msg);
 
 	protected:
 		void close();

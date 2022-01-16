@@ -105,6 +105,8 @@ void BaseClient::initializeCommon(const String& addr) {
 	setLoggingName("BaseClient " + ip);
 	setLogToConsole(false);
 
+	info() << __FUNCTION__;
+
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	const static int vars = Core::initializeProperties("BaseClient");
 
@@ -158,7 +160,7 @@ BaseClient::~BaseClient() {
 	sendLockFreeBuffer = nullptr;
 #endif
 
-	debug("deleted");
+	info() << "Deleted Session";
 }
 
 void BaseClient::initialize() {
@@ -213,6 +215,8 @@ void BaseClient::close() {
 	/*Reference<Task*> task = new BaseClientCleanupEvent(this);
 	task->scheduleInIoScheduler();*/
 
+	info() << "Close: sendBuffer.size() = " << sendBuffer.size() << "; sequenceBuffer.size() = " << sequenceBuffer.size();
+
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
 
@@ -235,8 +239,11 @@ void BaseClient::close() {
 
 	sequenceBuffer.removeAll();
 
+	int countDiscarded = 0;
+
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	while (!sendLockFreeBuffer->empty()) {
+		++countDiscarded;
 		BasePacket* pack;
 
 		if (sendLockFreeBuffer->pop(pack)) {
@@ -248,11 +255,16 @@ void BaseClient::close() {
 	}
 #else
 	for (int i = 0; i < sendUnreliableBuffer.size(); ++i) {
+		++countDiscarded;
 		delete sendUnreliableBuffer.get(i);
 	}
 
 	sendUnreliableBuffer.removeAll();
 #endif
+
+	if (countDiscarded > 0) {
+		info() << "Close: countDiscarded = " << countDiscarded;
+	}
 
 	if (fragmentedPacket != nullptr) {
 		if (fragmentedPacket->getReferenceCount())
@@ -263,12 +275,18 @@ void BaseClient::close() {
 		fragmentedPacket = nullptr;
 	}
 
+	info() << "Close: "
+		<< "serverSequence = " << serverSequence
+		<< "; clientSequence = " << clientSequence
+		<< "; acknowledgedServerSequence = " << acknowledgedServerSequence
+		;
+
 	//serverSequence = 0;
 	clientSequence = 0;
 
 	acknowledgedServerSequence = -1;
 
-	reportStats(true);
+	reportStats("Close");
 
 	closeFileLogger();
 
@@ -294,10 +312,11 @@ void BaseClient::send(Packet* pack, bool doLock) {
 			}
 		}
 	} catch (SocketException& e) {
-		error("on send()" + e.getMessage());
-
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
 		setError();
-		disconnect(false);
+		disconnect(err.toString());
 	}
 
 	delete pack;
@@ -319,10 +338,11 @@ void BaseClient::send(BasePacket* pack, bool doLock) {
 				debug() << "LOSING " << *pack;
 		}
 	} catch (SocketException& e) {
-		error("on send()" + e.getMessage());
-
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
 		setError();
-		disconnect(false);
+		disconnect(err.toString());
 	}
 
 	if (pack->getReferenceCount())
@@ -391,8 +411,14 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 		} else {
 			sendSequenceLess(pack);
 		}
+	} catch (SocketException& e) {
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
+		setError();
+		disconnect(err.toString());
 	} catch (...) {
-		disconnect("unreported exception on sendPacket()", false);
+		disconnect("unreported exception on sendPacket()");
 	}
 
 	unlock(doLock);
@@ -446,7 +472,11 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 		else
 			delete pack;
 
-		disconnect("on sendPacket()" + e.getMessage(), false);
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
+		setError();
+		disconnect(err.toString());
 	}
 }
 
@@ -463,9 +493,13 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 			reentrantTask->scheduleInIoScheduler(10);
 #endif
 	} catch (SocketException& e) {
-		disconnect("sending packet", false);
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
+		setError();
+		disconnect(err.toString());
 	} catch (ArrayIndexOutOfBoundsException& e) {
-		error("on sendQueued() - " + e.getMessage());
+		error("ArrayIndexOutOfBoundsException on sendSequenced() - " + e.getMessage());
 	}
 
 	/*#ifdef TRACE_CLIENTS
@@ -490,9 +524,13 @@ void BaseClient::sendFragmented(BasePacket* pack) {
 		else
 			delete frag;
 	} catch (SocketException& e) {
-		disconnect("sending packet", false);
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
+		setError();
+		disconnect(err.toString());
 	} catch (ArrayIndexOutOfBoundsException& e) {
-		error("on sendFragmented() - " + e.getMessage());
+		error("ArrayIndexOutOfBoundsException on sendFragmented() - " + e.getMessage());
 	}
 }
 
@@ -565,14 +603,18 @@ int BaseClient::sendReliablePackets(int count) {
 #endif
 
 	} catch (SocketException& e) {
-		disconnect("on activate() - " + e.getMessage(), false);
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
+		setError();
+		disconnect(err.toString());
 	} catch (Exception& e) {
 		error(e.getMessage());
 		e.printStackTrace();
 
-		disconnect("unreported exception on run()", false);
+		disconnect("exception on sendReliablePackets()");
 	} catch (...) {
-		disconnect("unreported exception on run()", false);
+		disconnect("unreported exception on sendReliablePackets()");
 	}
 
 	return sentPackets;
@@ -600,10 +642,11 @@ void BaseClient::sendUnreliablePacket(BasePacket* pack) {
 			delete pack;
 
 	} catch (SocketException& e) {
-		error("on activate() - " + e.getMessage());
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
 	} catch (Exception& e) {
-		error("exception on sendUnreliablePacket()");
-		error(e.getMessage());
+		error("Exception on sendUnreliablePacket() - " + e.getMessage());
 		e.printStackTrace();
 	} catch (...) {
 		error("unreported exception on sendUnreliablePacket()");
@@ -653,7 +696,9 @@ void BaseClient::sendUnreliablePackets() {
 		}
 #endif
 	} catch (SocketException& e) {
-		error("on activate() - " + e.getMessage());
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
 	} catch (Exception& e) {
 		error("exception on sendUnreliablePackets()");
 		error(e.getMessage());
@@ -703,7 +748,7 @@ void BaseClient::run() {
 				}
 			}
 		} catch (...) {
-			disconnect("unreported exception on lockfree sendPacket()", false);
+			disconnect("unreported exception in run");
 
 			unlock();
 
@@ -713,7 +758,7 @@ void BaseClient::run() {
 
 	if (i >= getMaxBufferPacketsTickCount()) {
 		warning() << "more than " << getMaxBufferPacketsTickCount() << " packets in sendLockFreeBuffer on BaseClient tick";
-		reportStats(true);
+		reportStats("getMaxBufferPacketsTickCount exceeded");
 	}
 
 	sendReliablePackets();
@@ -781,7 +826,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 
 		if (outstandingCount > maxOutstanding) {
 			maxOutstanding = outstandingCount;
-			reportStats(true);
+			reportStats("outstandingCount > maxOutstanding");
 		}
 
 		if (outstandingCount > getMaxOutstandingPackets()) {
@@ -973,11 +1018,11 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 				checkupEvent->scheduleInIoScheduler(pack->getTimeout());
 		}
 	} catch (SocketException& e) {
-		disconnect("on checkupServerPackets() - " + e.getMessage(), false);
+		disconnect("on checkupServerPackets() - " + e.getMessage());
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		error("on checkupServerPackets() - " + e.getMessage());
 	} catch (...) {
-		disconnect("unreported exception on checkupServerPackets()", false);
+		disconnect("unreported exception on checkupServerPackets()");
 	}
 
 	unlock();
@@ -1114,9 +1159,10 @@ void BaseClient::setPacketCheckupTime(uint32 time) {
 			debug(msg);
 		#endif
 
+		info() << "CheckupTime = " << time;
 		checkupEvent->setCheckupTime(time);
 	} catch (...) {
-		disconnect("unreported exception on setPacketCheckupTime()", false);
+		disconnect("unreported exception on setPacketCheckupTime()");
 	}
 
 	unlock();
@@ -1140,9 +1186,9 @@ void BaseClient::acknowledgeClientPackets(uint16 seq) {
 		BasePacket* ack = new AcknowledgeMessage(seq);
 		sendPacket(ack, false);
 	} catch (SocketException& e) {
-		disconnect("acknowledging client packets", false);
+		disconnect("SocketException acknowledging client packets");
 	} catch (...) {
-		disconnect("unreported exception on acknowledgeClientPackets()", false);
+		disconnect("unreported exception on acknowledgeClientPackets()");
 	}
 
 	unlock();
@@ -1200,7 +1246,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 	} catch (ArrayIndexOutOfBoundsException& e) {
 		debug("on acknowledgeServerPackets() - " + e.getMessage());
 	} catch (...) {
-		disconnect("unreported exception on acknowledgeServerPackets()", false);
+		disconnect("unreported exception on acknowledgeServerPackets()");
 	}
 
 	unlock();
@@ -1260,7 +1306,7 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 				uint16 difference = clientDelta - serverDelta;
 
 				if ((difference > 200) && (++erroneusTicks > 10)) {
-					disconnect("client clock desync", false);
+					disconnect("client clock desync");
 
 					unlock();
 
@@ -1282,9 +1328,9 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 		netcheckupEvent->rescheduleInIoScheduler(NETSTATUSCHECKUP_TIMEOUT);
 	} catch (Exception& e) {
 		e.printStackTrace();
-		disconnect("Exception on updateNetStatus()", false);
+		disconnect("Exception on updateNetStatus()");
 	} catch (...) {
-		disconnect("unreported exception on updateNetStatus()", false);
+		disconnect("unreported exception on updateNetStatus()");
 	}
 
 	unlock();
@@ -1310,7 +1356,7 @@ void BaseClient::requestNetStatus() {
 		netRequestEvent->rescheduleInIoScheduler(NETSTATUSREQUEST_TIME);
 	} catch (Exception& e) {
 		e.printStackTrace();
-		disconnect("Exception on requestNetStatus()", false);
+		disconnect("Exception on requestNetStatus()");
 	} catch (...) {
 		disconnect("unreported exception caught in BaseClient::requestNetStatus()", true);
 	}
@@ -1336,10 +1382,10 @@ bool BaseClient::checkNetStatus() {
 		setError();
 		disconnect(false);
 	} catch (Exception& e) {
-		disconnect("Exception on checkNetStatus()", false);
+		disconnect("Exception on checkNetStatus()");
 		e.printStackTrace();
 	} catch (...) {
-		disconnect("unreported exception on checkNetStatus()", false);
+		disconnect("unreported exception on checkNetStatus()");
 	}
 
 	unlock();
@@ -1415,7 +1461,7 @@ void BaseClient::notifyReceivedSeed(uint32 seed) {
 }
 
 void BaseClient::disconnect(const String& msg, bool doLock) {
-	error(msg);
+	error() << "Force disconnect: " << msg;
 
 	setError();
 	disconnect(doLock);
@@ -1431,6 +1477,7 @@ void BaseClient::disconnect(bool doLock) {
 	}
 
 	try {
+		info() << "Disconnecting client, hasError = " << hasError();
 		#ifdef TRACE_CLIENTS
 			debug("disconnecting client");
 		#endif
@@ -1444,6 +1491,7 @@ void BaseClient::disconnect(bool doLock) {
 			}
 
 			if (!clientDisconnected) {
+				info() << "Sending DisconnectMessage";
 				BasePacket* disc = new DisconnectMessage(this);
 				prepareSend(disc);
 				DatagramServiceClient::send(disc);
@@ -1454,7 +1502,9 @@ void BaseClient::disconnect(bool doLock) {
 			debug("kicking client");
 		}
 	} catch (const SocketException& e) {
-		error("disconnecting client");
+		StringBuffer err;
+		err << "SocketException in " << __PRETTY_FUNCTION__ << ": " << e.getMessage();
+		error() << err;
 		setError();
 	} catch (...) {
 		error("unreported exception on disconnect()");
@@ -1475,21 +1525,39 @@ void BaseClient::disconnect(bool doLock) {
 	}
 }
 
-void BaseClient::reportStats(bool doLog) const {
-	if (serverSequence == 0) {
-		return;
+void BaseClient::reportStats(const String& msg) {
+	if (firstStatusReport.compareAndSet(false, true)) {
+		info()
+			<< "MaxBufferPacketsTickCount=" << getMaxBufferPacketsTickCount()
+			<< ", InitialLockfreeBufferCapacity=" << getInitialLockfreeBufferCapacity()
+			<< ", MaxSentPacketsPerTick=" << getMaxSentPacketsPerTick()
+			<< ", MaxOutstandingPackets=" << getMaxOutstandingPackets();
 	}
 
-	int packetloss;
+	int resentPercent;
 
 	if (serverSequence == 0 || resentPackets == 0)
-		packetloss = 0;
+		resentPercent = 0;
 	else
-	 	packetloss = (100 * resentPackets) / (serverSequence + resentPackets);
+	 	resentPercent = (100 * resentPackets) / (serverSequence + resentPackets);
 
-	info(packetloss > 5)
-		<< "STATS: sent = " << serverSequence
-		<< ", resent = " << resentPackets << " [" << packetloss << "%]"
-		<< ", maxOutstanding = " << maxOutstanding
-		<< ", numOutOfOrder = " << numOutOfOrder;
+	info(numOutOfOrder > 0)
+		<< "BaseClient::reportStats:\n{\"ip\": \"" << ip << "\""
+		<< ", \"serverSequence\": " << serverSequence
+		<< ", \"resentPackets\": " << resentPackets
+		<< ", \"resentPercent\": " << resentPercent
+		<< ", \"maxOutstanding\": " << maxOutstanding
+		<< ", \"numOutOfOrder\": " << numOutOfOrder
+		<< ", \"acknowledgedServerSequence\": " << acknowledgedServerSequence
+		<< ", \"realServerSequence\": " << realServerSequence
+		<< ", \"sendBufferSize\": " << sendBuffer.size()
+		<< ", \"receiveBufferSize\": " << receiveBuffer.size()
+		<< ", \"sequenceBufferSize\": " << sequenceBuffer.size()
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+		<< ", \"isSendLockFreeBufferEmpty\": " << sendLockFreeBuffer->empty()
+#else // LOCKFREE_BCLIENT_BUFFERS
+		<< ", \"sendUnreliableBufferSize\": " << sendUnreliableBuffer.size()
+#endif // LOCKFREE_BCLIENT_BUFFERS
+		<< ", \"msg\": \"" << msg << "\""
+        << "}";
 }
