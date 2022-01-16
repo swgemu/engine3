@@ -65,10 +65,10 @@ if (ENABLE_ODB_REFERENCES)
 	add_definitions(-DODB_REFERENCES)
 endif()
 
+find_package(Boost REQUIRED COMPONENTS thread)
+
 if (ENABLE_LOCKFREE_BCLIENT_BUFFERS)
 	add_definitions(-DLOCKFREE_BCLIENT_BUFFERS)
-
-	find_package(Boost REQUIRED COMPONENTS thread)
 endif()
 
 if(Boost_FOUND)
