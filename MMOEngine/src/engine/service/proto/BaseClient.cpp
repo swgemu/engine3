@@ -23,47 +23,50 @@
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
+#define CACHED_PROPERTY_VALUE(type, getter, defaultValue, key) \
+	cachedValueInternal<type, String::hashCode(key)>(key, getter, defaultValue)
+
 namespace {
 	static Logger logger("BaseClient", Logger::WARNING);
+	template<typename Type, uint32 instance>
+	Type cachedValueInternal(const char* configKey, Type (getter)(const String&, Type), Type defaultValue)
+	{
+		static Mutex mutex;
+		Locker guard(&mutex);
+		static Type cachedValue = defaultValue;
+		static int cachedVersion = 0;
+		int currentVersion = Core::getPropertiesVersion();
+
+		if (currentVersion > cachedVersion) {
+			cachedVersion = currentVersion;
+			cachedValue = getter(configKey, defaultValue);
+			logger.info(true) << configKey << "=" << cachedValue;
+		}
+
+		return cachedValue;
+	}
 
 	int getMaxBufferPacketsTickCount() {
-		static const int setting = []() {
-			int value = Core::getIntProperty("BaseClient.maxBufferPacketsTickCount", 500);
-			logger.info(true) << "BaseClient.maxBufferPacketsTickCount = " << value;
-			return value;
-		} ();
-
-		return setting;
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 500, "BaseClient.maxBufferPacketsTickCount");
 	}
 
 	int getInitialLockfreeBufferCapacity() {
-		static const int setting = []() {
-			int value = Core::getIntProperty("BaseClient.initialLockfreeBufferCapacity", 500);
-			logger.info(true) << "BaseClient.initialLockfreeBufferCapacity = " << value;
-			return value;
-		} ();
-
-		return setting;
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 500, "BaseClient.initialLockfreeBufferCapacity");
 	}
 
 	int getMaxSentPacketsPerTick() {
-		static const int setting = []() {
-			int value = Core::getIntProperty("BaseClient.maxSentPacketsPerTick", 20);
-			logger.info(true) << "BaseClient.maxSentPacketsPerTick = " << value;
-			return value;
-		} ();
-
-		return setting;
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 20, "BaseClient.maxSentPacketsPerTick");
 	}
 
 	int getMaxOutstandingPackets() {
-		static const int setting = []() {
-			int value = Core::getIntProperty("BaseClient.maxOutstandingPackets", getInitialLockfreeBufferCapacity() * 10);
-			logger.info(true) << "BaseClient.maxOutstandingPackets = " << value;
-			return value;
-		} ();
+		auto value = CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 0, "BaseClient.maxOutstandingPackets");
 
-		return setting;
+		if (value <= 0) {
+			// If not set default to 10 x BaseClient.initialLockfreeBufferCapacity
+			value = getInitialLockfreeBufferCapacity() * 10;
+		}
+
+		return value;
 	}
 }
 
