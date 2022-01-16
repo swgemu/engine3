@@ -20,7 +20,7 @@ namespace engine {
 
 		void run() {
 			if (DistributedObjectBroker::instance()->isRootBroker())
-				DistributedObjectBroker::instance()->getObjectManager()->createBackup(false);
+				DistributedObjectBroker::instance()->getObjectManager()->createBackup();
 		}
 	};
 

@@ -83,7 +83,8 @@ namespace engine {
 			SAVE_DELTA  = 1 << 1,
 			SAVE_DEBUG  = 1 << 2,
 			SAVE_REPORT = 1 << 3,
-			SAVE_DUMP   = 1 << 4
+			SAVE_DUMP   = 1 << 4,
+			SAVE_JSON   = 1 << 5
 		};
 
 		virtual Reference<DistributedObjectStub*> loadPersistentObject(uint64 objid);
@@ -159,10 +160,17 @@ namespace engine {
 				ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>& objectsToDelete,
 				ArrayList<DistributedObject* >& objectsToDeleteFromRAM, VectorMap<String, int>* inRamClassCount, int flags);
 
-		void dumpSnapshot(ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
+		void dumpSnapshot(const String& baseFilename, Time timestamp,
+				ArrayList<DistributedObject*>* objectsToUpdate, ArrayList<DistributedObject*>* objectsToDelete,
 				ArrayList<DistributedObject* >* objectsToDeleteFromRAM, int flags);
 
+		void dumpRAMtoJSON(const String& baseFilename, Time timestamp);
+
 		friend class CommitMasterTransactionThread;
+
+	private:
+		static AtomicBoolean dumpRunning;
+		void dispatchDumpTask(const String& queueName, const String& baseDirname, Vector<uint64> oidsToDump, int taskNumber);
 	};
 
   } // namespace ORB
