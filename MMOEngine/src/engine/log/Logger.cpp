@@ -560,7 +560,12 @@ String Logger::nsToString(uint64 nanos, bool truncate) {
 
 String Logger::msToString(uint64 milli) {
 	StringBuffer output;
-	output << milli << " ms";
+	if (milli > 1000) {
+		float secs = milli / 1000.0f;
+		output << secs << " s";
+	} else {
+		output << commas << milli << " ms";
+	}
 	return output.toString();
 }
 
