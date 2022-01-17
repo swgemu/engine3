@@ -29,34 +29,42 @@ namespace engine {
 		WeakReference<BaseClient*> client;
 		Reference<BasePacket*> packet;
 
-		sys::uint32 checkupTime;
+		uint32 checkupTime;
+		uint32 minCheckupTime;
+		uint32 maxCheckupTime;
+		Time lastUpdateTimeStamp;
 
 	public:
-		BasePacketChekupEvent(BaseClient* cl, sys::uint32 time = 5000);
+		BasePacketChekupEvent(BaseClient* cl, uint32 time = 5000, uint32 minCheckupTime = 100, uint32 maxCheckupTime = 500);
 
 		void run();
 
 		// setters and getters
 		inline void update(BasePacket* pack) {
 			packet = pack;
+			lastUpdateTimeStamp.updateToCurrentTime(Time::MONOTONIC_TIME);
 		}
 
-		inline void setCheckupTime(sys::uint32 time) {
+		inline void setCheckupTime(uint32 time) {
 			checkupTime = time;
 		}
 
-		void increaseCheckupTime(sys::uint32 time) {
-			if (checkupTime < 500)
+		void increaseCheckupTime(uint32 time) {
+			if (checkupTime < maxCheckupTime)
 				checkupTime += time;
 		}
 
-		void decreaseCheckupTime(sys::uint32 time) {
-			if (checkupTime > 100)
+		void decreaseCheckupTime(uint32 time) {
+			if (checkupTime > minCheckupTime)
 				checkupTime -= time;
 		}
 
-		inline sys::uint32 getCheckupTime() {
+		inline uint32 getCheckupTime() {
 			return checkupTime;
+		}
+
+		inline int64 getElapsedTimeMs() {
+			return lastUpdateTimeStamp.miliDifference(Time::MONOTONIC_TIME);
 		}
 
 	};

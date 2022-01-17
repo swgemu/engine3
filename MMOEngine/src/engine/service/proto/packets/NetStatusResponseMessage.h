@@ -16,7 +16,7 @@ namespace engine {
 	public:
 		NetStatusResponseMessage(sys::uint16 tick) : BasePacket(40) {
 			insertShort(0x0800);
-			insertShort(tick);
+			insertShortNet(tick);
 			
 			insertInt(0x00000000);
 			insertInt(0x00000000);
@@ -35,7 +35,7 @@ namespace engine {
 		}
 	
 		inline static sys::uint16 parseTick(Packet* pack) {
-			return pack->parseShort(2);
+			return pack->parseNetShort(2);
 		}
 	};
 

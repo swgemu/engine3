@@ -12,16 +12,16 @@
 #ifndef NETSTATUSRESPONSETASK_H_
 #define NETSTATUSRESPONSETASK_H_
 
-#include "engine/service/proto/packets/NetStatusResponseMessage.h"
+#include "engine/log/Logger.h"
 
 class NetStatusResponseTask : public Task {
 	Reference<BaseClient*> client;
-	uint16 tick;
+	Packet* pack;
 public:
 
-	NetStatusResponseTask(BaseClient* cl, uint16 ti) {
+	NetStatusResponseTask(BaseClient* cl, Packet* inPack) {
 		client = cl;
-		tick = ti;
+		pack = inPack->clone();
 
 #if defined(BASECLIENT_DISABLE_STATSD) and defined(COLLECT_TASKSTATISTICS)
 		setStatsSample(0);
@@ -29,15 +29,8 @@ public:
 	}
 
 	void run() {
-		if (client->updateNetStatus(tick)) {
-
-			/*StringBuffer msg;
-		    	msg << hex << "NETSTAT respond with 0x" << tick << "\n";
-				info(msg);*/
-
-			BasePacket* resp = new NetStatusResponseMessage(tick);
-			client->sendPacket(resp);
-		}
+		client->handleNetStatusRequest(pack);
+		delete pack;
 	}
 };
 

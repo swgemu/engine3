@@ -81,9 +81,19 @@ namespace engine {
 		int maxOutstanding = 0;
 		int numOutOfOrder = 0;
 
+		// Sent by client to host in NetStatusRequest
+		uint64 clientTotalPacketsSent = 0;
+		uint64 clientTotalPacketsReceived = 0;
+		uint16 clientTickDelta = 0;
+
+		uint64 clientLastAckElapsedMs = 0;
+		uint64 clientMinAckElapsedMs = ULLONG_MAX;
+		uint64 clientMaxAckElapsedMs = 0;
+
 		bool keepSocket;
 
 		AtomicBoolean firstStatusReport = false;
+		Time lastStatusReportTimeStamp;
 
 	public:
 		static const int NETSTATUSCHECKUP_TIMEOUT = 50000;
@@ -128,7 +138,8 @@ namespace engine {
 		void acknowledgeClientPackets(sys::uint16 seq);
 		void acknowledgeServerPackets(sys::uint16 seq);
 
-		bool updateNetStatus(sys::uint16 recievedTick = 0);
+		bool handleNetStatusRequest(Packet* pack);
+		void resetNetStatusTimeout();
 		bool checkNetStatus();
 		void requestNetStatus();
 
@@ -200,6 +211,16 @@ namespace engine {
 		}
 
 		friend class engine::stm::TransactionalBaseClientManager;
+
+		static int tickDiff(uint16 tick1, uint16 tick2) {
+			uint16 delta = tick1 - tick2;
+
+			if (delta > 0x7FFF) {
+				delta = 0xFFFF - delta;
+			}
+
+			return (int)delta;
+		}
 
 	private:
 		void initializeCommon(const String& addr);

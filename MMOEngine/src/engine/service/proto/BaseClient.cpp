@@ -20,6 +20,7 @@
 #include "packets/OutOfOrderMessage.h"
 #include "packets/DisconnectMessage.h"
 #include "packets/NetStatusRequestMessage.h"
+#include "packets/NetStatusResponseMessage.h"
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
@@ -68,6 +69,19 @@ namespace {
 
 		return value;
 	}
+
+	int getMaxCheckupTime() {
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 2000, "BaseClient.maxCheckupTime");
+	}
+
+	int getMinCheckupTime() {
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 100, "BaseClient.minCheckupTime");
+	}
+
+	int getStatusReportInterval() {
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 1800, "BaseClient.statusReportInterval");
+	}
+
 }
 
 class AcknowledgeClientPackets : public Task {
@@ -185,7 +199,7 @@ void BaseClient::initialize() {
 
 	service = nullptr;
 
-	checkupEvent = new BasePacketChekupEvent(this);
+	checkupEvent = new BasePacketChekupEvent(this, getMinCheckupTime(), getMaxCheckupTime());
 	netcheckupEvent = new BaseClientNetStatusCheckupEvent(this);
 
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
@@ -1221,6 +1235,16 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 		        return;
 		}
 
+		clientLastAckElapsedMs = checkupEvent->getElapsedTimeMs();
+
+		if (clientLastAckElapsedMs < clientMinAckElapsedMs) {
+			clientMinAckElapsedMs = clientLastAckElapsedMs;
+		}
+
+		if (clientLastAckElapsedMs > clientMaxAckElapsedMs) {
+			clientMaxAckElapsedMs = clientLastAckElapsedMs;
+		}
+
 		checkupEvent->cancel();
 
 		flushSendBuffer(realseq);
@@ -1283,20 +1307,60 @@ void BaseClient::flushSendBuffer(int seq) {
 	#endif
 }
 
-bool BaseClient::updateNetStatus(uint16 recievedTick) {
+void BaseClient::resetNetStatusTimeout() {
+	if (!isAvailable()) {
+		return;
+	}
+
+	lock();
+
+	lastNetStatusTimeStamp.updateToCurrentTime();
+	lastRecievedNetStatusTick = 0;
+	netcheckupEvent->rescheduleInIoScheduler(NETSTATUSCHECKUP_TIMEOUT);
+
+	unlock();
+}
+
+bool BaseClient::handleNetStatusRequest(Packet* pack) {
 	lock();
 
 	try {
-		if (!isAvailable()) {
+		if (!isAvailable() || pack == nullptr) {
 			unlock();
 			return false;
 		}
 
-		uint16 hostByte = htons(recievedTick);
+		Time now;
+		uint16 ourTick = now.getMiliTime() & 0xFFFF;
+		uint16 tick = pack->parseNetShort();
+		uint32 unk1 = pack->parseInt();
+		uint32 unk2 = pack->parseInt();
+		uint32 unk3 = pack->parseInt();
+		uint32 unk4 = pack->parseInt();
+		uint32 unk5 = pack->parseInt();
+
+		clientTotalPacketsSent = pack->parseNetLong();
+		clientTotalPacketsReceived = pack->parseNetLong();
+		clientTickDelta = tickDiff(tick, ourTick);
+
+		if (clientTickDelta > 11000) {
+			info() << __FUNCTION__ << ": clientTickDelta=" << clientTickDelta;
+		}
 
 		if (lastRecievedNetStatusTick != 0) {
-			uint16 clientDelta = hostByte - lastRecievedNetStatusTick;
-			uint16 serverDelta = lastNetStatusTimeStamp.miliDifference();
+			auto clientDelta = tickDiff(tick, lastRecievedNetStatusTick);
+			auto serverDelta = lastNetStatusTimeStamp.miliDifference();
+			auto delta = abs(clientDelta - serverDelta);
+
+			if (clientDelta > 11000) {
+				info() << __FUNCTION__ << ": High clientDelta = " << clientDelta;
+			}
+
+			if (delta > 750) {
+				StringBuffer msg;
+				msg << __FUNCTION__ << ": Client clock desync: delta=" << delta << "; clientDelta=" << clientDelta << "; serverDelta=" << serverDelta;
+				reportStats(msg.toString());
+			}
 
 			/*StringBuffer msg;
 			msg << "recievedTick: " << hostByte << " clientDelta:" << clientDelta << " serverDelta:" << serverDelta;
@@ -1319,13 +1383,22 @@ bool BaseClient::updateNetStatus(uint16 recievedTick) {
 		}
 
 		lastNetStatusTimeStamp.updateToCurrentTime();
-		lastRecievedNetStatusTick = hostByte;
+		lastRecievedNetStatusTick = tick;
 
 		#ifdef TRACE_CLIENTS
 			debug("setting net status");
 		#endif
 
 		netcheckupEvent->rescheduleInIoScheduler(NETSTATUSCHECKUP_TIMEOUT);
+
+		if (lastStatusReportTimeStamp.miliDifference() / 1000 > getStatusReportInterval()) {
+			lastStatusReportTimeStamp.updateToCurrentTime();
+			reportStats("PeriodicReport");
+		}
+
+		BasePacket* resp = new NetStatusResponseMessage(tick);
+		sendPacket(resp);
+
 	} catch (Exception& e) {
 		e.printStackTrace();
 		disconnect("Exception on updateNetStatus()");
@@ -1348,9 +1421,10 @@ void BaseClient::requestNetStatus() {
 			return;
 		}
 
-		uint16 tick = System::random(0xFFF);
+		Time now;
+		uint16 ourTick = now.getMiliTime() & 0xFFFF;
 
-		BasePacket* resp = new NetStatusRequestMessage(tick);
+		BasePacket* resp = new NetStatusRequestMessage(ourTick);
 		sendPacket(resp, false);
 
 		netRequestEvent->rescheduleInIoScheduler(NETSTATUSREQUEST_TIME);
@@ -1531,7 +1605,10 @@ void BaseClient::reportStats(const String& msg) {
 			<< "MaxBufferPacketsTickCount=" << getMaxBufferPacketsTickCount()
 			<< ", InitialLockfreeBufferCapacity=" << getInitialLockfreeBufferCapacity()
 			<< ", MaxSentPacketsPerTick=" << getMaxSentPacketsPerTick()
-			<< ", MaxOutstandingPackets=" << getMaxOutstandingPackets();
+			<< ", MaxOutstandingPackets=" << getMaxOutstandingPackets()
+		    << ", MinCheckupTime=" << getMinCheckupTime()
+			<< ", MaxCheckupTime=" << getMaxCheckupTime()
+			;
 	}
 
 	int resentPercent;
@@ -1541,12 +1618,24 @@ void BaseClient::reportStats(const String& msg) {
 	else
 	 	resentPercent = (100 * resentPackets) / (serverSequence + resentPackets);
 
+	uint32 checkupTime = 0;
+
+	if (checkupEvent != nullptr) {
+		checkupTime = checkupEvent->getCheckupTime();
+	}
+
 	info(numOutOfOrder > 0)
 		<< "BaseClient::reportStats:\n{\"ip\": \"" << ip << "\""
 		<< ", \"serverSequence\": " << serverSequence
 		<< ", \"resentPackets\": " << resentPackets
 		<< ", \"resentPercent\": " << resentPercent
-		<< ", \"maxOutstanding\": " << maxOutstanding
+		<< ", \"checkupTime\": " << checkupTime
+		<< ", \"clientTotalPacketsReceived\": " << clientTotalPacketsReceived
+		<< ", \"clientTotalPacketsSent\": " << clientTotalPacketsSent
+		<< ", \"clientTickDelta\": " << clientTickDelta
+		<< ", \"clientLastAckElapsedMs\": " << clientLastAckElapsedMs
+		<< ", \"clientMinAckElapsedMs\": " << clientMinAckElapsedMs
+		<< ", \"clientMaxAckElapsedMs\": " << clientMaxAckElapsedMs
 		<< ", \"numOutOfOrder\": " << numOutOfOrder
 		<< ", \"acknowledgedServerSequence\": " << acknowledgedServerSequence
 		<< ", \"realServerSequence\": " << realServerSequence

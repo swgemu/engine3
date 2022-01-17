@@ -185,17 +185,12 @@ void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
 }
 
 void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
-	uint16 tick = NetStatusRequestMessage::parseTick(pack);
-
 #if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
-	Reference<Task*> task = new NetStatusResponseTask(client, tick);
+	Reference<Task*> task = new NetStatusResponseTask(client, pack);
 	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
 	task->execute();
 #else
-	if (client->updateNetStatus(tick)) {
-		BasePacket* resp = new NetStatusResponseMessage(tick);
-		client->sendPacket(resp);
-	}
+	client->handleNetStatusRequest(pack);
 #endif
 }
 

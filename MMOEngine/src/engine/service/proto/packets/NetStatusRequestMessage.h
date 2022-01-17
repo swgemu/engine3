@@ -16,14 +16,14 @@ namespace engine {
 	public:
 		NetStatusRequestMessage(sys::uint16 tick) : BasePacket(7) {
 			insertShort(0x0700);
-			insertShort(tick);
+			insertShortNet(tick);
 			
 			setSequencing(false);
 			setCompression(true);
 		}
 	
 		static sys::uint16 parseTick(Packet* pack) {
-			return pack->parseShort(2);
+			return pack->parseNetShort(2);
 		}
 	};
 

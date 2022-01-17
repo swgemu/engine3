@@ -9,9 +9,12 @@
 #include "engine/service/proto/BasePacket.h"
 #include "engine/service/proto/BaseClient.h"
 
-BasePacketChekupEvent::BasePacketChekupEvent(BaseClient* cl, uint32 time) : Task(time) {
+BasePacketChekupEvent::BasePacketChekupEvent(BaseClient* cl, uint32 time, uint32 minTime, uint32 maxTime) : Task(time) {
 	client = cl;
 	checkupTime = time;
+	minCheckupTime = minTime;
+	maxCheckupTime = maxTime;
+	lastUpdateTimeStamp.updateToCurrentTime(Time::MONOTONIC_TIME);
 
 #if defined(BASECLIENT_DISABLE_STATSD) and defined(COLLECT_TASKSTATISTICS)
 	setStatsSample(0);
