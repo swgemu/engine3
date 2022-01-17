@@ -708,7 +708,7 @@ void DOBObjectManager::dispatchDumpTask(const String& queueName, const String& b
 		int jitter = 25 * taskId;
 		Thread::sleep(jitter);
 
-	    String taskIdStr = (taskId < 10 ? "0" : "") + String::valueOf(taskId);
+		String taskIdStr = (taskId < 10 ? "0" : "") + String::valueOf(taskId);
 		Logger log;
 		log.setLoggingName("RAMtoJSON-" + taskIdStr);
 		log.setLogLevel(LogLevel::INFO);
