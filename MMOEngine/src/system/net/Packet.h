@@ -14,6 +14,9 @@
 #include <winsock2.h>
 #endif
 
+#define HTONLL(x) ((1==htonl(1)) ? (x) : (((uint64_t)htonl((x) & 0xFFFFFFFFUL)) << 32) | htonl((uint32_t)((x) >> 32)))
+#define NTOHLL(x) ((1==ntohl(1)) ? (x) : (((uint64_t)ntohl((x) & 0xFFFFFFFFUL)) << 32) | ntohl((uint32_t)((x) >> 32)))
+
 #include "system/lang/String.h"
 #include "system/lang/UnicodeString.h"
 #include "system/lang/Object.h"
@@ -226,6 +229,18 @@ namespace sys {
 
 		inline uint32 parseNetInt(int offs) {
 			return ntohl(readInt(offs));
+		}
+
+		inline uint64 parseNetLong() {
+			uint64 value = readLong();
+
+			return NTOHLL(value);
+		}
+
+		inline uint64 parseNetLong(int offs) {
+			auto value = readLong(offs);
+
+			return NTOHLL(value);
 		}
 
 		inline uint64 parseLong() {
