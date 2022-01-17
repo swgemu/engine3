@@ -705,6 +705,9 @@ void DOBObjectManager::dumpRAMtoJSON(const String& baseDirname, Time timestamp) 
 
 void DOBObjectManager::dispatchDumpTask(const String& queueName, const String& baseFilename, Vector<uint64> oidsToDump, int taskNumber) {
 	Core::getTaskManager()->executeTask([baseFilename, oidsToDump, taskId=taskNumber]() {
+		int jitter = 25 * taskId;
+		Thread::sleep(jitter);
+
 	    String taskIdStr = (taskId < 10 ? "0" : "") + String::valueOf(taskId);
 		Logger log;
 		log.setLoggingName("RAMtoJSON-" + taskIdStr);
@@ -719,7 +722,7 @@ void DOBObjectManager::dispatchDumpTask(const String& queueName, const String& b
 		File jsonDumpFile(jsonFileName);
 		FileWriter jsonDumpWriter(&jsonDumpFile, false);
 
-		Time now, last_rpt;
+		Time last_rpt;
 		int countDumped = 0;
 		int countSkipped = 0;
 		int countException = 0;
@@ -770,14 +773,15 @@ void DOBObjectManager::dispatchDumpTask(const String& queueName, const String& b
 				++countException;
 			}
 
-			now.updateToCurrentTime();
-			int delta = now.getTime() - last_rpt.getTime();
+			int delta = last_rpt.miliDifference();
 
-			if (delta > 5) {
+			if (delta >= 5000 + jitter) {
 				last_rpt.updateToCurrentTime();
 				auto elapsedMs = profileExport.elapsedToNow() / 1000000;
 				auto ps = countDumped / (elapsedMs / 1000.0f);
-				log.info(true) << "Dumped " << commas << countDumped << " objects (" << ps << "/s)";
+				auto total = oidsToDump.size();
+				int percentComplete = (double)(countDumped) / total * 100;
+				log.info(true) << "Dumped " << commas << countDumped << " of " << total << " (" << percentComplete << ") objects (" << ps << "/s)";
 			}
 		}
 
