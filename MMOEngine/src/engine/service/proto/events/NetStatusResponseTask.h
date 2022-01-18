@@ -28,9 +28,16 @@ public:
 #endif
 	}
 
+	~NetStatusResponseTask() {
+		if (pack != nullptr) {
+			delete pack;
+		}
+	}
+
 	void run() {
 		client->handleNetStatusRequest(pack);
 		delete pack;
+		pack = nullptr;
 	}
 };
 

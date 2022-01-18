@@ -76,6 +76,12 @@ namespace engine {
 
 		bool clientDisconnected = false;
 
+		// Cache hot settings
+		int configVersion = 0;
+		int configMaxBufferPacketsTickCount = 0;
+		int configMaxSentPacketsPerTick = 0;
+		int configMaxOutstandingPackets = 0;
+
 		int acknowledgedServerSequence = -1, realServerSequence = 0;
 		int resentPackets = 0;
 		int maxOutstanding = 0;
@@ -147,9 +153,9 @@ namespace engine {
 
 		virtual void notifyReceivedSeed(sys::uint32 seed);
 
-		void disconnect(const String& msg, bool doLock = false);
+		void disconnect(const String& msg, bool doLock = true);
 
-		inline void disconnect(const char* msg, bool doLock = false) {
+		inline void disconnect(const char* msg, bool doLock = true) {
 			disconnect(String(msg), doLock);
 		}
 
@@ -224,6 +230,7 @@ namespace engine {
 
 	private:
 		void initializeCommon(const String& addr);
+		void configureClient();
 	};
 
     } // namespace proto

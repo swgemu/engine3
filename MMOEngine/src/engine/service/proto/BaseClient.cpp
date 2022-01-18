@@ -129,6 +129,8 @@ void BaseClient::initializeCommon(const String& addr) {
 	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
 
+	configureClient();
+
    	//reentrantTask->schedulePeriodic(10, 10);
 }
 
@@ -208,6 +210,35 @@ void BaseClient::initialize() {
    	//netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
 
    	netRequestEvent = new BaseClientNetStatusRequestEvent(this);
+}
+
+void BaseClient::configureClient() {
+	auto currentConfigVersion = Core::getPropertiesVersion();
+
+	if (currentConfigVersion <= configVersion) {
+		return;
+	}
+
+	auto newMaxBufferPacketsTickCount = getMaxBufferPacketsTickCount();
+
+	if (configMaxBufferPacketsTickCount != newMaxBufferPacketsTickCount) {
+		configMaxBufferPacketsTickCount = newMaxBufferPacketsTickCount;
+		info() << "configureClient: configMaxBufferPacketsTickCount=" << configMaxBufferPacketsTickCount;
+	}
+
+	auto newMaxSentPacketsPerTick = getMaxSentPacketsPerTick();
+
+	if (configMaxSentPacketsPerTick != newMaxSentPacketsPerTick) {
+		configMaxSentPacketsPerTick = newMaxSentPacketsPerTick;
+		info() << "configureClient: configMaxSentPacketsPerTick=" << configMaxSentPacketsPerTick;
+	}
+
+	auto newMaxOutstandingPackets = getMaxOutstandingPackets();
+
+	if (configMaxOutstandingPackets != newMaxOutstandingPackets) {
+		configMaxOutstandingPackets = newMaxOutstandingPackets;
+		info() << "configureClient: configMaxOutstandingPackets=" << configMaxOutstandingPackets;
+	}
 }
 
 void BaseClient::close() {
@@ -731,9 +762,11 @@ void BaseClient::run() {
 
 	lock();
 
+	configureClient();
+
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	while ((i++ < getMaxBufferPacketsTickCount())
-			&& (j < getMaxSentPacketsPerTick())
+	while ((i++ < configMaxBufferPacketsTickCount)
+			&& (j < configMaxSentPacketsPerTick)
 			&& sendLockFreeBuffer->pop(incomingPack)) {
 		try {
 			BasePacket* pack;
@@ -770,9 +803,9 @@ void BaseClient::run() {
 		}
 	}
 
-	if (i >= getMaxBufferPacketsTickCount()) {
-		warning() << "more than " << getMaxBufferPacketsTickCount() << " packets in sendLockFreeBuffer on BaseClient tick";
-		reportStats("getMaxBufferPacketsTickCount exceeded");
+	if (i >= configMaxBufferPacketsTickCount) {
+		warning() << "more than " << configMaxBufferPacketsTickCount << " packets in sendLockFreeBuffer on BaseClient tick";
+		reportStats("configMaxBufferPacketsTickCount exceeded");
 	}
 
 	sendReliablePackets();
@@ -843,7 +876,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 			reportStats("outstandingCount > maxOutstanding");
 		}
 
-		if (outstandingCount > getMaxOutstandingPackets()) {
+		if (outstandingCount > configMaxOutstandingPackets) {
 			error() << "WARNING - send buffer overload [" << outstandingCount << "], disconnecting.";
 
 			disconnect(false);
@@ -1602,10 +1635,10 @@ void BaseClient::disconnect(bool doLock) {
 void BaseClient::reportStats(const String& msg) {
 	if (firstStatusReport.compareAndSet(false, true)) {
 		info()
-			<< "MaxBufferPacketsTickCount=" << getMaxBufferPacketsTickCount()
-			<< ", InitialLockfreeBufferCapacity=" << getInitialLockfreeBufferCapacity()
-			<< ", MaxSentPacketsPerTick=" << getMaxSentPacketsPerTick()
-			<< ", MaxOutstandingPackets=" << getMaxOutstandingPackets()
+			<< "InitialLockfreeBufferCapacity=" << getInitialLockfreeBufferCapacity()
+			<< ", MaxBufferPacketsTickCount=" << configMaxBufferPacketsTickCount
+			<< ", MaxSentPacketsPerTick=" << configMaxSentPacketsPerTick
+			<< ", MaxOutstandingPackets=" << configMaxOutstandingPackets
 		    << ", MinCheckupTime=" << getMinCheckupTime()
 			<< ", MaxCheckupTime=" << getMaxCheckupTime()
 			;
