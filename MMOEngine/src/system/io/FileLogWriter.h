@@ -42,6 +42,14 @@ namespace io {
 		void close() override;
 		int write(const char* str, int len) override;
 		void rotatefile(bool force = false) const;
+
+		const String getFileName() const {
+			if (file != nullptr) {
+				return file->getFileName();
+			}
+
+			return "";
+		}
 	};
 } // namespace io
 } // namespace sys

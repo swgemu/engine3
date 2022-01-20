@@ -17,22 +17,29 @@ namespace sys {
   	class FileWriter : public Writer {
 	protected:
   		File* file;
+		AtomicBoolean delayedOpen = false;
+		AtomicBoolean isOpen = false;
+		bool append = false;
 
   	public:
 		constexpr const static int bufferLength = 64;
 
-  		FileWriter(File* file, bool append = false) {
-  			file->mkdirs();
-
-  			if (append)
-  				file->setAppendable();
-  			else
-  				file->setWriteable();
-
+		FileWriter(File* file, bool append = false, bool delayOpen = false) {
   			FileWriter::file = file;
+			FileWriter::append = append;
+			FileWriter::delayedOpen.set(delayOpen);
+
+			if (!delayedOpen.get()) {
+				delayedOpen.set(true);
+				validateWriteable();
+			}
   		}
 
   		void close() override {
+			if (!isOpen.get()) {
+				return;
+			}
+
   			validateWriteable();
 
   			//file->flush(); close already does flush internally
@@ -41,6 +48,10 @@ namespace sys {
   		}
 
   		void flush() override {
+			if (!isOpen.get()) {
+				return;
+			}
+
   			validateWriteable();
 
   			file->flush();
@@ -208,9 +219,25 @@ namespace sys {
   		}
 
   	protected:
-  		void validateWriteable() const {
-  			if (!file->exists())
+		void validateWriteable() {
+			if (delayedOpen.compareAndSet(true, false)) {
+				file->mkdirs();
+
+				if (append)
+					file->setAppendable();
+				else
+					file->setWriteable();
+
+				isOpen.set(true);
+			} else {
+				while (!isOpen.get()) {
+					Thread::sleep(100);
+				}
+			}
+
+			if (!file->exists()) {
   				throw FileNotFoundException(file);
+			}
   		}
   	};
   } // namespace io

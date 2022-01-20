@@ -22,12 +22,12 @@ namespace FileLogWriterNamespace {
 	}
 }
 
-FileLogWriter::FileLogWriter(File* file, bool append, bool rotateAtStart) : FileWriter(file, append) {
+FileLogWriter::FileLogWriter(File* file, bool append, bool rotateAtStart) : FileWriter(file, append, true) {
 	if (rotateAtStart) {
 		rotatefile(true);
 	}
 
-	currentLoggedBytes.set(file->exists() ? file->size() : 0);
+	currentLoggedBytes.set(file->size());
 }
 
 FileLogWriter::~FileLogWriter() {
