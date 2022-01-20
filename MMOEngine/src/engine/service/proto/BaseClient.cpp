@@ -1657,7 +1657,7 @@ void BaseClient::reportStats(const String& msg) {
 		checkupTime = checkupEvent->getCheckupTime();
 	}
 
-	info(numOutOfOrder > 0)
+	info()
 		<< "BaseClient::reportStats:\n{\"ip\": \"" << ip << "\""
 		<< ", \"serverSequence\": " << serverSequence
 		<< ", \"resentPackets\": " << resentPackets
