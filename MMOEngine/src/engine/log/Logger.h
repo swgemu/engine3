@@ -206,6 +206,14 @@ namespace engine {
 
 		void setFileLogger(const String& file, bool appendData = false, bool rotateOnOpen = false);
 
+		const String getLogFileName() const {
+			if (logFile != nullptr) {
+				return logFile->getFileName();
+			}
+
+			return "";
+		}
+
 		void closeFileLogger();
 
 		void info(const char* msg, bool forcedlog) const;

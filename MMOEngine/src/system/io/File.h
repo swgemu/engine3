@@ -44,6 +44,7 @@ namespace sys {
 
 		bool mkdir();
 		bool mkdirs();
+		const String getFileName() const;
 		const String getBaseName() const;
 		const String getDirName() const;
 
