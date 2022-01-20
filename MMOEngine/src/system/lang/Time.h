@@ -260,6 +260,32 @@ namespace sys {
 			return value;
 		}
 
+		String getFormattedTime(const String& format) const {
+			struct tm t;
+			String value;
+			char buf[256];
+
+#ifndef PLATFORM_WIN
+			if (localtime_r(&(ts.tv_sec), &t) == nullptr)
+				return value;
+#else
+			auto retval = localtime(&(ts.tv_sec));
+			if (retval == nullptr)
+				return value;
+
+			t = *retval;
+#endif
+
+			int ret = strftime(buf, sizeof(buf), format.toCharArray(), &t);
+
+			if (ret <= 0)
+				return value;
+
+			value = buf;
+
+			return value;
+		}
+
 		int compareMiliTo(const Time& t) const {
 			uint64 t1 = getMiliTime();
 			uint64 t2 = t.getMiliTime();
