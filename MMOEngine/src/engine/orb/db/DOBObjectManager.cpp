@@ -763,6 +763,7 @@ void DOBObjectManager::dispatchDumpTask(const String& queueName, const String& b
 				nlohmann::json jsonObject;
 
 				jsonObject["_oid"] = oid;
+				jsonObject["_refCount"] = managedObject->getReferenceCount();
 
 				managedObject->writeJSON(jsonObject);
 
