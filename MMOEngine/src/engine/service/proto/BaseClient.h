@@ -78,9 +78,9 @@ namespace engine {
 
 		// Cache hot settings
 		int configVersion = 0;
-		int configMaxBufferPacketsTickCount = 0;
-		int configMaxSentPacketsPerTick = 0;
-		int configMaxOutstandingPackets = 0;
+		int configMaxBufferPacketsTickCount = 500;
+		int configMaxSentPacketsPerTick = 20;
+		int configMaxOutstandingPackets = 5000;
 
 		int acknowledgedServerSequence = -1, realServerSequence = 0;
 		int resentPackets = 0;
@@ -230,7 +230,7 @@ namespace engine {
 
 	private:
 		void initializeCommon(const String& addr);
-		void configureClient();
+		void configureClient(bool force);
 	};
 
     } // namespace proto

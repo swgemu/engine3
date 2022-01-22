@@ -129,7 +129,7 @@ void BaseClient::initializeCommon(const String& addr) {
 	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
 
-	configureClient();
+	configureClient(true);
 
    	//reentrantTask->schedulePeriodic(10, 10);
 }
@@ -212,10 +212,10 @@ void BaseClient::initialize() {
    	netRequestEvent = new BaseClientNetStatusRequestEvent(this);
 }
 
-void BaseClient::configureClient() {
+void BaseClient::configureClient(bool force) {
 	auto currentConfigVersion = Core::getPropertiesVersion();
 
-	if (currentConfigVersion <= configVersion) {
+	if (!force && currentConfigVersion <= configVersion) {
 		return;
 	}
 
@@ -762,7 +762,7 @@ void BaseClient::run() {
 
 	lock();
 
-	configureClient();
+	configureClient(false);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	while ((i++ < configMaxBufferPacketsTickCount)
