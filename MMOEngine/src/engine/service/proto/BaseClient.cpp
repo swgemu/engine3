@@ -121,9 +121,9 @@ void BaseClient::initializeCommon(const String& addr) {
 
 	info() << __FUNCTION__;
 
-#ifdef LOCKFREE_BCLIENT_BUFFERS
 	const static int vars = Core::initializeProperties("BaseClient");
 
+#ifdef LOCKFREE_BCLIENT_BUFFERS
 	sendLockFreeBuffer = new packet_buffer_t(getInitialLockfreeBufferCapacity());
 
 	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
@@ -239,6 +239,8 @@ void BaseClient::configureClient(bool force) {
 		configMaxOutstandingPackets = newMaxOutstandingPackets;
 		info() << "configureClient: configMaxOutstandingPackets=" << configMaxOutstandingPackets;
 	}
+
+	configVersion = currentConfigVersion;
 }
 
 void BaseClient::close() {
