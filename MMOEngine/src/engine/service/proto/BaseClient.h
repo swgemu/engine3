@@ -19,6 +19,8 @@
 
 #include "BaseProtocol.h"
 
+#include "BaseClientStats.h"
+
 namespace engine {
   namespace service {
     namespace proto {
@@ -41,6 +43,7 @@ namespace engine {
   namespace service {
     namespace proto {
 
+	class BaseClientHealthEvent;
 	class BaseClientNetStatusCheckupEvent;
 	class BaseClientNetStatusRequestEvent;
 	class BaseClientEvent;
@@ -54,6 +57,7 @@ namespace engine {
 		Reference<BasePacketChekupEvent*> checkupEvent;
 		Reference<BaseClientNetStatusCheckupEvent*> netcheckupEvent;
 		Reference<BaseClientNetStatusRequestEvent*> netRequestEvent;
+		Reference<BaseClientHealthEvent*> healthEvent;
 
 		BaseMultiPacket* bufferedPacket;
 		BaseFragmentedPacket* fragmentedPacket;
@@ -87,19 +91,12 @@ namespace engine {
 		int maxOutstanding = 0;
 		int numOutOfOrder = 0;
 
-		// Sent by client to host in NetStatusRequest
-		uint64 clientTotalPacketsSent = 0;
-		uint64 clientTotalPacketsReceived = 0;
-		uint16 clientTickDelta = 0;
-
-		uint64 clientLastAckElapsedMs = 0;
-		uint64 clientMinAckElapsedMs = ULLONG_MAX;
-		uint64 clientMaxAckElapsedMs = 0;
+		BaseClientStats remoteStats = BaseClientStats();
 
 		bool keepSocket;
 
 		AtomicBoolean firstStatusReport = false;
-		Time lastStatusReportTimeStamp;
+		Time creationTime;
 
 	public:
 		static const int NETSTATUSCHECKUP_TIMEOUT = 50000;
@@ -162,6 +159,8 @@ namespace engine {
 		void disconnect(bool doLock = true);
 
 		void reportStats(const String& msg);
+
+		void runHealthCheck();
 
 	protected:
 		void close();

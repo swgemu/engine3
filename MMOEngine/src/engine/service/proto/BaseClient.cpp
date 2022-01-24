@@ -14,6 +14,7 @@
 #include "events/BaseClientCleanupEvent.h"
 #include "events/BaseClientNetStatusRequestEvent.h"
 #include "events/BaseClientEvent.h"
+#include "events/BaseClientHealthEvent.h"
 
 #include "packets/SessionIDRequestMessage.h"
 #include "packets/AcknowledgeMessage.h"
@@ -78,10 +79,17 @@ namespace {
 		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 100, "BaseClient.minCheckupTime");
 	}
 
-	int getStatusReportInterval() {
-		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 1800, "BaseClient.statusReportInterval");
+	int getHealthCheckInterval() {
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 60, "BaseClient.healthCheckInterval");
 	}
 
+	int getRemoteDeltaThreshold() {
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 25000, "BaseClient.remoteDeltaThreshold");
+	}
+
+	int getClockDeltaThreshold() {
+		return CACHED_PROPERTY_VALUE(int, Core::getIntProperty, 1800, "BaseClient.clockDeltaThreshold");
+	}
 }
 
 class AcknowledgeClientPackets : public Task {
@@ -129,7 +137,12 @@ void BaseClient::initializeCommon(const String& addr) {
 	fatal(sendLockFreeBuffer->is_lock_free(), "lock free buffer is not lock free");
 #endif
 
+	creationTime.updateToCurrentTime(Time::MONOTONIC_TIME);
+
 	configureClient(true);
+
+	healthEvent = new BaseClientHealthEvent(this);
+	healthEvent->scheduleInIoScheduler(getHealthCheckInterval() * 1000);
 
    	//reentrantTask->schedulePeriodic(10, 10);
 }
@@ -150,6 +163,12 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 }
 
 BaseClient::~BaseClient() {
+	if (healthEvent != nullptr) {
+		healthEvent->shutdown();
+
+		healthEvent = nullptr;
+	}
+
 	if (checkupEvent != nullptr) {
 		checkupEvent->cancel();
 
@@ -204,6 +223,7 @@ void BaseClient::initialize() {
 	checkupEvent = new BasePacketChekupEvent(this, getMinCheckupTime(), getMaxCheckupTime());
 	netcheckupEvent = new BaseClientNetStatusCheckupEvent(this);
 
+	lastNetStatusTimeStamp.updateToCurrentTime(Time::MONOTONIC_TIME);
    	lastNetStatusTimeStamp.addMiliTime(NETSTATUSCHECKUP_TIMEOUT);
    	balancePacketCheckupTime();
 
@@ -246,6 +266,8 @@ void BaseClient::configureClient(bool force) {
 void BaseClient::close() {
 	disconnected = true;
 
+	healthEvent->shutdown();
+
 	reentrantTask->cancel();
 
 	checkupEvent->cancel();
@@ -261,8 +283,6 @@ void BaseClient::close() {
 
 	/*Reference<Task*> task = new BaseClientCleanupEvent(this);
 	task->scheduleInIoScheduler();*/
-
-	info() << "Close: sendBuffer.size() = " << sendBuffer.size() << "; sequenceBuffer.size() = " << sequenceBuffer.size();
 
 	for (int i = 0; i < sendBuffer.size(); ++i) {
 		BasePacket* pack = sendBuffer.get(i);
@@ -322,18 +342,12 @@ void BaseClient::close() {
 		fragmentedPacket = nullptr;
 	}
 
-	info() << "Close: "
-		<< "serverSequence = " << serverSequence
-		<< "; clientSequence = " << clientSequence
-		<< "; acknowledgedServerSequence = " << acknowledgedServerSequence
-		;
+	reportStats("Close");
 
 	//serverSequence = 0;
 	clientSequence = 0;
 
 	acknowledgedServerSequence = -1;
-
-	reportStats("Close");
 
 	closeFileLogger();
 
@@ -763,8 +777,6 @@ void BaseClient::run() {
 #endif
 
 	lock();
-
-	configureClient(false);
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 	while ((i++ < configMaxBufferPacketsTickCount)
@@ -1270,15 +1282,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 		        return;
 		}
 
-		clientLastAckElapsedMs = checkupEvent->getElapsedTimeMs();
-
-		if (clientLastAckElapsedMs < clientMinAckElapsedMs) {
-			clientMinAckElapsedMs = clientLastAckElapsedMs;
-		}
-
-		if (clientLastAckElapsedMs > clientMaxAckElapsedMs) {
-			clientMaxAckElapsedMs = clientLastAckElapsedMs;
-		}
+		remoteStats.updateAckStats(checkupEvent->getElapsedTimeMs());
 
 		checkupEvent->cancel();
 
@@ -1365,8 +1369,7 @@ bool BaseClient::handleNetStatusRequest(Packet* pack) {
 			return false;
 		}
 
-		Time now;
-		uint16 ourTick = now.getMiliTime() & 0xFFFF;
+		uint16 ourTick = Time().getMiliTime() & 0xFFFF;
 		uint16 tick = pack->parseNetShort();
 		uint32 unk1 = pack->parseInt();
 		uint32 unk2 = pack->parseInt();
@@ -1374,26 +1377,25 @@ bool BaseClient::handleNetStatusRequest(Packet* pack) {
 		uint32 unk4 = pack->parseInt();
 		uint32 unk5 = pack->parseInt();
 
-		clientTotalPacketsSent = pack->parseNetLong();
-		clientTotalPacketsReceived = pack->parseNetLong();
-		clientTickDelta = tickDiff(tick, ourTick);
-
-		if (clientTickDelta > 11000) {
-			info() << __FUNCTION__ << ": clientTickDelta=" << clientTickDelta;
-		}
+		remoteStats.setTotalPacketsSent(pack->parseNetLong());
+		remoteStats.setTotalPacketsReceived(pack->parseNetLong());
+		remoteStats.setTickDelta(tickDiff(tick, ourTick));
+		remoteStats.setTimeStamp(lastNetStatusTimeStamp);
 
 		if (lastRecievedNetStatusTick != 0) {
-			auto clientDelta = tickDiff(tick, lastRecievedNetStatusTick);
-			auto serverDelta = lastNetStatusTimeStamp.miliDifference();
-			auto delta = abs(clientDelta - serverDelta);
+			auto remoteDelta = tickDiff(tick, lastRecievedNetStatusTick);
+			auto localDelta = lastNetStatusTimeStamp.miliDifference(Time::MONOTONIC_TIME);
+			auto delta = abs(remoteDelta - localDelta);
 
-			if (clientDelta > 11000) {
-				info() << __FUNCTION__ << ": High clientDelta = " << clientDelta;
+			if (remoteDelta > getRemoteDeltaThreshold()) {
+				StringBuffer msg;
+				msg << __FUNCTION__ << ": remoteDeltaThreshold(" << getRemoteDeltaThreshold() << ") exceeded: remoteDelta=" << remoteDelta;
+				reportStats(msg.toString());
 			}
 
-			if (delta > 750) {
+			if (delta > getClockDeltaThreshold()) {
 				StringBuffer msg;
-				msg << __FUNCTION__ << ": Client clock desync: delta=" << delta << "; clientDelta=" << clientDelta << "; serverDelta=" << serverDelta;
+				msg << __FUNCTION__ << ": clockDeltaThreshold(" << getClockDeltaThreshold() << ") exceeded: delta=" << delta << "; remoteDelta=" << remoteDelta << "; localDelta=" << localDelta;
 				reportStats(msg.toString());
 			}
 
@@ -1417,7 +1419,7 @@ bool BaseClient::handleNetStatusRequest(Packet* pack) {
 				*/
 		}
 
-		lastNetStatusTimeStamp.updateToCurrentTime();
+		lastNetStatusTimeStamp.updateToCurrentTime(Time::MONOTONIC_TIME);
 		lastRecievedNetStatusTick = tick;
 
 		#ifdef TRACE_CLIENTS
@@ -1425,11 +1427,6 @@ bool BaseClient::handleNetStatusRequest(Packet* pack) {
 		#endif
 
 		netcheckupEvent->rescheduleInIoScheduler(NETSTATUSCHECKUP_TIMEOUT);
-
-		if (lastStatusReportTimeStamp.miliDifference() / 1000 > getStatusReportInterval()) {
-			lastStatusReportTimeStamp.updateToCurrentTime();
-			reportStats("PeriodicReport");
-		}
 
 		BasePacket* resp = new NetStatusResponseMessage(tick);
 		sendPacket(resp);
@@ -1456,8 +1453,7 @@ void BaseClient::requestNetStatus() {
 			return;
 		}
 
-		Time now;
-		uint16 ourTick = now.getMiliTime() & 0xFFFF;
+		uint16 ourTick = Time().getMiliTime() & 0xFFFF;
 
 		BasePacket* resp = new NetStatusRequestMessage(ourTick);
 		sendPacket(resp, false);
@@ -1643,6 +1639,9 @@ void BaseClient::reportStats(const String& msg) {
 			<< ", MaxOutstandingPackets=" << configMaxOutstandingPackets
 		    << ", MinCheckupTime=" << getMinCheckupTime()
 			<< ", MaxCheckupTime=" << getMaxCheckupTime()
+			<< ", HealthCheckInterval=" << getHealthCheckInterval()
+			<< ", RemoteDeltaThreshold=" << getRemoteDeltaThreshold()
+			<< ", ClockDeltaThreshold=" << getClockDeltaThreshold()
 			;
 	}
 
@@ -1659,18 +1658,20 @@ void BaseClient::reportStats(const String& msg) {
 		checkupTime = checkupEvent->getCheckupTime();
 	}
 
-	info()
-		<< "BaseClient::reportStats:\n{\"ip\": \"" << ip << "\""
+	Time now(Time::MONOTONIC_TIME);
+
+	auto elaspedMs = creationTime.miliDifference(now);
+
+	log()
+		<< "reportStats:\n{\"@timestamp\":\"" << now.getFormattedTimeFull() << "\""
+		<< ", \"ip\": \"" << ip << "\""
+		<< ", \"elaspedMs\": " << elaspedMs
 		<< ", \"serverSequence\": " << serverSequence
 		<< ", \"resentPackets\": " << resentPackets
 		<< ", \"resentPercent\": " << resentPercent
 		<< ", \"checkupTime\": " << checkupTime
-		<< ", \"clientTotalPacketsReceived\": " << clientTotalPacketsReceived
-		<< ", \"clientTotalPacketsSent\": " << clientTotalPacketsSent
-		<< ", \"clientTickDelta\": " << clientTickDelta
-		<< ", \"clientLastAckElapsedMs\": " << clientLastAckElapsedMs
-		<< ", \"clientMinAckElapsedMs\": " << clientMinAckElapsedMs
-		<< ", \"clientMaxAckElapsedMs\": " << clientMaxAckElapsedMs
+		<< ", \"configVersion\": " << configVersion
+		<< remoteStats.asJSONFragment(false)
 		<< ", \"numOutOfOrder\": " << numOutOfOrder
 		<< ", \"acknowledgedServerSequence\": " << acknowledgedServerSequence
 		<< ", \"realServerSequence\": " << realServerSequence
@@ -1682,6 +1683,24 @@ void BaseClient::reportStats(const String& msg) {
 #else // LOCKFREE_BCLIENT_BUFFERS
 		<< ", \"sendUnreliableBufferSize\": " << sendUnreliableBuffer.size()
 #endif // LOCKFREE_BCLIENT_BUFFERS
+		<< ", \"hasError\": " << hasError()
 		<< ", \"msg\": \"" << msg << "\""
         << "}";
+}
+
+void BaseClient::runHealthCheck() {
+	Locker lock(this);
+
+	if (healthEvent == nullptr) {
+		return;
+	}
+
+	if (Core::getPropertiesVersion() > configVersion) {
+		debug() << __FUNCTION__ << ": Detected new configVersion";
+		configureClient(true);
+	}
+
+	reportStats("PeriodicReport");
+
+	healthEvent->rescheduleInIoScheduler(getHealthCheckInterval() * 1000);
 }
