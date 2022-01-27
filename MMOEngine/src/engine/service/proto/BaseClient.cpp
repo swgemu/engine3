@@ -1631,6 +1631,10 @@ void BaseClient::disconnect(bool doLock) {
 }
 
 void BaseClient::reportStats(const String& msg) {
+	if (getLogLevel() == LogLevel::LOG) {
+		return;
+	}
+
 	if (firstStatusReport.compareAndSet(false, true)) {
 		info()
 			<< "InitialLockfreeBufferCapacity=" << getInitialLockfreeBufferCapacity()
@@ -1658,12 +1662,16 @@ void BaseClient::reportStats(const String& msg) {
 		checkupTime = checkupEvent->getCheckupTime();
 	}
 
+	auto thread = Thread::getCurrentThread();
+	auto customThreadName = thread != nullptr ? thread->getCustomThreadName() : "<unknown>";
+
 	Time now(Time::MONOTONIC_TIME);
 
 	auto elaspedMs = creationTime.miliDifference(now);
 
 	log()
 		<< "reportStats:\n{\"@timestamp\":\"" << now.getFormattedTimeFull() << "\""
+		<< ", \"thread\": \"" << customThreadName << "\""
 		<< ", \"ip\": \"" << ip << "\""
 		<< ", \"elaspedMs\": " << elaspedMs
 		<< ", \"serverSequence\": " << serverSequence

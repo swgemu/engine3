@@ -142,8 +142,11 @@ namespace sys {
 
 		static Thread* getCurrentThread();
 
-		// setters
 		void setCustomThreadName(const String& name);
+
+		String getCustomThreadName() const {
+			return customName;
+		}
 
 		void setDetached();
 
