@@ -162,6 +162,10 @@ namespace engine {
 			return sb.toString();
 		}
 
+		inline String toStringData() const {
+			return toString();
+		}
+
 		inline float operator [] (uint32 index) const {
 #ifdef VECTORS_OUT_OF_BOUNDS_CHECK
 			if (index > 2)
