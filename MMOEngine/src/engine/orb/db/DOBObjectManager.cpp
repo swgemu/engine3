@@ -984,15 +984,30 @@ int DOBObjectManager::runObjectsMarkedForUpdate(engine::db::berkeley::Transactio
 		if (dobObject->getReferenceCount() == 2) // 2 is the lowest count now
 			objectsToDeleteFromRAM.emplace(dobObject);
 		else if (inRamClassCount != nullptr) {
-			String className = TypeInfo<DistributedObject>::getClassName(dobObject, false);
-
-			inRamClassCount->put(className, inRamClassCount->get(className) + 1);
+			StringBuffer buf;
 
 			if (dobObject->isPersistent()) {
 				inRamClassCount->put("isPersistent", inRamClassCount->get("isPersistent") + 1);
+				buf << "Persistent ";
 			} else {
 				inRamClassCount->put("isNotPersistent", inRamClassCount->get("isNotPersistent") + 1);
+				buf << "Non-persistent ";
 			}
+
+			std::string className = TypeInfo<DistributedObject>::getClassName(dobObject, false);
+
+			int pos = 0;
+			for (int stop = 2; stop > 0 && (pos = className.rfind("::", pos - 1)) != std::string::npos;) {
+				if (className[pos] == ':') {
+					--stop;
+				}
+			}
+
+			buf << className.substr(pos + 2);
+
+			auto reportKey = buf.toString();
+
+			inRamClassCount->put(reportKey, inRamClassCount->get(reportKey) + 1);
 		}
 
 		ManagedObject* managedObject = static_cast<ManagedObject*>(dobObject);

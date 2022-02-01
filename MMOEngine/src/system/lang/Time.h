@@ -263,7 +263,7 @@ namespace sys {
 		String getFormattedTime(const String& format) const {
 			struct tm t;
 			String value;
-			char buf[256];
+			char buf[4096];
 
 #ifndef PLATFORM_WIN
 			if (localtime_r(&(ts.tv_sec), &t) == nullptr)
