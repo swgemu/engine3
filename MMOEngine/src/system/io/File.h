@@ -22,6 +22,7 @@ namespace sys {
 
 		int permissions;
 
+		static const int CLOSED = -1;
 		static const int TEXT_MODE = 1;
 		static const int BINARY_MODE = 2;
 		static const int READONLY_ACCESS = 1;

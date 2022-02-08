@@ -59,6 +59,8 @@ bool File::reopen() {
 }
 
 bool File::close() {
+	access = CLOSED;
+
 	if (fileDescriptor == nullptr) {
 		return true;
 	}
