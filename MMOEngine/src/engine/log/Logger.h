@@ -202,7 +202,7 @@ namespace engine {
 		static void setGlobalFileLoggerSync(bool val);
 		static void setGlobalFileJson(bool val);
 
-		static void closeGlobalFileLogger();
+		static void closeGlobalFileLogger(bool force = false);
 
 		void setFileLogger(const String& file, bool appendData = false, bool rotateOnOpen = false);
 
@@ -214,7 +214,7 @@ namespace engine {
 			return "";
 		}
 
-		void closeFileLogger();
+		void closeFileLogger(bool force = false);
 
 		void info(const char* msg, bool forcedlog) const;
 

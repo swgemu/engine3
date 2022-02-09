@@ -105,12 +105,12 @@ Logger& Logger::operator=(Logger&& logger) {
 }
 
 Logger::~Logger() {
-	closeFileLogger();
+	closeFileLogger(true);
 }
 
 void Logger::setGlobalFileLogger(const String& file, uint32 rotateSizeMB, bool rotateOnOpen) {
 	if (globalLogFile != nullptr)
-		closeGlobalFileLogger();
+		closeGlobalFileLogger(true);
 
 	globalLogFile = FileLogWriter::getWriter(file, true, rotateOnOpen);
 
@@ -146,23 +146,23 @@ void Logger::setFileLogger(const String& file, bool appendData, bool rotateOnOpe
 	logFile = obj;
 }
 
-void Logger::closeGlobalFileLogger() {
+void Logger::closeGlobalFileLogger(bool force) {
 	auto globalLogFile = Logger::globalLogFile;
 
 	bool success = Logger::globalLogFile.compareAndSet(globalLogFile, nullptr);
 
 	if (success && globalLogFile != nullptr) {
-		globalLogFile->close();
+		globalLogFile->closeLog(force);
 	}
 }
 
-void Logger::closeFileLogger() {
+void Logger::closeFileLogger(bool force) {
 	auto oldLogFile = logFile;
 
 	bool success = logFile.compareAndSet(oldLogFile, nullptr);
 
 	if (success && oldLogFile != nullptr) {
-		oldLogFile->close();
+		oldLogFile->closeLog(force);
 	}
 }
 
@@ -560,7 +560,7 @@ String Logger::nsToString(uint64 nanos, bool truncate) {
 
 String Logger::msToString(uint64 milli) {
 	StringBuffer output;
-	if (milli >= 1000) {
+	if (milli > 1000) {
 		float secs = milli / 1000.0f;
 		output << secs << " s";
 	} else {

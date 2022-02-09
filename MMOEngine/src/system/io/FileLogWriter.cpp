@@ -37,17 +37,21 @@ FileLogWriter::~FileLogWriter() {
 	}
 }
 
-void FileLogWriter::close() {
+void FileLogWriter::closeLog(bool force) {
 	std::unique_lock<std::mutex> guard(FileLogWriterNamespace::getMutex());
 
 	auto& filemap = FileLogWriterNamespace::getFileMap();
 	auto fileName = file->getName();
 	auto writer = filemap.get(fileName);
 
-	if (writer != nullptr && writer->getReferenceCount() <= 4) {
+	if (writer != nullptr && (writer->getReferenceCount() <= 6 || force)) {
 		filemap.drop(fileName);
 		file->close();
 	}
+}
+
+void FileLogWriter::close() {
+	closeLog(false);
 }
 
 Reference<FileLogWriter*> FileLogWriter::getWriter(const String& fileName, bool append, bool rotateAtStart) {

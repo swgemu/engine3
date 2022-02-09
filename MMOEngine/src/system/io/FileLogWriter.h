@@ -24,6 +24,8 @@ namespace io {
 		FileLogWriter(File* file, bool append = false, bool rotateAtStart = false);
 		~FileLogWriter();
 
+		void close() override;
+
 	public:
 		static Reference<FileLogWriter*> getWriter(const String& fileName, bool append = false, bool rotateAtStart = false);
 
@@ -39,7 +41,7 @@ namespace io {
 			rotatePrefix = prefix; // Setup rotate to {dir}{prefix}{filename}
 		}
 
-		void close() override;
+		void closeLog(bool force = false);
 		int write(const char* str, int len) override;
 		void rotatefile(bool force = false) const;
 
