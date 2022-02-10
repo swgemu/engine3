@@ -1629,6 +1629,10 @@ void BaseClient::disconnect(bool doLock) {
 }
 
 void BaseClient::reportStats(const String& msg) {
+	if (getLogLevel() < Logger::INFO) {
+		return;
+	}
+
 	if (firstStatusReport.compareAndSet(false, true)) {
 		info()
 			<< "InitialLockfreeBufferCapacity=" << getInitialLockfreeBufferCapacity()
