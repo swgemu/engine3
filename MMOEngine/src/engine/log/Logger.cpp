@@ -114,7 +114,7 @@ void Logger::setGlobalFileLogger(const String& file, uint32 rotateSizeMB, bool r
 
 	globalLogFile = FileLogWriter::getWriter(file, true, rotateOnOpen);
 
-	globalLogFile->setSynchronized(false);
+	globalLogFile->setSynchronized(true);
 	globalLogFile->setRotateSizeMB(rotateSizeMB);
 
 	starttime.updateToCurrentTime();
