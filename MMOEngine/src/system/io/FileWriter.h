@@ -30,8 +30,8 @@ namespace sys {
   	class FileWriter : public Writer {
 	protected:
   		File* file;
-		AtomicBoolean delayedOpen = false;
-		AtomicBoolean isOpen = false;
+		mutable Mutex validateMutex;
+		mutable AtomicBoolean isOpen = false;
 		bool append = false;
 
   	public:
@@ -40,10 +40,8 @@ namespace sys {
 		FileWriter(File* file, bool append = false, bool delayOpen = false) {
   			FileWriter::file = file;
 			FileWriter::append = append;
-			FileWriter::delayedOpen.set(delayOpen);
 
-			if (!delayedOpen.get()) {
-				delayedOpen.set(true);
+			if (!delayOpen) {
 				validateWriteable();
 			}
   		}
@@ -233,27 +231,32 @@ namespace sys {
 
   	protected:
 		void validateWriteable() {
-			if (delayedOpen.compareAndSet(true, false)) {
-				if (!file->mkdirs()) {
-					throw FileWriterMkDirException(file->getFileName());
+			validateMutex.lock();
+
+			try {
+				if (!isOpen.get()) {
+					if (!file->mkdirs()) {
+						throw FileWriterMkDirException(file->getFileName());
+					}
+
+					bool success = append ? file->setAppendable() : file->setWriteable();
+
+					if (!success) {
+						throw FileWriterOpenException(file->getFileName());
+					}
+
+					isOpen.set(true);
 				}
 
-				bool success = append ? file->setAppendable() : file->setWriteable();
-
-				if (!success) {
-					throw FileWriterOpenException(file->getFileName());
+				if (!file->exists()) {
+					throw FileNotFoundException(file);
 				}
-
-				isOpen.set(true);
-			} else {
-				while (!isOpen.get()) {
-					Thread::sleep(100);
-				}
+			} catch(...) {
+				validateMutex.unlock();
+				throw;
 			}
 
-			if (!file->exists()) {
-  				throw FileNotFoundException(file);
-			}
+			validateMutex.unlock();
   		}
   	};
   } // namespace io
