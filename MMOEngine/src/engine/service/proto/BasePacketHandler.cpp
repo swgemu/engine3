@@ -127,7 +127,22 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 			break;
 		}
 	} catch (const Exception& e) {
-		e.printStackTrace();
+		StringBuffer buf;
+
+		buf << "BasePacketHandler::handlePacket - exception caught: " << e.getMessage();
+
+		auto trace = e.getStackTrace();
+
+		client->error() << buf;
+		client->error() << "STACK: " << trace.toStringData();
+
+		auto logFileName = client->getLogFileName();
+
+		if (logFileName.isEmpty()) {
+			error() << "[" << client->getAddress() << "] " << buf;
+		} else {
+			error() << "[" << client->getAddress() << "] " << buf << " see " << client->getLogFileName() << " for details";
+		}
 	}
 }
 
@@ -462,7 +477,20 @@ int BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) 
 		} /*else if (pack->size() < 485)
 		throw Exception("incomplete fragmented packet");*/
 	} catch (const FragmentedPacketParseException& e) {
-		error(e.getMessage());
+		StringBuffer buf;
+
+		buf << "BasePacketHandler::handleFragmentedPacket - receiveFragmentedPacket failed: " << e.getMessage();
+
+		client->error() << buf;
+
+		auto logFileName = client->getLogFileName();
+
+		if (logFileName.isEmpty()) {
+			error() << "[" << client->getAddress() << "] " << buf;
+		} else {
+			error() << "[" << client->getAddress() << "] " << buf << " see " << client->getLogFileName() << " for details";
+		}
+
 		return 1;
 	}
 

@@ -999,11 +999,12 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 
 		fragmentedPacket = nullptr;
 
+		error() << "addFragment failed: " << fragmentedPacket->getError() << "; fragmentedPacket: " << *fragmentedPacket << endl << "packet: " << *pack;
+
 		throw FragmentedPacketParseException("could not insert frag");
 	}
 
 	try {
-
 		if (fragmentedPacket->isComplete()) {
 			fragmentedPacket->setOffset(0);
 
@@ -1013,11 +1014,12 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 			fragmentedPacket = nullptr;
 		}
 	} catch (const Exception& e) {
-		error(e.getMessage());
-		error(pack->toStringData());
-
 		if (fragmentedPacket != nullptr) {
-			error() << "current fragmented packet.." << *fragmentedPacket;
+			error()
+				<< "fragmentedPacket->isComplete() exception: " << e.getMessage()
+				<< "; error: " << fragmentedPacket->getError()
+				<< "; fragmentedPacket: " << *fragmentedPacket
+				<< "; packet: " << *pack;
 
 			if (fragmentedPacket->getReferenceCount())
 				fragmentedPacket->release();
@@ -1026,13 +1028,16 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 
 			fragmentedPacket = nullptr;
 			packet = nullptr;
+		} else {
+			error() << "fragmentedPacket->isComplete() exception: " << e.getMessage() << "; packet: " << *pack;
 		}
 	} catch (...) {
-		error("unreproted exception caught in BasePacket* BaseClient::recieveFragmentedPacket");
-		error(pack->toStringData());
-
 		if (fragmentedPacket != nullptr) {
-			error() << "current fragmented packet.." << *fragmentedPacket;
+			error()
+				<< "fragmentedPacket->isComplete() exception: unreproted exception caught"
+				<< "; error: " << fragmentedPacket->getError()
+				<< "; fragmentedPacket: " << *fragmentedPacket
+				<< "; packet: " << *pack;
 
 			if (fragmentedPacket->getReferenceCount())
 				fragmentedPacket->release();
@@ -1041,6 +1046,8 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 
 			fragmentedPacket = nullptr;
 			packet = nullptr;
+		} else {
+			error() << "fragmentedPacket->isComplete() exception: unreproted exception caught; packet: " << *pack;
 		}
 	}
 

@@ -24,6 +24,15 @@ namespace engine {
 
 		int totalSize;
 
+		StringBuffer error;
+
+		StringBuffer& addError() {
+			if (error.length()) {
+				error << endl;
+			}
+			return error;
+		}
+
 	public:
 		BaseFragmentedPacket();
 		BaseFragmentedPacket(BasePacket* pack);
@@ -34,9 +43,17 @@ namespace engine {
 
 		BasePacket* getFragment();
 
-		bool isComplete() const;
+		bool isComplete();
 
 		bool hasFragments() const;
+
+		bool hasError() const {
+			return !error.length();
+		}
+
+		String getError() const {
+			return error.toString();
+		}
 	};
 
     } // namespace proto

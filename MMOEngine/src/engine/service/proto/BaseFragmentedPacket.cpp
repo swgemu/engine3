@@ -33,24 +33,18 @@ BaseFragmentedPacket::~BaseFragmentedPacket() {
 }
 
 bool BaseFragmentedPacket::addFragment(Packet* pack) {
-	//uint32 seq = pack->parseNetShort();
-
 	if (totalSize == 0) {
 		totalSize = pack->parseNetInt();
 
 		if (totalSize < 0 || totalSize > MAX_COMPLETE_FRAG_SIZE) {
-			logger.error() <<
-				"received fragmented packet with size too big = (" << totalSize << ") for frag: " << *pack;
+			addError() << "received fragmented packet with size too big = (" << totalSize << ") for frag: " << pack->toStringData();
 
 			return false;
 		} else if (totalSize == 0) {
-			logger.error("fragmented total size totalSize parsed 0!");
+			addError() << "fragmented total size totalSize parsed 0!";
 
 			return false;
 		}
-
-		/*logger.info("received first segment of fragmented packet ("
-						+ String::valueOf(seq) + ") - size = " + String::valueOf(totalSize));*/
 	}
 
 	int packetOffset = pack->getOffset();
@@ -61,16 +55,11 @@ bool BaseFragmentedPacket::addFragment(Packet* pack) {
 		readBytes = totalSize - size();
 
 	if (readBytes < 0) {
-		logger.error("error parsing fragmented packet readBytes < 0");
+		addError() << "error parsing fragmented packet readBytes < 0";
 		return false;
-	} /*else {
-		logger.info("readBytes = " + String::valueOf(readBytes), true);
-	}*/
+	}
 
 	insertStream(pack->getBuffer() + packetOffset, readBytes/* - 3*/);
-
-	/*logger.info("received next segment of fragmented packet ("
-				+ String::valueOf(seq) + ") - size = " + String::valueOf(totalSize));*/
 
 	return true;
 }
@@ -101,21 +90,17 @@ BasePacket* BaseFragmentedPacket::getFragment() {
 	return frag;
 }
 
-bool BaseFragmentedPacket::isComplete() const {
+bool BaseFragmentedPacket::isComplete() {
 	int currentSize = size();
-
-	/*logger.info("checking fragmented packet completeness: " + String::valueOf(currentSize)
-			+ " = " + String::valueOf(totalSize));*/
 
 	if (currentSize < totalSize)
 		return false;
 	else if (currentSize == totalSize) {
-		//logger.info("currentSize == totalSize : " + String::valueOf(totalSize), true);
-
 		return true;
-	} else
-		throw Exception("fragmented packet exceeded size (" + String::valueOf(totalSize)
-				+ ") - size = " + String::valueOf(currentSize));
+	} else {
+		addError() << "fragmented packet exceeded size (" << totalSize << ") - size = " << currentSize;
+		throw Exception(getError());
+	}
 }
 
 bool BaseFragmentedPacket::hasFragments() const {
