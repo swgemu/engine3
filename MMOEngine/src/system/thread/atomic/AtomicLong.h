@@ -54,6 +54,14 @@ namespace sys {
 			return value += val;
 		}
 
+		inline uint64 compareAndSetReturnOld(uint64 oldval, uint64 newval) {
+			uint64 val = oldval;
+
+			value.compare_exchange_strong(val, newval);
+
+			return val;
+		}
+
 		inline bool compareAndSet(uint64 oldval, uint64 newval) {
 			uint64 val = oldval;
 
