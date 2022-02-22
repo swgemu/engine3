@@ -992,12 +992,12 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 	}
 
 	if (!fragmentedPacket->addFragment(pack)) {
+		error() << "addFragment failed: " << fragmentedPacket->getError() << "; fragmentedPacket: " << *fragmentedPacket << endl << "packet: " << *pack;
+
 		if (fragmentedPacket->getReferenceCount())
 			fragmentedPacket->release();
 		else
 			delete fragmentedPacket;
-
-		error() << "addFragment failed: " << fragmentedPacket->getError() << "; fragmentedPacket: " << *fragmentedPacket << endl << "packet: " << *pack;
 
 		fragmentedPacket = nullptr;
 
