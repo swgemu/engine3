@@ -997,9 +997,9 @@ BasePacket* BaseClient::receiveFragmentedPacket(Packet* pack) {
 		else
 			delete fragmentedPacket;
 
-		fragmentedPacket = nullptr;
-
 		error() << "addFragment failed: " << fragmentedPacket->getError() << "; fragmentedPacket: " << *fragmentedPacket << endl << "packet: " << *pack;
+
+		fragmentedPacket = nullptr;
 
 		throw FragmentedPacketParseException("could not insert frag");
 	}
