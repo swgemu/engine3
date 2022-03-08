@@ -31,7 +31,7 @@ namespace ThreadNs {
 
 }
 
-std::atomic<int> Thread::threadCounter;
+std::atomic<uint32> Thread::threadCounter;
 UniqueReference<ThreadInitializer*> Thread::threadInitializer;
 
 pthread_once_t Thread::initThread = PTHREAD_ONCE_INIT;
@@ -80,7 +80,8 @@ Thread::Thread() {
 	pthread_attr_init(&attributes);
 	memset(&thread, 0, sizeof(thread));
 
-	name = "Thread " + String::valueOf(++threadCounter);
+	threadNumber = ++threadCounter;
+	name = "Thread " + String::valueOf(threadNumber);
 	customName = name.replaceFirst(" ", "-");
 }
 

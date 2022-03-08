@@ -90,10 +90,11 @@ namespace sys {
 		pthread_t thread;
 		pthread_attr_t attributes;
 
+		uint32 threadNumber;
 		String name;
 		String customName;
 
-		static std::atomic<int> threadCounter;
+		static std::atomic<uint32> threadCounter;
 		static pthread_once_t initThread;
 
 		static ThreadLocal<Thread*> currentThread;
@@ -163,6 +164,10 @@ namespace sys {
 
 		static ThreadInitializer* getThreadInitializer() {
 			return threadInitializer;
+		}
+
+		uint32 getThreadNumber() {
+			return threadNumber;
 		}
 
 		const String& getName() {
