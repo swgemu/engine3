@@ -25,7 +25,7 @@
 	#define PLATFORM_UNIX
 #endif
 
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__)
 #define PLATFORM_64
 #else
 #define PLATFORM_32
