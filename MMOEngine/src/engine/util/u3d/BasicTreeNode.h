@@ -3,14 +3,14 @@
 ** See file COPYING for copying conditions.
 */
 /*
- * LightweightQuadTreeNode.h
+ * LightweightTreeNode.h
  *
  *  Created on: 15 de ago. de 2015
  *      Author: victor
  */
 
-#ifndef SRC_ENGINE_UTIL_U3D_BASICQUADTREENODE_H_
-#define SRC_ENGINE_UTIL_U3D_BASICQUADTREENODE_H_
+#ifndef SRC_ENGINE_UTIL_U3D_BasicTreeNode_H_
+#define SRC_ENGINE_UTIL_U3D_BasicTreeNode_H_
 
 #include "system/util/SortedVector.h"
 
@@ -18,17 +18,17 @@ namespace engine {
 namespace util {
 namespace u3d {
 
-class QuadTreeEntryInterface;
+class TreeEntryInterface;
 
-class BasicQuadTreeNode {
+class BasicTreeNode {
 protected:
-	SortedVector<engine::util::u3d::QuadTreeEntryInterface*> objects;
+	SortedVector<engine::util::u3d::TreeEntryInterface*> objects;
 
-	BasicQuadTreeNode* parentNode;
-	BasicQuadTreeNode* nwNode;
-	BasicQuadTreeNode* neNode;
-	BasicQuadTreeNode* swNode;
-	BasicQuadTreeNode* seNode;
+	BasicTreeNode* parentNode;
+	BasicTreeNode* nwNode;
+	BasicTreeNode* neNode;
+	BasicTreeNode* swNode;
+	BasicTreeNode* seNode;
 
 	float minX, minY;
 	float maxX, maxY;
@@ -36,21 +36,21 @@ protected:
 	float dividerX, dividerY;
 
 public:
-	BasicQuadTreeNode();
-	BasicQuadTreeNode(float minx, float miny, float maxx, float maxy,
-			BasicQuadTreeNode *parent);
+	BasicTreeNode();
+	BasicTreeNode(float minx, float miny, float maxx, float maxy,
+			BasicTreeNode *parent);
 
-	~BasicQuadTreeNode();
+	~BasicTreeNode();
 
 	// Add a object to this node
-	void addObject(QuadTreeEntryInterface *obj);
+	void addObject(TreeEntryInterface *obj);
 
-	QuadTreeEntryInterface* getObject(int index) const {
+	TreeEntryInterface* getObject(int index) const {
 		return objects.get(index);
 	}
 
 	// Remove a object by GUID
-	void removeObject(QuadTreeEntryInterface *obj);
+	void removeObject(TreeEntryInterface *obj);
 
 	void removeObject(int index);
 
@@ -85,7 +85,7 @@ public:
 	}
 
 	// Test if the object is inside this node
-	bool testInside(QuadTreeEntryInterface* obj) const;
+	bool testInside(TreeEntryInterface* obj) const;
 
 	/**
 	 * gets the node count including this one
@@ -95,12 +95,12 @@ public:
 	String toStringData() const;
 
 private:
-	static int _getSubNodeCount(const BasicQuadTreeNode* s);
+	static int _getSubNodeCount(const BasicTreeNode* s);
 
 	friend class BasicQuadTree;
-	friend class QuadTreeEntryInterface;
+	friend class TreeEntryInterface;
 	template<class Node>
-	friend class QuadTreeEntryInterfaceBase;
+	friend class TreeEntryInterfaceBase;
 };
 
 } // u3d
@@ -110,4 +110,4 @@ private:
 using namespace engine::util::u3d;
 
 
-#endif /* SRC_ENGINE_UTIL_U3D_BASICQUADTREENODE_H_ */
+#endif /* SRC_ENGINE_UTIL_U3D_BasicTreeNode_H_ */

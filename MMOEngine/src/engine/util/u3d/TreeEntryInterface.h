@@ -3,16 +3,16 @@
 ** See file COPYING for copying conditions.
 */
 /*
- * QuadTreeEntryInterface.h
+ * TreeEntryInterface.h
  *
  *  Created on: 15 de ago. de 2015
  *      Author: victor
  */
 
-#ifndef SRC_ENGINE_UTIL_U3D_QUADTREEENTRYINTERFACE_H_
-#define SRC_ENGINE_UTIL_U3D_QUADTREEENTRYINTERFACE_H_
+#ifndef SRC_ENGINE_UTIL_U3D_TreeEntryInterface_H_
+#define SRC_ENGINE_UTIL_U3D_TreeEntryInterface_H_
 
-#include "engine/util/u3d/BasicQuadTreeNode.h"
+#include "engine/util/u3d/BasicTreeNode.h"
 
 #include "system/util/SortedVector.h"
 
@@ -22,21 +22,21 @@ namespace u3d {
 
 
 template<class Node>
-class QuadTreeEntryInterfaceBase {
+class TreeEntryInterfaceBase {
 protected:
 	Node* node;
 	bool bounding;
 
 public:
-	QuadTreeEntryInterfaceBase() : node(nullptr), bounding(false) {
+	TreeEntryInterfaceBase() : node(nullptr), bounding(false) {
 
 	}
 
-	QuadTreeEntryInterfaceBase(Node* node) : node(node), bounding(false) {
+	TreeEntryInterfaceBase(Node* node) : node(node), bounding(false) {
 
 	}
 
-	virtual ~QuadTreeEntryInterfaceBase() {
+	virtual ~TreeEntryInterfaceBase() {
 
 	}
 
@@ -87,7 +87,7 @@ public:
 	virtual float getPositionX() const = 0;
 	virtual float getPositionY() const = 0;
 
-	virtual int compareTo(const QuadTreeEntryInterfaceBase* obj) const = 0;
+	virtual int compareTo(const TreeEntryInterfaceBase* obj) const = 0;
 
 	virtual bool isInQuadTree() const {
 		return node != nullptr;
@@ -120,7 +120,7 @@ public:
 	}
 };
 
-class QuadTreeEntryInterface : public QuadTreeEntryInterfaceBase<BasicQuadTreeNode> {
+class TreeEntryInterface : public TreeEntryInterfaceBase<BasicTreeNode> {
 };
 
 } // u3d
@@ -129,4 +129,4 @@ class QuadTreeEntryInterface : public QuadTreeEntryInterfaceBase<BasicQuadTreeNo
 
 using namespace engine::util::u3d;
 
-#endif /* SRC_ENGINE_UTIL_U3D_QUADTREEENTRYINTERFACE_H_ */
+#endif /* SRC_ENGINE_UTIL_U3D_TreeEntryInterface_H_ */
