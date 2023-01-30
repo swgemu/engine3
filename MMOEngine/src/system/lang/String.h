@@ -186,6 +186,7 @@ namespace sys {
 		static String valueOf(int64 val);
 		static String valueOf(uint64 val);
 		static String valueOf(float val);
+		static String valueOf(float val, int precision);
 		static String valueOf(double val);
 		static String valueOf(const void* val);
 		static String valueOf(const char* val);

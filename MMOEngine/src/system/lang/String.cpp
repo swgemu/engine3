@@ -384,6 +384,16 @@ String String::valueOf(float val) {
 	return String(buf, written);
 }
 
+String String::valueOf(float val, int precision) {
+	char buf[40];
+
+	int written = snprintf(buf, 40, "%.*f", precision, val);
+
+	E3_ASSERT(written >= 0 && written < 40);
+
+	return String(buf, written);
+}
+
 String String::valueOf(double val) {
 	char buf[40];
 
