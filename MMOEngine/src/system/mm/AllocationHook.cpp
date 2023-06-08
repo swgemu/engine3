@@ -49,6 +49,7 @@ void AllocationHook::install() {
 
 	instance = this;
 
+#if WITH_STM
 #ifndef PLATFORM_MAC
 	__saved_malloc_hook = __malloc_hook;
 	__saved_free_hook = __free_hook;
@@ -85,11 +86,13 @@ void AllocationHook::install() {
 	}
 
 #endif
+#endif // WITH_STM
 
 	//printf("hook installed %p\n", __malloc_hook);
 }
 
 void AllocationHook::uninstall() {
+#if WITH_STM
 #ifndef PLATFORM_MAC
 	__malloc_hook = __saved_malloc_hook;
 	__free_hook = __saved_free_hook;
@@ -114,6 +117,7 @@ void AllocationHook::uninstall() {
 		vm_protect(mach_task_self(), (uintptr_t)malloc_zones, protect_size, 0, VM_PROT_READ);//put the write protection back
 	}
 #endif
+#endif // WITH_STM
 
 	instance = nullptr;
 
