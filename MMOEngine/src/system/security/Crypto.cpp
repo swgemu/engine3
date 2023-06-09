@@ -9,7 +9,10 @@
 #include <openssl/err.h>
 
 #include <openssl/sha.h>
+
+#ifdef MD5_HASH
 #include <openssl/md5.h>
+#endif
 
 #include "engine/log/Logger.h"
 #include "system/thread/Mutex.h"
@@ -33,12 +36,14 @@ String Crypto::hashToString(uint8* val, std::size_t size) {
 	return sb.toString();
 }
 
+#ifdef MD5_HASH
 String Crypto::MD5Hash(const String& str) {
 	unsigned char res[MD5_DIGEST_LENGTH];
 	MD5(reinterpret_cast<const unsigned char*>(str.toCharArray()), str.length(), res);
 
 	return hashToString(res, MD5_DIGEST_LENGTH);
 }
+#endif
 
 String Crypto::SHA1Hash(const String& str) {
 	unsigned char res[SHA_DIGEST_LENGTH];
