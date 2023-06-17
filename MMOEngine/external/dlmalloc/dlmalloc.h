@@ -1789,6 +1789,9 @@ static FORCEINLINE int win32munmap(void* ptr, size_t size) {
 
 */
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-null-pointer-arithmetic"
+
 #if !USE_LOCKS
 #define USE_LOCK_BIT               (0U)
 #define INITIAL_LOCK(l)            (0)
@@ -3834,7 +3837,7 @@ static void* mmap_alloc(mstate m, size_t nb) {
 /* Realloc using mmap */
 static mchunkptr mmap_resize(mstate m, mchunkptr oldp, size_t nb, int flags) {
   size_t oldsize = chunksize(oldp);
-  flags = flags; /* placate people compiling -Wunused */
+  int unused_flags = flags; /* placate people compiling -Wunused */
   if (is_small(nb)) /* Can't shrink mmap regions below small size */
     return 0;
   /* Keep old chunk if big enough but not too big */
@@ -5944,6 +5947,7 @@ int mspace_mallopt(int param_number, int value) {
 
 #endif /* MSPACES */
 
+#pragma clang diagnostic pop
 
 /* -------------------- Alternative MORECORE functions ------------------- */
 
