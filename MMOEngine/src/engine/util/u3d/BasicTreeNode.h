@@ -29,16 +29,20 @@ protected:
 	BasicTreeNode* neNode;
 	BasicTreeNode* swNode;
 	BasicTreeNode* seNode;
+	BasicTreeNode* nwNode2;
+	BasicTreeNode* neNode2;
+	BasicTreeNode* swNode2;
+	BasicTreeNode* seNode2;
 
-	float minX, minY;
-	float maxX, maxY;
+	float minX, minY, minZ;
+	float maxX, maxY, maxZ;
 
-	float dividerX, dividerY;
+	float dividerX, dividerY, dividerZ;
 
 public:
 	BasicTreeNode();
-	BasicTreeNode(float minx, float miny, float maxx, float maxy,
-			BasicTreeNode *parent);
+	BasicTreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, BasicTreeNode *parent);
+	BasicTreeNode(float minx, float miny, float maxx, float maxy, BasicTreeNode *parent);
 
 	~BasicTreeNode();
 
@@ -57,15 +61,21 @@ public:
 	// Approximative test if a circle with center in x,y and
 	// given radius crosses this node.
 	bool testInRange(float x, float y, float range) const;
+	bool testInRange(float x, float y, float z, float range) const;
 
 	// Check if this node makes any sense to exist
 	void check();
 
 	bool validateNode() const {
-		if (minX > maxX || minY > maxY)
+		if (dividerZ != -1) {
+			if (minX > maxX || minY > maxY || minZ > maxZ) {
+				return false;
+			}
+		} else if (minX > maxX || minY > maxY) {
 			return false;
-		else
-			return true;
+		}
+
+		return true;
 	}
 
 	// Check if this node has any associated objects
@@ -75,11 +85,16 @@ public:
 
 	// Check if this node has children nodes
 	inline bool hasSubNodes() const {
-		return nwNode != nullptr || neNode != nullptr || swNode != nullptr || seNode
-				!= nullptr;
+		return nwNode != nullptr || neNode != nullptr || swNode != nullptr || seNode != nullptr
+			|| nwNode2 != nullptr || neNode2 != nullptr || swNode2 != nullptr || seNode2 != nullptr;
 	}
 
+
 	// Test if the point is inside this node
+	inline bool testInside(float x, float y, float z) const {
+		return x >= minX && x < maxX && y >= minY && y < maxY && z >= minZ && z < maxZ;
+	}
+
 	inline bool testInside(float x, float y) const {
 		return x >= minX && x < maxX && y >= minY && y < maxY;
 	}
@@ -98,6 +113,7 @@ private:
 	static int _getSubNodeCount(const BasicTreeNode* s);
 
 	friend class BasicQuadTree;
+	friend class BasicOcTree;
 	friend class TreeEntryInterface;
 	template<class Node>
 	friend class TreeEntryInterfaceBase;
