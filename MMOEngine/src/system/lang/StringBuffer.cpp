@@ -117,6 +117,14 @@ StringBuffer& StringBuffer::append(float val) {
 	return append(str);
 }
 
+StringBuffer& StringBuffer::append(float val, int places) {
+	String str;
+
+	str = String::valueOf(val, places);
+
+	return append(str);
+}
+
 StringBuffer& StringBuffer::append(double val) {
 	String str;
 

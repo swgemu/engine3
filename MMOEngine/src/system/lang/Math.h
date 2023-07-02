@@ -28,6 +28,10 @@ namespace sys {
 			return ::sqrt(number);
 		}
 
+		static inline double cbrt(double number) {
+			return ::cbrt(number);
+		}
+
 		//static float rsqrt(float number);
 
 		//static float fabs(float f);
