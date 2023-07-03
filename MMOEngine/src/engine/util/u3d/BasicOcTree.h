@@ -9,16 +9,16 @@
 #ifndef SRC_ENGINE_UTIL_U3D_BASICOCTREE_H_
 #define SRC_ENGINE_UTIL_U3D_BASICOCTREE_H_
 
-#include "engine/util/u3d/BasicTreeNode.h"
+#include "engine/util/u3d/BasicOcTreeNode.h"
 
-#include "TreeEntryInterface.h"
+#include "OcTreeEntryInterface.h"
 
 namespace engine {
 namespace util {
 namespace u3d {
 
 class BasicOcTree {
-	BasicTreeNode* root;
+	BasicOcTreeNode* root;
 
 	const int minSquareSize;
 
@@ -39,12 +39,12 @@ public:
 	/**
 	 * Insert a object into the quad tree.
 	 */
-	virtual void insert(TreeEntryInterface* obj);
+	virtual void insert(OcTreeEntryInterface* obj);
 
 	/**
 	 * Remove the object from the quad tree.
 	 */
-	virtual void remove(TreeEntryInterface* obj);
+	virtual void remove(OcTreeEntryInterface* obj);
 
 	/*
 	 * Recursively iterates the tree counting the nodes
@@ -54,9 +54,9 @@ public:
 	/*
 	 * Remove the node and all of its children including the objects
 	 */
-	void remove(BasicTreeNode* node);
+	void remove(BasicOcTreeNode* node);
 
-	virtual int inRange(float x, float y, float z, float range, Vector<TreeEntryInterface*>& objects);
+	virtual int inRange(float x, float y, float z, float range, Vector<OcTreeEntryInterface*>& objects);
 
 	/**
 	 * Remove all objects from the quad tree
@@ -64,9 +64,9 @@ public:
 	virtual void removeAll();
 
 private:
-	void _insert(BasicTreeNode* node, TreeEntryInterface* obj);
+	void _insert(BasicOcTreeNode* node, OcTreeEntryInterface* obj);
 
-	int _inRange(BasicTreeNode* node, float x, float y, float z, float range, Vector<TreeEntryInterface*>& objects);
+	int _inRange(BasicOcTreeNode* node, float x, float y, float z, float range, Vector<OcTreeEntryInterface*>& objects);
 
 public:
 	static void setLogging(bool doLog) {

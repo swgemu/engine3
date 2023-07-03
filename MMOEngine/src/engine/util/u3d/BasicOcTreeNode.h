@@ -9,8 +9,8 @@
  *      Author: victor
  */
 
-#ifndef SRC_ENGINE_UTIL_U3D_BasicTreeNode_H_
-#define SRC_ENGINE_UTIL_U3D_BasicTreeNode_H_
+#ifndef SRC_ENGINE_UTIL_U3D_BASICOCTREENODE_H_
+#define SRC_ENGINE_UTIL_U3D_BASICOCTREENODE_H_
 
 #include "system/util/SortedVector.h"
 
@@ -18,21 +18,21 @@ namespace engine {
 namespace util {
 namespace u3d {
 
-class TreeEntryInterface;
+class OcTreeEntryInterface;
 
-class BasicTreeNode {
+class BasicOcTreeNode {
 protected:
-	SortedVector<engine::util::u3d::TreeEntryInterface*> objects;
+	SortedVector<engine::util::u3d::OcTreeEntryInterface*> objects;
 
-	BasicTreeNode* parentNode;
-	BasicTreeNode* nwNode;
-	BasicTreeNode* neNode;
-	BasicTreeNode* swNode;
-	BasicTreeNode* seNode;
-	BasicTreeNode* nwNode2;
-	BasicTreeNode* neNode2;
-	BasicTreeNode* swNode2;
-	BasicTreeNode* seNode2;
+	BasicOcTreeNode* parentNode;
+	BasicOcTreeNode* nwNode;
+	BasicOcTreeNode* neNode;
+	BasicOcTreeNode* swNode;
+	BasicOcTreeNode* seNode;
+	BasicOcTreeNode* nwNode2;
+	BasicOcTreeNode* neNode2;
+	BasicOcTreeNode* swNode2;
+	BasicOcTreeNode* seNode2;
 
 	float minX, minY, minZ;
 	float maxX, maxY, maxZ;
@@ -40,21 +40,21 @@ protected:
 	float dividerX, dividerY, dividerZ;
 
 public:
-	BasicTreeNode();
-	BasicTreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, BasicTreeNode *parent);
-	BasicTreeNode(float minx, float miny, float maxx, float maxy, BasicTreeNode *parent);
+	BasicOcTreeNode();
+	BasicOcTreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, BasicOcTreeNode *parent);
+	BasicOcTreeNode(float minx, float miny, float maxx, float maxy, BasicOcTreeNode *parent);
 
-	~BasicTreeNode();
+	~BasicOcTreeNode();
 
 	// Add a object to this node
-	void addObject(TreeEntryInterface *obj);
+	void addObject(OcTreeEntryInterface *obj);
 
-	TreeEntryInterface* getObject(int index) const {
+	OcTreeEntryInterface* getObject(int index) const {
 		return objects.get(index);
 	}
 
 	// Remove a object by GUID
-	void removeObject(TreeEntryInterface *obj);
+	void removeObject(OcTreeEntryInterface *obj);
 
 	void removeObject(int index);
 
@@ -100,7 +100,7 @@ public:
 	}
 
 	// Test if the object is inside this node
-	bool testInside(TreeEntryInterface* obj) const;
+	bool testInside(OcTreeEntryInterface* obj) const;
 
 	/**
 	 * gets the node count including this one
@@ -110,13 +110,13 @@ public:
 	String toStringData() const;
 
 private:
-	static int _getSubNodeCount(const BasicTreeNode* s);
+	static int _getSubNodeCount(const BasicOcTreeNode* s);
 
 	friend class BasicQuadTree;
 	friend class BasicOcTree;
-	friend class TreeEntryInterface;
+	friend class OcTreeEntryInterface;
 	template<class Node>
-	friend class TreeEntryInterfaceBase;
+	friend class OcTreeEntryInterfaceBase;
 };
 
 } // u3d
@@ -126,4 +126,4 @@ private:
 using namespace engine::util::u3d;
 
 
-#endif /* SRC_ENGINE_UTIL_U3D_BasicTreeNode_H_ */
+#endif /* SRC_ENGINE_UTIL_U3D_BASICOCTREENODE_H_ */

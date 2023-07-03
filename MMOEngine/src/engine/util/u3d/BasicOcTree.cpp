@@ -11,12 +11,12 @@
 #include "engine/util/u3d/BasicOcTree.h"
 
 namespace OTNode {
-static Logger logger("BasicTreeNode", Logger::WARNING);
+static Logger logger("BasicOcTreeNode", Logger::WARNING);
 }
 
 using namespace OTNode;
 
-BasicTreeNode::BasicTreeNode() {
+BasicOcTreeNode::BasicOcTreeNode() {
 	objects.setNoDuplicateInsertPlan();
 
 	parentNode = nullptr;
@@ -34,7 +34,7 @@ BasicTreeNode::BasicTreeNode() {
 	dividerZ = 0;
 }
 
-BasicTreeNode::BasicTreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, BasicTreeNode* parent) {
+BasicOcTreeNode::BasicOcTreeNode(float minx, float miny, float minz, float maxx, float maxy, float maxz, BasicOcTreeNode* parent) {
 	objects.setNoDuplicateInsertPlan();
 
 	parentNode = parent;
@@ -57,7 +57,7 @@ BasicTreeNode::BasicTreeNode(float minx, float miny, float minz, float maxx, flo
 	dividerZ = (minZ + maxZ) / 2;
 }
 
-BasicTreeNode::~BasicTreeNode() {
+BasicOcTreeNode::~BasicOcTreeNode() {
 	if (nwNode != nullptr)
 		delete nwNode;
 
@@ -83,7 +83,7 @@ BasicTreeNode::~BasicTreeNode() {
 		delete seNode2;
 }
 
-void BasicTreeNode::addObject(TreeEntryInterface* obj) {
+void BasicOcTreeNode::addObject(OcTreeEntryInterface* obj) {
 	if (BasicOcTree::doLog())
 		logger.info(true) << hex << "object [" << obj->getObjectID() << "] added to BasicOcTree" << *this;
 
@@ -97,7 +97,7 @@ void BasicTreeNode::addObject(TreeEntryInterface* obj) {
 	obj->setNode(this);
 }
 
-void BasicTreeNode::removeObject(TreeEntryInterface* obj) {
+void BasicOcTreeNode::removeObject(OcTreeEntryInterface* obj) {
 	if (!objects.drop(obj)) {
 		logger.error() << hex << "object [" << obj->getObjectID() << "] not found on BasicOcTree" << *this;
 	} else {
@@ -108,12 +108,12 @@ void BasicTreeNode::removeObject(TreeEntryInterface* obj) {
 	}
 }
 
-void BasicTreeNode::removeObject(int index) {
-	TreeEntryInterface* obj = objects.remove(index);
+void BasicOcTreeNode::removeObject(int index) {
+	OcTreeEntryInterface* obj = objects.remove(index);
 	obj->setNode(nullptr);
 }
 
-bool BasicTreeNode::testInside(TreeEntryInterface* obj) const {
+bool BasicOcTreeNode::testInside(OcTreeEntryInterface* obj) const {
 	float x = obj->getPositionX();
 	float y = obj->getPositionY();
 	float z = obj->getPositionZ();
@@ -121,7 +121,7 @@ bool BasicTreeNode::testInside(TreeEntryInterface* obj) const {
 	return x >= minX && x < maxX && y >= minY && y < maxY && z >= minZ && z < maxZ;
 }
 
-bool BasicTreeNode::testInRange(float x, float y, float z, float range) const {
+bool BasicOcTreeNode::testInRange(float x, float y, float z, float range) const {
 	bool insideX = (minX <= x) && (x < maxX);
 	bool insideY = (minY <= y) && (y < maxY);
 	bool insideZ = (minZ <= z) && (z < maxZ);
@@ -139,7 +139,7 @@ bool BasicTreeNode::testInRange(float x, float y, float z, float range) const {
 		return false;
 }
 
-void BasicTreeNode::check() {
+void BasicOcTreeNode::check() {
 	if (isEmpty() && !hasSubNodes() && parentNode != nullptr) {
 		if (parentNode->nwNode == this)
 			parentNode->nwNode = nullptr;
@@ -165,14 +165,14 @@ void BasicTreeNode::check() {
 	}
 }
 
-String BasicTreeNode::toStringData() const {
+String BasicOcTreeNode::toStringData() const {
 	StringBuffer s;
 	s << "Node " << this << " (" << (int)minX << ", " << (int)minY << ", " << (int)minZ << ", " << (int)maxX << ", " << (int)maxY << ", " << maxZ << ") [" << objects.size() << "]";
 
 	return s.toString();
 }
 
-int BasicTreeNode::_getSubNodeCount(const BasicTreeNode* s) {
+int BasicOcTreeNode::_getSubNodeCount(const BasicOcTreeNode* s) {
 	int count = 1;
 
 	if (s->neNode != nullptr) {
@@ -210,7 +210,7 @@ int BasicTreeNode::_getSubNodeCount(const BasicTreeNode* s) {
 	return count;
 }
 
-int BasicTreeNode::getNodeCount() const {
+int BasicOcTreeNode::getNodeCount() const {
 	return _getSubNodeCount(this);
 }
 
@@ -221,7 +221,7 @@ bool BasicOcTree::logTree = false;
 BasicOcTree::BasicOcTree() : root(nullptr), minSquareSize(8) {
 }
 
-BasicOcTree::BasicOcTree(float minx, float miny, float minz, float maxx, float maxy, float maxz, float minSquareSize) : root(new BasicTreeNode(minx, miny, minz, maxx, maxy, maxz, nullptr)), minSquareSize(minSquareSize) {
+BasicOcTree::BasicOcTree(float minx, float miny, float minz, float maxx, float maxy, float maxz, float minSquareSize) : root(new BasicOcTreeNode(minx, miny, minz, maxx, maxy, maxz, nullptr)), minSquareSize(minSquareSize) {
 }
 
 BasicOcTree::~BasicOcTree() {
@@ -233,10 +233,10 @@ BasicOcTree::~BasicOcTree() {
 void BasicOcTree::setSize(float minx, float miny, float minz, float maxx, float maxy, float maxz) {
 	delete root;
 
-	root = new BasicTreeNode(minx, miny, minz, maxx, maxy, maxz, nullptr);
+	root = new BasicOcTreeNode(minx, miny, minz, maxx, maxy, maxz, nullptr);
 }
 
-void BasicOcTree::insert(TreeEntryInterface* obj) {
+void BasicOcTree::insert(OcTreeEntryInterface* obj) {
 	/*if (!isLocked()) {
 		System::out << "inserting to unlocked quad tree\n";
 		StackTrace::printStackTrace();
@@ -261,7 +261,7 @@ void BasicOcTree::insert(TreeEntryInterface* obj) {
 	}
 }
 
-int BasicOcTree::inRange(float x, float y, float z, float range, Vector<TreeEntryInterface*>& objects) {
+int BasicOcTree::inRange(float x, float y, float z, float range, Vector<OcTreeEntryInterface*>& objects) {
 	try {
 		return _inRange(root, x, y, z, range, objects);
 	} catch (const Exception& e) {
@@ -272,22 +272,22 @@ int BasicOcTree::inRange(float x, float y, float z, float range, Vector<TreeEntr
 	return 0;
 }
 
-void BasicOcTree::remove(BasicTreeNode* node) {
+void BasicOcTree::remove(BasicOcTreeNode* node) {
 	if (!node->validateNode()) {
 		logger.error() << "[BasicOcTree] "
-					   << " error on remove(BasicTreeNode) - invalid Node" << *node;
+					   << " error on remove(BasicOcTreeNode) - invalid Node" << *node;
 
 		return;
 	}
 
 	if (node->parentNode == nullptr) {
 		logger.error() << "[BasicOcTree] "
-					   << " error on remove(BasicTreeNode) - trying to remove root Node" << *node;
+					   << " error on remove(BasicOcTreeNode) - trying to remove root Node" << *node;
 
 		return;
 	}
 
-	BasicTreeNode* parent = node->parentNode;
+	BasicOcTreeNode* parent = node->parentNode;
 
 	if (parent->nwNode == node) {
 		parent->nwNode = nullptr;
@@ -310,7 +310,7 @@ int BasicOcTree::getNodeCount() {
 	return root->getNodeCount();
 }
 
-void BasicOcTree::remove(TreeEntryInterface* obj) {
+void BasicOcTree::remove(OcTreeEntryInterface* obj) {
 	/*if (!isLocked()) {
 		System::out << "remove on unlocked quad tree\n";
 		StackTrace::printStackTrace();
@@ -320,7 +320,7 @@ void BasicOcTree::remove(TreeEntryInterface* obj) {
 	if (BasicOcTree::doLog())
 		logger.info(true) << hex << "object [" << obj->getObjectID() << "] removing";
 
-	BasicTreeNode* node = obj->getNode();
+	BasicOcTreeNode* node = obj->getNode();
 
 	if (node != nullptr) {
 		if (!node->validateNode()) {
@@ -351,7 +351,7 @@ void BasicOcTree::removeAll() {
  * Every Node can have data and children. Every data must be completely
  * contained inside the Node, so boundary sphere is checked.
  */
-void BasicOcTree::_insert(BasicTreeNode* node, TreeEntryInterface* obj) {
+void BasicOcTree::_insert(BasicOcTreeNode* node, OcTreeEntryInterface* obj) {
 	/*
 	 * Logic:
 	 *
@@ -391,7 +391,7 @@ void BasicOcTree::_insert(BasicTreeNode* node, TreeEntryInterface* obj) {
 		 * makes handling deletions from the vector easier.
 		 */
 		for (int i = node->objects.size() - 1; i >= 0; i--) {
-			TreeEntryInterface* existing = node->getObject(i);
+			OcTreeEntryInterface* existing = node->getObject(i);
 
 			// We remove the Object from the Node if its not locked
 			// for crossing boundaries to add it to another Node
@@ -408,42 +408,42 @@ void BasicOcTree::_insert(BasicTreeNode* node, TreeEntryInterface* obj) {
 
 			if (existing->isInSWArea(node)) {
 				if (node->swNode == nullptr)
-					node->swNode = new BasicTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
+					node->swNode = new BasicOcTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
 				_insert(node->swNode, existing);
 			} else if (existing->isInSEArea(node)) {
 				if (node->seNode == nullptr)
-					node->seNode = new BasicTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
+					node->seNode = new BasicOcTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
 				_insert(node->seNode, existing);
 			} else if (existing->isInNWArea(node)) {
 				if (node->nwNode == nullptr)
-					node->nwNode = new BasicTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
+					node->nwNode = new BasicOcTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
 				_insert(node->nwNode, existing);
 			} else if (existing->isInNEArea(node)) {
 				if (node->neNode == nullptr)
-					node->neNode = new BasicTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
+					node->neNode = new BasicOcTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
 				_insert(node->neNode, existing);
 			} else if (existing->isInSW2Area(node)) {
 				if (node->swNode2 == nullptr)
-					node->swNode2 = new BasicTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
+					node->swNode2 = new BasicOcTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
 				_insert(node->swNode2, existing);
 			} else if (existing->isInSE2Area(node)) {
 				if (node->seNode2 == nullptr)
-					node->seNode2 = new BasicTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
+					node->seNode2 = new BasicOcTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
 				_insert(node->seNode2, existing);
 			} else if (existing->isInNW2Area(node)) {
 				if (node->nwNode2 == nullptr)
-					node->nwNode2 = new BasicTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
+					node->nwNode2 = new BasicOcTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
 				_insert(node->nwNode2, existing);
 			} else {
 				if (node->neNode2 == nullptr)
-					node->neNode2 = new BasicTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
+					node->neNode2 = new BasicOcTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
 				_insert(node->neNode2, existing);
 			}
@@ -474,42 +474,42 @@ void BasicOcTree::_insert(BasicTreeNode* node, TreeEntryInterface* obj) {
 	if (node->hasSubNodes()) {
 		if (obj->isInSWArea(node)) {
 			if (node->swNode == nullptr)
-				node->swNode = new BasicTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
+				node->swNode = new BasicOcTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
 			_insert(node->swNode, obj);
 		} else if (obj->isInSEArea(node)) {
 			if (node->seNode == nullptr)
-				node->seNode = new BasicTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
+				node->seNode = new BasicOcTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
 			_insert(node->seNode, obj);
 		} else if (obj->isInNWArea(node)) {
 			if (node->nwNode == nullptr)
-				node->nwNode = new BasicTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
+				node->nwNode = new BasicOcTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
 			_insert(node->nwNode, obj);
 		} else if (obj->isInNEArea(node)) {
 			if (node->neNode == nullptr)
-				node->neNode = new BasicTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
+				node->neNode = new BasicOcTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
 			_insert(node->neNode, obj);
 		} else if (obj->isInSW2Area(node)) {
 			if (node->swNode2 == nullptr)
-				node->swNode2 = new BasicTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
+				node->swNode2 = new BasicOcTreeNode(node->minX, node->minY, node->dividerX, node->dividerY, node);
 
 			_insert(node->swNode2, obj);
 		} else if (obj->isInSE2Area(node)) {
 			if (node->seNode2 == nullptr)
-				node->seNode2 = new BasicTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
+				node->seNode2 = new BasicOcTreeNode(node->dividerX, node->minY, node->maxX, node->dividerY, node);
 
 			_insert(node->seNode2, obj);
 		} else if (obj->isInNW2Area(node)) {
 			if (node->nwNode2 == nullptr)
-				node->nwNode2 = new BasicTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
+				node->nwNode2 = new BasicOcTreeNode(node->minX, node->dividerY, node->dividerX, node->maxY, node);
 
 			_insert(node->nwNode2, obj);
 		} else {
 			if (node->neNode2 == nullptr)
-				node->neNode2 = new BasicTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
+				node->neNode2 = new BasicOcTreeNode(node->dividerX, node->dividerY, node->maxX, node->maxY, node);
 
 			_insert(node->neNode2, obj);
 		}
@@ -522,11 +522,11 @@ void BasicOcTree::_insert(BasicTreeNode* node, TreeEntryInterface* obj) {
 	node->addObject(obj);
 }
 
-int BasicOcTree::_inRange(BasicTreeNode* node, float x, float y, float z, float range, Vector<TreeEntryInterface*>& objects) {
+int BasicOcTree::_inRange(BasicOcTreeNode* node, float x, float y, float z, float range, Vector<OcTreeEntryInterface*>& objects) {
 	int count = 0;
 
 	for (int i = 0; i < node->objects.size(); i++) {
-		TreeEntryInterface* o = node->objects.get(i);
+		OcTreeEntryInterface* o = node->objects.get(i);
 
 		if (o->isInRange(x, y, z, range)) {
 			++count;

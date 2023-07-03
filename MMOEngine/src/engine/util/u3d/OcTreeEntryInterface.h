@@ -3,16 +3,13 @@
 ** See file COPYING for copying conditions.
 */
 /*
- * TreeEntryInterface.h
- *
- *  Created on: 15 de ago. de 2015
- *      Author: victor
+ * OcTreeEntryInterface.h
  */
 
-#ifndef SRC_ENGINE_UTIL_U3D_TreeEntryInterface_H_
-#define SRC_ENGINE_UTIL_U3D_TreeEntryInterface_H_
+#ifndef SRC_ENGINE_UTIL_U3D_OCTREEENTRYINTERFACE_H_
+#define SRC_ENGINE_UTIL_U3D_OCTREEENTRYINTERFACE_H_
 
-#include "engine/util/u3d/BasicTreeNode.h"
+#include "engine/util/u3d/BasicOcTreeNode.h"
 
 #include "system/util/SortedVector.h"
 
@@ -21,19 +18,19 @@ namespace util {
 namespace u3d {
 
 template <class Node>
-class TreeEntryInterfaceBase {
+class OcTreeEntryInterfaceBase {
 protected:
 	Node* node;
 	bool bounding;
 
 public:
-	TreeEntryInterfaceBase() : node(nullptr), bounding(false) {
+	OcTreeEntryInterfaceBase() : node(nullptr), bounding(false) {
 	}
 
-	TreeEntryInterfaceBase(Node* node) : node(node), bounding(false) {
+	OcTreeEntryInterfaceBase(Node* node) : node(node), bounding(false) {
 	}
 
-	virtual ~TreeEntryInterfaceBase() {
+	virtual ~OcTreeEntryInterfaceBase() {
 	}
 
 	virtual bool isInRange(float x, float y, float range) const {
@@ -165,7 +162,7 @@ public:
 	virtual float getPositionY() const = 0;
 	virtual float getPositionZ() const = 0;
 
-	virtual int compareTo(const TreeEntryInterfaceBase* obj) const = 0;
+	virtual int compareTo(const OcTreeEntryInterfaceBase* obj) const = 0;
 
 	virtual bool isInQuadTree() const {
 		return node != nullptr;
@@ -202,7 +199,7 @@ public:
 	}
 };
 
-class TreeEntryInterface : public TreeEntryInterfaceBase<BasicTreeNode> {};
+class OcTreeEntryInterface : public OcTreeEntryInterfaceBase<BasicOcTreeNode> {};
 
 } // namespace u3d
 } // namespace util
@@ -210,4 +207,4 @@ class TreeEntryInterface : public TreeEntryInterfaceBase<BasicTreeNode> {};
 
 using namespace engine::util::u3d;
 
-#endif /* SRC_ENGINE_UTIL_U3D_TreeEntryInterface_H_ */
+#endif /* SRC_ENGINE_UTIL_U3D_OCTREEENTRYINTERFACE_H_ */
