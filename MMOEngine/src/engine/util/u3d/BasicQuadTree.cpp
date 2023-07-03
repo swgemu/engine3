@@ -24,6 +24,7 @@ BasicTreeNode::BasicTreeNode() {
 
 	parentNode = nullptr;
 	nwNode = neNode = swNode = seNode = nullptr;
+	nwNode2 = neNode2 = swNode2 = seNode2 = nullptr;
 
 	minX = 0;
 	minY = 0;
@@ -32,6 +33,7 @@ BasicTreeNode::BasicTreeNode() {
 
 	dividerX = 0;
 	dividerY = 0;
+	dividerZ = -1;
 }
 
 BasicTreeNode::BasicTreeNode(float minx, float miny, float maxx, float maxy, BasicTreeNode *parent) {
@@ -39,6 +41,7 @@ BasicTreeNode::BasicTreeNode(float minx, float miny, float maxx, float maxy, Bas
 
 	parentNode = parent;
 	nwNode = neNode = swNode = seNode = nullptr;
+	nwNode2 = neNode2 = swNode2 = seNode2 = nullptr;
 
 	minX = minx;
 	minY = miny;
@@ -51,6 +54,7 @@ BasicTreeNode::BasicTreeNode(float minx, float miny, float maxx, float maxy, Bas
 
 	dividerX = (minX + maxX) / 2;
 	dividerY = (minY + maxY) / 2;
+	dividerZ = -1;
 }
 
 BasicTreeNode::~BasicTreeNode() {

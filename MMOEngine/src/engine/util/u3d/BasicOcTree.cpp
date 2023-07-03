@@ -39,6 +39,7 @@ BasicTreeNode::BasicTreeNode(float minx, float miny, float minz, float maxx, flo
 
 	parentNode = parent;
 	nwNode = neNode = swNode = seNode = nullptr;
+	nwNode2 = neNode2 = swNode2 = seNode2 = nullptr;
 
 	minX = minx;
 	minY = miny;
