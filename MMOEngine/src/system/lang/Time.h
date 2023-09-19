@@ -219,7 +219,11 @@ namespace sys {
 #endif
 		}
 
-		String getFormattedTimeFull() const {
+		String getFormattedTimeShort() const {
+			return getFormattedTimeFull(false);
+		}
+
+		String getFormattedTimeFull(bool include_ms = true) const {
 			int ret;
 			struct tm t;
 			String value;
@@ -238,8 +242,12 @@ namespace sys {
 #endif
 
 			ret = strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &t);
-			if (ret <= 0)
+
+			if (ret <= 0 || !include_ms) {
+				value = buf;
+
 				return value;
+			}
 
 			len -= ret - 1;
 
