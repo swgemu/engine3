@@ -519,7 +519,7 @@ String String::withCommas(uint64 val) {
 	std::size_t i = 0;
 
 	for (auto pos = src.rbegin(); pos != src.rend(); ++pos) {
-		if (i % 3 == 0 && i != 0) {
+		if (i % 3 == 0 && i != 0 && !(val < 0 && i == src.length() - 1 && src[0] == '-')) {
 			out.push_back(',');
 		}
 		++i;
