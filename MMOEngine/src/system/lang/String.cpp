@@ -488,18 +488,22 @@ String String::withCommas(long val) {
 
 String String::withCommas(int64 val) {
 	std::ostringstream buf;
-	buf << val;
+ 	buf << ((val < 0) ? -val : val);
 	std::string src = buf.str();
 	std::string out;
 	std::size_t i = 0;
 
 	for (auto pos = src.rbegin(); pos != src.rend(); ++pos) {
-		if (i % 3 == 0 && i != 0 && !(val < 0 && i == src.length() - 1 && src[0] == '-')) {
+		if (i % 3 == 0 && i != 0) {
 			out.push_back(',');
 		}
 		++i;
 
 		out.push_back(*pos);
+	}
+
+	if (val < 0) {
+		out.push_back('-');
 	}
 
 	std::reverse (out.begin(), out.end());
