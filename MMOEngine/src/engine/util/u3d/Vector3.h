@@ -95,11 +95,19 @@ namespace engine {
 			return Math::sqrt(values[0] * values[0] + values[1] * values[1] + values[2] * values[2]);
 		}
 
+		inline float length2d() const {
+			return Math::sqrt(values[0] * values[0] + values[1] * values[1]);
+		}
+
 		/**
 		 * Returns the length before being squared. Good for comparing lengths.
 		 */
 		inline float squaredLength() const {
 			return (values[0] * values[0] + values[1] * values[1] + values[2] * values[2]);
+		}
+
+		inline float squaredLength2d() const {
+			return (values[0] * values[0] + values[1] * values[1]);
 		}
 
 		/**
@@ -112,6 +120,10 @@ namespace engine {
 			return (*this - v).length();
 		}
 
+		inline float distanceTo2d(const Vector3& v) const {
+			return (*this - v).length2d();
+		}
+
 		/**
 		 * Good for comparisons of distance. Saves the cpu usage needed for sqrt.
 		 * \param v The vector to get the distance to.
@@ -119,6 +131,10 @@ namespace engine {
 		 */
 		inline float squaredDistanceTo(const Vector3& v) const {
 			return (*this - v).squaredLength();
+		}
+
+		inline float squaredDistanceTo2d(const Vector3& v) const {
+			return (*this - v).squaredLength2d();
 		}
 
 		/**
