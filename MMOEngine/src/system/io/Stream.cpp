@@ -211,6 +211,8 @@ void Stream::readStream(Stream* stream, int len) {
 
 String Stream::toStringData() const {
 	StringBuffer str;
+
+#if !DEBUG_STREAM_HEXDUMP
 	str << "Stream [" << size() << "] " << uppercase << hex;
 
 	for (int i = 0; i < size(); ++i) {
@@ -221,6 +223,60 @@ String Stream::toStringData() const {
 		else
 			str << byte  << " ";
 	}
+
+#else // DEBUG_STREAM_HEXDUMP
+	// Extended hex dump format (slower), example:
+	//
+	// >> 020  42 0d 00 74 65 72 6d 69  6e 61 6c 5f 6e 61 6d 65  |B..terminal_name|
+	//
+	str << "Stream [" << size() << "]:";
+
+	if (size() == 0) {
+		str << " <empty>";
+		return str.toString();
+	}
+
+	bool multiline = size() >= 16;
+
+	str << (multiline ? "\n" : " ");
+
+	int width = (int)ceil(log10(size()) / log10(16)) + 1;
+
+	for (int i = 0; i < size(); i += 16) {
+		StringBuffer ascii;
+
+		if (multiline) {
+			str << ">> " << String::format("%0*x", width, i) << "  ";
+		}
+
+		for (int j = 0; j < 16; j++) {
+
+			if (i + j < size()) {
+				unsigned int byte = ((unsigned int) elementData[i + j]) & 0xFF;
+
+				str << String::format("%02x ", byte);
+
+				ascii << ((byte >= 32 && byte < 127) ? static_cast<char>(byte) : '.');
+			} else if (multiline) {
+				str << "   ";
+			}
+
+			if (j == 7) {
+				str << " "; // Extra middle space on hex dump
+			}
+		}
+
+		str << " |" << ascii << "|";
+
+		if (multiline) {
+			str << "\n";
+		}
+	}
+
+	if (multiline) {
+		str << "---";
+	}
+#endif // DEBUG_STREAM_HEXDUMP
 
 	return str.toString();
 }
