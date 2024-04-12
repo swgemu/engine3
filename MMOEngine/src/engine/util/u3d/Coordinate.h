@@ -69,11 +69,11 @@ namespace engine {
 			return true;
 		}
 
-		void randomizePosition(float radius) {
+		void randomizePosition(float maxRadius, float minRadius = 1.f) {
 			updatePreviousPosition();
 
 			float angle = (45 + System::random(200)) / 3.14;
-			float distance = radius + System::random((int) radius);
+			float distance = System::random((int)(maxRadius - minRadius)) + minRadius;
 
 			position.setX(position.getX() + cos(angle) * distance);
 			position.setY(position.getY() + sin(angle) * distance);
