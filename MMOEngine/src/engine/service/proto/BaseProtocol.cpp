@@ -9,6 +9,11 @@
 
 #include "engine/core/Core.h"
 
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wvla-cxx-extension"
+#endif
+
 BaseProtocol::BaseProtocol() : Logger("BaseProtocol") {
 }
 
@@ -438,3 +443,7 @@ bool BaseProtocol::testCRC(const Packet* pack, uint16 crcLength) const {
 
 	return crctest;
 }
+
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic pop
+#endif

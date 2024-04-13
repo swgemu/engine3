@@ -5159,6 +5159,10 @@ struct is_sax_static_asserts
 
 // #include <nlohmann/detail/value_t.hpp>
 
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wnan-infinity-disabled"
+#endif
 
 namespace nlohmann
 {
@@ -7122,6 +7126,10 @@ class binary_reader
 }  // namespace detail
 }  // namespace nlohmann
 
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic pop
+#endif
+
 // #include <nlohmann/detail/input/input_adapters.hpp>
 
 // #include <nlohmann/detail/input/lexer.hpp>
@@ -8643,6 +8651,10 @@ scan_number_done:
 
 // #include <nlohmann/detail/input/parser.hpp>
 
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wnan-infinity-disabled"
+#endif
 
 #include <cassert> // assert
 #include <cmath> // isfinite
@@ -9147,6 +9159,10 @@ class parser
 };
 }  // namespace detail
 }  // namespace nlohmann
+
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic pop
+#endif
 
 // #include <nlohmann/detail/iterators/internal_iterator.hpp>
 
@@ -12626,6 +12642,11 @@ class binary_writer
 }  // namespace detail
 }  // namespace nlohmann
 
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wnan-infinity-disabled"
+#endif
+
 // #include <nlohmann/detail/output/output_adapters.hpp>
 
 // #include <nlohmann/detail/output/serializer.hpp>
@@ -14609,6 +14630,10 @@ class serializer
 };
 }  // namespace detail
 }  // namespace nlohmann
+
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic pop
+#endif
 
 // #include <nlohmann/detail/value_t.hpp>
 
