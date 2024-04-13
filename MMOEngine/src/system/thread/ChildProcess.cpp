@@ -55,7 +55,8 @@ public:
 		Pipe& pipe = process->getPipe();
 		pipe.writeInt(SEGFAULT);
 
-		sigpause(SIGINT);
+		struct sigaction act;
+		sigsuspend(&act.sa_mask);
 	}
 
 	void pollEvents() {
