@@ -14,6 +14,11 @@
 
 #include "IOProcessor.h"
 
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wvla-cxx-extension"
+#endif
+
 IOProcessor::IOProcessor() {
 #ifdef PLATFORM_LINUX
 	epollFileDescritptor = -1;
@@ -161,3 +166,7 @@ void IOProcessor::removeFileDescriptor(FileDescriptor* descriptor) {
 	descriptors.removeElement(descriptor);
 #endif
 }
+
+#if defined (__clang__) && (__clang_major__ >= 18)
+	#pragma clang diagnostic pop
+#endif
