@@ -55,7 +55,12 @@ public:
 		Pipe& pipe = process->getPipe();
 		pipe.writeInt(SEGFAULT);
 
-		sigpause(SIGINT);
+		sigset_t mask;
+
+		sigemptyset(&mask);
+		sigaddset(&mask, SIGINT);
+
+		sigsuspend(&mask);
 	}
 
 	void pollEvents() {
