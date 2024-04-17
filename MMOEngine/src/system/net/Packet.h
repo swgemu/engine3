@@ -34,6 +34,7 @@ namespace sys {
 	class Packet : public ObjectInputStream, public ObjectOutputStream {
 	public:
 		static const int RAW_MAX_SIZE = 496;
+		static const uint32 MAX_UNICODE_LENGTH = 33554432U;
 
 	public:
 		Packet();
@@ -305,10 +306,16 @@ namespace sys {
 
 		inline void parseUnicode(UnicodeString& str) {
 			uint32 len = readInt();
-			shiftOffset(len * UnicodeString::UnicodeCharSize::value);
+			uint32 totalLen = len * UnicodeString::UnicodeCharSize::value;
+
+			if (totalLen > MAX_UNICODE_LENGTH) {
+				throw StreamIndexOutOfBoundsException(this, MAX_UNICODE_LENGTH);
+			}
+
+			shiftOffset(totalLen);
 
 			str.clear();
-			str.append(reinterpret_cast<UnicodeString::UnicodeCharType*>((offset - len * UnicodeString::UnicodeCharSize::value)), len);
+			str.append(reinterpret_cast<UnicodeString::UnicodeCharType*>((offset - totalLen)), len);
 		}
 
 		inline UnicodeString parseUnicode() {
@@ -320,13 +327,20 @@ namespace sys {
 
 		inline void parseUnicode(int offs, UnicodeString& str) {
 			uint32 len = readInt(offs);
+			uint32 totalLen = len * UnicodeString::UnicodeCharSize::value;
+
+			if (totalLen > MAX_UNICODE_LENGTH) {
+				throw StreamIndexOutOfBoundsException(this, MAX_UNICODE_LENGTH);
+			}
 
 			char* elementOffset = elementData + offs + 4;
-			if (elementOffset > end)
+
+			if (elementOffset > end) {
 				throw StreamIndexOutOfBoundsException(this, offs + 4);
+			}
 
 			str.clear();
-			str.append(reinterpret_cast<UnicodeString::UnicodeCharType*>((elementOffset - len * UnicodeString::UnicodeCharSize::value)), len);
+			str.append(reinterpret_cast<UnicodeString::UnicodeCharType*>((elementOffset - totalLen)), len);
 		}
 
 		inline void parseStream(char *buf, int len) {
