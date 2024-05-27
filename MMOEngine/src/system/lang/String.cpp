@@ -488,7 +488,7 @@ String String::withCommas(long val) {
 
 String String::withCommas(int64 val) {
 	std::ostringstream buf;
-	buf << val;
+	buf << ((val < 0) ? -val : val);
 	std::string src = buf.str();
 	std::string out;
 	std::size_t i = 0;
@@ -500,6 +500,10 @@ String String::withCommas(int64 val) {
 		++i;
 
 		out.push_back(*pos);
+	}
+
+	if (val < 0) {
+		out.push_back('-');
 	}
 
 	std::reverse (out.begin(), out.end());
