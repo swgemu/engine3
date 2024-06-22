@@ -14,6 +14,7 @@
 
 #include "AStarAlgorithm.h"
 #include "TriangleNode.h"
+#include "engine/log/Logger.h"
 
 namespace engine {
  namespace util {

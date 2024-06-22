@@ -19,123 +19,144 @@ Vector<const Triangle*>* TriangulationAStarAlgorithm::search(const Vector3& star
 	visited.setNullValue(nullptr);
 	visited.setNoDuplicateInsertPlan();
 
+	Vector<const Triangle*>* path = nullptr;
 	PriorityQueue priorityQueue;
 
-	AStarNode<TriangleNode, uint32>* start = new AStarNode<TriangleNode, uint32>(source, 0, startPoint.distanceTo(goalPoint));
-	priorityQueue.add(start);
+	//Setup exception handling block to catch any exceptions and free up memory
+	try {
+		AStarNode<TriangleNode, uint32>* start = new AStarNode<TriangleNode, uint32>(source, 0, startPoint.distanceTo(goalPoint));
 
-	AStarNode<TriangleNode, uint32>* goal = nullptr;
+		if (start != nullptr) {
+			visited.put(start->getID(), start);
+			priorityQueue.add(start);
+		}
 
-	while (!priorityQueue.isEmpty() && goal == nullptr) {
-		AStarNode<TriangleNode, uint32>* x = static_cast<AStarNode<TriangleNode, uint32>*>(const_cast<PriorityQueueEntry*>(priorityQueue.poll()));
+		AStarNode<TriangleNode, uint32>* goal = nullptr;
 
-		if (target == x->getNode()) {
-			goal = x;
-		} else {
-			auto neighbors = x->getNode()->getNeighbors();
+		while (!priorityQueue.isEmpty() && goal == nullptr) {
+			AStarNode<TriangleNode, uint32>* x = static_cast<AStarNode<TriangleNode, uint32>*>(const_cast<PriorityQueueEntry*>(priorityQueue.poll()));
 
-			for (int i = 0; i < neighbors->size(); ++i) {
-				const TriangleNode* neighbor = neighbors->getUnsafe(i);
+			if (target == x->getNode()) {
+				goal = x;
+			} else {
+				auto neighbors = x->getNode()->getNeighbors();
 
-				if (visited.contains(neighbor->getID()))
-					continue;
+				for (int i = 0; i < neighbors->size(); ++i) {
+					const TriangleNode* neighbor = neighbors->getUnsafe(i);
 
-				const Triangle* triangleA = x->getNode();
-				const Triangle* triangleB = neighbor;
+					if (neighbor == nullptr || visited.contains(neighbor->getID())) {
+						continue;
+					}
 
-				const Vector3* pointA = &Vector3::ZERO;
-				const Vector3* pointB = &Vector3::ZERO;
+					const Triangle* triangleA = x->getNode();
+					const Triangle* triangleB = neighbor;
 
-				triangleA->getSharedVertices(*triangleB, pointA, pointB);
+					const Vector3* pointA = &Vector3::ZERO;
+					const Vector3* pointB = &Vector3::ZERO;
 
-				Vector3 closestPoint = Segment::getClosestPoint(*pointA, *pointB, goalPoint);
+					triangleA->getSharedVertices(*triangleB, pointA, pointB);
 
-				float h = closestPoint.distanceTo(goalPoint);
+					Vector3 closestPoint = Segment::getClosestPoint(*pointA, *pointB, goalPoint);
 
-				closestPoint = Segment::getClosestPoint(*pointA, *pointB, startPoint);
+					float h = closestPoint.distanceTo(goalPoint);
 
-				float distEA = closestPoint.distanceTo(startPoint);
+					closestPoint = Segment::getClosestPoint(*pointA, *pointB, startPoint);
 
-				//funnel distance
-				//replacing with straight line for performance
+					float distEA = closestPoint.distanceTo(startPoint);
 
-				//funnel
+					//funnel distance
+					//replacing with straight line for performance
+					//funnel
 
-/*
-				Vector<Triangle*> currentPath;
-				currentPath.add(neighbor);
+					/*
+					Vector<Triangle*> currentPath;
+					currentPath.add(neighbor);
 
 
-				AStarNode<TriangleNode, uint32>* parent = x;
+					AStarNode<TriangleNode, uint32>* parent = x;
 
-				while (parent != nullptr) {
-					currentPath.insertElementAt(parent->getNode(), 0);
+					while (parent != nullptr) {
+						currentPath.insertElementAt(parent->getNode(), 0);
 
-					if (parent != parent->getCameFrom())
-						parent = parent->getCameFrom();
-				}
+						if (parent != parent->getCameFrom())
+							parent = parent->getCameFrom();
+					}
 
-				Vector<Vector3>* funnelPath = Funnel::funnel(startPoint, closestPoint, &currentPath);
+					Vector<Vector3>* funnelPath = Funnel::funnel(startPoint, closestPoint, &currentPath);
 
-				float funnelPathDistance = 0;
+					float funnelPathDistance = 0;
 
-				if (funnelPath->size() > 1) {
-					for (int i = 1; i < funnelPath->size(); ++i) {
-						Vector3* firstPoint = &funnelPath->get(i - 1);
-						Vector3* secondPoint = &funnelPath->get(i);
+					if (funnelPath->size() > 1) {
+						for (int i = 1; i < funnelPath->size(); ++i) {
+							Vector3* firstPoint = &funnelPath->get(i - 1);
+							Vector3* secondPoint = &funnelPath->get(i);
 
-						funnelPathDistance += secondPoint->distanceTo(*firstPoint);
+							funnelPathDistance += secondPoint->distanceTo(*firstPoint);
+						}
+					}
+
+					delete funnelPath;
+					*/
+
+					//printf("x->getG():%f distEA:%f funnelPathDistance:%f heuristic:%f\n", x->getG(), distEA, funnelPathDistance, h);
+					//float g = MAX(MAX(x->getG(), distEA), funnelPathDistance);
+
+					float g = Math::max(Math::max(x->getG(), distEA), x->getG() + (x->getHeuristic() - h));
+
+					AStarNode<TriangleNode, uint32>* newNode = new AStarNode<TriangleNode, uint32>(neighbor, g, h);
+
+					if (newNode != nullptr) {
+						newNode->setCameFrom(x);
+						visited.put(neighbor->getID(), newNode);
+						priorityQueue.add(newNode);
 					}
 				}
-
-				delete funnelPath;
-
-*/
-				//
-
-				//printf("x->getG():%f distEA:%f funnelPathDistance:%f heuristic:%f\n", x->getG(), distEA, funnelPathDistance, h);
-	//			float g = MAX(MAX(x->getG(), distEA), funnelPathDistance);
-
-				float g = Math::max(Math::max(x->getG(), distEA), x->getG() + (x->getHeuristic() - h));
-
-				AStarNode<TriangleNode, uint32>* newNode = new AStarNode<TriangleNode, uint32>(neighbor, g, h);
-				newNode->setCameFrom(x);
-				visited.put(neighbor->getID(), newNode);
-				priorityQueue.add(newNode);
 			}
 		}
-	}
 
-	priorityQueue.clearWithoutTraverse();
+		priorityQueue.clearWithoutTraverse();
 
-	if (goal == nullptr) {
-		//cleanup all nodes
-		visited.put(start->getID(), start);
+		if (goal == nullptr) {
+			//cleanup all nodes
+
+			for (auto& val : visited) {
+				delete val.getValue();
+			}
+
+			return nullptr;
+		}
+
+		path = new Vector<const Triangle*>();
+		path->add(goal->getNode());
+
+		const AStarNode<TriangleNode, uint32>* parent = goal->getCameFrom();
+
+		while (parent != nullptr) {
+			path->insertElementAt(parent->getNode(), 0);
+			parent = parent->getCameFrom();
+		}
+
+		// Cleanup all nodes
+		visited.put(goal->getID(), goal);
 
 		for (auto& val : visited) {
 			delete val.getValue();
 		}
 
-		return nullptr;
+		return path;
+
+	} catch (...) {
+		Logger::console.error() << "Exception in TriangulationAStarAlgorithm::search";
+
+		for (auto& val : visited) {
+			delete val.getValue();
+		}
+
+		if (path != nullptr) {
+			delete path;
+			path = nullptr;
+		}
 	}
 
-	auto path = new Vector<const Triangle*>();
-	path->add(goal->getNode());
-
-	const AStarNode<TriangleNode, uint32>* parent = goal->getCameFrom();
-
-	while (parent != nullptr) {
-		path->insertElementAt(parent->getNode(), 0);
-		parent = parent->getCameFrom();
-	}
-
-	//cleanup all nodes
-	visited.put(start->getID(), start);
-	visited.put(goal->getID(), goal);
-
-	for (auto& val : visited) {
-		delete val.getValue();
-	}
-
-	return path;
+	return nullptr;
 }
