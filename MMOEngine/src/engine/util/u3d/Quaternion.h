@@ -56,7 +56,6 @@ public:
 		z = fz;
 	}
 
-
 	/**
 	 * Create a quaternion based on a vector and an angle of direction.
 	 * \param v The vector to base rotation off of. Should be a UNIT vector.
@@ -73,11 +72,10 @@ public:
 		z = axis.getZ() * fsin;
 	}
 
-	//inline explicit Quaternion(const Matrix4& matrix) {
-	//}
+	// inline explicit Quaternion(const Matrix4& matrix) {
+	// }
 
 	virtual ~Quaternion() {
-
 	}
 
 	/**
@@ -124,7 +122,7 @@ public:
 		_offset = stream->getOffset();
 		stream->writeInt(0);
 		TypeInfo<float>::toBinaryStream(&z, stream);
-		_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+		_totalSize = (uint32)(stream->getOffset() - (_offset + 4));
 		stream->writeInt(_offset, _totalSize);
 
 		_name = "y";
@@ -132,15 +130,15 @@ public:
 		_offset = stream->getOffset();
 		stream->writeInt(0);
 		TypeInfo<float>::toBinaryStream(&y, stream);
-		_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+		_totalSize = (uint32)(stream->getOffset() - (_offset + 4));
 		stream->writeInt(_offset, _totalSize);
 
 		_name = "x";
 		_name.toBinaryStream(stream);
 		_offset = stream->getOffset();
 		stream->writeInt(0);
-		TypeInfo<float >::toBinaryStream(&x, stream);
-		_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+		TypeInfo<float>::toBinaryStream(&x, stream);
+		_totalSize = (uint32)(stream->getOffset() - (_offset + 4));
 		stream->writeInt(_offset, _totalSize);
 
 		_name = "w";
@@ -148,7 +146,7 @@ public:
 		_offset = stream->getOffset();
 		stream->writeInt(0);
 		TypeInfo<float>::toBinaryStream(&w, stream);
-		_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+		_totalSize = (uint32)(stream->getOffset() - (_offset + 4));
 		stream->writeInt(_offset, _totalSize);
 
 		String emptyName; // making it serialize the same way as Serializable so bas doesnt have to update all the objects
@@ -158,7 +156,7 @@ public:
 		_offset = stream->getOffset();
 		stream->writeInt(0);
 		TypeInfo<String>::toBinaryStream(&emptyName, stream);
-		_totalSize = (uint32) (stream->getOffset() - (_offset + 4));
+		_totalSize = (uint32)(stream->getOffset() - (_offset + 4));
 		stream->writeInt(_offset, _totalSize);
 
 		return 5;
@@ -184,7 +182,7 @@ public:
 
 			int _currentOffset = stream->getOffset();
 
-			if(readObjectMember(stream, _name)) {
+			if (readObjectMember(stream, _name)) {
 			}
 
 			stream->setOffset(_currentOffset + _varSize);
@@ -193,7 +191,7 @@ public:
 		return true;
 	}
 
-	inline Quaternion& operator = (const Quaternion& q) {
+	inline Quaternion& operator=(const Quaternion& q) {
 		w = q.w;
 		x = q.x;
 		y = q.y;
@@ -202,31 +200,27 @@ public:
 		return *this;
 	}
 
-	inline Quaternion operator + (const Quaternion& q) const {
+	inline Quaternion operator+(const Quaternion& q) const {
 		return Quaternion(w + q.w, x + q.x, y + q.y, z + q.z);
 	}
 
-	inline Quaternion operator - (const Quaternion& q) const {
+	inline Quaternion operator-(const Quaternion& q) const {
 		return Quaternion(w - q.w, x - q.x, y - q.y, z - q.z);
 	}
 
-	inline Quaternion operator * (const Quaternion& q) const {
-		return Quaternion(
-				w * q.w - x * q.x - y * q.y - z * q.z,
-				w * q.x + x * q.w + y * q.z - z * q.y,
-				w * q.y + y * q.w + z * q.x - x * q.z,
-				w * q.z + z * q.w + x * q.y - y * q.x);
+	inline Quaternion operator*(const Quaternion& q) const {
+		return Quaternion(w * q.w - x * q.x - y * q.y - z * q.z, w * q.x + x * q.w + y * q.z - z * q.y, w * q.y + y * q.w + z * q.x - x * q.z, w * q.z + z * q.w + x * q.y - y * q.x);
 	}
 
-	inline Quaternion operator * (const float scalar) const {
+	inline Quaternion operator*(const float scalar) const {
 		return Quaternion(scalar * w, scalar * x, scalar * y, scalar * z);
 	}
 
-	inline bool operator == (const Quaternion& q) const {
+	inline bool operator==(const Quaternion& q) const {
 		return (w == q.w && x == q.x && y == q.y && z == q.z);
 	}
 
-	inline bool operator != (const Quaternion& q) const {
+	inline bool operator!=(const Quaternion& q) const {
 		return (w != q.w || x != q.x || y != q.y || z != q.z);
 	}
 
@@ -254,6 +248,25 @@ public:
 	}
 
 	/**
+	* Computes the inverse of this quaternion.
+	* @return The inverse quaternion.
+	*/
+	Quaternion inverse() const {
+		// Compute the norm squared (w^2 + x^2 + y^2 + z^2)
+		float normSquared = (w * w) + (x * x) + (y * y) + (z * z);
+
+		// Prevent division by zero
+		if (normSquared == 0.0f) {
+			return Quaternion(1.0f, 0.0f, 0.0f, 0.0f); // Return identity quaternion if degenerate
+		}
+
+		// Compute the inverse as conjugate / normSquared
+		float invNorm = 1.0f / normSquared;
+
+		return Quaternion(w * invNorm, -x * invNorm, -y * invNorm, -z * invNorm);
+	}
+
+	/**
 	 * Rotates the quaternion on an axis of rotation n degrees.
 	 * \param axis The unit axis of rotation.
 	 * \param degrees How many degrees to rotate the quaternion.
@@ -269,7 +282,7 @@ public:
 	 * Converts this quaternion to a matrix4.
 	 * \return Matrix4 The matrix4 equivalent of this quaternion.
 	 */
-	//inline Matrix4 toMatrix() { }
+	// inline Matrix4 toMatrix() { }
 
 	Matrix3 toMatrix3() const {
 		/*float len = length();
@@ -277,7 +290,7 @@ public:
 			if (len > 0.9999 && len < 1.0001)
 				throw Exception("quaternion is not normalized");*/
 
-		return Matrix3(Vector3(1 - 2 * (y * y +  z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)),
+		return Matrix3(Vector3(1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)),
 				Vector3(2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)),
 				Vector3(2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)));
 	}
@@ -346,9 +359,9 @@ public:
 	}
 };
 
-} // u3d
-} // util
-} // engine
+} // namespace u3d
+} // namespace util
+} // namespace engine
 
 using namespace engine::util::u3d;
 
