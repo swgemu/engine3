@@ -102,6 +102,12 @@ namespace engine {
 			return ref;
 		}
 
+		inline O getReferenceUnsafeNoReload() const {
+			O ref = WeakReference<O>::getReferenceUnsafeStaticCast();
+
+			return ref;
+		}
+
 		inline O getReferenceUnsafe() {
 			O ref = WeakReference<O>::getReferenceUnsafeStaticCast();
 
@@ -143,14 +149,38 @@ namespace engine {
 
 		inline bool operator!=(const ManagedWeakReference<O>& r) const {
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
+			auto rSavedObjectID = r.savedObjectID.load(std::memory_order_relaxed);
 
-			return savedObjectID != r.savedObjectID.load(std::memory_order_relaxed);
+			// the savedObjectID may be incorrectly be 0
+			// if object O was given an objectID after
+			// creating the ManagedWeakReference - so we
+			// have to check for the actual objectID of O
+			// here
+			auto objectID = savedObjectID == 0 ?
+			    getReferenceUnsafeNoReload() == nullptr ? 0 : getReferenceUnsafeNoReload()->getObjectID()
+			    : savedObjectID;
+
+			auto rObjectID = rSavedObjectID == 0 ?
+			    r.getReferenceUnsafeNoReload() == nullptr ? 0 : r.getReferenceUnsafeNoReload()->getObjectID()
+			    : rSavedObjectID;
+
+			return objectID != rObjectID;
 		}
 
 		inline bool operator==(const ManagedWeakReference<O>& r) const {
 			auto savedObjectID = this->savedObjectID.load(std::memory_order_relaxed);
+			auto rSavedObjectID = r.savedObjectID.load(std::memory_order_relaxed);
 
-			return savedObjectID == r.savedObjectID.load(std::memory_order_relaxed);;
+			// see comment on same logic in the operator!= code
+			auto objectID = savedObjectID == 0 ?
+			    getReferenceUnsafeNoReload() == nullptr ? 0 : getReferenceUnsafeNoReload()->getObjectID()
+			    : savedObjectID;
+
+			auto rObjectID = rSavedObjectID == 0 ?
+			    r.getReferenceUnsafeNoReload() == nullptr ? 0 : r.getReferenceUnsafeNoReload()->getObjectID()
+			    : rSavedObjectID;
+
+			return objectID == rObjectID;
 		}
 
 		inline ManagedReference<O> get() {
