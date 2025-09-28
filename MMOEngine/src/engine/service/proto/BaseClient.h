@@ -196,7 +196,11 @@ namespace engine {
 		}
 
 		inline String getIPAddress() const {
-			return addr.getIPAddress();
+			return ip.isEmpty() ? addr.getIPAddress() : ip;
+		}
+
+		inline void setIPAddress(const String& newIP) {
+			ip = newIP;
 		}
 
 		inline int getSentPacketCount() const {
