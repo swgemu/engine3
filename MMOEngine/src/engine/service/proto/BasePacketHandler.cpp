@@ -139,9 +139,9 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 		auto logFileName = client->getLogFileName();
 
 		if (logFileName.isEmpty()) {
-			error() << "[" << client->getAddress() << "] " << buf;
+			error() << "[" << client->getFullIPAddress() << "] " << buf;
 		} else {
-			error() << "[" << client->getAddress() << "] " << buf << " see " << client->getLogFileName() << " for details";
+			error() << "[" << client->getFullIPAddress() << "] " << buf << " see " << client->getLogFileName() << " for details";
 		}
 	}
 }
@@ -486,9 +486,9 @@ int BasePacketHandler::handleFragmentedPacket(BaseClient* client, Packet* pack) 
 		auto logFileName = client->getLogFileName();
 
 		if (logFileName.isEmpty()) {
-			error() << "[" << client->getAddress() << "] " << buf;
+			error() << "[" << client->getFullIPAddress() << "] " << buf;
 		} else {
-			error() << "[" << client->getAddress() << "] " << buf << " see " << client->getLogFileName() << " for details";
+			error() << "[" << client->getFullIPAddress() << "] " << buf << " see " << client->getLogFileName() << " for details";
 		}
 
 		return 1;
