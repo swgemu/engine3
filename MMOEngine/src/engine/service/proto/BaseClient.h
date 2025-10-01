@@ -72,7 +72,8 @@ namespace engine {
 #endif
 		SortedVector<BasePacket*> receiveBuffer;
 
-		String ip;
+		String ip_full;
+		String ip_address;
 
 		Condition connectionEstablishedCondition;
 
@@ -191,16 +192,16 @@ namespace engine {
 		}
 
 		// getters
-		inline const String& getAddress() const {
-			return ip;
+		inline const String& getFullIPAddress() const {
+			return ip_full;
 		}
 
 		inline String getIPAddress() const {
-			return ip.isEmpty() ? addr.getIPAddress() : ip;
+			return ip_address.isEmpty() ? addr.getIPAddress() : ip_address;
 		}
 
 		inline void setIPAddress(const String& newIP) {
-			ip = newIP;
+			ip_address = newIP;
 		}
 
 		inline int getSentPacketCount() const {

@@ -108,7 +108,7 @@ public:
 };
 
 void BaseClient::initializeCommon(const String& addr) {
-    ip = addr;
+	ip_full = addr;
 
 	bufferedPacket = nullptr;
 	receiveBuffer.setInsertPlan(SortedVector<BasePacket*>::NO_DUPLICATE);
@@ -123,8 +123,8 @@ void BaseClient::initializeCommon(const String& addr) {
 
 	keepSocket = false;
 
-	setLockName("BaseClient " + ip);
-	setLoggingName("BaseClient " + ip);
+	setLockName("BaseClient " + ip_full);
+	setLoggingName("BaseClient " + ip_full);
 	setLogToConsole(false);
 
 	info() << __FUNCTION__;
@@ -1097,7 +1097,7 @@ void BaseClient::checkupServerPackets(BasePacket* pack) {
 void BaseClient::resendPackets() {
 	/*#ifdef TRACE_CLIENTS
 		StringBuffer msg2;
-		msg2 << "[" << seq << "] resending " << MIN(sequenceBuffer.size(), 5) << " packets to \'" << ip << "\' ["
+		msg2 << "[" << seq << "] resending " << MIN(sequenceBuffer.size(), 5) << " packets to \'" << ip_full << "\' ["
 			 << checkupEvent->getCheckupTime() << "]";
 		debug(msg2, true);
 	#endif*/
@@ -1109,7 +1109,7 @@ void BaseClient::resendPackets() {
 	int maxPacketResent = (int) Math::max(5.f, (float)30000.f * checkupTime / 496.f); //30kb * second assuming 496 packet size
 
 	/*StringBuffer msg2;
-	msg2 << "resending MIN(" << sequenceBuffer.size() << " and " << maxPacketResent << ") packets to \'" << ip << "\' ["
+	msg2 << "resending MIN(" << sequenceBuffer.size() << " and " << maxPacketResent << ") packets to \'" << ip_full << "\' ["
 			<< ((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime() << "]";
 	info(msg2, true);*/
 
@@ -1376,14 +1376,20 @@ bool BaseClient::handleNetStatusRequest(Packet* pack) {
 
 		uint16 ourTick = Time().getMiliTime() & 0xFFFF;
 		uint16 tick = pack->parseNetShort();
-		uint32 unk1 = pack->parseInt();
-		uint32 unk2 = pack->parseInt();
-		uint32 unk3 = pack->parseInt();
-		uint32 unk4 = pack->parseInt();
-		uint32 unk5 = pack->parseInt();
 
-		remoteStats.setTotalPacketsSent(pack->parseNetLong());
-		remoteStats.setTotalPacketsReceived(pack->parseNetLong());
+		try {
+			uint32 unk1 = pack->parseInt();
+			uint32 unk2 = pack->parseInt();
+			uint32 unk3 = pack->parseInt();
+			uint32 unk4 = pack->parseInt();
+			uint32 unk5 = pack->parseInt();
+
+			remoteStats.setTotalPacketsSent(pack->parseNetLong());
+			remoteStats.setTotalPacketsReceived(pack->parseNetLong());
+		} catch (Exception& e) {
+			error() << __PRETTY_FUNCTION__ << " " << ip_full << ": " << e.getMessage();
+		}
+
 		remoteStats.setTickDelta(tickDiff(tick, ourTick));
 		remoteStats.setTimeStamp(lastNetStatusTimeStamp);
 
@@ -1673,7 +1679,7 @@ void BaseClient::reportStats(const String& msg) {
 
 	log()
 		<< "reportStats:\n{\"@timestamp\":\"" << now.getFormattedTimeFull() << "\""
-		<< ", \"ip\": \"" << ip << "\""
+		<< ", \"ip\": \"" << ip_full << "\""
 		<< ", \"elaspedMs\": " << elaspedMs
 		<< ", \"serverSequence\": " << serverSequence
 		<< ", \"resentPackets\": " << resentPackets
