@@ -306,6 +306,37 @@ namespace sys {
 				return 0;
 		}
 
+		static Time fromISO8601(const String& isoString) {
+			struct tm tm = {};
+			const char* str = isoString.toCharArray();
+
+			// Parse ISO 8601 basic format: "2025-10-03T10:25:30" (with optional Z or timezone)
+			// Note: This handles the basic format, not all ISO 8601 variations
+			char* result = strptime(str, "%Y-%m-%dT%H:%M:%S", &tm);
+
+			if (result == nullptr) {
+				// Failed to parse, return epoch
+				return Time(0);
+			}
+
+#ifndef PLATFORM_WIN
+			// Use timegm() for UTC conversion (GNU extension, available on Linux/BSD)
+			time_t timestamp = timegm(&tm);
+#else
+			// Windows fallback: use mktime and adjust for timezone
+			time_t timestamp = mktime(&tm);
+			timestamp -= _timezone;
+#endif
+
+			if (timestamp == -1) {
+				// Invalid time
+				return Time(0);
+			}
+
+			// Note: Still limited to 2038 due to uint32 cast in Time constructor
+			return Time((uint32)timestamp);
+		}
+
 		inline static uint64 currentNanoTime(ClockType type = REAL_TIME) {
 			#if !defined(PLATFORM_WIN) && !defined(PLATFORM_MAC)
 				struct timespec cts;
