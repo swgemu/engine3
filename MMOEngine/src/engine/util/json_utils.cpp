@@ -16,6 +16,8 @@
 #include "engine/util/u3d/Vector3.h"
 #include "engine/util/u3d/Quaternion.h"
 #include "engine/util/u3d/Coordinate.h"
+#include "engine/util/u3d/Vector4.h"
+#include "engine/util/u3d/Matrix4.h"
 
 void sys::lang::to_json(nlohmann::json& j, const sys::lang::String& p) {
 	j = p.toCharArray();
@@ -49,4 +51,12 @@ void engine::util::u3d::to_json(nlohmann::json& j, const engine::util::u3d::Quat
 void engine::util::u3d::to_json(nlohmann::json& j, const engine::util::u3d::Coordinate& v) {
 	j["position"] = v.getPosition();
 	j["previousPosition"] = v.getPreviousPosition();
+}
+
+void engine::util::u3d::to_json(nlohmann::json& j, const engine::util::u3d::Vector4& v) {
+	j = nlohmann::json::array({v[0], v[1], v[2], v[3]});
+}
+
+void engine::util::u3d::to_json(nlohmann::json& j, const engine::util::u3d::Matrix4& m) {
+	j = nlohmann::json::array({m[0], m[1], m[2], m[3]});
 }

@@ -115,10 +115,14 @@ namespace engine {
 			class Vector3;
 			class Quaternion;
 			class Coordinate;
+			class Vector4;
+			class Matrix4;
 
 			void to_json(nlohmann::json& k, const engine::util::u3d::Vector3& v);
 			void to_json(nlohmann::json& k, const engine::util::u3d::Quaternion& q);
 			void to_json(nlohmann::json& k, const engine::util::u3d::Coordinate& q);
+			void to_json(nlohmann::json& k, const engine::util::u3d::Vector4& v);
+			void to_json(nlohmann::json& k, const engine::util::u3d::Matrix4& m);
 		}
 	}
 }
